@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "eval_url_template": "https://data.linuxarena.ai/api/runs/{run_id}/eval",
+  "datasets": [
+    {
+      "id": "lastraj",
+      "name": "LinuxArena / LaStraj",
+      "version": "LaStraj2.0:6",
+      "owner": "Redwood Research & EquiStamp",
+      "license": {
+        "name": "CC BY 4.0",
+        "url": "https://huggingface.co/datasets/anonymouslinuxarena/linuxarena-public"
+      },
+      "source": "https://huggingface.co/datasets/anonymouslinuxarena/linuxarena-public/tree/2fd29f9c7bc190fb873bd76c6bd648f22b9ab0a7",
+      "samples": {
+        "honest": 30,
+        "attack": 17
+      },
+      "files": [
+        {
+          "population": "honest",
+          "run_id": "59cdcf0761ca4867b2f700cdf36ce507"
+        },
+        {
+          "population": "attack",
+          "run_id": "e44cf63d11854e55be29b8d6a64f4ef7"
+        }
+      ]
+    },
+    {
+      "id": "basharena",
+      "name": "BashArena",
+      "version": "bashbench2_v1",
+      "owner": "UK AI Security Institute & Redwood Research",
+      "license": {
+        "name": "MIT",
+        "url": "https://github.com/UKGovernmentBEIS/control-arena/blob/3a378ed00eb1f6b8e893e39215d749688126c9cb/LICENSE"
+      },
+      "source": "https://github.com/UKGovernmentBEIS/control-arena/tree/3a378ed00eb1f6b8e893e39215d749688126c9cb",
+      "samples": {
+        "honest": 600,
+        "attack": 600
+      },
+      "files": [
+        {
+          "population": "honest",
+          "run_id": "92e62b8bcb2700bd654d48770e0ec92d"
+        },
+        {
+          "population": "attack",
+          "run_id": "d7f44bcf85fb4c61b9d0e22c1f02fece"
+        }
+      ]
+    },
+    {
+      "id": "monitoringbench",
+      "name": "MonitoringBench",
+      "version": "6c72cf1",
+      "owner": "MonitoringBench authors",
+      "license": {
+        "name": "CC BY 4.0",
+        "url": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      "source": "https://huggingface.co/datasets/neur26anonsub/ctrldataset2026/tree/6c72cf19883376b921a94a0dd17dc8ab6b25e52f",
+      "samples": {
+        "honest": 0,
+        "attack": 2644
+      },
+      "files": [
+        {
+          "population": "attack",
+          "run_id": "3e7aed402d4d48f693e2911bb8089cf6"
+        }
+      ]
+    },
+    {
+      "id": "sleight",
+      "name": "SLEIGHT-Bench",
+      "version": "218c583",
+      "owner": "SLEIGHT-Bench authors",
+      "license": {
+        "name": "MIT",
+        "url": "https://github.com/safety-research/sleight-bench/blob/218c58315cc01ff0dc5a100e906c27d82d259521/LICENSE"
+      },
+      "source": "https://github.com/safety-research/sleight-bench/tree/218c58315cc01ff0dc5a100e906c27d82d259521",
+      "samples": {
+        "honest": 37,
+        "attack": 37
+      },
+      "withheld_populations": [
+        "honest",
+        "attack"
+      ],
+      "files": []
+    },
+    {
+      "id": "shade-arena",
+      "name": "SHADE-Arena (Scale AI Monitor Red Teaming transcripts)",
+      "version": "bc636d0",
+      "owner": "Scale AI (Monitor Red Teaming authors)",
+      "license": {
+        "name": "CC BY-NC 4.0",
+        "url": "https://creativecommons.org/licenses/by-nc/4.0/"
+      },
+      "source": "https://huggingface.co/datasets/ScaleAI/mrt/tree/bc636d0c3b881c7d8c76fd71b45b009c3710d437",
+      "samples": {
+        "honest": 374,
+        "attack": 308
+      },
+      "files": [
+        {
+          "population": "honest",
+          "run_id": "273d72bedc575d8f43fc02f43c7592cb"
+        },
+        {
+          "population": "attack",
+          "run_id": "59027da92df6ead8f27d5641c40a9d10"
+        }
+      ]
+    },
+    {
+      "id": "mythos-5-incident",
+      "name": "Mythos 5 incident transcript (Anthropic)",
+      "version": "62858fc",
+      "owner": "Anthropic",
+      "license": {
+        "name": "Unlicensed release (no licence file)",
+        "url": "https://github.com/anthropics/mythos-5-incident-transcript/blob/62858fcf2725fe7b38872d538e973f38846ea744/README.md"
+      },
+      "source": "https://github.com/anthropics/mythos-5-incident-transcript/tree/62858fcf2725fe7b38872d538e973f38846ea744",
+      "samples": {
+        "honest": 0,
+        "attack": 1
+      },
+      "files": [
+        {
+          "population": "attack",
+          "run_id": "2af85c4a70b841fcbbd70237b2958f35"
+        }
+      ]
+    }
+  ]
+}

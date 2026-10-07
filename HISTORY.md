@@ -1,5 +1,6 @@
 # HISTORY
 
+- **Session 6 continuation (2026-10-07).** Added the VCVio audit-then-defer operational game and matching service-dependent `catV` recursion. The exact operational refinement remains unproved; no theorem is claimed.
 - **Session 1 (2026-10-06/07, to ~03:00 UTC).** Reuse decisions and a VCVio spike (REUSE.md); DESIGN v0, hostile
   design reviews before any Lean, DESIGN v1. Verified: UMHSF1, UMSURVF1, UMPROTF1, UMSTRATF1, UMNOGOF1, CANONF1,
   SANDBOXF1; VCVio Spike and HoneypotBridge proved. First final hostile review; STACK.md rescoped.

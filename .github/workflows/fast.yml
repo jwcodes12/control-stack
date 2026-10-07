@@ -33,6 +33,15 @@ jobs:
         run: cd gateway && python3 test_gateway.py
       - name: Assurance manifests are consistent (no category promotion)
         run: python3 assurance/check_manifests.py passed && git diff --stat assurance
+  lean-covert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Build and axiom-check the covert-channel theorems (mandatory)
+        run: PATH=$HOME/.elan/bin:$PATH ci/covert/check.sh
   lean-vcvio:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

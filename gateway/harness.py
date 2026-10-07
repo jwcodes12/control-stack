@@ -37,24 +37,24 @@ def sandboxed(code: Path, stdin: str, timeout: float) -> tuple[str, bool]:
 
 
 def run_episode(sender: Path, receiver: Path, secret: int, channels: dict, deadline: float = 3.0,
-                budget_bits: float = 16.0) -> dict:
-    g = Gateway(channels, budget_bits=budget_bits)
+                budget_bits: int = 16, ledger=None, lineage=None) -> dict:
+    g = Gateway(channels, budget_bits=budget_bits, ledger=ledger, lineage=lineage)
     t0 = time.monotonic()
     out, _ = sandboxed(sender, json.dumps({"secret": secret}) + "\n", deadline)
     if len(out.encode()) > MAX_BYTES:
-        g.act("output_overflow")
+        g.act()
     else:
         for line in out.splitlines():
             try:
                 msg = json.loads(line)
             except json.JSONDecodeError:
-                g.act("invalid_json"); continue
+                g.act(); continue
             if type(msg) is dict and msg.get("op") == "send" and set(msg) == {"op", "channel", "payload"}:
                 g.send(msg["channel"], msg["payload"])
             elif type(msg) is dict and msg.get("op") == "act":
-                g.act(str(msg.get("kind")))
+                g.act()
             else:
-                g.act("malformed")
+                g.act()
     g.close()
     time.sleep(max(0.0, deadline - (time.monotonic() - t0)))  # fixed schedule: receiver starts at t0 + deadline
     view = {k: [list(x) if x is not None else None for x in v] for k, v in g.deliver().items()}

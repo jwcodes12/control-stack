@@ -39,3 +39,9 @@ Red-team check: the optimal reachable-view encoder (k = 13) achieves 0.229 ± 0.
 Not yet: the gateway is unverified Python; the bound holds only if the deployment routes EVERY inter-instance artefact
 through it and the harness provides OS isolation. Next: run the gateway inside a sandboxed multi-agent harness and
 prove a Lean model of `send`/`deliver` refines the view map (implementation correspondence, P0).
+
+## v2 (after reviews/covert-channel-gateway-review-2026-10-07.md)
+Frozen, deep-validated configuration; exact integer cardinality; `LifetimeLedger` (cumulative budget per lineage);
+fixed-code alerts (no attacker strings); `close()` freezes a one-shot snapshot. Lean: `covert_bound_lifetime`,
+`attain_embedding`. CI: mandatory narrow Lean job (`ci/covert/check.sh`) builds CovertChannel and GatewayModel and
+fails on any `sorryAx`. Manifest: `assurance/covert-channel-gateway-v2.json` (CONDITIONAL, 6 unresolved).

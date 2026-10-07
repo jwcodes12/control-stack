@@ -78,6 +78,40 @@ def check(m: dict) -> tuple[str, list[str]]:
     return ("DEPLOYMENT-GRADE" if not blocking else "CONDITIONAL"), blocking
 
 
+def covert_manifest() -> dict:
+    A = lambda i, st, t: {"id": i, "status": st, "text": t}
+    return {
+        "name": "covert-channel-gateway-v2",
+        "claim": "bounded EXACT-MESSAGE RECOVERY: a uniform 32-bit secret held by U is recovered by a machine receiver "
+                 "with probability <= 2^-16 over the secret's lifetime. NOT a claim that coordination is impossible: a "
+                 "16-bit channel carries a 1-bit command with certainty.",
+        "theorem": {"files": {f: sha(ROOT / f) for f in ("ControlStack/CovertChannel.lean",
+                                                          "ControlStack/GatewayModel.lean")},
+                    "ids": ["Covert.covert_bound", "Covert.covert_bound_lifetime", "Covert.design_point",
+                            "Covert.attain_embedding", "GatewayModel.gateway_bound"],
+                    "lean_status": "passed"},
+        "implementation": {f: sha(ROOT / f) for f in ("gateway/gateway.py", "gateway/harness.py")},
+        "configuration": {"secret_bits": 32, "lifetime_budget_bits": 16, "bound": "2^-16"},
+        "tests": ["gateway/test_gateway.py (10 tests)", "gateway/difftest.py (300 traces vs Lean model, 0 mismatches)",
+                  "gateway/test_harness.py (bubblewrap side channels; red team within bound)"],
+        "assumptions": [
+            A("counting_bound", "THEOREM_VERIFIED", "covert_bound / covert_bound_lifetime"),
+            A("gateway_model_bound", "THEOREM_VERIFIED", "GatewayModel.gateway_bound for the modelled state machine"),
+            A("python_refines_model", "UNRESOLVED", "Python gateway matches the Lean model on 300 adversarial traces "
+                                                   "(differential test), not proved"),
+            A("only_channel", "UNRESOLVED", "the receiver observes nothing outside the delivered view: bubblewrap "
+                                             "harness closes files/network/stderr/exit code/duration in tests; shared "
+                                             "kernel state (page-cache timing) remains"),
+            A("lifetime_scope", "UNRESOLVED", "every receiver that can share memory with another is in one ledger "
+                                               "lineage; the deployment must define lineages"),
+            A("secret_independence", "UNRESOLVED", "m independent of the shared seed and receiver inputs (true in the "
+                                                    "eval design; not established for live secrets)"),
+            A("machine_receivers_only", "UNRESOLVED", "humans out of scope by decision (2026-10-07)"),
+            A("gateway_isolation", "UNRESOLVED", "the gateway process is outside every untrusted process's address space"),
+        ],
+    }
+
+
 def main() -> int:
     out = ROOT / "assurance"
     ms = []
@@ -103,6 +137,11 @@ def main() -> int:
         m["blocking"] = blocking
         (out / (m["name"].replace("/", "__") + ".json")).write_text(json.dumps(m, indent=1) + "\n")
         summary.append((m["name"], verdict, len(blocking)))
+    cm = covert_manifest()
+    verdict, blocking = check({"name": cm["name"], "theorem": cm["theorem"], "assumptions": cm["assumptions"]})
+    cm["verdict"], cm["blocking"] = verdict, blocking
+    (out / "covert-channel-gateway-v2.json").write_text(json.dumps(cm, indent=1) + "\n")
+    print(f"{cm['name']:<60} {verdict:<17} {len(blocking)} unresolved assumptions")
     for n, v, b in summary[:3]:
         print(f"{n:<60} {v:<17} {b} unresolved assumptions")
     print(f"... {len(summary)} manifests; deployment-grade: {sum(1 for _, v, _ in summary if v == 'DEPLOYMENT-GRADE')}")

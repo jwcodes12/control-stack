@@ -49,3 +49,4 @@
 - **Session 8, review response.** `ComposeBlindSpot.lean` (negative result), post hoc statistical audit, assurance manifests with a no-promotion checker, CI fast tier, roadmap reorganised around one end-to-end safety case.
 - **Session 8, P0.** `CATASTROPHE-SPEC.md` (covert secret propagation to machine receivers), `CovertChannel.lean` (bound P ≤ |V|/|M|, tight), fail-closed `gateway/` prototype with adversarial tests in CI.
 - **Session 8, gateway.** `GatewayModel.lean` (end-to-end bound for the gateway model), Python/Lean differential test, bubblewrap two-instance harness with side-channel tests.
+- **Session 8, gateway v2.** Responded to the covert-channel review (`reviews/dialogue/claude-01.md`): lifetime budget, exact cardinality, frozen config/snapshot, fixed alerts, Lean attainment and lifetime bound, covert manifest, narrow Lean CI.

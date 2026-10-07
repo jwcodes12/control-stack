@@ -21,6 +21,7 @@ Root module of the interface-level (VCVio) Lake project, so that `lake build` ch
   hockey-stick, stratified and audit-then-defer results.
 - `ComposeGame`: trusted + untrusted monitoring in one game; product bound and tightness witness.
 - `ComposeAvg`: composition with a general joint kernel and with the population-average trusted miss rate.
+- `CovertChannel`: covert-propagation bound for mediated machine channels (the P0 catastrophe).
 - `UseQ`: rational usefulness checker and its soundness bridge.
 - `AdaptiveBalance`, `AdaptiveSharp`, `AdaptiveGeneric`, `AdaptiveUMADAPT`: the sharper adaptive converse core.
 
@@ -52,3 +53,5 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.Compose.composed_tight
 #print axioms ControlStack.ComposeAvg.composedJ_end
 #print axioms ControlStack.ComposeAvg.composedPop_end
+#print axioms ControlStack.Covert.covert_bound
+#print axioms ControlStack.Covert.design_point

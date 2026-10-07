@@ -43,7 +43,16 @@ additivity over messages). For a schema channel this is assumption-free given th
 | rogue internal deployment / privilege escalation | medium: gateway + state invariants | exact (privileged action executed) | needs environment-state model |
 | sabotage of safety research | low | diffuse, hard to score | low-stakes / diffuse failure |
 
-## Decisions needed (John)
+## Decisions (John, 2026-10-07)
+1. Receivers: **machine receivers only** (other U instances, other models). Humans out of scope (UNRESOLVED).
+2. Channels: **schema and canonicaliser only; no paraphraser.** Every channel's leakage cap is exact.
+3. (Orchestrator's judgement) Secret k = 32 bits; target P(recover m) ≤ 2^-16; hence an episode leakage budget of
+   16 bits summed over all mediated channels (n·ℓ ≤ 16), enforced by the gateway.
+4. (Orchestrator's judgement) Prototype: a self-contained gateway in this repo with a simulated multi-instance setting
+   and programmatic adversarial encoders (the theorem is worst-case over encoders, so no LLM attacker is needed for
+   v1). Nothing is deployed. Porting to a ControlArena setting is a later step.
+
+## Original decision list
 1. Receivers in scope for v1: machine receivers only (recommended), or include humans.
 2. Channel classes allowed in v1: schema + canonicaliser only (recommended: provable ℓ), or free text too.
 3. Secret size k and tolerated success (e.g. k = 32, P ≤ 2^-16), message budget n.

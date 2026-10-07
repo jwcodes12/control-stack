@@ -184,7 +184,85 @@ theorem protocol_survival_formula {X Z Ω : Type} [Fintype Ω]
   have hn : ns - 1 + 1 = ns := Nat.sub_add_cancel hns
   rw [hn]
 
+/-- End-to-end soft-slack bound under the same domination and recall hypotheses as the hard-slack bridge. -/
+theorem softEndToEnd {X Z Ω : Type} [Fintype X] [Fintype Z] [Fintype Ω]
+    (Bad : X → Prop) [DecidablePred Bad]
+    (ρ : ProbComp Ω) (H : ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool)
+    (π : Ω → Hist X Z → ProbComp X) (A : Hist X Z → X → Z → ProbComp Bool)
+    (nh ns b N : ℕ) (r L : ℝ) (hns : 1 ≤ ns)
+    (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hL : 0 ≤ L)
+    (hrec : ∀ h x z, Bad x → r ≤ (Pr[= true | A h x z]).toReal)
+    (hdom : ∀ x, Bad x → ∀ z,
+      (Pr[= z | M x]).toReal ≤ L * (Pr[= z | H >>= M]).toReal) :
+    (Pr[= true | softProtocolGame Bad ρ H M D π A nh ns b N]).toReal ≤
+      (1 - r) + r * (L * ((ns : ℝ) / ((nh : ℝ) + 1))) := by
+  rw [protocol_survival_formula Bad ρ H M D π A nh ns b N hns]
+  set C : ℝ := (1 - r) + r * (L * ((ns : ℝ) / ((nh : ℝ) + 1))) with hC
+  have hρ : ∑ ω, (Pr[= ω | ρ]).toReal = 1 := sum_toReal_probOutput ρ
+  calc ∑ ω, (Pr[= ω | ρ]).toReal *
+        (1 - (Pr[= true | H >>= M >>= D ω]).toReal / (ns : ℝ)) ^ nh *
+        (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal
+      ≤ ∑ ω, (Pr[= ω | ρ]).toReal * C := by
+        apply Finset.sum_le_sum
+        intro ω _
+        rw [mul_assoc]
+        apply mul_le_mul_of_nonneg_left _ ENNReal.toReal_nonneg
+        set hω := (Pr[= true | H >>= M >>= D ω]).toReal with hhω
+        set Sω := (1 - hω / (ns : ℝ)) ^ nh with hSω
+        have hbridge := bridge X Z H M (D ω) (ns - 1) nh
+        have hns' : ns - 1 + 1 = ns := Nat.sub_add_cancel hns
+        rw [hns'] at hbridge
+        rw [← hhω] at hbridge
+        have hSprob : (Pr[= true | survives H M (D ω) (ns - 1) nh]).toReal = Sω := by
+          simpa [Sω, hω] using hbridge
+        have hS0 : 0 ≤ Sω := hSprob ▸ ENNReal.toReal_nonneg
+        have hS1 : Sω ≤ 1 := hSprob ▸ toReal_probOutput_le_one _ _
+        have hh0 : 0 ≤ hω := ENNReal.toReal_nonneg
+        have hh1 : hω ≤ 1 := toReal_probOutput_le_one _ _
+        have hB := soft_survival_first_moment nh ns hω hns hh0 hh1
+        have hsum : hω = ∑ z, (Pr[= z | H >>= M]).toReal * (Pr[= true | D ω z]).toReal := by
+          rw [hhω, probOutput_bind_eq_tsum, tsum_fintype,
+            ENNReal.toReal_sum (fun z _ => by finiteness)]
+          simp only [ENNReal.toReal_mul]
+        set Aω := min 1 (L * hω) with hAω
+        have hA0 : 0 ≤ Aω := le_min zero_le_one (mul_nonneg hL hh0)
+        have hA1 : Aω ≤ 1 := min_le_left _ _
+        have hbad : ∀ x, Bad x → ∑ z, (Pr[= z | M x]).toReal *
+            (Pr[= true | D ω z]).toReal ≤ Aω := by
+          intro x hx
+          apply le_min
+          · apply wsum_le _ _ _ (fun _ => ENNReal.toReal_nonneg) (sum_toReal_probOutput _)
+            intro z; exact toReal_probOutput_le_one _ _
+          · rw [hsum, Finset.mul_sum]
+            apply Finset.sum_le_sum
+            intro z _
+            calc (Pr[= z | M x]).toReal * (Pr[= true | D ω z]).toReal
+                ≤ (L * (Pr[= z | H >>= M]).toReal) * (Pr[= true | D ω z]).toReal :=
+                  mul_le_mul_of_nonneg_right (hdom x hx z) ENNReal.toReal_nonneg
+              _ = L * ((Pr[= z | H >>= M]).toReal * (Pr[= true | D ω z]).toReal) := by ring
+        have hdep := deploy_le X Z Bad (π ω) M (D ω) A r b hrec N 0 []
+        have hcat := t3a Bad (fun x z => (Pr[= z | M x]).toReal)
+          (fun z => (Pr[= true | D ω z]).toReal)
+          (fun h x => (Pr[= x | π ω h]).toReal) r Aω b
+          (fun _ _ => ENNReal.toReal_nonneg) (fun x => sum_toReal_probOutput _)
+          (fun _ => ENNReal.toReal_nonneg) (fun _ => toReal_probOutput_le_one _ _)
+          (fun _ _ => ENNReal.toReal_nonneg) (fun h => sum_toReal_probOutput _)
+          hr0 hr1 hA0 hA1 hbad N 0 []
+        have hAB : Aω ≤ 1 - r + r * Aω := by nlinarith
+        have hP : (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal ≤
+            1 - r + r * Aω := by
+          refine le_trans hdep (le_trans hcat ?_)
+          split_ifs <;> linarith
+        have hbound := ControlStack.Refine.final_dom Sω hω L r Aω
+          ((ns : ℝ) / ((nh : ℝ) + 1))
+          hS0 hS1 hr0 hr1 hL (min_le_right _ _) hB
+        calc Sω * (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal
+            ≤ Sω * (1 - r + r * Aω) := mul_le_mul_of_nonneg_left hP hS0
+          _ ≤ C := hbound
+    _ = C := by rw [← Finset.sum_mul, hρ, one_mul]
+
 #print axioms bridge
 #print axioms protocol_survival_formula
+#print axioms softEndToEnd
 
 end ControlStack.SoftSlack

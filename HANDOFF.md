@@ -12,8 +12,10 @@ happened). The next-session prompt is `~/research/proofledger/prompts/next-sessi
 - **UMLOWERF1.** Sol-high says **revise**: the maths is true and the 1/4 witness non-vacuous, but certify the
   uniform-seed strategy family, match every witness hypothesis explicitly, and drop the unconditional "two-sided rate"
   wording from the docstring. Its fixed statement is at `campaigns/UMLOWER/forms/UMLOWERF1/fixed-openai.lean`.
-  - An isolated Opus prover was still running on the ORIGINAL statement (`/var/tmp/opus-provers/UMLOWERF1/proof.lean`
-    when done).
+  - A proof of the ORIGINAL statement is DONE (284 lines, standard axioms; the bound is attained exactly in the
+    witness) and saved at `control-stack/proofs/UMLOWERF1-original-statement.lean`. If the restated text keeps the
+    same Claim shape, the proof should need only small edits. Alternatively, keep the original statement: Sol
+    judged it true and non-vacuous; its "revise" is about certifying the strategy family and the docstring wording.
   - Next:
     1. Inspect the fix, then `pl restate UMLOWERF1 <fixed> --actor orchestrator` (verdicts are hash-bound, so it
        needs a fresh red team: `pl redteam UMLOWER --cids UMLOWERF1 --models sol-high,flash`).

@@ -34,3 +34,10 @@ randomises.
 **Novelty.** Markov's inequality over a uniform seed (both red teams; Blum–Hopcroft–Kannan Thm 2.1). As a converse for
 honeypot-based untrusted monitoring, neither red team found it stated, in Greenblatt et al. 2312.06942 or in LASR
 2602.20628. Calibrated: elementary infrastructure; the value is that it makes layer 1 two-sided.
+
+**Scope note (Sol, final review 2).**
+- `D` samples a whole tuple, independently of the seed. So the converse covers NONADAPTIVE joint designs only. An
+  adaptive tester that picks later honeypots from earlier answers can do better: with four decoded classes, t = 1,
+  n_s = 1 and five tests, scanning until the first PASS and then repeating that class gives risk 0 < 3/8.
+- `TestSetup` requires continuation on every pattern with ≤ n_s misses. Extra rejection rules (e.g. inverse
+  honeypots) need not satisfy that contract.

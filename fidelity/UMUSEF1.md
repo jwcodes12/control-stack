@@ -44,3 +44,13 @@ History:
 - The inequalities are classical (Cantelli 1928; Neyman–Pearson / hockey-stick).
 - Calibrated: infrastructure. The value is closing the always-flag loophole in Lean, on both sides of the same
   recursions.
+
+**Scope notes (Sol, final review 2).**
+- (P) requires a bad x and N ≥ 1. At N = 0 or with Bad = ∅, every pair has zero risk while completion can be
+  positive, so the obstruction does not apply.
+- α₀ is the honest rule's honeypot TEST-PASS rate. It is a backdoor miss rate only if the honeypot law has that
+  meaning.
+- (P) is a necessary constraint on universal certificates at an availability target. It is not a Blue optimisation,
+  Pareto or feasibility result.
+- The frozen docstring's sentence "The operational bridge for both is the VCVio refinement" overstates. The VCVio
+  game proves the catastrophe correspondence only; honest completion (`haltP`) has no game-level correspondence yet.

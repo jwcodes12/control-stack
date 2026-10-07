@@ -14,7 +14,7 @@ open ControlStack.Refine
 
 abbrev Service (X Z : Type) := Hist X Z → X → Z → ℝ
 
-/-- Service-dependent catastrophe recursion from the defer statement. -/
+/-- Service-dependent catastrophe recursion from the proofledger defer statement. -/
 noncomputable def catV {X Z : Type} [Fintype X] [Fintype Z]
     (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ)
     (φ : Z → ℝ) (π : Hist X Z → X → ℝ)
@@ -290,5 +290,46 @@ theorem catVE_inner_ne_top {X Z : Type} [Fintype X] [Fintype Z]
   intro z _
   exact ENNReal.mul_ne_top probOutput_ne_top
     (catVE_transition_ne_top Bad π M D A Halt Svc b n u h x z)
+
+/-- The operational ENNReal recursion converts to the calibrated real-valued
+ledger recursion when the monitor, halt, and service probabilities match. -/
+theorem catVE_toReal_eq_catV {X Z : Type} [Fintype X] [Fintype Z]
+    (Bad : X → Prop) [DecidablePred Bad]
+    (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool)
+    (A : Hist X Z → X → Z → ProbComp Bool)
+    (Halt : Hist X Z → X → Z → ProbComp Bool)
+    (Svc : Hist X Z → X → Z → ProbComp Bool) (b : ℕ) (r η : ℝ)
+    (a : Service X Z)
+    (hA : ∀ h x z, Bad x → (Pr[= true | A h x z]).toReal = r)
+    (hH : ∀ h x z, (Pr[= true | Halt h x z]).toReal = η)
+    (hS : ∀ h x z, Bad x → (Pr[= true | Svc h x z]).toReal = a h x z) :
+    ∀ n u h, (catVE Bad π M D A Halt Svc b n u h).toReal =
+      catV Bad (fun x z => (Pr[= z | M x]).toReal)
+        (fun z => (Pr[= true | D z]).toReal)
+        (fun h x => (Pr[= x | π h]).toReal) r η a b n u h := by
+  intro n
+  induction n with
+  | zero => intro u h; simp [catVE, catV]
+  | succ n ih =>
+    intro u h
+    simp only [catVE, catV]
+    rw [ENNReal.toReal_sum (fun x _ => ENNReal.mul_ne_top probOutput_ne_top
+      (catVE_inner_ne_top Bad π M D A Halt Svc b n u h x))]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    rw [ENNReal.toReal_mul, ENNReal.toReal_sum (fun z _ => ENNReal.mul_ne_top
+      probOutput_ne_top (catVE_transition_ne_top Bad π M D A Halt Svc b n u h x z))]
+    congr 1
+    refine Finset.sum_congr rfl fun z _ => ?_
+    have htr := catVE_transition_ne_top Bad π M D A Halt Svc b n u h x z
+    rcases ENNReal.add_ne_top.mp htr with ⟨hpass, hfail⟩
+    rw [ENNReal.toReal_mul, ENNReal.toReal_add hpass hfail,
+      ENNReal.toReal_mul, ENNReal.toReal_mul]
+    by_cases hx : Bad x <;> by_cases hu : u < b <;>
+      simp [hx, hu, ih, hA, hH, hS, ControlStack.Refine.probOutput_false_toReal]
+
+theorem defer_bridge : DeferBridgeClaim := by
+  intro X Z _ _ Bad _ π M D A Halt Svc b r η a hA hH hS n u h
+  rw [deployV_eq_catVE]
+  exact catVE_toReal_eq_catV Bad π M D A Halt Svc b r η a hA hH hS n u h
 
 end ControlStack.DeferGame

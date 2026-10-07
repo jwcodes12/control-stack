@@ -2,8 +2,8 @@
 > The anonymized private export was refreshed with these modules and pushed as snapshot commit `98fe35f`.
 > **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization and classwise end-to-end safety compile with standard axioms.
 > The LASR interval fixture has a rational usefulness certificate with conditional floor `22873/250`; deployment-matched held-out data remain missing.
-> TMLIPF1 Claim and Witness local gates pass with standard axioms; no red-team verdict is recorded and the campaign remains draft.
-> `DeferGame.lean` proves equality with an exact operational `ENNReal` recursion. The real-valued bridge is blocked by a continuation mismatch in the exhausted bad-service branch.
+> TMLIPF1 Claim and Witness local gates pass with standard axioms. Two-family review returned `kill` on the contribution and `revise` on formulation; it remains draft and unfrozen.
+> `DeferGame.lean` now proves equality with an exact operational `ENNReal` recursion and calibrated real-valued ledger `catV`; bridge axioms are standard.
 > `AdaptiveBalance.lean`, `AdaptiveGeneric.lean` and `AdaptiveUMADAPT.lean` prove the adaptive sharp aggregate bound; the frozen claim remains unchanged pending separate strengthening registration.
 
 # Session 5 continuation (2026-10-07). Added exact-rational simultaneous ROC bands and a LASR archive converter. Generated an eight-vertex, 100-step/two-coin interval table; `checkRiskQ`, `checkLawfulQ`, and the TMCERTF1 full-information risk bound compile by `decide +kernel`, with standard axioms only. This is a real-data pipeline demonstration, not deployment certification (the sample's held-out/IID/deployment match is unestablished). Added the VCVio soft-hazard honeypot survival bridge in `ControlStack/SoftSlack.lean`; it compiles with standard axioms. Added `COMPOSITION-N1-UMPROT.md`: still design-stage pending a common protocol/event and adversary intersection; only the `min` corollary is currently justified. TMLIPF1 remains a local draft pending the user's decision on external review. The anonymised private export was refreshed with these results.

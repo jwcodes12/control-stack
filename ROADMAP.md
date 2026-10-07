@@ -46,7 +46,7 @@ Status legend:
 ## 2. In flight
 | item | what it gives | status |
 |---|---|---|
-| GitHub export | private repo `jwcodes12/control-stack` | ✅ refreshed session-5 snapshot pushed; reviewer identities anonymised |
+| GitHub export | private repo `jwcodes12/control-stack` | ✅ session-6 snapshot pushed (`f507506`); reviewer identities anonymised |
 
 ## 3. Next (ranked)
 1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic fixture, exact-rational ROC-band generator, and LASR archive pipeline demonstration complete; the 100-step/two-coin interval table passes `checkRiskQ`/`checkLawfulQ`, and a 100-step, three-state, eight-model `checkUseQ` certificate gives the conditional honest-reward floor `22873/250 = 91.492` for every full-history selector. A deployment-matched, predeclared held-out sample remains.) Rational ROC enclosures from finite samples

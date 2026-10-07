@@ -46,7 +46,7 @@ Status legend:
 ## 2. In flight
 | item | what it gives | status |
 |---|---|---|
-| GitHub export | private repo `jwcodes12/control-stack` | ✅ session-3 snapshot pushed (`d320fa9`); next export follows a reviewed roadmap change |
+| GitHub export | private repo `jwcodes12/control-stack` | ✅ refreshed session-5 snapshot pushed (`e809e70`); reviewer identities anonymised |
 
 ## 3. Next (ranked)
 1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic exact-table fixture, and exact-rational simultaneous ROC-band generator complete; labelled samples, interval-to-GAC adapter, and the Lean checker run remain.) Rational ROC enclosures from finite samples

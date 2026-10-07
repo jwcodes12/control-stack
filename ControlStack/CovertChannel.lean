@@ -95,6 +95,55 @@ theorem design_point {Ω : Type} [Fintype Ω] (ρ : Ω → ℝ)
     simp [Fintype.card_bool, Fintype.card_fin]; norm_num
   linarith [h, e.le]
 
+/-- **General attainment (review P1-2).** If V embeds into M (|V| ≤ |M|), the encoder that sends `e⁻¹ m` for secrets in
+the image of the embedding `e` (and a fixed view otherwise) with decoder `e` succeeds with probability exactly |V|/|M|. -/
+theorem attain_embedding {M V : Type} [Fintype M] [Fintype V] [DecidableEq M] [DecidableEq V] [Nonempty M]
+    [Nonempty V] (e : V → M) (he : Function.Injective e) :
+    successProb (Ω := Unit) (fun _ => 1)
+      (fun _ m v => if (∃ w, e w = m) then (if e v = m then 1 else 0)
+        else (if v = Classical.arbitrary V then 1 else 0))
+      (fun _ v m => if m = e v then 1 else 0) = (Fintype.card V : ℝ) / (Fintype.card M : ℝ) := by
+  classical
+  unfold successProb
+  have hM : (Fintype.card M : ℝ) ≠ 0 := by exact_mod_cast Fintype.card_ne_zero
+  have term : ∀ m, (∑ v, (if (∃ w, e w = m) then (if e v = m then (1 : ℝ) else 0)
+        else (if v = Classical.arbitrary V then 1 else 0)) * (if m = e v then 1 else 0)) =
+      if (∃ w, e w = m) then 1 else 0 := by
+    intro m
+    by_cases hm : ∃ w, e w = m
+    · obtain ⟨w, rfl⟩ := hm
+      have hx : ∃ w', e w' = e w := ⟨w, rfl⟩
+      simp only [hx, if_true]
+      rw [Finset.sum_eq_single w]
+      · simp
+      · intro v _ hv; have : e v ≠ e w := fun h => hv (he h); simp [this]
+      · intro h; exact absurd (Finset.mem_univ _) h
+    · simp only [hm, if_false]
+      apply Finset.sum_eq_zero; intro v _
+      have : m ≠ e v := fun h => hm ⟨v, h.symm⟩
+      simp [this]
+  simp only [term]
+  have hcount : (∑ m : M, (if (∃ w, e w = m) then (1 : ℝ) else 0)) = Fintype.card V := by
+    rw [Finset.sum_boole]
+    have : (Finset.univ.filter fun m : M => ∃ w, e w = m) = Finset.univ.image e := by
+      ext m; simp [eq_comm]
+    rw [this, Finset.card_image_of_injective _ he, Finset.card_univ]
+  rw [hcount]
+  simp [div_eq_inv_mul]
+
+/-- **Lifetime form (review P0-1).** If the receiver's whole observation over a secret's lifetime is the tuple of E
+episode views (episode e's view in V e), success ≤ ∏_e |V e| / |M|. The gateway's lifetime ledger enforces
+∏_e |V e| ≤ 2^budget per lineage. -/
+theorem covert_bound_lifetime {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M] {E : ℕ}
+    (V : Fin E → Type) [∀ e, Fintype (V e)] [∀ e, DecidableEq (V e)]
+    (ρ : Ω → ℝ) (enc : Ω → M → ((e : Fin E) → V e) → ℝ) (dec : Ω → ((e : Fin E) → V e) → M → ℝ)
+    (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) :
+    successProb ρ enc dec ≤ (∏ e, (Fintype.card (V e) : ℝ)) / (Fintype.card M : ℝ) := by
+  have h := covert_bound ρ enc dec hρ henc hdec
+  simpa [Fintype.card_pi, Nat.cast_prod] using h
+
+#print axioms attain_embedding
+#print axioms covert_bound_lifetime
 #print axioms covert_bound
 #print axioms covert_bound_schema
 #print axioms attain_injective

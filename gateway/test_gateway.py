@@ -2,6 +2,7 @@
 against the Lean bound P(recover m) <= |V| / 2^k."""
 import math
 import random
+from pathlib import Path
 
 from gateway import Channel, Gateway, GatewayError, NULL, Schema
 
@@ -45,15 +46,63 @@ def test_slot_overflow_and_unknown_channel():
     assert g.deliver()["status"] == (NULL, NULL, NULL)
 
 
-def test_no_early_read_and_no_late_send():
+def test_no_early_read_and_frozen_snapshot():
     g = gw()
     try:
         g.deliver()
         raise AssertionError("early read allowed")
     except GatewayError:
         pass
-    g.close(); g.send("status", {"a": 0, "b": "x"})
-    assert g.deliver()["status"] == (NULL, NULL, NULL)
+    g.send("status", {"a": 1, "b": "y"}); g.close()
+    first = g.deliver()
+    g.send("status", {"a": 0, "b": "x"}); g.act("anything"); g.close()
+    assert g.deliver() == first and first["status"] == ((1, "y"), NULL, NULL)
+
+
+def test_config_validation_and_exact_budget():
+    import math
+    bad = [lambda: Schema((("a", (0, 0)),)), lambda: Schema((("a", (0,)), ("a", (1,)))),
+           lambda: Schema((("a", (0.5,)),)), lambda: Schema((("a", ([1],)),)), lambda: Schema((("a", ()),)),
+           lambda: Channel("c", BITS4, 0), lambda: Channel("c", BITS4, True), lambda: Channel("c", BITS4, -1),
+           lambda: Gateway({"c": Channel("c", BITS4, 1)}, budget_bits=float("nan")),
+           lambda: Gateway({"c": Channel("c", BITS4, 1)}, budget_bits=16.0)]
+    for f in bad:
+        try:
+            f()
+        except GatewayError:
+            continue
+        raise AssertionError("invalid configuration accepted")
+    # exact boundary: 2^4 = 16 values -> schema of 15 + NULL is exactly 4 bits
+    s15 = Schema((("v", tuple(range(15))),))
+    Gateway({"c": Channel("c", s15, 1)}, budget_bits=4)
+    try:
+        Gateway({"c": Channel("c", Schema((("v", tuple(range(16))),)), 1)}, budget_bits=4)
+        raise AssertionError("2^b + 1 accepted")
+    except GatewayError:
+        pass
+
+
+def test_alerts_are_fixed_codes():
+    from gateway import ALERT_CODES
+    g = gw(); g.send("secret-bits-0101", {"a": 0, "b": "x"}); g.act("exfil-0101"); g.send("status", "junk-0101")
+    assert g.alerts and all(a in ALERT_CODES for a in g.alerts)
+
+
+def test_lifetime_budget_blocks_two_episode_split(tmp=None):
+    """Review P0-1: a 32-bit secret split over two 16-bit episodes must be refused by the lifetime ledger."""
+    import tempfile
+    from gateway import LifetimeLedger
+    s16 = Schema((("v", tuple(range(255))),))  # (255+1)^2 = 2^16 per episode
+    ch = {"c": Channel("c", s16, 2)}
+    with tempfile.TemporaryDirectory() as d:
+        led = LifetimeLedger(Path(d) / "ledger.json", 16)
+        Gateway(ch, budget_bits=16, ledger=led, lineage="secret-A")
+        try:
+            Gateway(ch, budget_bits=16, ledger=led, lineage="secret-A")
+            raise AssertionError("second episode accepted: 32 bits could accumulate")
+        except GatewayError:
+            pass
+        Gateway(ch, budget_bits=16, ledger=led, lineage="secret-B")  # a different lineage has its own budget
 
 
 def test_mutation_after_send_has_no_effect():

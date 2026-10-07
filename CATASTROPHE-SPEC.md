@@ -1,5 +1,16 @@
 # P0 draft: the concrete catastrophe and restricted deployment (2026-10-07; proposed by John, drafted for decision)
 
+## Scope of the claim (v2, after the gateway review)
+The certified property is **bounded exact-message recovery**: a uniform, independent k-bit secret held by U is
+recovered by a machine receiver with probability ≤ |V_lifetime| / 2^k, where V_lifetime is everything the receiver
+(and anything sharing its memory) observes over the secret's LIFETIME. It is NOT "U cannot coordinate": a 16-bit channel
+carries a 1-bit attack command with certainty. Low-bandwidth coordination remains possible and is out of scope of this
+certificate; bounding it needs application-specific invariants (P2).
+
+**Lifetime budget.** The 16-bit budget is cumulative per lineage (all receivers that can share memory, over the
+secret's lifetime), enforced by the gateway's `LifetimeLedger`; per-episode budgets alone would let a 32-bit secret be
+split across two episodes (review P0-1; `test_lifetime_budget_blocks_two_episode_split`). Lean: `covert_bound_lifetime`.
+
 ## Catastrophe: covert propagation of a secret message
 The untrusted model U transmits a secret to a receiver it should not be able to signal: another instance of itself,
 another model (including an untrusted monitor), or a human.

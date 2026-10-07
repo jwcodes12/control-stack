@@ -13,6 +13,8 @@ def checkUseQ (N m t : ℕ)
     (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ) : Bool :=
   decide (0 < t) && decide (floor ≤ W (Fin.last N) s₀) &&
   (List.finRange m).all (fun s => decide (W 0 s ≤ 0)) &&
+  (List.finRange N).all (fun i => (List.finRange m).all (fun s =>
+    (List.finRange t).any (fun th => adm th i s))) &&
   (List.finRange t).all (fun th => (List.finRange N).all (fun i =>
     (List.finRange m).all (fun s =>
       if adm th i s then decide (W i.succ s ≤ rew th i s +
@@ -36,12 +38,29 @@ theorem checkUseQ_spec {N m t : ℕ}
     (hc : checkUseQ N m t rew K adm W s₀ floor = true) :
     0 < t ∧ floor ≤ W (Fin.last N) s₀ ∧
       (∀ s, W 0 s ≤ 0) ∧
+      (∀ i s, ∃ th, adm th i s = true) ∧
       (∀ th i s, adm th i s = true → W i.succ s ≤ rew th i s +
         ∑ s', K th i s s' * W i.castSucc s') := by
-  simp only [checkUseQ, Bool.and_eq_true, List.all_eq_true, List.mem_finRange,
-    forall_const, decide_eq_true_eq, sumQ_eq, Bool.ite_eq_true_distrib] at hc
-  rcases hc with ⟨⟨⟨ht, hfloor⟩, hzero⟩, hrows⟩
-  exact ⟨ht, hfloor, hzero, fun th i s ha => by simpa [ha] using hrows th i s⟩
+  simp only [checkUseQ, Bool.and_eq_true, List.all_eq_true, List.any_eq_true, List.mem_finRange,
+    forall_const, decide_eq_true_eq, sumQ_eq, Bool.ite_eq_true_distrib, true_and] at hc
+  rcases hc with ⟨⟨⟨⟨ht, hfloor⟩, hzero⟩, hany⟩, hrows⟩
+  exact ⟨ht, hfloor, hzero, hany, fun th i s ha => by simpa [ha] using hrows th i s⟩
+
+/-- An accepted certificate admits at least one admissible selector, so soundness is never vacuous. -/
+theorem selector_exists {N m t : ℕ}
+    (rew : Fin t → Fin N → Fin m → ℚ)
+    (K : Fin t → Fin N → Fin m → Fin m → ℚ)
+    (adm : Fin t → Fin N → Fin m → Bool)
+    (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ)
+    (hc : checkUseQ N m t rew K adm W s₀ floor = true) :
+    ∃ θ : ℕ → List (Fin m) → Fin m → Fin t,
+      ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true := by
+  obtain ⟨ht, -, -, hany, -⟩ := checkUseQ_spec hc
+  classical
+  refine ⟨fun n _ s => if hn : n < N then Classical.choose (hany ⟨n, hn⟩ s) else ⟨0, ht⟩, ?_⟩
+  intro n hn h s
+  simp only [hn, dite_true]
+  exact Classical.choose_spec (hany ⟨n, hn⟩ s)
 
 noncomputable def honestValue {N m t : ℕ}
     (rew : Fin t → Fin N → Fin m → ℚ)
@@ -79,7 +98,7 @@ theorem checkUseQ_sound {N m t : ℕ}
         have hlt : n < N := by omega
         let i : Fin N := ⟨n, hlt⟩
         have ha := hθ n hlt h s
-        have hrow := cert.2.2.2 (θ n h s) i s ha
+        have hrow := cert.2.2.2.2 (θ n h s) i s ha
         have hrowR : (W i.succ s : ℝ) ≤ (rew (θ n h s) i s : ℝ) +
             ∑ s', (K (θ n h s) i s s' : ℝ) * (W i.castSucc s' : ℝ) := by
           exact_mod_cast hrow
@@ -114,8 +133,16 @@ def Claim : Prop :=
     {W : Fin (N + 1) → Fin m → ℚ} {s₀ : Fin m} {floor : ℚ},
     checkUseQ N m t rew K adm W s₀ floor = true →
       0 < t ∧ floor ≤ W (Fin.last N) s₀ ∧ (∀ s, W 0 s ≤ 0) ∧
+        (∀ i s, ∃ th, adm th i s = true) ∧
         (∀ th i s, adm th i s = true → W i.succ s ≤ rew th i s +
           ∑ s', K th i s s' * W i.castSucc s')) ∧
+  (∀ {N m t : ℕ} (rew : Fin t → Fin N → Fin m → ℚ)
+    (K : Fin t → Fin N → Fin m → Fin m → ℚ)
+    (adm : Fin t → Fin N → Fin m → Bool)
+    (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ),
+    checkUseQ N m t rew K adm W s₀ floor = true →
+      ∃ θ : ℕ → List (Fin m) → Fin m → Fin t,
+        ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true) ∧
   (∀ {N m t : ℕ} (rew : Fin t → Fin N → Fin m → ℚ)
     (K : Fin t → Fin N → Fin m → Fin m → ℚ)
     (adm : Fin t → Fin N → Fin m → Bool)
@@ -126,7 +153,7 @@ def Claim : Prop :=
     (∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true) →
       (floor : ℝ) ≤ honestValue rew K θ N s₀ [])
 
-theorem claim : Claim := ⟨@checkUseQ_spec, @checkUseQ_sound⟩
+theorem claim : Claim := ⟨@checkUseQ_spec, @selector_exists, @checkUseQ_sound⟩
 
 def Witness : Prop :=
   checkUseQ 1 1 1 (fun _ _ _ => (1 : ℚ)) (fun _ _ _ _ => 0)

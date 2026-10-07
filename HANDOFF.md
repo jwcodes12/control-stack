@@ -3,6 +3,8 @@
 
 # HANDOFF: control stack, state at end of session 2 (2026-10-07, ~07:30 UTC)
 
+> **Update 2026-10-07 (session 5 continuation):** Current roadmap is in `ROADMAP.md`. Added `numerics/roc_bands.py` and linked it from DESIGN-A2; real labelled data and the concrete Lean checker run are still outstanding. Added `COMPOSITION-N1-UMPROT.md` as a design note; no joint theorem is claimed yet. TMLIPF1 is a local draft with passing local claim/witness gates; external red-team transmission is awaiting explicit user approval. The private export has not yet been refreshed for these session-4/5 changes.
+
 Read this first in a fresh session, then STACK.md (status and positioning; revised after two final reviews),
 DESIGN.md v1 (model and assumptions A1–A11) and SESSION.md (what happened). Reviews of this session:
 - `reviews/final-review2-{sol,sonnet}.md`;

@@ -1,3 +1,5 @@
+# Session 5 continuation (2026-10-07). Added exact-rational simultaneous ROC bands (`numerics/roc_bands.py`) and documented the pipeline; no labelled sample is available, so no empirical confidence claim or GAC checker run exists. Added `COMPOSITION-N1-UMPROT.md`: composition is still design-stage pending a common protocol/event and adversary intersection; only the `min` corollary is currently justified. TMLIPF1 remains a local draft pending the user's decision on external review.
+
 > **SESSION 5 STATUS (2026-10-07 ~16:00 UTC).** Opened draft campaign TMLIPF1, depending on TMCERTF1: certificate inflation by row L1 error, plus finite-grid confidence-box transfer.
 > Statement compiles; local claim and witness gates pass with standard axioms; exact N=1 and finite-grid witnesses are included.
 > External formulation/red-team transmission was rejected by automatic review; user approval is pending. No freeze, final gate, or theorem promotion yet.

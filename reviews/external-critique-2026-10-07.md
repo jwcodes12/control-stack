@@ -40,7 +40,7 @@ verbatim in substance as a standing input to the programme. Disposition at the e
 ## Disposition (orchestrator, 2026-10-07)
 - Agreed:
   - (2) is our A6 (r) and A9 (coverage). The stack isolates them; it does not solve them.
-  - UMLOWERF1 and UMSURVF1 already formalise the rare-event point (risk ≥ about k/n_h for every design).
+  - UMLOWERF1 and UMSURVF1 give the protocol-sampling analogue of the rare-event point (risk ≥ about k/n_h for every nonadaptive design). Neither converts a benchmark average into a worst-case, history-conditional premise (Sol, final review 2).
   - (3) matches our use of "capability-free".
   - UMUSE is the inf–sup objective for the hard-slack family.
   - (5) matches our withdrawn product claim.

@@ -42,3 +42,4 @@
 
 - **Session 7 (2026-10-07).** Calibrated defer bridge proved (`defer_bridge`); the four VCVio game modules (soft slack, hockey-stick, stratified, defer) are recorded as completed.
 - **Session 8 (2026-10-07).** Added `DeferMono.lean`: the monotone audit-then-defer bound (lower bounds on recall, halt hazard and service give an upper bound on catastrophe by `catV`).
+- **Session 8 (2026-10-07).** Added `ComposeGame.lean`: trusted + untrusted monitoring in one game, product bound with a tightness witness. The root module now imports every proof file.

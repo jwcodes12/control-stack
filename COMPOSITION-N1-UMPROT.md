@@ -1,6 +1,20 @@
 # Design note: composing trusted and untrusted monitoring
 
-**Status:** scope and probability bookkeeping only; no composition theorem is claimed.
+**Status (session 8):** a product composition is proved for one concrete joint protocol, `ControlStack/ComposeGame.lean` (standard axioms; game-level, not ledger-gated). See "Proved instance" below. The general marginal-bounds discussion stands.
+
+## Proved instance (session 8)
+
+Joint protocol: the untrusted monitor is honeypot-tested exactly as in UMPROTF1. In deployment each submission `x` also goes to a trusted monitor `T x` with **fresh coins** (it does not see the colluders' seed and is not chosen by Red). A submission passes only if both monitors pass it. A flag from either sends it to audit while budget lasts, then halts. Generator and audit see the full history, including the trusted verdicts. Trusted false positives on benign work consume audit budget.
+
+- `composed_factorization`: P(catastrophe) = Σ_ω ρ(ω)·binCDF(n_h, n_s, h_ω)·P(deployment catastrophe | ω).
+- `joint_pass_prob`: per submission, P(both pass | x) = P(T misses x)·P(untrusted passes x). This conditional independence is a property of the game (fresh trusted coins), not a hypothesis.
+- `composedEndToEnd`: if the trusted miss probability is at most τ on every bad submission, audit recall is at least r, and bad views are L-dominated by mediated honeypots, then for every colluding pair, P(catastrophe) ≤ (1 − r) + r·τ·L·(n_s+1)/(n_h+1).
+- `composed_tight`: at n_h = n_s = 0, with τ = r = 1/2 and L = 1, the bound 3/4 is attained exactly.
+
+Compared with the `min` corollary: with τ = 1/2, L = 1, n_h = 99, n_s = 0, the product gives (1 − r) + r·0.005, against min((1−r)+r·0.5, (1−r)+r·0.01).
+
+Limits: τ is a worst case over bad submissions (Red picks the action that best evades `T`). The trusted monitor's own analysis (N1/N1b) is time-blind and certifies a different quantity, so this does not yet plug N1b certificates in directly. That needs a bridge from a TMCERT-style certificate to a per-submission miss bound τ. Novelty is modest: the product follows once independence is built into the game. The contribution is fixing a joint protocol in which multiplying is sound, and machine-checking it.
+
 
 ## Candidate statement
 
@@ -26,7 +40,7 @@ Conditional independence given a fully specified attack/history could justify mu
 
 ## Source results
 
-- N1/N1b: [`../control-tree/lean/ControlTree.lean`](../control-tree/lean/ControlTree.lean), sequential trusted monitoring with time-blind Red and the N1b dual certificate.
+- N1/N1b: `<research-root>/control-tree/lean/ControlTree.lean` (not exported), sequential trusted monitoring with time-blind Red and the N1b dual certificate.
 - UMPROTF1: `ledger/UMPROT.lean`, a honeypot screening phase followed by an untrusted-monitor deployment game, with its own shared-seed quantifiers and assumptions.
 
 The immediate next step is to settle the joint protocol and adversary intersection. Until then, the only safe composition claim is the elementary `min` bound under the common-event/common-experiment conditions above.

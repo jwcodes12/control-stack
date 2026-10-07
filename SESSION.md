@@ -1,3 +1,12 @@
+> **SESSION 3 STATUS (2026-10-07, from ~12:00 UTC): John chose Sonnet's order of the cheaper precursors.**
+> 1. UMCERT (certificate form of UMPROT/UMSTRAT: one-shot reduction, envelope + grid certificates, AOQL exactness,
+>    stratified exactness): draft v0 compiles; in hostile design review (Sol xhigh + Sonnet).
+> 2. UMADAPT (adaptive-tester converse t(1 − t·n/k), optimised form, counterexample to the n_s factor): draft v0
+>    compiles; in design review together with 3.
+> 3. Outcome-valued VCVio game (`ControlStack/Outcome.lean`, five outcomes; honest-completion bridge): statement
+>    compiles; in design review.
+> Then direction (A) rescoped, if time allows. Continuation routine `trig_01RsgfEAcQ1rDt5TZLo2tLMp` (every 2h).
+
 > **STATUS (2026-10-07 ~07:30 UTC): session-2 plan items 1–3 are DONE; the next direction is BLOCKED on John.**
 > - Verified this session: SANDBOX2F1, UMLOWERF1, UMUSEF1, UMDEFERF1, plus the VCVio refinement (394 lines). 11
 >   control-stack CIDs in all; `pl reverify` gives 46/46 ok.

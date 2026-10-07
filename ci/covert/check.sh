@@ -9,7 +9,7 @@ sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../
 printf 'import CovertCI.CovertChannel\nimport CovertCI.GatewayModel\n' > CovertCI.lean
 lake exe cache get
 lake build 2>&1 | tee build.log
-for t in covert_bound covert_bound_schema covert_bound_lifetime attain_embedding design_point gateway_bound other_blanks; do
+for t in covert_bound covert_bound_schema covert_bound_lifetime attain_embedding design_point gateway_bound gateway_bound_reachable other_blanks; do
   line=$(grep -A2 "\.$t' depends on axioms" build.log | tr '\n' ' ' || true)
   [ -n "$line" ] || { echo "MISSING axiom report for $t"; exit 1; }
   echo "$line" | grep -q "sorryAx" && { echo "SORRY in $t"; exit 1; }

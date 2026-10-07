@@ -82,6 +82,30 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   They are the stateful-adversary caveats to A1 and A4 here. That is an informal connection; **no composition
   theorem is claimed**.
 
+## Prior art and positioning (related-work audit 2026-10-07, `reviews/related-work-2026-10-07.md`; external critique `reviews/external-critique-2026-10-07.md`)
+- **Defensible claim.** These are machine-checked worst-case probabilistic bounds for untrusted monitoring with
+  upfront honeypots, as far as a limited search shows. Do NOT claim a "first Lean formalisation of control
+  protocols". The mathematics is classical (counting, binomial moments, Neyman–Pearson, short inductions).
+- **Formal, different object.**
+  - Games for AI Control (Griffin, Thomson, Shlegeris, Abate, 2409.07985): trusted monitoring as a POSG, Pareto
+    frontiers, defer/audit. Not machine-checked; untrusted monitoring is future work. UMUSE is an instance of its
+    safety/usefulness framing.
+  - Alignment Contracts (2605.00081, Lean): deterministic effect-trace contracts; the closest Lean "action layer".
+  - SOUNDGATE (2607.14166, Verus/TLA+): an external effect gate. It discharges A4/A5/A11-style properties under
+    complete mediation.
+  - Formal Confinement (Dougherty; Lean Hoare gate on a toy language; two `sorry`s in the while rule).
+  - Legitimacy (`abenenson/legitimacy`; deterministic fixtures, `native_decide`).
+- **Informal / statistical anticipations.**
+  - Roger–Shlegeris "toy models" ("audit a few examples from each category"): the informal precursor of
+    UMSTRATF1/UMNOGOF1.
+  - LASR 2602.20628 (statistical; App. B.3: safety is bounded by honest ability).
+  - Greenblatt et al. 2312.06942 (App. G: a benign-flag guard).
+  - Shlegeris, "win/continue/lose" (Nov 2024): the defer stopping ratio, so UMDEFER claims only the adaptive bound,
+    the composition and the no-go.
+- **Open evidential obligations** (the critique's four): deductive correctness (Lean gate); specification fidelity
+  (fidelity audits); implementation correspondence (VCVio refinement, SANDBOX; scaffold unverified); environmental
+  validity (L, r, coverage: STANDING, not discharged by any measurement here).
+
 ## Assumptions still unproved (what the stack does NOT give)
 1. **That any deployed mediator satisfies the trusted-component hypothesis** (domination constant L, or
    hockey-stick δ, over every bad submission).

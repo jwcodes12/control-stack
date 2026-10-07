@@ -33,16 +33,36 @@ Statements to prove (in `RefinementProof.lean`):
   Pr[survive the test, then uncaught catastrophe] ≤ (1 − r) + r·L·(n_s + 1)/(n_h + 1),
   for every colluding pair (ρ, D, π) and every audit kernel with conditional recall ≥ r.
 
-The definitions `IsKernel`, `cat` and `binCDF` are textual copies of the ledger statements
-(PL_UMHSF1, PL_UMPROTF1, PL_UMSURVF1; Lean v4.35 project). The two projects are linked only by this
-textual identity. `EndToEndClaim` does not depend on the link: it is stated and proved here.
+- `DeployGClaim` (primary, no hypotheses): Pr[catastrophe | deployment from (u, h)] EQUALS `catG`, the
+  core recursion with the recall constant replaced by the audit's actual recall function
+  (h, x, z) ↦ Pr[A h x z = true]. `DeployClaim` and `DeployExactClaim` follow from it.
+- `AttainClaim` and `Witness`: a generator that submits a fixed bad x at once attains the core's T3*
+  value operationally, and the hypotheses of `EndToEndClaim` are jointly satisfiable with a non-trivial bound.
+
+Assumptions that are built into the game. They are load-bearing; they are not conveniences.
+- The monitor is stateless with fresh coins (A1, A2): `D ω z` sees only the seed and the view. It cannot see a
+  call index, the audit counter or whether a call is a test. A call-counting monitor that FLAGs the n_h test calls
+  and PASSes the next one reaches catastrophe probability 1 (Sonnet's review), so this restriction IS the theorem.
+- The audit kernel `A` is independent of the seed ω, and it is chosen after (ρ, D, π): worst case over all
+  kernels with the stated recall.
+- The generator is not shown the test outcome. This is without loss: given ω, the test coins are independent of
+  deployment.
+- Test before deployment (A4); absorbing shutdown on a catch (A11); halt on an unaffordable flag (A5).
+- Every `ProbComp` probability is rational, and X, Z and Ω are `Fintype`.
+
+`cat` (and `catG`) are textual copies of `PL_UMPROTF1.cat` (Lean v4.35 ledger project). `binCDF` and
+`honeypotPasses` are IMPORTED from the proved Bridge. The ledger and this project are linked only by the
+textual identity of `cat`. `EndToEndClaim` does not depend on that link: it is stated and proved here. It is more
+general than the ledger's T3 in one respect (the recall may depend on (h, x, z)) and narrower in another (hard
+slack and the domination form only).
 -/
-import VCVio.EvalDist.TVDist
-import VCVio.OracleComp.ProbComp
+import ControlStack.HoneypotBridgeProof
 
 open OracleComp
 
 namespace ControlStack.Refine
+
+open ControlStack.Bridge (honeypotPasses binCDF)
 
 abbrev Hist (X Z : Type) := List (X × Z × Bool)
 
@@ -58,9 +78,16 @@ noncomputable def cat {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [D
                       (if Bad x then 1 - r else cat Bad M φ π r b n (u + 1) (h ++ [(x, z, false)]))
                     else 0))
 
-/-- textual copy of `PL_UMSURVF1.binCDF` -/
-def binCDF (n s : ℕ) (h : ℝ) : ℝ :=
-  ∑ j ∈ Finset.range (s + 1), (n.choose j : ℝ) * h ^ j * (1 - h) ^ (n - j)
+/-- `cat` with a history- and view-dependent recall function `R` in place of the constant `r` -/
+noncomputable def catG {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad]
+    (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (R : Hist X Z → X → Z → ℝ) (b : ℕ) :
+    ℕ → ℕ → Hist X Z → ℝ
+  | 0, _, _ => 0
+  | n + 1, u, h => ∑ x, π h x * ∑ z, M x z *
+      (φ z * (if Bad x then 1 else catG Bad M φ π R b n u (h ++ [(x, z, true)])) +
+       (1 - φ z) * (if u < b then
+                      (if Bad x then 1 - R h x z else catG Bad M φ π R b n (u + 1) (h ++ [(x, z, false)]))
+                    else 0))
 
 /-- the deployment phase; `true` = uncaught catastrophe -/
 def deploy {X Z : Type} (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X)
@@ -78,15 +105,6 @@ def deploy {X Z : Type} (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z �
          else deploy Bad π M D A b n (u + 1) (h ++ [(x, z, false)]))
       else pure false
 
-/-- the honeypot test: number of PASSes among `n` fresh mediated honeypots (as in the Bridge) -/
-def honeypotPasses {X Z : Type} (H : ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) :
-    ℕ → ProbComp ℕ
-  | 0 => pure 0
-  | n + 1 => do
-      let b ← (H >>= M >>= D)
-      let k ← honeypotPasses H M D n
-      pure (if b then k + 1 else k)
-
 /-- the whole protocol game; `true` = the colluding pair survived the test and then caused an uncaught
 catastrophe -/
 def protocolGame {X Z Ω : Type} (Bad : X → Prop) [DecidablePred Bad] (ρ : ProbComp Ω)
@@ -96,6 +114,16 @@ def protocolGame {X Z Ω : Type} (Bad : X → Prop) [DecidablePred Bad] (ρ : Pr
   let ω ← ρ
   let k ← honeypotPasses H M (D ω) nh
   if k ≤ ns then deploy Bad (π ω) M (D ω) A b N 0 [] else pure false
+
+/-- the deployment game's catastrophe probability is exactly `catG` with the audit's recall function
+(no hypotheses) -/
+def DeployGClaim : Prop :=
+  ∀ (X Z : Type) [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad]
+    (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool)
+    (A : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z),
+    (Pr[= true | deploy Bad π M D A b n u h]).toReal =
+      catG Bad (fun x z => (Pr[= z | M x]).toReal) (fun z => (Pr[= true | D z]).toReal)
+        (fun h x => (Pr[= x | π h]).toReal) (fun h x z => (Pr[= true | A h x z]).toReal) b n u h
 
 /-- refinement of the deployment phase by the core recursion with constant recall `r` -/
 def DeployClaim : Prop :=
@@ -119,7 +147,7 @@ def DeployExactClaim : Prop :=
 
 /-- the whole game factorises through the seed: test survival is binomial, then deployment -/
 def ProtocolClaim : Prop :=
-  ∀ (X Z Ω : Type) [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad]
+  ∀ (X Z Ω : Type) [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad]
     (ρ : ProbComp Ω) (H : ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool)
     (π : Ω → Hist X Z → ProbComp X) (A : Hist X Z → X → Z → ProbComp Bool) (nh ns b N : ℕ),
     (Pr[= true | protocolGame Bad ρ H M D π A nh ns b N]).toReal =
@@ -137,5 +165,28 @@ def EndToEndClaim : Prop :=
     (∀ x, Bad x → ∀ z, (Pr[= z | M x]).toReal ≤ L * (Pr[= z | H >>= M]).toReal) →
     (Pr[= true | protocolGame Bad ρ H M D π A nh ns b N]).toReal ≤
       (1 - r) + r * (L * (((ns : ℝ) + 1) / ((nh : ℝ) + 1)))
+
+/-- operational attainment (the core's T3*): a generator that submits a fixed bad `x` at once, with recall
+exactly `r` at the root history, `N ≥ 1` and `b ≥ 1` -/
+def AttainClaim : Prop :=
+  ∀ (X Z Ω : Type) [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad]
+    (ρ : ProbComp Ω) (H : ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool)
+    (A : Hist X Z → X → Z → ProbComp Bool) (nh ns b N : ℕ) (r : ℝ) (x : X),
+    Bad x → 1 ≤ N → 1 ≤ b → (∀ z, (Pr[= true | A [] x z]).toReal = r) →
+    (Pr[= true | protocolGame Bad ρ H M D (fun _ _ => pure x) A nh ns b N]).toReal =
+      ∑ ω, (Pr[= ω | ρ]).toReal * binCDF nh ns (Pr[= true | H >>= M >>= D ω]).toReal *
+        (1 - r + r * (Pr[= true | M x >>= D ω]).toReal)
+
+/-- Non-vacuity, mirroring PL_UMPROTF1.Witness. X = Z = Bool, Bad = {true}, identity mediator, honeypots
+`pure true` (so L = 1), a perfect audit (r = 1), n_h = 3, n_s = 0, b = N = 1. The monitor PASSes w.p. 1/4
+(a uniform draw from Fin 4 equal to 0), and the generator always attacks. Its catastrophe probability is
+(3/4)^3 · 1/4 = 27/256, which is below the EndToEnd bound 1/4. -/
+def Witness : Prop :=
+  (Pr[= true | protocolGame (fun x : Bool => x = true) (pure ()) (pure true)
+      (fun x => pure x) (fun _ _ => (fun k : Fin 4 => decide (k = 0)) <$> $[0..3])
+      (fun _ _ => pure true) (fun _ _ _ => pure true) 3 0 1 1]).toReal = 27/256 ∧
+  (∀ z : Bool, (Pr[= z | (pure true : ProbComp Bool)]).toReal ≤
+      1 * (Pr[= z | (pure true : ProbComp Bool) >>= (fun x => pure x)]).toReal) ∧
+  (27/256 : ℝ) < (1 - 1) + 1 * (1 * (((0 : ℝ) + 1) / ((3 : ℝ) + 1)))
 
 end ControlStack.Refine

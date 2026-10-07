@@ -3,6 +3,24 @@
 Read this first in a fresh session, then STACK.md (status), DESIGN.md v1 (model and assumptions) and SESSION.md (what
 happened). The next-session prompt is `~/research/proofledger/prompts/next-session-control-stack-2.md`.
 
+## IN FLIGHT at the moment of /clear (2026-10-07 ~03:10 UTC); finish these first
+- **SANDBOX2F1.** Sol-high pass; the Flash red team was still running (`/var/tmp/redteam3.log`). The proof is DONE
+  (77 lines, standard axioms) and saved at `control-stack/proofs/SANDBOX2F1.lean`.
+  - Next: once `pl status` shows 2 foreign passes, run `pl freeze SANDBOX2F1` and then
+    `pl gate SANDBOX2F1 ~/research/control-stack/proofs/SANDBOX2F1.lean --actor anthropic:claude-opus-5-5`.
+  - Then the fidelity audit (`control-stack/fidelity/`), `pl headline`, a STACK.md row, and commit.
+- **UMLOWERF1.** Sol-high says **revise**: the maths is true and the 1/4 witness non-vacuous, but certify the
+  uniform-seed strategy family, match every witness hypothesis explicitly, and drop the unconditional "two-sided rate"
+  wording from the docstring. Its fixed statement is at `campaigns/UMLOWER/forms/UMLOWERF1/fixed-openai.lean`.
+  - An isolated Opus prover was still running on the ORIGINAL statement (`/var/tmp/opus-provers/UMLOWERF1/proof.lean`
+    when done).
+  - Next:
+    1. Inspect the fix, then `pl restate UMLOWERF1 <fixed> --actor orchestrator` (verdicts are hash-bound, so it
+       needs a fresh red team: `pl redteam UMLOWER --cids UMLOWERF1 --models sol-high,flash`).
+    2. Adapt the proof to the restated text: re-run `tools/mkprover.py UMLOWERF1` and a prover, reusing the old proof.
+    3. Freeze, gate, fidelity audit, STACK.md row, commit.
+- **Routine.** The auto-continuation routine `trig_01MvSD2rFuyz5yktsSpFrRMQ` (every 2 h) wakes this session.
+
 ## Where things are
 | what | where |
 |---|---|

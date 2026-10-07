@@ -1,21 +1,15 @@
-> **SESSION 3 STATUS (2026-10-07, from ~12:00 UTC): John chose Sonnet's order of the cheaper precursors.**
-> 1. UMCERT (certificate form of UMPROT/UMSTRAT: one-shot reduction, envelope + grid certificates, AOQL exactness,
->    stratified exactness): draft v0 compiles; in hostile design review (Sol xhigh + Sonnet).
-> 2. UMADAPT (adaptive-tester converse t(1 − t·n/k), optimised form, counterexample to the n_s factor): draft v0
->    compiles; in design review together with 3.
-> 3. Outcome-valued VCVio game (`ControlStack/Outcome.lean`, five outcomes; honest-completion bridge): statement
->    compiles; in design review.
-> Then direction (A) rescoped, if time allows. Continuation routine `trig_01RsgfEAcQ1rDt5TZLo2tLMp` (every 2h).
-
-> **STATUS (2026-10-07 ~07:30 UTC): session-2 plan items 1–3 are DONE; the next direction is BLOCKED on John.**
-> - Verified this session: SANDBOX2F1, UMLOWERF1, UMUSEF1, UMDEFERF1, plus the VCVio refinement (394 lines). 11
->   control-stack CIDs in all; `pl reverify` gives 46/46 ok.
-> - STACK.md was revised after the final reviews (Sol xhigh: major positioning fixes, all applied; Sonnet: the
->   revisions suffice, plus the AOQL remark and stale-doc fixes, all applied).
-> - Item 4 of the prompt (the Cedar action layer) is deferred. After John's external critique and the related-work
->   audit, both final reviewers rank a rescoped certificate checker (direction A in HANDOFF.md) first, and the
->   gate/action-layer port last.
-> - Decision needed from John: A (rescoped), one of the cheaper precursors listed in HANDOFF.md, or something else.
+> **SESSION 3 STATUS (2026-10-07, updated ~14:30 UTC): Sonnet's three precursors are DONE.**
+> 1. UMCERTF1 **verified** (frozen 73c2633b1568; 750 lines): one-shot reduction, envelope + grid certificates, AOQL floor,
+>    exactness at L = 1, for decodable content-only mediators (Xp) and for the stratified design (S2).
+> 2. UMADAPTF1 **verified** (frozen a416cc05f830; 484 lines): adaptive converse t·max(0, 1 − tn/k); the nonadaptive
+>    UMLOWER formula fails for adaptive testers pointwise (c1) and after optimisation (c2).
+> 3. Outcome-valued VCVio game **proved** (`ControlStack/OutcomeProof.lean`, 512 lines): five-outcome law, honest-completion
+>    bridge to UMUSEF1, Pareto identity.
+> Direction (A): TMCERT v0 got MAJOR from both reviewers; split into TMCERT v1 (core checker: soundness vs history-dependent
+> Red and rectangular nature, fixed-model corollary, tightness, usefulness, rational checker, vertex lemma, abstraction
+> theorem) and TMGAC v0 (GAC instance: bridges to Prop. 4.1 and usefulness, separation 13/50 vs 11/32); second design
+> review running. John asked to publish to a PRIVATE GitHub repo `control-stack` (sandbox results generalised; model
+> names anonymised); export being prepared in /var/tmp/cs-export. Routine `trig_01RsgfEAcQ1rDt5TZLo2tLMp` (every 2h).
 
 # Session 2026-10-07: a Lean-verified, capability-free control stack, layer 1 (collusion) plus action-layer step 1
 

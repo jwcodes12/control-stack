@@ -1,6 +1,6 @@
 # Fidelity audit (orchestrator): UMDEFERF1, audit-then-defer after exhaustion
 
-Statement: `ledger/UMDEFER.lean` v2.1 (frozen ad82ec06fc48). Depends on UMPROTF1 (and UMHSF1, UMSURVF1).
+Statement: `ledger/UMDEFER.lean` v2.1 (frozen ad82ec06fc48). Depends on UMPROTF1 (and UMHSF1, UMSURVF1). Proof: 714 lines (isolated Opus), gated, standard axioms.
 
 History:
 - **v1** got major revision from Sol xhigh:
@@ -42,3 +42,9 @@ availability, which is not modelled.
 in Games for AI Control; Ctrl-Z covers incrimination by resampling. Claimed: the adaptive-generator Lean bound with a
 reachable conditional floor, the budget-sensitive finite certificate, the composition with the honeypot test, and the
 two-point no-go. Calibrated: modest infrastructure.
+
+**Scope notes (Sol, final review 2).**
+- The floor bridge ASSUMES the conditional contract; it does not derive it from an average audit rate or from
+  "fresh coins". Deriving α = q·r needs a conditional recall floor for the selected audits.
+- The resource prose describes the expected load under a selection service. A reserve-halting variant is not in the
+  frozen Claim; its monotonicity is numerics only.

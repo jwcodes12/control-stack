@@ -1,6 +1,6 @@
-> **SESSION 3 STATUS (2026-10-07 ~15:20 UTC).** TMCERTF1 and TMGACF1 frozen, both red-team families pass, and both claim/witness gates pass with standard axioms.
-> Research repo records, fidelity audits, STACK/ROADMAP, and handoff report are committed; proofledger records are committed.
-> Private export refreshed and local ledger-check still to do; `gh` auth token is invalid, so push is blocked pending re-authentication.
+> **SESSION 3 STATUS (2026-10-07 ~15:20 UTC).** TMCERTF1 and TMGACF1 frozen; both reviewer families pass; claim/witness gates pass with standard axioms.
+> Research and proofledger records committed; private export committed locally as `d320fa9`; both new CIDs pass independent ledger-check.
+> Push was rejected twice by GitHub with HTTP 500; `gh auth status` also reports an invalid token. Re-authenticate, then push `main`.
 
 > **SESSION 3 STATUS (2026-10-07 ~14:45 UTC).** Precursors 1–3 DONE (UMCERTF1, UMADAPTF1 verified; Outcome game proved).
 > Direction (A) remaining steps (all mechanical):

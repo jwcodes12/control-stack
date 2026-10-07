@@ -2,7 +2,7 @@
 > The LASR interval fixture now has a `checkUseQ` certificate and full-history soundness floor `22873/250`; deployment-matched held-out data remain missing.
 > The anonymized private export is refreshed and pushed. UseQ awaits second-family review; automatic review rejected Anthropic statement egress pending user approval.
 > `DeferGame.lean` now proves operational equality with an exact `ENNReal` recursion and the one-step probability expansion. Conversion to the calibrated real `catV` remains open; no defer theorem is promoted.
-> `AdaptiveBalance.lean` proves the balanced power-sum bound for exact class counts; its adaptive-transcript application remains open.
+> `AdaptiveBalance.lean` proves the balanced power-sum bound; `AdaptiveSharp.lean` proves its weighted path-measure aggregation and `t/k` corollary. Connecting the adaptive tester to that path measure remains open.
 
 # Session 5 continuation (2026-10-07). Added exact-rational simultaneous ROC bands and a LASR archive converter. Generated an eight-vertex, 100-step/two-coin interval table; `checkRiskQ`, `checkLawfulQ`, and the TMCERTF1 full-information risk bound compile by `decide +kernel`, with standard axioms only. This is a real-data pipeline demonstration, not deployment certification (the sample's held-out/IID/deployment match is unestablished). Added the VCVio soft-hazard honeypot survival bridge in `ControlStack/SoftSlack.lean`; it compiles with standard axioms. Added `COMPOSITION-N1-UMPROT.md`: still design-stage pending a common protocol/event and adversary intersection; only the `min` corollary is currently justified. TMLIPF1 remains a local draft pending the user's decision on external review. The anonymised private export was refreshed with these results.
 

@@ -1,5 +1,6 @@
 # HISTORY
 
+- **Session 6 continuation (2026-10-07).** Added the adaptive balanced-count lemma and weighted finite-path aggregation, including the uniform-seed `t/k` corollary. Connecting the adaptive tester recursion to the path measure remains open.
 - **Session 6 continuation (2026-10-07).** Proved the VCVio defer game equals its exact `ENNReal` recursion, and proved the discrete balanced-count power-sum bound used by the sharper adaptive converse. Real-valued defer calibration and the adaptive-transcript application remain open.
 - **Session 1 (2026-10-06/07, to ~03:00 UTC).** Reuse decisions and a VCVio spike (REUSE.md); DESIGN v0, hostile
   design reviews before any Lean, DESIGN v1. Verified: UMHSF1, UMSURVF1, UMPROTF1, UMSTRATF1, UMNOGOF1, CANONF1,

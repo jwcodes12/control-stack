@@ -1,3 +1,13 @@
+> **STATUS (2026-10-07 ~07:30 UTC): session-2 plan items 1–3 are DONE; the next direction is BLOCKED on John.**
+> - Verified this session: SANDBOX2F1, UMLOWERF1, UMUSEF1, UMDEFERF1, plus the VCVio refinement (394 lines). 11
+>   control-stack CIDs in all; `pl reverify` gives 46/46 ok.
+> - STACK.md was revised after the final reviews (Sol xhigh: major positioning fixes, all applied; Sonnet: the
+>   revisions suffice, plus the AOQL remark and stale-doc fixes, all applied).
+> - Item 4 of the prompt (the Cedar action layer) is deferred. After John's external critique and the related-work
+>   audit, both final reviewers rank a rescoped certificate checker (direction A in HANDOFF.md) first, and the
+>   gate/action-layer port last.
+> - Decision needed from John: A (rescoped), one of the cheaper precursors listed in HANDOFF.md, or something else.
+
 # Session 2026-10-07: a Lean-verified, capability-free control stack, layer 1 (collusion) plus action-layer step 1
 
 Prompt: `~/research/proofledger/prompts/` (next-session control stack); skill `/safety-theory-sprint` with John's
@@ -57,10 +67,10 @@ disposition in `reviews/external-critique-2026-10-07.md` and `reviews/related-wo
 | item | status | notes |
 |---|---|---|
 | SANDBOX2F1 (corrected sandbox fix) | **verified** (frozen 094db3d3379a) | state binds before the hiding tmpfs; hiding holds for every choice of state directories. Not deployed |
-| UMLOWERF1 (design-free converse) | **verified** (frozen 8415ec049329) | restated after both red teams flagged that the colluder was chosen after the design; the proof was adapted |
+| UMLOWERF1 (converse for nonadaptive designs) | **verified** (frozen 8415ec049329) | restated after both red teams flagged that the colluder was chosen after the design; the proof was adapted |
 | VCVio operational refinement | **proved** (394 lines; not ledger-gated) | the trace-level ProbComp game equals `catG` exactly; the protocol factorises; the end-to-end bound and attainment are in-project |
 | UMUSEF1 (usefulness companion) | **verified** (frozen 61a4c0bdf711; 573 lines) | v1 rejected (false κ conjunct; PH ⊆ Bad mismatch); v2/v2.1 add the view-blind pair, the obstruction q·u ≤ D·X, Cantelli for both tails, the honest ROC and the b = 0 sharpening |
-| UMDEFERF1 (audit-then-defer) | in red team / prover | v1 got major from Sol; v2 → v2.1 adds the service-dependent catV with a reachable conditional floor, the finite retry certificate, the protocol certificate and the no-go for every two-point honeypot law |
+| UMDEFERF1 (audit-then-defer) | **verified** (frozen ad82ec06fc48; 714 lines) | v1 got major from Sol; v2 → v2.1 adds the service-dependent catV with a reachable conditional floor, the finite retry certificate, the protocol certificate and the no-go for every two-point honeypot law |
 | prior-art positioning | done | STACK.md section; the defensible claim is narrowed to machine-checked worst-case probabilistic bounds for UM with honeypots |
 
 ## What the critique changed

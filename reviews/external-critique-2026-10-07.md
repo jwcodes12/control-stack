@@ -42,7 +42,7 @@ verbatim in substance as a standing input to the programme. Disposition at the e
   - (2) is our A6 (r) and A9 (coverage). The stack isolates them; it does not solve them.
   - UMLOWERF1 and UMSURVF1 give the protocol-sampling analogue of the rare-event point (risk ≥ about k/n_h for every nonadaptive design). Neither converts a benchmark average into a worst-case, history-conditional premise (Sol, final review 2).
   - (3) matches our use of "capability-free".
-  - UMUSE is the inf–sup objective for the hard-slack family.
+  - UMUSE formalises honest availability and a necessary (mimicry) lower constraint on universal certificates; it is not an inf–sup optimisation (Sol and Sonnet, final review 2).
   - (5) matches our withdrawn product claim.
 - Novelty: Games for AI Control has safety/usefulness Pareto frontiers (trusted monitoring), so UMUSE's Pareto framing
   is not new. Add all of the above to the novelty gate and CORRESPONDENCE.

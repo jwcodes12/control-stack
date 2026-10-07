@@ -1,4 +1,4 @@
-# Fidelity audit (orchestrator): UMLOWERF1, the design-free converse
+# Fidelity audit (orchestrator): UMLOWERF1, a converse for nonadaptive joint test designs
 
 Statement: `ledger/UMLOWER.lean` = Sol-high's fixed text, restated (frozen 8415ec049329). The original statement is in
 `ledger-drafts/UMLOWER-v1-original.lean`. Depends on UMPROTF1 (`cat`, `Hist`) and UMHSF1 (`IsKernel`, `IsRule`,
@@ -21,10 +21,10 @@ Red-team history:
 | conclusion: t(1 − t n/(k(n_s+1))) ≤ designProtocolCat, for all r ∈ [0,1], b, N ≥ 1 | SOURCE | there is no Θ claim in the Lean. The docstring says the matching upper bound needs the separate hypotheses of UMSTRATF1/UMPROTF1 |
 
 **Reading.**
-- Against every honeypot design and every slack-respecting shutdown rule, a decodable mediator with k bad classes
+- Against every NONADAPTIVE honeypot design and every slack-respecting shutdown rule, a decodable mediator with k bad classes
   admits a colluder with risk ≥ min(1/2, k(n_s+1)/(4n)). This is for n > 0, at t = min(1, k(n_s+1)/(2n)).
 - With UMSTRATF1 (fixed per-class budget m = n/k, class-aware slack, content-only mediator), honeypot budget per
-  distinguishable class is necessary and sufficient up to constants. **This holds only under UMSTRATF1's
+  distinguishable class gives order-of-budget scaling (lower and upper bounds under their respective hypotheses). **This holds only under UMSTRATF1's
   hypotheses**, and only for the adversarial gain: at r < 1 and b ≥ 1 the always-flag floor 1 − r remains (Sol).
 
 **Witness.** Four classes, one honeypot of each (deterministic stratified design), zero slack, r = 1, b = N = 1,

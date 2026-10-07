@@ -1,3 +1,6 @@
+> **ROADMAP.md** (added 2026-10-07 at John's request) is the one-page status plan: completed / in flight / next / open
+> assumptions / needs John. Keep it current whenever a row changes status, and mirror it into the GitHub export.
+
 # HANDOFF: control stack, state at end of session 2 (2026-10-07, ~07:30 UTC)
 
 Read this first in a fresh session, then STACK.md (status and positioning; revised after two final reviews),

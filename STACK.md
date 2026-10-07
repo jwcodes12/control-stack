@@ -99,6 +99,8 @@ Status legend:
 
 **Usefulness checker extension (in progress).** `ControlStack/UseQ.lean` contains an exact-rational `checkUseQ` and a Lean soundness bridge: an accepted sub-solution lower-bounds expected cumulative reward for a fixed honest action under every full-history-dependent admissible row selector, assuming nonnegative transitions on admissible rows. A positive one-state witness compiles. Claim and witness pass the proofledger Lean gate with standard axioms; Google red-team passed. A second foreign-family review was rejected by automatic review because it would send the private statement to a new destination; no freeze. `numerics/lasr_usefulness_certificate.lean` also passes the rational checker on the current 100-step interval fixture and proves the conditional floor `22873/250`; held-out deployment evidence remains open.
 
+**Parameter-Lipschitz certificate transfer (TMLIPF1, draft).** Claim and witness pass local proofledger gates with standard axioms. Two sandbox red-team attempts did not complete; external reviewer dispatch remains pending destination approval. The statement is not frozen.
+
 ## Layer 2: actions (reference monitor), first step
 
 SANDBOXF1 models the research harness's sandbox for untrusted provers. It is *not yet* an action monitor for U's tool

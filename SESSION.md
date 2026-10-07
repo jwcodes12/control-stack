@@ -1,6 +1,7 @@
 > **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization, and classwise end-to-end safety compile with standard axioms.
 > The LASR interval fixture now has a `checkUseQ` certificate and full-history soundness floor `22873/250`; deployment-matched held-out data remain missing.
 > The anonymized private export is refreshed and pushed. UseQ awaits second-family review; automatic review rejected Anthropic statement egress pending user approval.
+> TMLIPF1 Claim and Witness local proofledger gates now pass (standard axioms); the campaign stays draft because two-family red-team review has not run. Sandbox red-team attempts failed; external reviewer dispatch awaits destination approval.
 > `DeferGame.lean` now proves operational equality with an exact `ENNReal` recursion and the one-step probability expansion. Conversion to the calibrated real `catV` remains open; no defer theorem is promoted.
 > `AdaptiveBalance.lean` proves the balanced power-sum bound; `AdaptiveSharp.lean` proves its weighted path-measure aggregation and `t/k` corollary. Connecting the adaptive tester to that path measure remains open.
 

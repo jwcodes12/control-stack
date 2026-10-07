@@ -176,8 +176,10 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
 5. **Fidelity of the recursions to the operational protocol.** For the halting protocol with hard slack this is now a
   Lean theorem in the VCVio project (`RefinementProof.lean`: game = `catG`, and the end-to-end bound). This is an
   abstract operational-model correspondence, not a deployed scaffold. `SoftSlack.lean` proves the VCVio soft-hazard
-  honeypot survival bridge (with `ns = d+1` and an exact finite uniform coin). Still open: soft-slack composition with
-  deployment, the hockey-stick form, the stratified design at the game level, and the defer variant at the game level.
+  honeypot survival bridge (with `ns = d+1` and an exact finite uniform coin), seed-conditional whole-protocol
+  factorization, and the scalar first-moment inequality `h(1-h/ns)^nh ≤ ns/(nh+1)`. Still open: the deployment-bound
+  composition under domination/recall assumptions, the hockey-stick form, the stratified design at the game level,
+  and the defer variant at the game level.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

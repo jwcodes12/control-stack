@@ -1,6 +1,8 @@
 > **ROADMAP.md** (added 2026-10-07 at John's request) is the one-page status plan: completed / in flight / next / open
 > assumptions / needs John. Keep it current whenever a row changes status, and mirror it into the GitHub export.
 
+> **Update 2026-10-07 (session 7 continuation):** `DeferGame.lean` now treats a missed exhausted-budget service check as a live continuation with the trusted replacement, matching ledger `catV`; its VCVio compile passes. The calibrated real-valued bridge is still unproved. John approved the pending TMLIPF1 red team; Reviewer A returned `kill` for Bellman-stability triviality, and Reviewer C is still running. The draft remains unfrozen pending the second verdict and disposition.
+
 # HANDOFF: control stack, state at end of session 2 (2026-10-07, ~07:30 UTC)
 
 > **Update 2026-10-07 (session 5 continuation):** Current roadmap is in `ROADMAP.md`. Processed the LASR audit2 score archive into simultaneous rational ROC bands and a 100-step/two-coin table; `checkRiskQ`, `checkLawfulQ`, and a TMCERTF1-derived all-Red risk bound pass `decide +kernel` with standard axioms. This is not deployment evidence because the sample design/match is unestablished. `ControlStack/SoftSlack.lean` proves the constant-hazard soft-slack honeypot survival bridge; end-to-end soft slack remains open. Added `COMPOSITION-N1-UMPROT.md`; no joint theorem is claimed yet. TMLIPF1 is a local draft with passing local claim/witness gates; external red-team transmission is awaiting explicit user approval. The anonymised private export is refreshed with these updates.

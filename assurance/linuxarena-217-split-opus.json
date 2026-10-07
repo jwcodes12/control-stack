@@ -4,7 +4,7 @@
   "id": "PL_TMCERTF1 (full_information_risk_bound via checkRiskQ)",
   "statement_sha256": "53a3bc12f43cf56b3cababe2e8522a9b89a3d6f3d1ba852799b0e0a61a1eb491",
   "lean_file": "numerics/linuxarena_split/primary.lean",
-  "lean_status": "pending"
+  "lean_status": "passed"
  },
  "preregistration": {
   "file": "PREREG-LINUXARENA-SPLIT.md",
@@ -39,8 +39,8 @@
  "assumptions": [
   {
    "id": "checker_soundness",
-   "status": "UNRESOLVED",
-   "text": "TMCERTF1 soundness + checkRiskQ/checkLawfulQ by decide +kernel [Lean check pending]"
+   "status": "THEOREM_VERIFIED",
+   "text": "TMCERTF1 soundness + checkRiskQ/checkLawfulQ by decide +kernel"
   },
   {
    "id": "band_coverage",
@@ -85,7 +85,6 @@
  ],
  "verdict": "CONDITIONAL",
  "blocking": [
-  "checker_soundness",
   "iid_sampling",
   "population_match",
   "attack_content_coverage",

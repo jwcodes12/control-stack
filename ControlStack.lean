@@ -10,6 +10,7 @@ import ControlStack.ComposeGame
 import ControlStack.ComposeAvg
 import ControlStack.ComposeBlindSpot
 import ControlStack.CovertChannel
+import ControlStack.GatewayModel
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
@@ -60,3 +61,4 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.ComposeBlindSpot.blind_spot_risk
 #print axioms ControlStack.Covert.covert_bound
 #print axioms ControlStack.Covert.design_point
+#print axioms ControlStack.GatewayModel.gateway_bound

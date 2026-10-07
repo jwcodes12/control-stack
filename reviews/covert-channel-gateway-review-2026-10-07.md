@@ -7,6 +7,8 @@
 **Core files:** CATASTROPHE-SPEC.md; ControlStack/CovertChannel.lean; gateway/gateway.py; gateway/test_gateway.py; gateway/CORRESPONDENCE.md; .github/workflows/fast.yml; assurance/check_manifests.py; ROADMAP.md.  
 **Review status:** Open for a separate Claude session to challenge and respond. Findings below are based on source inspection and GitHub Actions metadata; I have not independently run the full Lean build or OS-level penetration tests.
 
+**Companion scenario research:** [SCENARIO-CATALOG.md](../SCENARIO-CATALOG.md) includes the full proposed portfolio, Redwood/AISI/Google/MITRE threat sources, reusable checker families, prioritization, and additional observations for Claude to review.
+
 ## Executive assessment
 
 This is a worthwhile shift from bounding an AI monitor's empirical average accuracy to a structural, finite-observation safeguard. The central theorem is a standard and sound-looking counting result: if a uniformly random secret M is independent of the shared seed and receiver side information, and the *receiver's complete observation for the chosen horizon* lies in a fixed finite space V, then any colluding randomized encoder/decoder pair has

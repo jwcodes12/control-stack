@@ -58,31 +58,38 @@ for n in range(0, 25):
                     bad += 1
 print("2b. Chebyshev slack lemma counterexamples on grid:", bad)
 
-# 3. frontier (floats; pmf by recurrence to avoid huge binomials)
+# 3. frontier (v2, after Sol's design review: designs separated, balanced allocation, grid sup labelled)
+from math import lgamma, log, exp
 def fbinCDF(n, s, h):
+    """P(Bin(n,h) <= s) in floats (log-gamma summation)."""
     if s < 0: return 0.0
     if h <= 0: return 1.0
     if h >= 1: return 1.0 if s >= n else 0.0
-    from math import lgamma, log, exp
     return min(1.0, sum(exp(lgamma(n+1)-lgamma(j+1)-lgamma(n-j+1)+j*log(h)+(n-j)*log(1-h)) for j in range(0, min(s, n)+1)))
-def sup_t(f, grid=2000):
-    best, bt = 0.0, 0.0
-    for i in range(grid+1):
-        t = i/grid; v = f(t)
-        if v > best: best, bt = v, t
-    return best, bt
+def grid_sup(f, grid=2000):
+    """max over t = i/grid of f(t); a GRID APPROXIMATION of sup_t (error <= 1/grid for these monotone-CDF curves)."""
+    return max(f(i/grid) for i in range(grid+1))
 
-eps = 0.10
-print(f"3. frontier, eps = {eps} (honest false shutdown <= eps), b = 0, r = 1, decodable, stratified m = n/k")
-print(" n_h  a0    k | global n_s  risk_glob  floor Cheb+UMLOWER   | class s_c  risk_cls | mimicry (1-eps)a")
+eps, f0, N, b = 0.10, 0.01, 100, 3
+print(f"3. frontier: honest false shutdown <= eps = {eps}; r = 1, b = 0 for risk; class-only (decodable, content-only) views;")
+print(f"   the colluder passes ONE class at rate t. Usefulness column: full completion S * binCDF(N, b, f0) at N={N}, b={b}, f0={f0}.")
+print("   'iid' = PL_UMPROTF1's iid honeypots, uniform class masses: sup_t t*binCDF(n_h, n_s, t/k).")
+print("   'strat' = balanced deterministic allocation m_c (sum n_h), GLOBAL counter: sup_t t*binCDF(min_c m_c, n_s, t) (colluder picks the smallest class).")
+print("   'class' = balanced allocation with per-class slack s_c: honest survival prod_c binCDF(m_c, s_c, a0).")
+print("   All sup_t values are grid approximations (grid 1/2000).")
+print(" n_h   a0   k | n_s  iid_glob strat_glob | s_c  class  | completion(global) completion(class) | floor a0*u")
 for nh, a0, k in [(30, .01, 4), (30, .05, 4), (100, .01, 4), (100, .01, 8), (100, .05, 8), (100, .05, 16),
                   (1000, .05, 8), (1000, .01, 8), (10000, .05, 8)]:
-    m = nh // k
+    ms = [nh // k + (1 if c < nh % k else 0) for c in range(k)]
     ns = next(s for s in range(nh+1) if fbinCDF(nh, s, a0) >= 1 - eps)
-    rg, _ = sup_t(lambda t: t * fbinCDF(m, ns, t))          # colluder passes its own class; m honeypots of it
-    sc = next(s for s in range(m+1) if fbinCDF(m, s, a0) ** k >= 1 - eps)
-    rc, _ = sup_t(lambda t: t * fbinCDF(m, sc, t))
-    # Chebyshev slack lemma: ns >= n a - sqrt(n a (1-a)/(1-eps)); then UMLOWERF1 at the best t
-    sl = max(nh*a0 - (nh*a0*(1-a0)/(1-eps))**.5, 0) + 1
-    fl = min(.5, k * sl / (4 * nh))
-    print(f"{nh:5d} {a0:.2f} {k:3d} | {ns:5d} {rg:9.3f} {fl:9.3f}            | {sc:5d} {rc:9.3f} | {(1-eps)*a0:.4f}")
+    rg_iid = grid_sup(lambda t: t * fbinCDF(nh, ns, t / k))
+    rg_str = grid_sup(lambda t: t * fbinCDF(min(ms), ns, t))
+    def honest_cls(sc): 
+        p = 1.0
+        for m in ms: p *= fbinCDF(m, sc, a0)
+        return p
+    sc = next(s for s in range(max(ms)+1) if honest_cls(s) >= 1 - eps)
+    rc = grid_sup(lambda t: t * fbinCDF(min(ms), sc, t))
+    D = fbinCDF(N, b, f0)
+    ug, uc = fbinCDF(nh, ns, a0) * D, honest_cls(sc) * D
+    print(f"{nh:5d} {a0:.2f} {k:3d} | {ns:4d} {rg_iid:8.3f} {rg_str:9.3f}  | {sc:4d} {rc:6.3f} | {ug:17.3f} {uc:18.3f} | {a0*min(ug,uc):.4f}")

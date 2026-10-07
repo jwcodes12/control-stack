@@ -1,6 +1,6 @@
-> **SESSION 6 STATUS (2026-10-07).** `StratifiedGame.lean` proves per-class binomial survival and seeded protocol factorization; local Lean check passes with standard axioms.
+> **SESSION 6 STATUS (2026-10-07).** `StratifiedGame.lean` proves per-class binomial survival, seeded factorization, and the end-to-end classwise bound; Lean reports standard axioms only.
 > UseQ claim/witness gates and TMCERTF1/TMGACF1 export checks pass; Google reviewed UseQ PASS, but its second foreign-family review remains outstanding.
-> Export `b2be2f7` is pushed; next: stratified end-to-end safety bound, then defer game.
+> Export `87bdcbd` is pushed; next: defer game. The held-out deployment data and decisions listed in §§3–5 remain open.
 
 # Session 5 continuation (2026-10-07). Added exact-rational simultaneous ROC bands and a LASR archive converter. Generated an eight-vertex, 100-step/two-coin interval table; `checkRiskQ`, `checkLawfulQ`, and the TMCERTF1 full-information risk bound compile by `decide +kernel`, with standard axioms only. This is a real-data pipeline demonstration, not deployment certification (the sample's held-out/IID/deployment match is unestablished). Added the VCVio soft-hazard honeypot survival bridge in `ControlStack/SoftSlack.lean`; it compiles with standard axioms. Added `COMPOSITION-N1-UMPROT.md`: still design-stage pending a common protocol/event and adversary intersection; only the `min` corollary is currently justified. TMLIPF1 remains a local draft pending the user's decision on external review. The anonymised private export was refreshed with these results.
 

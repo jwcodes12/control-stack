@@ -183,8 +183,9 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   `(1-r)+r·L·ns/(nh+1)` under row domination and worst-case recall (the same hypotheses as `RefinementProof.endToEnd`).
   `SoftHockey.lean` proves the operational pass bridge from finite hockey-stick divergence and the end-to-end bound
   `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. `StratifiedGame.lean`
-  models independent per-class hard-slack tests and proves their exact binomial product survival law and the seeded
-  protocol decomposition. The corresponding end-to-end stratified safety bound and defer variant remain open.
+  models independent per-class hard-slack tests and proves their exact binomial product survival law, seeded protocol
+  decomposition, and end-to-end bound `(1-r)+r·L·(sc+1)/(m+1)` under classwise domination, class coverage, and recall.
+  The defer variant remains open.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

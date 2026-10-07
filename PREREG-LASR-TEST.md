@@ -32,3 +32,15 @@ filtered (e.g. to working backdoors) by the paper's pipeline, so the attack popu
 honest sets may coincide across conditions (Bonferroni does not need independence). Not a deployment certificate.
 
 **Code.** `numerics/lasr_test_all.py` (committed with this file).
+
+## Results (run after the prereg commit 2c10cae)
+Full table: `numerics/lasr_test/summary.json`. Certified full-information risk with 2 audit coins:
+
+| class / setting | conditions | N = 1 | N = 10 | N = 100 |
+|---|---|---|---|---|
+| closed-source (T = GPT-4o-mini), APPS | 15 | 0.130–0.220 | 0.329–0.514 | 0.626–0.804 |
+| closed-source, BigCodeBench | 12 | 0.052–0.083 | 0.090–0.219 | 0.708–0.832 |
+| open-source (T = Qwen3.5-4B), APPS | 15 | 0.062–0.433 | 0.103–0.598 | 0.987–0.9997 |
+
+Worst condition at N = 100: open-source APPS self_rec/none_base (0.9997). The closed-source trusted monitor gives the
+first non-vacuous held-out 100-task certificates in this project. Lean checks run sequentially (≈5 min each).

@@ -39,18 +39,18 @@ theorem checkUseQ_spec {N m t : ℕ}
       (∀ th i s, adm th i s = true → W i.succ s ≤ rew th i s +
         ∑ s', K th i s s' * W i.castSucc s') := by
   simp only [checkUseQ, Bool.and_eq_true, List.all_eq_true, List.mem_finRange,
-    forall_const, decide_eq_true_eq, sumQ_eq, Bool.ite_eq_true_distrib, Bool.true_eq] at hc
+    forall_const, decide_eq_true_eq, sumQ_eq, Bool.ite_eq_true_distrib] at hc
   rcases hc with ⟨⟨⟨ht, hfloor⟩, hzero⟩, hrows⟩
   exact ⟨ht, hfloor, hzero, fun th i s ha => by simpa [ha] using hrows th i s⟩
 
 noncomputable def honestValue {N m t : ℕ}
     (rew : Fin t → Fin N → Fin m → ℚ)
     (K : Fin t → Fin N → Fin m → Fin m → ℚ)
-    (θ : ℕ → Fin m → Fin t) : ℕ → Fin m → ℝ
-  | 0, _ => 0
-  | n + 1, s => if hn : n < N then
-      (rew (θ n s) ⟨n, hn⟩ s : ℝ) +
-        ∑ s', (K (θ n s) ⟨n, hn⟩ s s' : ℝ) * honestValue rew K θ n s'
+    (θ : ℕ → List (Fin m) → Fin m → Fin t) : ℕ → Fin m → List (Fin m) → ℝ
+  | 0, _, _ => 0
+  | n + 1, s, h => if hn : n < N then
+      (rew (θ n h s) ⟨n, hn⟩ s : ℝ) +
+        ∑ s', (K (θ n h s) ⟨n, hn⟩ s s' : ℝ) * honestValue rew K θ n s' (h ++ [s])
     else 0
 
 /-- A passing usefulness certificate lower-bounds the expected honest reward for every admissible selector. -/
@@ -59,48 +59,48 @@ theorem checkUseQ_sound {N m t : ℕ}
     (K : Fin t → Fin N → Fin m → Fin m → ℚ)
     (adm : Fin t → Fin N → Fin m → Bool)
     (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ)
-    (θ : ℕ → Fin m → Fin t)
+    (θ : ℕ → List (Fin m) → Fin m → Fin t)
     (hc : checkUseQ N m t rew K adm W s₀ floor = true)
     (hK : ∀ th i s, adm th i s = true → ∀ s', 0 ≤ K th i s s')
-    (hθ : ∀ n (hn : n < N) s, adm (θ n s) ⟨n, hn⟩ s = true) :
-    (floor : ℝ) ≤ honestValue rew K θ N s₀ := by
+    (hθ : ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true) :
+    (floor : ℝ) ≤ honestValue rew K θ N s₀ [] := by
   let cert := checkUseQ_spec hc
-  have hmain : ∀ n (hn : n ≤ N) s,
-      (W ⟨n, by omega⟩ s : ℝ) ≤ honestValue rew K θ n s := by
+  have hmain : ∀ n (hn : n ≤ N) s h,
+      (W ⟨n, by omega⟩ s : ℝ) ≤ honestValue rew K θ n s h := by
     intro n
     induction n with
     | zero =>
-        intro hn s
+        intro hn s h
         have hz := cert.2.2.1 s
         have hzR : (W 0 s : ℝ) ≤ 0 := by exact_mod_cast hz
         simpa [honestValue] using hzR
     | succ n ih =>
-        intro hn s
+        intro hn s h
         have hlt : n < N := by omega
         let i : Fin N := ⟨n, hlt⟩
-        have ha := hθ n hlt s
-        have hrow := cert.2.2.2 (θ n s) i s ha
-        have hrowR : (W i.succ s : ℝ) ≤ (rew (θ n s) i s : ℝ) +
-            ∑ s', (K (θ n s) i s s' : ℝ) * (W i.castSucc s' : ℝ) := by
+        have ha := hθ n hlt h s
+        have hrow := cert.2.2.2 (θ n h s) i s ha
+        have hrowR : (W i.succ s : ℝ) ≤ (rew (θ n h s) i s : ℝ) +
+            ∑ s', (K (θ n h s) i s s' : ℝ) * (W i.castSucc s' : ℝ) := by
           exact_mod_cast hrow
-        have hcont : (∑ s', (K (θ n s) i s s' : ℝ) * (W i.castSucc s' : ℝ)) ≤
-            ∑ s', (K (θ n s) i s s' : ℝ) * honestValue rew K θ n s' := by
+        have hcont : (∑ s', (K (θ n h s) i s s' : ℝ) * (W i.castSucc s' : ℝ)) ≤
+            ∑ s', (K (θ n h s) i s s' : ℝ) * honestValue rew K θ n s' (h ++ [s]) := by
           apply Finset.sum_le_sum
           intro s' _
-          apply mul_le_mul_of_nonneg_left _ (by exact_mod_cast hK (θ n s) i s ha s')
+          apply mul_le_mul_of_nonneg_left _ (by exact_mod_cast hK (θ n h s) i s ha s')
           have hi : i.castSucc = ⟨n, by omega⟩ := by ext; rfl
           rw [hi]
-          exact ih (by omega) s'
-        have hstep := add_le_add_left hcont (rew (θ n s) i s : ℝ)
-        have hstep' : (rew (θ n s) i s : ℝ) +
-            ∑ s', (K (θ n s) i s s' : ℝ) * (W i.castSucc s' : ℝ) ≤
-            (rew (θ n s) i s : ℝ) +
-            ∑ s', (K (θ n s) i s s' : ℝ) * honestValue rew K θ n s' := by
+          exact ih (by omega) s' (h ++ [s])
+        have hstep := add_le_add_left hcont (rew (θ n h s) i s : ℝ)
+        have hstep' : (rew (θ n h s) i s : ℝ) +
+            ∑ s', (K (θ n h s) i s s' : ℝ) * (W i.castSucc s' : ℝ) ≤
+            (rew (θ n h s) i s : ℝ) +
+            ∑ s', (K (θ n h s) i s s' : ℝ) * honestValue rew K θ n s' (h ++ [s]) := by
           simpa [add_comm] using hstep
         have hidx : i.succ = ⟨n + 1, by omega⟩ := by ext; rfl
         rw [hidx] at hrowR
         simpa [honestValue, hlt, i] using hrowR.trans hstep'
-  have hN := hmain N (le_refl N) s₀
+  have hN := hmain N (le_refl N) s₀ []
   have hfloor := cert.2.1
   have hfloorR : (floor : ℝ) ≤ (W (Fin.last N) s₀ : ℝ) := by exact_mod_cast hfloor
   have hidx : (⟨N, Nat.lt_succ_self N⟩ : Fin (N + 1)) = Fin.last N := by ext; rfl
@@ -120,11 +120,11 @@ def Claim : Prop :=
     (K : Fin t → Fin N → Fin m → Fin m → ℚ)
     (adm : Fin t → Fin N → Fin m → Bool)
     (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ)
-    (θ : ℕ → Fin m → Fin t),
+    (θ : ℕ → List (Fin m) → Fin m → Fin t),
     checkUseQ N m t rew K adm W s₀ floor = true →
     (∀ th i s, adm th i s = true → ∀ s', 0 ≤ K th i s s') →
-    (∀ n (hn : n < N) s, adm (θ n s) ⟨n, hn⟩ s = true) →
-      (floor : ℝ) ≤ honestValue rew K θ N s₀)
+    (∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true) →
+      (floor : ℝ) ≤ honestValue rew K θ N s₀ [])
 
 theorem claim : Claim := ⟨@checkUseQ_spec, @checkUseQ_sound⟩
 

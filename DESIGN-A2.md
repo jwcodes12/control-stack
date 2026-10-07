@@ -43,7 +43,13 @@ For the illustrative nested pair `audit score ≥ 7`, `defer score ≥ 3`, the s
 | defer FPR | 33 / 633 | `[289/10000, 2127/25000]` |
 | defer TPR | 218 / 240 | `[8373/10000, 239/250]` |
 
-`numerics/lasr_design_a2_certificate.py` clips the TPR interval box by `TPR_audit ≤ TPR_defer`, enumerates its four exact TPR vertices crossed with the audit-FPR endpoints (eight models), and emits the 100-problem/two-coin table. `numerics/emit_lasr_design_a2_lean.py` assembles that table with the frozen TMCERTF1 statement and its proof. The resulting `checkRiskQ` and `checkLawfulQ` instances both compiled by `decide +kernel` in the shared Lean project (4,800 risk inequalities); a further Lean theorem applies TMCERTF1 soundness to bound every history-dependent Red policy and admissible row selector. `#print axioms` reports only `propext`, `Classical.choice`, and `Quot.sound` for all three theorems. The full-information rectangular risk upper bound is about `0.577300`. The separate simple honest-reward floor is `22873/250 = 91.492` of 100, using only the defer-FPR upper endpoint; this is not a `checkUseQ` certificate.
+`numerics/lasr_design_a2_certificate.py` clips the TPR interval box by `TPR_audit ≤ TPR_defer`, enumerates its four exact TPR vertices crossed with the audit-FPR endpoints (eight models), and emits the 100-problem/two-coin table. `numerics/emit_lasr_design_a2_lean.py` assembles that table with the frozen TMCERTF1 statement and its proof. The resulting `checkRiskQ` and `checkLawfulQ` instances both compiled by `decide +kernel` in the shared Lean project (4,800 risk inequalities); a further Lean theorem applies TMCERTF1 soundness to bound every history-dependent Red policy and admissible row selector. `#print axioms` reports only `propext`, `Classical.choice`, and `Quot.sound` for all three theorems. The full-information rectangular risk upper bound is about `0.577300`.
+
+### Usefulness checker certificate
+
+`numerics/emit_lasr_useq_certificate.py` emits `numerics/lasr_usefulness_certificate.lean` from the same interval fixture. It instantiates `checkUseQ` with 100 rounds, three coin states, and all eight ROC vertices. The transition row models an audit false positive consuming a coin; the one-step honest reward is at least `1 − deferFPR_upper = 22873/25000`. The sub-solution is `W[i,s] = i·22873/25000`, so the checker certifies `22873/250 = 91.492` honest completions for every full-history-dependent admissible model selector. Both `checker_passes` and `adaptive_usefulness` compile; their only axioms are `propext`, `Classical.choice`, and `Quot.sound`.
+
+Reproduce with `python numerics/emit_lasr_useq_certificate.py`, then `lake build ControlStack.UseQ` and `lake env lean numerics/lasr_usefulness_certificate.lean` from the control-stack project. This is a certificate for the finite interval fixture, conditional on those interval rows. It does not establish that the sample is predeclared, held out, IID, or deployment matched.
 
 Reproduce with `python numerics/lasr_score_bands.py <honest.csv> <attack.csv> --condition <name> --output numerics/lasr_selfrec_nonebase_roc_bands.json`, then run `python numerics/lasr_design_a2_certificate.py` and `python numerics/emit_lasr_design_a2_lean.py`; compile the emitted file from `~/research/alignment-contrib/lean/StabilityDebate` with `lake env lean ~/research/control-stack/numerics/lasr_design_a2_certificate.lean`.
 
@@ -55,7 +61,7 @@ This is a real-data pipeline demonstration, **not a deployment certificate or a 
 - The confidence statement is conditional on the sampling protocol and its independence assumptions. Distribution shift, adaptive data collection, label error, and unrepresented backdoors are not discharged by the checker.
 - The two-coin GAC abstraction, threshold semantics, catastrophe event, and task horizon match the intended protocol. The existing `TMGACF1` result supplies the recurrence bridge for its stated model; the finite interval table must still be checked against the concrete GAC rows.
 - A confidence band over operating points does not establish scaffold enforcement, state coverage, or the identity between a sampled score and a deployment monitor view.
-- The current exact fixture has not been passed through Lean's `decide +kernel`; no new theorem or frozen claim is made in this phase.
+- The exact risk, lawfulness, and usefulness fixtures compile in Lean with standard axioms. Their sampling and deployment assumptions remain open; no new proofledger claim is frozen by these fixture checks.
 
 ## Cost estimate
 

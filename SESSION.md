@@ -1,15 +1,12 @@
-> **SESSION 3 STATUS (2026-10-07, updated ~14:30 UTC): Sonnet's three precursors are DONE.**
-> 1. UMCERTF1 **verified** (frozen 73c2633b1568; 750 lines): one-shot reduction, envelope + grid certificates, AOQL floor,
->    exactness at L = 1, for decodable content-only mediators (Xp) and for the stratified design (S2).
-> 2. UMADAPTF1 **verified** (frozen a416cc05f830; 484 lines): adaptive converse t·max(0, 1 − tn/k); the nonadaptive
->    UMLOWER formula fails for adaptive testers pointwise (c1) and after optimisation (c2).
-> 3. Outcome-valued VCVio game **proved** (`ControlStack/OutcomeProof.lean`, 512 lines): five-outcome law, honest-completion
->    bridge to UMUSEF1, Pareto identity.
-> Direction (A): TMCERT v0 got MAJOR from both reviewers; split into TMCERT v1 (core checker: soundness vs history-dependent
-> Red and rectangular nature, fixed-model corollary, tightness, usefulness, rational checker, vertex lemma, abstraction
-> theorem) and TMGAC v0 (GAC instance: bridges to Prop. 4.1 and usefulness, separation 13/50 vs 11/32); second design
-> review running. John asked to publish to a PRIVATE GitHub repo `control-stack` (sandbox results generalised; model
-> names anonymised); export being prepared in /var/tmp/cs-export. Routine `trig_01RsgfEAcQ1rDt5TZLo2tLMp` (every 2h).
+> **SESSION 3 STATUS (2026-10-07 ~14:45 UTC).** Precursors 1–3 DONE (UMCERTF1, UMADAPTF1 verified; Outcome game proved).
+> Direction (A) remaining steps (all mechanical):
+> 1. TMCERTF1: sol-high PASS; flash pending. Then `pl freeze TMCERTF1`, `pl gate TMCERTF1 /var/tmp/opus-provers/TMCERTF1/proof.lean
+>    --actor anthropic:claude-opus-5-5` (dry-run gate already PASSES), copy proof to proofs/, ledger/TMCERT.lean from
+>    ledger-drafts/TMCERT-v2.lean, fill the hash in fidelity/TMCERTF1.md (drafted), STACK row, ROADMAP.
+> 2. TMGACF1: red team (sol-high, flash) runs after TMCERT's. Proof ready: /var/tmp/opus-provers/TMGACF1/proof.lean (554 lines;
+>    needs TMCERTF1 verified before gating). Same steps; fidelity/TMGACF1.md drafted.
+> 3. Refresh the private GitHub export (/var/tmp/cs-export; anonymise; ledger-check the 2 new CIDs; push).
+> 4. Then disable routine trig_01RsgfEAcQ1rDt5TZLo2tLMp. John said tokens are low: be economical.
 
 # Session 2026-10-07: a Lean-verified, capability-free control stack, layer 1 (collusion) plus action-layer step 1
 

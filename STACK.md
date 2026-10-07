@@ -158,7 +158,7 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
 
 ## Sharper adaptive converse in progress
 
-`ControlStack/AdaptiveBalance.lean` proves the discrete balancing lemma for exact class counts and the quotient/remainder bound. `ControlStack/AdaptiveSharp.lean` proves the weighted path aggregation and uniform-seed `t/k` corollary. The adaptive tester's all-FLAG path measure is not yet connected to those abstractions; UMADAPTF1 remains the verified `t(1 − tn/k)` theorem.
+`ControlStack/AdaptiveBalance.lean`, `ControlStack/AdaptiveGeneric.lean`, and `ControlStack/AdaptiveUMADAPT.lean` compile the sharp balancing, adaptive recursion, and abstract seed-risk layers. The separate `proofledger/campaigns/UMADAPT/forms/UMADAPTF1/proofs/sharp-conv-port.lean` proofport inlines these layers and proves `conv_a_sharp` against the actual `Setup` premises, `cat_ge`/`pass_eq`, `adProtocolCat`, and `seedLaw`. It passed `leangate.gate` assembly against the frozen statement and verified dependencies; a direct `#print axioms` check for `conv_a_sharp` reported only `[propext, Classical.choice, Quot.sound]`. No gate event was recorded and no frozen statement changed. UMADAPTF1 remains verified only at `t(1 − tn/k)` until the strengthening is registered separately.
 
 ## Assumptions still unproved (what the stack does NOT give)
 1. **That any deployed mediator satisfies the trusted-component hypothesis** (domination constant L, or

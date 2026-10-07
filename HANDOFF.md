@@ -7,6 +7,8 @@
 
 > **Update 2026-10-07 (session 6 continuation):** `DeferGame.lean` proves the VCVio operational game equals an exact `ENNReal` recursion; calibration to the real-valued ledger `catV` is still open. `AdaptiveBalance.lean` and `AdaptiveSharp.lean` prove the balanced-count and weighted-path aggregation cores; the adaptive tester's all-FLAG path measure remains to be connected. The local TMLIPF1 red-team dispatch failed in the sandbox, and automatic review rejected an escalated send to OpenAI/Google; no verdict was recorded. Await explicit destination approval before retrying that external review. See `SESSION.md` and `ROADMAP.md` for current status.
 
+> **Update 2026-10-07 (~19:22 UTC):** The adaptive sharp-converse path measure is now connected to the campaign's actual survival and uniform-seed catastrophe sum in `proofledger/campaigns/UMADAPT/forms/UMADAPTF1/proofs/sharp-conv-port.lean`. The direct frozen-statement gate assembly passes, and `conv_a_sharp` uses only standard axioms. No gate event or statement change was recorded. The sharper theorem remains auxiliary pending a decision to register a separate campaign statement; see ROADMAP.md and SESSION.md.
+
 Read this first in a fresh session, then STACK.md (status and positioning; revised after two final reviews),
 DESIGN.md v1 (model and assumptions A1–A11) and SESSION.md (what happened). Reviews of this session:
 - `reviews/final-review2-{sol,sonnet}.md`;

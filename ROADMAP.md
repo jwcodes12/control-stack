@@ -49,7 +49,7 @@ Status legend:
 | GitHub export | private repo `jwcodes12/control-stack` | ✅ refreshed session-5 snapshot pushed; reviewer identities anonymised |
 
 ## 3. Next (ranked)
-1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic fixture, exact-rational ROC-band generator, and LASR archive pipeline demonstration complete; the 100-step/two-coin interval table passes `checkRiskQ` and `checkLawfulQ` by `decide +kernel`. A deployment-matched, predeclared held-out sample and a `checkUseQ` certificate remain.) Rational ROC enclosures from finite samples
+1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic fixture, exact-rational ROC-band generator, and LASR archive pipeline demonstration complete; the 100-step/two-coin interval table passes `checkRiskQ`/`checkLawfulQ`, and a 100-step, three-state, eight-model `checkUseQ` certificate gives the conditional honest-reward floor `22873/250 = 91.492` for every full-history selector. A deployment-matched, predeclared held-out sample remains.) Rational ROC enclosures from finite samples
    (simultaneous confidence bands), discretised thresholds and ties, an interval uncertainty set for TMCERT, and a
    GAC-scale certificate (100 problems, 2 coins) run through the checker. Output: certified risk against a memoryless,
    a clocked and a full-information Red for the same Blue policy. This is the step a lab could actually use.
@@ -60,7 +60,7 @@ Status legend:
 4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. `SoftSlack.lean` proves exact survival, seeded factorization and the domination bound `(1-r)+r·L·ns/(nh+1)`. `SoftHockey.lean` proves the hockey-stick bound `(1-r)+r·(δ+e^η·ns/(nh+1))` from a per-bad-row finite hockey-stick assumption. `StratifiedGame.lean` proves exact per-class binomial survival, seeded decomposition, and the end-to-end bound `(1-r)+r·L·(sc+1)/(m+1)` under classwise domination and class coverage. The defer game remains.
 5. ⏳ **Sharper adaptive converse**: the balanced bound (t/k)[(k − a)(1 − t)^q + a(1 − t)^{q+1}], numerically equal to the
    optimal adaptive tester under the acceptance contract.
-6. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under full-history-dependent admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; Google red-team passed. The statement is attributed to OpenAI, so `sol-high` is not a foreign review; it remains unfrozen pending a second distinct foreign-family review.
+6. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under full-history-dependent admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; Google red-team passed. The statement is attributed to OpenAI, so `sol-high` is not a foreign review; it remains unfrozen pending a second distinct foreign-family review. `numerics/lasr_usefulness_certificate.lean` demonstrates the checker on the current interval fixture; it does not discharge deployment sampling assumptions.
 
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:

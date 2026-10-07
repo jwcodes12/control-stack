@@ -1,4 +1,4 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 3)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 4)
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
@@ -49,7 +49,7 @@ Status legend:
 | GitHub export | private repo `jwcodes12/control-stack` | 🔄 local snapshot refresh prepared; authenticated push pending |
 
 ## 3. Next (ranked)
-1. ⏳ **Certify a realistic trusted-monitoring configuration.** Rational ROC enclosures from finite samples
+1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4: design note and synthetic exact-table fixture complete; empirical bands and the Lean checker run remain.) Rational ROC enclosures from finite samples
    (simultaneous confidence bands), discretised thresholds and ties, an interval uncertainty set for TMCERT, and a
    GAC-scale certificate (100 problems, 2 coins) run through the checker. Output: certified risk against a memoryless,
    a clocked and a full-information Red for the same Blue policy. This is the step a lab could actually use.

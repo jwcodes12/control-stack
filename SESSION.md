@@ -1,3 +1,7 @@
+> **SESSION 4 STATUS (2026-10-07 ~15:45 UTC).** Added DESIGN-A2 and an exact-rational 100-problem/2-coin fixture; 101 certificate rows, 1,200 checker inequalities.
+> Illustrative full-information risk bound ≈0.45051; honest used-solutions estimate ≈52.464/100. The ROC endpoints are synthetic, not empirical confidence bands.
+> Next: obtain labelled validation data, derive simultaneous rational bands, then run the concrete `checkRiskQ`/`decide +kernel` fixture; no theorem was added.
+
 > **SESSION 3 STATUS (2026-10-07 ~15:20 UTC).** TMCERTF1 and TMGACF1 frozen; both reviewer families pass; claim/witness gates pass with standard axioms.
 > Research and proofledger records committed; private export `d320fa9` pushed to `jwcodes12/control-stack` main; both new CIDs pass independent ledger-check.
 > Session 3 tasks 1–4 complete. Task 5 skipped as instructed.

@@ -51,6 +51,33 @@ def deployV {X Z : Type} (Bad : X → Prop) [DecidablePred Bad]
           (fun caught => !caught) <$> Svc h x z
         else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
 
+/-- One operational step, expanded over the finite output spaces. -/
+theorem deployV_step {X Z : Type} [Fintype X] [Fintype Z]
+    (Bad : X → Prop) [DecidablePred Bad]
+    (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool)
+    (A : Hist X Z → X → Z → ProbComp Bool)
+    (Halt : Hist X Z → X → Z → ProbComp Bool)
+    (Svc : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) :
+    Pr[= true | deployV Bad π M D A Halt Svc b (n+1) u h] =
+      ∑ x, Pr[= x | π h] * ∑ z, Pr[= z | M x] *
+        (Pr[= true | D z] * Pr[= true | (if Bad x then pure true else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,true)]) : ProbComp Bool)] +
+         Pr[= false | D z] * (if u < b then
+           Pr[= true | (if Bad x then (fun caught => !caught) <$> A h x z
+             else deployV Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)]) : ProbComp Bool)]
+           else Pr[= true | (if Bad x then do
+             let halt ← Halt h x z
+             if halt then pure false else (fun caught => !caught) <$> Svc h x z
+             else do
+             let halt ← Halt h x z
+             if halt then pure false else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) : ProbComp Bool)])) := by
+  rw [deployV]
+  simp only [probOutput_bind_eq_tsum, tsum_fintype, Fintype.sum_bool]
+  refine Finset.sum_congr rfl fun x _ => ?_
+  congr 1
+  refine Finset.sum_congr rfl fun z _ => ?_
+  congr 1
+  by_cases hx : Bad x <;> simp [hx]
+
 /-- The operational defer recursion equals `catV` when the measured halt and service
 probabilities are `η` and `a h x z`, respectively. -/
 def DeferBridgeClaim : Prop :=

@@ -107,6 +107,82 @@ theorem gateway_bound {Ω M R S : Type} [Fintype Ω] [Fintype M] [Nonempty M] [F
   refine le_trans h (le_of_eq ?_)
   simp [Fintype.card_fun, Fintype.card_option, Fintype.card_fin, Nat.cast_pow]
 
+/-- the buffer never exceeds the slot count -/
+theorem buf_le {R S : Type} (valid : R → Option S) (slots : ℕ) (tr : List (Act R)) (st : St S)
+    (h : st.buf.length ≤ slots) : (tr.foldl (step valid slots) st).buf.length ≤ slots := by
+  induction tr generalizing st with
+  | nil => simpa
+  | cons a tr ih =>
+    apply ih
+    cases a with
+    | other => simpa [step] using h
+    | send r =>
+      simp only [step]
+      cases valid r with
+      | none => simpa using h
+      | some v =>
+        split_ifs with hl
+        · simp; omega
+        · simpa using h
+
+/-- reachable views: a prefix of j accepted values (j ≤ slots), the rest NULL -/
+abbrev Prefix (S : Type) (slots : ℕ) := (j : Fin (slots + 1)) × (Fin j → S)
+
+def toPrefix {S : Type} (slots : ℕ) (st : St S) (h : st.buf.length ≤ slots) : Prefix S slots :=
+  if hb : st.blanked then ⟨0, fun i => i.elim0⟩
+  else ⟨⟨st.buf.length, by omega⟩, fun i => st.buf.get ⟨i.val, i.isLt⟩⟩
+
+def embedPrefix {S : Type} (slots : ℕ) (p : Prefix S slots) : Fin slots → Option S :=
+  fun i => if h : i.val < p.1.val then some (p.2 ⟨i.val, h⟩) else none
+
+theorem deliver_eq_embed {S : Type} (slots : ℕ) (st : St S) (h : st.buf.length ≤ slots) :
+    deliver slots st = embedPrefix slots (toPrefix slots st h) := by
+  funext i
+  by_cases hb : st.blanked
+  · simp [deliver, embedPrefix, toPrefix, hb]
+  · have e : toPrefix slots st h = ⟨⟨st.buf.length, by omega⟩, fun i => st.buf.get ⟨i.val, i.isLt⟩⟩ := by
+      simp [toPrefix, hb]
+    rw [e]
+    unfold deliver embedPrefix
+    simp only [hb, Bool.false_eq_true, ↓reduceIte]
+    by_cases hi : i.val < st.buf.length
+    · simp [hi]
+    · simp [hi, List.getElem?_eq_none (by omega)]
+
+/-- **Reachable-view bound (review P1-3).** Success ≤ (Σ_{j ≤ slots} |S|^j) / |M|, tighter than (|S|+1)^slots / |M|. -/
+theorem gateway_bound_reachable {Ω M R S : Type} [Fintype Ω] [Fintype M] [Nonempty M] [Fintype R] [Fintype S]
+    [DecidableEq S] (valid : R → Option S) (slots L : ℕ)
+    (ρ : Ω → ℝ) (enc : Ω → M → (Fin L → Act R) → ℝ) (dec : Ω → (Fin slots → Option S) → M → ℝ)
+    (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) :
+    (∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, ∑ tr, enc ω m tr *
+        dec ω (deliver slots (run valid slots (List.ofFn tr))) m))
+      ≤ (∑ j : Fin (slots + 1), (Fintype.card S : ℝ) ^ (j : ℕ)) / (Fintype.card M : ℝ) := by
+  classical
+  have hlen : ∀ tr : Fin L → Act R, (run valid slots (List.ofFn tr)).buf.length ≤ slots :=
+    fun tr => buf_le valid slots _ _ (by simp)
+  set pv : (Fin L → Act R) → Prefix S slots := fun tr => toPrefix slots _ (hlen tr)
+  have hview : ∀ tr, deliver slots (run valid slots (List.ofFn tr)) = embedPrefix slots (pv tr) :=
+    fun tr => deliver_eq_embed slots _ (hlen tr)
+  have hpush : ∀ ω m, (∑ tr, enc ω m tr * dec ω (deliver slots (run valid slots (List.ofFn tr))) m) =
+      ∑ v, push pv (enc ω m) v * dec ω (embedPrefix slots v) m := by
+    intro ω m
+    unfold push
+    simp_rw [Finset.sum_mul]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun tr _ => ?_
+    rw [Finset.sum_eq_single (pv tr)]
+    · simp [hview tr]
+    · intro v _ hv; simp [Ne.symm hv]
+    · intro h; exact absurd (Finset.mem_univ _) h
+  have h := covert_bound ρ (fun ω m => push pv (enc ω m)) (fun ω v => dec ω (embedPrefix slots v)) hρ
+    (fun ω m => push_dist _ _ (henc ω m)) (fun ω v => hdec ω _)
+  unfold successProb at h
+  simp_rw [hpush]
+  refine le_trans h (le_of_eq ?_)
+  congr 1
+  simp [Prefix, Fintype.card_sigma, Fintype.card_fun, Fintype.card_fin, Nat.cast_sum, Nat.cast_pow]
+
+#print axioms gateway_bound_reachable
 #print axioms other_blanks
 #print axioms gateway_bound
 

@@ -6,7 +6,7 @@ LIFETIME is one value in a finite set fixed in advance, with exact integer cardi
 
 v2 (after reviews/covert-channel-gateway-review-2026-10-07.md):
 - configuration is deep-validated and frozen (primitive enum values int/str/bool only, unique names and values, slots
-  a positive int); cardinality is EXACT integer arithmetic: prod_c (|schema_c|+1)^slots_c;
+  a positive int); cardinality is EXACT integer arithmetic over REACHABLE views: prod_c sum_{j<=slots_c} |schema_c|^j;
 - a LifetimeLedger charges every episode's view-space size against a cumulative budget per lineage (secret lifetime ×
   receiver memory scope); an episode that would exceed it is refused before it starts (P0-1);
 - alerts are fixed codes; no attacker-controlled strings are stored (P0-2);
@@ -87,7 +87,10 @@ class Channel:
             raise GatewayError("slots must be a positive int")
 
     def alphabet(self) -> int:
-        return (self.schema.size() + 1) ** self.slots
+        """Exact number of REACHABLE slot tuples: j accepted values then NULLs, j = 0..slots (blanked = j = 0).
+        Lean: GatewayModel.gateway_bound_reachable."""
+        s = self.schema.size()
+        return sum(s ** j for j in range(self.slots + 1))
 
 
 def view_space_size(channels) -> int:

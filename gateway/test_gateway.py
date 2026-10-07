@@ -15,7 +15,7 @@ def gw():
 
 def test_budget_refused():
     try:
-        Gateway({"c": Channel("c", BITS4, 5)})  # 13^5 -> 18.5 bits
+        Gateway({"c": Channel("c", BITS4, 5)})  # sum 12^j, j<=5 -> 18.0 bits
     except GatewayError:
         return
     raise AssertionError("over-budget configuration accepted")
@@ -72,7 +72,7 @@ def test_config_validation_and_exact_budget():
         except GatewayError:
             continue
         raise AssertionError("invalid configuration accepted")
-    # exact boundary: 2^4 = 16 values -> schema of 15 + NULL is exactly 4 bits
+    # exact boundary: one slot, schema of 15 values -> 1 + 15 = 16 reachable views = 2^4
     s15 = Schema((("v", tuple(range(15))),))
     Gateway({"c": Channel("c", s15, 1)}, budget_bits=4)
     try:
@@ -92,8 +92,8 @@ def test_lifetime_budget_blocks_two_episode_split(tmp=None):
     """Review P0-1: a 32-bit secret split over two 16-bit episodes must be refused by the lifetime ledger."""
     import tempfile
     from gateway import LifetimeLedger
-    s16 = Schema((("v", tuple(range(255))),))  # (255+1)^2 = 2^16 per episode
-    ch = {"c": Channel("c", s16, 2)}
+    s16 = Schema((("v", tuple(range(65535))),))  # 1 + 65535 = 2^16 reachable views per episode
+    ch = {"c": Channel("c", s16, 1)}
     with tempfile.TemporaryDirectory() as d:
         led = LifetimeLedger(Path(d) / "ledger.json", 16)
         Gateway(ch, budget_bits=16, ledger=led, lineage="secret-A")
@@ -152,6 +152,7 @@ def redteam_eval(k=13, trials=20000, seed=1):
             g.send("status", {"a": a, "b": b})
         g.close()
         wins += index[g.deliver()["status"]] == m
+    assert len(views) == gw().view_space_size()  # the gateway charges exactly the reachable views
     return wins / trials, gw().view_space_size() / K, len(views) / K
 
 

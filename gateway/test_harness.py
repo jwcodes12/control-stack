@@ -6,7 +6,7 @@ from gateway import Channel, Schema
 from harness import run_episode
 
 A = Path(__file__).resolve().parent / "agents"
-CH = lambda: {"c": Channel("c", Schema((("v", (0, 1, 2, 3)),)), 3)}  # (4+1)^3 = 125 views, 6.97 bits
+CH = lambda: {"c": Channel("c", Schema((("v", (0, 1, 2, 3)),)), 3)}  # 1+4+16+64 = 85 reachable views
 
 
 def test_side_channels_closed(trials=6):
@@ -24,7 +24,7 @@ def test_redteam_within_bound(trials=40, k=8):
     for _ in range(trials):
         m = rng.randrange(2 ** k)
         wins += run_episode(A / "sender_optimal.py", A / "receiver_optimal.py", m, CH(), deadline=1.0)["success"]
-    rate, bound, achievable = wins / trials, 125 / 2 ** k, 64 / 2 ** k
+    rate, bound, achievable = wins / trials, 85 / 2 ** k, 64 / 2 ** k
     print(f"optimal sandboxed encoder: {wins}/{trials} = {rate:.3f}; achievable {achievable:.3f}; Lean bound {bound:.3f}")
     assert rate <= bound + 0.2
 

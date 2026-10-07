@@ -47,6 +47,7 @@ Status legend:
 | `DeferMono` | **monotone defer bound** (`defer_mono`): recall ≥ r, halt hazard ≥ η and service catch ≥ a imply operational catastrophe ≤ ledger `catV`; with `defer_bridge` the bound is exact under calibration | ✅ proved (session 8) |
 | `ComposeGame` | trusted + untrusted monitoring in one game; fresh trusted coins make the misses multiply: (1 − r) + r·τ·L·(n_s+1)/(n_h+1); tight at n_h = 0 | ✅ proved (session 8) |
 | `ComposeAvg` | composition for any joint kernel (`composedJ_end`) and with the population-average trusted miss τ̄ = 1 − TPR (`composedPop_end`), so certified ROC bands plug in | ✅ proved (session 8) |
+| `ComposeBlindSpot` | **negative result**: population-average trusted miss 1/1000, yet a content-adaptive Red reaches catastrophe w.p. 1; sampled ROC data cannot certify the per-submission τ | ✅ proved (session 8) |
 
 ### Empirical certification (preregistered; Lean-checked certificates)
 | item | what it gives | status |
@@ -56,6 +57,8 @@ Status legend:
 | LinuxArena 217, cutoffs 7/3 (`PREREG-LINUXARENA.md`) | 250 honest / 150 attack, public task-set scores | ✅ done; per-task risk 0.115 (Opus attacker), 0.32 (Sol), but 92% of honest work deferred |
 | LinuxArena 217, environment-split calibration (`PREREG-LINUXARENA-SPLIT.md`) | thresholds chosen on 2 environments, certified on 3 | ✅ done; FPR transfers (≤ 6.5%), per-task risk 0.82 (Opus): this monitor's exact safety–usefulness trade-off |
 | Risk decomposition (`CERTIFICATE-DECOMPOSITION.md`, post hoc) | point estimate vs certified | ✅ done; weak monitors: the monitor is the limit; strong monitors at 100 tasks: statistical margin (needs ~1,000–3,000 attacks or predeclaring fewer cutoffs) |
+| Statistical audit (`numerics/stat_audit.py`, post hoc) | duplication, epochs, clustering, matched populations | ✅ done; LASR clean (1 epoch, no duplicates); LinuxArena task ids and honest main-task scores are stripped in the public JSON (cannot audit repeats or report completion); matched-population split: TPR at ≥8 is 7/56 (band [0.04, 0.27]) vs 39/150 pooled, so detection does not transport across environments |
+| Assurance manifests (`assurance/`, `tools/assurance.py`) | per-certificate theorem/data/preregistration hashes and assumption status; checker refuses to promote categories | ✅ done; 44 manifests, 0 deployment-grade |
 | Held-out data search (`reviews/heldout-data-search-2026-10-07.md`) | public datasets, prior art (rocci; Gao 2026) | ✅ done |
 
 ### Layer 2: actions (first step)
@@ -69,11 +72,21 @@ Status legend:
 | Lean checks of the 42 LASR certificates and 2 LinuxArena certificates | 🔄 running sequentially (≈5 min each) |
 | GitHub export (private `jwcodes12/control-stack`) | ✅ refreshed with every session-8 result (`a8e5540`); refresh again after the Lean checks |
 
-## 3. Next (ranked)
-1. ✅ **Link trusted-monitor certificates to composition** (session 8): `ComposeAvg.lean` proves the composed bound with the population-average trusted miss τ̄ = 1 − TPR (Red picks timing, content from the evaluated population); certified LASR bands give τ̄ = 0.05–0.22 for the closed-source trusted monitor at ≥ 3. Content-adaptive Red still needs per-submission τ, which data cannot certify.
-2. ⏳ **General attainment for balanced honeypot schedules**: UMADAPTF2 is attained at one instance; prove it for every (k, n).
-3. ⏳ **Tighter empirical certificates**: a fresh, single-condition preregistration with only the cutoffs used (no unseen LASR condition exists), larger attack samples, or per-action rather than per-trajectory scoring on LinuxArena.
-4. 🔒 **More data**: LinuxArena monitored `.eval` files (login-gated), or scoring a public held-out split with a fixed monitor (API cost).
+## 3. Next (reorganised after external review, 2026-10-07; see `reviews/external-review-2026-10-07.md`)
+Goal: one end-to-end, independently checkable safety case, optimising for how much uncertainty each result removes.
+
+| priority | work | definition of success | status |
+|---|---|---|---|
+| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | ⏳ |
+| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | ⏳ (touches the agent runtime: 🔒 John) |
+| P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | ⏳ |
+| P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |
+| P1 | trusted/untrusted composition | Lean bound for the actual joint protocol incl. shared state and audit budget | 🔄 (`ComposeGame`, `ComposeAvg`, `ComposeBlindSpot`) |
+| P1 | one reproducible safety case | a verifier reproduces the safety/usefulness pair and every unmet assumption | 🔄 (assurance manifests) |
+| P1 | CI | fast tier (source scan, numerics, manifests) + slow tier (Lean ledger, certificates) | ⏳ |
+| P2 | model coverage | multi-step attacks, stateful monitors, distribution shift, correlated failures; environment-state invariants | ⏳ |
+| P3 | more mathematics | general balanced-schedule attainment (draft `ledger-drafts/UMADAPTF3-draft.lean`, shelved), sharper bounds | ⏸ demoted |
+| — | human review | one AI-control researcher reads the specification and correspondence | 🔒 John |
 
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:

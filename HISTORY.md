@@ -46,3 +46,4 @@
 - **Session 8 (2026-10-07), continued.** Verified UMADAPTF2 (sharp adaptive converse) and TMCERTUSF1 (usefulness-certificate checker; two review rounds added a non-degenerate witness and an admissible-row check). Both pass `ledger-check`. `UseQ.lean` ported to the stricter checker.
 - **Session 8 (2026-10-07), late.** Verified TMLIPF1 v2 (frozen with an approved override; passes `ledger-check`). Added preregistered empirical certifications (LaStraj, LASR held-out test split, LinuxArena 217 with and without environment-split calibration) and a post hoc decomposition of certified risk.
 - **Session 8, composition bridge.** `ComposeAvg.lean`: composition with the population-average trusted miss rate, so certified ROC bands plug in.
+- **Session 8, review response.** `ComposeBlindSpot.lean` (negative result), post hoc statistical audit, assurance manifests with a no-promotion checker, CI fast tier, roadmap reorganised around one end-to-end safety case.

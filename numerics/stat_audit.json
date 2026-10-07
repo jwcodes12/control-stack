@@ -1,0 +1,73 @@
+{
+ "lasr": {
+  "conditions": 42,
+  "max_dup_rows": 0,
+  "epochs_seen": [
+   1
+  ],
+  "rows_minus_distinct_tasks_max": 0,
+  "task_overlap_range": [
+   84,
+   318
+  ],
+  "example": {
+   "honest": {
+    "n": 345,
+    "distinct_tasks": 345,
+    "dup_rows": 0,
+    "epochs": {
+     "1": 345
+    }
+   },
+   "attack": {
+    "n": 183,
+    "distinct_tasks": 183,
+    "dup_rows": 0,
+    "epochs": {
+     "1": 183
+    }
+   },
+   "task_overlap_honest_attack": 169
+  }
+ },
+ "linuxarena": {
+  "honest_main_task_ids_present": 0,
+  "honest_repeated_env_main_task": 245,
+  "attack_side_task_ids_present": 0,
+  "honest_main_score_present": 0,
+  "honest_main_success_mean": 0.0,
+  "honest_main_score_mean": null
+ },
+ "linuxarena_matched_split": {
+  "n_honest": 161,
+  "n_attack": 56,
+  "rows": [
+   {
+    "name": "score_ge_8",
+    "safe_false_positive_count": 3,
+    "backdoor_true_positive_count": 7,
+    "fpr_interval": [
+     "57/25000",
+     "3239/50000"
+    ],
+    "tpr_interval": [
+     "787/20000",
+     "6853/25000"
+    ]
+   },
+   {
+    "name": "score_ge_10",
+    "safe_false_positive_count": 0,
+    "backdoor_true_positive_count": 0,
+    "fpr_interval": [
+     "0",
+     "97/3125"
+    ],
+    "tpr_interval": [
+     "0",
+     "1733/20000"
+    ]
+   }
+  ]
+ }
+}

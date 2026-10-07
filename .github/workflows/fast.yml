@@ -1,0 +1,43 @@
+name: fast-checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Banned tokens in proofs and ledger statements
+        run: |
+          ! grep -nE '\bsorry\b|\badmit\b|native_decide|implemented_by|@\[extern' proofs/*.lean ledger/*.lean ControlStack/*.lean ControlStack.lean
+      - name: Data hashes match the preregistrations
+        run: |
+          (cd data/linuxarena && sha256sum -c SHA256SUMS)
+          (cd data/redwood-leaderboard && sha256sum -c SHA256SUMS)
+      - name: Re-run preregistered LinuxArena and LaStraj band analyses and compare
+        run: |
+          cd numerics
+          cp linuxarena_split/summary.json /tmp/split_before.json
+          python3 linuxarena_split.py > /dev/null
+          python3 - <<'PY'
+          import json
+          a=json.load(open('/tmp/split_before.json')); b=json.load(open('linuxarena_split/summary.json'))
+          assert a==b, "LinuxArena split certificate changed"
+          print("LinuxArena split certificate reproduced")
+          PY
+          python3 lastraj_bands.py > /dev/null && git diff --exit-code lastraj_roc_bands.json
+      - name: Assurance manifests are consistent (no category promotion)
+        run: python3 assurance/check_manifests.py passed && git diff --stat assurance
+  lean-vcvio:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Build the VCVio project (slow)
+        run: ~/.elan/bin/lake build

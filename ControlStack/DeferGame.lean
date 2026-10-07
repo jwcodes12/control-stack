@@ -1,8 +1,9 @@
 /-
 VCVio operational bridge for audit-then-defer deployment.
 
-At exhausted audit budget, a fresh halt computation may safely stop the run; if it
-continues, a service computation may safely incriminate a flagged bad submission.
+At exhausted audit budget, a fresh halt computation may safely stop the run. On a
+bad flagged submission, service catches it with its measured probability; if it
+misses, the trusted replacement stays in place and deployment continues.
 -/
 import ControlStack.RefinementProof
 
@@ -13,7 +14,7 @@ open ControlStack.Refine
 
 abbrev Service (X Z : Type) := Hist X Z → X → Z → ℝ
 
-/-- Service-dependent catastrophe recursion from the ledger defer statement. -/
+/-- Service-dependent catastrophe recursion from the defer statement. -/
 noncomputable def catV {X Z : Type} [Fintype X] [Fintype Z]
     (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ)
     (φ : Z → ℝ) (π : Hist X Z → X → ℝ)
@@ -47,8 +48,10 @@ def deployV {X Z : Type} (Bad : X → Prop) [DecidablePred Bad]
       else do
         let halt ← Halt h x z
         if halt then pure false
-        else if Bad x then
-          (fun caught => !caught) <$> Svc h x z
+        else if Bad x then do
+          let caught ← Svc h x z
+          if caught then pure false
+          else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
         else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
 
 /-- One operational step, expanded over the finite output spaces. -/
@@ -66,7 +69,10 @@ theorem deployV_step {X Z : Type} [Fintype X] [Fintype Z]
              else deployV Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)]) : ProbComp Bool)]
            else Pr[= true | (if Bad x then do
              let halt ← Halt h x z
-             if halt then pure false else (fun caught => !caught) <$> Svc h x z
+             if halt then pure false else do
+               let caught ← Svc h x z
+               if caught then pure false
+               else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
              else do
              let halt ← Halt h x z
              if halt then pure false else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) : ProbComp Bool)])) := by
@@ -90,12 +96,18 @@ theorem halt_then_real (H K : ProbComp Bool) :
       (1 - (Pr[= true | H]).toReal) * (Pr[= true | K]).toReal := by
   rw [halt_then_prob, ENNReal.toReal_mul, ControlStack.Refine.probOutput_false_toReal]
 
-/-- On a bad flag, the service's safe output is inverted into catastrophe. -/
-theorem halt_service_real (H S : ProbComp Bool) :
-    (Pr[= true | do let halt ← H; if halt then pure false else (fun caught => !caught) <$> S]).toReal =
-      (1 - (Pr[= true | H]).toReal) * (1 - (Pr[= true | S]).toReal) := by
-  rw [halt_then_prob, ENNReal.toReal_mul, ControlStack.Refine.probOutput_false_toReal,
-    ControlStack.Refine.probOutput_not_true, ControlStack.Refine.probOutput_false_toReal]
+/-- On a missed service check, the replacement stays in place and the continuation
+is reached. -/
+theorem halt_service_continue_real (H S C : ProbComp Bool) :
+    (Pr[= true | do
+      let halt ← H
+      if halt then pure false else do
+        let caught ← S
+        if caught then pure false else C]).toReal =
+      (1 - (Pr[= true | H]).toReal) *
+        (1 - (Pr[= true | S]).toReal) * (Pr[= true | C]).toReal := by
+  rw [halt_then_real, halt_then_real]
+  ring
 
 theorem calibrated_exhausted_benign_real (H C : ProbComp Bool) (η : ℝ)
     (hH : (Pr[= true | H]).toReal = η) :
@@ -103,12 +115,16 @@ theorem calibrated_exhausted_benign_real (H C : ProbComp Bool) (η : ℝ)
       (1 - η) * (Pr[= true | C]).toReal := by
   rw [halt_then_real, hH]
 
-theorem calibrated_exhausted_bad_real (H S : ProbComp Bool) (η a : ℝ)
+theorem calibrated_exhausted_bad_real (H S C : ProbComp Bool) (η a c : ℝ)
     (hH : (Pr[= true | H]).toReal = η)
-    (hS : (Pr[= true | S]).toReal = a) :
-    (Pr[= true | do let halt ← H; if halt then pure false else (fun caught => !caught) <$> S]).toReal =
-      (1 - η) * (1 - a) := by
-  rw [halt_service_real, hH, hS]
+    (hS : (Pr[= true | S]).toReal = a)
+    (hC : (Pr[= true | C]).toReal = c) :
+    (Pr[= true | do
+      let halt ← H
+      if halt then pure false else do
+        let caught ← S
+        if caught then pure false else C]).toReal = (1 - η) * (1 - a) * c := by
+  rw [halt_service_continue_real, hH, hS, hC]
 
 theorem calibrated_audit_escape_real (A : ProbComp Bool) (r : ℝ)
     (hA : (Pr[= true | A]).toReal = r) :
@@ -138,8 +154,8 @@ end ControlStack.DeferGame
 namespace ControlStack.DeferGame
 open OracleComp
 open ControlStack.Refine
-/-- At an exhausted budget, a bad flag is catastrophic only when both the
-halt coin and the service fail to return a safe outcome. -/
+/-- At an exhausted budget, a bad flag reaches continuation only when both
+the halt coin and service miss. -/
 theorem exhausted_benign_probability (H C : ProbComp Bool) :
     Pr[= true | do
       let halt ← H
@@ -150,15 +166,16 @@ theorem exhausted_benign_probability (H C : ProbComp Bool) :
   simp only [Fintype.sum_bool]
   simp
 
-theorem exhausted_bad_probability (H S : ProbComp Bool) :
+theorem exhausted_bad_then_probability (H S C : ProbComp Bool) :
     Pr[= true | do
       let halt ← H
-      if halt then pure false else (fun caught => !caught) <$> S] =
-      Pr[= false | H] * Pr[= false | S] := by
-  rw [probOutput_bind_eq_tsum]
-  rw [tsum_fintype]
-  simp only [Fintype.sum_bool]
-  simp [ControlStack.Refine.probOutput_not_true]
+      if halt then pure false else do
+        let caught ← S
+        if caught then pure false else C] =
+      Pr[= false | H] * Pr[= false | S] * Pr[= true | C] := by
+  rw [halt_then_prob]
+  rw [halt_then_prob]
+  exact (mul_assoc _ _ _).symm
 
 /-- Exact ENNReal recursion induced by the operational defer game. -/
 noncomputable def catVE {X Z : Type} [Fintype X] [Fintype Z]
@@ -174,7 +191,8 @@ noncomputable def catVE {X Z : Type} [Fintype X] [Fintype Z]
        Pr[= false | D z] * (if u < b then
          (if Bad x then Pr[= false | A h x z]
           else catVE Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)]))
-        else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z]
+        else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z] *
+          catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
           else Pr[= false | Halt h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])))
 
 /-- The operational catastrophe probability is exactly `catVE`, with no conversion
@@ -195,7 +213,8 @@ theorem deployV_eq_catVE {X Z : Type} [Fintype X] [Fintype Z]
       rw [deployV_step]
       by_cases hub : u < b
       · simp [catVE, ih, hub, ControlStack.Refine.probOutput_not_true]
-      · simp [catVE, ih, hub, ControlStack.Refine.probOutput_not_true, exhausted_bad_probability, exhausted_benign_probability]
+      · simp [catVE, ih, hub, ControlStack.Refine.probOutput_not_true,
+          exhausted_bad_then_probability, exhausted_benign_probability, mul_assoc]
 
 theorem catVE_ne_top {X Z : Type} [Fintype X] [Fintype Z]
     (Bad : X → Prop) [DecidablePred Bad]
@@ -218,7 +237,8 @@ theorem catVE_transition_ne_top {X Z : Type} [Fintype X] [Fintype Z]
       Pr[= false | D z] * (if u < b then
         (if Bad x then Pr[= false | A h x z]
          else catVE Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)]))
-       else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z]
+       else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z] *
+         catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
          else Pr[= false | Halt h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]))) ≠ ⊤ := by
   apply ENNReal.add_ne_top.2
   constructor
@@ -234,10 +254,19 @@ theorem catVE_transition_ne_top {X Z : Type} [Fintype X] [Fintype Z]
       · simp [hx]
       · simp [hx]
         exact catVE_ne_top Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)])
-    · simp [hu]
+    · rw [if_neg hu]
       by_cases hx : Bad x
       · simp [hx]
-        exact ENNReal.mul_ne_top probOutput_ne_top probOutput_ne_top
+        have hc : catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) ≠ ⊤ :=
+          catVE_ne_top Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
+        have hsc : Pr[= false | Svc h x z] *
+            catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) ≠ ⊤ :=
+          ENNReal.mul_ne_top probOutput_ne_top hc
+        have hfinal : Pr[= false | Halt h x z] *
+            (Pr[= false | Svc h x z] *
+              catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])) ≠ ⊤ :=
+          ENNReal.mul_ne_top probOutput_ne_top hsc
+        simpa [mul_assoc] using hfinal
       · simp [hx]
         exact ENNReal.mul_ne_top probOutput_ne_top
           (catVE_ne_top Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]))
@@ -254,7 +283,8 @@ theorem catVE_inner_ne_top {X Z : Type} [Fintype X] [Fintype Z]
         Pr[= false | D z] * (if u < b then
           (if Bad x then Pr[= false | A h x z]
            else catVE Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)]))
-         else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z]
+       else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z] *
+         catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])
            else Pr[= false | Halt h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])))) ≠ ⊤ := by
   apply ENNReal.sum_ne_top.2
   intro z _

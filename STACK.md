@@ -191,7 +191,7 @@ calls, and it supplies no structural B̄ to layer 1 (Reviewer B B5).
   `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. `StratifiedGame.lean`
   models independent per-class hard-slack tests and proves their exact binomial product survival law, seeded protocol
   decomposition, and end-to-end bound `(1-r)+r·L·(sc+1)/(m+1)` under classwise domination, class coverage, and recall.
-`DeferGame.lean` proves exact operational equality with a service-dependent `ENNReal` recursion, with a proved one-step probability expansion. The attempted calibrated real-valued bridge exposed a semantic mismatch: on an exhausted bad row, the operational game terminates with catastrophe probability `(1-η)(1-a)`, but `catV` multiplies that term by the recursive continuation value. The ledger theorem is not connected to this operational game; reconcile the intended post-service behavior before promoting a bridge. No frozen statement was changed.
+`DeferGame.lean` proves exact operational equality with a service-dependent `ENNReal` recursion and a one-step probability expansion. The exhausted-budget semantics are aligned with the ledger recursion: a caught bad submission stops safely, while a missed service check keeps the trusted replacement in place and continues. The calibrated real-valued induction connecting the operational probability to ledger `catV` remains unproved. No frozen statement was changed.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

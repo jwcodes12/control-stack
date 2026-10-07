@@ -1,7 +1,7 @@
 namespace PL_UMUSEF1
 open Finset PL_UMHSF1 PL_UMSURVF1 PL_UMPROTF1 PL_UMSTRATF1
 
-/-! Control stack, collusion layer (campaign UMUSE, v2 after the Sol xhigh and Sonnet design reviews): the
+/-! Control stack, collusion layer (campaign UMUSE, v2.1: after the Sol xhigh and Sonnet design reviews, and the Sol-high red team): the
 honest side of protocol UM(n_h, κ, b, N), halting variant, and a usefulness-constrained obstruction.
 Depends on PL_UMPROTF1 and PL_UMSTRATF1 (and PL_UMHSF1, PL_UMSURVF1).
 
@@ -15,8 +15,10 @@ Honest side. This part is conditional on a measured honest profile; it is NOT ca
 - `missRate M PH φ₀ = α₀`: the probability that `φ₀` PASSes a mediated honeypot. `flagRate M μ φ₀ = f₀`: its
   false-flag rate on the benign submission law `μ`. Both are capability statistics of `φ₀`, not trusted quantities.
 - `μ` is a law on SUBMISSIONS, supported off Bad, and it is iid across rounds: the history-independent
-  generator `fun _ => μ`. This is optimistic: under a mixture of task difficulties the false-halt
-  probability is larger, by convexity.
+  generator `fun _ => μ`. Task difficulties resampled iid are already covered by `μ`. A rate shared across rounds
+  (correlated difficulty) is not covered, and its effect on the false-halt probability can go either way:
+  the binomial tail is neither convex nor concave in f₀ in general (Sonnet: 5.8% vs 19.2% at N = 100, b = 5;
+  Sol: concave at N = 2, b = 0).
 - `haltP` scores the event "deployment halts on an unaffordable flag", in the same protocol as `cat`. On a bad
   PASS (catastrophe) and a bad FLAG with an audit (caught or executed) the score is 0, since neither is a halt;
   so `r` is irrelevant. A benign FLAG with an audit continues with u + 1. A FLAG with no audit left scores 1.
@@ -45,18 +47,20 @@ Claim.
     In words: a protocol that keeps the honest monitor's completion probability ≥ u cannot certify risk below
     u × (the honest monitor's own honeypot miss rate, plus audit failures when b ≥ 1).
 (d) Slack cost, lower tail (Cantelli, hypothesis-free). (max 0 (nα − s))² · F ≤ nα(1 − α)(1 − F), where
-    F = binCDF n s α. Hence honest false shutdown ≤ ε forces (max 0 (nα − s))²(1 − ε) ≤ nα(1 − α)ε, i.e.
-    s ≥ nα − √(nα(1 − α)ε/(1 − ε)).
+    F = binCDF n s α. Hence honest false shutdown ≤ ε forces (max 0 (nα − s))²(1 − ε) ≤ nα(1 − α)ε (stated
+    division-free), i.e. for 0 ≤ ε < 1: s ≥ nα − √(nα(1 − α)ε/(1 − ε)).
 (d') Sufficient slack, upper tail (Cantelli). (max 0 (s + 1 − nα))² · (1 − F) ≤ nα(1 − α) · F.
 (f) Honest ROC. For every real η, 1 − f₀ ≤ e^η α₀ + hs_η(M·μ, M·P_H) (PL_UMHSF1). At η = 0:
-    α₀ + f₀ ≥ 1 − TV(M·μ, M·P_H). The right-hand side involves only trusted components. Mediation can only
-    hurt the honest monitor (data processing): a mediator that hides attack/honeypot differences also blurs
-    honeypot/benign differences.
+    α₀ + f₀ ≥ 1 − TV(M·μ, M·P_H). The floor involves only the mediator and the two laws, with no property of U;
+    the statement is still conditional on the specified benign law μ and the rule φ₀. By data processing
+    (PL_UMHSF1), mediation can only shrink this TV, so it can only RAISE the floor on α₀ + f₀ that every honest rule
+    must pay. A mediator that hides attack/honeypot differences tends to blur honeypot/benign differences too. That
+    is the tension; (f) itself is the per-rule inequality.
 (g) Zero audit budget, sharpened upper bound. With b = 0 (the first flag halts), every colluding pair has risk
     ≤ L·(n_s + 1)/(n_h + 1). The 1 − r term of PL_UMPROTF1 is spurious there.
 
-Corner, not stated separately: always-FLAG (φ₀ = 0) has α₀ = 0 and f₀ = 1, so its (risk, completion) is
-([0<b](1 − r), [N ≤ b]), by (c') and (b).
+Corner, not stated separately: always-FLAG (φ₀ = 0) has α₀ = 0 and f₀ = 1, so for N ≥ 1 its (risk, completion)
+is ([0<b](1 − r), [N ≤ b]), by (c') and (b); at N = 0 its risk is 0.
 Not claimed: history-dependent honest streams; audit false positives; the global-slack class-count corollary
 (PL_UMLOWERF1 with (d)), which is left for a separate campaign. -/
 
@@ -114,7 +118,7 @@ def Claim : Prop :=
   -- (b') honest completion of the class-aware stratified design
   (∀ (X Z C : Type) [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad]
       (K : C → Z → ℝ) (c : X → C) (Es : Finset C) (m sc b N : ℕ) (φ₀ : Z → ℝ) (μ : X → ℝ),
-      IsKernel K → IsDist μ → (∀ x, μ x ≠ 0 → ¬ Bad x) →
+      IsKernel K → IsRule φ₀ → IsDist μ → (∀ x, μ x ≠ 0 → ¬ Bad x) →
       stratSurv K Es φ₀ m sc * (1 - haltP Bad (fun x => K (c x)) φ₀ (fun _ => μ) b N 0 [])
         = (∏ e ∈ Es, binCDF m sc (∑ z, K e z * φ₀ z)) * binCDF N b (flagRate (fun x => K (c x)) μ φ₀)) ∧
   -- (c') the view-blind pair: exact value

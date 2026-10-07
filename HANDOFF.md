@@ -3,16 +3,29 @@
 Read this first in a fresh session, then STACK.md (status), DESIGN.md v1 (model and assumptions) and SESSION.md (what
 happened). The next-session prompt is `~/research/proofledger/prompts/next-session-control-stack-2.md`.
 
-## IN FLIGHT (session 2, 2026-10-07 from ~03:00 UTC)
-- DONE: SANDBOX2F1 verified (frozen 094db3d3379a) and UMLOWERF1 verified (restated to Sol's fixed text, frozen
-  8415ec049329; the proof was adapted from the original). Both have fidelity audits and STACK rows, and both repos are committed.
-- **UMUSE (usefulness companion), in design review.** Draft statement `ledger/UMUSE.lean` (it compiles after the
-  UMPROTF1 closure; checker `/var/tmp/trystmt.py UMUSEF1 <file> UMPROTF1`). Numerics are in
-  `numerics/umuse_frontier.py` / `.out`. Reviews: Sol xhigh → `reviews/umuse-design-review-sol.md`; Sonnet subagent →
-  `reviews/umuse-design-review-sonnet.md`; prompt `reviews/umuse-design-review-prompt.md`.
-  - Next: disposition the reviews, then `pl campaign UMUSE --question ledger/q_UMUSE.md`, `pl ingest-forms`, red team
-    (sol-high, flash), prover, gate, fidelity audit.
-- Dry-run gate without recording: `python3 /var/tmp/trygate.py <CID> <proof.lean> claim|witness`.
+## IN FLIGHT (session 2, 2026-10-07 from ~03:00 UTC; updated ~04:05)
+- DONE this session:
+  - SANDBOX2F1 verified (frozen 094db3d3379a) and UMLOWERF1 verified (frozen 8415ec049329).
+  - **VCVio refinement proved** (`ControlStack/RefinementProof.lean`, 394 lines, standard axioms): the deploy game
+    equals `catG` exactly; the protocol factorises; the end-to-end bound; attainment; witness.
+  - External critique and a related-work audit (`reviews/external-critique-2026-10-07.md`,
+    `reviews/related-work-2026-10-07.md`); STACK.md has a prior-art and positioning section.
+- **UMUSEF1 (campaign UMUSE).** v2 drafted after the Sol xhigh and Sonnet design reviews (v1 was rejected: the κ
+  bound was false; the mimicry floor needed PH ⊆ Bad).
+  - Sol-high red team: revise, minor (`IsRule φ₀` in (b'), docstring fixes). v2.1 with the fixes is in
+    `ledger/UMUSE.lean` and compiles.
+  - Next: read the Flash verdict; `pl restate UMUSEF1 ledger/UMUSE.lean --actor orchestrator`; re-red-team; prover
+    (`tools/mkprover.py UMUSEF1`, then an isolated Opus subagent); gate; fidelity audit; STACK row.
+- **UMDEFERF1 (campaign UMDEFER).** v2 after Sol's xhigh review (major: resource accounting, conditional α contract,
+  finite retry certificate, false asymptotic prose, prior art from Shlegeris' win/continue/lose).
+  - Red team (sol-high, flash) running: log `/var/tmp/redteam6.log`. A Sonnet v2 review is running →
+    `reviews/umdefer-v2-review-sonnet.md`.
+- **Awaiting John:** whether the next step is the critique's suggested project: Lean-check a Games-for-AI-Control
+  trusted-monitoring certificate, which merges with N1b. Alternatives: a SOUNDGATE gate model (turns A4/A5/A11
+  into consequences of complete mediation), or the action layer with Cedar.
+- Tools:
+  - dry-run gate without recording: `python3 /var/tmp/trygate.py <CID> <proof.lean> claim|witness`;
+  - statement check: `/var/tmp/trystmt.py <CID> <file> <deps,comma>`.
 
 ## Where things are
 | what | where |

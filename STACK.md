@@ -185,7 +185,7 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. `StratifiedGame.lean`
   models independent per-class hard-slack tests and proves their exact binomial product survival law, seeded protocol
   decomposition, and end-to-end bound `(1-r)+r·L·(sc+1)/(m+1)` under classwise domination, class coverage, and recall.
-  `DeferGame.lean` now defines the operational defer game and matching service-dependent `catV` recursion; the VCVio refinement equality remains open. The ledger theorem is not yet connected to this operational game.
+  `DeferGame.lean` defines the operational defer game and matching service-dependent `catV` recursion, with a proved one-step probability expansion; the real-valued VCVio refinement equality remains open. The ledger theorem is not yet connected to this operational game.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

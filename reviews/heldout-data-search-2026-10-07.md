@@ -59,3 +59,19 @@ Use BashArena bashbench2_v1 (600 honest / 600 attack, MIT, per-sample monitor sc
   (b) request EquiStamp/Redwood access to the LinuxArena 217 monitored runs (250/150), then predeclare a split;
   (c) score a public held-out split ourselves with a fixed trusted monitor (e.g. the 1,200-row APPS test split on HF,
       or BashArena raw honest + a public attack set), which costs API calls.
+
+## Follow-up (John's notes, checked 2026-10-07)
+- **LASR "When can we trust untrusted monitoring?" data IS a held-out test split.** The LASR code assigns even record
+  indices to `even_test`; all 43,698 sample ids in our local archive are even. Used in `PREREG-LASR-TEST.md`.
+- **LinuxArena 217 monitored evals:** re-checked at ~22:00 UTC; still HTTP 401 for both runs.
+- **Prior art confirmed:** `rocci` (PyPI, https://pypi.org/project/rocci/) gives distribution-free simultaneous ROC
+  confidence bands. Gao, "From Probe Scores to Alarm Policies: Operational Validity of Activation Monitors for
+  Language-Model Agents", arXiv:2610.04575 (DAI 2026): frozen targets, calibration/test separation, false-alarm budgets,
+  abstention when evidence is insufficient. Classical: exact/distribution-free ROC bands (e.g. PubMed 1857255;
+  Macskassy & Provost, NYU CeDER-05-12).
+- **Novelty statement to use:** not "simultaneous ROC bands" (known). At most: exact finite-sample simultaneous ROC
+  bands fed into a machine-checked (Lean, kernel-evaluated) worst-case control-game certificate against adaptive
+  red-team policies, evaluated on frozen monitors and held-out trajectories. Not yet checked: whether rocci's bands
+  are tighter than our Bonferroni Clopper–Pearson bands (likely; could be swapped in if they output rational endpoints).
+- Not yet examined: Scale MRT / SHADE-Arena (CC BY-NC; many monitors per trajectory, so not independent samples) and
+  TraceGuard (279/240 BashArena; holdout status unclear) as secondary stress tests.

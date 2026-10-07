@@ -1,4 +1,4 @@
-"""TMGAC checks (exact): (Z) 1 - risk(constRed beta) on gac = zGAC (Sonnet's App. C form) when qa(m,0) = 0, f(0) = 0;
+"""TMGAC checks (exact; uGAC corrected per GAC App. C.2: audited safe solutions are USED, reward 1 - qd + qa): (Z) 1 - risk(constRed beta) on gac = zGAC (Sonnet's App. C form) when qa(m,0) = 0, f(0) = 0;
 (UZ) honest reward of gac's safe rows with rew = 1 - qd(n+1,c) equals uGAC; (T5') exG3 numbers; (WLOG) C = 0."""
 from fractions import Fraction as F
 import random
@@ -25,7 +25,7 @@ def zGAC(f, qa, qd, beta, m, c):
 def uGAC(qa, qd, m, c):
     if m == 0: return F(0)
     if c == 0: return (1 - qd(m, 0)) + uGAC(qa, qd, m - 1, 0)
-    return (1 - qd(m, c)) + qa(m, c) * uGAC(qa, qd, m - 1, c - 1) + (1 - qa(m, c)) * uGAC(qa, qd, m - 1, c)
+    return ((1 - qd(m, c)) + qa(m, c)) + qa(m, c) * uGAC(qa, qd, m - 1, c - 1) + (1 - qa(m, c)) * uGAC(qa, qd, m - 1, c)
 def honest(m, c, TA, TD, FA, rew):
     if m == 0: return F(0)
     n = m - 1; cat, K = gac_rows(n, c, False, TA, TD, FA)
@@ -50,7 +50,7 @@ for trial in range(300):
         # zGAC uses f(qd) directly; equal to TD when f(qd) >= f(qa)
         if all(f(qd(m, c)) >= f(qa(m, c)) for m in range(1, M + 1) for c in range(C + 1)):
             if 1 - r != z: bad += 1; print("Z mismatch", M, C, beta, 1 - r, z)
-    u = uGAC(qa, qd, M, C); h = honest(M, C, TA, TD, FA, lambda n, c: 1 - qd(n + 1, c))
+    u = uGAC(qa, qd, M, C); h = honest(M, C, TA, TD, FA, lambda n, c: 1 - qd(n + 1, c) + qa(n + 1, c))
     if u != h: bad += 1; print("U mismatch", M, C, u, h)
 print("Z/U mismatches:", bad)
 # exG3
@@ -82,3 +82,23 @@ for n in range(3):
             cat, K = gac_rows(n, c, a, TA3, TD3, FA3)
             if cat + sum(k * V[n][c2] for c2, k in K.items()) > V[n + 1][c]: ok = False; print("viol", n, c, a)
 print("exV3 certificate ok:", ok, [ (n,c,vstar(n,c,TA3,TD3,FA3)) for n in range(4) for c in (0,1)])
+
+# --- round-2 review additions
+def risk_pol(pol, m, c, TA, TD, FA):   # pol(c) -> P(backdoor) depends on the current coin count only
+    if m == 0: return F(0)
+    n = m - 1; tot = F(0)
+    for a, pa in ((True, pol(c)), (False, 1 - pol(c))):
+        cat, K = gac_rows(n, c, a, TA, TD, FA)
+        tot += pa * (cat + sum(k * risk_pol(pol, n, c2, TA, TD, FA) for c2, k in K.items()))
+    return tot
+print("coinRed on exG3 (backdoor iff no coin):", risk_pol(lambda c: F(1) if c == 0 else F(0), 3, 1, TA3, TD3, FA3), "vs 13/50")
+# exG3 as gacQ: f q = min 1 (3q/2); qa = qd = 1/2 while c > 0; qa(m,0) = 0, qd(m,0) = 1/2
+f = lambda q: min(F(1), F(3, 2) * q)
+qa3 = lambda m, c: F(1, 2) if c > 0 else F(0); qd3 = lambda m, c: F(1, 2)
+assert all(f(qa3(n + 1, c)) == TA3(n, c) and f(qd3(n + 1, c)) == TD3(n, c) and qa3(n + 1, c) == FA3(n, c) for n in range(5) for c in (0, 1))
+print("exG3 = gacQ (f = min 1 (3q/2), qa = qd = 1/2): ok; corrected usefulness uGAC(3,1) =", uGAC(qa3, qd3, 3, 1))
+# small adapter witness: f q = min 1 (3q), qa = (0 | 1/4), qd = (1/4 | 1/2), beta 1/2, m = 2, c = 1
+fw = lambda q: min(F(1), 3 * q); qaw = lambda m, c: F(0) if c == 0 else F(1, 4); qdw = lambda m, c: F(1, 4) if c == 0 else F(1, 2)
+print("adapter witness: zGAC =", zGAC(fw, qaw, qdw, F(1, 2), 2, 1), " usefulness =", uGAC(qaw, qdw, 2, 1))
+# audited-only witness: one problem, one coin, qa = qd = 1
+print("audited-only usefulness (m=1,c=1,qa=qd=1):", uGAC(lambda m, c: F(1) if c > 0 else F(0), lambda m, c: F(1), 1, 1))

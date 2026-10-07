@@ -1,0 +1,46 @@
+import ControlStack.Spike
+import ControlStack.OutcomeProof
+import ControlStack.SoftHockey
+import ControlStack.StratifiedGame
+import ControlStack.DeferMono
+import ControlStack.UseQ
+import ControlStack.AdaptiveSharp
+import ControlStack.AdaptiveUMADAPT
+
+/-!
+Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
+
+- `ControlStack/Spike.lean`: T1 for arbitrary `ProbComp` distinguishers through a `ProbComp` mediator.
+- `ControlStack/HoneypotBridgeProof.lean` restates `ControlStack/HoneypotBridge.lean` (the statement file, kept
+  separately and not imported here because both declare the same names) and proves it.
+- `ControlStack/RefinementProof.lean` and `ControlStack/OutcomeProof.lean` import and prove the statement files
+  `ControlStack/Refinement.lean` and `ControlStack/Outcome.lean`.
+- `SoftSlack`/`SoftHockey`, `StratifiedGame` and `DeferGame`/`DeferMono`: game-level versions of the soft-slack,
+  hockey-stick, stratified and audit-then-defer results.
+- `UseQ`: rational usefulness checker and its soundness bridge.
+- `AdaptiveBalance`, `AdaptiveSharp`, `AdaptiveGeneric`, `AdaptiveUMADAPT`: the sharper adaptive converse core.
+
+The axiom reports below should list only `propext`, `Classical.choice` and `Quot.sound`.
+-/
+
+#print axioms ControlStack.Spike.distinguish_le_tv
+#print axioms ControlStack.Spike.mediated_tv_le
+#print axioms ControlStack.Bridge.bridge
+#print axioms ControlStack.Refine.deployG
+#print axioms ControlStack.Refine.protocol
+#print axioms ControlStack.Refine.endToEnd
+#print axioms ControlStack.Refine.attain
+#print axioms ControlStack.Refine.witness
+#print axioms ControlStack.OutcomeGame.marginal
+#print axioms ControlStack.OutcomeGame.gameLaw
+#print axioms ControlStack.OutcomeGame.honest
+#print axioms ControlStack.OutcomeGame.pareto
+#print axioms ControlStack.OutcomeGame.witness
+#print axioms ControlStack.SoftSlack.softEndToEnd
+#print axioms ControlStack.SoftHockey.softEndToEndHockey
+#print axioms ControlStack.StratifiedGame.stratifiedProtocolEndToEnd
+#print axioms ControlStack.DeferGame.defer_bridge
+#print axioms ControlStack.DeferGame.defer_mono
+#print axioms ControlStack.UseQ.checkUseQ_sound
+#print axioms ControlStack.AdaptiveSharp.uniform_seed_risk_balanced
+#print axioms ControlStack.AdaptiveUMADAPT.sharp_uniform_adProtocolCatModel

@@ -40,6 +40,8 @@ status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.
 |---|---|
 | `STACK.md` | status table and positioning (start here) |
 | `DESIGN.md` | the formal model, assumptions A1–A11, theorem plan, disposition of the design reviews |
+| `DESIGN-A2.md` | sampled-ROC certificate design and an exploratory kernel-checked LASR interval-game example |
+| `COMPOSITION-N1-UMPROT.md` | current scope and assumptions for trusted/untrusted-monitoring composition |
 | `CORRESPONDENCE.md` | ControlArena / LASR vocabulary mapped to the formal objects |
 | `REUSE.md` | dependency decisions (VCVio, Mathlib, others considered) |
 | `LESSONS-section.md`, `HISTORY.md` | process lessons; what was verified when |
@@ -48,7 +50,7 @@ status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.
 | `proofs/<CID>.lean` | the gated proofs (`theorem claim`, `theorem witness`), one per CID |
 | `fidelity/<CID>.md` | orchestrator fidelity audits (statement vs. informal claim) |
 | `reviews/` | hostile design reviews, final reviews, an external critique and a related-work audit |
-| `numerics/` | exact brute-force checks in Python (standard library only) |
+| `numerics/` | exact brute-force checks and rational ROC/certificate generators |
 | `ControlStack/`, `ControlStack.lean`, `lakefile.lean` | the interface-level Lake project (Lean v4.34.0, VCVio) |
 | `ledger-check/` | a Mathlib v4.35.0-rc3 Lake project and `check.py`, which re-runs the ledger gate's check |
 | `core/UMDefs.lean` | an early encoding draft of the core definitions (not gated) |

@@ -30,6 +30,25 @@ These approximate decimals are for reading only; the generated artifacts store e
 
 The next data-backed run should substitute sample-derived rational interval endpoints and enumerate the clipped-box vertices above. Let `T` be the largest vertex count at any row (at most 12 under the stated three-coordinate model); use `T` model indices with row-wise selection. At 100 problems, 3 coin states and 2 actions, that is `600T` risk inequalities and `600T` lawfulness rows, each with at most 3 successor terms. At `T=12`, this is 7,200 of each. This is small as a mathematical table; the Lean source encoding and kernel reduction are the main implementation costs.
 
+## Empirical archive pipeline demonstration (2026-10-07)
+
+The local `proofledger/audit2/lasr_scores` archive contains labelled per-sample trusted-monitor scores from LASR Inspect runs. The reproducible example uses `closed-source-model__apps__self_rec/none_base`: 633 honest samples and 240 attack samples, score in `{0,…,10}`. `numerics/lasr_score_bands.py` computes bands at every integer cutoff, with ties kept together, and records the two input CSV hashes in [`numerics/lasr_selfrec_nonebase_roc_bands.json`](numerics/lasr_selfrec_nonebase_roc_bands.json). The threshold grid is fixed by the score scale; the Bonferroni allocation covers both rates at all 12 cutoffs for this condition.
+
+For the illustrative nested pair `audit score ≥ 7`, `defer score ≥ 3`, the simultaneous intervals are:
+
+| rate | observed count | interval |
+|---|---:|---:|
+| audit FPR | 0 / 633 | `[0, 1079/100000]` |
+| audit TPR | 70 / 240 | `[644/3125, 38901/100000]` |
+| defer FPR | 33 / 633 | `[289/10000, 2127/25000]` |
+| defer TPR | 218 / 240 | `[8373/10000, 239/250]` |
+
+`numerics/lasr_design_a2_certificate.py` clips the TPR interval box by `TPR_audit ≤ TPR_defer`, enumerates its four exact TPR vertices crossed with the audit-FPR endpoints (eight models), and emits the 100-problem/two-coin table. `numerics/emit_lasr_design_a2_lean.py` assembles that table with the frozen TMCERTF1 statement and its proof. The resulting `checkRiskQ` and `checkLawfulQ` instances both compiled by `decide +kernel` in the shared Lean project (4,800 risk inequalities); a further Lean theorem applies TMCERTF1 soundness to bound every history-dependent Red policy and admissible row selector. `#print axioms` reports only `propext`, `Classical.choice`, and `Quot.sound` for all three theorems. The full-information rectangular risk upper bound is about `0.577300`. The separate simple honest-reward floor is `22873/250 = 91.492` of 100, using only the defer-FPR upper endpoint; this is not a `checkUseQ` certificate.
+
+Reproduce with `python numerics/lasr_score_bands.py <honest.csv> <attack.csv> --condition <name> --output numerics/lasr_selfrec_nonebase_roc_bands.json`, then run `python numerics/lasr_design_a2_certificate.py` and `python numerics/emit_lasr_design_a2_lean.py`; compile the emitted file from `~/research/alignment-contrib/lean/StabilityDebate` with `lake env lean ~/research/control-stack/numerics/lasr_design_a2_certificate.lean`.
+
+This is a real-data pipeline demonstration, **not a deployment certificate or a valid claimed 95% confidence guarantee**. The archive is not established as a predeclared held-out IID sample from the target deployment; the condition was selected from a larger archive, and no adjustment across conditions was made. The confidence interpretation is conditional on the sampling assumptions in §1. The exact checker certifies the finite rational game induced by these intervals; it does not prove those intervals cover a deployment monitor or that the LASR task distribution matches the intended 100-problem GAC application.
+
 ## Assumptions and limits
 
 - The samples represent the deployed task distribution and monitor version; labels are correct; the backdoor class used for sampling covers the deployment class of concern.

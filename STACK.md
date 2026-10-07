@@ -156,7 +156,7 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
 
 ## Sharper adaptive converse in progress
 
-`ControlStack/AdaptiveBalance.lean` proves the discrete balancing lemma for exact class counts and the quotient/remainder bound. It does not yet connect the lemma to adaptive transcript probabilities; UMADAPTF1 remains the verified `t(1 − tn/k)` theorem.
+`ControlStack/AdaptiveBalance.lean` proves the discrete balancing lemma for exact class counts and the quotient/remainder bound. `ControlStack/AdaptiveSharp.lean` proves the weighted path aggregation and uniform-seed `t/k` corollary. The adaptive tester's all-FLAG path measure is not yet connected to those abstractions; UMADAPTF1 remains the verified `t(1 − tn/k)` theorem.
 
 ## Assumptions still unproved (what the stack does NOT give)
 1. **That any deployed mediator satisfies the trusted-component hypothesis** (domination constant L, or

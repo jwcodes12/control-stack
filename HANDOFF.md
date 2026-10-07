@@ -3,7 +3,7 @@
 
 # HANDOFF: control stack, state at end of session 2 (2026-10-07, ~07:30 UTC)
 
-> **Update 2026-10-07 (session 5 continuation):** Current roadmap is in `ROADMAP.md`. Added `numerics/roc_bands.py` and linked it from DESIGN-A2; real labelled data and the concrete Lean checker run are still outstanding. Added `COMPOSITION-N1-UMPROT.md` as a design note; no joint theorem is claimed yet. TMLIPF1 is a local draft with passing local claim/witness gates; external red-team transmission is awaiting explicit user approval. The anonymised private export was refreshed and pushed at `e809e70`.
+> **Update 2026-10-07 (session 5 continuation):** Current roadmap is in `ROADMAP.md`. Processed the LASR audit2 score archive into simultaneous rational ROC bands and a 100-step/two-coin table; `checkRiskQ`, `checkLawfulQ`, and a TMCERTF1-derived all-Red risk bound pass `decide +kernel` with standard axioms. This is not deployment evidence because the sample design/match is unestablished. Added `COMPOSITION-N1-UMPROT.md`; no joint theorem is claimed yet. TMLIPF1 is a local draft with passing local claim/witness gates; external red-team transmission is awaiting explicit user approval. The anonymised private export is being refreshed for these updates.
 
 Read this first in a fresh session, then STACK.md (status and positioning; revised after two final reviews),
 DESIGN.md v1 (model and assumptions A1–A11) and SESSION.md (what happened). Reviews of this session:

@@ -184,3 +184,4 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
    - multi-step attacks;
    - composition with trusted monitoring (a min, not a product, absent conditional independence);
    - LASR's retraining slack (an assumption about U's learning dynamics).
+7. **Sample-to-deployment gap.** DESIGN-A2 now contains a real-data LASR score archive demonstration, including exact simultaneous bands and a kernel-checked 100-problem interval game. Its source data are not established as predeclared held-out IID samples from the deployment distribution; this verifies the table/checker pipeline conditionally and does not discharge environmental validity.

@@ -7,8 +7,8 @@ from pathlib import Path
 
 
 HERE = Path(__file__).resolve().parent
-STATEMENT = Path(__file__).resolve().parents[1] / "ledger/TMCERT.lean"
-PROOF = Path(__file__).resolve().parents[1] / "proofs/TMCERTF1.lean"
+STATEMENT = Path(__file__).resolve().parent.parent / "ledger" / "TMCERT.lean"
+PROOF = Path(__file__).resolve().parent.parent / "proofs" / "TMCERTF1.lean"
 
 
 def frac(text: str) -> str:

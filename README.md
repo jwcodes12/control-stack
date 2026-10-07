@@ -57,7 +57,7 @@ status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.
 | `scout/` | read-only scout notes on VCVio and two related Lean repositories |
 
 Ledger CIDs (all verified): UMHSF1, UMSURVF1, UMPROTF1, UMSTRATF1, UMNOGOF1, UMLOWERF1, UMADAPTF1, UMUSEF1, UMDEFERF1,
-UMCERTF1, TMCERTF1, TMGACF1, UMADAPTF2, TMCERTUSF1, CANONF1, SANDBOXF1, SANDBOX2F1 (UMADAPTF2 is in `ledger/UMADAPT2.lean`, TMCERTUSF1 in `ledger/TMCERT_USEQ.lean`). CID `XF1` has its statement in `ledger/X.lean` and its proof in
+UMCERTF1, TMCERTF1, TMGACF1, UMADAPTF2, TMCERTUSF1, TMLIPF1, CANONF1, SANDBOXF1, SANDBOX2F1 (UMADAPTF2 is in `ledger/UMADAPT2.lean`, TMCERTUSF1 in `ledger/TMCERT_USEQ.lean`). CID `XF1` has its statement in `ledger/X.lean` and its proof in
 `proofs/XF1.lean`; dependencies are listed in `ledger-check/check.py`.
 
 ## How to check
@@ -120,3 +120,10 @@ The download is large: the dependency checkout and builds took about 8.5 GB, plu
 ## License
 
 Apache-2.0; see [LICENSE](LICENSE). Copyright 2026 John Watkins.
+
+## Empirical certification (session 8)
+`PREREG-LASTRAJ.md`, `PREREG-LASR-TEST.md`, `PREREG-LINUXARENA.md`, `PREREG-LINUXARENA-SPLIT.md` are preregistered
+certifications of trusted monitors on public data (Redwood/LinuxArena Control Leaderboard; the LASR untrusted-monitoring
+release, whose logs are its held-out test split). `CERTIFICATE-DECOMPOSITION.md` separates monitor quality from
+statistical margin. Model names in these files and in `data/` name the EVALUATED systems (attackers, monitors), not
+reviewers. Data are evaluation-only per their publishers; do not train on them.

@@ -58,6 +58,7 @@ Status legend:
 |---|---|---|
 | `ControlStack/Spike.lean` | T1 for *arbitrary* `ProbComp` distinguishers through a `ProbComp` mediator: \|Pr[D=1 ∣ mediated attack] − Pr[D=1 ∣ mediated honeypot]\| ≤ tvDist; data processing | checked, standard axioms |
 | `ControlStack/HoneypotBridgeProof.lean` | The honeypot test as a crypto-style game. For arbitrary `ProbComp` honeypot law H, mediator M and monitor D (stateless, with fresh coins per call, automatically in `ProbComp`), the number of PASSes among n honeypots is exactly binomial: Pr[#PASS ≤ s] = binCDF(n, s, Pr[D passes a mediated honeypot]). This is the first operational bridge to UMSURVF1's quantity, by textually identical `binCDF` definitions across the two projects | checked (67-line proof), standard axioms |
+| `ControlStack/Refinement.lean` + `RefinementProof.lean` | **Operational refinement and end-to-end bound.** The halting protocol is a trace-level `ProbComp` game: shared seed; the honeypot test (fresh calls); then deployment with an adaptive `ProbComp` generator, a fresh mediator, a stateless monitor `D ω z`, and an audit kernel `A h x z` that may depend on the history and use fresh coins; absorbing shutdown on a catch; halt on an unaffordable flag. Proved (394 lines, isolated Opus): (i) **DeployG**: P(catastrophe in deployment) = `catG` exactly, the core `cat` with the audit's actual recall function, with no hypotheses. Hence ≤ `cat` with constant r under conditional recall ≥ r, and = at exact recall. (ii) **Protocol**: the game factorises as Σ_ω Pr[ω]·binCDF(n_h, n_s, h_ω)·P(deploy catastrophe | ω). (iii) **EndToEnd**: under L-domination, every colluding pair and every audit kernel with conditional recall ≥ r has P(catastrophe) ≤ (1−r) + r·L(n_s+1)/(n_h+1). T3a and T3c were re-proved inside this project. (iv) **Attain**: a fixed-bad generator gives Σ ρ·binCDF·(1 − r + r·Pr[PASS | M x]). (v) Witness 27/256 < 1/4. Built-in, load-bearing assumptions: a stateless monitor with fresh coins (a call-counting monitor reaches 1), an audit independent of ω, test before deployment, no benign-audit false positives, rational probabilities, finite types. `cat` is linked to the ledger's `PL_UMPROTF1.cat` by textual identity only; EndToEnd does not need that link | checked, standard axioms (not ledger-gated). Design review: Sonnet (minor; about 4000 exact game-vs-recursion instances, 0 mismatches) |
 
 ## Layer 2: actions (reference monitor), first step
 
@@ -126,8 +127,9 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
    - upfront honeypots.
 
    Verifying the scaffold is a code-level (Aeneas/hax) target.
-5. **Fidelity of the recursions to the operational protocol** rests on an independent simulation, not a Lean bridge.
-   The VCVio bridge is open.
+5. **Fidelity of the recursions to the operational protocol.** For the halting protocol with hard slack this is now a
+   Lean theorem in the VCVio project (`RefinementProof.lean`: game = `catG`, and the end-to-end bound). Still open: soft
+   slack (needs real-valued coins), the hockey-stick form, and the stratified design at the game level.
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;
    - defer-on-exhaustion (it voids the guarantee; numerics only);

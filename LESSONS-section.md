@@ -1,8 +1,23 @@
 ## Round 7 (2026-10-07): a Lean-verified, capability-free control stack, collusion layer (`~/research/control-stack`)
 - **Goal shift worked.** The bar was "correct, used in the stack, Lean-verified", not novelty. With classical lemmas
-  allowed as infrastructure, the campaign produced 7 verified CIDs in one session (UMHS, UMSURV, UMPROT, UMSTRAT,
-  UMNOGO, CANON, SANDBOX); see STACK.md for final status. Every one passed two foreign red teams; most passed without
-  overrides.
+  allowed as infrastructure, the campaign produced 7–9 verified CIDs in one session (UMHS, UMSURV, UMPROT, UMSTRAT,
+  UMNOGO, CANON, SANDBOX, plus UMLOWER and SANDBOX2 at close); see STACK.md for final status. Every one passed two
+  foreign red teams with **no overrides** (John's override was never needed). There were also two VCVio bridge
+  results, not ledger-gated.
+- **The final hostile review still matters when every statement is verified.** Both reviewers found no false or
+  vacuous Lean, but 11+ MAJOR overclaims in the plain-English STACK rows:
+  - "capability-free" hides two parity hypotheses, L and r;
+  - the bounds are one-sided (an always-flag protocol satisfies them);
+  - the coarse-regime caveat was missing;
+  - the LASR/Python claims were overextended;
+  - a regression in my own proposed sandbox fix.
+
+  Rule: verified ≠ correctly described. Review the prose against the frozen text.
+- **Calibrated significance.** Novelty is known/classical/modest; nothing is "apparently open". The decision-relevant
+  output is structural:
+  - capability-independent collusion safety needs few Red-choosable classes in the monitor's view;
+  - honeypot budget per class is necessary and sufficient, Θ(k(n_s+1)/n);
+  - the critical path is the action layer.
 - **Design review before Lean was decisive again.**
   - Sol rejected DESIGN v0 as a spec ("reject"); Sonnet gave "major". All core inequalities were true. The failures
     were definitional:

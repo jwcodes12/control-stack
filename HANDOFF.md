@@ -3,25 +3,16 @@
 Read this first in a fresh session, then STACK.md (status), DESIGN.md v1 (model and assumptions) and SESSION.md (what
 happened). The next-session prompt is `~/research/proofledger/prompts/next-session-control-stack-2.md`.
 
-## IN FLIGHT at the moment of /clear (2026-10-07 ~03:10 UTC); finish these first
-- **SANDBOX2F1.** Sol-high pass; the Flash red team was still running (`/var/tmp/redteam3.log`). The proof is DONE
-  (77 lines, standard axioms) and saved at `control-stack/proofs/SANDBOX2F1.lean`.
-  - Next: once `pl status` shows 2 foreign passes, run `pl freeze SANDBOX2F1` and then
-    `pl gate SANDBOX2F1 ~/research/control-stack/proofs/SANDBOX2F1.lean --actor anthropic:claude-opus-5-5`.
-  - Then the fidelity audit (`control-stack/fidelity/`), `pl headline`, a STACK.md row, and commit.
-- **UMLOWERF1.** Sol-high says **revise**: the maths is true and the 1/4 witness non-vacuous, but certify the
-  uniform-seed strategy family, match every witness hypothesis explicitly, and drop the unconditional "two-sided rate"
-  wording from the docstring. Its fixed statement is at `campaigns/UMLOWER/forms/UMLOWERF1/fixed-openai.lean`.
-  - A proof of the ORIGINAL statement is DONE (284 lines, standard axioms; the bound is attained exactly in the
-    witness) and saved at `control-stack/proofs/UMLOWERF1-original-statement.lean`. If the restated text keeps the
-    same Claim shape, the proof should need only small edits. Alternatively, keep the original statement: Sol
-    judged it true and non-vacuous; its "revise" is about certifying the strategy family and the docstring wording.
-  - Next:
-    1. Inspect the fix, then `pl restate UMLOWERF1 <fixed> --actor orchestrator` (verdicts are hash-bound, so it
-       needs a fresh red team: `pl redteam UMLOWER --cids UMLOWERF1 --models sol-high,flash`).
-    2. Adapt the proof to the restated text: re-run `tools/mkprover.py UMLOWERF1` and a prover, reusing the old proof.
-    3. Freeze, gate, fidelity audit, STACK.md row, commit.
-- **Routine.** The auto-continuation routine `trig_01MvSD2rFuyz5yktsSpFrRMQ` (every 2 h) wakes this session.
+## IN FLIGHT (session 2, 2026-10-07 from ~03:00 UTC)
+- DONE: SANDBOX2F1 verified (frozen 094db3d3379a) and UMLOWERF1 verified (restated to Sol's fixed text, frozen
+  8415ec049329; the proof was adapted from the original). Both have fidelity audits and STACK rows, and both repos are committed.
+- **UMUSE (usefulness companion), in design review.** Draft statement `ledger/UMUSE.lean` (it compiles after the
+  UMPROTF1 closure; checker `/var/tmp/trystmt.py UMUSEF1 <file> UMPROTF1`). Numerics are in
+  `numerics/umuse_frontier.py` / `.out`. Reviews: Sol xhigh → `reviews/umuse-design-review-sol.md`; Sonnet subagent →
+  `reviews/umuse-design-review-sonnet.md`; prompt `reviews/umuse-design-review-prompt.md`.
+  - Next: disposition the reviews, then `pl campaign UMUSE --question ledger/q_UMUSE.md`, `pl ingest-forms`, red team
+    (sol-high, flash), prover, gate, fidelity audit.
+- Dry-run gate without recording: `python3 /var/tmp/trygate.py <CID> <proof.lean> claim|witness`.
 
 ## Where things are
 | what | where |
@@ -38,7 +29,7 @@ happened). The next-session prompt is `~/research/proofledger/prompts/next-sessi
 | prover setup script | `/var/tmp/mkprover.py <CID>` (it may not survive a reboot; it is also copied into `control-stack/tools/mkprover.py`) |
 
 ## Status
-- **Verified (9 CIDs if UMLOWERF1 and SANDBOX2F1 landed; check `pl status`):**
+- **Verified (9 CIDs; check `pl status`):**
   - UMHSF1, UMSURVF1, UMPROTF1 (main theorem), UMSTRATF1, UMNOGOF1 and CANONF1 (verified canonicaliser);
   - SANDBOXF1 (the harness bwrap root is writable, in the model);
   - UMLOWERF1 (design-free converse) and SANDBOX2F1 (corrected fix).

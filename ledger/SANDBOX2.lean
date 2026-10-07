@@ -1,4 +1,4 @@
-namespace PL_SANDBOXF2
+namespace PL_SANDBOX2F1
 open PL_SANDBOXF1
 
 /-! Control stack, ACTION layer step 1b (campaign SANDBOX2): the corrected sandbox fix.
@@ -47,4 +47,4 @@ def Witness : Prop :=
   ReadsHost (fixedPolicy2 ["var", "tmp", "pl-x"] [home ++ [".codex"]]) (mathlibProj ++ ["x.lean"])
     (mathlibProj ++ ["x.lean"])
 
-end PL_SANDBOXF2
+end PL_SANDBOX2F1

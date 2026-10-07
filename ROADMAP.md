@@ -57,7 +57,7 @@ Status legend:
 3. 🔄 **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): design note added; the
    joint protocol and overlap of adversary classes must be specified before a theorem. Marginal bounds give a min,
    not a product, absent a suitable conditional-independence argument. See [COMPOSITION-N1-UMPROT.md](COMPOSITION-N1-UMPROT.md).
-4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. The constant-hazard soft-slack honeypot survival bridge is proved in `ControlStack/SoftSlack.lean`; full protocol-level soft-slack composition and the other three variants remain.
+4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. `ControlStack/SoftSlack.lean` now proves exact survival, the seeded whole-game factorization, and a scalar first-moment inequality yielding `h(1-h/ns)^nh ≤ ns/(nh+1)`. Full deployment-bound composition under domination/recall assumptions and the other three variants remain.
 5. ⏳ **Sharper adaptive converse**: the balanced bound (t/k)[(k − a)(1 − t)^q + a(1 − t)^{q+1}], numerically equal to the
    optimal adaptive tester under the acceptance contract.
 6. ⏳ **Usefulness checker**: a rational `checkUseQ` with a soundness bridge, mirroring the risk checker.

@@ -3,6 +3,7 @@
 # public theorem depends only on the standard axioms.
 set -euo pipefail
 cd "$(dirname "$0")"
+mkdir -p CovertCI
 sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../ControlStack/CovertChannel.lean > CovertCI/CovertChannel.lean
 sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../ControlStack/GatewayModel.lean > CovertCI/GatewayModel.lean
 printf 'import CovertCI.CovertChannel\nimport CovertCI.GatewayModel\n' > CovertCI.lean

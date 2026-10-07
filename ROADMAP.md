@@ -1,4 +1,4 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 6)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 7)
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
@@ -37,6 +37,10 @@ Status legend:
 | `HoneypotBridgeProof` | the honeypot test as a crypto-style game is exactly binomial | ✅ proved |
 | `RefinementProof` | trace-level protocol game = the core recursion; end-to-end bound | ✅ proved |
 | `OutcomeProof` | five-outcome game; honest-completion bridge to UMUSEF1; Pareto identity | ✅ proved (session 3) |
+| `SoftSlack` | soft-slack honeypot game: exact survival, seed factorisation, end-to-end bound (1−r)+r·L·n_s/(n_h+1) | ✅ proved (session 5) |
+| `SoftHockey` | hockey-stick form of the soft-slack bound: (1−r)+r·(δ+e^η·n_s/(n_h+1)) | ✅ proved (session 5) |
+| `StratifiedGame` | per-class binomial survival; end-to-end (1−r)+r·L·(s_c+1)/(m+1) under classwise domination and coverage | ✅ proved (session 6) |
+| `DeferGame` | audit-then-defer game equals the exact `ENNReal` recursion, and under calibrated kernels equals the frozen UMDEFERF1 `catV` (`defer_bridge`) | ✅ proved (session 7; calibration is an equality on recall, halt and service rates) |
 
 ### Layer 2: actions (first step)
 | item | what it gives | status |
@@ -57,9 +61,8 @@ Status legend:
 3. 🔄 **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): design note added; the
    joint protocol and overlap of adversary classes must be specified before a theorem. Marginal bounds give a min,
    not a product, absent a suitable conditional-independence argument. See [COMPOSITION-N1-UMPROT.md](COMPOSITION-N1-UMPROT.md).
-4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. `SoftSlack.lean` proves exact survival, seeded factorization and the domination bound `(1-r)+r·L·ns/(nh+1)`. `SoftHockey.lean` proves the hockey-stick bound `(1-r)+r·(δ+e^η·ns/(nh+1))` from a per-bad-row finite hockey-stick assumption. `StratifiedGame.lean` proves exact per-class binomial survival, seeded decomposition, and the end-to-end bound `(1-r)+r·L·(sc+1)/(m+1)` under classwise domination and class coverage. `DeferGame.lean` now proves operational equality with both the exact `ENNReal` recursion and calibrated real-valued ledger `catV`. The exhausted-budget semantics are aligned: a caught bad submission stops safely; a service miss keeps the trusted replacement and continues. The module compiles with standard VCVio deprecation warnings.
-5. 🔄 **Sharper adaptive converse**: `ControlStack/AdaptiveBalance.lean`, `ControlStack/AdaptiveGeneric.lean`, and `ControlStack/AdaptiveUMADAPT.lean` compile the balancing inequality, generic adaptive recursion, and abstract seed-risk composition. `proofledger/campaigns/UMADAPT/forms/UMADAPTF1/proofs/sharp-conv-port.lean` now inlines those helpers and proves `conv_a_sharp` against the actual `Setup` premises, `cat_ge`/`pass_eq`, `adProtocolCat`, and `seedLaw`; the full file compiled through the proofledger gate assembly, with a separate standard-axiom report. This was checked without appending a gate event or modifying the frozen claim. Remaining: decide whether to register a separate campaign strengthening; the frozen UMADAPTF1 claim remains the `t(1 − tn/k)` bound.
-6. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under full-history-dependent admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; Google red-team passed. The statement is attributed to OpenAI, so `sol-high` is not a foreign review; it remains unfrozen pending a second distinct foreign-family review. `numerics/lasr_usefulness_certificate.lean` demonstrates the checker on the current interval fixture; it does not discharge deployment sampling assumptions.
+4. 🔄 **Sharper adaptive converse**: `ControlStack/AdaptiveBalance.lean`, `ControlStack/AdaptiveGeneric.lean`, and `ControlStack/AdaptiveUMADAPT.lean` compile the balancing inequality, generic adaptive recursion, and abstract seed-risk composition. `proofledger/campaigns/UMADAPT/forms/UMADAPTF1/proofs/sharp-conv-port.lean` now inlines those helpers and proves `conv_a_sharp` against the actual `Setup` premises, `cat_ge`/`pass_eq`, `adProtocolCat`, and `seedLaw`; the full file compiled through the proofledger gate assembly, with a separate standard-axiom report. This was checked without appending a gate event or modifying the frozen claim. Remaining: decide whether to register a separate campaign strengthening; the frozen UMADAPTF1 claim remains the `t(1 − tn/k)` bound.
+5. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under full-history-dependent admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; Google red-team passed. The statement is attributed to OpenAI, so `sol-high` is not a foreign review; it remains unfrozen pending a second distinct foreign-family review. `numerics/lasr_usefulness_certificate.lean` demonstrates the checker on the current interval fixture; it does not discharge deployment sampling assumptions.
 
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:

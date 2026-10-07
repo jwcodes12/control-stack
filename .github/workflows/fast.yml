@@ -29,6 +29,8 @@ jobs:
           print("LinuxArena split certificate reproduced")
           PY
           python3 lastraj_bands.py > /dev/null && git diff --exit-code lastraj_roc_bands.json
+      - name: Gateway adversarial tests and red-team bound
+        run: cd gateway && python3 test_gateway.py
       - name: Assurance manifests are consistent (no category promotion)
         run: python3 assurance/check_manifests.py passed && git diff --stat assurance
   lean-vcvio:

@@ -48,6 +48,7 @@ Status legend:
 | `ComposeGame` | trusted + untrusted monitoring in one game; fresh trusted coins make the misses multiply: (1 − r) + r·τ·L·(n_s+1)/(n_h+1); tight at n_h = 0 | ✅ proved (session 8) |
 | `ComposeAvg` | composition for any joint kernel (`composedJ_end`) and with the population-average trusted miss τ̄ = 1 − TPR (`composedPop_end`), so certified ROC bands plug in | ✅ proved (session 8) |
 | `ComposeBlindSpot` | **negative result**: population-average trusted miss 1/1000, yet a content-adaptive Red reaches catastrophe w.p. 1; sampled ROC data cannot certify the per-submission τ | ✅ proved (session 8) |
+| `CovertChannel` | covert-propagation bound: P(recover a uniform secret) ≤ |V|/|M| for every shared seed, adaptive encoder and decoder; schema form sⁿ/K; tight; design point 2^-16 | ✅ proved (session 8) |
 
 ### Empirical certification (preregistered; Lean-checked certificates)
 | item | what it gives | status |
@@ -77,8 +78,8 @@ Goal: one end-to-end, independently checkable safety case, optimising for how mu
 
 | priority | work | definition of success | status |
 |---|---|---|---|
-| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | ⏳ |
-| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | ⏳ (touches the agent runtime: 🔒 John) |
+| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | ✅ `CATASTROPHE-SPEC.md`: covert secret propagation to machine receivers; schema/canonicaliser channels only; k = 32, P ≤ 2^-16, 16-bit budget |
+| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1 prototype `gateway/` (schema channels, fail-closed, default-deny; adversarial tests pass; red-team encoder meets but never exceeds the Lean bound); next: run inside a sandboxed multi-agent harness |
 | P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | ⏳ |
 | P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |
 | P1 | trusted/untrusted composition | Lean bound for the actual joint protocol incl. shared state and audit budget | 🔄 (`ComposeGame`, `ComposeAvg`, `ComposeBlindSpot`) |

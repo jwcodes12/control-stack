@@ -47,3 +47,4 @@
 - **Session 8 (2026-10-07), late.** Verified TMLIPF1 v2 (frozen with an approved override; passes `ledger-check`). Added preregistered empirical certifications (LaStraj, LASR held-out test split, LinuxArena 217 with and without environment-split calibration) and a post hoc decomposition of certified risk.
 - **Session 8, composition bridge.** `ComposeAvg.lean`: composition with the population-average trusted miss rate, so certified ROC bands plug in.
 - **Session 8, review response.** `ComposeBlindSpot.lean` (negative result), post hoc statistical audit, assurance manifests with a no-promotion checker, CI fast tier, roadmap reorganised around one end-to-end safety case.
+- **Session 8, P0.** `CATASTROPHE-SPEC.md` (covert secret propagation to machine receivers), `CovertChannel.lean` (bound P ≤ |V|/|M|, tight), fail-closed `gateway/` prototype with adversarial tests in CI.

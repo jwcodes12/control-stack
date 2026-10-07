@@ -9,6 +9,7 @@ import ControlStack.AdaptiveUMADAPT
 import ControlStack.ComposeGame
 import ControlStack.ComposeAvg
 import ControlStack.ComposeBlindSpot
+import ControlStack.CovertChannel
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
@@ -23,6 +24,7 @@ Root module of the interface-level (VCVio) Lake project, so that `lake build` ch
 - `ComposeGame`: trusted + untrusted monitoring in one game; product bound and tightness witness.
 - `ComposeAvg`: composition with a general joint kernel and with the population-average trusted miss rate.
 - `ComposeBlindSpot`: negative result: a population-average trusted miss rate does not bound a content-adaptive Red.
+- `CovertChannel`: covert-propagation bound for mediated machine channels (the P0 catastrophe).
 - `UseQ`: rational usefulness checker and its soundness bridge.
 - `AdaptiveBalance`, `AdaptiveSharp`, `AdaptiveGeneric`, `AdaptiveUMADAPT`: the sharper adaptive converse core.
 
@@ -56,3 +58,5 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.ComposeAvg.composedPop_end
 #print axioms ControlStack.ComposeBlindSpot.pop_avg_miss
 #print axioms ControlStack.ComposeBlindSpot.blind_spot_risk
+#print axioms ControlStack.Covert.covert_bound
+#print axioms ControlStack.Covert.design_point

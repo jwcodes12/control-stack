@@ -24,8 +24,8 @@ happened). The next-session prompt is `~/research/proofledger/prompts/next-sessi
   trusted-monitoring certificate, which merges with N1b. Alternatives: a SOUNDGATE gate model (turns A4/A5/A11
   into consequences of complete mediation), or the action layer with Cedar.
 - Tools:
-  - dry-run gate without recording: `python3 /var/tmp/trygate.py <CID> <proof.lean> claim|witness`;
-  - statement check: `/var/tmp/trystmt.py <CID> <file> <deps,comma>`.
+  - dry-run gate without recording: `python3 tools/trygate.py (copy of /var/tmp/trygate.py) <CID> <proof.lean> claim|witness`;
+  - statement check: `tools/trystmt.py <CID> <file> <deps,comma>`.
 
 ## Where things are
 | what | where |

@@ -1,7 +1,7 @@
 > **ROADMAP.md** (added 2026-10-07 at John's request) is the one-page status plan: completed / in flight / next / open
 > assumptions / needs John. Keep it current whenever a row changes status, and mirror it into the GitHub export.
 
-> **Update 2026-10-07 (session 7 continuation):** `DeferGame.lean` now treats a missed exhausted-budget service check as a live continuation with the trusted replacement, matching ledger `catV`; its VCVio compile passes. The calibrated real-valued bridge is still unproved. John approved the pending TMLIPF1 red team; Reviewer A returned `kill` for Bellman-stability triviality, and Reviewer C is still running. The draft remains unfrozen pending the second verdict and disposition.
+> **Update 2026-10-07 (session 7 continuation):** `DeferGame.lean` now treats a missed exhausted-budget service check as a live continuation with the trusted replacement, matching ledger `catV`; its VCVio compile passes. The calibrated real-valued bridge is still unproved. TMLIPF1 review returned Reviewer A `kill` for the classical Bellman-stability argument and Reviewer C `revise` for witness/formulation drift. No restatement or freeze was made because the proposed witness repair does not answer the substantive `kill`; a new version needs a distinct theorem contribution.
 
 # HANDOFF: control stack, state at end of session 2 (2026-10-07, ~07:30 UTC)
 

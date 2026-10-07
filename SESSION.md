@@ -46,3 +46,29 @@ overrides (classical lemmas allowed as infrastructure; no GPU work). Nothing was
 
 ## Next formalisation step
 (See below.)
+
+# Session 2026-10-07 (second session, ~03:00 UTC onwards)
+
+Prompt: `~/research/proofledger/prompts/next-session-control-stack-2.md`. Nothing was sent to anyone, and nothing was
+deployed. Mid-session, John shared an external critique and a list of prior art. Both are recorded with their
+disposition in `reviews/external-critique-2026-10-07.md` and `reviews/related-work-2026-10-07.md`.
+
+## Delivered
+| item | status | notes |
+|---|---|---|
+| SANDBOX2F1 (corrected sandbox fix) | **verified** (frozen 094db3d3379a) | state binds before the hiding tmpfs; hiding holds for every choice of state directories. Not deployed |
+| UMLOWERF1 (design-free converse) | **verified** (frozen 8415ec049329) | restated after both red teams flagged that the colluder was chosen after the design; the proof was adapted |
+| VCVio operational refinement | **proved** (394 lines; not ledger-gated) | the trace-level ProbComp game equals `catG` exactly; the protocol factorises; the end-to-end bound and attainment are in-project |
+| UMUSEF1 (usefulness companion) | **verified** (frozen 61a4c0bdf711; 573 lines) | v1 rejected (false κ conjunct; PH ⊆ Bad mismatch); v2/v2.1 add the view-blind pair, the obstruction q·u ≤ D·X, Cantelli for both tails, the honest ROC and the b = 0 sharpening |
+| UMDEFERF1 (audit-then-defer) | in red team / prover | v1 got major from Sol; v2 → v2.1 adds the service-dependent catV with a reachable conditional floor, the finite retry certificate, the protocol certificate and the no-go for every two-point honeypot law |
+| prior-art positioning | done | STACK.md section; the defensible claim is narrowed to machine-checked worst-case probabilistic bounds for UM with honeypots |
+
+## What the critique changed
+- The positioning claim was narrowed, and the novelty labels lowered: UMUSE is an instance of Games for AI Control's
+  framing, and UMDEFER's ratio is credited to Shlegeris/LASR.
+- Decision-relevant findings are now explicit:
+  - per-class slack vs a global counter (≈ 0.05 vs 0.38 risk at matched honest false shutdown);
+  - deferral needs a uniform stopping hazard, priced at 1/θ;
+  - a completion target forces risk ≥ α₀·u.
+- **Proposed next direction (awaiting John):** Lean-check a Games-for-AI-Control trusted-monitoring certificate
+  (merges with N1b), or port SOUNDGATE's gate model so that A4/A5/A11 become consequences of complete mediation.

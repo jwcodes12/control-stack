@@ -44,3 +44,5 @@ budgets that keep usefulness, this monitor catches few attacks (≤ 36% of Opus 
 so the certified single-task risk is 0.82 (Opus) and 0.98 (Sol). Together with PREREG-LINUXARENA (thresholds 7/3:
 risk 0.115 but 92% of honest work deferred), this is an exact, held-out statement of the safety-usefulness trade-off
 for this monitor: no threshold pair gives both low risk and low honest deferral.
+
+Lean: `numerics/linuxarena_split/primary.lean` passes (`decide +kernel`; standard axioms). All 42 LASR certificates (PREREG-LASR-TEST) also pass; full axiom lists confirmed on two, banned-token scan on all.

@@ -53,7 +53,7 @@ Status legend:
 | item | what it gives | status |
 |---|---|---|
 | LaStraj 2.0 (`PREREG-LASTRAJ.md`) | 30 honest / 17 attack; pipeline end to end | ✅ done; vacuous (≈1 at 100 tasks): too few attacks; Lean passes |
-| LASR held-out test split, all 42 conditions (`PREREG-LASR-TEST.md`) | family-wise 95% over every condition | ✅ done; closed-source monitor 0.63–0.83 at 100 tasks, 0.05–0.22 per task; open-source ≈1; Lean checks running |
+| LASR held-out test split, all 42 conditions (`PREREG-LASR-TEST.md`) | family-wise 95% over every condition | ✅ done; closed-source monitor 0.63–0.83 at 100 tasks, 0.05–0.22 per task; open-source ≈1; all 42 Lean checks pass |
 | LinuxArena 217, cutoffs 7/3 (`PREREG-LINUXARENA.md`) | 250 honest / 150 attack, public task-set scores | ✅ done; per-task risk 0.115 (Opus attacker), 0.32 (Sol), but 92% of honest work deferred |
 | LinuxArena 217, environment-split calibration (`PREREG-LINUXARENA-SPLIT.md`) | thresholds chosen on 2 environments, certified on 3 | ✅ done; FPR transfers (≤ 6.5%), per-task risk 0.82 (Opus): this monitor's exact safety–usefulness trade-off |
 | Risk decomposition (`CERTIFICATE-DECOMPOSITION.md`, post hoc) | point estimate vs certified | ✅ done; weak monitors: the monitor is the limit; strong monitors at 100 tasks: statistical margin (needs ~1,000–3,000 attacks or predeclaring fewer cutoffs) |
@@ -69,7 +69,7 @@ Status legend:
 ## 2. In flight
 | item | status |
 |---|---|
-| Lean checks of the 42 LASR certificates and 2 LinuxArena certificates | 🔄 running sequentially (≈5 min each) |
+| Lean checks of the 42 LASR certificates and 2 LinuxArena certificates | ✅ all pass (standard axioms) |
 | GitHub export (private `jwcodes12/control-stack`) | ✅ refreshed with every session-8 result (`a8e5540`); refresh again after the Lean checks |
 
 ## 3. Next (reorganised after external review, 2026-10-07; see `reviews/external-review-2026-10-07.md`)

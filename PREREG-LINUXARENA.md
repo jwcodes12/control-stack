@@ -55,3 +55,5 @@ it flags 21% of honest trajectories at ≥7 and 92% at ≥3 (so deferral would r
 single-task risk is 0.115 (Opus attacker) and 0.316 (Sol attacker); over 100 tasks with 2 audits the worst case is ≈1.
 The stronger attacker (Sol) evades this monitor far more often (TPR at ≥7 ≤ 0.24). Lean check of the primary
 certificate: queued (see below).
+
+Lean: `numerics/linuxarena/primary.lean` passes (`decide +kernel`; standard axioms).

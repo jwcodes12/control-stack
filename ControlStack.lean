@@ -8,6 +8,8 @@ import ControlStack.AdaptiveSharp
 import ControlStack.AdaptiveUMADAPT
 import ControlStack.ComposeGame
 import ControlStack.ComposeAvg
+import ControlStack.ComposeBlindSpot
+import ControlStack.CovertChannel
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
@@ -53,5 +55,8 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.Compose.composed_tight
 #print axioms ControlStack.ComposeAvg.composedJ_end
 #print axioms ControlStack.ComposeAvg.composedPop_end
+#print axioms ControlStack.Covert.covert_bound
+#print axioms ControlStack.Covert.design_point
+#print axioms ControlStack.ComposeBlindSpot.blind_spot_risk
 #print axioms ControlStack.Covert.covert_bound
 #print axioms ControlStack.Covert.design_point

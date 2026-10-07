@@ -1,8 +1,8 @@
-> **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization, and classwise end-to-end safety compile with standard axioms.
-> The LASR interval fixture now has a `checkUseQ` certificate and full-history soundness floor `22873/250`; deployment-matched held-out data remain missing.
-> The anonymized private export is refreshed and pushed. UseQ awaits second-family review; automatic review rejected Anthropic statement egress pending user approval.
-> `DeferGame.lean` now proves operational equality with an exact `ENNReal` recursion and the one-step probability expansion. Conversion to the calibrated real `catV` remains open; no defer theorem is promoted.
-> `AdaptiveBalance.lean` proves the balanced power-sum bound; `AdaptiveSharp.lean` proves its weighted path-measure aggregation and `t/k` corollary. Connecting the adaptive tester to that path measure remains open.
+> **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization and classwise end-to-end safety compile with standard axioms.
+> The LASR interval fixture has a rational usefulness certificate with conditional floor `22873/250`; deployment-matched held-out data remain missing.
+> TMLIPF1 Claim and Witness local gates pass with standard axioms; no red-team verdict is recorded and the campaign remains draft.
+> `DeferGame.lean` proves equality with an exact operational `ENNReal` recursion. The real-valued bridge is blocked by a continuation mismatch in the exhausted bad-service branch.
+> `AdaptiveBalance.lean` and `AdaptiveSharp.lean` prove balanced allocation and weighted path aggregation; connecting the tester recursion remains open.
 
 # Session 5 continuation (2026-10-07). Added exact-rational simultaneous ROC bands and a LASR archive converter. Generated an eight-vertex, 100-step/two-coin interval table; `checkRiskQ`, `checkLawfulQ`, and the TMCERTF1 full-information risk bound compile by `decide +kernel`, with standard axioms only. This is a real-data pipeline demonstration, not deployment certification (the sample's held-out/IID/deployment match is unestablished). Added the VCVio soft-hazard honeypot survival bridge in `ControlStack/SoftSlack.lean`; it compiles with standard axioms. Added `COMPOSITION-N1-UMPROT.md`: still design-stage pending a common protocol/event and adversary intersection; only the `min` corollary is currently justified. TMLIPF1 remains a local draft pending the user's decision on external review. The anonymised private export was refreshed with these results.
 
@@ -17,39 +17,39 @@
 > Next: obtain labelled validation data, derive simultaneous rational bands, then run the concrete `checkRiskQ`/`decide +kernel` fixture; no theorem was added.
 
 > **SESSION 3 STATUS (2026-10-07 ~15:20 UTC).** TMCERTF1 and TMGACF1 frozen; both reviewer families pass; claim/witness gates pass with standard axioms.
-> Research and proofledger records committed; private export `d320fa9` pushed to `jwcodes12/control-stack` main; both new CIDs pass independent ledger-check.
+> Research and ledger harness records committed; private export `d320fa9` pushed to `jwcodes12/control-stack` main; both new CIDs pass independent ledger-check.
 > Session 3 tasks 1–4 complete. Task 5 skipped as instructed.
 
 > **SESSION 3 STATUS (2026-10-07 ~14:45 UTC).** Precursors 1–3 DONE (UMCERTF1, UMADAPTF1 verified; Outcome game proved).
 > Direction (A) remaining steps (all mechanical):
-> 1. TMCERTF1: sol-high PASS; flash pending. Then `pl freeze TMCERTF1`, `pl gate TMCERTF1 /var/tmp/opus-provers/TMCERTF1/proof.lean
->    --actor anthropic:claude-opus-5-5` (dry-run gate already PASSES), copy proof to proofs/, ledger/TMCERT.lean from
+> 1. TMCERTF1: Reviewer A PASS; Reviewer C pending. Then `pl freeze TMCERTF1`, `pl gate TMCERTF1 <proof-output>/TMCERTF1/proof.lean
+>    --actor reviewer family:prover agent-prover agent-5-5` (dry-run gate already PASSES), copy proof to proofs/, ledger/TMCERT.lean from
 >    ledger-drafts/TMCERT-v2.lean, fill the hash in fidelity/TMCERTF1.md (drafted), STACK row, ROADMAP.
-> 2. TMGACF1: red team (sol-high, flash) runs after TMCERT's. Proof ready: /var/tmp/opus-provers/TMGACF1/proof.lean (554 lines;
+> 2. TMGACF1: red team (Reviewer A, Reviewer C) runs after TMCERT's. Proof ready: <proof-output>/TMGACF1/proof.lean (554 lines;
 >    needs TMCERTF1 verified before gating). Same steps; fidelity/TMGACF1.md drafted.
 > 3. Refresh the private GitHub export (/var/tmp/cs-export; anonymise; ledger-check the 2 new CIDs; push).
 > 4. Then disable routine trig_01RsgfEAcQ1rDt5TZLo2tLMp. John said tokens are low: be economical.
 
 # Session 2026-10-07: a Lean-verified, capability-free control stack, layer 1 (collusion) plus action-layer step 1
 
-Prompt: `~/research/proofledger/prompts/` (next-session control stack); skill `/safety-theory-sprint` with John's
+Prompt: `<research-root>/ledger harness/prompts/` (next-session control stack); skill `/safety-theory-sprint` with John's
 overrides (classical lemmas allowed as infrastructure; no GPU work). Nothing was sent to anyone.
 
 ## Deliverables (in the prompt's order)
 1. **REUSE.md** (decisions, costs) and **CORRESPONDENCE.md** (ControlArena / LASR mapping).
-   - VCVio builds cleanly in `~/research/control-stack` (Lean v4.34.0; 11.5 GB; about 10 min). It gives T1 for
+   - VCVio builds cleanly in `<research-root>/control-stack` (Lean v4.34.0; 11.5 GB; about 10 min). It gives T1 for
      arbitrary `ProbComp` distinguishers in two lines (`ControlStack/Spike.lean`).
    - The quantitative core is real-valued finite sums in the shared 4.35 project, ledger-gated.
    - Nothing was vendored: the Atlas repos have no TV or hockey-stick material; TestingLowerBounds is a
      correspondence target.
    - Cedar (pinned `3f51c8f7`) is planned for a later action-layer step; Veil was rejected (sorry-based SMT trust).
 2. **DESIGN.md v1.** The model, the full assumption list (TRUSTED-COMPONENT / MODELLING / STANDING) and the theorem
-   list. v0 was hostile-reviewed *before* any Lean (Sol xhigh: "reject as spec"; Sonnet: "major"), and every point is
+   list. v0 was hostile-reviewed *before* any Lean (Reviewer A: "reject as spec"; Reviewer B: "major"), and every point is
    dispositioned in §8.
-3. **Verified CIDs** (proofledger, `pl headline` OK; two foreign red-team passes each, no overrides; standard axioms):
+3. **Verified CIDs** (ledger harness, `pl headline` OK; two foreign red-team passes each, no overrides; standard axioms):
    see the table below.
 4. **STACK.md.** Maps each guarantee to its assumptions and to real protocols, and lists what is still unproved.
-5. **Honest significance and next step:** below. The final review is in `reviews/final-review-{sol,sonnet}.md`.
+5. **Honest significance and next step:** below. The final review is in `reviews/final-review-{Reviewer A,Reviewer B}.md`.
 
 ## Verified results
 | CID | plain-English guarantee | proof |
@@ -60,12 +60,12 @@ overrides (classical lemmas allowed as infrastructure; no GPU work). Nothing was
 | UMSTRATF1 | stratified honeypots with class-aware shutdown: ≤ (1−r) + r(s_c+1)/(m+1), with no class-count factor; attained by a decodable colluder | 218 lines |
 | UMNOGOF1 | a content-preserving mediator with k decodable bad classes: **one deterministic colluder** beats every iid honeypot law, every shutdown schedule and every budget, with probability ≥ (1−1/k)^{n_h}; exact attainment curve | 244 lines |
 | CANONF1 | a verified canonicaliser for a toy imperative language: semantics preserved; unique normal form modulo for→while, `;`-association and local renaming; class-agreeing laws give identical mediated laws | 757 lines |
-| SANDBOXF1 | the proofledger sandbox (bwrap mount table): (a) the current policy lets a sandboxed process write the host `~/.elan`, which the gate executes; (b) a read-only-root policy confines host writes to scratch plus declared state directories; (c) the current hiding works at mount level, outside the stated `/proc` boundary | 91 lines |
+| SANDBOXF1 | the ledger harness sandbox (bwrap mount table): (a) the current policy lets a sandboxed process write the host `~/.elan`, which the gate executes; (b) a read-only-root policy confines host writes to scratch plus declared state directories; (c) the current hiding works at mount level, outside the stated `/proc` boundary | 91 lines |
 
-## Harness work (proofledger)
+## Harness work (ledger harness)
 - `a637fac`, `a08075e`: stack statements may reference transitive dependency definitions (check_statement, gate,
   auto_probe, red-team prompts); `tests/test_deps.py`.
-- `6ea98c5`: red-team verdicts are bound to the reviewed statement hash. A stale Flash verdict after a restate had
+- `6ea98c5`: red-team verdicts are bound to the reviewed statement hash. A stale Reviewer C verdict after a restate had
   counted, live; `tests/test_redteam_binding.py`.
 - **Found, not fixed (needs John):**
   - `dispatch.sandbox()` mounts a writable host root. This is proved in SANDBOXF1(a); the fixed policy is in
@@ -81,7 +81,7 @@ overrides (classical lemmas allowed as infrastructure; no GPU work). Nothing was
 
 # Session 2026-10-07 (second session, ~03:00 UTC onwards)
 
-Prompt: `~/research/proofledger/prompts/next-session-control-stack-2.md`. Nothing was sent to anyone, and nothing was
+Prompt: `<research-root>/ledger harness/prompts/next-session-control-stack-2.md`. Nothing was sent to anyone, and nothing was
 deployed. Mid-session, John shared an external critique and a list of prior art. Both are recorded with their
 disposition in `reviews/external-critique-2026-10-07.md` and `reviews/related-work-2026-10-07.md`.
 
@@ -92,7 +92,7 @@ disposition in `reviews/external-critique-2026-10-07.md` and `reviews/related-wo
 | UMLOWERF1 (converse for nonadaptive designs) | **verified** (frozen 8415ec049329) | restated after both red teams flagged that the colluder was chosen after the design; the proof was adapted |
 | VCVio operational refinement | **proved** (394 lines; not ledger-gated) | the trace-level ProbComp game equals `catG` exactly; the protocol factorises; the end-to-end bound and attainment are in-project |
 | UMUSEF1 (usefulness companion) | **verified** (frozen 61a4c0bdf711; 573 lines) | v1 rejected (false κ conjunct; PH ⊆ Bad mismatch); v2/v2.1 add the view-blind pair, the obstruction q·u ≤ D·X, Cantelli for both tails, the honest ROC and the b = 0 sharpening |
-| UMDEFERF1 (audit-then-defer) | **verified** (frozen ad82ec06fc48; 714 lines) | v1 got major from Sol; v2 → v2.1 adds the service-dependent catV with a reachable conditional floor, the finite retry certificate, the protocol certificate and the no-go for every two-point honeypot law |
+| UMDEFERF1 (audit-then-defer) | **verified** (frozen ad82ec06fc48; 714 lines) | v1 got major from Reviewer A; v2 → v2.1 adds the service-dependent catV with a reachable conditional floor, the finite retry certificate, the protocol certificate and the no-go for every two-point honeypot law |
 | prior-art positioning | done | STACK.md section; the defensible claim is narrowed to machine-checked worst-case probabilistic bounds for UM with honeypots |
 
 ## What the critique changed

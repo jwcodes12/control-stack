@@ -32,7 +32,7 @@ The next data-backed run should substitute sample-derived rational interval endp
 
 ## Empirical archive pipeline demonstration (2026-10-07)
 
-The local `proofledger/audit2/lasr_scores` archive contains labelled per-sample trusted-monitor scores from LASR Inspect runs. The reproducible example uses `closed-source-model__apps__self_rec/none_base`: 633 honest samples and 240 attack samples, score in `{0,…,10}`. `numerics/lasr_score_bands.py` computes bands at every integer cutoff, with ties kept together, and records the two input CSV hashes in [`numerics/lasr_selfrec_nonebase_roc_bands.json`](numerics/lasr_selfrec_nonebase_roc_bands.json). The threshold grid is fixed by the score scale; the Bonferroni allocation covers both rates at all 12 cutoffs for this condition.
+The local `ledger harness/audit2/lasr_scores` archive contains labelled per-sample trusted-monitor scores from LASR Inspect runs. The reproducible example uses `closed-source-model__apps__self_rec/none_base`: 633 honest samples and 240 attack samples, score in `{0,…,10}`. `numerics/lasr_score_bands.py` computes bands at every integer cutoff, with ties kept together, and records the two input CSV hashes in [`numerics/lasr_selfrec_nonebase_roc_bands.json`](numerics/lasr_selfrec_nonebase_roc_bands.json). The threshold grid is fixed by the score scale; the Bonferroni allocation covers both rates at all 12 cutoffs for this condition.
 
 For the illustrative nested pair `audit score ≥ 7`, `defer score ≥ 3`, the simultaneous intervals are:
 
@@ -51,7 +51,7 @@ For the illustrative nested pair `audit score ≥ 7`, `defer score ≥ 3`, the s
 
 Reproduce with `python numerics/emit_lasr_useq_certificate.py`, then `lake build ControlStack.UseQ` and `lake env lean numerics/lasr_usefulness_certificate.lean` from the control-stack project. This is a certificate for the finite interval fixture, conditional on those interval rows. It does not establish that the sample is predeclared, held out, IID, or deployment matched.
 
-Reproduce with `python numerics/lasr_score_bands.py <honest.csv> <attack.csv> --condition <name> --output numerics/lasr_selfrec_nonebase_roc_bands.json`, then run `python numerics/lasr_design_a2_certificate.py` and `python numerics/emit_lasr_design_a2_lean.py`; compile the emitted file from `~/research/alignment-contrib/lean/StabilityDebate` with `lake env lean ~/research/control-stack/numerics/lasr_design_a2_certificate.lean`.
+Reproduce with `python numerics/lasr_score_bands.py <honest.csv> <attack.csv> --condition <name> --output numerics/lasr_selfrec_nonebase_roc_bands.json`, then run `python numerics/lasr_design_a2_certificate.py` and `python numerics/emit_lasr_design_a2_lean.py`; compile the emitted file from `<research-root>/alignment-contrib/lean/StabilityDebate` with `lake env lean <research-root>/control-stack/numerics/lasr_design_a2_certificate.lean`.
 
 This is a real-data pipeline demonstration, **not a deployment certificate or a valid claimed 95% confidence guarantee**. The archive is not established as a predeclared held-out IID sample from the target deployment; the condition was selected from a larger archive, and no adjustment across conditions was made. The confidence interpretation is conditional on the sampling assumptions in §1. The exact checker certifies the finite rational game induced by these intervals; it does not prove those intervals cover a deployment monitor or that the LASR task distribution matches the intended 100-problem GAC application.
 
@@ -61,7 +61,7 @@ This is a real-data pipeline demonstration, **not a deployment certificate or a 
 - The confidence statement is conditional on the sampling protocol and its independence assumptions. Distribution shift, adaptive data collection, label error, and unrepresented backdoors are not discharged by the checker.
 - The two-coin GAC abstraction, threshold semantics, catastrophe event, and task horizon match the intended protocol. The existing `TMGACF1` result supplies the recurrence bridge for its stated model; the finite interval table must still be checked against the concrete GAC rows.
 - A confidence band over operating points does not establish scaffold enforcement, state coverage, or the identity between a sampled score and a deployment monitor view.
-- The exact risk, lawfulness, and usefulness fixtures compile in Lean with standard axioms. Their sampling and deployment assumptions remain open; no new proofledger claim is frozen by these fixture checks.
+- The exact risk, lawfulness, and usefulness fixtures compile in Lean with standard axioms. Their sampling and deployment assumptions remain open; no new ledger harness claim is frozen by these fixture checks.
 
 ## Cost estimate
 

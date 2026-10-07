@@ -1,6 +1,6 @@
 > **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization, and classwise end-to-end safety compile with standard axioms.
 > The LASR interval fixture now has a `checkUseQ` certificate and full-history soundness floor `22873/250`; deployment-matched held-out data remain missing.
-> Export `7d1661b` is pushed. UseQ awaits second-family review; automatic review rejected Anthropic statement egress pending user approval. Next: defer game.
+> The anonymized private export is refreshed and pushed. UseQ awaits second-family review; automatic review rejected Anthropic statement egress pending user approval. Next: defer game.
 
 # Session 5 continuation (2026-10-07). Added exact-rational simultaneous ROC bands and a LASR archive converter. Generated an eight-vertex, 100-step/two-coin interval table; `checkRiskQ`, `checkLawfulQ`, and the TMCERTF1 full-information risk bound compile by `decide +kernel`, with standard axioms only. This is a real-data pipeline demonstration, not deployment certification (the sample's held-out/IID/deployment match is unestablished). Added the VCVio soft-hazard honeypot survival bridge in `ControlStack/SoftSlack.lean`; it compiles with standard axioms. Added `COMPOSITION-N1-UMPROT.md`: still design-stage pending a common protocol/event and adversary intersection; only the `min` corollary is currently justified. TMLIPF1 remains a local draft pending the user's decision on external review. The anonymised private export was refreshed with these results.
 

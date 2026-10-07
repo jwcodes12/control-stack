@@ -32,3 +32,9 @@ under the assumption that the 47 trajectories are an IID draw from it. It is not
 n = 30/17 the bands will be wide; whatever the result, it is reported.
 
 **Code.** `numerics/lastraj_bands.py` (committed with this file).
+
+## Amendment 1 (before any score was read)
+The first run stopped with "found 0 rows": the matcher tested `monitor_variant == "strong"`, but the board stores the
+prompt name in `monitor` and the model/effort string (`gpt-5.4-nano-none`) in `monitor_variant`. Fix: test
+`monitor == "strong"`. Only row metadata was printed to diagnose this (one row: action, strong, openai/gpt-5.4-nano,
+effort none, no error, 30 honest / 17 attack). The intended monitor, and everything else, is unchanged.

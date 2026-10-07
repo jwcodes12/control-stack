@@ -15,7 +15,7 @@ CUTOFFS = range(12)
 
 def pick_row(rows: list[dict]) -> dict:
     hits = [r for r in rows if r.get("dataset") == "lastraj" and r.get("monitor_kind") == "action"
-            and r.get("monitor_variant") == "strong" and str(r.get("monitor_model", "")).endswith("gpt-5.4-nano")
+            and r.get("monitor") == "strong" and str(r.get("monitor_model", "")).endswith("gpt-5.4-nano")
             and r.get("monitor_reasoning_effort") in (None, "none")]
     if len(hits) != 1:
         sys.exit(f"STOP: expected exactly one preregistered row, found {len(hits)}")

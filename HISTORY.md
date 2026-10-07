@@ -41,3 +41,4 @@
 - **Session 6 continuation (2026-10-07).** Added the exact operational defer recursion and calibrated branch lemmas; the proposed real-valued bridge exposed a mismatch in the exhausted bad-service continuation. The local TMLIPF1 Claim and Witness gates pass, but review remains pending and the campaign is not frozen. The adaptive weighted path bound is proved; connecting the tester recursion remains open.
 
 - **Session 7 (2026-10-07).** Calibrated defer bridge proved (`defer_bridge`); the four VCVio game modules (soft slack, hockey-stick, stratified, defer) are recorded as completed.
+- **Session 8 (2026-10-07).** Added `DeferMono.lean`: the monotone audit-then-defer bound (lower bounds on recall, halt hazard and service give an upper bound on catastrophe by `catV`).

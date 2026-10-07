@@ -41,6 +41,7 @@ Status legend:
 | `SoftHockey` | hockey-stick form of the soft-slack bound: (1−r)+r·(δ+e^η·n_s/(n_h+1)) | ✅ proved |
 | `StratifiedGame` | per-class binomial survival; end-to-end (1−r)+r·L·(s_c+1)/(m+1) under classwise domination and coverage | ✅ proved |
 | `DeferGame` | audit-then-defer game equals the exact `ENNReal` recursion, and under calibrated kernels equals the UMDEFERF1 `catV` | ✅ proved (calibration is an equality on recall, halt and service rates) |
+| `DeferMono` | **monotone defer bound** (`defer_mono`): recall ≥ r, halt hazard ≥ η and service catch ≥ a imply operational catastrophe ≤ ledger `catV`; with `defer_bridge` the bound is exact under calibration | ✅ proved |
 
 ### Layer 2: actions (first step)
 | item | what it gives | status |

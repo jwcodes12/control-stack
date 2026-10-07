@@ -66,3 +66,67 @@ def ctr_risk(t, ns=1):
     return tot
 for t in [F(1,2), F(5,8), F(2,3), F(3,4), F(7,8), F(1)]:
     print("ctr t", t, float(ctr_risk(t)), "nonadaptive formula", float(t * (1 - t * F(3, 4))), "adaptive lb", float(t*(1-t*F(3,2))))
+
+# Sol's lock-on tester: k = n = 4, n_s = 1; query a uniform class until the first PASS, then repeat that class;
+# keep iff at most one PASS. Risk against the UMLOWER pair, identity mediator, r = 1, b = N = 1.
+def lock_risk(t, k=4, n=4, ns=1):
+    tot = F(0)
+    for om in range(k):
+        def rec(h, rem, w):
+            if w == 0: return F(0)
+            if rem == 0:
+                return w * (1 if sum(1 for e in h if e[1]) <= ns else 0)
+            locked = next((e[0] for e in h if e[1]), None)
+            qs = [(locked, F(1))] if locked is not None else [(q, F(1, k)) for q in range(k)]
+            s = F(0)
+            for q, wq in qs:
+                p = t if q == om else F(0)
+                s += rec(h + [(q, True)], rem - 1, w * wq * p) + rec(h + [(q, False)], rem - 1, w * wq * (1 - p))
+            return s
+        tot += F(1, k) * rec([], n, F(1)) * t
+    return tot
+mx = F(0)
+for i in range(0, 201):
+    t = F(i, 200); v = lock_risk(t)
+    closed = t / 3 * (4 * (1 - t / 4) ** 4 - (1 - t) ** 4)
+    assert v == closed, (t, v, closed)
+    mx = max(mx, v)
+print("lock tester: closed form matches on 201 points; max risk", float(mx), "< 4096/9375 =", 4096/9375, "< 1/2")
+# Sol's sharp balanced bound vs DP (all-FLAG contract)
+for (k, n, ns) in [(2, 3, 1), (4, 5, 1), (4, 6, 1), (3, 4, 0), (3, 6, 1), (4, 8, 2), (5, 6, 0)]:
+    for t in [F(1, 4), F(1, 2), F(3, 4)]:
+        q, a = divmod(n, k)
+        sharp = t / k * ((k - a) * (1 - t) ** q + a * (1 - t) ** (q + 1))
+        dp = t * opt_surv(k, n, ns, t, 'allflag')
+        assert dp == sharp, (k, n, t, dp, sharp)
+print("sharp balanced bound equals the DP optimum (all-FLAG contract) on all cells")
+
+# Sonnet's sticky tester: k = n = 3, n_s = 1: query 0, 1, 2 in order until the first miss, then re-query the missed class
+def sticky_risk(t, k=3, n=3, ns=1, keepfn=None):
+    tot = F(0)
+    for om in range(k):
+        def rec(h, rem, w):
+            if rem == 0:
+                mi = sum(1 for e in h if e[1])
+                return w * (1 if mi <= ns else 0)
+            locked = next((e[0] for e in h if e[1]), None)
+            q = locked if locked is not None else len(h)
+            p = t if q == om else F(0)
+            return rec(h + [(q, True)], rem - 1, w * p) + rec(h + [(q, False)], rem - 1, w * (1 - p))
+        tot += F(1, k) * rec([], n, F(1)) * t
+    return tot
+mx = F(0)
+for i in range(201):
+    t = F(i, 200); v = sticky_risk(t)
+    assert v == t - t**3 + t**4 / 3, (t, v)
+    mx = max(mx, v)
+print("sticky (3,3,1): closed form t - t^3 + t^4/3 on 201 points; max", float(mx), "< 1/2 (UMLOWER optimised floor min(1/2, k(ns+1)/(4n)) =", min(F(1,2), F(3*2, 12)), ")")
+print("ctr at t*=2/3:", ctr_risk(F(2,3)), "vs 1/3")
+# necessity witness: keep iff misses != 0 (shuts down the perfect record) on the Witness instance
+def wit(keepfn, t=F(1,2)):
+    tot = F(0)
+    for om in (False, True):
+        p = t if om == False else F(0)
+        tot += F(1,2) * (p * keepfn(1) + (1 - p) * keepfn(0)) * t
+    return tot
+print("Witness tight:", wit(lambda mi: 1 if mi == 0 else 0), " necessity witness (keep iff a miss):", wit(lambda mi: 0 if mi == 0 else 1))

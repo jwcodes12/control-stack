@@ -1,6 +1,6 @@
 # Fidelity audit (orchestrator): TMCERTF1, a certificate checker for finite-horizon stateful control games
 
-Statement: `ledger/TMCERT.lean` v2 (frozen <hash at freeze>). No dependencies. Proof: 448 lines (isolated prover agent),
+Statement: `ledger/TMCERT.lean` v2 (frozen 53a3bc12f43c). No dependencies. Proof: 448 lines (isolated prover agent),
 gated, standard axioms. Session 3, direction (A) (trusted-monitoring layer).
 
 History:

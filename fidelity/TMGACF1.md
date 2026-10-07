@@ -1,6 +1,6 @@
 # Fidelity audit (orchestrator): TMGACF1, Games for AI Control trusted monitoring as a certified instance
 
-Statement: `ledger/TMGAC.lean` v1 (frozen <hash at freeze>). Depends on TMCERTF1. Proof: 554 lines (isolated prover
+Statement: `ledger/TMGAC.lean` v1 (frozen 89331ac41986). Depends on TMCERTF1. Proof: 554 lines (isolated prover
 agent; certificate soundness for the Witness proved locally), gated, standard axioms. Session 3, direction (A).
 
 History:

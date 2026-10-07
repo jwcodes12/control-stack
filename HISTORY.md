@@ -17,3 +17,5 @@
 - No human expert has reviewed any result yet.
 - **This export (2026-10-07):** a single-commit snapshot; reviewer identities anonymised; the sandbox results stated as
   general mount-table lessons; `ledger-check/` added to reproduce the gate.
+
+- **Session 3 update (2026-10-07).** TMCERTF1 and TMGACF1 frozen, independently red-teamed by two reviewer families, and verified by claim and witness gates; export includes statements, proofs, fidelity audits and stack status.

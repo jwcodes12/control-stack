@@ -9,7 +9,7 @@ toolchain path) are instances; the theorems' content is the mount-order lesson, 
 |---|---|
 | `--dev-bind / /` | `.bind [] [] .rw` (dev-bind and bind are both read-write binds; device-node semantics are not modelled) |
 | `--tmpfs /var/tmp` | `.tmpfs ["var","tmp"]` (the scratch tmpfs root) |
-| `--bind W /var/tmp/work` | `.bind W ["var","tmp","work"] .rw` |
+| `--bind W <temporary path>` | `.bind W ["var","tmp","work"] .rw` |
 | `--tmpfs d` for each hidden directory d (if it exists) | `hiddenDirs.map .tmpfs`. All are assumed to exist; a missing dir only removes a mount, and the property shapes are unaffected for paths under it, since there is nothing to hide |
 | `--bind W/.empty F` for each hidden file F | **omitted**. A read-only empty file over one path; it does not affect (a) or (b), and (c) is stated for hidden *directories* |
 | `--ro-bind MATHLIB MATHLIB` | `.bind mathlibProj mathlibProj .ro` |

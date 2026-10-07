@@ -55,7 +55,7 @@ status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.
 | `scout/` | read-only scout notes on VCVio and two related Lean repositories |
 
 Ledger CIDs (all verified): UMHSF1, UMSURVF1, UMPROTF1, UMSTRATF1, UMNOGOF1, UMLOWERF1, UMADAPTF1, UMUSEF1, UMDEFERF1,
-UMCERTF1, CANONF1, SANDBOXF1, SANDBOX2F1. CID `XF1` has its statement in `ledger/X.lean` and its proof in
+UMCERTF1, TMCERTF1, TMGACF1, CANONF1, SANDBOXF1, SANDBOX2F1. CID `XF1` has its statement in `ledger/X.lean` and its proof in
 `proofs/XF1.lean`; dependencies are listed in `ledger-check/check.py`.
 
 ## How to check

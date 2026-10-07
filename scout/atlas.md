@@ -13,7 +13,7 @@ Target: Lean 4.35.0-rc3, Mathlib v4.35.0-rc3 (the ledger's Mathlib project; see 
   and a Bayes-risk DPI (details in section 3). So the target lemmas (delta_eta, E_P phi <= e^eta E_Q phi + delta,
   TV DPI for kernels) have to be proved by us (or taken from VCVio); these repos do not shortcut them.
 * The only reusable pieces found:
-  1. A's vendored `AISafetyAtlas/Upstream/Debate/Prob/*` (google-deepmind/debate, Apache-2.0): a
+  1. A's vendored `AISafetyAtlas/Upstream/Debate/Prob/*` (Reviewer C family-deepmind/debate, Apache-2.0): a
      finsupp-based `Prob` monad with `count f n` (binomial count of Bernoulli trials) and Hoeffding/Chernoff
      bounds. Mathlib-only deps, no sorry. Marginal value (Mathlib now has `ProbabilityTheory.binomial` and a
      sub-Gaussian Hoeffding already).
@@ -35,7 +35,7 @@ Target: Lean 4.35.0-rc3, Mathlib v4.35.0-rc3 (the ledger's Mathlib project; see 
 * All source uses the Lean module system: first line `module`, `public import ...`, `@[expose] public def`.
 * Licence: Apache-2.0. Root `LICENSE` is the standard Apache text (11357 bytes, confirmed "Apache License Version 2.0").
   No per-file `Copyright` headers in AISafetyAtlas/* (grep for "Copyright": none). Vendored subtrees keep upstream
-  attribution; `AISafetyAtlas/Upstream/LICENSE-NOTICE` lists them: Debate (google-deepmind/debate via LukaHobor/debate
+  attribution; `AISafetyAtlas/Upstream/LICENSE-NOTICE` lists them: Debate (Reviewer C family-deepmind/debate via LukaHobor/debate
   port-lean-4.31, Apache-2.0), KolmogorovMathlib (Apache-2.0), Attribution (Apache-2.0), GibbardSatterthwaite (MIT),
   LinearSystems and Analysis/Blackwell (Apache-2.0, adapted, per-file headers).
 * sorry/axiom/native_decide: none in any file I fetched (counted: DataProcessing, ChannelCapacity, Determinism,

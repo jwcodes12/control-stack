@@ -26,6 +26,8 @@ Status legend:
 | UMUSEF1 | honest availability identities; mimicry constraint; Cantelli slack costs | ✅ verified |
 | UMDEFERF1 | audit-then-defer: needs a uniform stopping hazard; no-go without one | ✅ verified |
 | UMCERTF1 | certificate form: exact one-shot reduction, Lean-checkable grid certificates (0.154 → 0.07 certified), exactness results | ✅ verified (session 3) |
+| TMCERTF1 | finite-horizon trusted-monitoring certificate checker with rectangular uncertainty, usefulness, rational checker and abstraction interface | ✅ verified (frozen 53a3bc12f43c; session 3) |
+| TMGACF1 | GAC safety/usefulness bridges and exact separation of constant-rate, coin-count and clocked Red | ✅ verified (frozen 89331ac41986; session 3) |
 | CANONF1 | a verified canonicaliser (toy language) as a concrete trusted mediator | ✅ verified |
 
 ### Interface level (VCVio operational games)
@@ -41,12 +43,10 @@ Status legend:
 |---|---|---|
 | SANDBOXF1, SANDBOX2F1 | mount-table model of a bubblewrap sandbox: the writable-root weakness and the corrected bind order | ✅ verified (model theorems; nothing deployed) |
 
-## 2. In flight (direction A: trusted monitoring with a certificate checker)
+## 2. In flight
 | item | what it gives | status |
 |---|---|---|
-| TMCERTF1 | certificate checker for finite stateful control games: sound against every history-dependent Red and rectangular model uncertainty; tightness; usefulness; a proved rational checker (`decide +kernel`); hull lemma; deployment through an abstraction | 🔄 two design-review rounds done; red team: one family passed, second pending; proof written (448 lines, passes a dry-run gate) |
-| TMGACF1 | Games for AI Control (2409.07985) as a certified instance: exact bridges to its safety and usefulness recurrences; fixed-rate bounds; exact separation: constant-rate Red 13/50 vs round-index-only Red 11/32 (= full information) vs coin-count-only Red 9/32 | 🔄 red team pending; prover running |
-| GitHub export | private repo `jwcodes12/control-stack` | ✅ first snapshot pushed; 🔄 refresh after TMCERT/TMGAC |
+| GitHub export | private repo `jwcodes12/control-stack` | 🔄 local snapshot refresh prepared; authenticated push pending |
 
 ## 3. Next (ranked)
 1. ⏳ **Certify a realistic trusted-monitoring configuration.** Rational ROC enclosures from finite samples

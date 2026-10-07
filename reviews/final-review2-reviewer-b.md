@@ -146,7 +146,7 @@ Checks:
 
 - I read `ledger/SANDBOX.lean`, `ledger/SANDBOX2.lean` and the proof.
 - (b) is a structural fact about the mount list: only two read-write host binds exist. It already held for `fixedPolicy`, so SANDBOX2F1's new content is (a) and (c).
-- (c) is correct. The state binds come before the hiding tmpfs, so any path inside a hidden directory is covered by a later tmpfs, except the read-only Mathlib re-bind. The `["var","tmp"] <+: W` hypothesis is necessary, because W inside a hidden directory would reveal it through `/var/tmp/work`.
+- (c) is correct. The state binds come before the hiding tmpfs, so any path inside a hidden directory is covered by a later tmpfs, except the read-only Mathlib re-bind. The `["var","tmp"] <+: W` hypothesis is necessary, because W inside a hidden directory would reveal it through `<temporary path>`.
 
 **Model-level gaps, all disclosed in the fidelity doc, some not in STACK.md:**
 - **Hidden files** (e.g. a CLI history file inside a CLI state directory) are not modelled. With that state directory declared they are readable and writable.

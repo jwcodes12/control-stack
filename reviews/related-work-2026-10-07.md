@@ -376,7 +376,7 @@ family and Lean-checking". N1/N1b: "machine-checked rendition of the TM audit ga
 https://arxiv.org/abs/2609.26419.
 
 **What it does.** [R] Applies classical reliability theory (coherent systems, minimal paths and cuts, Birnbaum
-importance, common-cause failure domains) to Google DeepMind's AI-control roadmap against rogue deployment (the
+importance, common-cause failure domains) to Reviewer C family DeepMind's AI-control roadmap against rogue deployment (the
 route-level model `phi = A or (M and R) or (V and T and Q)`, cited as GDM AI Control Roadmap arXiv:2607.13087). The
 headline: the same stack can have cubic, quadratic or linear rare-failure suppression depending on shared failure
 domains. A LinuxArena example shows a monitor can fire 36/51 times and still be pivotal in only 2/51 to 8/51

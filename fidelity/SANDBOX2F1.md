@@ -8,7 +8,7 @@ policy modelled in SANDBOXF1, and the SANDBOXF1 proposed fix.
 | object | model | note |
 |---|---|---|
 | SANDBOXF1's proposed fix | `fixedPolicy W stateDirs`: ro root, tmpfs scratch root, scratch bind, **hiding tmpfs, then state binds**, ro Mathlib | as frozen in SANDBOXF1 |
-| corrected fix (this CID) | `fixedPolicy2 W stateDirs`: ro root, tmpfs scratch root, scratch bind, **state binds, then hiding tmpfs**, ro Mathlib | in bwrap terms: `--ro-bind / / --tmpfs /var/tmp --bind W /var/tmp/work`, then `--bind d d` for each state dir, then `--tmpfs H` for each hidden dir, then `--ro-bind MATHLIB MATHLIB` |
+| corrected fix (this CID) | `fixedPolicy2 W stateDirs`: ro root, tmpfs scratch root, scratch bind, **state binds, then hiding tmpfs**, ro Mathlib | in bwrap terms: `--ro-bind / / --tmpfs /var/tmp --bind W <temporary path>`, then `--bind d d` for each state dir, then `--tmpfs H` for each hidden dir, then `--ro-bind MATHLIB MATHLIB` |
 | `hiddenDirs` | the 11 modelled hidden directories (several are subdirectories of CLI state directories, e.g. session logs) | hidden FILES are still omitted, as in SANDBOXF1 |
 | state directories | universally quantified `stateDirs` in (b) and (c) | which directories a given CLI needs is not fixed by the theorem; the Witness instantiates one CLI state directory |
 

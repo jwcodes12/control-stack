@@ -1,7 +1,7 @@
 QUESTION (campaign SANDBOX: the ACTION layer's first theorem, about a REAL policy). Model a research harness's
 bubblewrap sandbox for untrusted provers, `sandbox(work)`, as a reference monitor over a mount table, and prove its
 intended properties or refute them. The policy code (2026-10-07) is:
-    args = ["bwrap", "--dev-bind", "/", "/", "--tmpfs", "/var/tmp", "--bind", str(work), "/var/tmp/work"]
+    args = ["bwrap", "--dev-bind", "/", "/", "--tmpfs", "/var/tmp", "--bind", str(work), "<temporary path>
     for d in HIDE_DIRS: if d.exists(): args += ["--tmpfs", str(d)]
     for f in HIDE_FILES: if f.exists(): args += ["--bind", str(work / ".empty"), str(f)]
     args += ["--ro-bind", str(MATHLIB_PROJ), str(MATHLIB_PROJ)]

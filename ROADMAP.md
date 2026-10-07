@@ -9,7 +9,7 @@ Status legend:
 - ✅ **proved**: a VCVio-level file checked with `lake env lean` and `#print axioms` (not ledger-gated);
 - 🔄 in progress;
 - ⏳ planned;
-- 🔒 blocked on a decision by project owner.
+- 🔒 blocked on a decision by John.
 
 ## 1. Completed
 
@@ -46,7 +46,7 @@ Status legend:
 ## 2. In flight
 | item | what it gives | status |
 |---|---|---|
-| GitHub export | private repo `jwcodes12/control-stack` | ✅ session-3 snapshot pushed (`d320fa9`); next export follows a reviewed roadmap change |
+| GitHub export | private repo `jwcodes12/control-stack` | ✅ refreshed session-5 snapshot pushed (`e809e70`); reviewer identities anonymised |
 
 ## 3. Next (ranked)
 1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic exact-table fixture, and exact-rational simultaneous ROC-band generator complete; labelled samples, interval-to-GAC adapter, and the Lean checker run remain.) Rational ROC enclosures from finite samples
@@ -70,7 +70,7 @@ Every guarantee is conditional on these. None is discharged by anything here:
   (A1–A4, A11);
 - for TMCERT, row coverage of the concrete deployment (Abs). An average ROC estimate does not discharge it.
 
-## 5. Needs project owner 🔒
+## 5. Needs John 🔒
 - **Scaffold enforcement**: turn A1–A4/A11 into runtime checks or verified code (stateless calls, no clock exposure,
   test before deploy, absorbing shutdown). It touches deployment.
 - **Sandbox fix**: deploying the corrected bind order (SANDBOX2F1) in the research harness.

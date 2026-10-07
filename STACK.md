@@ -99,7 +99,7 @@ Status legend:
 
 **Usefulness checker extension (in progress).** `ControlStack/UseQ.lean` contains an exact-rational `checkUseQ` and a Lean soundness bridge: an accepted sub-solution lower-bounds expected cumulative reward for a fixed honest action under every full-history-dependent admissible row selector, assuming nonnegative transitions on admissible rows. A positive one-state witness compiles. Claim and witness pass the ledger harness Lean gate with standard axioms; reviewer family red-team passed. A second foreign-family review was rejected by automatic review because it would send the private statement to a new destination; no freeze. `numerics/lasr_usefulness_certificate.lean` also passes the rational checker on the current 100-step interval fixture and proves the conditional floor `22873/250`; held-out deployment evidence remains open.
 
-**Parameter-Lipschitz certificate transfer (TMLIPF1, draft).** Claim and witness pass local ledger harness gates with standard axioms. Two sandbox red-team attempts did not complete; external reviewer dispatch remains pending destination approval. The statement is not frozen.
+**Parameter-Lipschitz certificate transfer (TMLIPF1, draft).** Claim and witness pass local ledger harness gates with standard axioms. Review returned Reviewer A `kill` because the transfer follows from classical Bellman stability, and Reviewer C `revise` for witness/formulation drift (with a proposed repair). The repair does not address the `kill` reason, so no restatement or freeze was made. A future version needs a distinct result beyond the standard simulation-lemma argument.
 
 ## Layer 2: actions (reference monitor), first step
 

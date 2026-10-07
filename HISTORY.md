@@ -1,6 +1,7 @@
 # HISTORY
 
 - **Session 7 continuation (2026-10-07).** Corrected the VCVio defer game so a missed service check keeps the trusted replacement in place and continues, matching the ledger recursion. The operational game and exact `ENNReal` recursion compile; the calibrated real-valued bridge remains open.
+- **Session 7 review (2026-10-07).** Two-family review of the finite-grid transfer draft returned `kill` for classical Bellman stability and `revise` for witness/formulation drift. No restatement or freeze was made; a new version needs a distinct theorem contribution.
 
 - **Session 6 continuation (2026-10-07).** Added an optional-decoder adaptive survival recursion and proved the sharper uniform-seed risk bound. A separate proofport compiled against the existing frozen statement and verified dependencies, with a standard-axiom report; no ledger event or frozen statement changed. Registration and red-team review of a separate strengthening remain.
 - **Export refresh (2026-10-07).** Added the checked adaptive sharp-converse modules and updated roadmap status; reviewer identities remain anonymised.

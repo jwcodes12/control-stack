@@ -53,7 +53,7 @@ Status legend:
    (simultaneous confidence bands), discretised thresholds and ties, an interval uncertainty set for TMCERT, and a
    GAC-scale certificate (100 problems, 2 coins) run through the checker. Output: certified risk against a memoryless,
    a clocked and a full-information Red for the same Blue policy. This is the step a lab could actually use.
-2. 🔄 **Parameter-Lipschitz lemma**: from a finite grid of models to a whole confidence box (TMLIPF1 Claim and Witness local Lean gates pass with standard axioms; two-family red team remains pending. Sandbox dispatch failed, and external reviewer dispatch awaits destination approval).
+2. 🔒 **Parameter-Lipschitz lemma**: TMLIPF1 Claim and Witness pass local gates, but review returned Reviewer A `kill` (the transfer is a direct classical Bellman-stability argument) and Reviewer C `revise` (witness/formulation drift, with a proposed repair). No restatement or freeze: the `kill` concerns the theorem's contribution, which the witness repair does not address. Any next version needs a distinct result beyond the standard simulation-lemma argument.
 3. 🔄 **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): design note added; the
    joint protocol and overlap of adversary classes must be specified before a theorem. Marginal bounds give a min,
    not a product, absent a suitable conditional-independence argument. See [COMPOSITION-N1-UMPROT.md](COMPOSITION-N1-UMPROT.md).

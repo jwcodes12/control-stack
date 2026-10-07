@@ -158,7 +158,7 @@ calls, and it supplies no structural B̄ to layer 1 (Reviewer B B5).
 
 ## Sharper adaptive converse in progress
 
-`ControlStack/AdaptiveBalance.lean` proves the discrete balancing lemma for exact class counts and the quotient/remainder bound. `ControlStack/AdaptiveSharp.lean` proves the weighted path aggregation and uniform-seed `t/k` corollary. The adaptive tester's all-FLAG path measure is not yet connected to those abstractions; UMADAPTF1 remains the verified `t(1 − tn/k)` theorem.
+`ControlStack/AdaptiveBalance.lean`, `AdaptiveGeneric.lean` and `AdaptiveUMADAPT.lean` prove the balanced recursion, optional-decoder survival bound and uniform-seed risk composition. A separate kernel-gated proofport proves the sharper bound against the actual setup, catastrophe and seed-law definitions, with only standard axioms. The frozen UMADAPTF1 statement remains `t(1 − tn/k)`; registering and red-teaming a separate strengthening remains.
 
 ## Assumptions still unproved (what the stack does NOT give)
 1. **That any deployed mediator satisfies the trusted-component hypothesis** (domination constant L, or

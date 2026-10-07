@@ -1,4 +1,33 @@
-# STACK: the capability-free control guarantee stack, status 2026-10-07
+# STACK: strategy-free (adversary-quantified) control guarantees, conditional on explicit trust hypotheses; status 2026-10-07
+
+**Reading guide (after the final hostile review, `reviews/final-review-{sol,sonnet}.md`).**
+- Every row is a *conditional* theorem about an idealised finite model. The adversary is universally quantified, which
+  is what makes it capability-independent.
+- The conclusions hold only under the explicit assumptions listed:
+  - scaffold (fresh stateless monitor calls; the view is the complete input);
+  - upfront testing and absorbing shutdown;
+  - a constant audit recall r;
+  - honeypot construction and coverage;
+  - a certified domination constant for the mediator.
+- The protocol bounds are on the **joint** event "survives the honeypot test and then causes an uncaught catastrophe",
+  measured from before testing. They are not conditional on observed test success.
+- None of this is a deployed-system assurance.
+- **One-sided (Sonnet, final review).**
+  - In the halting variant a monitor that flags everything satisfies every bound, so the upper bounds measure the
+    **adversarial gain over the always-flag baseline**.
+  - Usefulness (honest false-shutdown 1 − S_κ(α₀), false-halt P(Bin(N, f₀) > b)) appears in DESIGN §2.2 numerics,
+    not in Lean.
+- **Coarse-regime caveat.** The positive results' hypotheses are satisfiable at realistic budgets only for coarse
+  mediated views (k ≲ 4–8 bad classes). There, the untrusted monitor's value over a trusted class rule is *not*
+  established (DESIGN §5).
+- **Who must be trusted for what:**
+
+  | quantity | what it asserts | kind |
+  |---|---|---|
+  | L (or δ) | Blue's honeypot generator, after mediation, spans every bad submission U could produce, up to the constant | constructibility / honeypot–U parity (A9) |
+  | r | a human audit catches every bad submission U could produce, with probability ≥ r (constant r in the Lean recursion) | audit–U parity (A6, STANDING) |
+  | A1–A4, A11 | fresh stateless monitor calls; the view is the complete input; upfront testing; a caught attack is absorbing shutdown | scaffold engineering, not proved |
+  | κ, n_h, n_s, b | Blue's protocol parameters | trusted by construction |
 
 Each row is a machine-checked guarantee, or a planned one. Every verified row passed:
 - a red team by two foreign model families;
@@ -16,18 +45,28 @@ Status legend:
 
 | CID | plain-English guarantee | assumptions it needs (DESIGN §2.3) | protocols it speaks to | status |
 |---|---|---|---|---|
-| UMHSF1 | No monitor rule can pass attacks much more often than honeypots unless the mediated attack and honeypot laws differ. Precisely: pass(attack) ≤ e^η·pass(honeypot) + hs_η, attained. Mediation never increases distinguishability. A content-preserving mediator cannot reduce it below the content-level value (exact or approximate decoder). No honeypot law has a likelihood-ratio constant below the maximal leakage Σ_z max_x M(x,z). | finite laws | every untrusted-monitoring protocol (LASR, Greenblatt §3.4) | **verified** (frozen c4a262fd3de3; Sol-high + Flash pass; gate: standard axioms) |
-| UMSURVF1 | The honeypot test's survival depends only on the monitor's honeypot pass rate h. It is a binomial CDF (hard slack) or (1−κh)^n (constant schedule), and h·survival ≤ (n_s+1)/(n_h+1). | A1–A3 (fresh contexts, iid honeypots) | Greenblatt upfront synthetic testing; LASR slack | **verified** (frozen 89139ffcfe63; Sol-high + Flash pass; gate: standard axioms) |
-| UMPROTF1 | **For every colluding pair** (shared seed, stateless monitor, adaptive generator), the uncaught-catastrophe probability is at most (1−r) + r·L·(n_s+1)/(n_h+1) when every bad submission's view is L-dominated by the mediated honeypot law. The same holds in hockey-stick and soft-slack forms. The first bad submission decides; the trusted-only objective S(h)(1−r+r·a) is exactly attained. | A1–A10; L or δ is a hypothesis on the trusted mediator and honeypot law; r is STANDING | the halting variant of UM; LASR Eq. (1) with ε = 0 and shutdown in place of retraining | **verified** (frozen 1385777cdd90; Sol-high + Flash pass; gate: standard axioms) |
-| UMSTRATF1 | With a content-only mediator, m honeypots per bad class and class-aware shutdown, every colluding pair has risk ≤ (1−r) + r(s_c+1)/(m+1), with no class-count factor. Attained by an explicit colluder. | A1–A10; content-only M; Blue can build honeypots per class | design recommendation for any honeypot protocol | **verified** (frozen d2b4b11507cc; Sol-high + Flash pass; gate: standard axioms) |
-| UMNOGOF1 | If the mediator preserves a decodable content class and Bad has k distinct classes, **every** iid honeypot law loses to some colluding pair with probability ≥ (1−1/k)^{n_h}. This is the impossibility side. | free-submission model (lower bound) | why summarising/paraphrasing alone cannot give capability-free collusion safety | **verified** (frozen d251d71f8951; Sol-high + Flash pass; gate: standard axioms) |
-| CANONF1 | A verified canonicaliser for a toy imperative language. It preserves semantics, and its output is a unique normal form modulo for→while, `;`-association and local renaming. Laws that agree on classes become identical after mediation, so markers carried only by those freedoms are erased. | (a verified trusted component) | LASR's For/While marker survived their minifier; this class is provably erased | **verified** (frozen d3d1dd97809f; Sol-high + Flash pass; gate: standard axioms) |
+| UMHSF1 | No monitor rule can pass attacks much more often than honeypots unless the mediated attack and honeypot laws differ. Precisely: pass(attack) ≤ e^η·pass(honeypot) + hs_η, attained by some [0,1] rule. Mediation never increases hs_η. An exact-decoder content-preserving mediator cannot reduce hs_η below the content-level value. With a decoder that errs with probability ≤ γ on **every** submission, it cannot go below that value minus (1+e^η)γ. For a chosen bad set B, no law Q on views has a likelihood-ratio constant below Σ_z max_{x∈B} M(x,z), the *exponentiated* maximal leakage. The attaining Q is an arbitrary view law, not necessarily a constructible honeypot law. | finite laws | the testing core of any honeypot-based untrusted-monitoring analysis (no protocol semantics involved) | **verified** (frozen c4a262fd3de3; Sol-high + Flash pass; gate: standard axioms) |
+| UMSURVF1 | The honeypot test's survival depends only on the monitor's honeypot pass rate h. Hard slack: survival = P(Bin(n_h,h) ≤ n_s) and h·survival ≤ (n_s+1)/(n_h+1). Constant schedule κ ∈ (0,1]: survival = (1−κh)^{n_h} and h·survival ≤ 1/(κ(n_h+1)), i.e. n_s/(n_h+1) for κ = 1/n_s, n_s ≥ 1. | A1–A3 (fresh contexts, iid honeypots) | Greenblatt upfront synthetic testing; LASR slack | **verified** (frozen 89139ffcfe63; Sol-high + Flash pass; gate: standard axioms) |
+| UMPROTF1 | **For every colluding pair** (shared seed, stateless monitor, adaptive generator, free choice of submission): P(survive the test, then uncaught catastrophe) ≤ (1−r) + r·L·(n_s+1)/(n_h+1) when every bad submission's view is L-dominated by the mediated honeypot law. Hockey-stick and soft-slack forms also hold. The first bad submission decides, **because catching an attack is absorbing shutdown** (A11): if a caught attack were merely blocked, the bound fails (Sol: 3/4 > 1/2). The recursion uses a *constant* audit recall r; the conditional-recall refinement is open. One-shot attainment: S(h)(1−r+r·a). | A1–A11; L or δ is a hypothesis on the trusted mediator and honeypot law; r is STANDING; bounds the adversarial gain over always-flag; usefulness not formalised | *motivated by* the upfront-honeypot mechanism of Greenblatt et al. §3.4 and LASR. It is not a formalisation of LASR Eq. (1), which also has upfront audits, attack rates, defer dynamics and retraining slack, and no reduction to it is proved | **verified** (frozen 1385777cdd90; Sol-high + Flash pass; gate: standard axioms) |
+| UMSTRATF1 | With a content-only mediator, m honeypots per bad class and class-aware shutdown, every colluding pair has risk ≤ (1−r) + r(s_c+1)/(m+1), with no *additional* class-count factor **at fixed per-class budget**. At a fixed total budget n_h = k·m, this is (1−r) + r·k(s_c+1)/(n_h+k), so the class count reappears. Under exact class decoding an explicit colluder attains binCDF(m,s_c,t)(1−r+rt); the counting bound itself is not claimed tight. | A1–A10; content-only M; Blue can build honeypots per class | a design variant of the halting idealisation; no named protocol | **verified** (frozen d2b4b11507cc; Sol-high + Flash pass; gate: standard axioms) |
+| UMNOGOF1 | If the mediator has an exact decoder for a content class and Bad has k distinct classes, then for **every** iid honeypot law one deterministic colluding pair wins, uniformly over every shutdown schedule, budget, recall and horizon N ≥ 1, with probability ≥ (1−1/k)^{n_h}. This holds in the free-submission model; availability on an exogenous task stream is not shown. It is a finite-sample bound, not a proof that no finite domination constant exists. | free-submission model (lower bound) | why decodable mediators (e.g. CANONF1's canonicaliser) with many Red-choosable bad classes cannot get small risk from iid honeypots at realistic n_h. LLM summarisers are not proved decodable, so they are not covered as stated | **verified** (frozen d251d71f8951; Sol-high + Flash pass; gate: standard axioms) |
+| CANONF1 | A verified canonicaliser for a toy imperative language. It preserves semantics, and its output is a unique normal form modulo for→while, `;`-association and local renaming. Laws that agree on classes become identical after mediation, so markers carried only by those freedoms are erased. | (a verified trusted component) | erases an *analogous* For/While channel in the specified toy language. LASR's Python pipeline would need a verified frontend and an observation-level theorem | **verified** (frozen d3d1dd97809f; Sol-high + Flash pass; gate: standard axioms) |
+
+### Interface level (VCVio, `~/research/control-stack`, Lean v4.34; checked with `lake env lean` + `#print axioms`, not ledger-gated)
+| file | guarantee | status |
+|---|---|---|
+| `ControlStack/Spike.lean` | T1 for *arbitrary* `ProbComp` distinguishers through a `ProbComp` mediator: \|Pr[D=1 ∣ mediated attack] − Pr[D=1 ∣ mediated honeypot]\| ≤ tvDist; data processing | checked, standard axioms |
+| `ControlStack/HoneypotBridgeProof.lean` | The honeypot test as a crypto-style game. For arbitrary `ProbComp` honeypot law H, mediator M and monitor D (stateless, with fresh coins per call, automatically in `ProbComp`), the number of PASSes among n honeypots is exactly binomial: Pr[#PASS ≤ s] = binCDF(n, s, Pr[D passes a mediated honeypot]). This is the first operational bridge to UMSURVF1's quantity, by textually identical `binCDF` definitions across the two projects | checked (67-line proof), standard axioms |
 
 ## Layer 2: actions (reference monitor), first step
 
+SANDBOXF1 models the research harness's sandbox for untrusted provers. It is *not yet* an action monitor for U's tool
+calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
+
+
 | CID | guarantee | status |
 |---|---|---|
-| SANDBOXF1 | A model of the proofledger sandbox (bubblewrap mount table). (a) The current policy does **not** confine host writes to scratch: `~/.elan` (executed by the gate) is writable. (b) A read-only-root fixed policy confines host writes to scratch and the declared state directories. (c) The current policy does hide the hidden directories, except through the read-only Mathlib re-bind. Boundary assumption: no `/proc/<pid>/root` alias (needs `--unshare-pid`). | **verified** (frozen 85a64bdfb3ce; Sol-high + Flash pass) |
+| SANDBOXF1 | A model of the proofledger sandbox (bubblewrap mount table). (a) The current policy does **not** confine host writes to scratch: `~/.elan` (executed by the gate) is writable. (b) A read-only-root fixed policy confines host writes to scratch and the declared state directories. (c) The current policy does hide the hidden directories, except through the read-only Mathlib re-bind. These are statements about **modelled pathname resolution**, not about host files. Hard links, symlinks and other aliases are outside the model (Sol). Boundary assumptions: no `/proc/<pid>/root` alias (needs `--unshare-pid`), no network side channels. (a) remains a counterexample inside the model. | **model theorem verified** (frozen 85a64bdfb3ce). **System claim untested**: no canary write was run. **The proposed fix as written regresses hiding** (Sonnet): state-directory binds are placed after the hiding tmpfs, so a state dir that is an ancestor of a hidden dir (e.g. ~/.codex over ~/.codex/sessions) re-exposes it. (b) is still true because it concerns writes only. See SANDBOXF2 |
 
 ## Existing verified results that slot into the stack (earlier sessions)
 - **Trusted monitoring (Redwood):**
@@ -38,14 +77,17 @@ Status legend:
   - CLKF1/CLKF2: a visible audit counter destroys the value of upfront auditing;
   - LUREF1/LUREF2: silent failures are a clock; erase the failure feedback.
 
-  These are the stateful-adversary caveats to A1 and A4 here.
+  They are the stateful-adversary caveats to A1 and A4 here. That is an informal connection; **no composition
+  theorem is claimed**.
 
 ## Assumptions still unproved (what the stack does NOT give)
 1. **That any deployed mediator satisfies the trusted-component hypothesis** (domination constant L, or
    hockey-stick δ, over every bad submission).
    - The theorems are parameterised by it.
-   - For rich content-preserving mediators (LLM summarisers, semantics-preserving code transforms) it is false for
-     every honeypot law: UMHSF1's maximal-leakage floor and UMNOGOF1.
+   - Content preservation forces large domination constants: L ≥ exp-maximal-leakage over the chosen bad set
+     (UMHSF1). Coverage requirements grow with the number of decodable bad classes (UMNOGOF1). A finite L always
+     exists in a finite model, e.g. L = |Bad| for uniform honeypots over Bad (Sol); the point is that it is too large
+     to be useful at realistic n_h.
    - Certifying it for a concrete mediator is open. CANONF1 is the only verified concrete mediator, and it removes only
      three named channels.
 2. **Constructibility (A9).** Blue can enumerate a superset B̄ of Bad and build honeypots on it. The action layer

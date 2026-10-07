@@ -120,6 +120,7 @@ Both are reported next to every X below. For soft schedules, n_s is a hazard par
 | A8 | finite X, Z, Ω, horizon N | MODELLING |
 | A9 | Bad ⊆ B̄ with B̄ Blue-enumerable; P_H constructible on B̄ | STANDING (constructibility) |
 | A10 | κ is Blue's observable shutdown rule (not retraining) | TRUSTED-COMPONENT |
+| A11 | catching a bad submission in an audit is **absorbing**: shutdown, with no further deployment. If a caught attack were merely blocked and deployment continued, first-bad-decides fails (Sol's final review: 3/4 > 1/2) | TRUSTED-COMPONENT (protocol) |
 
 ## 3. Theorems to formalise (ledger campaigns), in order
 

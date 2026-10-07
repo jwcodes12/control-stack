@@ -182,8 +182,9 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   factorization, the scalar first-moment inequality `h(1-h/ns)^nh ≤ ns/(nh+1)`, and the end-to-end soft-slack bound
   `(1-r)+r·L·ns/(nh+1)` under row domination and worst-case recall (the same hypotheses as `RefinementProof.endToEnd`).
   `SoftHockey.lean` proves the operational pass bridge from finite hockey-stick divergence and the end-to-end bound
-  `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. Still open: the stratified
-  design and defer variants at the game level.
+  `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. `StratifiedGame.lean`
+  models independent per-class hard-slack tests and proves their exact binomial product survival law and the seeded
+  protocol decomposition. The corresponding end-to-end stratified safety bound and defer variant remain open.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

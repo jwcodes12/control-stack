@@ -1,4 +1,4 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 5)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 6)
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
@@ -57,10 +57,10 @@ Status legend:
 3. 🔄 **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): design note added; the
    joint protocol and overlap of adversary classes must be specified before a theorem. Marginal bounds give a min,
    not a product, absent a suitable conditional-independence argument. See [COMPOSITION-N1-UMPROT.md](COMPOSITION-N1-UMPROT.md).
-4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. `SoftSlack.lean` proves exact survival, seeded factorization and the domination bound `(1-r)+r·L·ns/(nh+1)`. `SoftHockey.lean` proves the hockey-stick bound `(1-r)+r·(δ+e^η·ns/(nh+1))` from a per-bad-row finite hockey-stick assumption. Stratified and defer game variants remain.
+4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. `SoftSlack.lean` proves exact survival, seeded factorization and the domination bound `(1-r)+r·L·ns/(nh+1)`. `SoftHockey.lean` proves the hockey-stick bound `(1-r)+r·(δ+e^η·ns/(nh+1))` from a per-bad-row finite hockey-stick assumption. `StratifiedGame.lean` now proves exact independent per-class survival and the seeded protocol's binomial product decomposition; its end-to-end safety bound and the defer game remain.
 5. ⏳ **Sharper adaptive converse**: the balanced bound (t/k)[(k − a)(1 − t)^q + a(1 − t)^{q+1}], numerically equal to the
    optimal adaptive tester under the acceptance contract.
-6. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` now has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; the fresh two-family red-team review remains before freeze.
+6. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under full-history-dependent admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; Google red-team passed. The statement is attributed to OpenAI, so `sol-high` is not a foreign review; it remains unfrozen pending a second distinct foreign-family review.
 
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:

@@ -49,6 +49,7 @@ Status legend:
 | `ComposeAvg` | composition for any joint kernel (`composedJ_end`) and with the population-average trusted miss τ̄ = 1 − TPR (`composedPop_end`), so certified ROC bands plug in | ✅ proved (session 8) |
 | `ComposeBlindSpot` | **negative result**: population-average trusted miss 1/1000, yet a content-adaptive Red reaches catastrophe w.p. 1; sampled ROC data cannot certify the per-submission τ | ✅ proved (session 8) |
 | `CovertChannel` | covert-propagation bound: P(recover a uniform secret) ≤ |V|/|M| for every shared seed, adaptive encoder and decoder; schema form sⁿ/K; tight; design point 2^-16 | ✅ proved (session 8) |
+| `GatewayModel` | Lean model of the gateway; any refusal blanks delivery; end-to-end bound (|S|+1)^slots/|M| for every adversarial raw trace | ✅ proved (session 8) |
 
 ### Empirical certification (preregistered; Lean-checked certificates)
 | item | what it gives | status |
@@ -79,8 +80,8 @@ Goal: one end-to-end, independently checkable safety case, optimising for how mu
 | priority | work | definition of success | status |
 |---|---|---|---|
 | P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | ✅ `CATASTROPHE-SPEC.md`: covert secret propagation to machine receivers; schema/canonicaliser channels only; k = 32, P ≤ 2^-16, 16-bit budget |
-| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1 prototype `gateway/` (schema channels, fail-closed, default-deny; adversarial tests pass; red-team encoder meets but never exceeds the Lean bound); next: run inside a sandboxed multi-agent harness |
-| P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | ⏳ |
+| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1: `gateway/` (schema channels, fail-closed, default-deny) running in a bubblewrap two-instance harness; side channels (files, network, stderr, exit code, duration) closed in tests; red-team within the Lean bound. Residual: shared kernel state (page cache timing) needs VM isolation |
+| P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | 🔄 `GatewayModel.lean` proves the end-to-end bound for the gateway model; Python matches the model on 300 adversarial traces (differential test); remaining assumptions in `gateway/CORRESPONDENCE.md` |
 | P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |
 | P1 | trusted/untrusted composition | Lean bound for the actual joint protocol incl. shared state and audit budget | 🔄 (`ComposeGame`, `ComposeAvg`, `ComposeBlindSpot`) |
 | P1 | one reproducible safety case | a verifier reproduces the safety/usefulness pair and every unmet assumption | 🔄 (assurance manifests) |

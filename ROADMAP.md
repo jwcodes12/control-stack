@@ -77,7 +77,7 @@ Goal: one end-to-end, independently checkable safety case, optimising for how mu
 
 | priority | work | definition of success | status |
 |---|---|---|---|
-| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | ⏳ |
+| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | 🔄 draft `CATASTROPHE-SPEC.md`: covert secret propagation (John's proposal); 4 decisions pending |
 | P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | ⏳ (touches the agent runtime: 🔒 John) |
 | P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | ⏳ |
 | P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |

@@ -1,4 +1,5 @@
 > **SESSION 6 CONTINUATION (2026-10-07).** The sharper adaptive bound now compiles in standalone modules and in a separate kernel-gated proofport against the actual setup and protocol definitions. The proof uses only standard axioms. The frozen statement remains unchanged; a separate strengthening still needs registration and red-team review.
+> The anonymized private export was refreshed with these modules and pushed as snapshot commit `98fe35f`.
 > **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization and classwise end-to-end safety compile with standard axioms.
 > The LASR interval fixture has a rational usefulness certificate with conditional floor `22873/250`; deployment-matched held-out data remain missing.
 > TMLIPF1 Claim and Witness local gates pass with standard axioms; no red-team verdict is recorded and the campaign remains draft.

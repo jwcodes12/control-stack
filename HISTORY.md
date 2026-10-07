@@ -1,6 +1,7 @@
 # HISTORY
 
 - **Session 6 continuation (2026-10-07).** Added an optional-decoder adaptive survival recursion and proved the sharper uniform-seed risk bound. A separate proofport compiled against the existing frozen statement and verified dependencies, with a standard-axiom report; no ledger event or frozen statement changed. Registration and red-team review of a separate strengthening remain.
+- **Export refresh (2026-10-07).** Added the checked adaptive sharp-converse modules and updated roadmap status; reviewer identities remain anonymised.
 
 - **Session 6 continuation (2026-10-07).** Added the adaptive balanced-count lemma and weighted finite-path aggregation, including the uniform-seed `t/k` corollary. Connecting the adaptive tester recursion to the path measure remains open.
 - **Session 6 continuation (2026-10-07).** Proved the VCVio defer game equals its exact `ENNReal` recursion, and proved the discrete balanced-count power-sum bound used by the sharper adaptive converse. Real-valued defer calibration and the adaptive-transcript application remain open.

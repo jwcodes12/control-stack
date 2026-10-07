@@ -1,4 +1,4 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 3)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 5)
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
@@ -9,7 +9,7 @@ Status legend:
 - ✅ **proved**: a VCVio-level file checked with `lake env lean` and `#print axioms` (not ledger-gated);
 - 🔄 in progress;
 - ⏳ planned;
-- 🔒 blocked on a decision by John.
+- 🔒 blocked on a decision by project owner.
 
 ## 1. Completed
 
@@ -46,16 +46,17 @@ Status legend:
 ## 2. In flight
 | item | what it gives | status |
 |---|---|---|
-| GitHub export | private repo `jwcodes12/control-stack` | 🔄 local snapshot refresh prepared; authenticated push pending |
+| GitHub export | private repo `jwcodes12/control-stack` | ✅ session-3 snapshot pushed (`d320fa9`); next export follows a reviewed roadmap change |
 
 ## 3. Next (ranked)
-1. ⏳ **Certify a realistic trusted-monitoring configuration.** Rational ROC enclosures from finite samples
+1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic exact-table fixture, and exact-rational simultaneous ROC-band generator complete; labelled samples, interval-to-GAC adapter, and the Lean checker run remain.) Rational ROC enclosures from finite samples
    (simultaneous confidence bands), discretised thresholds and ties, an interval uncertainty set for TMCERT, and a
    GAC-scale certificate (100 problems, 2 coins) run through the checker. Output: certified risk against a memoryless,
    a clocked and a full-information Red for the same Blue policy. This is the step a lab could actually use.
-2. ⏳ **Parameter-Lipschitz lemma**: from a finite grid of models to a whole confidence box.
-3. ⏳ **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): a min, not a product,
-   absent conditional independence.
+2. 🔄 **Parameter-Lipschitz lemma**: from a finite grid of models to a whole confidence box (session 5: TMLIPF1 claim and witness pass local Lean gates; two-family red team remains pending).
+3. 🔄 **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): design note added; the
+   joint protocol and overlap of adversary classes must be specified before a theorem. Marginal bounds give a min,
+   not a product, absent a suitable conditional-independence argument. See [COMPOSITION-N1-UMPROT.md](COMPOSITION-N1-UMPROT.md).
 4. ⏳ **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant.
 5. ⏳ **Sharper adaptive converse**: the balanced bound (t/k)[(k − a)(1 − t)^q + a(1 − t)^{q+1}], numerically equal to the
    optimal adaptive tester under the acceptance contract.
@@ -69,7 +70,7 @@ Every guarantee is conditional on these. None is discharged by anything here:
   (A1–A4, A11);
 - for TMCERT, row coverage of the concrete deployment (Abs). An average ROC estimate does not discharge it.
 
-## 5. Needs John 🔒
+## 5. Needs project owner 🔒
 - **Scaffold enforcement**: turn A1–A4/A11 into runtime checks or verified code (stateless calls, no clock exposure,
   test before deploy, absorbing shutdown). It touches deployment.
 - **Sandbox fix**: deploying the corrected bind order (SANDBOX2F1) in the research harness.

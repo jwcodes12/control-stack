@@ -19,3 +19,4 @@
   general mount-table lessons; `ledger-check/` added to reproduce the gate.
 
 - **Session 3 update (2026-10-07).** TMCERTF1 and TMGACF1 frozen, independently red-teamed by two reviewer families, and verified by claim and witness gates; export includes statements, proofs, fidelity audits and stack status.
+- **Session 5 continuation (2026-10-07).** Added the sampled-ROC design note and exact-rational simultaneous band generator. The realistic checker run remains dependent on labelled validation data. Added a design note for trusted/untrusted monitoring composition; only a common-event minimum bound is currently justified. No theorem was promoted in this update.

@@ -46,14 +46,14 @@ Status legend:
 ## 2. In flight
 | item | what it gives | status |
 |---|---|---|
-| GitHub export | private repo `jwcodes12/control-stack` | 🔄 local snapshot refresh prepared; authenticated push pending |
+| GitHub export | private repo `jwcodes12/control-stack` | ✅ session-3 snapshot pushed (`d320fa9`); next export follows a reviewed roadmap change |
 
 ## 3. Next (ranked)
 1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4: design note and synthetic exact-table fixture complete; empirical bands and the Lean checker run remain.) Rational ROC enclosures from finite samples
    (simultaneous confidence bands), discretised thresholds and ties, an interval uncertainty set for TMCERT, and a
    GAC-scale certificate (100 problems, 2 coins) run through the checker. Output: certified risk against a memoryless,
    a clocked and a full-information Red for the same Blue policy. This is the step a lab could actually use.
-2. ⏳ **Parameter-Lipschitz lemma**: from a finite grid of models to a whole confidence box.
+2. 🔄 **Parameter-Lipschitz lemma**: from a finite grid of models to a whole confidence box (session 5: TMLIPF1 claim and witness pass local Lean gates; two-family red team remains pending).
 3. ⏳ **Composition of trusted and untrusted monitoring** (the earlier N1 results with UMPROTF1): a min, not a product,
    absent conditional independence.
 4. ⏳ **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant.

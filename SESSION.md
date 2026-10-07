@@ -1,3 +1,7 @@
+> **SESSION 5 STATUS (2026-10-07 ~16:00 UTC).** Opened draft campaign TMLIPF1, depending on TMCERTF1: certificate inflation by row L1 error, plus finite-grid confidence-box transfer.
+> Statement compiles; local claim and witness gates pass with standard axioms; exact N=1 and finite-grid witnesses are included.
+> External formulation/red-team transmission was rejected by automatic review; user approval is pending. No freeze, final gate, or theorem promotion yet.
+
 > **SESSION 4 STATUS (2026-10-07 ~15:45 UTC).** Added DESIGN-A2 and an exact-rational 100-problem/2-coin fixture; 101 certificate rows, 1,200 checker inequalities.
 > Illustrative full-information risk bound ≈0.45051; honest used-solutions estimate ≈52.464/100. The ROC endpoints are synthetic, not empirical confidence bands.
 > Next: obtain labelled validation data, derive simultaneous rational bands, then run the concrete `checkRiskQ`/`decide +kernel` fixture; no theorem was added.

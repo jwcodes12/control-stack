@@ -179,7 +179,9 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   honeypot survival bridge (with `ns = d+1` and an exact finite uniform coin), seed-conditional whole-protocol
   factorization, the scalar first-moment inequality `h(1-h/ns)^nh ≤ ns/(nh+1)`, and the end-to-end soft-slack bound
   `(1-r)+r·L·ns/(nh+1)` under row domination and worst-case recall (the same hypotheses as `RefinementProof.endToEnd`).
-  Still open: the hockey-stick form, the stratified design at the game level, and the defer variant at the game level.
+  `SoftHockey.lean` proves the operational pass bridge from finite hockey-stick divergence and the end-to-end bound
+  `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. Still open: the stratified
+  design and defer variants at the game level.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

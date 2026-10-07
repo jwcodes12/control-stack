@@ -24,3 +24,4 @@
 - **Session 5 continuation (2026-10-07).** Added a VCVio soft-slack honeypot survival bridge: an exact finite uniform rejection coin with hazard `1/ns` yields survival `(1 - h/ns)^n`, with only standard axioms. Full protocol composition remains open.
 - **Session 5 continuation (2026-10-07).** Extended the VCVio soft-slack model with seed-conditional whole-protocol factorization and the scalar first-moment inequality `h(1-h/ns)^nh ≤ ns/(nh+1)`. Deployment-bound composition under domination and recall remains open.
 - **Session 5 continuation (2026-10-07).** Proved the VCVio soft-slack end-to-end catastrophe bound `(1-r)+r·L·ns/(nh+1)` from row domination and worst-case recall; the other game-level variants remain in progress.
+- **Session 5 continuation (2026-10-07).** Added the VCVio soft-slack hockey-stick pass bridge and end-to-end bound `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound; standard-axiom Lean check passes.

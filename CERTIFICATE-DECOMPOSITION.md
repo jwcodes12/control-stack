@@ -37,3 +37,9 @@ Point estimate: 0.000 at every horizon.
   1,000–3,000 attack samples, or fewer rounds/more audits.
 - For weak monitors (LinuxArena at low false-alarm budgets) the certificate is close to the point estimate: the
   monitor, not the method, is the limit.
+
+## Fresh-data check (2026-10-07)
+The official LASR release (`huggingface.co/datasets/jbostock/untrusted-monitoring-2026-paper`) contains the same 42
+test-split conditions as our archive (plus open-source `causal_train`/`self_rec_train` training-split runs). There is
+no unseen LASR condition on which to run a clean single-condition, K = 2 preregistration; the tighter numbers above
+remain post hoc.

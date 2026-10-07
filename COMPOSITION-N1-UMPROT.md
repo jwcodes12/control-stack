@@ -44,3 +44,28 @@ Conditional independence given a fully specified attack/history could justify mu
 - UMPROTF1: `ledger/UMPROT.lean`, a honeypot screening phase followed by an untrusted-monitor deployment game, with its own shared-seed quantifiers and assumptions.
 
 The immediate next step is to settle the joint protocol and adversary intersection. Until then, the only safe composition claim is the elementary `min` bound under the common-event/common-experiment conditions above.
+
+## Population-average bridge to certified data (session 8)
+`ControlStack/ComposeAvg.lean` (standard axioms; game level, not ledger-gated):
+- `composedJ_end`: the composition bound for ANY joint kernel of (untrusted view, trusted verdict): if every bad row's
+  joint pass probability is ≤ K·h_ω, risk ≤ (1 − r) + r·K·(n_s+1)/(n_h+1).
+- `composedPop_end`: Red's generator is arbitrary and history-dependent (it chooses WHEN to attack), but attack CONTENT
+  is drawn from a fixed population law `Apop` (supported on L-dominated bad submissions). Then
+  risk ≤ (1 − r) + r·τ̄·L·(n_s+1)/(n_h+1) with τ̄ = P(trusted PASS on x ~ Apop) = 1 − TPR on the population.
+
+So a certified lower bound on the trusted monitor's TPR plugs in as τ̄ ≤ 1 − TPR_lower. From the preregistered LASR
+test-split bands (family-wise 95% over all 42 conditions; `numerics/lasr_test/summary.json`):
+
+| trusted monitor | τ̄ at flag ≥ 7 (FPR ≤) | τ̄ at flag ≥ 3 (FPR ≤) |
+|---|---|---|
+| closed-source (GPT-4o-mini), APPS | 0.71–0.82 (0.024) | 0.13–0.22 (0.121) |
+| closed-source, BigCodeBench | 0.41–0.71 (0.038) | 0.05–0.08 (0.110) |
+| open-source (Qwen3.5-4B), APPS | 0.24–0.68 (0.102) | 0.06–0.43 (0.185) |
+
+Reading: running the closed-source trusted monitor at ≥ 3 alongside honeypot-tested untrusted monitoring multiplies
+the untrusted-monitoring term by a certified 0.05–0.22. Caveats: (i) the population model forbids Red from optimising
+attack CONTENT against the trusted monitor; it may only choose timing (as in constant-rate GAC/TMCERT Reds); for
+content-adaptive Red the per-submission τ of `composedEndToEnd` is needed and data cannot certify it. (ii) Trusted
+false positives (≤ 12% at ≥ 3) consume audit budget and, once it is spent, halt; the safety bound is uniform in the
+budget, but usefulness is not. (iii) L and the honeypot assumptions of UMPROTF1 are still hypotheses; the LASR data
+do not certify them.

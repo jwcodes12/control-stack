@@ -46,6 +46,7 @@ Status legend:
 | `DeferGame` | audit-then-defer game equals the exact `ENNReal` recursion, and under calibrated kernels equals the frozen UMDEFERF1 `catV` (`defer_bridge`) | ✅ proved (session 7; calibration is an equality on recall, halt and service rates) |
 | `DeferMono` | **monotone defer bound** (`defer_mono`): recall ≥ r, halt hazard ≥ η and service catch ≥ a imply operational catastrophe ≤ ledger `catV`; with `defer_bridge` the bound is exact under calibration | ✅ proved (session 8) |
 | `ComposeGame` | trusted + untrusted monitoring in one game; fresh trusted coins make the misses multiply: (1 − r) + r·τ·L·(n_s+1)/(n_h+1); tight at n_h = 0 | ✅ proved (session 8) |
+| `ComposeAvg` | composition for any joint kernel (`composedJ_end`) and with the population-average trusted miss τ̄ = 1 − TPR (`composedPop_end`), so certified ROC bands plug in | ✅ proved (session 8) |
 
 ### Empirical certification (preregistered; Lean-checked certificates)
 | item | what it gives | status |
@@ -69,7 +70,7 @@ Status legend:
 | GitHub export (private `jwcodes12/control-stack`) | ✅ refreshed with every session-8 result (`a8e5540`); refresh again after the Lean checks |
 
 ## 3. Next (ranked)
-1. ⏳ **Link trusted-monitor certificates to composition**: derive the per-submission trusted miss bound τ in `ComposeGame` from a TMCERT/N1b certificate, so the product bound uses certified inputs.
+1. ✅ **Link trusted-monitor certificates to composition** (session 8): `ComposeAvg.lean` proves the composed bound with the population-average trusted miss τ̄ = 1 − TPR (Red picks timing, content from the evaluated population); certified LASR bands give τ̄ = 0.05–0.22 for the closed-source trusted monitor at ≥ 3. Content-adaptive Red still needs per-submission τ, which data cannot certify.
 2. ⏳ **General attainment for balanced honeypot schedules**: UMADAPTF2 is attained at one instance; prove it for every (k, n).
 3. ⏳ **Tighter empirical certificates**: a fresh, single-condition preregistration with only the cutoffs used (no unseen LASR condition exists), larger attack samples, or per-action rather than per-trajectory scoring on LinuxArena.
 4. 🔒 **More data**: LinuxArena monitored `.eval` files (login-gated), or scoring a public held-out split with a fixed monitor (API cost).

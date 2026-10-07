@@ -7,6 +7,7 @@ import ControlStack.UseQ
 import ControlStack.AdaptiveSharp
 import ControlStack.AdaptiveUMADAPT
 import ControlStack.ComposeGame
+import ControlStack.ComposeAvg
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
@@ -19,6 +20,7 @@ Root module of the interface-level (VCVio) Lake project, so that `lake build` ch
 - `SoftSlack`/`SoftHockey`, `StratifiedGame` and `DeferGame`/`DeferMono`: game-level versions of the soft-slack,
   hockey-stick, stratified and audit-then-defer results.
 - `ComposeGame`: trusted + untrusted monitoring in one game; product bound and tightness witness.
+- `ComposeAvg`: composition with a general joint kernel and with the population-average trusted miss rate.
 - `UseQ`: rational usefulness checker and its soundness bridge.
 - `AdaptiveBalance`, `AdaptiveSharp`, `AdaptiveGeneric`, `AdaptiveUMADAPT`: the sharper adaptive converse core.
 
@@ -48,3 +50,5 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.AdaptiveUMADAPT.sharp_uniform_adProtocolCatModel
 #print axioms ControlStack.Compose.composedEndToEnd
 #print axioms ControlStack.Compose.composed_tight
+#print axioms ControlStack.ComposeAvg.composedJ_end
+#print axioms ControlStack.ComposeAvg.composedPop_end

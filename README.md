@@ -7,7 +7,7 @@ audit-then-defer variant, certificate forms with Lean-checked rational fixtures,
 language, an operational (VCVio `ProbComp`) game that is proved equal to the recursions, and a first action-layer
 step (a bubblewrap mount-table model).
 
-**Start with [STACK.md](STACK.md)**: one row per guarantee, with its assumptions, the protocols it speaks to and its
+**Status at a glance: [ROADMAP.md](ROADMAP.md)** (completed, in flight, next, open assumptions). **Then [STACK.md](STACK.md)**: one row per guarantee, with its assumptions, the protocols it speaks to and its
 status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.
 
 ## Reading guide

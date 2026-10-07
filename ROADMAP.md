@@ -60,7 +60,7 @@ Status legend:
 4. 🔄 **Game-level (VCVio) versions** of soft slack, the hockey-stick form, the stratified design and the defer variant. `SoftSlack.lean` proves exact survival, seeded factorization and the domination bound `(1-r)+r·L·ns/(nh+1)`. `SoftHockey.lean` proves the hockey-stick bound `(1-r)+r·(δ+e^η·ns/(nh+1))` from a per-bad-row finite hockey-stick assumption. Stratified and defer game variants remain.
 5. ⏳ **Sharper adaptive converse**: the balanced bound (t/k)[(k − a)(1 − t)^q + a(1 − t)^{q+1}], numerically equal to the
    optimal adaptive tester under the acceptance contract.
-6. ⏳ **Usefulness checker**: a rational `checkUseQ` with a soundness bridge, mirroring the risk checker.
+6. 🔄 **Usefulness checker**: `ControlStack/UseQ.lean` now has a rational `checkUseQ`, a soundness bridge from sub-solutions to expected honest reward under admissible selectors, and a positive one-state witness. Claim and witness pass the proofledger Lean gate with standard axioms; the fresh two-family red-team review remains before freeze.
 
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:

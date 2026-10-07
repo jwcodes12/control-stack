@@ -25,3 +25,4 @@
 - **Session 5 continuation (2026-10-07).** Extended the VCVio soft-slack model with seed-conditional whole-protocol factorization and the scalar first-moment inequality `h(1-h/ns)^nh ≤ ns/(nh+1)`. Deployment-bound composition under domination and recall remains open.
 - **Session 5 continuation (2026-10-07).** Proved the VCVio soft-slack end-to-end catastrophe bound `(1-r)+r·L·ns/(nh+1)` from row domination and worst-case recall; the other game-level variants remain in progress.
 - **Session 5 continuation (2026-10-07).** Added the VCVio soft-slack hockey-stick pass bridge and end-to-end bound `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound; standard-axiom Lean check passes.
+- **Session 6 continuation (2026-10-07).** Added a full-history-dependent rational usefulness checker and soundness bridge. Proofledger claim and witness gates pass with standard axioms; fresh two-family review is pending, so the result is not frozen.

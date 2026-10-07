@@ -154,6 +154,10 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   (fidelity audits); implementation correspondence (VCVio refinement, SANDBOX; scaffold unverified); environmental
   validity (L, r, coverage: STANDING, not discharged by any measurement here).
 
+## Sharper adaptive converse in progress
+
+`ControlStack/AdaptiveBalance.lean` proves the discrete balancing lemma for exact class counts and the quotient/remainder bound. It does not yet connect the lemma to adaptive transcript probabilities; UMADAPTF1 remains the verified `t(1 − tn/k)` theorem.
+
 ## Assumptions still unproved (what the stack does NOT give)
 1. **That any deployed mediator satisfies the trusted-component hypothesis** (domination constant L, or
    hockey-stick δ, over every bad submission).
@@ -185,7 +189,7 @@ calls, and it supplies no structural B̄ to layer 1 (Sonnet B5).
   `(1-r)+r·(δ+e^η·ns/(nh+1))` under a per-bad-row divergence bound and worst-case recall. `StratifiedGame.lean`
   models independent per-class hard-slack tests and proves their exact binomial product survival law, seeded protocol
   decomposition, and end-to-end bound `(1-r)+r·L·(sc+1)/(m+1)` under classwise domination, class coverage, and recall.
-  `DeferGame.lean` defines the operational defer game and matching service-dependent `catV` recursion, with a proved one-step probability expansion; the real-valued VCVio refinement equality remains open. The ledger theorem is not yet connected to this operational game.
+  `DeferGame.lean` proves exact operational equality with a service-dependent `ENNReal` recursion, with a proved one-step probability expansion; conversion to the calibrated real-valued `catV` remains open. The ledger theorem is not yet connected to this operational game.
   The honest-completion event is now in the game (`OutcomeProof.lean`).
 6. **Out of model:**
    - stateful monitors and interleaved honeypots;

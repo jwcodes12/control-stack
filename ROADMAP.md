@@ -1,4 +1,4 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 6)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 8)
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
@@ -40,11 +40,22 @@ Status legend:
 | `HoneypotBridgeProof` | the honeypot test as a crypto-style game is exactly binomial | ✅ proved |
 | `RefinementProof` | trace-level protocol game = the core recursion; end-to-end bound | ✅ proved |
 | `OutcomeProof` | five-outcome game; honest-completion bridge to UMUSEF1; Pareto identity | ✅ proved (session 3) |
-| `SoftSlack` | soft-slack honeypot game: exact survival, seed factorisation, end-to-end bound (1−r)+r·L·n_s/(n_h+1) | ✅ proved |
-| `SoftHockey` | hockey-stick form of the soft-slack bound: (1−r)+r·(δ+e^η·n_s/(n_h+1)) | ✅ proved |
-| `StratifiedGame` | per-class binomial survival; end-to-end (1−r)+r·L·(s_c+1)/(m+1) under classwise domination and coverage | ✅ proved |
-| `DeferGame` | audit-then-defer game equals the exact `ENNReal` recursion, and under calibrated kernels equals the UMDEFERF1 `catV` | ✅ proved (calibration is an equality on recall, halt and service rates) |
-| `DeferMono` | **monotone defer bound** (`defer_mono`): recall ≥ r, halt hazard ≥ η and service catch ≥ a imply operational catastrophe ≤ ledger `catV`; with `defer_bridge` the bound is exact under calibration | ✅ proved |
+| `SoftSlack` | soft-slack honeypot game: exact survival, seed factorisation, end-to-end bound (1−r)+r·L·n_s/(n_h+1) | ✅ proved (session 5) |
+| `SoftHockey` | hockey-stick form of the soft-slack bound: (1−r)+r·(δ+e^η·n_s/(n_h+1)) | ✅ proved (session 5) |
+| `StratifiedGame` | per-class binomial survival; end-to-end (1−r)+r·L·(s_c+1)/(m+1) under classwise domination and coverage | ✅ proved (session 6) |
+| `DeferGame` | audit-then-defer game equals the exact `ENNReal` recursion, and under calibrated kernels equals the frozen UMDEFERF1 `catV` (`defer_bridge`) | ✅ proved (session 7; calibration is an equality on recall, halt and service rates) |
+| `DeferMono` | **monotone defer bound** (`defer_mono`): recall ≥ r, halt hazard ≥ η and service catch ≥ a imply operational catastrophe ≤ ledger `catV`; with `defer_bridge` the bound is exact under calibration | ✅ proved (session 8) |
+| `ComposeGame` | trusted + untrusted monitoring in one game; fresh trusted coins make the misses multiply: (1 − r) + r·τ·L·(n_s+1)/(n_h+1); tight at n_h = 0 | ✅ proved (session 8) |
+
+### Empirical certification (preregistered; Lean-checked certificates)
+| item | what it gives | status |
+|---|---|---|
+| LaStraj 2.0 (`PREREG-LASTRAJ.md`) | 30 honest / 17 attack; pipeline end to end | ✅ done; vacuous (≈1 at 100 tasks): too few attacks; Lean passes |
+| LASR held-out test split, all 42 conditions (`PREREG-LASR-TEST.md`) | family-wise 95% over every condition | ✅ done; closed-source monitor 0.63–0.83 at 100 tasks, 0.05–0.22 per task; open-source ≈1; Lean checks running |
+| LinuxArena 217, cutoffs 7/3 (`PREREG-LINUXARENA.md`) | 250 honest / 150 attack, public task-set scores | ✅ done; per-task risk 0.115 (Opus attacker), 0.32 (Sol), but 92% of honest work deferred |
+| LinuxArena 217, environment-split calibration (`PREREG-LINUXARENA-SPLIT.md`) | thresholds chosen on 2 environments, certified on 3 | ✅ done; FPR transfers (≤ 6.5%), per-task risk 0.82 (Opus): this monitor's exact safety–usefulness trade-off |
+| Risk decomposition (`CERTIFICATE-DECOMPOSITION.md`, post hoc) | point estimate vs certified | ✅ done; weak monitors: the monitor is the limit; strong monitors at 100 tasks: statistical margin (needs ~1,000–3,000 attacks or predeclaring fewer cutoffs) |
+| Held-out data search (`reviews/heldout-data-search-2026-10-07.md`) | public datasets, prior art (rocci; Gao 2026) | ✅ done |
 
 ### Layer 2: actions (first step)
 | item | what it gives | status |
@@ -52,19 +63,16 @@ Status legend:
 | SANDBOXF1, SANDBOX2F1 | mount-table model of a bubblewrap sandbox: the writable-root weakness and the corrected bind order | ✅ verified (model theorems; nothing deployed) |
 
 ## 2. In flight
-| item | what it gives | status |
-|---|---|---|
-| GitHub export | private repo `jwcodes12/control-stack` | ✅ refreshed with the adaptive sharp proofport and pushed; reviewer identities anonymised |
+| item | status |
+|---|---|
+| Lean checks of the 42 LASR certificates and 2 LinuxArena certificates | 🔄 running sequentially (≈5 min each) |
+| GitHub export (private `jwcodes12/control-stack`) | ✅ refreshed with every session-8 result (`a8e5540`); refresh again after the Lean checks |
 
 ## 3. Next (ranked)
-1. 🔄 **Certify a realistic trusted-monitoring configuration.** (session 4/5: design note, synthetic fixture, exact-rational ROC-band generator, and LASR archive pipeline demonstration complete; the 100-step/two-coin interval table passes `checkRiskQ`/`checkLawfulQ`, and a 100-step, three-state, eight-model `checkUseQ` certificate gives the conditional honest-reward floor `22873/250 = 91.492` for every full-history selector. A deployment-matched, predeclared held-out sample remains. Session 8: **blocked on data** (🔒 John): no further step is valid without a predeclared sample from the actual monitor/task/scaffold; an optional interim step is re-running the archive bands with a Bonferroni adjustment across every archive condition considered, which fixes the selection issue but still certifies nothing about a deployment.) Rational ROC enclosures from finite samples Session 8b: searched for public held-out data (`reviews/heldout-data-search-2026-10-07.md`); ran a PREREGISTERED certification on LaStraj 2.0 (`PREREG-LASTRAJ.md`; action/strong @ gpt-5.4-nano; 30 honest / 17 attack): pipeline and Lean check pass, but the 100-round, 2-coin bound is vacuous (≈ 1) because 17 attacks only certify defer recall ≥ 0.57. Next data: request access to the LinuxArena 217 monitored runs (250/150; login-gated) or score a public held-out split with a fixed monitor. Session 8c: the LASR archive is the paper's held-out TEST split (all 43,698 sample ids even; even = test in the LASR code). Preregistered all-42-condition certification (`PREREG-LASR-TEST.md`, family-wise 95%): closed-source trusted monitor gives non-vacuous 100-task bounds 0.63–0.83; open-source ≈1. LinuxArena 217 per-trajectory scores are public via `task_sets/linuxarena-217.json`; preregistered certification (`PREREG-LINUXARENA.md`): single-task risk 0.115 (Opus attacker) / 0.316 (Sol attacker), 100-task ≈1; the trajectory-max score gives 21% honest FPR at ≥7.
-   (simultaneous confidence bands), discretised thresholds and ties, an interval uncertainty set for TMCERT, and a
-   GAC-scale certificate (100 problems, 2 coins) run through the checker. Output: certified risk against a memoryless,
-   a clocked and a full-information Red for the same Blue policy. This is the step a lab could actually use.
-2. ✅ **Parameter-Lipschitz lemma**: verified as TMLIPF1 v2 (frozen 5c844eb0129e with override approved by John; Reviewer A kill on triviality only, Reviewer C pass; claim and witness gated). Classical infrastructure for transferring certificates under estimation error.
-3. ✅/🔄 **Composition of trusted and untrusted monitoring**: `ControlStack/ComposeGame.lean` proves a product bound (1 − r) + r·τ·L·(n_s+1)/(n_h+1) for a joint protocol in which the trusted monitor has fresh coins, plus factorisation, the per-submission product lemma and a tightness witness (standard axioms). Remaining: a bridge from TMCERT/N1b certificates to the per-submission trusted miss bound τ. See [COMPOSITION-N1-UMPROT.md](COMPOSITION-N1-UMPROT.md).
-4. ✅ **Sharper adaptive converse**: registered and verified as UMADAPTF2 (session 8; Reviewer A + Reviewer C pass; claim and witness gated, standard axioms). Open: a general attainment theorem for balanced schedules.
-5. ✅ **Usefulness checker**: verified as TMCERTUSF1 (frozen 3b0cda8ceba9; session 8). Two prover-agent-family reviews forced two repairs: a non-degenerate witness and an admissible-row check that rules out vacuous certificates; the final version passed Reviewer C and the prover-agent family. `ControlStack/UseQ.lean` was ported to the stricter checker and the LASR fixture re-checks. Classical (robust-DP comparison principle); banked as infrastructure.
+1. ⏳ **Link trusted-monitor certificates to composition**: derive the per-submission trusted miss bound τ in `ComposeGame` from a TMCERT/N1b certificate, so the product bound uses certified inputs.
+2. ⏳ **General attainment for balanced honeypot schedules**: UMADAPTF2 is attained at one instance; prove it for every (k, n).
+3. ⏳ **Tighter empirical certificates**: a fresh, single-condition preregistration with only the cutoffs used (no unseen LASR condition exists), larger attack samples, or per-action rather than per-trajectory scoring on LinuxArena.
+4. 🔒 **More data**: LinuxArena monitored `.eval` files (login-gated), or scoring a public held-out split with a fixed monitor (API cost).
 
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:

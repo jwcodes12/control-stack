@@ -14,7 +14,7 @@ open ControlStack.Refine
 
 abbrev Service (X Z : Type) := Hist X Z → X → Z → ℝ
 
-/-- Service-dependent catastrophe recursion from the proofledger defer statement. -/
+/-- Service-dependent catastrophe recursion from the ledger defer statement. -/
 noncomputable def catV {X Z : Type} [Fintype X] [Fintype Z]
     (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ)
     (φ : Z → ℝ) (π : Hist X Z → X → ℝ)

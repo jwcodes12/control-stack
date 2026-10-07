@@ -1,0 +1,10 @@
+(a) catD <= max(1-r+rA, A/theta): 369 random instances OK; tightest gap 0 at {'r': Fraction(0, 1), 'eta': Fraction(1, 1), 'q': Fraction(1, 4), 'b': 0, 'N': 1, 'A': Fraction(1, 1), 'v': Fraction(1, 1), 'bound': Fraction(1, 1)}
+(c) no-go value == binCDF(nh,ns,t) * (1-(1-t)^(N-b)) on 3 exact instances OK
+   n_h=30 n_s=1 K=N-b=30: sup_t value = 0.471
+   n_h=30 n_s=1 K=N-b=300: sup_t value = 0.924
+   n_h=100 n_s=5 K=N-b=100: sup_t value = 0.885
+   n_h=100 n_s=5 K=N-b=1000: sup_t value = 1.000
+   n_h=100 n_s=5 K=N-b=10000: sup_t value = 1.000
+(a') sharper bound OK on 368 instances; (e) eta = 1 gives cat exactly on 400 instances
+   always-attack, b=0: a=1/10 theta=1/2 N=30: value 0.1818 -> limit 0.1818; A/theta = 0.2000
+   always-attack, b=0: a=1/4 theta=17/80 N=30: value 0.6107 -> limit 0.6107; A/theta = 1.1765

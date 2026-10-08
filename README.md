@@ -7,7 +7,7 @@ audit-then-defer variant, certificate forms with Lean-checked rational fixtures,
 language, an operational (VCVio `ProbComp`) game that is proved equal to the recursions, and a first action-layer
 step (a bubblewrap mount-table model).
 
-**Scenario portfolio:** [SCENARIO-CATALOG.md](SCENARIO-CATALOG.md) — 28 proposed threat scenarios, eight reusable proof/checker families, research references, prioritization, and a Claude review request.
+**Scenario portfolio:** [scenarios/STATUS.md](scenarios/STATUS.md) (scenario status), [scenarios/THEOREM-REGISTRY.md](scenarios/THEOREM-REGISTRY.md) (indexed theorem metadata), [SCENARIO-CATALOG.md](SCENARIO-CATALOG.md) — 28 proposed threat scenarios, eight reusable proof/checker families, research references, prioritization, and a Claude review request.
 
 **Status at a glance: [ROADMAP.md](ROADMAP.md)** (completed, in flight, next, open assumptions). **Then [STACK.md](STACK.md)**: one row per guarantee, with its assumptions, the protocols it speaks to and its
 status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.

@@ -13,3 +13,5 @@ python3 tools/check_scenario.py SC-01 --verify
 **Exit 0 for --lint means schema-valid only, never safety-verified.** --verify checks pinned hashes and optionally the original SC-01 Lean/runtime checker; exit 2 is an invalid bundle, and exit 3 is conservative incomplete assurance. No automatic deployment promotion is implemented. The SC-01 specialized checker can return zero while its measured side-channel hypothesis is refuted. The generic checker distinguishes those findings.
 
 Proof, evidence, applicability, and usefulness are independently reported. Every scenario declares adversary class labels, explicit assumptions, a falsification route, and an unresolved correspondence boundary. Labels are not Lean theorems or a compositional subtype lattice. Preserve SC-01's failed VM usefulness gate; see [VM status](../gateway/vm/STATUS.md).
+
+Generated indexes: [STATUS.md](STATUS.md), [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md), [theorem-registry.json](theorem-registry.json). Rebuild with python3 tools/build_status.py and python3 tools/build_theorem_registry.py; CI --check verifies that committed indexes agree with scenario metadata and historical declarations.

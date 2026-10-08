@@ -1,3 +1,5 @@
+> New scenario-level index: [scenarios/STATUS.md](scenarios/STATUS.md). This historical roadmap retains unique research/provenance details and is not auto-promoted by the scenario checker.
+
 # ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 8)
 
 ## SC-03 egress update (2026-10-08)

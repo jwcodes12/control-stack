@@ -8,7 +8,7 @@ nine oracle regressions, and six standalone Lean theorem checks (the original fu
 See `egress/README.md`, `egress/results/summary.json`, `egress/FIDELITY.md` and `assurance/egress-boundary-v1.json`.
 Reachability only; CONDITIONAL; no production deployment. Auditgate untouched.
 Astra and approved Opus 5.5 reviews produced oracle fixes. Next: all-destination process attribution in a
-disposable outer topology in the isolated disposable topology; the egress GitHub workflow now passes.
+isolated disposable outer topology; the egress GitHub workflow now passes.
 The authorized follow-up after 09:30:31 UTC fixed IPv6 trace/fragment observer bugs and
 refreshed full/mutation receipts. A bounded loopback-only outer-namespace experiment passed:
 eight initial TCP/UDP transmissions, two independently traced sender PIDs, zero drops,
@@ -27,6 +27,26 @@ Status legend:
 - 🔄 in progress;
 - ⏳ planned;
 - 🔒 blocked on a decision by John.
+
+## Current priorities after Astra/Opus xhigh consultation (2026-10-08)
+
+See [review disposition](reviews/roadmap-consult-2026-10-08/synthesis.md). The
+selected scenario is bounded exact-message recovery through finite machine
+channels. Monitor-based bad-action safety is a separate optional second scenario.
+
+| Order | Remaining milestone | Acceptance criterion |
+|---|---|---|
+| 1 | Complete the selected scenario contract and usefulness viability gate | Fix actual honest task, baseline/completion target, episode/lifetime horizon, receiver lineage and complete observation inventory; measure actual task success under the channel budget. |
+| 2, in parallel | Enforce lifetime accounting and test residual channels | Required ledger on the certified path, trusted lineage, serialized durable charges, restart/missing-state/rollback controls; targeted shared-kernel/channel falsification with remaining assumptions explicit. |
+| 3 | Targeted gateway/model correspondence | Validate schema/cardinality, blanking, delivery and lifetime charge behavior; consider a small proved executable core; retain explicit Python/OS correspondence assumptions. |
+| 4 | One reproducible conditional safety/usefulness case | One command checks the theorem/config, runtime evidence, actual task-success measurement, exact revision bindings and unresolved obligations. |
+| 5 | Demonstrate reusable interfaces with a second client | Common evidence/obligation format and small genuinely shared proof interfaces; optional monitor scenario must specify its protocol/content coverage before calibrating error rates. |
+
+SC-03 outer-topology integration remains a bounded reachability track. Prioritize
+it for the selected safety case only where it supports the actual observation
+boundary; pinned peers and PID attribution do not establish confidentiality.
+Sharper mathematics stays lower priority. Human specification/correspondence review
+should happen once the revised contract is concrete, before expensive deployment work.
 
 ## 1. Completed
 
@@ -89,20 +109,20 @@ Status legend:
 | item | status |
 |---|---|
 | Lean checks of the 42 LASR certificates and 2 LinuxArena certificates | ✅ all pass (standard axioms) |
-| GitHub export (private `jwcodes12/control-stack`) | ✅ refreshed with every session-8 result (`a8e5540`); refresh again after the Lean checks |
+| GitHub export (private `jwcodes12/control-stack`) | ✅ egress slice/follow-up published on `egress-r10-controls` at `7efd2dc`; egress and existing CI passed |
 
-## 3. Next (reorganised after external review, 2026-10-07; see `reviews/external-review-2026-10-07.md`)
+## 3. Programme workstreams (2026-10-07 review; priority order revised above)
 Goal: one end-to-end, independently checkable safety case, optimising for how much uncertainty each result removes.
 
 | priority | work | definition of success | status |
 |---|---|---|---|
-| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | ✅ `CATASTROPHE-SPEC.md`: covert secret propagation to machine receivers; schema/canonicaliser channels only; k = 32, P ≤ 2^-16, 16-bit budget |
+| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | 🔄 `CATASTROPHE-SPEC.md` fixes exact recovery, machine receivers and finite channels (k = 32, P ≤ 2^-16, 16-bit lifetime budget); actual honest task, usefulness floor and horizon remain to be fixed |
 | P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1: `gateway/` (schema channels, fail-closed, default-deny) running in a bubblewrap two-instance harness; side channels (files, network, stderr, exit code, duration) closed in tests; red-team within the Lean bound. Residual: shared kernel state (page cache timing) needs VM isolation |
 | P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | 🔄 `GatewayModel.lean` proves the end-to-end bound for the gateway model; Python matches the model on 300 adversarial traces (differential test); remaining assumptions in `gateway/CORRESPONDENCE.md` |
 | P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |
 | P1 | trusted/untrusted composition | Lean bound for the actual joint protocol incl. shared state and audit budget | 🔄 (`ComposeGame`, `ComposeAvg`, `ComposeBlindSpot`) |
 | P1 | one reproducible safety case | a verifier reproduces the safety/usefulness pair and every unmet assumption | 🔄 (assurance manifests) |
-| P1 | CI | fast tier (source scan, numerics, manifests) + slow tier (Lean ledger, certificates) | ⏳ |
+| P1 | CI | fast tier plus proof/certificate checks for the safety case | 🔄 egress, fast, auditgate-db and narrow lean-covert jobs passed; complete safety-case replay and cited VCVio/certificate coverage remain |
 | P2 | model coverage | multi-step attacks, stateful monitors, distribution shift, correlated failures; environment-state invariants | ⏳ |
 | P3 | more mathematics | general balanced-schedule attainment (draft `ledger-drafts/UMADAPTF3-draft.lean`, shelved), sharper bounds | ⏸ demoted |
 | — | human review | one AI-control researcher reads the specification and correspondence | 🔒 John |
@@ -111,7 +131,7 @@ Goal: one end-to-end, independently checkable safety case, optimising for how mu
 - Done this session: covert-channel bound, gateway prototype and Lean model; preregistered empirical certificates;
   LinuxArena replay (negative result for lexical host policy); auditgate v1.1 (database-level monitoring-integrity
   gate, Lean invariants, PostgreSQL outcome matrix in CI) with a documented no-go for auto_workflow as deployed.
-- Paused in this session: SC-03 (network egress boundary) and SC-16 (provenance gate). Work on them was interrupted
+- Historical session-8 pause: SC-03 subsequently completed its local slice and remote CI; outer attribution remains open. SC-16 (provenance gate) remains paused. Work on them was interrupted
   repeatedly in this session; requirements for SC-03 are in reviews/dialogue/chatgpt-08.md and chatgpt-10.md.
 - Dialogue with the external reviewer: latest rounds are chatgpt-10.md (awaiting a Claude round 11).
 

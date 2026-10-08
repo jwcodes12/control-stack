@@ -3,7 +3,7 @@
 ## 2026-10-08 — structure merge work branch (not yet verified)
 
 - From exact main `18c1859`, selected B's single 28-case `scenarios/` tree and static checker, retained A's two CI roles, and ported C's Lean family scaffold, explicit policy tamper/dual-gate counterexample, adversary taxonomy and future prereg templates.
-- Moved six reviewed main theorem implementations without changing their bytes; old Lean module names now import canonical definitions. Generated one source-derived theorem registry (Markdown + JSON) with registry-link checking; did not promote recorded validation to new verification.
+- Moved six reviewed main theorem implementations without changing their bytes; old Lean module names now import canonical definitions. Generated one source-derived theorem registry (Markdown + JSON; 852 scanned theorem/lemma declarations after the inline-attribute and dotted-name fix) with registry-link checking; did not promote recorded validation to new verification.
 - Reconciled SC-27 as a draft attestation scenario; C's dispatch theorem is only a narrower bridge and does not establish independent attestation.
 - Known outstanding: no networked shell clone, no elan/lake build or Python full suite run in this environment. See [comparison](reviews/structure-merge/comparison.md) and [remaining steps](STRUCTURE-PLAN.md).
 - Every integration commit uses `[skip ci]`; no push to `main`. No frozen prereg/evidence receipt touched. SC-01 assurance manifest source SHA-256 bindings for the two relocated compat facades were explicitly re-pinned; this is metadata, not a regenerated experimental receipt.

@@ -9,7 +9,7 @@ This is the **single status entry point**. The source-derived scenario index is 
 - SC-01, SC-03 and SC-13 have named proof references and remain **conditional**, not deployment assured; SC-27 remains **draft** because audit-dispatch integrity does not prove independently attested evidence.
 - 28 scenario folders exist: **3 conditional, 25 draft**. A scenario folder is not a tested safety case.
 - Reviewed main proof definitions now live under `ControlStack/Core/`, `ControlStack/Families/` and `ControlStack/Witnesses/`, with old imports preserved. C contributes policy-tamper and shared-state gate candidate proofs.
-- The theorem registry is a lexical source inventory (849 declarations at integration), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
+- The theorem registry is a lexical source inventory (852 declarations after lexical completeness repair), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
 - **Required before approval:** actual Lean 4.34.0 clean build, standard-axiom audit, Python tests, SC-01 unchanged receipt steps 1–4, mutation/fail-closed controls, and independent correspondence review. The historical OpenSSL receipt must not be regenerated. SC-01 assurance metadata explicitly rebinds the moved Leakage/Necessity facade sources; only the OpenSSL host-bound failure is expected in step 5.
 - C's four active-bundle observations were reconciled conservatively: SC-01's frozen VM usefulness gate and single-host side-channel gate failed; SC-03 proves only a narrow immediate-peer model; SC-13 assumes exclusive trusted dispatch; SC-27 still lacks independently rooted attestation.
 

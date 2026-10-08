@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DECL = re.compile(r"(?m)^[ \t]*(?:(?:private|protected)\s+)?(?:theorem|lemma)\s+([A-Za-z_][A-Za-z_0-9']*)\b")
+DECL = re.compile(r"(?m)^[ \t]*(?:(?:@\[[^\]\n]+\]|noncomputable|private|protected|local)\s+)*(?:theorem|lemma)\s+([A-Za-z_][A-Za-z_0-9']*(?:\.[A-Za-z_][A-Za-z_0-9']*)*)\b")
 ALLOWED = {"SOURCE_ONLY", "PROVED_RECORDED", "VERIFIED_RECORDED", "REVIEWED_RECORDED"}
 FAMILIES = {f"F{i}" for i in range(1, 9)}
 CLASSES = {"NON_ADAPTIVE", "ADAPTIVE_FEEDBACK", "SHARED_SEED",

@@ -9,6 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from tools.check_scenarios import Invalid, main, verify
+from tools.build_registry import DECL
 
 
 class CheckerTests(unittest.TestCase):
@@ -85,6 +86,16 @@ class CheckerTests(unittest.TestCase):
         (self.root / "THEOREM-REGISTRY.json").write_text("[]")
         with self.assertRaises(Invalid):
             verify(self.root, "SC-01")
+
+    def test_missing_claim_query_fails_closed(self):
+        (self.bundle / "claim.lean").write_text("import Std\n")
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_registry_covers_simp_and_qualified_declarations(self):
+        source = ("@[simp] theorem System.run_nil : True := by trivial\n"
+                  "noncomputable theorem bound : True := by trivial\n")
+        self.assertEqual(DECL.findall(source), ["System.run_nil", "bound"])
 
     def test_draft_has_no_proof(self):
         self.m["theorems"] = []

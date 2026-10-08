@@ -1,4 +1,4 @@
-# Lean track handoff — 2026-10-08 (branch `claude/lean-track`, a separate worktree)
+# Lean track handoff — 2026-10-08 (branch `claude/lean-track`, worktree <repo root>)
 
 Built in a separate worktree so it does not collide with the concurrent SC-01 isolation work on `master`.
 Not merged, not pushed. To merge: `git -C ~/research/control-stack merge claude/lean-track` (new files only,
@@ -20,12 +20,15 @@ none is ledger-gated or red-teamed by two families yet.
 | ControlStack/ComposeCoverage.lean | coverage (K, ε): Red's trusted miss ≤ K·τ̄ + ε, tight in K and ε; composed protocol bound under coverage (positive counterpart to ComposeBlindSpot) |
 | ControlStack/MultiStep.lean | k-step attacks: uniform conditional catch rate c ⇒ survival ≤ (1−c)^k; marginal rate c with correlated misses gives 1−c for every k (no-go); posterior-hazard bound for seeded monitors |
 | ControlStack/ScenarioACore.lean | SC-01's 9-view carrier derived from GatewayCore; end-to-end five-episode bound over raw traces; a visible variable episode count attains 66430/2^32 > 2^-16 |
+| ControlStack/AuditBudget.lean | shared fixed audit budget B over N rounds vs a k-step attack: a hidden uniformly random audit set gives survival C(N−k,B)/C(N,B) ≤ (1−B/N)^k; a schedule Red can observe gives survival 1 whenever N−B ≥ k (e.g. N=100, B=10, k=5: 0.584 vs 1) |
 | REVIEW-PACKET.md | packet for one human control researcher: claim, threat model, theorem chain, assumptions, 12 questions, reproduction |
 | reviews/codex-lean-audit-2026-10-08.md | independent statement audit of ScenarioARepair / EgressGate / GatewayModel |
 
 Open from the audit (for whoever owns those files): EgressGate assumes policy integrity by definition (FIDELITY.md
 overclaims); fixed-five-episode premise undocumented in README/manifest; egress README vs manifest CI claim;
 CORRESPONDENCE.md timing row marked validated despite the cache finding.
+
+Checker coverage: `tools/check_sc01_case.py` now also checks ScenarioACore (case chain) and ComposeCoverage, MultiStep, AuditBudget (supporting results).
 
 Next: once the VM-pair isolation lands, re-run the side-channel probe there and re-run `python3 tools/check_sc01_case.py`;
 the safety conjunct applies only if the measured evidence no longer refutes the side certificate.

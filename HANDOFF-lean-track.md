@@ -18,6 +18,9 @@ none is ledger-gated or red-teamed by two families yet.
 | ControlStack/SafetyCaseSC01.lean | the case in one theorem (`sc01_case`), ledger admits ≤ 5 nine-view episodes, `bit_refutes` (measured bit recovery p ⇒ certificate mass ≥ 2p) |
 | tools/check_sc01_case.py + assurance/sc01-safety-case.json | one-command checker; current verdict HYPOTHESIS_REFUTED for the single-host harness (cache bit 64/64, lower 0.954 ⇒ mass ≥ 1.909 > 1.11) |
 | ControlStack/ComposeCoverage.lean | coverage (K, ε): Red's trusted miss ≤ K·τ̄ + ε, tight in K and ε; composed protocol bound under coverage (positive counterpart to ComposeBlindSpot) |
+| ControlStack/MultiStep.lean | k-step attacks: uniform conditional catch rate c ⇒ survival ≤ (1−c)^k; marginal rate c with correlated misses gives 1−c for every k (no-go); posterior-hazard bound for seeded monitors |
+| ControlStack/ScenarioACore.lean | SC-01's 9-view carrier derived from GatewayCore; end-to-end five-episode bound over raw traces; a visible variable episode count attains 66430/2^32 > 2^-16 |
+| REVIEW-PACKET.md | packet for one human control researcher: claim, threat model, theorem chain, assumptions, 12 questions, reproduction |
 | reviews/codex-lean-audit-2026-10-08.md | independent statement audit of ScenarioARepair / EgressGate / GatewayModel |
 
 Open from the audit (for whoever owns those files): EgressGate assumes policy integrity by definition (FIDELITY.md

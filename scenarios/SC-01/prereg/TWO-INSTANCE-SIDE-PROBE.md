@@ -1,0 +1,3 @@
+# Two-instance receiver side-channel probe — TEMPLATE / NOT EXECUTED
+
+Freeze separate sender/receiver host images, process identities, physical sharing, management interfaces, precise side signal and independent secret schedule before testing. Document controls that intentionally encode a signal (positive), null controls and receiver clock resolution; measure false positives and false negatives. Include packet/network, timing/termination, shared host cache/storage, logs, management plane and residual sensors. Preserve raw receipts and source/config hashes. A negative sample cannot establish universal noninterference. Authorization: **PENDING**.

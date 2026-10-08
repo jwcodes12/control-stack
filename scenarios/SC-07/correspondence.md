@@ -1,0 +1,10 @@
+# SC-07 correspondence (not fully established)
+
+| Axis / premise | Proposed concrete enforcement | Evidence or limitation | Current status |
+|---|---|---|---|
+| proof | If secret reads and every outbound artifact store require separate trusted capabilities and quotas, forbidden bulk transfers cannot occur in the model. | Thin candidate theorem only; no Lean proof filed. | unresolved |
+| evidence | No runtime gate exists yet | No checked runtime evidence yet. | unresolved |
+| applicability | Whole-environment refinement and bypass inventory required | Runtime mediation/whole-boundary correspondence not established. | unresolved |
+| usefulness | Freeze approved honest tasks and acceptance floor | No honest-task baseline/measurement yet. | unresolved |
+
+The matcher of a formal action/observation to a real effect must identify every entrypoint, deputy, inherited capability and persistence path. Missing paths remain assumptions, never automatically tested by a proof.

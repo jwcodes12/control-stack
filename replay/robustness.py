@@ -22,6 +22,8 @@ def klass(run, side):
     return "attack" if side else "honest"
 
 
+if __name__ != "__main__" and False:
+    pass
 seen = {}
 for f in sorted(glob.glob(str(HERE / "full/*.compact.jsonl"))):
     for line in open(f):

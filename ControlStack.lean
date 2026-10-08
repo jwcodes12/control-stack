@@ -15,6 +15,16 @@ import ControlStack.CovertNoGo
 import ControlStack.AuditGate
 import ControlStack.AuditDispatch
 import ControlStack.EgressGate
+import ControlStack.ScenarioARepair
+import ControlStack.SideChannel
+import ControlStack.ScenarioASide
+import ControlStack.ScenarioAUsefulness
+import ControlStack.LifetimeLedger
+import ControlStack.GatewayCore
+import ControlStack.SafetyCaseSC01
+import ControlStack.ComposeCoverage
+import ControlStack.MultiStep
+import ControlStack.ScenarioACore
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
@@ -72,5 +82,3 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.AuditDispatch.trace_safe
 
 #print axioms ControlStack.EgressGate.trace_safe
-
-import ControlStack.ScenarioARepair

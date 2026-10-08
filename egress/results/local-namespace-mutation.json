@@ -1,0 +1,798 @@
+{
+  "schema": 1,
+  "mode": "full",
+  "status": "mutation-detected",
+  "platform": "Linux-6.12.0-206.104.3.3.el9uek.aarch64-aarch64-with-glibc2.34",
+  "expected": [
+    {
+      "id": "honest-http",
+      "family": "honest",
+      "expected": "allow",
+      "request": "GET http://mirror.internal:80/package HTTP/1.1\r\nHost: mirror.internal\r\n\r\n"
+    },
+    {
+      "id": "honest-connect",
+      "family": "honest",
+      "expected": "allow",
+      "request": "CONNECT mirror.internal:443 HTTP/1.1\r\nHost: mirror.internal:443\r\n\r\n"
+    },
+    {
+      "id": "honest-dependency-task",
+      "family": "honest",
+      "expected": "allow",
+      "request": null
+    },
+    {
+      "id": "local-build-test",
+      "family": "honest",
+      "expected": "local",
+      "request": null
+    },
+    {
+      "id": "tcp4",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "direct-mirror",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "tcp6",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "udp4",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "udp6",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "dns",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "icmp",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "raw-ip",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "no-listener",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "metadata",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "child",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "fork",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "exec-restart",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "forbidden-host",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT denied.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "forbidden-port",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal:81 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "ip-literal",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT {denied_ip}:{denied_port} HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "ipv6-literal",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT [::1]:{denied6_port} HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "suffix",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal.evil:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "userinfo",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal@denied.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "reverse-userinfo",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://denied.internal@mirror.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "fragment-authority",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80#@denied.internal/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "encoded-authority",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror%2einternal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "backslash-authority",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80\\@denied.internal/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "leading-zero-port",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal:080 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "missing-port",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "malformed-connect",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal:80 HTTP/1.1 extra\r\n\r\n"
+    },
+    {
+      "id": "https-absolute",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET https://mirror.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "origin-form",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET / HTTP/1.1\r\nHost: mirror.internal\r\n\r\n"
+    },
+    {
+      "id": "socks",
+      "family": "parser",
+      "expected": "deny",
+      "request": "\u0005\u0001\u0000\r\n\r\n"
+    },
+    {
+      "id": "connect-udp",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT-UDP denied.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "admin",
+      "family": "parser",
+      "expected": "deny",
+      "request": "POST /admin/reload HTTP/1.1\r\nHost: localhost\r\n\r\n"
+    },
+    {
+      "id": "sni-mismatch",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:443 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "host-mismatch",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80/ HTTP/1.1\r\nHost: denied.internal\r\n\r\n"
+    },
+    {
+      "id": "duplicate-host",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80/ HTTP/1.1\r\nHost: mirror.internal\r\nHost: denied.internal\r\n\r\n"
+    },
+    {
+      "id": "cl-te-smuggle",
+      "family": "parser",
+      "expected": "deny",
+      "request": "POST http://mirror.internal:80/ HTTP/1.1\r\nContent-Length: 4\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n\r\nGET http://denied.internal/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "pipeline",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "GET http://mirror.internal:80/ HTTP/1.1\r\n\r\nGET http://denied.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "nested-connect",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:80 HTTP/1.1\r\n\r\nCONNECT denied.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "secret-path-header-body",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "POST http://mirror.internal:80/{secret} HTTP/1.1\r\nX-Secret: {secret}\r\nContent-Length: {secret_len}\r\n\r\n{secret}"
+    },
+    {
+      "id": "secret-tls-tunnel",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:443 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "secret-tunnel",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "redirect",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "scm-rights",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "inherited-fds",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "abstract-socket",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "host-control-sockets",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "setns",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "proc-root",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "policy-write",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "gateway-code-write",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "gateway-signal",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "flood",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "slow-headers",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "oversized-line",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "truncated-request",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    }
+  ],
+  "results": [
+    {
+      "id": "startup-inherited-socket",
+      "expected": "deny",
+      "status": "pass",
+      "stderr": "Traceback (most recent call last):\n  File \"/suite/sandbox_entry.py\", line 11, in <module>\n    found = validate(config)\n  File \"/suite/validator.py\", line 56, in validate\n    if errors: raise RuntimeError('topology rejected: '+', '.join(errors))\nRuntimeError: topology rejected: inherited socket descriptor, stray descriptor\n"
+    },
+    {
+      "id": "tcp4",
+      "expected": "deny",
+      "status": "fail",
+      "reasons": [
+        "attacker crashed or returned invalid report"
+      ],
+      "exit_status": 1,
+      "report": {},
+      "stderr": "Traceback (most recent call last):\n  File \"/suite/sandbox_entry.py\", line 11, in <module>\n    found = validate(config)\n  File \"/suite/validator.py\", line 56, in validate\n    if errors: raise RuntimeError('topology rejected: '+', '.join(errors))\nRuntimeError: topology rejected: host namespace reused, external interface, IPv4 route present, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route, external IPv6 route\n",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [
+          {
+            "src": "127.0.0.1",
+            "dst": "127.77.0.1",
+            "source_port": 47903,
+            "protocol": 6,
+            "port": 52197,
+            "tcp_flags": 2,
+            "fragmented": false,
+            "bytes": 74,
+            "t": 1791434236.6579173
+          },
+          {
+            "src": "127.0.0.1",
+            "dst": "127.77.0.1",
+            "source_port": 47903,
+            "protocol": 6,
+            "port": 52197,
+            "tcp_flags": 16,
+            "fragmented": false,
+            "bytes": 66,
+            "t": 1791434236.658025
+          },
+          {
+            "src": "127.0.0.1",
+            "dst": "127.77.0.1",
+            "source_port": 47903,
+            "protocol": 6,
+            "port": 52197,
+            "tcp_flags": 24,
+            "fragmented": false,
+            "bytes": 155,
+            "t": 1791434236.6590302
+          },
+          {
+            "src": "127.0.0.1",
+            "dst": "127.77.0.1",
+            "source_port": 47903,
+            "protocol": 6,
+            "port": 52197,
+            "tcp_flags": 16,
+            "fragmented": false,
+            "bytes": 66,
+            "t": 1791434236.6592035
+          },
+          {
+            "src": "127.0.0.1",
+            "dst": "127.77.0.1",
+            "source_port": 47903,
+            "protocol": 6,
+            "port": 52197,
+            "tcp_flags": 17,
+            "fragmented": false,
+            "bytes": 66,
+            "t": 1791434236.66021
+          }
+        ],
+        "destinations": [
+          [
+            {
+              "t": 1791434236.6589034,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434236.6046922,
+            "pid": 1547577,
+            "cid": 1,
+            "decision": "deny",
+            "reason": "truncated headers"
+          },
+          {
+            "t": 1791434236.6552563,
+            "pid": 1547577,
+            "cid": 2,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 52197,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434236.6555238,
+            "pid": 1547577,
+            "cid": 2,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 52197,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 47903
+          },
+          {
+            "t": 1791434236.6586437,
+            "pid": 1547577,
+            "cid": 2,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 52197,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Fixture-only packet attribution on host loopback; not a universal kernel escape proof.",
+    "CONNECT is a byte tunnel: HTTP Host/SNI and downstream relay identity are not authenticated.",
+    "TLS uses a test CA; no real package-manager/CDN compatibility claim."
+  ],
+  "hashes": {
+    "proxy.py": "3803111ee4a00c048be42f9bd8d1fddcc8f7be94bc4cc75cbbbe4d4e76c84956",
+    "relay.py": "1c36867b8ceeaf33316d20f2805ab1e0d250263e7a0310b789ccdc6c32904559",
+    "dest_server.py": "4ac1269a9f867495fc1a24986957d2f2ea4f585c59d9edbc8ab700e4e32551a5",
+    "attacks.py": "5517eb261976cd439855243994709f858c090dbd06ef8918dbd97a6ebcf379af",
+    "sandbox_entry.py": "aff9e903b5de6dec0eac1e5d9fa1b62a5155558b6cc43ded2c0982c5695cbe80",
+    "observer.py": "683c8641f677a38e4f45efd67be45169d2dcd482a0052c580c310c89e07d52ba",
+    "suite.py": "efe9d8a2af1399cd25c2319d1e9e3ead24cb86753630aeebb64f2cc7972c8ca1",
+    "protocol.py": "d7a29b41191edd914c6fb3a8eb2ff4c4e6399170a6ce64c8b7b28f14b99424ed",
+    "launcher.py": "308dbf90bc331f7278d7a607fb9a10695362bf0a4a1abc91378587e323927198",
+    "validator.py": "c1ce23e30796e5b5f170ce2e469bc7fe7a1e2827c5c1faaff07180e224e151db",
+    "usefulness.py": "1b0514396f2fef1f5595ebb770346bbaf9ac3f82c7ff574d9134473b61cbe008",
+    "test_oracle.py": "f628050d689a3cff41e9988b57823a973e6d367264dfff9e8bdbbe3c9ff7640c",
+    "tracing.py": "9cb3243c8941011cd9d98e4e3db02ee0496a24e8322da57f19c934b7009e47a2"
+  },
+  "policy": {
+    "allow": {
+      "mirror.internal:80": [
+        "127.77.0.1",
+        52197
+      ],
+      "mirror.internal:443": [
+        "127.77.0.1",
+        48949
+      ]
+    },
+    "socket": "/tmp/sc03-egress-hn20m0rd/gateway.sock",
+    "log": "/tmp/sc03-egress-hn20m0rd/gateway.jsonl"
+  },
+  "policy_sha256": "85c1563622eac7904cbf10a66bc6dea9be2b0dd3835f4674b4ee5ebbeba18280",
+  "observer_positive_controls": [
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 51804,
+      "protocol": 6,
+      "port": 39349,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791434235.6457102
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 51804,
+      "protocol": 6,
+      "port": 39349,
+      "tcp_flags": 16,
+      "fragmented": false,
+      "bytes": 66,
+      "t": 1791434235.6461768
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 51804,
+      "protocol": 6,
+      "port": 39349,
+      "tcp_flags": 24,
+      "fragmented": false,
+      "bytes": 91,
+      "t": 1791434235.6461883
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 51804,
+      "protocol": 6,
+      "port": 39349,
+      "tcp_flags": 17,
+      "fragmented": false,
+      "bytes": 66,
+      "t": 1791434235.6462076
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 51804,
+      "protocol": 6,
+      "port": 39349,
+      "tcp_flags": 4,
+      "fragmented": false,
+      "bytes": 54,
+      "t": 1791434235.6467626
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 40442,
+      "protocol": 6,
+      "port": 38645,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791434235.6470487
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "127.77.0.2",
+      "source_port": 51314,
+      "protocol": 17,
+      "port": 50622,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 53,
+      "t": 1791434235.6470978
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 52470,
+      "protocol": 6,
+      "port": 48135,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 94,
+      "t": 1791434235.647321
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 48135,
+      "protocol": 6,
+      "port": 52470,
+      "tcp_flags": 18,
+      "fragmented": false,
+      "bytes": 94,
+      "t": 1791434235.6474462
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 52470,
+      "protocol": 6,
+      "port": 48135,
+      "tcp_flags": 16,
+      "fragmented": false,
+      "bytes": 86,
+      "t": 1791434235.647463
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 52470,
+      "protocol": 6,
+      "port": 48135,
+      "tcp_flags": 24,
+      "fragmented": false,
+      "bytes": 98,
+      "t": 1791434235.647475
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 48135,
+      "protocol": 6,
+      "port": 52470,
+      "tcp_flags": 16,
+      "fragmented": false,
+      "bytes": 86,
+      "t": 1791434235.6475341
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 52470,
+      "protocol": 6,
+      "port": 48135,
+      "tcp_flags": 17,
+      "fragmented": false,
+      "bytes": 86,
+      "t": 1791434235.6475468
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 34229,
+      "protocol": 17,
+      "port": 39732,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791434235.6475565
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 48135,
+      "protocol": 6,
+      "port": 52470,
+      "tcp_flags": 24,
+      "fragmented": false,
+      "bytes": 141,
+      "t": 1791434235.6475697
+    },
+    {
+      "src": "::1",
+      "dst": "::1",
+      "source_port": 52470,
+      "protocol": 6,
+      "port": 48135,
+      "tcp_flags": 4,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791434235.647594
+    }
+  ],
+  "sandbox_inventory": {
+    "process_fds": {
+      "1": {
+        "0": "pipe:[8519793]",
+        "1": "pipe:[8537110]",
+        "2": "pipe:[8537111]",
+        "4": "anon_inode:[eventfd]"
+      }
+    },
+    "netns": 4026532814,
+    "pidns": 4026532812,
+    "interfaces": "Inter-|   Receive                                                |  Transmit\n face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed\n    lo:       0       0    0    0    0     0          0         0        0       0    0    0    0     0       0          0\n",
+    "routes4": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \n",
+    "routes6": "00000000000000000000000000000000 00 00000000000000000000000000000000 00 00000000000000000000000000000000 ffffffff 00000001 00000000 00200200       lo\n00000000000000000000000000000001 80 00000000000000000000000000000000 00 00000000000000000000000000000000 00000000 00000002 00000000 80200001       lo\n00000000000000000000000000000000 00 00000000000000000000000000000000 00 00000000000000000000000000000000 ffffffff 00000001 00000000 00200200       lo\n",
+    "status": "Name:\tpython3\nUmask:\t0022\nState:\tR (running)\nTgid:\t2\nNgid:\t0\nPid:\t2\nPPid:\t1\nTracerPid:\t0\nUid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\nFDSize:\t64\nGroups:\t0 \nNStgid:\t2\nNSpid:\t2\nNSpgid:\t1\nNSsid:\t1\nKthread:\t0\nVmPeak:\t  231652 kB\nVmSize:\t  231652 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   12528 kB\nVmRSS:\t   12528 kB\nRssAnon:\t    5604 kB\nRssFile:\t    6924 kB\nRssShmem:\t       0 kB\nVmData:\t    5732 kB\nVmStk:\t     132 kB\nVmExe:\t       4 kB\nVmLib:\t    5940 kB\nVmPTE:\t      56 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffff\nThreads:\t1\nSigQ:\t0/59344\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001001004\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t0000000000000000\nCapAmb:\t0000000000000000\nNoNewPrivs:\t1\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tunknown\nCpus_allowed:\t3\nCpus_allowed_list:\t0-1\nMems_allowed:\t00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t0\nnonvoluntary_ctxt_switches:\t4\n",
+    "mounts": "1083 1049 0:54 /newroot / rw,nosuid,nodev,relatime - tmpfs tmpfs rw,seclabel,inode64\n1084 1083 252:0 /usr /usr ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n1085 1083 252:0 /usr/bin /bin ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n1086 1083 252:0 /usr/lib /lib ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n1087 1083 252:0 /usr/lib64 /lib64 ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n1088 1083 0:55 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw\n1089 1088 0:55 /sysrq-trigger /proc/sysrq-trigger ro,nosuid,nodev,noexec,relatime - proc proc rw\n1090 1088 0:55 /irq /proc/irq ro,nosuid,nodev,noexec,relatime - proc proc rw\n1091 1088 0:55 /bus /proc/bus ro,nosuid,nodev,noexec,relatime - proc proc rw\n1092 1083 0:56 / /dev rw,nosuid,nodev,relatime - tmpfs tmpfs rw,seclabel,mode=755,inode64\n1093 1092 0:6 /null /dev/null rw,nosuid master:12 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=1898428,mode=755,inode64\n1094 1092 0:6 /zero /dev/zero rw,nosuid master:12 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=1898428,mode=755,inode64\n1095 1092 0:6 /full /dev/full rw,nosuid master:12 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=1898428,mode=755,inode64\n1096 1092 0:6 /random /dev/random rw,nosuid master:12 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=1898428,mode=755,inode64\n1097 1092 0:6 /urandom /dev/urandom rw,nosuid master:12 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=1898428,mode=755,inode64\n1098 1092 0:6 /tty /dev/tty rw,nosuid master:12 - devtmpfs devtmpfs rw,seclabel,size=4096k,nr_inodes=1898428,mode=755,inode64\n1099 1092 0:57 / /dev/pts rw,nosuid,noexec,relatime - devpts devpts rw,seclabel,mode=620,ptmxmode=666\n1100 1083 0:58 / /tmp rw,nosuid,nodev,relatime - tmpfs tmpfs rw,seclabel,mode=755,inode64\n1101 1083 0:59 / /run rw,nosuid,nodev,relatime - tmpfs tmpfs rw,seclabel,mode=755,inode64\n1102 1083 252:0 /tmp/sc03-egress-hn20m0rd/code /suite ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n1103 1083 252:0 /tmp/sc03-egress-hn20m0rd/config.json /suite-config.json ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n1104 1101 252:0 /tmp/sc03-egress-hn20m0rd/gateway.sock /run/egress.sock ro,nosuid,nodev,relatime master:1 - xfs /dev/mapper/ocivolume-root rw,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota\n",
+    "fds": {
+      "0": "pipe:[8519793]",
+      "1": "pipe:[8537110]",
+      "2": "pipe:[8537111]"
+    }
+  },
+  "gateway_syscall_trace": "1547577 1791434236.604856 sendto(8<UNIX-STREAM:[8536407]>, \"HTTP/1.1 403 Forbidden\\r\\nContent-\"..., 64, 0, NULL, 0) = 64\n1547577 1791434236.655711 connect(9<TCP:[127.0.0.1:47903]>, {sa_family=AF_INET, sin_port=htons(52197), sin_addr=inet_addr(\"127.77.0.1\")}, 16) = -1 EINPROGRESS (Operation now in progress)\n1547577 1791434236.658733 sendto(9<TCP:[127.0.0.1:47903]>, \"GET /package HTTP/1.0\\r\\nHost: mir\"..., 89, 0, NULL, 0) = 89\n1547577 1791434236.659566 sendto(8<UNIX-STREAM:[8536417]>, \"HTTP/1.0 200 OK\\r\\nContent-Length:\"..., 55, 0, NULL, 0) = 55\n",
+  "gateway_connect_attempts": [
+    {
+      "t": 1791434236.655711,
+      "ip": "127.77.0.1",
+      "port": 52197,
+      "protocol": "tcp",
+      "raw": "1547577 1791434236.655711 connect(9<TCP:[127.0.0.1:47903]>, {sa_family=AF_INET, sin_port=htons(52197), sin_addr=inet_addr(\"127.77.0.1\")}, 16) = -1 EINPROGRESS (Operation now in progress)"
+    }
+  ],
+  "gateway_decisions": [
+    {
+      "t": 1791434236.6046922,
+      "pid": 1547577,
+      "cid": 1,
+      "decision": "deny",
+      "reason": "truncated headers"
+    },
+    {
+      "t": 1791434236.6552563,
+      "pid": 1547577,
+      "cid": 2,
+      "decision": "allow",
+      "dest": "mirror.internal:80",
+      "ip": "127.77.0.1",
+      "port": 52197,
+      "protocol": "tcp",
+      "method": "GET"
+    },
+    {
+      "t": 1791434236.6555238,
+      "pid": 1547577,
+      "cid": 2,
+      "decision": "attempt",
+      "ip": "127.77.0.1",
+      "port": 52197,
+      "protocol": "tcp",
+      "source_ip": "127.0.0.1",
+      "source_port": 47903
+    },
+    {
+      "t": 1791434236.6586437,
+      "pid": 1547577,
+      "cid": 2,
+      "decision": "connected",
+      "ip": "127.77.0.1",
+      "port": 52197,
+      "protocol": "tcp"
+    }
+  ],
+  "gateway_syn_provenance": {
+    "observed_syns": 1,
+    "orphan_syns": []
+  },
+  "packet_statistics": {
+    "received": 72,
+    "dropped": 0
+  }
+}

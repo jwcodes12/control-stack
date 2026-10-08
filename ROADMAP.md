@@ -1,5 +1,19 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 8)
 
+## SC-03 egress update (2026-10-08)
+
+Implemented test-only launcher/gateway/adapter, actual namespace validator, host packet and syscall observers,
+pinned dependency install/compile/test, 62 passing full-suite controls, three successful mutation checks,
+seven oracle regressions, and six standalone Lean theorem checks (`lake build ControlStack` also passes).
+See `egress/README.md`, `egress/results/summary.json`, `egress/FIDELITY.md` and `assurance/egress-boundary-v1.json`.
+Reachability only; CONDITIONAL; no production deployment or remote CI result claimed. Auditgate untouched.
+Astra and approved Opus 5.5 reviews produced oracle fixes. Next: all-destination process attribution in a
+disposable outer topology and an actual GitHub workflow run after publication is authorized.
+A bounded local CLI follow-up is scheduled for 09:30:31 UTC on 2026-10-08 (five hours after scheduling;
+account reset time unavailable). Remote/export publication remains pending.
+
+
+
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
 

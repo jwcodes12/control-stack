@@ -14,6 +14,7 @@ import ControlStack.GatewayModel
 import ControlStack.CovertNoGo
 import ControlStack.AuditGate
 import ControlStack.AuditDispatch
+import ControlStack.EgressGate
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.
@@ -69,3 +70,5 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.CovertNoGo.one_bit_coordinates
 #print axioms ControlStack.AuditGate.invariant_preserved
 #print axioms ControlStack.AuditDispatch.trace_safe
+
+#print axioms ControlStack.EgressGate.trace_safe

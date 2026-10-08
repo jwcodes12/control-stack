@@ -1,0 +1,119 @@
+{
+  "name": "egress-boundary-v1",
+  "claim": "Fixture-scoped immediate TCP peer reachability via the gateway, conditional on the fixed Linux topology and trusted host. No confidentiality or authenticated-origin claim.",
+  "theorem": {
+    "files": {
+      "ControlStack/EgressGate.lean": "b491ec0accf6be75e7355667012b173760c5278b7180a31f4c4990ffad9f2af6"
+    },
+    "ids": [
+      "EgressGate.lookup_pinned",
+      "EgressGate.direct_no_effect",
+      "EgressGate.step_safe",
+      "EgressGate.trace_safe",
+      "EgressGate.failed_launch",
+      "EgressGate.crash_closed"
+    ],
+    "lean_status": "passed",
+    "ledger_gated": false
+  },
+  "implementation": {
+    "egress/attacks.py": "5517eb261976cd439855243994709f858c090dbd06ef8918dbd97a6ebcf379af",
+    "egress/protocol.py": "d7a29b41191edd914c6fb3a8eb2ff4c4e6399170a6ce64c8b7b28f14b99424ed",
+    "egress/proxy.py": "3803111ee4a00c048be42f9bd8d1fddcc8f7be94bc4cc75cbbbe4d4e76c84956",
+    "egress/relay.py": "1c36867b8ceeaf33316d20f2805ab1e0d250263e7a0310b789ccdc6c32904559",
+    "egress/launcher.py": "308dbf90bc331f7278d7a607fb9a10695362bf0a4a1abc91378587e323927198",
+    "egress/validator.py": "c1ce23e30796e5b5f170ce2e469bc7fe7a1e2827c5c1faaff07180e224e151db",
+    "egress/sandbox_entry.py": "aff9e903b5de6dec0eac1e5d9fa1b62a5155558b6cc43ded2c0982c5695cbe80",
+    "egress/observer.py": "683c8641f677a38e4f45efd67be45169d2dcd482a0052c580c310c89e07d52ba",
+    "egress/tracing.py": "9cb3243c8941011cd9d98e4e3db02ee0496a24e8322da57f19c934b7009e47a2",
+    "egress/suite.py": "efe9d8a2af1399cd25c2319d1e9e3ead24cb86753630aeebb64f2cc7972c8ca1",
+    "egress/usefulness.py": "1b0514396f2fef1f5595ebb770346bbaf9ac3f82c7ff574d9134473b61cbe008",
+    "egress/test_oracle.py": "f628050d689a3cff41e9988b57823a973e6d367264dfff9e8bdbbe3c9ff7640c"
+  },
+  "evidence": {
+    "egress/results/local-full.json": "e8f3e11f9937f3103e282b9dc9b43faf35a2bc40283568367d6e39b032d4cc03",
+    "egress/results/local-namespace-mutation.json": "ef727f3cf41a7fa7a10e296df133ba41defd0586d8f15e0556b2d020ea5eea4a",
+    "egress/results/local-packet-mutation.json": "a5ff1f1a7ddcb7b975cc1fba8c969cfbf457a25b677b4f61b6c5391038d9035f",
+    "egress/results/local-mirror-mutation.json": "9c5ca443050b4fe7bfa9917751ab619d58bcd337757258a62efc5433adc52673",
+    "egress/results/local-parser.json": "e9b19e03452f8055b610292bdb3a936e65e1d9d4ff4b4ca3da546475dee029d2",
+    "egress/results/local-unprivileged.json": "1c542eab2b39d1d73997a5823d282bf4c35c6d8499a47d0876f37ce9019f953a",
+    "egress/results/lean-axioms.txt": "e33baab29e188099de21a2745950ec6a9e80f75e611281ffb37f5c7affd96117"
+  },
+  "configuration": {
+    "expected_matrix": "egress/expected_outcomes.json",
+    "matrix_sha256": "58017a23c3e0bcf52c173da145a1be81e9b5a765747fefff85203a34d9402a3c",
+    "policy": "per-run ephemeral numeric loopback peer table; bytes and SHA-256 in full artifact",
+    "runtime": {
+      "bubblewrap": "0.6.3",
+      "strace": "6.12",
+      "python": "3.9.25"
+    }
+  },
+  "results": {
+    "full": "pass",
+    "cases": 62,
+    "scripted_cases": 58,
+    "packet_statistics": {
+      "received": 1460,
+      "dropped": 0
+    },
+    "observed_mirror_syns": 69,
+    "orphan_syns": 0,
+    "traced_gateway_connects": 69,
+    "oracle_regressions": 7,
+    "mutations": [
+      "namespace rejected",
+      "failed forbidden SYN detected",
+      "direct-to-mirror without gateway provenance detected"
+    ],
+    "ci": "Workflow authored; local commands passed. No remote GitHub CI run claimed."
+  },
+  "assumptions": [
+    {
+      "id": "model_trace_invariant",
+      "status": "THEOREM_VERIFIED",
+      "text": "Six Lean theorems kernel checked with only standard axioms; not ledger-gated."
+    },
+    {
+      "id": "fixed_fixture_topology",
+      "status": "RUNTIME_VALIDATED",
+      "text": "Actual namespace validator, mount/FD inventory, scripted probes and mutation controls."
+    },
+    {
+      "id": "fixture_socket_attempt_accounting",
+      "status": "RUNTIME_VALIDATED",
+      "text": "Host strace vs prior permits, host packets including failed SYNs, SYN source tuple attribution, destination counters, zero capture drops."
+    },
+    {
+      "id": "fixture_usefulness",
+      "status": "RUNTIME_VALIDATED",
+      "text": "Pinned wheel install/compile/test, standard TCP adapter, test-CA validated HTTPS and local service/build controls."
+    },
+    {
+      "id": "kernel_and_host_integrity",
+      "status": "UNRESOLVED",
+      "text": "Linux isolation, bubblewrap, trusted runtime trees and privileged host remain assumed."
+    },
+    {
+      "id": "implementation_refines_model",
+      "status": "UNRESOLVED",
+      "text": "Finite runtime tests do not prove Python/OS refinement of the Lean transitions."
+    },
+    {
+      "id": "all_destination_attribution",
+      "status": "UNRESOLVED",
+      "text": "Packet observations bounded to fixture IPv4 prefix and IPv6 loopback; arbitrary host/interface traffic attribution needs a disposable outer topology."
+    },
+    {
+      "id": "other_host_deputies",
+      "status": "UNRESOLVED",
+      "text": "No privileged supervisor or host watcher executes/uploads attacker artifacts; deployment must enforce this assumption."
+    },
+    {
+      "id": "deployment_workload_match",
+      "status": "UNRESOLVED",
+      "text": "No live LinuxArena or general package ecosystem usefulness/reachability certification."
+    }
+  ],
+  "verdict": "CONDITIONAL"
+}

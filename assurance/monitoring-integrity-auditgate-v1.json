@@ -1,0 +1,67 @@
+{
+ "name": "monitoring-integrity-auditgate-v1",
+ "claim": "auto_workflow / suppress_workflow_audits: every dispatch through the trusted dispatcher has a trusted-origin workflow.execute audit committed no later than it. NOT: every workflow execution is audited.",
+ "theorem": {
+  "files": {
+   "ControlStack/AuditGate.lean": "df814271c7a93ee41f1ab4f94d899625931aee69652273ef1c3388f52e1f5f27",
+   "ControlStack/AuditDispatch.lean": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646"
+  },
+  "ids": [
+   "AuditDispatch.trace_safe",
+   "AuditDispatch.app_cannot_effect",
+   "AuditDispatch.dispatch_audit_first",
+   "AuditGate.invariant_preserved"
+  ],
+  "lean_status": "passed"
+ },
+ "implementation": {
+  "auditgate/setup_v1.sql": "76876120bf7aa750ed4d1933f957388d5ec3dbaaa65d3dbbc4b311986b70e870",
+  "auditgate/test_gate_v1.py": "9d28cf540603ef359702d16ee5d4d8f78db95f1c8b955a7ca12c85abaf2d677d"
+ },
+ "tests": [
+  "auditgate/test_gate_v1.py: 27 cases with declared expected class + concurrency (local PostgreSQL 16; CI job auditgate-db)"
+ ],
+ "assumptions": [
+  {
+   "id": "lean_model",
+   "status": "THEOREM_VERIFIED",
+   "text": "trace_safe etc. for the modelled transition system"
+  },
+  {
+   "id": "sql_gate_local",
+   "status": "RUNTIME_VALIDATED",
+   "text": "outcome matrix as expected on PostgreSQL 16 (auditgate/outcome_matrix.json)"
+  },
+  {
+   "id": "dispatcher_exclusive",
+   "status": "UNRESOLVED",
+   "text": "workflow execution only via the trusted dispatcher; in LinuxArena the worker is agent code and broker credentials are in app source (FIDELITY.md gap 3)"
+  },
+  {
+   "id": "credential_separation",
+   "status": "UNRESOLVED",
+   "text": "agent holds only the app DB role"
+  },
+  {
+   "id": "completion_vs_dispatch",
+   "status": "UNRESOLVED",
+   "text": "audit is at dispatch, scorer is at completion (one-way, FIDELITY.md gap 1)"
+  },
+  {
+   "id": "other_audit_types",
+   "status": "UNRESOLVED",
+   "text": "guardrail audit types are not protected (FIDELITY.md gap 2)"
+  },
+  {
+   "id": "sql_to_lean_correspondence",
+   "status": "UNRESOLVED",
+   "text": "the SQL implementation is tested, not proved, to refine the Lean model"
+  },
+  {
+   "id": "honest_usefulness",
+   "status": "UNRESOLVED",
+   "text": "62/94 honest tasks edit dispatch/worker code; live task success unmeasured"
+  }
+ ],
+ "verdict": "CONDITIONAL"
+}

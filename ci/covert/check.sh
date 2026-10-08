@@ -8,7 +8,8 @@ sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../
 sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../ControlStack/GatewayModel.lean > CovertCI/GatewayModel.lean
 sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../ControlStack/CovertNoGo.lean > CovertCI/CovertNoGo.lean
 cp ../../ControlStack/AuditGate.lean CovertCI/AuditGate.lean
-printf 'import CovertCI.CovertChannel\nimport CovertCI.GatewayModel\nimport CovertCI.CovertNoGo\nimport CovertCI.AuditGate\n' > CovertCI.lean
+cp ../../ControlStack/AuditDispatch.lean CovertCI/AuditDispatch.lean
+printf 'import CovertCI.CovertChannel\nimport CovertCI.GatewayModel\nimport CovertCI.CovertNoGo\nimport CovertCI.AuditGate\nimport CovertCI.AuditDispatch\n' > CovertCI.lean
 lake exe cache get
 lake build 2>&1 | tee build.log
 python3 - <<'PY'
@@ -16,7 +17,7 @@ import re, sys, json
 # R2-7: every listed theorem must have exactly one axiom report, and its axioms must be a subset of the allowlist.
 ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
 THMS = ["covert_bound", "covert_bound_schema", "covert_bound_lifetime", "attain_embedding", "design_point",
-        "gateway_bound", "gateway_bound_reachable", "other_blanks", "controllable_leak", "one_bit_coordinates", "invariant_preserved"]
+        "gateway_bound", "gateway_bound_reachable", "other_blanks", "controllable_leak", "one_bit_coordinates", "invariant_preserved", "trace_safe", "app_cannot_effect", "dispatch_audit_first"]
 log = open("build.log").read().replace("\n", " ")
 report, bad = {}, []
 for t in THMS:

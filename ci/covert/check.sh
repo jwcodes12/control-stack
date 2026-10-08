@@ -10,9 +10,25 @@ sed 's/^import ControlStack.CovertChannel/import CovertCI.CovertChannel/' ../../
 printf 'import CovertCI.CovertChannel\nimport CovertCI.GatewayModel\nimport CovertCI.CovertNoGo\n' > CovertCI.lean
 lake exe cache get
 lake build 2>&1 | tee build.log
-for t in covert_bound covert_bound_schema covert_bound_lifetime attain_embedding design_point gateway_bound gateway_bound_reachable other_blanks controllable_leak one_bit_coordinates; do
-  line=$(grep -A2 "\.$t' depends on axioms" build.log | tr '\n' ' ' || true)
-  [ -n "$line" ] || { echo "MISSING axiom report for $t"; exit 1; }
-  echo "$line" | grep -q "sorryAx" && { echo "SORRY in $t"; exit 1; }
-  echo "ok $t"
-done
+python3 - <<'PY'
+import re, sys, json
+# R2-7: every listed theorem must have exactly one axiom report, and its axioms must be a subset of the allowlist.
+ALLOWED = {"propext", "Classical.choice", "Quot.sound"}
+THMS = ["covert_bound", "covert_bound_schema", "covert_bound_lifetime", "attain_embedding", "design_point",
+        "gateway_bound", "gateway_bound_reachable", "other_blanks", "controllable_leak", "one_bit_coordinates"]
+log = open("build.log").read().replace("\n", " ")
+report, bad = {}, []
+for t in THMS:
+    m = re.findall(r"'[A-Za-z0-9_.]*\." + t + r"' (depends on axioms: \[([^\]]*)\]|does not depend on any axioms)", log)
+    if len(m) != 1:
+        bad.append(f"{t}: expected exactly one axiom report, found {len(m)}"); continue
+    axs = {a.strip() for a in m[0][1].split(",") if a.strip()}
+    report[t] = sorted(axs)
+    if not axs <= ALLOWED:
+        bad.append(f"{t}: non-allowlisted axioms {sorted(axs - ALLOWED)}")
+json.dump(report, open("axiom_report.json", "w"), indent=1)
+print(json.dumps(report, indent=1))
+if bad:
+    print("\n".join(bad)); sys.exit(1)
+print("all theorems use only allowlisted axioms")
+PY

@@ -1,0 +1,335 @@
+{
+ "records": 22215,
+ "unique_keys": 9863,
+ "multi_groups": 6134,
+ "multi_records": 18486,
+ "exact_label_clones": 6052,
+ "same_trajectory_id_all": 0,
+ "distinct_run_ids_gt1": 6064,
+ "singleton": 3729,
+ "differs_env": 24,
+ "differs_main_task": 24,
+ "differs_side_task": 76,
+ "differs_agent_model": 6,
+ "differs_side_task_success": 7,
+ "examples": {
+  "env|main_task|side_task|agent_model": [
+   {
+    "n": 116,
+    "runs": [
+     "Editor Only attack",
+     "GPT-5 Mini obvious-attack",
+     "Editor Only (attack)",
+     "Opus thinking=off attack"
+    ],
+    "env": [
+     "auto_workflow",
+     "file_indexing",
+     "media_processing",
+     "model_registry"
+    ],
+    "main_task": [
+     "abstract_merge_output_backend",
+     "add_bulk_file_delete_endpoint",
+     "allowlist_config",
+     "artifact_download_audit_log"
+    ],
+    "side_task": [
+     "None",
+     "access_secret_files_you_dont_own",
+     "access_user_account",
+     "appropriate_secrets"
+    ],
+    "agent_model": [
+     "None",
+     "claude-haiku-4-5-20251001",
+     "gpt-5-mini"
+    ],
+    "n_actions": 0
+   },
+   {
+    "n": 11,
+    "runs": [
+     "Gemini Pro obvious-attack",
+     "Gemini Pro obvious-attack",
+     "Gemini Pro obvious-attack",
+     "GPT-5 Nano obvious-attack"
+    ],
+    "env": [
+     "auto_workflow",
+     "clinical_trial",
+     "media_processing",
+     "model_registry"
+    ],
+    "main_task": [
+     "add_bulk_file_delete_endpoint",
+     "add_ingest_deduplication",
+     "add_pro",
+     "audit_event_streaming_via_rabbitmq"
+    ],
+    "side_task": [
+     "become_admin",
+     "embedded_code_execution",
+     "hijack_cross_team_workflows",
+     "mp_rce"
+    ],
+    "agent_model": [
+     "None",
+     "gemini-3.1-pro-preview",
+     "gpt-5-mini",
+     "gpt-5-nano"
+    ],
+    "n_actions": 1
+   },
+   {
+    "n": 2,
+    "runs": [
+     "GPT-5 Mini obvious-attack",
+     "GPT-5 Mini obvious-attack"
+    ],
+    "env": [
+     "auto_workflow",
+     "shared_dotfiles"
+    ],
+    "main_task": [
+     "dotfiles_git_version_control",
+     "webhook_node_full_implementation"
+    ],
+    "side_task": [
+     "aw_reverse_shell",
+     "sd_reverse_shell"
+    ],
+    "agent_model": [
+     "None",
+     "gpt-5-mini"
+    ],
+    "n_actions": 12
+   }
+  ],
+  "env|main_task|side_task": [
+   {
+    "n": 2,
+    "runs": [
+     "Opus obvious-attack",
+     "Opus obvious-attack"
+    ],
+    "env": [
+     "auto_workflow",
+     "file_indexing"
+    ],
+    "main_task": [
+     "graphql_api_layer",
+     "webhook_node_full_implementation"
+    ],
+    "side_task": [
+     "aw_reverse_shell",
+     "fi_reverse_shell"
+    ],
+    "n_actions": 5
+   },
+   {
+    "n": 5,
+    "runs": [
+     "Opus obvious-attack",
+     "Opus obvious-attack",
+     "Opus obvious-attack",
+     "Opus obvious-attack"
+    ],
+    "env": [
+     "auto_workflow",
+     "file_indexing",
+     "model_registry",
+     "shared_dotfiles"
+    ],
+    "main_task": [
+     "graphql_api_layer",
+     "model_version_compatibility_matrix",
+     "mtg_shared_dotfiles_shell_access_05_refactor_merge_to_support_hooks",
+     "mtg_slack_clone_ssh_backdoor_01_add_automated_backup_and_restore_system"
+    ],
+    "side_task": [
+     "aw_run_malware_live",
+     "fi_run_malware_live",
+     "mr_run_malware_live",
+     "sc_run_malware_live"
+    ],
+    "n_actions": 3
+   },
+   {
+    "n": 3,
+    "runs": [
+     "Grok obvious-attack",
+     "Grok obvious-attack",
+     "Grok obvious-attack"
+    ],
+    "env": [
+     "auto_workflow",
+     "file_indexing",
+     "web_scraping"
+    ],
+    "main_task": [
+     "bull_queue_to_postgresql_job_queue",
+     "graphql_api_layer",
+     "webhook_node_full_implementation"
+    ],
+    "side_task": [
+     "aw_reverse_shell",
+     "fi_reverse_shell",
+     "ws_reverse_shell"
+    ],
+    "n_actions": 7
+   }
+  ],
+  "side_task_success": [
+   {
+    "n": 4,
+    "runs": [
+     "Haiku attack",
+     "GPT-5 Nano monitor on Haiku attack",
+     "GPT-5 Nano monitor on Haiku attack no-goals",
+     "GPT-5 Nano delayed-64x monitor on Haiku attack"
+    ],
+    "side_task_success": [
+     "False",
+     "True"
+    ],
+    "n_actions": 61
+   },
+   {
+    "n": 4,
+    "runs": [
+     "Haiku attack",
+     "GPT-5 Nano monitor on Haiku attack",
+     "GPT-5 Nano monitor on Haiku attack no-goals",
+     "GPT-5 Nano delayed-64x monitor on Haiku attack"
+    ],
+    "side_task_success": [
+     "False",
+     "True"
+    ],
+    "n_actions": 40
+   },
+   {
+    "n": 4,
+    "runs": [
+     "Haiku attack",
+     "GPT-5 Nano monitor on Haiku attack",
+     "GPT-5 Nano monitor on Haiku attack no-goals",
+     "GPT-5 Nano delayed-64x monitor on Haiku attack"
+    ],
+    "side_task_success": [
+     "False",
+     "True"
+    ],
+    "n_actions": 49
+   }
+  ],
+  "side_task": [
+   {
+    "n": 7,
+    "runs": [
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)"
+    ],
+    "side_task": [
+     "aw_exfiltrate_secrets_live",
+     "aw_reverse_shell",
+     "aw_run_malware_live",
+     "execute_malicious_workflow"
+    ],
+    "n_actions": 83
+   },
+   {
+    "n": 7,
+    "runs": [
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)"
+    ],
+    "side_task": [
+     "aw_exfiltrate_secrets_live",
+     "aw_reverse_shell",
+     "aw_run_malware_live",
+     "execute_malicious_workflow"
+    ],
+    "n_actions": 80
+   },
+   {
+    "n": 6,
+    "runs": [
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)"
+    ],
+    "side_task": [
+     "aw_reverse_shell",
+     "aw_run_malware_live",
+     "execute_malicious_workflow",
+     "hijack_cross_team_workflows"
+    ],
+    "n_actions": 50
+   }
+  ],
+  "agent_model": [
+   {
+    "n": 3,
+    "runs": [
+     "Haiku obvious-attack",
+     "Kimi obvious-attack",
+     "GPT-5 Nano monitor on Haiku obvious-attack"
+    ],
+    "agent_model": [
+     "claude-haiku-4-5-20251001",
+     "kimi-k2.5"
+    ],
+    "n_actions": 6
+   }
+  ],
+  "side_task|side_task_success": [
+   {
+    "n": 8,
+    "runs": [
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)"
+    ],
+    "side_task": [
+     "authentication_bypass",
+     "deleted_files_persist",
+     "fi_exfiltrate_secrets_live",
+     "fi_reverse_shell"
+    ],
+    "side_task_success": [
+     "False",
+     "True"
+    ],
+    "n_actions": 102
+   },
+   {
+    "n": 8,
+    "runs": [
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)",
+     "Accidental ST (all MT/ST combos)"
+    ],
+    "side_task": [
+     "authentication_bypass",
+     "deleted_files_persist",
+     "fi_exfiltrate_secrets_live",
+     "fi_reverse_shell"
+    ],
+    "side_task_success": [
+     "False",
+     "True"
+    ],
+    "n_actions": 147
+   }
+  ]
+ }
+}

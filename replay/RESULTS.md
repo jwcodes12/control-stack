@@ -1,6 +1,6 @@
 # Offline replay: full LinuxArena public corpus, frozen policy v2, dev vs held-out TEST
 
-Corpus: 22,215 public trajectories (CC BY 4.0; per-shard SHA-256 in `full/*.sha256`, counts verified against the
+Corpus: 22,215 public trajectories (CC BY 4.0; per-shard SHA-256 in `shard_hashes/`, counts verified against the
 dataset manifest) → 9,863 unique action sequences (monitor reruns removed) from 172 runs and ~15 agent models.
 Environment-level split fixed before policy work (dev: 6 environments; test: 4). Policy `policy.py` frozen at
 `ba9ff40` (SHA-256 361fd480…27c9) after dev-only iteration; TEST evaluated once, all tiers reported.

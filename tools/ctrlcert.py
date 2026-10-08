@@ -242,13 +242,23 @@ def cmd_audit(args):
             "the schedule is a uniformly random size-B subset of the N rounds, drawn independently of Red",
             "an audit of an attack step catches it with certainty; catching ends the attack",
             "Red needs k attack steps in distinct rounds",
-            "honest rounds do not consume audits (no false-positive budget consumption) -- OPEN",
+            "honest rounds do not consume audits: the schedule is drawn independently of monitor flags "
+            "(with first-come flag-triggered audits this fails; see --fpr)",
             "everything Red learns about the schedule beyond catch flags is dominated by the leak certificate, "
             "given its visible history",
         ],
         "refuted_by": "timing or resource differences between audited and unaudited rounds that Red can measure "
                       "(estimate the leak certificate from a distinguishing experiment)",
     }
+    if args.fpr:
+        f = frac(args.fpr)
+        exhaust = binom_tail_ge(N - k, B, f) if B >= 1 else F(1)
+        res["first_come_with_false_positives"] = (
+            f"if audits are instead triggered by monitor flags, first come first served, and honest rounds flag at "
+            f"rate {fmt(f)}: an attacker that waits for the last {k} rounds finds the budget already spent with "
+            f"probability >= P(Bin({N - k}, {fmt(f)}) >= {B}) = {fmt(exhaust)}, and then survives whatever the "
+            f"monitor's recall (Necessity.exhausted_no_audit; instance: fp_exhaustion_breaks_audit, 7/8 vs 3/4). "
+            f"Expected false positives {fmt(f * (N - k))} vs budget {B}")
     if args.target:
         T = frac(args.target)
         need_B = next((b for b in range(0, N + 1) if L * hyper(N, b, k) <= T), None)
@@ -362,6 +372,7 @@ def main():
     a = sub.add_parser("audit"); a.add_argument("--rounds", type=int, required=True)
     a.add_argument("--budget", type=int, required=True); a.add_argument("--steps", type=int, required=True)
     a.add_argument("--leak-mass"); a.add_argument("--target"); a.add_argument("--lean")
+    a.add_argument("--fpr", help="honest false-positive rate, for first-come score-triggered auditing")
     h = sub.add_parser("hazard"); h.add_argument("--catch", required=True); h.add_argument("--steps", type=int, required=True)
     s = sub.add_parser("samples"); s.add_argument("--target-miss"); s.add_argument("--alpha", default="1/20")
     s.add_argument("--horizon", type=int)

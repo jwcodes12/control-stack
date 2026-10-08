@@ -115,3 +115,43 @@ end ControlStack.Necessity
 #print axioms ControlStack.Necessity.correlated_lifetimes_break_gate
 #print axioms ControlStack.Necessity.marginal_certs_dont_compose
 #print axioms ControlStack.Necessity.shared_score_product_unsound
+
+/-! ## Audit budget consumed by false positives (first-come, score-triggered auditing) -/
+
+namespace ControlStack.Necessity
+
+/-- first-come auditing: round i is audited iff it is flagged and fewer than B earlier rounds were flagged -/
+def audited {N : ℕ} (B : ℕ) (flags : Fin N → Bool) (i : Fin N) : Bool :=
+  flags i && decide ((Finset.univ.filter (fun j : Fin N => j < i ∧ flags j = true)).card < B)
+
+/-- **Exhaustion.** If at least B rounds before every attack round were flagged (e.g. honest false positives), no
+attack round is audited, whatever the attack's own flags. -/
+theorem exhausted_no_audit {N : ℕ} (B : ℕ) (flags : Fin N → Bool) (A : Finset (Fin N))
+    (h : ∀ i ∈ A, B ≤ (Finset.univ.filter (fun j : Fin N => j < i ∧ flags j = true)).card) :
+    ∀ i ∈ A, audited B flags i = false := by
+  intro i hi
+  simp [audited, Nat.not_lt.2 (h i hi)]
+
+/-- flags on Fin 4 from the three honest flags; the attack (round 3) is always flagged (a perfect monitor) -/
+def flagsOf (b : Bool × Bool × Bool) : Fin 4 → Bool := ![b.1, b.2.1, b.2.2, true]
+
+theorem audited_last (b : Bool × Bool × Bool) :
+    audited 1 (flagsOf b) 3 = (!b.1 && !b.2.1 && !b.2.2) := by
+  rcases b with ⟨_ | _, _ | _, _ | _⟩ <;> decide
+
+/-- **False positives break the hidden-schedule bound.** N = 4 rounds, budget B = 1, one attack step in the last
+round, a monitor that flags every attack, and three honest rounds that each raise a false positive w.p. 1/2
+(uniform over the 8 patterns). First-come auditing lets the attack survive with probability 7/8. A hidden uniformly
+random schedule of the same size (`AuditBudget`, `Leakage.audit_adaptive_hidden`) gives 3/4. The premise "honest
+rounds do not consume audits" cannot be dropped. -/
+theorem fp_exhaustion_breaks_audit :
+    (∑ b : Bool × Bool × Bool, (1 / 8 : ℚ) * (if audited 1 (flagsOf b) 3 = false then 1 else 0)) = 7 / 8 ∧
+    (Nat.choose 3 1 : ℚ) / Nat.choose 4 1 = 3 / 4 := by
+  refine ⟨?_, by norm_num [Nat.choose]⟩
+  simp only [audited_last, Fintype.sum_prod_type, Fintype.sum_bool]
+  norm_num
+
+end ControlStack.Necessity
+
+#print axioms ControlStack.Necessity.exhausted_no_audit
+#print axioms ControlStack.Necessity.fp_exhaustion_breaks_audit

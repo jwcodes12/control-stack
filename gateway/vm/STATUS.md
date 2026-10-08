@@ -43,6 +43,63 @@ snapshots, not hardware separation or universal leakage. Host/emulator integrity
 management channels, rollback and fixed-horizon correspondence remain assumptions.
 See [BOUND.md](BOUND.md).
 
+## Scenario testing: next gated run (planned; not executed)
+
+**Current test decision: NO-GO for repeating the frozen 0.25-second usefulness gate on this TCG host.**
+The unchanged VM replay already establishes an infeasible deadline for this setup
+(both conditions 0/64 lifetimes, all sender/receiver invocations timed out).
+A fresh result on this host at the same deadline would not resolve the cause.
+The repaired guest link and resource-configuration controls are the verified
+infrastructure baseline, **not** a completed scenario evaluation.
+
+| Gate | Required test / acceptance | Status |
+|---|---|---|
+| A. Host and protocol selection | Prefer a host with usable hardware virtualization, or separately administered hosts with authorized access. Record actual KVM/guest support, boot/source/config hashes, host sharing and management assumptions. If retaining TCG, independently measure startup costs and **pre-register** a new deadline protocol before running it; never relabel the original failed gate. | **BLOCKED: host/access or owner-approved protocol decision** |
+| B. Pair readiness | Provision a new isolated pair; check actual guest identities, disks, RAM, affinity, prohibited devices and the single trusted link. Exercise fixed health requests and resource-rejection controls. Record a fresh config hash/receipt; don't reuse H for a changed platform. | **NOT RUN on another host** |
+| C. Honest SC-01 scenario | Replay the fixed eight-fault catalog with the same declared sampling unit (64 independent paired five-episode lifetimes), oracle, schema, lineage, ledger charges, and 90% lower-confidence-bound usefulness floor. Prefer the **unchanged 0.25 s** contract if feasible; otherwise run a separately identified, preregistered amended contract with its own baseline/mediated receipts. | **FAILED on current TCG; next run pending** |
+| D. Adversarial channel falsification | In a **separate** preregistered experiment after explicit authorization, test cross-guest signal paths and receiver-visible timing/termination, host cache/storage/clock effects, allowed-link misuse, management-plane influence and unintended episode-count signals. Include positive controls, independent trials, source-bound receipts and mutation checks. A null result cannot prove channel absence. | **NOT RUN for the VM pair** |
+| E. Correspondence and assurance | Reconcile *all* receiver observations and the actual five-view schedule against Lean's model, confirm durable ledger/lineage/no-rollback assumptions, and bind VM, gateway, proof, side-channel and usefulness evidence to exact revisions. Update assumption status only after the corresponding evidence exists. | **PENDING; case CONDITIONAL** |
+| F. Realistic-agent extension | Treat any open-ended coding/agent task as a **new scenario contract** with its own Bad event, usefulness metric, receiver observation inventory, preregistration and baseline. The current catalog success on the single-host harness does not validate an LLM-agent workload. | **NOT STARTED** |
+
+### Reproduction versus a *new* scenario run
+
+These commands verify the **saved historical failure**; they do not boot VMs or
+establish usefulness or confidentiality:
+
+```bash
+python3 gateway/vm/check_isolation.py --config gateway/vm/configs/local-20261008-final.json --receipt gateway/vm/receipts/qemu-provision-20261008-linkfix.json
+python3 gateway/vm/test_isolation.py
+python3 gateway/vm/check_usefulness.py gateway/vm/receipts/usefulness-20261008-linkfix.json
+```
+
+After an authorized platform is provisioned and the chosen protocol is frozen,
+the existing runner/checker entry points for a **fresh** scenario receipt are:
+
+```bash
+# Run on the provisioned host with NEW, source-bound pair configuration.
+python3 gateway/vm/pair.py --config /path/to/new-config.json --receipt /path/to/new-boot-receipt.json --health 8
+python3 gateway/vm/check_isolation.py --config /path/to/new-config.json --receipt /path/to/new-boot-receipt.json --files
+python3 gateway/vm/run_usefulness.py --config /path/to/new-config.json --output /path/to/new-usefulness-receipt.json
+python3 gateway/vm/check_usefulness.py /path/to/new-usefulness-receipt.json
+```
+
+Paths above are placeholders, **not** commands validated for an alternative
+hypervisor or a deadline-amended contract. The current checker pins the QEMU
+TCG configuration, and the runner imports the original frozen SC-01 contract:
+a KVM/multi-host port or a revised deadline needs corresponding checked
+implementation/configuration and preregistration before reuse. The runner's
+nonzero exit on a failed usefulness gate is a meaningful failure even when
+`check_usefulness.py` accepts its receipt as internally consistent. Keep
+historical, revised-protocol, and future side-channel receipts distinct.
+
+**Do not promote to runtime recovery certification from VM isolation or
+successful scenario completion alone.** In particular, two guests on the same
+physical host still share host-managed resources. The counting theorem requires
+the complete receiver observation to be the five padded views or a justified
+uniform side-kernel domination certificate within the stated budget; see
+[BOUND.md](BOUND.md). No new VMs, channel experiments, ACL/IAM changes, or
+proof/assurance promotions were performed by this documentation update.
+
 ## MXC assessment
 
 Checked the Microsoft MXC documentation at commit

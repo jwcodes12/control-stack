@@ -62,4 +62,3 @@ Static review of the prepared earlier snapshot; no tools ran. Subsequent fixes a
 4. **Pass only if the packet observer alone flags each case,** with no credit from the validator or from the attacker's own report.
 
 Why this one: right now the claim only holds if the sandbox setup is correct, which the in-sandbox validator checks for itself. The outside observer is meant to back that up independently, and there's currently no evidence it would see a direct-to-mirror breach. That's the R10 goal of making the claim falsifiable.
-

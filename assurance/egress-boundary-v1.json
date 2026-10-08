@@ -24,20 +24,21 @@
     "egress/launcher.py": "308dbf90bc331f7278d7a607fb9a10695362bf0a4a1abc91378587e323927198",
     "egress/validator.py": "c1ce23e30796e5b5f170ce2e469bc7fe7a1e2827c5c1faaff07180e224e151db",
     "egress/sandbox_entry.py": "aff9e903b5de6dec0eac1e5d9fa1b62a5155558b6cc43ded2c0982c5695cbe80",
-    "egress/observer.py": "683c8641f677a38e4f45efd67be45169d2dcd482a0052c580c310c89e07d52ba",
-    "egress/tracing.py": "9cb3243c8941011cd9d98e4e3db02ee0496a24e8322da57f19c934b7009e47a2",
+    "egress/observer.py": "b0998fc5cbbd411bcc0d0d3def498a9c1795ca61e227da145bd744b3f98ab62d",
+    "egress/tracing.py": "cf44e7bfd7c89e64d11ff0e276d5b80bf338fa988f47b1201475c76703fc0290",
     "egress/suite.py": "efe9d8a2af1399cd25c2319d1e9e3ead24cb86753630aeebb64f2cc7972c8ca1",
     "egress/usefulness.py": "1b0514396f2fef1f5595ebb770346bbaf9ac3f82c7ff574d9134473b61cbe008",
-    "egress/test_oracle.py": "f628050d689a3cff41e9988b57823a973e6d367264dfff9e8bdbbe3c9ff7640c"
+    "egress/test_oracle.py": "e6059e000664def24b25494882ea87e6e51872b9ac1c85ab710bbf4a2ad1f8e0"
   },
   "evidence": {
-    "egress/results/local-full.json": "e8f3e11f9937f3103e282b9dc9b43faf35a2bc40283568367d6e39b032d4cc03",
-    "egress/results/local-namespace-mutation.json": "ef727f3cf41a7fa7a10e296df133ba41defd0586d8f15e0556b2d020ea5eea4a",
-    "egress/results/local-packet-mutation.json": "a5ff1f1a7ddcb7b975cc1fba8c969cfbf457a25b677b4f61b6c5391038d9035f",
-    "egress/results/local-mirror-mutation.json": "9c5ca443050b4fe7bfa9917751ab619d58bcd337757258a62efc5433adc52673",
-    "egress/results/local-parser.json": "e9b19e03452f8055b610292bdb3a936e65e1d9d4ff4b4ca3da546475dee029d2",
-    "egress/results/local-unprivileged.json": "1c542eab2b39d1d73997a5823d282bf4c35c6d8499a47d0876f37ce9019f953a",
-    "egress/results/lean-axioms.txt": "e33baab29e188099de21a2745950ec6a9e80f75e611281ffb37f5c7affd96117"
+    "egress/results/local-full.json": "8629085f3931ccc905e61cbd98e38d51ed6d55883de7dbb04a9d0725d0da0124",
+    "egress/results/local-namespace-mutation.json": "8a426397a92114b5e06a3a6760562420861f366dbdda20c16459e4958883ebce",
+    "egress/results/local-packet-mutation.json": "18e2320dd2d3487bfa49615dc0cded364f290c0871a3dc4247da0d89386b0858",
+    "egress/results/local-mirror-mutation.json": "22524c36c04309da905ba116f8969ff900fcbc7aa51e8f26e57a87446ff229a7",
+    "egress/results/local-parser.json": "f80b8b8e74d634723f3e6f23844294703fd8be52e48453b8a8834ef4b6bc445c",
+    "egress/results/local-unprivileged.json": "8e7ce34cb88b9b082be2bf62f4d86445fb84157be4d8c392ab86bc28600daabb",
+    "egress/results/lean-axioms.txt": "e33baab29e188099de21a2745950ec6a9e80f75e611281ffb37f5c7affd96117",
+    "egress/results/local-outer-accounting.json": "212112e0ae0d8b5261a0f51b13690c22da8b0ab458f750802691d371c3c62cde"
   },
   "configuration": {
     "expected_matrix": "egress/expected_outcomes.json",
@@ -54,13 +55,13 @@
     "cases": 62,
     "scripted_cases": 58,
     "packet_statistics": {
-      "received": 1460,
+      "received": 1454,
       "dropped": 0
     },
     "observed_mirror_syns": 69,
     "orphan_syns": 0,
     "traced_gateway_connects": 69,
-    "oracle_regressions": 7,
+    "oracle_regressions": 9,
     "mutations": [
       "namespace rejected",
       "failed forbidden SYN detected",
@@ -102,7 +103,7 @@
     {
       "id": "all_destination_attribution",
       "status": "UNRESOLVED",
-      "text": "Packet observations bounded to fixture IPv4 prefix and IPv6 loopback; arbitrary host/interface traffic attribution needs a disposable outer topology."
+      "text": "Packet observations bounded to fixture IPv4 prefix and IPv6 loopback; arbitrary host/interface traffic attribution needs a disposable outer topology. Separate isolated eight-flow calibration passed; full sandbox integration and general attribution remain open."
     },
     {
       "id": "other_host_deputies",
@@ -115,5 +116,13 @@
       "text": "No live LinuxArena or general package ecosystem usefulness/reachability certification."
     }
   ],
-  "verdict": "CONDITIONAL"
+  "verdict": "CONDITIONAL",
+  "experimental": {
+    "files": {
+      "egress/experimental/outer_accounting.py": "f12007c6e1db0d959c3f60ba2f979050bf51f631bf3650d65a4e7bb16550fe5a"
+    },
+    "status": "bounded-calibration-pass",
+    "evidence": "egress/results/local-outer-accounting.json",
+    "scope": "Loopback-only outer namespace, two traced senders, eight initial TCP/UDP transmissions; no sandbox integration or universal attribution."
+  }
 }

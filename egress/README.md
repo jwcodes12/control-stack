@@ -7,6 +7,14 @@ and read-only runtime/code mounts. Its one intentional host service is
 authority table. No DNS resolution, public endpoints or production sandbox
 configuration changes occur in this fixture.
 
+The 2026-10-08 follow-up fixes IPv6 connect-trace parsing and non-initial fragment
+visibility; nine oracle regressions pass. A separate eight-flow outer-namespace
+calibration is in `experimental/outer_accounting.py`, with commands, results and
+limits in `../reviews/egress-follow-up-2026-10-08.md`. It captures every IP destination
+in a loopback-only private namespace and attributes initial TCP/UDP packets to two
+traced sender PIDs. It does not yet integrate the sandbox/gateway or discharge
+general process attribution.
+
 The claim is **immediate network peer reachability**, conditional on Linux and the
 specified launch contract. It is not confidentiality, authenticated HTTP origin
 identity, a kernel escape proof, or a guarantee about downstream forwarding by an

@@ -22,3 +22,13 @@ It does not formalise HTTP parsing, Linux syscalls, PID namespace semantics or T
 All runtime statuses refer to a disposable dev fixture. No production sandbox is
 deployed. The assurance verdict remains CONDITIONAL. Neither a successful finite
 attack corpus nor the model theorem establishes universal Linux refinement.
+
+Follow-up calibration (2026-10-08): `experimental/outer_accounting.py` captures all
+IP destinations on lo in a distinct outer network namespace with no external links
+or default route. Eight initial TCP/UDP transmissions at locally assigned IPv4/IPv6
+documentation addresses are attributed to two independently traced sender PIDs;
+missing-trace mutation is detected and capture drops are zero. Reply packets are
+captured without PID attribution. This is separate from sandbox/gateway execution;
+general socket API coverage and inherited authority remain open. The all-destination
+attribution obligation above remains unresolved. See
+`../reviews/egress-follow-up-2026-10-08.md` and `results/local-outer-accounting.json`.

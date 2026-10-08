@@ -1,10 +1,13 @@
 > **SC-03 egress handoff (2026-10-08).** See `egress/README.md`, `egress/FIDELITY.md`,
 > `egress/results/summary.json`, `assurance/egress-boundary-v1.json` and `reviews/dialogue/sol-11.md`.
-> 62 full controls and three oracle/validator mutations pass; seven oracle regressions, six Lean axiom checks and
-> full `lake build ControlStack` pass. Stored receipts are checked by `egress/check_evidence.py`.
+> 62 full controls and three oracle/validator mutations pass; nine oracle regressions and six Lean axiom checks pass.
+> The original full `lake build ControlStack` passed. Stored receipts are checked by `egress/check_evidence.py`.
 > Safe test-only defaults; reachability only; CONDITIONAL; auditgate untouched. No remote CI or production deployment.
-> Next: all-destination process attribution in disposable topology. Timer 2026-10-08 09:30:31 UTC launches one bounded
-> workspace-write CLI follow-up; logs/prompt in `/home/opc/handoff/control-stack-egress/`. Export/publication pending.
+> Authorized follow-up completed after 09:30:31 UTC: IPv6 trace/fragment fixes, refreshed receipts and isolated
+> eight-flow/two-PID outer accounting calibration; zero drops and missing-trace mutation detected.
+> Next: integrate gateway/sandbox into that disposable topology; general attribution remains unresolved.
+> See `reviews/egress-follow-up-2026-10-08.md`; export/publication pending. Timer prompt/logs remain in
+> `/home/opc/handoff/control-stack-egress/`. No rate-limit error/reset timestamp was observed.
 
 > **ROADMAP.md** (added 2026-10-07 at John's request) is the one-page status plan: completed / in flight / next / open
 > assumptions / needs John. Keep it current whenever a row changes status, and mirror it into the GitHub export.
@@ -129,4 +132,20 @@ The tools:
   - the Claude subagent usage limit hit at about 04:40 UTC and reset at 05:10 UTC; resume the agents with
     SendMessage, since their context survives.
 - **VCVio:** the `Pr[…]` notation is deprecated at the pinned commit (warnings only).
-- **Never deploy the sandbox change, and never send anything to anyone, without John.**
+- **Never deploy the sandbox change or send people emails/messages without John.**
+- John clarified on 2026-10-08 that Git pushes and GitHub CI are permitted; the external-send restriction concerns direct messages to people.
+
+## SC-03 publication authorization — 2026-10-08
+
+John clarified that Git pushes are permitted and the external-send restriction
+concerns emails/messages to people. Publishing the prepared private branch
+`egress-r10-controls` and running GitHub CI are authorized. The completed local
+follow-up is included; unrelated destination prototypes and review metadata are
+excluded. Auditgate is unchanged.
+
+Publication checks: `python3 egress/check_evidence.py` (receipt hashes, 62 controls,
+three mutations and eight-flow calibration), `python3 egress/test_oracle.py`
+(nine tests), `egress/check_lean.sh` (six theorem axiom checks) and
+`git diff --check` passed. Remote results will be recorded after the push.
+Next engineering step: integrate the gateway/sandbox into the isolated outer
+topology; general process attribution remains unresolved.

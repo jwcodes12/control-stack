@@ -134,3 +134,79 @@ disposition in `reviews/external-critique-2026-10-07.md` and `reviews/related-wo
   - a completion target forces risk ≥ α₀·u.
 - **Proposed next direction (awaiting John):** Lean-check a Games-for-AI-Control trusted-monitoring certificate
   (merges with N1b), or port SOUNDGATE's gate model so that A4/A5/A11 become consequences of complete mediation.
+
+## SC-03 authorized local follow-up — 2026-10-08 after 09:30:31 UTC
+
+Read global instructions and local handoff/evidence first; no nearer repo agent
+instruction file and no configured Git remote. No auditgate, production deployment,
+publication, public target contact or external repository transmission. Existing
+Astra/Opus review records were used locally. No rate-limit error occurred; the
+five-hour timer is not evidence of account reset.
+
+Fixed two observer correctness gaps: IPv6 connects now parse into independent
+pinned-peer/prior-permit records (previously rejected by IPv4-only patterns), and
+non-initial IPv6 fragments retain address evidence rather than being lost while
+parsing continuation payload as extension headers. Two regressions reproduce the
+old behavior. Refreshed original runtime receipts and assurance hashes.
+
+Actual checks: `/usr/bin/python3 egress/test_oracle.py` → 9 tests OK;
+`sudo -n /usr/bin/python3 egress/suite.py --output egress/results/local-full.json`
+→ 62/62 pass, 1,454 kernel-counted packets, zero drops, 69 mirror SYNs/69 traced
+connects, zero orphan SYNs. Same command with `--self-check-shared-net`,
+`--self-check-packet-oracle`, `--self-check-direct-mirror` and the respective
+`local-{namespace,packet,mirror}-mutation.json` outputs → mutation-detected,
+zero drops, exit 0 for each. `--gateway-only --output egress/results/local-parser.json`
+→ partial-pass, 34 controls. Ordinary-user full command outside managed network
+restrictions with `--output egress/results/local-unprivileged.json` → blocked,
+EPERM, exit 2. `egress/check_lean.sh` → six axiom checks pass;
+`/usr/bin/python3 egress/check_evidence.py` → all refreshed source/receipt hashes,
+full controls, mutations and outer calibration pass, CONDITIONAL. `git diff --check`
+→ clean. No Lean source change; prior full build was not repeated.
+
+Managed-sandbox attempts also blocked: default sudo has no-new-privileges; full
+mode cannot create NETLINK_ROUTE (receipt `/tmp/egress-followup-managed-blocked.json`);
+parser fixture socket initially got EPERM. Approved local escalated runs succeeded;
+no automatic approval rejection. These blocks were not treated as denials/pass evidence.
+
+Feasibility probe `sudo -n unshare --net /bin/sh -c 'ip link set lo up; ip -brief link; ip route show; ip -6 route show'`
+→ exit 0, only lo, no external routes. Implemented isolated
+`egress/experimental/outer_accounting.py`. Ran:
+
+```sh
+sudo -n unshare --net /usr/bin/python3 egress/experimental/outer_accounting.py \
+  --host-netns "$(stat -Lc %i /proc/self/ns/net)" \
+  --output egress/results/local-outer-accounting.json
+```
+
+Result: pass, exit 0; eight independent bind/connect/sendto flows across four
+locally assigned IPv4/IPv6 documentation addresses and two sender PIDs; eight
+initial TCP SYN/UDP packets attributed, 16 decoded frames total, 32 kernel-counted
+frames, zero drops. Removing a flow detects missing provenance. Repeated after
+per-child isolation guards; same result. Direct `--sender 0` without outer topology
+exits 1 before traffic. No external links, default routes, DNS or target listeners.
+All-destination packet capture here is a bounded calibration, not universal process
+attribution: replies have no PID attribution, sandbox/gateway integration and raw,
+inherited-FD/connected-UDP/sendmsg/io_uring paths remain untested. The corresponding
+assurance assumption stays UNRESOLVED.
+
+Commands, real results and limitations are fully recorded in
+`reviews/egress-follow-up-2026-10-08.md`; README/FIDELITY/ROADMAP/HANDOFF updated.
+Pre-existing untracked destination prototype and TMCERT review error/metadata files
+were left untouched. Next: integrate gateway and disposable sandbox into the isolated
+outer topology, then test alternate sends/inherited authority and negative provenance
+mutations before expanding the claim. This bounded follow-up is complete; stop here.
+
+## SC-03 publication authorization — 2026-10-08
+
+John clarified that Git pushes are permitted and the external-send restriction
+concerns emails/messages to people. Publishing the prepared private branch
+`egress-r10-controls` and running GitHub CI are authorized. The completed local
+follow-up is included; unrelated destination prototypes and review metadata are
+excluded. Auditgate is unchanged.
+
+Publication checks: `python3 egress/check_evidence.py` (receipt hashes, 62 controls,
+three mutations and eight-flow calibration), `python3 egress/test_oracle.py`
+(nine tests), `egress/check_lean.sh` (six theorem axiom checks) and
+`git diff --check` passed. Remote results will be recorded after the push.
+Next engineering step: integrate the gateway/sandbox into the isolated outer
+topology; general process attribution remains unresolved.

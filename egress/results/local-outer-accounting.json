@@ -1,0 +1,533 @@
+{
+  "status": "pass",
+  "scope": "isolated two-sender TCP/UDP calibration",
+  "limitations": [
+    "Not integrated with gateway/sandbox or its permit oracle.",
+    "PID attribution covers initial TCP SYN and UDP datagrams via traced explicit binds.",
+    "ICMP/TCP replies are captured but not assigned a sender PID.",
+    "No raw sockets, inherited FDs, connected UDP, sendmsg, io_uring or universal syscall coverage claim."
+  ],
+  "hashes": {
+    "experimental/outer_accounting.py": "f12007c6e1db0d959c3f60ba2f979050bf51f631bf3650d65a4e7bb16550fe5a",
+    "observer.py": "b0998fc5cbbd411bcc0d0d3def498a9c1795ca61e227da145bd744b3f98ab62d"
+  },
+  "netns": 4026532602,
+  "host_netns": 4026531840,
+  "links": [
+    {
+      "ifindex": 1,
+      "ifname": "lo",
+      "flags": [
+        "LOOPBACK"
+      ],
+      "mtu": 65536,
+      "qdisc": "noop",
+      "operstate": "DOWN",
+      "linkmode": "DEFAULT",
+      "group": "default",
+      "txqlen": 1000,
+      "link_type": "loopback",
+      "address": "00:00:00:00:00:00",
+      "broadcast": "00:00:00:00:00:00"
+    }
+  ],
+  "routes": {
+    "-4": [
+      {
+        "type": "local",
+        "dst": "127.0.0.0/8",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "host",
+        "prefsrc": "127.0.0.1",
+        "flags": []
+      },
+      {
+        "type": "local",
+        "dst": "127.0.0.1",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "host",
+        "prefsrc": "127.0.0.1",
+        "flags": []
+      },
+      {
+        "type": "broadcast",
+        "dst": "127.255.255.255",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "link",
+        "prefsrc": "127.0.0.1",
+        "flags": []
+      },
+      {
+        "type": "local",
+        "dst": "192.0.2.1",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "host",
+        "prefsrc": "192.0.2.1",
+        "flags": []
+      },
+      {
+        "type": "local",
+        "dst": "198.51.100.2",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "scope": "host",
+        "prefsrc": "198.51.100.2",
+        "flags": []
+      }
+    ],
+    "-6": [
+      {
+        "dst": "2001:db8::1",
+        "dev": "lo",
+        "protocol": "kernel",
+        "metric": 256,
+        "flags": [],
+        "pref": "medium"
+      },
+      {
+        "dst": "2001:db8::2",
+        "dev": "lo",
+        "protocol": "kernel",
+        "metric": 256,
+        "flags": [],
+        "pref": "medium"
+      },
+      {
+        "type": "local",
+        "dst": "::1",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "metric": 0,
+        "flags": [],
+        "pref": "medium"
+      },
+      {
+        "type": "local",
+        "dst": "2001:db8::1",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "metric": 0,
+        "flags": [],
+        "pref": "medium"
+      },
+      {
+        "type": "local",
+        "dst": "2001:db8::2",
+        "dev": "lo",
+        "table": "local",
+        "protocol": "kernel",
+        "metric": 0,
+        "flags": [],
+        "pref": "medium"
+      }
+    ]
+  },
+  "traces": {
+    "trace.1585590": "1791452099.509884 execve(\"/usr/bin/python3\", [\"/usr/bin/python3\", \"/home/opc/research/control-stack\"..., \"--workers\", \"--host-netns\", \"4026531840\"], 0xffffec163278 /* 18 vars */) = 0\n1791452099.510415 close(3</etc/ld.so.cache>) = 0\n1791452099.510663 close(3</usr/lib64/libpython3.9.so.1.0>) = 0\n1791452099.510810 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.510933 close(3</usr/lib64/libm.so.6>) = 0\n1791452099.511058 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.512404 close(3</usr/lib/locale/locale-archive>) = 0\n1791452099.512739 close(3</usr/share/locale/locale.alias>) = 0\n1791452099.512873 close(3</usr/lib/locale/C.utf8/LC_CTYPE>) = 0\n1791452099.512955 close(3</usr/lib64/gconv/gconv-modules.cache>) = 0\n1791452099.517335 close(3</usr/share/zoneinfo/GMT>) = 0\n1791452099.517950 close(3</usr/lib64/python3.9>) = 0\n1791452099.518324 close(3</usr/lib64/python3.9/encodings/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.518810 close(3</usr/lib64/python3.9/__pycache__/codecs.cpython-39.pyc>) = 0\n1791452099.519594 close(3</usr/lib64/python3.9/encodings>) = 0\n1791452099.519904 close(3</usr/lib64/python3.9/encodings/__pycache__/aliases.cpython-39.pyc>) = 0\n1791452099.520380 close(3</usr/lib64/python3.9/encodings/__pycache__/utf_8.cpython-39.pyc>) = 0\n1791452099.521608 close(3</usr/lib64/python3.9/encodings/__pycache__/latin_1.cpython-39.pyc>) = 0\n1791452099.522075 close(3</usr/lib64/python3.9/__pycache__/io.cpython-39.pyc>) = 0\n1791452099.522406 close(3</usr/lib64/python3.9/__pycache__/abc.cpython-39.pyc>) = 0\n1791452099.522770 close(3</dev/null<char 1:3>>) = 0\n1791452099.522903 close(3<pipe:[8680735]>) = 0\n1791452099.523014 close(3<pipe:[8680736]>) = 0\n1791452099.523632 close(3</usr/lib64/python3.9/__pycache__/site.cpython-39.pyc>) = 0\n1791452099.524095 close(3</usr/lib64/python3.9/__pycache__/os.cpython-39.pyc>) = 0\n1791452099.524568 close(3</usr/lib64/python3.9/__pycache__/stat.cpython-39.pyc>) = 0\n1791452099.525190 close(3</usr/lib64/python3.9/__pycache__/_collections_abc.cpython-39.pyc>) = 0\n1791452099.526384 close(3</usr/lib64/python3.9/__pycache__/posixpath.cpython-39.pyc>) = 0\n1791452099.526767 close(3</usr/lib64/python3.9/__pycache__/genericpath.cpython-39.pyc>) = 0\n1791452099.527422 close(3</usr/lib64/python3.9/__pycache__/_sitebuiltins.cpython-39.pyc>) = 0\n1791452099.527947 close(3</usr/lib64/python3.9/site-packages>) = 0\n1791452099.528122 close(3</usr/lib/python3.9/site-packages>) = 0\n1791452099.528484 close(4</usr/lib64/python3.9/__pycache__/_bootlocale.cpython-39.pyc>) = 0\n1791452099.528896 close(3</usr/lib/python3.9/site-packages/distutils-precedence.pth>) = 0\n1791452099.529193 close(3</usr/lib64/python3.9/lib-dynload>) = 0\n1791452099.529383 close(3</usr/lib64/python3.9/site-packages>) = 0\n1791452099.529575 close(3</usr/lib/python3.9/site-packages>) = 0\n1791452099.530068 close(3</home/opc/research/control-stack/egress/experimental/outer_accounting.py>) = 0\n1791452099.532279 close(3</home/opc/research/control-stack/egress/experimental/outer_accounting.py>) = 0\n1791452099.533663 close(3</home/opc/research/control-stack/egress/experimental>) = 0\n1791452099.534018 close(3</usr/lib64/python3.9/__pycache__/argparse.cpython-39.pyc>) = 0\n1791452099.534684 close(3</usr/lib64/python3.9/__pycache__/re.cpython-39.pyc>) = 0\n1791452099.535172 close(3</usr/lib64/python3.9/__pycache__/enum.cpython-39.pyc>) = 0\n1791452099.535731 close(3</usr/lib64/python3.9/__pycache__/types.cpython-39.pyc>) = 0\n1791452099.536673 close(3</usr/lib64/python3.9/__pycache__/sre_compile.cpython-39.pyc>) = 0\n1791452099.537193 close(3</usr/lib64/python3.9/__pycache__/sre_parse.cpython-39.pyc>) = 0\n1791452099.538550 close(3</usr/lib64/python3.9/__pycache__/sre_constants.cpython-39.pyc>) = 0\n1791452099.539271 close(3</usr/lib64/python3.9/__pycache__/functools.cpython-39.pyc>) = 0\n1791452099.539912 close(3</usr/lib64/python3.9/collections/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.540644 close(3</usr/lib64/python3.9/__pycache__/heapq.cpython-39.pyc>) = 0\n1791452099.541094 close(3</usr/lib64/python3.9/lib-dynload/_heapq.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.541622 close(3</usr/lib64/python3.9/__pycache__/keyword.cpython-39.pyc>) = 0\n1791452099.541963 close(3</usr/lib64/python3.9/__pycache__/operator.cpython-39.pyc>) = 0\n1791452099.542584 close(3</usr/lib64/python3.9/__pycache__/reprlib.cpython-39.pyc>) = 0\n1791452099.544194 close(3</usr/lib64/python3.9/__pycache__/copyreg.cpython-39.pyc>) = 0\n1791452099.544661 close(3</usr/lib64/python3.9/__pycache__/gettext.cpython-39.pyc>) = 0\n1791452099.546406 close(3</usr/lib64/python3.9/__pycache__/hashlib.cpython-39.pyc>) = 0\n1791452099.546807 close(3</usr/lib64/python3.9/lib-dynload/_hashlib.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.546922 close(3</etc/ld.so.cache>) = 0\n1791452099.547090 close(3</usr/lib64/libcrypto.so.3.5.8>) = 0\n1791452099.547241 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.548118 close(3</proc/sys/crypto/fips_enabled>) = 0\n1791452099.549301 close(4</etc/pki/tls/openssl.d>) = 0\n1791452099.549437 close(4</usr/share/crypto-policies/DEFAULT/opensslcnf.txt>) = 0\n1791452099.549620 close(3</etc/pki/tls/openssl.cnf>) = 0\n1791452099.550404 close(3</usr/lib64/python3.9/lib-dynload/_blake2.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.550982 close(3</usr/lib64/python3.9/json/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.555497 close(3</usr/lib64/python3.9/json>) = 0\n1791452099.555933 close(3</usr/lib64/python3.9/json/__pycache__/decoder.cpython-39.pyc>) = 0\n1791452099.556651 close(3</usr/lib64/python3.9/json/__pycache__/scanner.cpython-39.pyc>) = 0\n1791452099.557077 close(3</usr/lib64/python3.9/lib-dynload/_json.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.558111 close(3</usr/lib64/python3.9/json/__pycache__/encoder.cpython-39.pyc>) = 0\n1791452099.558921 close(3</usr/lib64/python3.9/__pycache__/pathlib.cpython-39.pyc>) = 0\n1791452099.559601 close(3</usr/lib64/python3.9/__pycache__/fnmatch.cpython-39.pyc>) = 0\n1791452099.560019 close(3</usr/lib64/python3.9/__pycache__/ntpath.cpython-39.pyc>) = 0\n1791452099.561330 close(3</usr/lib64/python3.9/urllib/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.561543 close(3</usr/lib64/python3.9/urllib>) = 0\n1791452099.561776 close(3</usr/lib64/python3.9/urllib/__pycache__/parse.cpython-39.pyc>) = 0\n1791452099.562511 close(3</usr/lib64/python3.9/__pycache__/warnings.cpython-39.pyc>) = 0\n1791452099.563021 close(3</usr/lib64/python3.9/__pycache__/ipaddress.cpython-39.pyc>) = 0\n1791452099.565833 close(3</usr/lib64/python3.9/__pycache__/socket.cpython-39.pyc>) = 0\n1791452099.566564 close(3</usr/lib64/python3.9/lib-dynload/_socket.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.567670 close(3</usr/lib64/python3.9/__pycache__/selectors.cpython-39.pyc>) = 0\n1791452099.568154 close(3</usr/lib64/python3.9/collections>) = 0\n1791452099.568391 close(3</usr/lib64/python3.9/collections/__pycache__/abc.cpython-39.pyc>) = 0\n1791452099.568830 close(3</usr/lib64/python3.9/lib-dynload/math.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.569478 close(3</usr/lib64/python3.9/lib-dynload/select.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.570029 close(3<anon_inode:[eventpoll]>) = 0\n1791452099.571928 close(3</usr/lib64/python3.9/lib-dynload/array.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.572594 close(3</usr/lib64/python3.9/__pycache__/subprocess.cpython-39.pyc>) = 0\n1791452099.573315 close(3</usr/lib64/python3.9/__pycache__/signal.cpython-39.pyc>) = 0\n1791452099.574482 close(3</usr/lib64/python3.9/__pycache__/threading.cpython-39.pyc>) = 0\n1791452099.575043 close(3</usr/lib64/python3.9/__pycache__/_weakrefset.cpython-39.pyc>) = 0\n1791452099.575844 close(3</usr/lib64/python3.9/__pycache__/contextlib.cpython-39.pyc>) = 0\n1791452099.576707 close(3</usr/lib64/python3.9/lib-dynload/grp.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.577282 close(3</usr/lib64/python3.9/lib-dynload/_posixsubprocess.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.577889 close(3</usr/lib64/python3.9/__pycache__/tempfile.cpython-39.pyc>) = 0\n1791452099.578384 close(3</usr/lib64/python3.9/__pycache__/shutil.cpython-39.pyc>) = 0\n1791452099.579113 close(3</usr/lib64/python3.9/lib-dynload/zlib.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.579628 close(3</usr/lib64/python3.9/__pycache__/bz2.cpython-39.pyc>) = 0\n1791452099.580033 close(3</usr/lib64/python3.9/__pycache__/_compression.cpython-39.pyc>) = 0\n1791452099.580485 close(3</usr/lib64/python3.9/lib-dynload/_bz2.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.580643 close(3</etc/ld.so.cache>) = 0\n1791452099.580851 close(3</usr/lib64/libbz2.so.1.0.8>) = 0\n1791452099.581378 close(3</usr/lib64/python3.9/__pycache__/lzma.cpython-39.pyc>) = 0\n1791452099.581784 close(3</usr/lib64/python3.9/lib-dynload/_lzma.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.581923 close(3</etc/ld.so.cache>) = 0\n1791452099.582077 close(3</usr/lib64/liblzma.so.5.2.5>) = 0\n1791452099.583016 close(3</usr/lib64/python3.9/__pycache__/random.cpython-39.pyc>) = 0\n1791452099.583566 close(3</usr/lib64/python3.9/__pycache__/bisect.cpython-39.pyc>) = 0\n1791452099.585518 close(3</usr/lib64/python3.9/lib-dynload/_bisect.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.585960 close(3</usr/lib64/python3.9/lib-dynload/_random.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.586735 close(3</usr/lib64/python3.9/__pycache__/weakref.cpython-39.pyc>) = 0\n1791452099.587803 close(3</home/opc/research/control-stack/egress>) = 0\n1791452099.588106 close(3</home/opc/research/control-stack/egress/__pycache__/observer.cpython-39.pyc>) = 0\n1791452099.588497 close(3</usr/lib64/python3.9/__pycache__/struct.cpython-39.pyc>) = 0\n1791452099.588933 close(3</usr/lib64/python3.9/lib-dynload/_struct.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.589887 close(3</usr/lib64/python3.9/__pycache__/locale.cpython-39.pyc>) = 0\n1791452099.592716 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9e437990) = 1585591\n1791452099.593705 close(6<pipe:[8680746]>) = 0\n1791452099.594188 close(4<pipe:[8680745]>) = 0\n1791452099.594937 close(5<pipe:[8680746]>) = 0\n1791452099.600954 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585591, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.601078 close(3<pipe:[8680745]>) = 0\n1791452099.602326 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9e437990) = 1585592\n1791452099.603208 close(6<pipe:[8680756]>) = 0\n1791452099.603549 close(4<pipe:[8680755]>) = 0\n1791452099.604575 close(5<pipe:[8680756]>) = 0\n1791452099.608991 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585592, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.609102 close(3<pipe:[8680755]>) = 0\n1791452099.610186 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9e437990) = 1585593\n1791452099.610981 close(6<pipe:[8680758]>) = 0\n1791452099.611392 close(4<pipe:[8680757]>) = 0\n1791452099.612596 close(5<pipe:[8680758]>) = 0\n1791452099.616860 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585593, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.616997 close(3<pipe:[8680757]>) = 0\n1791452099.618060 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9e437990) = 1585594\n1791452099.618913 close(6<pipe:[8680765]>) = 0\n1791452099.619208 close(4<pipe:[8680764]>) = 0\n1791452099.620132 close(5<pipe:[8680765]>) = 0\n1791452099.624439 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585594, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.624575 close(3<pipe:[8680764]>) = 0\n1791452099.626067 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9e437990) = 1585595\n1791452099.626840 close(4<pipe:[8680766]>) = 0\n1791452099.628053 close(3<pipe:[8680766]>) = 0\n1791452099.629593 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9e437990) = 1585596\n1791452099.630763 close(4<pipe:[8680767]>) = 0\n1791452099.631567 close(3<pipe:[8680767]>) = 0\n1791452099.816224 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585596, si_uid=0, si_status=0, si_utime=3 /* 0.03 s */, si_stime=4 /* 0.04 s */} ---\n1791452099.851639 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585595, si_uid=0, si_status=0, si_utime=6 /* 0.06 s */, si_stime=4 /* 0.04 s */} ---\n1791452099.915946 +++ exited with 0 +++\n",
+    "trace.1585591": "1791452099.593761 close(3<pipe:[8680745]>) = 0\n1791452099.593882 close(5<pipe:[8680746]>) = 0\n1791452099.594012 close(4<pipe:[8680745]>) = 0\n1791452099.594050 close(3</proc/1585591/fd>) = 0\n1791452099.594080 execve(\"/sbin/ip\", [\"ip\", \"-j\", \"link\"], 0xffffda9a5428 /* 18 vars */) = 0\n1791452099.595208 close(3</etc/ld.so.cache>) = 0\n1791452099.595453 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.595629 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.596363 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.596633 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.596801 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.596960 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.597110 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.597264 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.597403 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.597569 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.598842 bind(3<NETLINK:[8679669]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.599838 sendto(3<NETLINK:[ROUTE:1585591]>, [{nlmsg_len=40, nlmsg_type=RTM_GETLINK, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {ifi_family=AF_PACKET, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0}, [{nla_len=8, nla_type=IFLA_EXT_MASK}, RTEXT_FILTER_VF|RTEXT_FILTER_SKIP_STATS]], 40, 0, NULL, 0) = 40\n1791452099.600389 close(4</usr/share/iproute2/group>) = 0\n1791452099.600893 +++ exited with 0 +++\n",
+    "trace.1585592": "1791452099.603350 close(3<pipe:[8680755]>) = 0\n1791452099.603434 close(5<pipe:[8680756]>) = 0\n1791452099.603642 close(4<pipe:[8680755]>) = 0\n1791452099.603703 close(3</proc/1585592/fd>) = 0\n1791452099.603740 execve(\"/sbin/ip\", [\"ip\", \"-j\", \"addr\", \"show\", \"dev\", \"lo\"], 0xffffda9a5428 /* 18 vars */) = 0\n1791452099.604817 close(3</etc/ld.so.cache>) = 0\n1791452099.605022 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.605156 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.605289 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.605415 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.605555 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.605697 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.605828 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.605960 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.606083 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.606228 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.607356 bind(3<NETLINK:[8679679]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.607603 bind(4<NETLINK:[8679681]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.607756 close(4<NETLINK:[ROUTE:4164955084]>) = 0\n1791452099.607884 sendto(3<NETLINK:[ROUTE:1585592]>, [[{nlmsg_len=24, nlmsg_type=RTM_GETADDR, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452101, nlmsg_pid=0}, {ifa_family=AF_UNSPEC, ifa_prefixlen=0, ifa_flags=0, ifa_scope=RT_SCOPE_UNIVERSE, ifa_index=if_nametoindex(\"lo\")}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 152, 0, NULL, 0) = 152\n1791452099.608165 close(4</usr/share/iproute2/group>) = 0\n1791452099.608928 +++ exited with 0 +++\n",
+    "trace.1585593": "1791452099.611424 close(3<pipe:[8680757]>) = 0\n1791452099.611570 close(5<pipe:[8680758]>) = 0\n1791452099.611716 close(4<pipe:[8680757]>) = 0\n1791452099.611753 close(3</proc/1585593/fd>) = 0\n1791452099.611783 execve(\"/sbin/ip\", [\"ip\", \"-4\", \"-j\", \"route\", \"show\", \"table\", \"all\"], 0xffffda9a5428 /* 18 vars */) = 0\n1791452099.612883 close(3</etc/ld.so.cache>) = 0\n1791452099.613075 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.613221 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.613363 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.613482 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.613618 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.613756 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.613887 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.614017 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.614140 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.614283 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.615470 bind(3<NETLINK:[8679690]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.615782 close(4</etc/iproute2/rt_tables>) = 0\n1791452099.615868 sendto(3<NETLINK:[ROUTE:1585593]>, [[{nlmsg_len=28, nlmsg_type=RTM_GETROUTE, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {rtm_family=AF_INET, rtm_dst_len=0, rtm_src_len=0, rtm_tos=0, rtm_table=RT_TABLE_UNSPEC, rtm_protocol=RTPROT_UNSPEC, rtm_scope=RT_SCOPE_UNIVERSE, rtm_type=RTN_UNSPEC, rtm_flags=0}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 156, 0, NULL, 0) = 156\n1791452099.616081 bind(4<NETLINK:[8679693]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.616220 close(4<NETLINK:[ROUTE:3481833095]>) = 0\n1791452099.616811 +++ exited with 0 +++\n",
+    "trace.1585594": "1791452099.619008 close(3<pipe:[8680764]>) = 0\n1791452099.619078 close(5<pipe:[8680765]>) = 0\n1791452099.619193 close(4<pipe:[8680764]>) = 0\n1791452099.619260 close(3</proc/1585594/fd>) = 0\n1791452099.619342 execve(\"/sbin/ip\", [\"ip\", \"-6\", \"-j\", \"route\", \"show\", \"table\", \"all\"], 0xffffda9a5428 /* 18 vars */) = 0\n1791452099.620447 close(3</etc/ld.so.cache>) = 0\n1791452099.620709 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.620849 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.620982 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.621105 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.621241 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.621378 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.621506 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.621639 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.621763 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.621904 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.623000 bind(3<NETLINK:[8679705]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.623317 close(4</etc/iproute2/rt_tables>) = 0\n1791452099.623418 sendto(3<NETLINK:[ROUTE:1585594]>, [[{nlmsg_len=28, nlmsg_type=RTM_GETROUTE, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {rtm_family=AF_INET6, rtm_dst_len=0, rtm_src_len=0, rtm_tos=0, rtm_table=RT_TABLE_UNSPEC, rtm_protocol=RTPROT_UNSPEC, rtm_scope=RT_SCOPE_UNIVERSE, rtm_type=RTN_UNSPEC, rtm_flags=0}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 156, 0, NULL, 0) = 156\n1791452099.623633 bind(4<NETLINK:[8679708]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.623778 close(4<NETLINK:[ROUTE:2624034485]>) = 0\n1791452099.624378 +++ exited with 0 +++\n",
+    "trace.1585595": "1791452099.626939 close(3<pipe:[8680766]>) = 0\n1791452099.627088 close(3</proc/1585595/fd>) = 0\n1791452099.627122 execve(\"/usr/bin/python3\", [\"/usr/bin/python3\", \"/home/opc/research/control-stack\"..., \"--sender\", \"0\", \"--host-netns\", \"4026531840\"], 0xffffda9a5428 /* 18 vars */) = 0\n1791452099.628257 close(3</etc/ld.so.cache>) = 0\n1791452099.628437 close(3</usr/lib64/libpython3.9.so.1.0>) = 0\n1791452099.628663 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.628800 close(3</usr/lib64/libm.so.6>) = 0\n1791452099.628938 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.629920 close(3</usr/lib/locale/locale-archive>) = 0\n1791452099.630033 close(3</usr/share/locale/locale.alias>) = 0\n1791452099.630376 close(3</usr/lib/locale/C.utf8/LC_CTYPE>) = 0\n1791452099.630644 close(3</usr/lib64/gconv/gconv-modules.cache>) = 0\n1791452099.636493 close(3</usr/share/zoneinfo/GMT>) = 0\n1791452099.637167 close(3</usr/lib64/python3.9>) = 0\n1791452099.637631 close(3</usr/lib64/python3.9/encodings/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.638057 close(3</usr/lib64/python3.9/__pycache__/codecs.cpython-39.pyc>) = 0\n1791452099.638915 close(3</usr/lib64/python3.9/encodings>) = 0\n1791452099.639315 close(3</usr/lib64/python3.9/encodings/__pycache__/aliases.cpython-39.pyc>) = 0\n1791452099.639894 close(3</usr/lib64/python3.9/encodings/__pycache__/utf_8.cpython-39.pyc>) = 0\n1791452099.641481 close(3</usr/lib64/python3.9/encodings/__pycache__/latin_1.cpython-39.pyc>) = 0\n1791452099.642283 close(3</usr/lib64/python3.9/__pycache__/io.cpython-39.pyc>) = 0\n1791452099.642932 close(3</usr/lib64/python3.9/__pycache__/abc.cpython-39.pyc>) = 0\n1791452099.643401 close(3</dev/null<char 1:3>>) = 0\n1791452099.643620 close(3<pipe:[8680735]>) = 0\n1791452099.643884 close(3<pipe:[8680736]>) = 0\n1791452099.644476 close(3</usr/lib64/python3.9/__pycache__/site.cpython-39.pyc>) = 0\n1791452099.645133 close(3</usr/lib64/python3.9/__pycache__/os.cpython-39.pyc>) = 0\n1791452099.645918 close(3</usr/lib64/python3.9/__pycache__/stat.cpython-39.pyc>) = 0\n1791452099.646797 close(3</usr/lib64/python3.9/__pycache__/_collections_abc.cpython-39.pyc>) = 0\n1791452099.648377 close(3</usr/lib64/python3.9/__pycache__/posixpath.cpython-39.pyc>) = 0\n1791452099.649185 close(3</usr/lib64/python3.9/__pycache__/genericpath.cpython-39.pyc>) = 0\n1791452099.650637 close(3</usr/lib64/python3.9/__pycache__/_sitebuiltins.cpython-39.pyc>) = 0\n1791452099.651586 close(3</usr/lib64/python3.9/site-packages>) = 0\n1791452099.651895 close(3</usr/lib/python3.9/site-packages>) = 0\n1791452099.652291 close(4</usr/lib64/python3.9/__pycache__/_bootlocale.cpython-39.pyc>) = 0\n1791452099.652954 close(3</usr/lib/python3.9/site-packages/distutils-precedence.pth>) = 0\n1791452099.653355 close(3</usr/lib64/python3.9/lib-dynload>) = 0\n1791452099.653667 close(3</usr/lib64/python3.9/site-packages>) = 0\n1791452099.653934 close(3</usr/lib/python3.9/site-packages>) = 0\n1791452099.654615 close(3</home/opc/research/control-stack/egress/experimental/outer_accounting.py>) = 0\n1791452099.658291 close(3</home/opc/research/control-stack/egress/experimental/outer_accounting.py>) = 0\n1791452099.659707 close(3</home/opc/research/control-stack/egress/experimental>) = 0\n1791452099.660149 close(3</usr/lib64/python3.9/__pycache__/argparse.cpython-39.pyc>) = 0\n1791452099.661021 close(3</usr/lib64/python3.9/__pycache__/re.cpython-39.pyc>) = 0\n1791452099.661647 close(3</usr/lib64/python3.9/__pycache__/enum.cpython-39.pyc>) = 0\n1791452099.662170 close(3</usr/lib64/python3.9/__pycache__/types.cpython-39.pyc>) = 0\n1791452099.663956 close(3</usr/lib64/python3.9/__pycache__/sre_compile.cpython-39.pyc>) = 0\n1791452099.665212 close(3</usr/lib64/python3.9/__pycache__/sre_parse.cpython-39.pyc>) = 0\n1791452099.667940 close(3</usr/lib64/python3.9/__pycache__/sre_constants.cpython-39.pyc>) = 0\n1791452099.668913 close(3</usr/lib64/python3.9/__pycache__/functools.cpython-39.pyc>) = 0\n1791452099.669880 close(3</usr/lib64/python3.9/collections/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.671548 close(3</usr/lib64/python3.9/__pycache__/heapq.cpython-39.pyc>) = 0\n1791452099.672223 close(3</usr/lib64/python3.9/lib-dynload/_heapq.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.674145 close(3</usr/lib64/python3.9/__pycache__/keyword.cpython-39.pyc>) = 0\n1791452099.674973 close(3</usr/lib64/python3.9/__pycache__/operator.cpython-39.pyc>) = 0\n1791452099.675871 close(3</usr/lib64/python3.9/__pycache__/reprlib.cpython-39.pyc>) = 0\n1791452099.677808 close(3</usr/lib64/python3.9/__pycache__/copyreg.cpython-39.pyc>) = 0\n1791452099.679716 close(3</usr/lib64/python3.9/__pycache__/gettext.cpython-39.pyc>) = 0\n1791452099.688422 close(3</usr/lib64/python3.9/__pycache__/hashlib.cpython-39.pyc>) = 0\n1791452099.689071 close(3</usr/lib64/python3.9/lib-dynload/_hashlib.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.689243 close(3</etc/ld.so.cache>) = 0\n1791452099.690541 close(3</usr/lib64/libcrypto.so.3.5.8>) = 0\n1791452099.690839 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.691843 close(3</proc/sys/crypto/fips_enabled>) = 0\n1791452099.697552 close(4</etc/pki/tls/openssl.d>) = 0\n1791452099.697809 close(4</usr/share/crypto-policies/DEFAULT/opensslcnf.txt>) = 0\n1791452099.698067 close(3</etc/pki/tls/openssl.cnf>) = 0\n1791452099.699504 close(3</usr/lib64/python3.9/lib-dynload/_blake2.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.700904 close(3</usr/lib64/python3.9/json/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.705383 close(3</usr/lib64/python3.9/json>) = 0\n1791452099.708441 close(3</usr/lib64/python3.9/json/__pycache__/decoder.cpython-39.pyc>) = 0\n1791452099.709443 close(3</usr/lib64/python3.9/json/__pycache__/scanner.cpython-39.pyc>) = 0\n1791452099.709923 close(3</usr/lib64/python3.9/lib-dynload/_json.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.715607 close(3</usr/lib64/python3.9/json/__pycache__/encoder.cpython-39.pyc>) = 0\n1791452099.717513 close(3</usr/lib64/python3.9/__pycache__/pathlib.cpython-39.pyc>) = 0\n1791452099.718385 close(3</usr/lib64/python3.9/__pycache__/fnmatch.cpython-39.pyc>) = 0\n1791452099.718965 close(3</usr/lib64/python3.9/__pycache__/ntpath.cpython-39.pyc>) = 0\n1791452099.720815 close(3</usr/lib64/python3.9/urllib/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.721246 close(3</usr/lib64/python3.9/urllib>) = 0\n1791452099.722326 close(3</usr/lib64/python3.9/urllib/__pycache__/parse.cpython-39.pyc>) = 0\n1791452099.723337 close(3</usr/lib64/python3.9/__pycache__/warnings.cpython-39.pyc>) = 0\n1791452099.725398 close(3</usr/lib64/python3.9/__pycache__/ipaddress.cpython-39.pyc>) = 0\n1791452099.728481 close(3</usr/lib64/python3.9/__pycache__/socket.cpython-39.pyc>) = 0\n1791452099.729614 close(3</usr/lib64/python3.9/lib-dynload/_socket.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.731337 close(3</usr/lib64/python3.9/__pycache__/selectors.cpython-39.pyc>) = 0\n1791452099.732252 close(3</usr/lib64/python3.9/collections>) = 0\n1791452099.732725 close(3</usr/lib64/python3.9/collections/__pycache__/abc.cpython-39.pyc>) = 0\n1791452099.733915 close(3</usr/lib64/python3.9/lib-dynload/math.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.735132 close(3</usr/lib64/python3.9/lib-dynload/select.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.736476 close(3<anon_inode:[eventpoll]>) = 0\n1791452099.739506 close(3</usr/lib64/python3.9/lib-dynload/array.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.740494 close(3</usr/lib64/python3.9/__pycache__/subprocess.cpython-39.pyc>) = 0\n1791452099.741580 close(3</usr/lib64/python3.9/__pycache__/signal.cpython-39.pyc>) = 0\n1791452099.742878 close(3</usr/lib64/python3.9/__pycache__/threading.cpython-39.pyc>) = 0\n1791452099.743930 close(3</usr/lib64/python3.9/__pycache__/_weakrefset.cpython-39.pyc>) = 0\n1791452099.745058 close(3</usr/lib64/python3.9/__pycache__/contextlib.cpython-39.pyc>) = 0\n1791452099.746194 close(3</usr/lib64/python3.9/lib-dynload/grp.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.746882 close(3</usr/lib64/python3.9/lib-dynload/_posixsubprocess.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.747954 close(3</usr/lib64/python3.9/__pycache__/tempfile.cpython-39.pyc>) = 0\n1791452099.748834 close(3</usr/lib64/python3.9/__pycache__/shutil.cpython-39.pyc>) = 0\n1791452099.750079 close(3</usr/lib64/python3.9/lib-dynload/zlib.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.751266 close(3</usr/lib64/python3.9/__pycache__/bz2.cpython-39.pyc>) = 0\n1791452099.752037 close(3</usr/lib64/python3.9/__pycache__/_compression.cpython-39.pyc>) = 0\n1791452099.752793 close(3</usr/lib64/python3.9/lib-dynload/_bz2.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.752981 close(3</etc/ld.so.cache>) = 0\n1791452099.753213 close(3</usr/lib64/libbz2.so.1.0.8>) = 0\n1791452099.753992 close(3</usr/lib64/python3.9/__pycache__/lzma.cpython-39.pyc>) = 0\n1791452099.754562 close(3</usr/lib64/python3.9/lib-dynload/_lzma.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.754736 close(3</etc/ld.so.cache>) = 0\n1791452099.754973 close(3</usr/lib64/liblzma.so.5.2.5>) = 0\n1791452099.757029 close(3</usr/lib64/python3.9/__pycache__/random.cpython-39.pyc>) = 0\n1791452099.757851 close(3</usr/lib64/python3.9/__pycache__/bisect.cpython-39.pyc>) = 0\n1791452099.759958 close(3</usr/lib64/python3.9/lib-dynload/_bisect.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.760485 close(3</usr/lib64/python3.9/lib-dynload/_random.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.761851 close(3</usr/lib64/python3.9/__pycache__/weakref.cpython-39.pyc>) = 0\n1791452099.763454 close(3</home/opc/research/control-stack/egress>) = 0\n1791452099.763958 close(3</home/opc/research/control-stack/egress/__pycache__/observer.cpython-39.pyc>) = 0\n1791452099.764771 close(3</usr/lib64/python3.9/__pycache__/struct.cpython-39.pyc>) = 0\n1791452099.765529 close(3</usr/lib64/python3.9/lib-dynload/_struct.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.766874 close(3</usr/lib64/python3.9/__pycache__/locale.cpython-39.pyc>) = 0\n1791452099.771123 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9b094990) = 1585600\n1791452099.772218 close(6<pipe:[8680804]>) = 0\n1791452099.772876 close(4<pipe:[8680803]>) = 0\n1791452099.774943 close(5<pipe:[8680804]>) = 0\n1791452099.781136 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585600, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.781421 close(3<pipe:[8680803]>) = 0\n1791452099.783409 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9b094990) = 1585602\n1791452099.784761 close(6<pipe:[8680823]>) = 0\n1791452099.785125 close(4<pipe:[8680819]>) = 0\n1791452099.797168 close(5<pipe:[8680823]>) = 0\n1791452099.803905 close(3<pipe:[8680819]>) = 0\n1791452099.804134 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585602, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.805327 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9b094990) = 1585603\n1791452099.806277 close(6<pipe:[8680845]>) = 0\n1791452099.806612 close(4<pipe:[8680844]>) = 0\n1791452099.808514 close(5<pipe:[8680845]>) = 0\n1791452099.813024 close(3<pipe:[8680844]>) = 0\n1791452099.813152 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585603, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.814398 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffff9b094990) = 1585604\n1791452099.815440 close(6<pipe:[8680862]>) = 0\n1791452099.815873 close(4<pipe:[8680861]>) = 0\n1791452099.817238 close(5<pipe:[8680862]>) = 0\n1791452099.821738 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585604, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.821848 close(3<pipe:[8680861]>) = 0\n1791452099.822570 bind(3<TCP:[8680871]>, {sa_family=AF_INET, sin_port=htons(39000), sin_addr=inet_addr(\"127.0.0.1\")}, 16) = 0\n1791452099.825159 connect(3<TCP:[127.0.0.1:39000]>, {sa_family=AF_INET, sin_port=htons(40101), sin_addr=inet_addr(\"192.0.2.1\")}, 16) = -1 EINPROGRESS (Operation now in progress)\n1791452099.827784 close(3<TCP:[127.0.0.1:39000]>) = 0\n1791452099.827949 bind(3<UDP:[8679786]>, {sa_family=AF_INET, sin_port=htons(39001), sin_addr=inet_addr(\"127.0.0.1\")}, 16) = 0\n1791452099.828119 sendto(3<UDP:[127.0.0.1:39001]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET, sin_port=htons(40101), sin_addr=inet_addr(\"192.0.2.1\")}, 16) = 28\n1791452099.828277 close(3<UDP:[127.0.0.1:39001]>) = 0\n1791452099.828371 bind(3<TCPv6:[8679787]>, {sa_family=AF_INET6, sin6_port=htons(39004), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"::1\", &sin6_addr), sin6_scope_id=0}, 28) = 0\n1791452099.830728 connect(3<TCPv6:[[::1]:39004]>, {sa_family=AF_INET6, sin6_port=htons(40103), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::1\", &sin6_addr), sin6_scope_id=0}, 28) = -1 EINPROGRESS (Operation now in progress)\n1791452099.833402 close(3<TCPv6:[[::1]:39004]>) = 0\n1791452099.833563 bind(3<UDPv6:[8679788]>, {sa_family=AF_INET6, sin6_port=htons(39005), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"::1\", &sin6_addr), sin6_scope_id=0}, 28) = 0\n1791452099.833701 sendto(3<UDPv6:[[::1]:39005]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET6, sin6_port=htons(40103), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::1\", &sin6_addr), sin6_scope_id=0}, 28) = 28\n1791452099.833883 close(3<UDPv6:[[::1]:39005]>) = 0\n1791452099.851411 +++ exited with 0 +++\n",
+    "trace.1585596": "1791452099.630422 close(3<pipe:[8680767]>) = 0\n1791452099.630702 close(3</proc/1585596/fd>) = 0\n1791452099.630786 execve(\"/usr/bin/python3\", [\"/usr/bin/python3\", \"/home/opc/research/control-stack\"..., \"--sender\", \"1\", \"--host-netns\", \"4026531840\"], 0xffffda9a5428 /* 18 vars */) = 0\n1791452099.631860 close(3</etc/ld.so.cache>) = 0\n1791452099.632114 close(3</usr/lib64/libpython3.9.so.1.0>) = 0\n1791452099.632313 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.632452 close(3</usr/lib64/libm.so.6>) = 0\n1791452099.632631 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.633893 close(3</usr/lib/locale/locale-archive>) = 0\n1791452099.634031 close(3</usr/share/locale/locale.alias>) = 0\n1791452099.634107 close(3</usr/lib/locale/C.utf8/LC_CTYPE>) = 0\n1791452099.634174 close(3</usr/lib64/gconv/gconv-modules.cache>) = 0\n1791452099.637730 close(3</usr/share/zoneinfo/GMT>) = 0\n1791452099.638346 close(3</usr/lib64/python3.9>) = 0\n1791452099.638845 close(3</usr/lib64/python3.9/encodings/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.639405 close(3</usr/lib64/python3.9/__pycache__/codecs.cpython-39.pyc>) = 0\n1791452099.640132 close(3</usr/lib64/python3.9/encodings>) = 0\n1791452099.640568 close(3</usr/lib64/python3.9/encodings/__pycache__/aliases.cpython-39.pyc>) = 0\n1791452099.641115 close(3</usr/lib64/python3.9/encodings/__pycache__/utf_8.cpython-39.pyc>) = 0\n1791452099.643820 close(3</usr/lib64/python3.9/encodings/__pycache__/latin_1.cpython-39.pyc>) = 0\n1791452099.644316 close(3</usr/lib64/python3.9/__pycache__/io.cpython-39.pyc>) = 0\n1791452099.644828 close(3</usr/lib64/python3.9/__pycache__/abc.cpython-39.pyc>) = 0\n1791452099.645424 close(3</dev/null<char 1:3>>) = 0\n1791452099.645602 close(3<pipe:[8680735]>) = 0\n1791452099.645785 close(3<pipe:[8680736]>) = 0\n1791452099.646581 close(3</usr/lib64/python3.9/__pycache__/site.cpython-39.pyc>) = 0\n1791452099.648151 close(3</usr/lib64/python3.9/__pycache__/os.cpython-39.pyc>) = 0\n1791452099.648926 close(3</usr/lib64/python3.9/__pycache__/stat.cpython-39.pyc>) = 0\n1791452099.649738 close(3</usr/lib64/python3.9/__pycache__/_collections_abc.cpython-39.pyc>) = 0\n1791452099.651225 close(3</usr/lib64/python3.9/__pycache__/posixpath.cpython-39.pyc>) = 0\n1791452099.651854 close(3</usr/lib64/python3.9/__pycache__/genericpath.cpython-39.pyc>) = 0\n1791452099.652870 close(3</usr/lib64/python3.9/__pycache__/_sitebuiltins.cpython-39.pyc>) = 0\n1791452099.653538 close(3</usr/lib64/python3.9/site-packages>) = 0\n1791452099.653746 close(3</usr/lib/python3.9/site-packages>) = 0\n1791452099.654421 close(4</usr/lib64/python3.9/__pycache__/_bootlocale.cpython-39.pyc>) = 0\n1791452099.654820 close(3</usr/lib/python3.9/site-packages/distutils-precedence.pth>) = 0\n1791452099.655429 close(3</usr/lib64/python3.9/lib-dynload>) = 0\n1791452099.655842 close(3</usr/lib64/python3.9/site-packages>) = 0\n1791452099.656429 close(3</usr/lib/python3.9/site-packages>) = 0\n1791452099.657462 close(3</home/opc/research/control-stack/egress/experimental/outer_accounting.py>) = 0\n1791452099.661116 close(3</home/opc/research/control-stack/egress/experimental/outer_accounting.py>) = 0\n1791452099.662560 close(3</home/opc/research/control-stack/egress/experimental>) = 0\n1791452099.663033 close(3</usr/lib64/python3.9/__pycache__/argparse.cpython-39.pyc>) = 0\n1791452099.664293 close(3</usr/lib64/python3.9/__pycache__/re.cpython-39.pyc>) = 0\n1791452099.666260 close(3</usr/lib64/python3.9/__pycache__/enum.cpython-39.pyc>) = 0\n1791452099.667093 close(3</usr/lib64/python3.9/__pycache__/types.cpython-39.pyc>) = 0\n1791452099.668662 close(3</usr/lib64/python3.9/__pycache__/sre_compile.cpython-39.pyc>) = 0\n1791452099.669591 close(3</usr/lib64/python3.9/__pycache__/sre_parse.cpython-39.pyc>) = 0\n1791452099.671268 close(3</usr/lib64/python3.9/__pycache__/sre_constants.cpython-39.pyc>) = 0\n1791452099.672726 close(3</usr/lib64/python3.9/__pycache__/functools.cpython-39.pyc>) = 0\n1791452099.674460 close(3</usr/lib64/python3.9/collections/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.675416 close(3</usr/lib64/python3.9/__pycache__/heapq.cpython-39.pyc>) = 0\n1791452099.676116 close(3</usr/lib64/python3.9/lib-dynload/_heapq.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.676691 close(3</usr/lib64/python3.9/__pycache__/keyword.cpython-39.pyc>) = 0\n1791452099.677048 close(3</usr/lib64/python3.9/__pycache__/operator.cpython-39.pyc>) = 0\n1791452099.677876 close(3</usr/lib64/python3.9/__pycache__/reprlib.cpython-39.pyc>) = 0\n1791452099.679621 close(3</usr/lib64/python3.9/__pycache__/copyreg.cpython-39.pyc>) = 0\n1791452099.680143 close(3</usr/lib64/python3.9/__pycache__/gettext.cpython-39.pyc>) = 0\n1791452099.682019 close(3</usr/lib64/python3.9/__pycache__/hashlib.cpython-39.pyc>) = 0\n1791452099.682447 close(3</usr/lib64/python3.9/lib-dynload/_hashlib.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.682580 close(3</etc/ld.so.cache>) = 0\n1791452099.682746 close(3</usr/lib64/libcrypto.so.3.5.8>) = 0\n1791452099.682891 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.683814 close(3</proc/sys/crypto/fips_enabled>) = 0\n1791452099.685044 close(4</etc/pki/tls/openssl.d>) = 0\n1791452099.685183 close(4</usr/share/crypto-policies/DEFAULT/opensslcnf.txt>) = 0\n1791452099.685370 close(3</etc/pki/tls/openssl.cnf>) = 0\n1791452099.686149 close(3</usr/lib64/python3.9/lib-dynload/_blake2.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.686756 close(3</usr/lib64/python3.9/json/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.687038 close(3</usr/lib64/python3.9/json>) = 0\n1791452099.687344 close(3</usr/lib64/python3.9/json/__pycache__/decoder.cpython-39.pyc>) = 0\n1791452099.687997 close(3</usr/lib64/python3.9/json/__pycache__/scanner.cpython-39.pyc>) = 0\n1791452099.688711 close(3</usr/lib64/python3.9/lib-dynload/_json.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.690936 close(3</usr/lib64/python3.9/json/__pycache__/encoder.cpython-39.pyc>) = 0\n1791452099.692331 close(3</usr/lib64/python3.9/__pycache__/pathlib.cpython-39.pyc>) = 0\n1791452099.693071 close(3</usr/lib64/python3.9/__pycache__/fnmatch.cpython-39.pyc>) = 0\n1791452099.693466 close(3</usr/lib64/python3.9/__pycache__/ntpath.cpython-39.pyc>) = 0\n1791452099.694731 close(3</usr/lib64/python3.9/urllib/__pycache__/__init__.cpython-39.pyc>) = 0\n1791452099.694943 close(3</usr/lib64/python3.9/urllib>) = 0\n1791452099.695177 close(3</usr/lib64/python3.9/urllib/__pycache__/parse.cpython-39.pyc>) = 0\n1791452099.696169 close(3</usr/lib64/python3.9/__pycache__/warnings.cpython-39.pyc>) = 0\n1791452099.696876 close(3</usr/lib64/python3.9/__pycache__/ipaddress.cpython-39.pyc>) = 0\n1791452099.701031 close(3</usr/lib64/python3.9/__pycache__/socket.cpython-39.pyc>) = 0\n1791452099.701609 close(3</usr/lib64/python3.9/lib-dynload/_socket.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.702630 close(3</usr/lib64/python3.9/__pycache__/selectors.cpython-39.pyc>) = 0\n1791452099.703469 close(3</usr/lib64/python3.9/collections>) = 0\n1791452099.703922 close(3</usr/lib64/python3.9/collections/__pycache__/abc.cpython-39.pyc>) = 0\n1791452099.704342 close(3</usr/lib64/python3.9/lib-dynload/math.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.705196 close(3</usr/lib64/python3.9/lib-dynload/select.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.705883 close(3<anon_inode:[eventpoll]>) = 0\n1791452099.708127 close(3</usr/lib64/python3.9/lib-dynload/array.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.709056 close(3</usr/lib64/python3.9/__pycache__/subprocess.cpython-39.pyc>) = 0\n1791452099.710281 close(3</usr/lib64/python3.9/__pycache__/signal.cpython-39.pyc>) = 0\n1791452099.711492 close(3</usr/lib64/python3.9/__pycache__/threading.cpython-39.pyc>) = 0\n1791452099.712120 close(3</usr/lib64/python3.9/__pycache__/_weakrefset.cpython-39.pyc>) = 0\n1791452099.712994 close(3</usr/lib64/python3.9/__pycache__/contextlib.cpython-39.pyc>) = 0\n1791452099.713817 close(3</usr/lib64/python3.9/lib-dynload/grp.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.714409 close(3</usr/lib64/python3.9/lib-dynload/_posixsubprocess.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.715715 close(3</usr/lib64/python3.9/__pycache__/tempfile.cpython-39.pyc>) = 0\n1791452099.716254 close(3</usr/lib64/python3.9/__pycache__/shutil.cpython-39.pyc>) = 0\n1791452099.717137 close(3</usr/lib64/python3.9/lib-dynload/zlib.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.717850 close(3</usr/lib64/python3.9/__pycache__/bz2.cpython-39.pyc>) = 0\n1791452099.718436 close(3</usr/lib64/python3.9/__pycache__/_compression.cpython-39.pyc>) = 0\n1791452099.719074 close(3</usr/lib64/python3.9/lib-dynload/_bz2.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.719231 close(3</etc/ld.so.cache>) = 0\n1791452099.719454 close(3</usr/lib64/libbz2.so.1.0.8>) = 0\n1791452099.720236 close(3</usr/lib64/python3.9/__pycache__/lzma.cpython-39.pyc>) = 0\n1791452099.720937 close(3</usr/lib64/python3.9/lib-dynload/_lzma.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.721091 close(3</etc/ld.so.cache>) = 0\n1791452099.721309 close(3</usr/lib64/liblzma.so.5.2.5>) = 0\n1791452099.722586 close(3</usr/lib64/python3.9/__pycache__/random.cpython-39.pyc>) = 0\n1791452099.723295 close(3</usr/lib64/python3.9/__pycache__/bisect.cpython-39.pyc>) = 0\n1791452099.725009 close(3</usr/lib64/python3.9/lib-dynload/_bisect.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.725983 close(3</usr/lib64/python3.9/lib-dynload/_random.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.726890 close(3</usr/lib64/python3.9/__pycache__/weakref.cpython-39.pyc>) = 0\n1791452099.727950 close(3</home/opc/research/control-stack/egress>) = 0\n1791452099.728436 close(3</home/opc/research/control-stack/egress/__pycache__/observer.cpython-39.pyc>) = 0\n1791452099.729046 close(3</usr/lib64/python3.9/__pycache__/struct.cpython-39.pyc>) = 0\n1791452099.729493 close(3</usr/lib64/python3.9/lib-dynload/_struct.cpython-39-aarch64-linux-gnu.so>) = 0\n1791452099.730625 close(3</usr/lib64/python3.9/__pycache__/locale.cpython-39.pyc>) = 0\n1791452099.734626 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa3a89990) = 1585597\n1791452099.735926 close(6<pipe:[8679730]>) = 0\n1791452099.736392 close(4<pipe:[8679729]>) = 0\n1791452099.739599 close(5<pipe:[8679730]>) = 0\n1791452099.745261 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585597, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.745398 close(3<pipe:[8679729]>) = 0\n1791452099.746649 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa3a89990) = 1585598\n1791452099.747757 close(6<pipe:[8679739]>) = 0\n1791452099.748148 close(4<pipe:[8679738]>) = 0\n1791452099.749483 close(5<pipe:[8679739]>) = 0\n1791452099.758054 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585598, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.758193 close(3<pipe:[8679738]>) = 0\n1791452099.760213 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa3a89990) = 1585599\n1791452099.761198 close(6<pipe:[8679748]>) = 0\n1791452099.761608 close(4<pipe:[8679747]>) = 0\n1791452099.762730 close(5<pipe:[8679748]>) = 0\n1791452099.771017 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585599, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.771145 close(3<pipe:[8679747]>) = 0\n1791452099.773520 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xffffa3a89990) = 1585601\n1791452099.775247 close(6<pipe:[8679757]>) = 0\n1791452099.775627 close(4<pipe:[8679756]>) = 0\n1791452099.776918 close(5<pipe:[8679757]>) = 0\n1791452099.784156 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=1585601, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---\n1791452099.784289 close(3<pipe:[8679756]>) = 0\n1791452099.785342 bind(3<TCP:[8679770]>, {sa_family=AF_INET, sin_port=htons(39002), sin_addr=inet_addr(\"127.0.0.1\")}, 16) = 0\n1791452099.787762 connect(3<TCP:[127.0.0.1:39002]>, {sa_family=AF_INET, sin_port=htons(40102), sin_addr=inet_addr(\"198.51.100.2\")}, 16) = -1 EINPROGRESS (Operation now in progress)\n1791452099.790680 close(3<TCP:[127.0.0.1:39002]>) = 0\n1791452099.790888 bind(3<UDP:[8679776]>, {sa_family=AF_INET, sin_port=htons(39003), sin_addr=inet_addr(\"127.0.0.1\")}, 16) = 0\n1791452099.791490 sendto(3<UDP:[127.0.0.1:39003]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET, sin_port=htons(40102), sin_addr=inet_addr(\"198.51.100.2\")}, 16) = 28\n1791452099.791785 close(3<UDP:[127.0.0.1:39003]>) = 0\n1791452099.791913 bind(3<TCPv6:[8679777]>, {sa_family=AF_INET6, sin6_port=htons(39006), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"::1\", &sin6_addr), sin6_scope_id=0}, 28) = 0\n1791452099.794750 connect(3<TCPv6:[[::1]:39006]>, {sa_family=AF_INET6, sin6_port=htons(40104), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::2\", &sin6_addr), sin6_scope_id=0}, 28) = -1 EINPROGRESS (Operation now in progress)\n1791452099.797627 close(3<TCPv6:[[::1]:39006]>) = 0\n1791452099.798022 bind(3<UDPv6:[8679778]>, {sa_family=AF_INET6, sin6_port=htons(39007), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"::1\", &sin6_addr), sin6_scope_id=0}, 28) = 0\n1791452099.798203 sendto(3<UDPv6:[[::1]:39007]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET6, sin6_port=htons(40104), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::2\", &sin6_addr), sin6_scope_id=0}, 28) = 28\n1791452099.798460 close(3<UDPv6:[[::1]:39007]>) = 0\n1791452099.816180 +++ exited with 0 +++\n",
+    "trace.1585597": "1791452099.735986 close(3<pipe:[8679729]>) = 0\n1791452099.736419 close(5<pipe:[8679730]>) = 0\n1791452099.738403 close(4<pipe:[8679729]>) = 0\n1791452099.738533 close(3</proc/1585597/fd>) = 0\n1791452099.738574 execve(\"/sbin/ip\", [\"ip\", \"-j\", \"link\"], 0xffffea1b20e0 /* 18 vars */) = 0\n1791452099.740218 close(3</etc/ld.so.cache>) = 0\n1791452099.740598 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.740751 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.740888 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.741016 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.741212 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.741412 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.741642 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.741779 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.741901 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.742051 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.743607 bind(3<NETLINK:[8679737]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.743837 sendto(3<NETLINK:[ROUTE:1585597]>, [{nlmsg_len=40, nlmsg_type=RTM_GETLINK, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {ifi_family=AF_PACKET, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0}, [{nla_len=8, nla_type=IFLA_EXT_MASK}, RTEXT_FILTER_VF|RTEXT_FILTER_SKIP_STATS]], 40, 0, NULL, 0) = 40\n1791452099.744746 close(4</usr/share/iproute2/group>) = 0\n1791452099.745222 +++ exited with 0 +++\n",
+    "trace.1585598": "1791452099.747799 close(3<pipe:[8679738]>) = 0\n1791452099.748119 close(5<pipe:[8679739]>) = 0\n1791452099.748460 close(4<pipe:[8679738]>) = 0\n1791452099.748608 close(3</proc/1585598/fd>) = 0\n1791452099.748651 execve(\"/sbin/ip\", [\"ip\", \"-j\", \"addr\", \"show\", \"dev\", \"lo\"], 0xffffea1b20e0 /* 18 vars */) = 0\n1791452099.749978 close(3</etc/ld.so.cache>) = 0\n1791452099.750262 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.751057 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.751391 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.751770 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.751977 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.752367 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.752595 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.752817 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.753104 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.753376 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.755144 bind(3<NETLINK:[8679745]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.755858 bind(4<NETLINK:[8679746]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.756118 close(4<NETLINK:[ROUTE:2798296545]>) = 0\n1791452099.756454 sendto(3<NETLINK:[ROUTE:1585598]>, [[{nlmsg_len=24, nlmsg_type=RTM_GETADDR, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452101, nlmsg_pid=0}, {ifa_family=AF_UNSPEC, ifa_prefixlen=0, ifa_flags=0, ifa_scope=RT_SCOPE_UNIVERSE, ifa_index=if_nametoindex(\"lo\")}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 152, 0, NULL, 0) = 152\n1791452099.756964 close(4</usr/share/iproute2/group>) = 0\n1791452099.758010 +++ exited with 0 +++\n",
+    "trace.1585599": "1791452099.761303 close(3<pipe:[8679747]>) = 0\n1791452099.761633 close(5<pipe:[8679748]>) = 0\n1791452099.761887 close(4<pipe:[8679747]>) = 0\n1791452099.761933 close(3</proc/1585599/fd>) = 0\n1791452099.761970 execve(\"/sbin/ip\", [\"ip\", \"-4\", \"-j\", \"route\", \"show\", \"table\", \"all\"], 0xffffea1b20e0 /* 18 vars */) = 0\n1791452099.763194 close(3</etc/ld.so.cache>) = 0\n1791452099.763618 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.763875 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.764204 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.764410 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.764703 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.764972 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.765259 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.765505 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.765759 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.766424 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.768711 bind(3<NETLINK:[8679754]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.769090 close(4</etc/iproute2/rt_tables>) = 0\n1791452099.769215 sendto(3<NETLINK:[ROUTE:1585599]>, [[{nlmsg_len=28, nlmsg_type=RTM_GETROUTE, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {rtm_family=AF_INET, rtm_dst_len=0, rtm_src_len=0, rtm_tos=0, rtm_table=RT_TABLE_UNSPEC, rtm_protocol=RTPROT_UNSPEC, rtm_scope=RT_SCOPE_UNIVERSE, rtm_type=RTN_UNSPEC, rtm_flags=0}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 156, 0, NULL, 0) = 156\n1791452099.769553 bind(4<NETLINK:[8679755]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.770035 close(4<NETLINK:[ROUTE:4255452300]>) = 0\n1791452099.770945 +++ exited with 0 +++\n",
+    "trace.1585600": "1791452099.772326 close(3<pipe:[8680803]>) = 0\n1791452099.772379 close(5<pipe:[8680804]>) = 0\n1791452099.773829 close(4<pipe:[8680803]>) = 0\n1791452099.773889 close(3</proc/1585600/fd>) = 0\n1791452099.773923 execve(\"/sbin/ip\", [\"ip\", \"-j\", \"link\"], 0xffffd7c8d0e0 /* 18 vars */) = 0\n1791452099.775759 close(3</etc/ld.so.cache>) = 0\n1791452099.776149 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.776286 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.776421 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.776613 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.776758 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.776965 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.777110 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.777408 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.777624 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.777891 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.779893 bind(3<NETLINK:[8680815]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.780108 sendto(3<NETLINK:[ROUTE:1585600]>, [{nlmsg_len=40, nlmsg_type=RTM_GETLINK, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {ifi_family=AF_PACKET, ifi_type=ARPHRD_NETROM, ifi_index=0, ifi_flags=0, ifi_change=0}, [{nla_len=8, nla_type=IFLA_EXT_MASK}, RTEXT_FILTER_VF|RTEXT_FILTER_SKIP_STATS]], 40, 0, NULL, 0) = 40\n1791452099.780491 close(4</usr/share/iproute2/group>) = 0\n1791452099.781064 +++ exited with 0 +++\n",
+    "trace.1585601": "1791452099.775309 close(3<pipe:[8679756]>) = 0\n1791452099.775662 close(5<pipe:[8679757]>) = 0\n1791452099.775954 close(4<pipe:[8679756]>) = 0\n1791452099.776018 close(3</proc/1585601/fd>) = 0\n1791452099.776068 execve(\"/sbin/ip\", [\"ip\", \"-6\", \"-j\", \"route\", \"show\", \"table\", \"all\"], 0xffffea1b20e0 /* 18 vars */) = 0\n1791452099.777348 close(3</etc/ld.so.cache>) = 0\n1791452099.777603 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.777773 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.778001 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.778277 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.778487 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.778701 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.778969 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.779305 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.779511 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.779713 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.782080 bind(3<NETLINK:[8679768]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.782406 close(4</etc/iproute2/rt_tables>) = 0\n1791452099.782519 sendto(3<NETLINK:[ROUTE:1585601]>, [[{nlmsg_len=28, nlmsg_type=RTM_GETROUTE, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {rtm_family=AF_INET6, rtm_dst_len=0, rtm_src_len=0, rtm_tos=0, rtm_table=RT_TABLE_UNSPEC, rtm_protocol=RTPROT_UNSPEC, rtm_scope=RT_SCOPE_UNIVERSE, rtm_type=RTN_UNSPEC, rtm_flags=0}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 156, 0, NULL, 0) = 156\n1791452099.782897 bind(4<NETLINK:[8679769]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.783480 close(4<NETLINK:[ROUTE:3503777261]>) = 0\n1791452099.784100 +++ exited with 0 +++\n",
+    "trace.1585602": "1791452099.785254 close(3<pipe:[8680819]>) = 0\n1791452099.785321 close(5<pipe:[8680823]>) = 0\n1791452099.790737 close(4<pipe:[8680819]>) = 0\n1791452099.790817 close(3</proc/1585602/fd>) = 0\n1791452099.790851 execve(\"/sbin/ip\", [\"ip\", \"-j\", \"addr\", \"show\", \"dev\", \"lo\"], 0xffffd7c8d0e0 /* 18 vars */) = 0\n1791452099.797931 close(3</etc/ld.so.cache>) = 0\n1791452099.799455 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.799655 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.799936 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.800085 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.800234 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.800384 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.800584 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.800797 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.800942 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.801094 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.802268 bind(3<NETLINK:[8680837]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.802478 bind(4<NETLINK:[8680839]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.802635 close(4<NETLINK:[ROUTE:3634632693]>) = 0\n1791452099.802772 sendto(3<NETLINK:[ROUTE:1585602]>, [[{nlmsg_len=24, nlmsg_type=RTM_GETADDR, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452101, nlmsg_pid=0}, {ifa_family=AF_UNSPEC, ifa_prefixlen=0, ifa_flags=0, ifa_scope=RT_SCOPE_UNIVERSE, ifa_index=if_nametoindex(\"lo\")}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 152, 0, NULL, 0) = 152\n1791452099.803048 close(4</usr/share/iproute2/group>) = 0\n1791452099.804095 +++ exited with 0 +++\n",
+    "trace.1585603": "1791452099.807461 close(3<pipe:[8680844]>) = 0\n1791452099.807550 close(5<pipe:[8680845]>) = 0\n1791452099.807661 close(4<pipe:[8680844]>) = 0\n1791452099.807697 close(3</proc/1585603/fd>) = 0\n1791452099.807726 execve(\"/sbin/ip\", [\"ip\", \"-4\", \"-j\", \"route\", \"show\", \"table\", \"all\"], 0xffffd7c8d0e0 /* 18 vars */) = 0\n1791452099.809018 close(3</etc/ld.so.cache>) = 0\n1791452099.809186 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.809312 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.809444 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.809569 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.809708 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.809841 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.809971 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.810107 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.810238 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.810388 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.811546 bind(3<NETLINK:[8680855]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.811833 close(4</etc/iproute2/rt_tables>) = 0\n1791452099.811911 sendto(3<NETLINK:[ROUTE:1585603]>, [[{nlmsg_len=28, nlmsg_type=RTM_GETROUTE, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {rtm_family=AF_INET, rtm_dst_len=0, rtm_src_len=0, rtm_tos=0, rtm_table=RT_TABLE_UNSPEC, rtm_protocol=RTPROT_UNSPEC, rtm_scope=RT_SCOPE_UNIVERSE, rtm_type=RTN_UNSPEC, rtm_flags=0}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 156, 0, NULL, 0) = 156\n1791452099.812115 bind(4<NETLINK:[8680858]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.812259 close(4<NETLINK:[ROUTE:4278096430]>) = 0\n1791452099.813102 +++ exited with 0 +++\n",
+    "trace.1585604": "1791452099.815541 close(3<pipe:[8680861]>) = 0\n1791452099.815899 close(5<pipe:[8680862]>) = 0\n1791452099.816344 close(4<pipe:[8680861]>) = 0\n1791452099.816388 close(3</proc/1585604/fd>) = 0\n1791452099.816417 execve(\"/sbin/ip\", [\"ip\", \"-6\", \"-j\", \"route\", \"show\", \"table\", \"all\"], 0xffffd7c8d0e0 /* 18 vars */) = 0\n1791452099.817657 close(3</etc/ld.so.cache>) = 0\n1791452099.817856 close(3</usr/lib64/libselinux.so.1>) = 0\n1791452099.817997 close(3</usr/lib64/libbpf.so.1.5.0>) = 0\n1791452099.818147 close(3</usr/lib64/libelf-0.194.so>) = 0\n1791452099.818284 close(3</usr/lib64/libmnl.so.0.2.0>) = 0\n1791452099.818436 close(3</usr/lib64/libcap.so.2.48>) = 0\n1791452099.818591 close(3</usr/lib64/libc.so.6>) = 0\n1791452099.818729 close(3</usr/lib64/libpcre2-8.so.0.11.0>) = 0\n1791452099.818876 close(3</usr/lib64/libz.so.1.2.11>) = 0\n1791452099.819012 close(3</usr/lib64/libzstd.so.1.5.5>) = 0\n1791452099.819188 close(3</usr/lib64/libksplice_helper.so>) = 0\n1791452099.820434 bind(3<NETLINK:[8679784]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.820737 close(4</etc/iproute2/rt_tables>) = 0\n1791452099.820816 sendto(3<NETLINK:[ROUTE:1585604]>, [[{nlmsg_len=28, nlmsg_type=RTM_GETROUTE, nlmsg_flags=NLM_F_REQUEST|NLM_F_DUMP, nlmsg_seq=1791452100, nlmsg_pid=0}, {rtm_family=AF_INET6, rtm_dst_len=0, rtm_src_len=0, rtm_tos=0, rtm_table=RT_TABLE_UNSPEC, rtm_protocol=RTPROT_UNSPEC, rtm_scope=RT_SCOPE_UNIVERSE, rtm_type=RTN_UNSPEC, rtm_flags=0}], {nlmsg_len=0, nlmsg_type=0 /* NLMSG_??? */, nlmsg_flags=0, nlmsg_seq=0, nlmsg_pid=0}], 156, 0, NULL, 0) = 156\n1791452099.821028 bind(4<NETLINK:[8679785]>, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0\n1791452099.821163 close(4<NETLINK:[ROUTE:3552150026]>) = 0\n1791452099.821686 +++ exited with 0 +++\n"
+  },
+  "flows": [
+    {
+      "pid": 1585595,
+      "t": 1791452099.825159,
+      "src": "127.0.0.1",
+      "source_port": 39000,
+      "dst": "192.0.2.1",
+      "port": 40101,
+      "protocol": 6,
+      "raw": "1791452099.825159 connect(3<TCP:[127.0.0.1:39000]>, {sa_family=AF_INET, sin_port=htons(40101), sin_addr=inet_addr(\"192.0.2.1\")}, 16) = -1 EINPROGRESS (Operation now in progress)"
+    },
+    {
+      "pid": 1585595,
+      "t": 1791452099.828119,
+      "src": "127.0.0.1",
+      "source_port": 39001,
+      "dst": "192.0.2.1",
+      "port": 40101,
+      "protocol": 17,
+      "raw": "1791452099.828119 sendto(3<UDP:[127.0.0.1:39001]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET, sin_port=htons(40101), sin_addr=inet_addr(\"192.0.2.1\")}, 16) = 28"
+    },
+    {
+      "pid": 1585595,
+      "t": 1791452099.830728,
+      "src": "::1",
+      "source_port": 39004,
+      "dst": "2001:db8::1",
+      "port": 40103,
+      "protocol": 6,
+      "raw": "1791452099.830728 connect(3<TCPv6:[[::1]:39004]>, {sa_family=AF_INET6, sin6_port=htons(40103), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::1\", &sin6_addr), sin6_scope_id=0}, 28) = -1 EINPROGRESS (Operation now in progress)"
+    },
+    {
+      "pid": 1585595,
+      "t": 1791452099.833701,
+      "src": "::1",
+      "source_port": 39005,
+      "dst": "2001:db8::1",
+      "port": 40103,
+      "protocol": 17,
+      "raw": "1791452099.833701 sendto(3<UDPv6:[[::1]:39005]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET6, sin6_port=htons(40103), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::1\", &sin6_addr), sin6_scope_id=0}, 28) = 28"
+    },
+    {
+      "pid": 1585596,
+      "t": 1791452099.787762,
+      "src": "127.0.0.1",
+      "source_port": 39002,
+      "dst": "198.51.100.2",
+      "port": 40102,
+      "protocol": 6,
+      "raw": "1791452099.787762 connect(3<TCP:[127.0.0.1:39002]>, {sa_family=AF_INET, sin_port=htons(40102), sin_addr=inet_addr(\"198.51.100.2\")}, 16) = -1 EINPROGRESS (Operation now in progress)"
+    },
+    {
+      "pid": 1585596,
+      "t": 1791452099.79149,
+      "src": "127.0.0.1",
+      "source_port": 39003,
+      "dst": "198.51.100.2",
+      "port": 40102,
+      "protocol": 17,
+      "raw": "1791452099.791490 sendto(3<UDP:[127.0.0.1:39003]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET, sin_port=htons(40102), sin_addr=inet_addr(\"198.51.100.2\")}, 16) = 28"
+    },
+    {
+      "pid": 1585596,
+      "t": 1791452099.79475,
+      "src": "::1",
+      "source_port": 39006,
+      "dst": "2001:db8::2",
+      "port": 40104,
+      "protocol": 6,
+      "raw": "1791452099.794750 connect(3<TCPv6:[[::1]:39006]>, {sa_family=AF_INET6, sin6_port=htons(40104), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::2\", &sin6_addr), sin6_scope_id=0}, 28) = -1 EINPROGRESS (Operation now in progress)"
+    },
+    {
+      "pid": 1585596,
+      "t": 1791452099.798203,
+      "src": "::1",
+      "source_port": 39007,
+      "dst": "2001:db8::2",
+      "port": 40104,
+      "protocol": 17,
+      "raw": "1791452099.798203 sendto(3<UDPv6:[[::1]:39007]>, \"outer-accounting-calibration\", 28, 0, {sa_family=AF_INET6, sin6_port=htons(40104), sin6_flowinfo=htonl(0), inet_pton(AF_INET6, \"2001:db8::2\", &sin6_addr), sin6_scope_id=0}, 28) = 28"
+    }
+  ],
+  "packets": [
+    {
+      "src": "127.0.0.1",
+      "dst": "198.51.100.2",
+      "source_port": 39002,
+      "protocol": 6,
+      "port": 40102,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791452099.7904048
+    },
+    {
+      "src": "198.51.100.2",
+      "dst": "127.0.0.1",
+      "source_port": 40102,
+      "protocol": 6,
+      "port": 39002,
+      "tcp_flags": 20,
+      "fragmented": false,
+      "bytes": 54,
+      "t": 1791452099.7904677
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "198.51.100.2",
+      "source_port": 39003,
+      "protocol": 17,
+      "port": 40102,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 70,
+      "t": 1791452099.7917204
+    },
+    {
+      "src": "198.51.100.2",
+      "dst": "127.0.0.1",
+      "source_port": null,
+      "protocol": 1,
+      "port": null,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 98,
+      "t": 1791452099.7917538
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::2",
+      "source_port": 39006,
+      "protocol": 6,
+      "port": 40104,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 94,
+      "t": 1791452099.797338
+    },
+    {
+      "src": "2001:db8::2",
+      "dst": "::1",
+      "source_port": 40104,
+      "protocol": 6,
+      "port": 39006,
+      "tcp_flags": 20,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791452099.7973645
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::2",
+      "source_port": 39007,
+      "protocol": 17,
+      "port": 40104,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 90,
+      "t": 1791452099.7983825
+    },
+    {
+      "src": "2001:db8::2",
+      "dst": "::1",
+      "source_port": null,
+      "protocol": 58,
+      "port": null,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 138,
+      "t": 1791452099.798413
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "192.0.2.1",
+      "source_port": 39000,
+      "protocol": 6,
+      "port": 40101,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791452099.827597
+    },
+    {
+      "src": "192.0.2.1",
+      "dst": "127.0.0.1",
+      "source_port": 40101,
+      "protocol": 6,
+      "port": 39000,
+      "tcp_flags": 20,
+      "fragmented": false,
+      "bytes": 54,
+      "t": 1791452099.8276255
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "192.0.2.1",
+      "source_port": 39001,
+      "protocol": 17,
+      "port": 40101,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 70,
+      "t": 1791452099.82823
+    },
+    {
+      "src": "192.0.2.1",
+      "dst": "127.0.0.1",
+      "source_port": null,
+      "protocol": 1,
+      "port": null,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 98,
+      "t": 1791452099.8282475
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::1",
+      "source_port": 39004,
+      "protocol": 6,
+      "port": 40103,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 94,
+      "t": 1791452099.8332436
+    },
+    {
+      "src": "2001:db8::1",
+      "dst": "::1",
+      "source_port": 40103,
+      "protocol": 6,
+      "port": 39004,
+      "tcp_flags": 20,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791452099.8332832
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::1",
+      "source_port": 39005,
+      "protocol": 17,
+      "port": 40103,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 90,
+      "t": 1791452099.833809
+    },
+    {
+      "src": "2001:db8::1",
+      "dst": "::1",
+      "source_port": null,
+      "protocol": 58,
+      "port": null,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 138,
+      "t": 1791452099.8338351
+    }
+  ],
+  "packet_statistics": {
+    "received": 32,
+    "dropped": 0
+  },
+  "errors": [],
+  "attributed_initial_packets": [
+    {
+      "src": "127.0.0.1",
+      "dst": "198.51.100.2",
+      "source_port": 39002,
+      "protocol": 6,
+      "port": 40102,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791452099.7904048,
+      "pids": [
+        1585596
+      ]
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "198.51.100.2",
+      "source_port": 39003,
+      "protocol": 17,
+      "port": 40102,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 70,
+      "t": 1791452099.7917204,
+      "pids": [
+        1585596
+      ]
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::2",
+      "source_port": 39006,
+      "protocol": 6,
+      "port": 40104,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 94,
+      "t": 1791452099.797338,
+      "pids": [
+        1585596
+      ]
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::2",
+      "source_port": 39007,
+      "protocol": 17,
+      "port": 40104,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 90,
+      "t": 1791452099.7983825,
+      "pids": [
+        1585596
+      ]
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "192.0.2.1",
+      "source_port": 39000,
+      "protocol": 6,
+      "port": 40101,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 74,
+      "t": 1791452099.827597,
+      "pids": [
+        1585595
+      ]
+    },
+    {
+      "src": "127.0.0.1",
+      "dst": "192.0.2.1",
+      "source_port": 39001,
+      "protocol": 17,
+      "port": 40101,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 70,
+      "t": 1791452099.82823,
+      "pids": [
+        1585595
+      ]
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::1",
+      "source_port": 39004,
+      "protocol": 6,
+      "port": 40103,
+      "tcp_flags": 2,
+      "fragmented": false,
+      "bytes": 94,
+      "t": 1791452099.8332436,
+      "pids": [
+        1585595
+      ]
+    },
+    {
+      "src": "::1",
+      "dst": "2001:db8::1",
+      "source_port": 39005,
+      "protocol": 17,
+      "port": 40103,
+      "tcp_flags": null,
+      "fragmented": false,
+      "bytes": 90,
+      "t": 1791452099.833809,
+      "pids": [
+        1585595
+      ]
+    }
+  ],
+  "missing_trace_mutation_detected": true
+}

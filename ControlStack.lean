@@ -16,6 +16,16 @@ import ControlStack.AuditGate
 import ControlStack.AuditDispatch
 import ControlStack.EgressGate
 import ControlStack.ScenarioARepair
+import ControlStack.SideChannel
+import ControlStack.ScenarioASide
+import ControlStack.ScenarioAUsefulness
+import ControlStack.LifetimeLedger
+import ControlStack.GatewayCore
+import ControlStack.SafetyCaseSC01
+import ControlStack.ComposeCoverage
+import ControlStack.MultiStep
+import ControlStack.ScenarioACore
+import ControlStack.AuditBudget
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.

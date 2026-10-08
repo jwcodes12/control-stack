@@ -37,9 +37,9 @@ def fail(msg):
     sys.exit(1)
 
 
-def check_lean(m):
+def check_lean(m, key="lean"):
     build = ROOT / ".lake" / "build" / "lib" / "lean"
-    for entry in m["lean"]:
+    for entry in m.get(key, []):
         f, ns, names = entry["file"], entry["namespace"], entry["theorems"]
         src = (ROOT / f).read_text()
         if re.search(r"\b(sorry|admit|native_decide)\b|^\s*axiom\s", src, re.M):
@@ -71,8 +71,10 @@ def main():
         print("hashes updated")
         return 0
 
-    print("1. Lean")
+    print("1. Lean (case chain)")
     check_lean(m)
+    print("   Lean (supporting results outside the SC-01 chain)")
+    check_lean(m, "supporting_lean")
 
     print("2. hashes")
     bad = [p for p, h in m["hashes"].items() if sha(p) != h]

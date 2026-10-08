@@ -92,6 +92,23 @@
     "refute_threshold",
     "sc01_case"
    ]
+  },
+  {
+   "file": "ControlStack/ScenarioACore.lean",
+   "namespace": "ControlStack.ScenarioACore",
+   "theorems": [
+    "card_epPrefix",
+    "prefixEquiv",
+    "reachable_eq_univ",
+    "delivered_view_coord",
+    "card_five_prefixes",
+    "lifetime_bound_prefixes",
+    "five_episode_core_bound",
+    "card_varObs",
+    "varObs_gt",
+    "varObs_attain",
+    "varObs_breaks_target"
+   ]
   }
  ],
  "hashes": {
@@ -108,7 +125,11 @@
   "gateway/difftest_core.py": "badf9d945869106bcdb315ae70b118869ab84b359edb7f77790ffcf0c220280b",
   "gateway/scenario/contract.json": "b15961943dfc715d299671ac99fbcd01a9ea408e5239d66bb3b8f329ec89700d",
   "gateway/scenario/results/local-full.json": "8a57c3bca3449f44d56fd00d93a18d884d486ecdaa6dd05c5c1e9e324238e83a",
-  "gateway/scenario/results/local-cache.json": "dbda404ff30010f979e6d8136d62d13a4c91eee925188ae4825189d3075e3647"
+  "gateway/scenario/results/local-cache.json": "dbda404ff30010f979e6d8136d62d13a4c91eee925188ae4825189d3075e3647",
+  "ControlStack/ScenarioACore.lean": "600f17f90661bd4e6ee3cedcce8a27eaab6692e0e9045e46d40c4d04cfde7d82",
+  "ControlStack/ComposeCoverage.lean": "66836abdc45b3a70893749a9752909c73832ee85d61183851f6c9009f91b66db",
+  "ControlStack/MultiStep.lean": "c84cf17fd263c0d678621c994da4d1433d7e0e954243e396a736c45b4bd426cf",
+  "ControlStack/AuditBudget.lean": "e22f5086a5c679c4e4548b3fd157a77509e9f1ab3a8efd84fa59bd1bfacd9661"
  },
  "evidence": {
   "usefulness_receipt": "gateway/scenario/results/local-full.json",
@@ -123,7 +144,7 @@
   {
    "id": "gateway_core_semantics",
    "status": "THEOREM_VERIFIED",
-   "text": "multi-channel core: refusal blanks, close freezes, reachable views counted exactly (= Python view_space_size), end-to-end core_bound"
+   "text": "multi-channel core: refusal blanks, close freezes, reachable views counted exactly (= Python view_space_size), end-to-end core_bound; SC-01's nine-view episode carrier is derived from the core (ScenarioACore.prefixEquiv, five_episode_core_bound end-to-end over raw traces)"
   },
   {
    "id": "python_refines_core",
@@ -148,7 +169,7 @@
   {
    "id": "fixed_episode_count",
    "status": "ASSUMPTION",
-   "text": "the receiver always gets exactly five episode views (Transcript = Fin 5 -> Option (Fin 8)); if the delivered episode count could vary, the view space is 66430 > 2^16 and the target fails (audit 2026-10-08)"
+   "text": "the receiver always gets exactly five episode views and nothing reveals how many ran; necessity proved: a visible variable count (0..5 episodes) attains 66430/2^32 > 2^-16 (ScenarioACore.varObs_breaks_target)"
   },
   {
    "id": "side_certificate",
@@ -171,5 +192,45 @@
    "text": "the trusted supervisor assigns lineages so that every receiver able to share memory with another is in one lineage"
   }
  ],
- "verdict": "CONDITIONAL"
+ "verdict": "CONDITIONAL",
+ "supporting_lean": [
+  {
+   "file": "ControlStack/ComposeCoverage.lean",
+   "namespace": "ControlStack.ComposeCoverage",
+   "theorems": [
+    "coverage_transfer",
+    "tight_K",
+    "tight_eps",
+    "coverage_miss",
+    "composedCov_end"
+   ]
+  },
+  {
+   "file": "ControlStack/MultiStep.lean",
+   "namespace": "ControlStack.MultiStep",
+   "theorems": [
+    "survival_bounds",
+    "survival_le",
+    "survival_const",
+    "seeded_survival",
+    "correlated_nogo",
+    "survival_avg",
+    "seeded_violates_posterior",
+    "survival_example"
+   ]
+  },
+  {
+   "file": "ControlStack/AuditBudget.lean",
+   "namespace": "ControlStack.AuditBudget",
+   "theorems": [
+    "filter_disjoint_eq",
+    "random_subset_survival",
+    "survival_le_pow",
+    "random_survival_le_pow",
+    "observable_schedule_nogo",
+    "budget_example",
+    "budget_example_observable"
+   ]
+  }
+ ]
 }

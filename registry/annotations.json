@@ -1,0 +1,143 @@
+{
+  "ControlStack/CovertChannel.lean::covert_bound": {
+    "family": "F2",
+    "scenarios": [
+      "SC-01",
+      "SC-02"
+    ],
+    "adversary": "SHARED_SEED",
+    "premises": [
+      "uniform independent M",
+      "complete finite view"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "attain_embedding",
+    "record": "assurance/sc01-safety-case.json"
+  },
+  "ControlStack/CovertNoGo.lean::controllable_leak": {
+    "family": "F2",
+    "scenarios": [
+      "SC-05"
+    ],
+    "adversary": "SHARED_SEED",
+    "premises": [
+      "N controllable distinct views",
+      "injective embed into messages"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "one_bit_coordinates",
+    "record": "ROADMAP.md"
+  },
+  "ControlStack/CovertNoGo.lean::one_bit_coordinates": {
+    "family": "F2",
+    "scenarios": [
+      "SC-05"
+    ],
+    "adversary": "SHARED_SEED",
+    "premises": [
+      "two distinguishable realizable traces"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "controllable_leak",
+    "record": "ROADMAP.md"
+  },
+  "ControlStack/GatewayModel.lean::gateway_bound": {
+    "family": "F2",
+    "scenarios": [
+      "SC-01"
+    ],
+    "adversary": "SHARED_SEED",
+    "premises": [
+      "finite reachable view space",
+      "complete receiver view"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "NONE_RECORDED",
+    "record": "assurance/sc01-safety-case.json"
+  },
+  "ControlStack/SafetyCaseSC01.lean::sc01_case": {
+    "family": "F2",
+    "scenarios": [
+      "SC-01"
+    ],
+    "adversary": "SIDE_OBSERVING",
+    "premises": [
+      "side-kernel domination",
+      "lifetime cardinality",
+      "independent secrets and lifetimes"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "bit_refutes",
+    "record": "assurance/sc01-safety-case.json"
+  },
+  "ControlStack/EgressGate.lean::trace_safe": {
+    "family": "F1",
+    "scenarios": [
+      "SC-03"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "safe initial topology",
+      "fixed trusted policy and no bypass"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "NONE_RECORDED",
+    "record": "assurance/egress-boundary-v1.json"
+  },
+  "ControlStack/AuditGate.lean::invariant_preserved": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-27"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "app schema cannot mutate audits or trusted trigger"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "NONE_RECORDED",
+    "record": "assurance/monitoring-integrity-auditgate-v1.json"
+  },
+  "ControlStack/AuditDispatch.lean::trace_safe": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-27"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "trusted dispatch authority",
+      "atomic audit+effect transition"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "NONE_RECORDED",
+    "record": "assurance/monitoring-integrity-auditgate-v1.json"
+  },
+  "ControlStack/AuditDispatch.lean::dispatch_audit_first": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-25"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "dispatch enabled and not effected before"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "NONE_RECORDED",
+    "record": "assurance/monitoring-integrity-auditgate-v1.json"
+  },
+  "ControlStack/ComposeBlindSpot.lean::blind_spot_risk": {
+    "family": "F6",
+    "scenarios": [
+      "SC-24"
+    ],
+    "adversary": "CONTENT_ADAPTIVE",
+    "premises": [
+      "population miss rate not worst-case"
+    ],
+    "status": "PROVED_RECORDED",
+    "necessity_witness": "explicit blind-spot witness",
+    "record": "ROADMAP.md"
+  }
+}

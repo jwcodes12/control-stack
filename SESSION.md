@@ -235,3 +235,22 @@ the pushed branch. Auditgate source and remote main are unchanged. Tracker #1
 records publication, verification and the remaining gateway/sandbox integration
 work; general process attribution remains unresolved. Git pushes and CI are
 authorized; emails/messages to people still require approval.
+
+## Astra/Opus xhigh roadmap consultation — 2026-10-08
+
+Both requested reviews completed: native gpt-6-astra xhigh and exact
+claude-opus-5-5 xhigh (served model confirmed in metadata). Reports, static
+source packet/hash provenance and disposition are under
+`reviews/roadmap-consult-2026-10-08/`. No code, auditgate source or assurance
+status changed; no new test/exploit result is claimed.
+
+The previous proposed roadmap mixed bounded exact-secret recovery with
+monitor-based safety. Current next step is fixing the actual honest task,
+usefulness target, horizon, lineage and observation contract, while testing
+lifetime accounting and residual channels in parallel. Egress integration stays
+a bounded supporting/separate reachability track. Sampling average monitor rates
+does not establish content-adaptive coverage. ROADMAP.md now states this order.
+
+Verification: `git diff --check`; consult metadata shows both requested models
+at xhigh completed. Remaining work: implement the revised scenario contract and
+usefulness viability gate; recommendations have not been implemented yet.

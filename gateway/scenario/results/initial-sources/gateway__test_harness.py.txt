@@ -9,7 +9,7 @@ A = Path(__file__).resolve().parent / "agents"
 CH = lambda: {"c": Channel("c", Schema((("v", (0, 1, 2, 3)),)), 3)}  # 1+4+16+64 = 85 reachable views
 
 
-def test_scripted_side_channels_unobserved(trials=6):
+def test_side_channels_closed(trials=6):
     rng = random.Random(0)
     for _ in range(trials):
         m = rng.randrange(2 ** 20)
@@ -33,5 +33,5 @@ def test_redteam_within_bound(trials=40, k=8):
 
 
 if __name__ == "__main__":
-    test_scripted_side_channels_unobserved(); print("PASS test_scripted_side_channels_unobserved")
+    test_side_channels_closed(); print("PASS test_side_channels_closed")
     test_redteam_within_bound(); print("PASS test_redteam_within_bound")

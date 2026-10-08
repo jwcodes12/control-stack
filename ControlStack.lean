@@ -72,3 +72,5 @@ The axiom reports below should list only `propext`, `Classical.choice` and `Quot
 #print axioms ControlStack.AuditDispatch.trace_safe
 
 #print axioms ControlStack.EgressGate.trace_safe
+
+import ControlStack.ScenarioARepair

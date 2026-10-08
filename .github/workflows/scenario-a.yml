@@ -1,0 +1,40 @@
+name: scenario-a-repair
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  viability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install namespace fixture prerequisite
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap openssl
+      - name: Concurrent ledger and evidence mutation controls
+        run: |
+          /usr/bin/python3 gateway/test_lifetime.py
+          /usr/bin/python3 gateway/scenario/test_scenario.py
+          /usr/bin/python3 gateway/test_gateway.py
+      - name: Full paired usefulness experiment (missing isolation fails)
+        run: sudo /usr/bin/python3 gateway/scenario/run.py --output gateway/scenario/results/ci-full.json
+      - name: Verify actual completion, confidence and unresolved premises
+        run: /usr/bin/python3 gateway/scenario/check_receipt.py gateway/scenario/results/ci-full.json
+      - name: Probe shared cache observations (no full-secret recovery claim)
+        run: |
+          sudo /usr/bin/python3 gateway/scenario/cache_probe.py --output gateway/scenario/results/ci-cache.json
+          /usr/bin/python3 gateway/scenario/check_cache_receipt.py gateway/scenario/results/ci-cache.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scenario-a-repair-evidence
+          path: gateway/scenario/results/ci-*.json
+  lean:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean tooling
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Check structural recovery theorem and standard axioms
+        run: PATH=$HOME/.elan/bin:$PATH ci/covert/check.sh

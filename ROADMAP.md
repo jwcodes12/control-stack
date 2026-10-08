@@ -153,3 +153,25 @@ Every guarantee is conditional on these. None is discharged by anything here:
 ## Maintenance
 Update this file whenever a row changes status: verified, frozen, started, or dropped. Also update the matching row in
 STACK.md, and note the change in HISTORY.md when a new snapshot is exported.
+
+## SC-01 repair milestone — 2026-10-08
+
+Implemented the contract/usefulness milestone and durable SQLite lifetime charging.
+See `gateway/scenario/README.md`, the two preregistrations, source-bound receipts
+and `ControlStack/ScenarioARepair.lean`. Contract preregistration: `1001024`.
+Baseline and mediated repair each passed 320/320 episodes and 64/64 lifetimes;
+simultaneous completion lower bound 93.382% exceeds the 90% floor. Ten ledger
+controls, five scenario/oracle/evidence-mutation tests, ten gateway tests, selected
+harness probes, three new standard-axiom Lean checks and full
+`lake build ControlStack` (3,691 jobs) passed. Both final receipt verifiers passed.
+
+The targeted shared-cache experiment decoded one secret bit in 64/64 trials with
+a constant NULL gateway view. This falsifies the sole-transcript premise in the
+current harness. It does not demonstrate full-secret recovery; the finite-view
+Lean bound remains model-only and the case stays CONDITIONAL. Initial results
+and corresponding changed source snapshots are retained, not pooled.
+
+Next blocker: stronger isolation or a justified bound covering all receiver
+observations, followed by repeat probes and gateway/model correspondence. Valid
+host snapshot rollback, statistical runtime independence and workload transport
+remain assumptions. Auditgate untouched. Private tracker: GitHub issue #2.

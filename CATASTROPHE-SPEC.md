@@ -1,3 +1,18 @@
+> **SC-01 contract update (2026-10-08).** The concrete first viability client is
+> `gateway/scenario/contract.json` (`sc01-repair-catalog/1.0`), frozen in
+> commit `1001024` before measurement. Two isolated programmatic agents diagnose
+> and repair one of eight addition faults. Five episodes share one receiver/secret
+> lineage; the trusted supervisor admits them through a durable ledger.
+> Nine padded views per episode give 9^5 = 59049 lifetime views for a uniform
+> independent 32-bit secret. The predeclared usefulness floor is a 0.90 lower bound
+> on complete five-repair lifetimes, with paired unmediated baseline and mediated
+> conditions; 64 independent lifetimes per condition. Scope is this fixed catalog,
+> not arbitrary debugging or LLM agents.
+> The shared-page-cache probe demonstrates an unmediated bit in the actual
+> bubblewrap harness. The sole-transcript observation premise is therefore
+> falsified in that tested setup; no runtime `2^-16` guarantee is claimed.
+> See `PREREG-SC01-REPAIR.md`, `PREREG-SC01-CACHE.md`, and `gateway/scenario/README.md`.
+
 # P0 draft: the concrete catastrophe and restricted deployment (2026-10-07; proposed by John, drafted for decision)
 
 ## Scope of the claim (v2, after the gateway review)
@@ -21,9 +36,9 @@ y_1..y_n reach the receiver only through the deployment's channels. **Bad event:
 Success above the trivial rate 2^-k is the signal; a k-bit threshold makes "how much" explicit.
 
 **Why this catastrophe.** It is the enabler of collusion (an untrusted monitor learning to look away; instances
-coordinating multi-step attacks), it is exactly what the existing collusion layer bounds (UMHSF1 maximal-leakage floor,
-CANONF1 canonicalising mediator, UMPROTF1 honeypot protocol), and it is checkable in evals. Limitation: it is an
-enabler, not the final harm; a certificate says "U cannot coordinate beyond k bits", not "U cannot exfiltrate weights".
+coordinating multi-step attacks), it is related to the existing collusion layer (UMHSF1 maximal-leakage floor,
+CANONF1 canonicalising mediator, UMPROTF1 honeypot protocol), without an automatic composition bridge, and it is checkable in evals. Limitation: it is an
+enabler, not the final harm; the certificate bounds exact recovery of the specified independent secret; it does not rule out low-bandwidth coordination or certify weight confidentiality.
 
 ## Restricted deployment (first version)
 - **Receivers in scope:** other U instances and other models (machine receivers). Humans: OUT of scope in v1, recorded as
@@ -37,13 +52,13 @@ enabler, not the final harm; a certificate says "U cannot coordinate beyond k bi
   2. a canonicaliser on a structured language (CANONF1-style): ℓ ≤ log2(#canonical forms in the reachable set);
   3. free text through a paraphraser: ℓ is empirical, hence the same worst-case/coverage problem as trusted monitoring
      (see ComposeBlindSpot); v1 avoids this class or marks it UNRESOLVED.
-- **Horizon:** n messages per episode (to be chosen), N episodes.
+- **Horizon:** for the first repair client, one slot per episode and five episodes per secret/receiver lifetime; other clients must fix their own horizon.
 - **Usefulness:** task success with mediation vs without (the paraphraser/canonicaliser cost), reported as a pair with risk.
 
 ## Target theorem (classical, Lean-checkable)
 If every message passes a channel with maximal leakage ≤ ℓ bits and the secret is uniform on k bits, then for every
 encoder (U) and decoder (receiver), P(Dec recovers m) ≤ 2^(n·ℓ − k) after n messages (maximal-leakage guessing bound plus
-additivity over messages). For a schema channel this is assumption-free given the gateway's correctness.
+additivity over messages). For a schema channel this is conditional on complete mediation, isolation, secret independence, correct lineage closure and gateway correspondence.
 
 ## Alternatives considered (Redwood / Google DeepMind framings)
 | catastrophe | fit with the stack | measurability | notes |

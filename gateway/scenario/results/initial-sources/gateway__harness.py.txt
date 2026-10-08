@@ -1,8 +1,4 @@
-"""Sandboxed two-instance harness with a bounded explicit transcript.
-
-The gateway is the intended message path. It is not the only possible observation:
-the shared-page-cache probe demonstrates an unmediated bit in this configuration.
-The model's exact-recovery bound therefore remains conditional, not runtime certified.
+"""Sandboxed two-instance harness: the gateway is the ONLY path from sender to receiver.
 
 Sender and receiver each run in a fresh bubblewrap sandbox: all namespaces unshared (no network, own PID/IPC/UTS),
 environment cleared, read-only /usr, a private empty tmpfs /tmp, no home directory, agent code bind-mounted read-only.

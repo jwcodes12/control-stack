@@ -1,10 +1,8 @@
 """Fail-closed covert-channel gateway (prototype; CATASTROPHE-SPEC.md, ControlStack/CovertChannel.lean,
 ControlStack/GatewayModel.lean).
 
-Constrains the delivered transcript to an exactly counted finite space. Applying
-`covert_bound` to a runtime additionally requires that this transcript captures
-every receiver observation over the secret's lifetime. Shared kernel channels
-in the current harness violate that sole-transcript premise in the cache probe.
+Makes the premise of `covert_bound` true by construction: everything a machine receiver observes over the secret's
+LIFETIME is one value in a finite set fixed in advance, with exact integer cardinality ≤ 2^budget_bits.
 
 v2 (after reviews/covert-channel-gateway-review-2026-10-07.md):
 - configuration is deep-validated and frozen (primitive enum values int/str/bool only, unique names and values, slots
@@ -13,8 +11,6 @@ v2 (after reviews/covert-channel-gateway-review-2026-10-07.md):
   receiver memory scope); an episode that would exceed it is refused before it starts (P0-1);
 - alerts are fixed codes; no attacker-controlled strings are stored (P0-2);
 - close() atomically freezes the delivered transcript; later sends cannot change it (P0-4).
-v3 adds transactional SQLite charges and fail-closed opening of initialized state.
-Legacy JSON ledgers are rejected; there is no automatic reset or migration.
 The gateway must run outside the untrusted agents' process (see harness.py); Python object privacy is not a boundary.
 """
 from __future__ import annotations

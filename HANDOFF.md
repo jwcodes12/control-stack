@@ -24,4 +24,6 @@ resolve this ARM64 host's limitation. Complete-observation proof remains separat
 Checks: saved isolation receipt, 10 unittest cases, frozen usefulness receipt
 verifier, and whitespace checks; see publication verification receipt in STATUS.
 Push uses `[skip ci]` to avoid the existing automatic cache experiment; dispatch
-only the VM configuration/archived-receipt workflow. Remote CI pending.
+only the VM configuration/archived-receipt workflow. [VM verification CI](https://github.com/jwcodes12/control-stack/actions/runs/37851767586)
+passed on publication commit `ef26633`. The saved CI receipt and canonical status
+record its exact revision. No push-triggered workflows ran for the publication.

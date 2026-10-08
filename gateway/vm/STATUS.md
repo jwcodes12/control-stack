@@ -77,5 +77,8 @@ The publication verification receipt records these checks and their source hashe
 Automatic push CI is skipped for this publication because the existing scenario
 workflow runs a new cache experiment. Only `vm-isolation.yml` is dispatched:
 saved configuration and receipt verification plus rejection controls, with no
-VM boot, usefulness replay or channel experiment. Remote CI status is pending.
+VM boot, usefulness replay or channel experiment. [VM verification CI](https://github.com/jwcodes12/control-stack/actions/runs/37851767586)
+passed on publication commit `ef266336e0e45b1bd903a94d2c20340a42113848`;
+[CI receipt](receipts/ci-verification-20261008.json). Subsequent publication edits
+are status/CI-receipt documentation only; the checked VM sources are unchanged.
 Auditgate, ACLs, IAM and host network settings are untouched by this publication.

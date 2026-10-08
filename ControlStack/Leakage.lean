@@ -311,6 +311,26 @@ theorem sc01_adaptive_target {Ω Y Z : Type} [Fintype Ω] [Fintype Y] [Fintype Z
     _ ≤ 65536 / (Fintype.card (Fin (2 ^ 32)) : ℝ) := by gcongr
     _ = (2 : ℝ)⁻¹ ^ 16 := by simp; norm_num
 
+/-- **General channel bound with stateful side channels.** Views in a finite set V, n episodes, side outputs in Z
+whose certificate mass in episode i is ≤ λ i on every visible history: recovery of a uniform secret on M is
+≤ |V|^n · Π λ / |M|. (`sc01_adaptive_target` is the case |V| = 9, n = 5, |M| = 2^32.) -/
+theorem covert_side_bound {Ω M V Y Z : Type} [Fintype Ω] [Fintype M] [Nonempty M] [Fintype V] [Fintype Y]
+    [Fintype Z] (ρ : Ω → ℝ) (K : Ω → M → List (Y × (V × Z)) → Y × (V × Z) → ℝ)
+    (cs : List (V × Z) → Z → ℝ) (lam : ℕ → ℝ) (dec : Ω → List (V × Z) → M → ℝ) (n : ℕ)
+    (hρ : IsDist ρ) (hK0 : ∀ ω m h z, 0 ≤ K ω m h z) (hdom : ∀ ω m, Dominated (K ω m) (fun g o => cs g o.2))
+    (hcs0 : ∀ g z, 0 ≤ cs g z) (hlam : ∀ g, ∑ z, cs g z ≤ lam g.length) (hlam0 : ∀ i, 0 ≤ lam i)
+    (hdec : ∀ ω t, IsDist (dec ω t)) :
+    ∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) n [])
+      ≤ (Fintype.card V : ℝ) ^ n * (∏ i ∈ range n, lam i) / (Fintype.card M : ℝ) := by
+  have h1 := covert_seq ρ K (fun g o => cs g o.2) dec n hρ hK0 hdom (fun g o => hcs0 g o.2) hdec
+  have hm := mass_le_prod (fun g (o : V × Z) => cs g o.2) (fun i => (Fintype.card V : ℝ) * lam i)
+    (fun g o => hcs0 g o.2) (fun i => mul_nonneg (Nat.cast_nonneg _) (hlam0 i))
+    (fun g => by rw [episode_mass]; exact mul_le_mul_of_nonneg_left (hlam g) (Nat.cast_nonneg _)) n []
+  simp only [List.length_nil, zero_add] at hm
+  rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_range] at hm
+  have hM : (0 : ℝ) < (Fintype.card M : ℝ) := by exact_mod_cast Fintype.card_pos
+  exact le_trans h1 (div_le_div_of_nonneg_right hm hM.le)
+
 end Covert
 
 /-! ## Stopping outputs are free -/
@@ -587,6 +607,7 @@ end ControlStack.Leakage
 #print axioms ControlStack.Leakage.covert_seq
 #print axioms ControlStack.Leakage.episode_dom
 #print axioms ControlStack.Leakage.sc01_adaptive_target
+#print axioms ControlStack.Leakage.covert_side_bound
 #print axioms ControlStack.Leakage.cval_live
 #print axioms ControlStack.Leakage.blind_audit
 #print axioms ControlStack.Leakage.audit_leak_bound

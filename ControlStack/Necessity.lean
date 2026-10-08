@@ -9,9 +9,9 @@ necessary in every weaker form (see NECESSITY.md for the exact scope of each wit
   a function of the seed, a decoder that sees NOTHING (|V| = 1) recovers it with certainty, versus the bound 1/|M|.
 - `correlated_lifetimes_break_gate`: `false_pass_le` assumes independent lifetimes. With every lifetime completing with
   marginal probability 9/10 but all lifetimes perfectly correlated, the gate passes with probability 9/10, not ≤ 1/80.
-- `marginal_certs_dont_compose`: per-channel certificates do not multiply. Two side outputs R and R xor m are each
-  independent of the secret bit m (each has least certificate mass 1), yet together they reveal m with certainty
-  (success 1 = 2 × the blind value 1/2). Composition needs the joint or sequential domination of `Leakage.seq_transfer`
+- `marginal_certs_dont_compose`: per-channel certificates do not multiply. Two side outputs R and R xor m each have
+  the same law for both values of the secret bit m (proved), yet together they reveal m with certainty (success 1,
+  proved). The certificate masses (1 alone, 2 for the second given the first) are prose arithmetic, not Lean. Composition needs the joint or sequential domination of `Leakage.seq_transfer`
   (the second output's certificate given the first has mass 2).
 - `shared_score_product_unsound` (ILLUSTRATION, not a witness against a stack theorem; adversarial review
   2026-10-08): two layers fired by the same score miss together w.p. 1/10, not 1/100. This is just P(A ∩ A) = P(A).
@@ -31,25 +31,40 @@ noncomputable def jointSuccess {Ω M V : Type} [Fintype Ω] [Fintype M] [Fintype
     (q : Ω → M → ℝ) (enc : Ω → M → V → ℝ) (dec : Ω → V → M → ℝ) : ℝ :=
   ∑ ω, ∑ m, q ω m * ∑ v, enc ω m v * dec ω v m
 
-/-- **Seed-correlated secret.** The secret equals the shared seed (uniform on M); the view is a single constant
-value. The decoder outputs its seed and succeeds with probability 1, while `covert_bound` would give |V|/|M| = 1/|M|. -/
-theorem seed_secret_breaks_covert {M : Type} [Fintype M] [DecidableEq M] [Nonempty M] :
+/-- the joint form reduces to `successProb` when the secret is uniform and independent of the seed -/
+theorem jointSuccess_indep {Ω M V : Type} [Fintype Ω] [Fintype M] [Fintype V]
+    (ρ : Ω → ℝ) (enc : Ω → M → V → ℝ) (dec : Ω → V → M → ℝ) :
+    jointSuccess (fun ω _ => ρ ω * (Fintype.card M : ℝ)⁻¹) enc dec = successProb ρ enc dec := by
+  unfold jointSuccess successProb
+  apply Finset.sum_congr rfl; intro ω _
+  rw [Finset.mul_sum, Finset.mul_sum]
+  apply Finset.sum_congr rfl; intro m _; ring
+
+/-- **Seed-correlated secret.** The secret equals the shared seed (uniform on M, |M| ≥ 2); the view is a single
+constant value. The decoder outputs its seed and succeeds with probability 1, strictly above what `covert_bound`
+gives for an independent secret, |V|/|M| = 1/|M| < 1 (`jointSuccess_indep` ties the joint form to `successProb`).
+This is the extreme case. Partial correlation (the secret equals the seed with probability α) is not treated
+(adversarial review D4). -/
+theorem seed_secret_breaks_covert {M : Type} [Fintype M] [DecidableEq M] (hM : 2 ≤ Fintype.card M) :
     jointSuccess (fun (ω m : M) => if ω = m then (Fintype.card M : ℝ)⁻¹ else 0)
       (fun (_ _ : M) (_ : Unit) => (1 : ℝ)) (fun (ω : M) (_ : Unit) (m : M) => if m = ω then (1 : ℝ) else 0) = 1 ∧
-    (Fintype.card Unit : ℝ) / (Fintype.card M : ℝ) = (Fintype.card M : ℝ)⁻¹ := by
-  have hM : (Fintype.card M : ℝ) ≠ 0 := by exact_mod_cast Fintype.card_ne_zero
-  refine ⟨?_, by simp⟩
-  unfold jointSuccess
-  simp only [Fintype.univ_unit, Finset.sum_singleton, one_mul]
-  have : ∀ ω : M, ∑ m, (if ω = m then (Fintype.card M : ℝ)⁻¹ else 0) * (if m = ω then 1 else 0)
-      = (Fintype.card M : ℝ)⁻¹ := by
-    intro ω
-    rw [Finset.sum_eq_single ω]
-    · simp
-    · intro m _ hm; simp [Ne.symm hm]
-    · simp
-  simp only [this, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  field_simp
+    (Fintype.card Unit : ℝ) / (Fintype.card M : ℝ) < 1 := by
+  have hM0 : (0 : ℝ) < (Fintype.card M : ℝ) := by exact_mod_cast (by omega : 0 < Fintype.card M)
+  have hM' : (Fintype.card M : ℝ) ≠ 0 := hM0.ne'
+  refine ⟨?_, ?_⟩
+  · unfold jointSuccess
+    simp only [Fintype.univ_unit, Finset.sum_singleton, one_mul]
+    have : ∀ ω : M, ∑ m, (if ω = m then (Fintype.card M : ℝ)⁻¹ else 0) * (if m = ω then 1 else 0)
+        = (Fintype.card M : ℝ)⁻¹ := by
+      intro ω
+      rw [Finset.sum_eq_single ω]
+      · simp
+      · intro m _ hm; simp [Ne.symm hm]
+      · simp
+    simp only [this, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    field_simp
+  · rw [Fintype.card_unit, Nat.cast_one, div_lt_one hM0]
+    exact_mod_cast (by omega : 1 < Fintype.card M)
 
 /-! ## Independent lifetimes -/
 
@@ -59,6 +74,14 @@ noncomputable def comono (p : ℝ) (x : Fin 64 → Bool) : ℝ :=
 
 /-- number of completed lifetimes -/
 def count (x : Fin 64 → Bool) : ℕ := (univ.filter fun i => x i = true).card
+
+/-- the comonotone law is a probability distribution for p ∈ [0, 1] (review D13) -/
+theorem comono_dist (p : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) : IsDist (comono p) := by
+  refine ⟨fun x => ?_, ?_⟩
+  · unfold comono; split_ifs <;> linarith
+  · unfold comono
+    rw [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
+    simp
 
 theorem comono_marginal (p : ℝ) (i : Fin 64) :
     ∑ x, comono p x * (if x i = true then 1 else 0) = p := by
@@ -113,6 +136,8 @@ theorem shared_score_product_unsound :
 end ControlStack.Necessity
 
 #print axioms ControlStack.Necessity.seed_secret_breaks_covert
+#print axioms ControlStack.Necessity.jointSuccess_indep
+#print axioms ControlStack.Necessity.comono_dist
 #print axioms ControlStack.Necessity.correlated_lifetimes_break_gate
 #print axioms ControlStack.Necessity.marginal_certs_dont_compose
 #print axioms ControlStack.Necessity.shared_score_product_unsound
@@ -140,11 +165,14 @@ theorem audited_last (b : Bool × Bool × Bool) :
     audited 1 (flagsOf b) 3 = (!b.1 && !b.2.1 && !b.2.2) := by
   rcases b with ⟨_ | _, _ | _, _ | _⟩ <;> decide
 
-/-- **False positives break the hidden-schedule bound.** N = 4 rounds, budget B = 1, one attack step in the last
+/-- **Policy comparison, not a premise witness** (adversarial review D3). N = 4 rounds, budget B = 1, one attack step in the last
 round, a monitor that flags every attack, and three honest rounds that each raise a false positive w.p. 1/2
 (uniform over the 8 patterns). First-come auditing lets the attack survive with probability 7/8. A hidden uniformly
-random schedule of the same size (`AuditBudget`, `Leakage.audit_adaptive_hidden`) gives 3/4. The premise "honest
-rounds do not consume audits" cannot be dropped. -/
+random schedule of the same size (`AuditBudget`, `Leakage.audit_adaptive_hidden`) gives 3/4. The comparison is
+between two MECHANISMS at one false-positive rate: at rate 0 the same first-come policy catches this attack
+(survival 0 < 3/4). What is shown is that flag-triggered first-come auditing can be exploited by an attacker who
+waits for the budget to run out. The underlying premise is that audit allocation is independent of the attacker's
+timing. -/
 theorem fp_exhaustion_breaks_audit :
     (∑ b : Bool × Bool × Bool, (1 / 8 : ℚ) * (if audited 1 (flagsOf b) 3 = false then 1 else 0)) = 7 / 8 ∧
     (Nat.choose 3 1 : ℚ) / Nat.choose 4 1 = 3 / 4 := by

@@ -19,16 +19,26 @@ maximal leakage); what is new here is the checked operational form and its insta
 - `covert_seq`: exact recovery of a uniform secret from an adaptive transcript ≤ mass(c)/|M|. With a noiseless
   sender-chosen view per round (c ≡ 1 on V) this is `covert_bound_lifetime`. Side observations from kernels whose state
   carries over between episodes (a page cache) and that the sender sees as feedback are covered as long as each round
-  is dominated given the visible history (`episode_dom`, `sc01_adaptive_target`).
-- `audit_leak_bound`: an adaptive k-step attacker against a uniformly random size-B audit set, who sees a leak about the
-  schedule through dominated kernels AND learns when it is caught, survives with probability
-  ≤ mass(leak) · C(N−k,B)/C(N,B). Catch feedback is free (`cval_live`): on every surviving path it reads "not caught".
+  is dominated given the visible history (`episode_dom`, `sc01_adaptive_target`). Domination is worst-case over the
+  hidden history, so a cache written once and read out over later episodes pays its full capacity in every round.
+  At the SC-01 design point the condition allows only about 0.15 bits of maximal leakage over five episodes (for a
+  binary symmetric side bit, crossover ≥ about 0.49). The bound is therefore informative only near "no side
+  channel". `covert_seq_seed` lets the certificate depend on the shared seed.
+- `audit_leak_bound`: an adaptive attacker against a uniformly random size-B audit set sees a leak about the schedule
+  through kernels dominated on the support, AND learns when it is caught. It attacks in ≥ k rounds with no attacked
+  round audited with probability ≤ mass(leak) · C(N−k,B)/C(N,B). The success event `survInd` requires EVERY attack
+  to go unaudited. Catch feedback is free (`cval_live`): on every surviving path it reads "not caught".
   The endpoints are a hidden schedule (mass 1: the hypergeometric of `AuditBudget`, now for adaptive attackers) and full
   visibility (mass ≥ C(N,B): the bound is vacuous, consistent with `observable_schedule_nogo`).
 
-Not claimed: tightness of the transfer bound in general (it is attained for noiseless views, `attain_embedding`, but
-can be loose for other leaks; see the worked example in `tools/ctrlcert.py`); anything about the physical
-system beyond the stated kernel model.
+Not claimed:
+- tightness of the transfer bound in general. It is attained for noiseless views (`attain_embedding`) but can be loose
+  for other leaks; see the worked example in `tools/ctrlcert.py`.
+- that a leaky instance of `audit_leak_bound` has been exhibited in Lean. The only Lean instance is the no-leak
+  `audit_adaptive_hidden` (adversarial review D5).
+- anything about the physical system beyond the stated kernel model.
+
+Adversarial review 2026-10-08: reviews/adversarial-2026-10-08/ (Gemini 3.1 Pro, Opus 5.5).
 -/
 import ControlStack.CovertChannel
 import ControlStack.AuditBudget
@@ -255,6 +265,27 @@ theorem covert_seq {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M]
     _ = mass c n [] / (Fintype.card M : ℝ) := by
         rw [← Finset.sum_mul, hρ.2, one_mul, div_eq_inv_mul]
 
+/-- **Seed-dependent certificates** (adversarial review D7): the decoder knows the shared seed, so the certificate may
+depend on it; the bound is the seed-average of the masses. -/
+theorem covert_seq_seed {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M]
+    (ρ : Ω → ℝ) (K : Ω → M → List (Y × O) → Y × O → ℝ) (c : Ω → List O → O → ℝ) (dec : Ω → List O → M → ℝ)
+    (n : ℕ) (hρ : IsDist ρ) (hK0 : ∀ ω m h z, 0 ≤ K ω m h z) (hdom : ∀ ω m, Dominated (K ω m) (c ω))
+    (hc0 : ∀ ω g o, 0 ≤ c ω g o) (hdec : ∀ ω t, IsDist (dec ω t)) :
+    ∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) n [])
+      ≤ (∑ ω, ρ ω * mass (c ω) n []) / (Fintype.card M : ℝ) := by
+  have hM : (0 : ℝ) ≤ (Fintype.card M : ℝ)⁻¹ := inv_nonneg.2 (Nat.cast_nonneg _)
+  have per : ∀ ω, (Fintype.card M : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) n []
+      ≤ (Fintype.card M : ℝ)⁻¹ * mass (c ω) n [] := by
+    intro ω
+    have h := seq_transfer_const (fun _ : M => (Fintype.card M : ℝ)⁻¹) (K ω) (c ω) (fun m t => dec ω t m)
+      (Fintype.card M : ℝ)⁻¹ n (fun _ => hM) (hK0 ω) (hdom ω) (hc0 ω) (fun m t => (hdec ω t).1 m)
+      (fun t => by rw [← Finset.mul_sum, (hdec ω t).2, mul_one])
+    rwa [← Finset.mul_sum] at h
+  calc _ ≤ ∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * mass (c ω) n []) :=
+        Finset.sum_le_sum fun ω _ => mul_le_mul_of_nonneg_left (per ω) (hρ.1 ω)
+    _ = (∑ ω, ρ ω * mass (c ω) n []) / (Fintype.card M : ℝ) := by
+        rw [div_eq_inv_mul, Finset.mul_sum]; apply Finset.sum_congr rfl; intro ω _; ring
+
 /-- One episode = the sender picks a mediated view v and a hidden side state s (any law given the full history,
 including past side outputs), then the environment emits a side output z from a kernel that may depend on the whole
 history (state carried across episodes). If the side kernel is dominated by cs on the visible history, the episode is
@@ -388,7 +419,10 @@ def attackSet (t : List (AOut Z)) : Finset (Fin N) := univ.filter fun i : Fin N 
 def Consistent (S : Finset (Fin N)) (t : List (AOut Z)) : Prop :=
   ∀ i (o : AOut Z), t[i]? = some o → o.2.2 = (o.1 && decide (memN S i))
 
-/-- the attack succeeds: k attack steps, none in an audited round -/
+/-- the attack succeeds: it attacks in at least k rounds and NO attacked round is audited. Attacking again after k
+unaudited steps therefore risks the whole attack (adversarial review D6). For `audit_adaptive_hidden` this costs
+nothing: an attacker can stop after k steps within the same strategy class. For leaky kernels, "the first k
+attacks unaudited" would need a truncation lemma that is not proved here. -/
 noncomputable def survInd (k : ℕ) (S : Finset (Fin N)) (t : List (AOut Z)) : ℝ :=
   if Disjoint S (attackSet (N := N) t) ∧ k ≤ (attackSet (N := N) t).card then 1 else 0
 
@@ -485,10 +519,10 @@ theorem survInd_nonneg (k : ℕ) (S : Finset (Fin N)) (t : List (AOut Z)) : 0 �
 the attacker (any strategy, using everything it has seen, including catch flags) decides whether to attack and the
 round emits a leak z about the schedule; the catch flag is set exactly when an attacked round is audited (catching
 need not stop the play: after a catch the payoff is 0 anyway). If the non-catch outputs are dominated by a certificate
-cl on the visible history, the attacker completes k attack steps unaudited with probability
+cl on the visible history, the attacker attacks in ≥ k rounds with no attacked round audited with probability
   ≤ mass(cl) · C(N−k,B)/C(N,B).
 Catch-flag outputs cost nothing (`cval_live`). -/
-theorem audit_leak_bound (k B : ℕ) (hB : B ≤ N)
+theorem audit_leak_bound_all (k B : ℕ) (hB : B ≤ N)
     (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ)
     (hK0 : ∀ S h z, 0 ≤ K S h z) (hK1 : ∀ S h, ∑ z, K S h z ≤ 1)
     (hcons : ∀ S h y o, K S h (y, o) ≠ 0 → o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length)))
@@ -539,13 +573,52 @@ theorem audit_leak_bound (k B : ℕ) (hB : B ≤ N)
         apply Finset.sum_congr rfl; intro S _; rw [hstep1 S]
     _ ≤ _ := h2
 
+/-- **Leakage-sensitive adaptive auditing** (support form). The kernel, its consistency and the leak certificate are
+only required on schedules the protocol can actually draw (size-B subsets): a leak that is uninformative on the
+support costs nothing extra (adversarial review D7). -/
+theorem audit_leak_bound (k B : ℕ) (hB : B ≤ N)
+    (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ)
+    (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h, ∑ z, K S h z ≤ 1)
+    (hcons : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h y o, K S h (y, o) ≠ 0 →
+      o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length)))
+    (hdom : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o)
+    (hcl0 : ∀ g o, 0 ≤ cl g o) :
+    ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) *
+      val (K S) (survInd k S) N []
+      ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) * mass (dropStop caughtFlag cl) N [] := by
+  classical
+  -- off the support, replace the kernel by 0 (it has weight 0 anyway)
+  set K' : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ :=
+    fun S => if S ∈ AuditBudget.randomSchedules N B then K S else fun _ _ => 0 with hK'
+  have hsame : ∀ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) * val (K S) (survInd k S) N []
+      = (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) * val (K' S) (survInd k S) N [] := by
+    intro S
+    by_cases hS : S ∈ AuditBudget.randomSchedules N B
+    · simp only [hK', if_pos hS]
+    · simp only [if_neg hS, zero_mul]
+  rw [Finset.sum_congr rfl (fun S _ => hsame S)]
+  refine audit_leak_bound_all k B hB K' cl ?_ ?_ ?_ ?_ hcl0
+  · intro S h z; by_cases hS : S ∈ AuditBudget.randomSchedules N B
+    · simp only [hK', if_pos hS]; exact hK0 S hS h z
+    · simp [hK', hS]
+  · intro S h; by_cases hS : S ∈ AuditBudget.randomSchedules N B
+    · simp only [hK', if_pos hS]; exact hK1 S hS h
+    · simp [hK', hS]
+  · intro S h y o hne; by_cases hS : S ∈ AuditBudget.randomSchedules N B
+    · simp only [hK', if_pos hS] at hne; exact hcons S hS h y o hne
+    · simp [hK', hS] at hne
+  · intro S h o hf; by_cases hS : S ∈ AuditBudget.randomSchedules N B
+    · simp only [hK', if_pos hS]; exact hdom S hS h o hf
+    · simp only [hK', if_neg hS, Finset.sum_const_zero]; exact hcl0 _ _
+
 /-- per-round leak masses multiply: if the non-catch certificate of round i has mass ≤ Lr i, survival is
 ≤ Π_i Lr i · C(N−k,B)/C(N,B). Rounds that leak nothing have Lr i = 1. -/
 theorem audit_leak_prod (k B : ℕ) (hB : B ≤ N)
     (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ) (Lr : ℕ → ℝ)
-    (hK0 : ∀ S h z, 0 ≤ K S h z) (hK1 : ∀ S h, ∑ z, K S h z ≤ 1)
-    (hcons : ∀ S h y o, K S h (y, o) ≠ 0 → o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length)))
-    (hdom : ∀ S h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o)
+    (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h, ∑ z, K S h z ≤ 1)
+    (hcons : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h y o, K S h (y, o) ≠ 0 →
+      o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length)))
+    (hdom : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o)
     (hcl0 : ∀ g o, 0 ≤ cl g o) (hLr0 : ∀ i, 0 ≤ Lr i)
     (hL : ∀ g, ∑ o, dropStop caughtFlag cl g o ≤ Lr g.length) :
     ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) *
@@ -566,22 +639,22 @@ noncomputable def hiddenK (σ : List (AOut Unit) → Bool → ℝ) :
 
 /-- **Adaptive attackers gain nothing against a hidden random schedule.** Every adaptive k-step attacker that sees
 only its own actions and whether it has been caught survives a uniformly random size-B schedule with probability
-≤ C(N−k,B)/C(N,B) ≤ ((N−B)/N)^k (`AuditBudget.survival_le_pow`). This formalises the reduction that
+≤ C(N−k,B)/C(N,B), and ≤ ((N−B)/N)^k when 0 < N and k ≤ N (`AuditBudget.survival_le_pow`). This formalises the reduction that
 `AuditBudget` stated as a modelling remark. -/
 theorem audit_adaptive_hidden (k B : ℕ) (hB : B ≤ N) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) :
     ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) *
       val (hiddenK σ S) (survInd k S) N []
       ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) := by
   have h := audit_leak_prod k B hB (hiddenK σ) (fun g o => σ g o.1) (fun _ => 1)
-    (fun S h z => mul_nonneg ((hσ _).1 _) (by split_ifs <;> norm_num))
-    (fun S h => by
+    (fun S _ h z => mul_nonneg ((hσ _).1 _) (by split_ifs <;> norm_num))
+    (fun S _ h => by
       simp only [hiddenK, Fintype.sum_prod_type, Fintype.univ_unit, Finset.sum_singleton, Fintype.sum_bool]
       have h1 := (hσ (h.map Prod.snd)).2
       rw [Fintype.sum_bool] at h1
       cases (decide (memN S (List.map Prod.snd h).length)) <;> simp <;> linarith)
-    (fun S h y o hK => by
+    (fun S _ h y o hK => by
       by_contra hne; apply hK; simp only [hiddenK, hne, ↓reduceIte, mul_zero])
-    (fun S h o _ => by
+    (fun S _ h o _ => by
       simp only [hiddenK, Fintype.univ_unit, Finset.sum_singleton]
       have := (hσ (h.map Prod.snd)).1 o.1
       split_ifs <;> nlinarith)
@@ -605,11 +678,13 @@ end ControlStack.Leakage
 #print axioms ControlStack.Leakage.mass_le_prod
 #print axioms ControlStack.Leakage.mass_const
 #print axioms ControlStack.Leakage.covert_seq
+#print axioms ControlStack.Leakage.covert_seq_seed
 #print axioms ControlStack.Leakage.episode_dom
 #print axioms ControlStack.Leakage.sc01_adaptive_target
 #print axioms ControlStack.Leakage.covert_side_bound
 #print axioms ControlStack.Leakage.cval_live
 #print axioms ControlStack.Leakage.blind_audit
 #print axioms ControlStack.Leakage.audit_leak_bound
+#print axioms ControlStack.Leakage.audit_leak_bound_all
 #print axioms ControlStack.Leakage.audit_leak_prod
 #print axioms ControlStack.Leakage.audit_adaptive_hidden

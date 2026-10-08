@@ -6,20 +6,25 @@ Existing gates, now instances (each reuses the gate's own step lemma; nothing is
 - `auditGateSpec`: AuditGate, where every recorded execution has its `workflow.execute` row;
 - `egressSpec p`: EgressGate, where every socket attempt originates at the gateway and goes to a pinned peer. This is
   still under the policy-integrity premise that the model takes by definition (audit finding; see FIDELITY.md).
+  `egressHaltSpec` adds the generic absorbing halt. Halting freezes new socket ATTEMPTS only: bytes through an
+  already-open CONNECT tunnel are not effects in this model. EgressGate's own `crashGateway` is not absorbing, since
+  `startGateway` restarts it. Nothing here proves the halt is ever processed (liveness).
 
 New primitives:
 - **F4 content-addressed artefact gate** (`Artifact`): a deploy names a hash. It succeeds only if a trusted reviewer
   reviewed content with that hash, and it deploys the stored content with that hash. `deployed_reviewed`: every
   deployed artefact's hash was reviewed. `deployed_is_reviewed`: if no two contents that appear in the run (stored
-  or reviewed) collide, the deployed content IS reviewed content. Global injectivity is not assumed. `collision_breaks`: with a collision, unreviewed content is deployed, so
+  or reviewed) collide, the deployed content IS reviewed content. Global injectivity is not assumed. The hypothesis is checked on the FINAL state, so a collision created after a
+  correct deploy voids it. That is conservative, but narrower than necessary (review D11). Reviews never expire. `collision_breaks`: with a collision, unreviewed content is deployed, so
   collision resistance cannot be dropped. The agent may write arbitrary content to the store at any time; what it
   cannot do is change the content behind a reviewed hash. Not claimed: that reviewed content is harmless.
 - **F7 exact-payload approval** (`Approval`): an irreversible transaction executes only if an approval for exactly that
   transaction exists, the clock has not passed its expiry, and its nonce is unused. `approval_safe`: every execution is
   approved and unexpired, and nonces never repeat (no replay). `replay_without_nonce`: dropping the nonce check lets
-  one approval execute twice. Premise (not modelled): approvals come only from the distinct trusted principal, i.e.
-  signatures are unforgeable and the key is not the agent's. The model gives the agent no operation that adds an
-  approval, and that is exactly this premise.
+  one approval execute twice. `agent_cannot_approve` / `Artifact.agent_cannot_review`: the agent's own operations
+  never add approvals or reviews. The theorems above range over ALL traces, including the trusted principals'
+  operations. Premises (not modelled): signatures are unforgeable and the key is not the agent's; the used-nonce
+  store and the clock are durable and monotone (`replay_if_nonces_lost` shows durability matters).
 -/
 import ControlStack.Gate
 import ControlStack.AuditDispatch
@@ -207,6 +212,23 @@ theorem collision_breaks :
     false ∈ s.deployed ∧ false ∉ s.reviewedContent := by
   decide
 
+/-- agent operations: storing content and requesting deploys (review belongs to the trusted reviewer) -/
+def agentOp : Op C H → Prop
+  | .put _ => True
+  | .deploy _ => True
+  | .review _ => False
+
+/-- **The agent cannot review** (adversarial review D9): agent operations never change what was reviewed. -/
+theorem agent_cannot_review (hash : C → H) (s : St C H) (o : Op C H) (ho : agentOp o) :
+    (step hash s o).reviewed = s.reviewed ∧ (step hash s o).reviewedContent = s.reviewedContent := by
+  cases o with
+  | put c => simp [step]
+  | deploy hh =>
+    simp only [step]; split_ifs
+    · cases s.store.find? (fun c => hash c = hh) <;> simp
+    · simp
+  | review c => simp [agentOp] at ho
+
 end Artifact
 
 /-! ## F7: exact-payload approval with expiry and replay protection -/
@@ -303,6 +325,26 @@ theorem replay_without_nonce :
     ([Op.approve t, .execute t, .execute t].foldl step (⟨0, [], [], []⟩ : St Unit)).executed.length = 1 := by
   decide
 
+/-- agent operations: requesting an execution (the clock and approvals belong to trusted principals) -/
+def agentOp : Op P → Prop
+  | .execute _ => True
+  | _ => False
+
+/-- **The agent cannot approve** (adversarial review D9): agent operations never change the approval list. -/
+theorem agent_cannot_approve (s : St P) (o : Op P) (ho : agentOp o) : (step s o).approvals = s.approvals := by
+  cases o with
+  | execute t => simp only [step]; split_ifs <;> simp
+  | _ => simp [agentOp] at ho
+
+/-- **Nonce durability cannot be dropped** (review D9): if a restart loses the used-nonce store, one approval executes
+twice. The model above has no restart. Durability of `used` is a premise, not a theorem. -/
+theorem replay_if_nonces_lost :
+    let t : Tx Unit := ⟨(), 0, 5⟩
+    let s1 := [Op.approve t, .execute t].foldl step (⟨0, [], [], []⟩ : St Unit)
+    let s2 := step { s1 with used := [] } (.execute t)
+    s2.executed.length = 2 := by
+  decide
+
 end Approval
 
 end ControlStack.GateClients
@@ -317,3 +359,6 @@ end ControlStack.GateClients
 #print axioms ControlStack.GateClients.Artifact.collision_breaks
 #print axioms ControlStack.GateClients.Approval.approval_safe
 #print axioms ControlStack.GateClients.Approval.replay_without_nonce
+#print axioms ControlStack.GateClients.Approval.agent_cannot_approve
+#print axioms ControlStack.GateClients.Approval.replay_if_nonces_lost
+#print axioms ControlStack.GateClients.Artifact.agent_cannot_review

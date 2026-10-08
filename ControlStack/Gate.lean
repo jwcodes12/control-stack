@@ -16,6 +16,14 @@ The interface adds no new mathematics: each generic theorem is an induction over
 clients import it (`GateClients.lean`): the three existing gates (AuditDispatch, AuditGate, EgressGate) and two new
 primitives (F4 content-addressed artefact gate, F7 exact-payload approval).
 
+Limits (adversarial review D10):
+- A `Spec` has no content by itself: `ok := True` satisfies it for any append-only log. The content is each client's
+  `ok` and `Inv`.
+- `Spec` has no initial-state field; each client must show that its initial state satisfies `Inv`.
+- `withHalt` is absorbing BY CONSTRUCTION (a sticky bit). It shows that a halt bit composes with any gate's spec,
+  not that a deployed component has one.
+- Nothing here is about liveness (that a halt is ever processed).
+
 Scope: like every model here, a gate spec is about the transition system. That the deployed component implements it,
 and that no effect bypasses it, are correspondence obligations recorded per client.
 -/

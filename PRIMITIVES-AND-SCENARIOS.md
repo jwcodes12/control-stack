@@ -1,5 +1,13 @@
 # Primitives and scenarios: what exists and what is left (2026-10-08)
 
+> Update after adversarial review (Gemini 3.1 Pro, Opus 5.5):
+> - Lease now bounds the number of units and refuses forks onto existing workers.
+> - Artifact assumes injectivity only on contents in the run.
+> - Approval/Artifact/Lease separate agent ops from trusted ops.
+> - `LeakWitness` gives a real-leak instance of the audit bound.
+>
+> See `reviews/adversarial-2026-10-08/disposition.md`.
+
 This page summarises status against the eight proof/checker families (F1–F8) and the 28-scenario starter set in
 [SCENARIO-CATALOG.md](SCENARIO-CATALOG.md). Per-result detail lives in [STACK.md](STACK.md) and
 [ROADMAP.md](ROADMAP.md).

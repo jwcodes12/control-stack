@@ -17,9 +17,24 @@ Proved (`lease_safe`, from the initial state, for any interleaving):
 `revoke_absorbing`: after a lease is revoked, no later operation appends work under it. `fork_without_lease_accounting`
 (necessity): if budgets are charged per WORKER, one fork doubles the work done under one lease.
 
-Premises (not modelled): every resource use goes through the gate; the counters live in the trusted controller and
-survive restarts (restart is a no-op on this state); worker identities cannot be forged. Costs are declared by the
-gate, not the agent.
+Also proved:
+- `work_count_le`: every admitted unit costs at least 1, so the NUMBER of work units per lease is ≤ its budget, and
+  ≤ cap overall.
+- `agent_cannot_issue`: agent operations (fork, work, restart) never change the lease table or the revocation list.
+- `revoked_worker_stays_stopped`: forks may only create FRESH workers, so a revoked worker cannot be re-pointed onto
+  another lease.
+
+Premises (not modelled):
+- every resource use goes through the gate;
+- the counters live in the trusted controller and survive restarts. Restart is a no-op on this state, so durability
+  holds by definition, the same pattern as EgressGate's policy integrity (`LifetimeLedger.restore_breaks` shows
+  rollback matters);
+- worker identities cannot be forged;
+- the cost of a unit is metered by the gate. The agent's declared cost could under-report, but `work_count_le`
+  bounds the number of units regardless.
+
+Revocation stops a lease, not a worker identity: re-issuing a lease to the same worker is a trusted controller
+decision. Adversarial review 2026-10-08: D1, D2 fixed; reviews/adversarial-2026-10-08/.
 -/
 import ControlStack.Gate
 
@@ -44,7 +59,7 @@ inductive Op where
   | tick                         -- trusted clock
   | issue (l : LeaseRec) (w : ℕ)    -- trusted controller
   | revoke (id : ℕ)              -- trusted controller
-  | fork (w w' : ℕ)              -- agent: w' inherits w's lease
+  | fork (w w' : ℕ)              -- agent: a FRESH worker w' inherits w's lease
   | restart                      -- infrastructure: counters are durable
   | work (w cost : ℕ)            -- agent: request a unit of work
 
@@ -64,7 +79,7 @@ def step (cap : ℕ) (s : St) : Op → St
   | .revoke id => { s with revoked := s.revoked ++ [id] }
   | .fork w w' =>
     match leaseOf s w with
-    | some id => { s with holder := (w', id) :: s.holder }
+    | some id => if w' ∈ s.holder.map Prod.fst then s else { s with holder := (w', id) :: s.holder }
     | none => s
   | .restart => s
   | .work w c =>
@@ -74,7 +89,7 @@ def step (cap : ℕ) (s : St) : Op → St
       match s.leases.find? (fun l => l.id = id) with
       | none => s
       | some l =>
-        if id ∉ s.revoked ∧ s.now ≤ l.expiry ∧ spent s.work id + c ≤ l.budget ∧ total s.work + c ≤ cap then
+        if id ∉ s.revoked ∧ s.now ≤ l.expiry ∧ spent s.work id + c ≤ l.budget ∧ total s.work + c ≤ cap ∧ 1 ≤ c then
           { s with work := s.work ++ [(id, c, s.now)] }
         else s
 
@@ -86,7 +101,8 @@ def Inv (cap : ℕ) (s : St) : Prop :=
   (s.leases.map LeaseRec.id).Nodup ∧
   (∀ e ∈ s.work, ∃ l ∈ s.leases, l.id = e.1 ∧ e.2.2 ≤ l.expiry) ∧
   (∀ l ∈ s.leases, spent s.work l.id ≤ l.budget) ∧
-  total s.work ≤ cap
+  total s.work ≤ cap ∧
+  ∀ e ∈ s.work, 1 ≤ e.2.1
 
 theorem spent_append (work : List (ℕ × ℕ × ℕ)) (e : ℕ × ℕ × ℕ) (id : ℕ) :
     spent (work ++ [e]) id = spent work id + (if e.1 = id then e.2.1 else 0) := by
@@ -102,20 +118,18 @@ theorem spent_eq_zero_of_absent (work : List (ℕ × ℕ × ℕ)) (id : ℕ) (h 
   rfl
 
 theorem step_inv (cap : ℕ) (s : St) (o : Op) (h : Inv cap s) : Inv cap (step cap s o) := by
-  obtain ⟨hn, hw, hb, ht⟩ := h
+  obtain ⟨hn, hw, hb, ht, hp⟩ := h
   cases o with
-  | tick => exact ⟨hn, hw, hb, ht⟩
-  | revoke id => exact ⟨hn, hw, hb, ht⟩
-  | restart => exact ⟨hn, hw, hb, ht⟩
+  | tick => exact ⟨hn, hw, hb, ht, hp⟩
+  | revoke id => exact ⟨hn, hw, hb, ht, hp⟩
+  | restart => exact ⟨hn, hw, hb, ht, hp⟩
   | fork w w' =>
-    simp only [step]; split
-    · exact ⟨hn, hw, hb, ht⟩
-    · exact ⟨hn, hw, hb, ht⟩
+    simp only [step]; split <;> (try split_ifs) <;> exact ⟨hn, hw, hb, ht, hp⟩
   | issue l w =>
     simp only [step]
     split_ifs with hfresh
-    · exact ⟨hn, hw, hb, ht⟩
-    · refine ⟨?_, ?_, ?_, ht⟩
+    · exact ⟨hn, hw, hb, ht, hp⟩
+    · refine ⟨?_, ?_, ?_, ht, hp⟩
       · rw [List.map_append, List.nodup_append]
         refine ⟨hn, List.nodup_singleton _, ?_⟩
         intro a ha b hb'; simp only [List.map_cons, List.map_nil, List.mem_singleton] at hb'
@@ -135,15 +149,15 @@ theorem step_inv (cap : ℕ) (s : St) (o : Op) (h : Inv cap s) : Inv cap (step c
   | work w c =>
     simp only [step]
     split
-    · exact ⟨hn, hw, hb, ht⟩
+    · exact ⟨hn, hw, hb, ht, hp⟩
     · rename_i id _
       split
-      · exact ⟨hn, hw, hb, ht⟩
+      · exact ⟨hn, hw, hb, ht, hp⟩
       · rename_i l0 hf
         have hl0 : l0 ∈ s.leases := List.mem_of_find?_eq_some hf
         have hid : l0.id = id := by simpa using List.find?_some hf
         split_ifs with hc
-        · refine ⟨hn, ?_, ?_, ?_⟩
+        · refine ⟨hn, ?_, ?_, ?_, ?_⟩
           · intro e he
             rcases List.mem_append.1 he with he | he
             · exact hw e he
@@ -156,13 +170,17 @@ theorem step_inv (cap : ℕ) (s : St) (o : Op) (h : Inv cap s) : Inv cap (step c
               subst this
               rw [hid]; exact hc.2.2.1
             · simpa using hb l hl
-          · rw [total_append]; exact hc.2.2.2
-        · exact ⟨hn, hw, hb, ht⟩
+          · rw [total_append]; exact hc.2.2.2.1
+          · intro e he
+            rcases List.mem_append.1 he with he | he
+            · exact hp e he
+            · simp only [List.mem_singleton] at he; subst he; exact hc.2.2.2.2
+        · exact ⟨hn, hw, hb, ht, hp⟩
 
 theorem prefix_step (cap : ℕ) (s : St) (o : Op) : s.work <+: (step cap s o).work := by
   cases o with
   | issue l w => simp only [step]; split_ifs <;> simp
-  | fork w w' => simp only [step]; split <;> simp
+  | fork w w' => simp only [step]; split <;> (try split_ifs) <;> simp
   | work w c =>
     simp only [step]; split
     · exact List.prefix_refl _
@@ -188,8 +206,8 @@ theorem lease_safe (cap : ℕ) (ops : List Op) :
     (∀ e ∈ s.work, ∃ l ∈ s.leases, l.id = e.1 ∧ e.2.2 ≤ l.expiry) ∧
     (∀ l ∈ s.leases, spent s.work l.id ≤ l.budget) ∧ total s.work ≤ cap := by
   have h := ((spec cap).trace_safe init ops ⟨List.nodup_nil, by simp [init], by simp [init],
-    by simp [init, total]⟩).1
-  exact h.2
+    by simp [init, total], by simp [init]⟩).1
+  exact ⟨h.2.1, h.2.2.1, h.2.2.2.1⟩
 
 /-- **Revocation is absorbing.** Once lease id is revoked, no operation appends work under it, and it stays revoked. -/
 theorem revoke_step (cap : ℕ) (s : St) (o : Op) (id : ℕ) (hr : id ∈ s.revoked) :
@@ -201,7 +219,7 @@ theorem revoke_step (cap : ℕ) (s : St) (o : Op) (id : ℕ) (hr : id ∈ s.revo
   | issue l w =>
     refine ⟨?_, [], ?_, by simp⟩ <;> simp only [step] <;> split_ifs <;> simp [hr]
   | fork w w' =>
-    refine ⟨?_, [], ?_, by simp⟩ <;> simp only [step] <;> split <;> simp [hr]
+    refine ⟨?_, [], ?_, by simp⟩ <;> simp only [step] <;> split <;> (try split_ifs) <;> simp [hr]
   | work w c =>
     simp only [step]
     split
@@ -230,6 +248,62 @@ theorem revoke_absorbing (cap : ℕ) (s : St) (ops : List Op) (id : ℕ) (hr : i
     · intro e he; rcases List.mem_append.1 he with he | he
       · exact h1' e he
       · exact h2' e he
+
+theorem length_le_sum (L : List (ℕ × ℕ × ℕ)) (h : ∀ e ∈ L, 1 ≤ e.2.1) : L.length ≤ (L.map (fun e => e.2.1)).sum := by
+  induction L with
+  | nil => simp
+  | cons e L ih =>
+    simp only [List.length_cons, List.map_cons, List.sum_cons]
+    have h1 := h e List.mem_cons_self
+    have h2 := ih (fun e' he' => h e' (List.mem_cons_of_mem e he'))
+    omega
+
+/-- **The number of work units is bounded** (adversarial review D1): every admitted unit costs at least 1, so a lease
+admits at most `budget` units, summed over all workers on it, and the whole system at most `cap`. A zero-cost request
+is refused. -/
+theorem work_count_le (cap : ℕ) (ops : List Op) :
+    let s := (sys cap).run init ops
+    (∀ l ∈ s.leases, (s.work.filter (fun e => e.1 = l.id)).length ≤ l.budget) ∧ s.work.length ≤ cap := by
+  have h := ((spec cap).trace_safe init ops ⟨List.nodup_nil, by simp [init], by simp [init],
+    by simp [init, total], by simp [init]⟩).1
+  obtain ⟨-, -, hb, ht, hp⟩ := h
+  refine ⟨fun l hl => le_trans (length_le_sum _ (fun e he => hp e (List.mem_of_mem_filter he))) (hb l hl),
+    le_trans (length_le_sum _ hp) ht⟩
+
+/-- operations the AGENT can issue (the clock, issue and revoke belong to the trusted controller) -/
+def agentOp : Op → Prop
+  | .fork _ _ => True
+  | .work _ _ => True
+  | .restart => True
+  | _ => False
+
+/-- **The agent cannot issue or un-revoke leases** (review D9-style actor separation): agent operations leave the
+lease table and the revocation list unchanged. -/
+theorem agent_cannot_issue (cap : ℕ) (s : St) (o : Op) (ho : agentOp o) :
+    (step cap s o).leases = s.leases ∧ (step cap s o).revoked = s.revoked := by
+  cases o with
+  | fork w w' => simp only [step]; split <;> (try split_ifs) <;> simp
+  | work w c =>
+    simp only [step]; split
+    · simp
+    · split
+      · simp
+      · split_ifs <;> simp
+  | restart => simp [step]
+  | _ => simp [agentOp] at ho
+
+/-- **A revoked worker stays stopped** (review D2): worker 1's lease is revoked; worker 2 (another lease) tries to fork
+onto worker 1's identity; the fork is refused because forks may only create fresh workers, and worker 1's work is not
+admitted. -/
+theorem revoked_worker_stays_stopped :
+    let ops := [Op.issue ⟨0, 5, 100⟩ 1, .issue ⟨1, 5, 100⟩ 2, .revoke 0, .fork 2 1, .work 1 3]
+    (ops.foldl (step 100) init).work = [] := by
+  decide
+
+/-- zero-cost work is refused (review D1) -/
+theorem zero_cost_refused :
+    ([Op.issue ⟨0, 0, 100⟩ 1, .work 1 0, .work 1 0].foldl (step 100) init).work = [] := by
+  decide
 
 /-! ## Necessity: per-worker accounting lets forks multiply a lease -/
 
@@ -269,3 +343,7 @@ end ControlStack.Lease
 #print axioms ControlStack.Lease.revoke_absorbing
 #print axioms ControlStack.Lease.fork_without_lease_accounting
 #print axioms ControlStack.Lease.reissue_takes_effect
+#print axioms ControlStack.Lease.work_count_le
+#print axioms ControlStack.Lease.agent_cannot_issue
+#print axioms ControlStack.Lease.revoked_worker_stays_stopped
+#print axioms ControlStack.Lease.zero_cost_refused

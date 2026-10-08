@@ -31,6 +31,7 @@ import ControlStack.Necessity
 import ControlStack.Gate
 import ControlStack.GateClients
 import ControlStack.Lease
+import ControlStack.LeakWitness
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.

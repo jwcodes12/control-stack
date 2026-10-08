@@ -205,4 +205,19 @@ observations, followed by repeat probes and gateway/model correspondence. Valid
 host snapshot rollback, statistical runtime independence and workload transport
 remain assumptions. Auditgate untouched. Private tracker: GitHub issue #2.
 
-SC-01 private branch `sc01-repair-viability` pushed at `9a7e3a6`; GitHub CI pending. Tracker #2 updated with results and the confirmed isolation blocker.
+SC-01 private branch `sc01-repair-viability` pushed at `9a7e3a6`; GitHub CI completed successfully for all three workflows. Tracker #2 records results and the confirmed isolation blocker.
+
+## Current continuation status — 2026-10-08
+
+Canonical status: [gateway/scenario/STATUS.md](gateway/scenario/STATUS.md).
+Published SC-01 commit `9a7e3a6` now has three successful GitHub workflows:
+scenario-a-repair, fast-checks and egress-boundary. The 320/320 repair usefulness
+result and 64/64 shared-cache bit observation remain the completed evidence.
+
+A separate-runtime-file experiment is preregistered at source commit `8b96430`.
+Five implementation files are local drafts; three rejection-control tests pass.
+The first smoke invocation failed at `AttributeError: __enter__`; no receipt or
+new cache/usefulness measurement exists. Next: fix lifecycle, run real preflights
+and comparison/usefulness experiments, then consult Opus xhigh and Astra high
+on meaningful results. Those new reviews remain pending. No runtime secrecy
+certification or production deployment; auditgate untouched.

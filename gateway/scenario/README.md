@@ -53,3 +53,5 @@ finding, gateway/harness documentation and a harness-test name were corrected;
 final experiments were rerun to bind the final source bytes. The three original
 source snapshots and SHA index are in `results/initial-sources/`. Initial and
 final measurements are not pooled. Saved local runs are distinct from CI runs.
+
+Current continuation and remaining work: [STATUS.md](STATUS.md).

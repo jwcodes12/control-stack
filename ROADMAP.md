@@ -55,6 +55,21 @@ case checker's verdict), followed by repeat probes and gateway/model corresponde
 host snapshot rollback, statistical runtime independence and workload transport
 remain assumptions. Auditgate untouched. Private tracker: GitHub issue #2.
 
+## Circle effort (2026-10-08, branch claude/circle)
+
+Consultation: `reviews/circle-consult-2026-10-08/`. Astra (gpt-6-astra, xhigh) and Fable (claude-fable-5-1) reviewed
+adversarially. Both said not to build a general certificate calculus now, because its combinators are classical. The
+value they see is conditional accounting, refutation and experiment design. Remaining work across all primitives and
+scenarios: [PRIMITIVES-AND-SCENARIOS.md](PRIMITIVES-AND-SCENARIOS.md). Witness scopes:
+[NECESSITY.md](NECESSITY.md).
+
+| item | what it gives | status |
+|---|---|---|
+| `Leakage.lean` | one leakage-transfer principle: an adversary informed through dominated, history-dependent kernels is worth ≤ mass(c) blind adversaries. Instances: `covert_seq`/`covert_side_bound`/`sc01_adaptive_target` (side channels with state and feedback; replaces `dom_pi`'s independence premise); `audit_leak_bound`/`audit_leak_prod` (leakage-sensitive adaptive auditing; catch flags are free, `cval_live`); `audit_adaptive_hidden` (adaptive attackers gain nothing against a hidden random schedule, formalising AuditBudget's remark) | ✅ proved (15 theorems) |
+| `Necessity.lean` | missing witnesses: seed-correlated secret, correlated lifetimes break the gate (9/10 vs 1/80), marginal side certificates do not compose, shared-score layers do not multiply | ✅ proved |
+| `tools/check_sc01_case.py` | proof / binding / evidence / applicability reported separately; exit 3 when a hypothesis is refuted; invokes the cache-receipt verifier; manifest assumptions carry provenance, testability, refuting lemma and experiment, and scoped witnesses | ✅ verdict HYPOTHESIS_REFUTED (exit 3) |
+| `tools/ctrlcert.py` | researcher CLI: `channel`, `probe`, `audit`, `hazard`, `samples`, `diagnose`. Each number comes with its theorem, premises and refuting measurement; `--lean` emits a compiled instantiation. `diagnose` classifies LASR BigCodeBench as MARGIN and LinuxArena as PROTOCOL | ✅ tests pass; emitted Lean compiles |
+
 ## Lean track (2026-10-08, branch claude/lean-track)
 
 Seven new Lean files plus a differential test, a one-command case checker and an independent statement audit. Status

@@ -129,3 +129,7 @@ certifications of trusted monitors on public data (Redwood/LinuxArena Control Le
 release, whose logs are its held-out test split). `CERTIFICATE-DECOMPOSITION.md` separates monitor quality from
 statistical margin. Model names in these files and in `data/` name the EVALUATED systems (attackers, monitors), not
 reviewers. Data are evaluation-only per their publishers; do not train on them.
+
+## Scenario-centered review bundle (new static work)
+
+See [scenarios/README.md](scenarios/README.md) for all 28 scenario bundles, their separate proof/evidence/applicability axes, and the no-experiments static checker (tools/check_scenarios.py). The theorem declaration inventory is generated with tools/theorem_registry.py; unknown adversary/premise classifications remain explicit. This is a proposed reorganization of references, not a migration of original Lean/CI files or a deployment claim.

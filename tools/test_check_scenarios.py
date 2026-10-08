@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Static checker tests; do not invoke agents, Lean, or VMs."""
+import hashlib
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from tools.check_scenarios import Invalid, main, verify
+
+
+class CheckerTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.bundle = self.root / "scenarios" / "SC-01"
+        (self.bundle / "tests").mkdir(parents=True)
+        for p in ("threat.md", "claim.lean", "policy.json", "correspondence.md",
+                  "result.md", "tests/README.md"):
+            (self.bundle / p).write_text("placeholder")
+        proof = self.root / "sample.lean"
+        proof.write_text("theorem foo : True := by trivial")
+        self.m = {
+            "schema_version": 1, "id": "SC-01", "title": "test",
+            "bad_event": "event", "adversary": "model", "refutation": "trace",
+            "scope": "fixture", "families": ["F1"], "status": "CONDITIONAL",
+            "theorems": [{"path": "sample.lean", "name": "foo",
+                          "sha256": hashlib.sha256(proof.read_bytes()).hexdigest(),
+                          "recorded_status": "KERNEL_CHECK_RECORDED"}],
+            "evidence": [], "assumptions": [{"id": "boundary", "text": "exclusive gate",
+                "proof": "THEOREM_VERIFIED", "evidence": "NOT_RUN", "applicability": "UNRESOLVED"}]
+        }
+        self.save()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def save(self):
+        (self.bundle / "manifest.json").write_text(json.dumps(self.m))
+
+    def test_conditional_does_not_promote(self):
+        r = verify(self.root, "SC-01")
+        self.assertEqual(r["proof"], "RECORDED_NOT_RECHECKED")
+        self.assertEqual(r["applicability"], "BLOCKED")
+        self.assertFalse(r["deployment_assured"])
+
+    def test_missing_assumption_axis_fails(self):
+        del self.m["assumptions"][0]["evidence"]
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_mismatched_hash_fails(self):
+        self.m["theorems"][0]["sha256"] = "0" * 64
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_traversal_fails(self):
+        self.m["theorems"][0]["path"] = "../../oops.lean"
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_failed_receipt_cannot_promote(self):
+        p = self.root / "failed.json"
+        p.write_text('{"passed":false}')
+        self.m["evidence"] = [{"path": "failed.json", "sha256":
+            hashlib.sha256(p.read_bytes()).hexdigest(), "purpose": "negative trial",
+            "outcome": "FAIL"}]
+        self.save()
+        r = verify(self.root, "SC-01")
+        self.assertEqual(r["evidence"], "FAILURE_RECORDED")
+        self.assertEqual(r["applicability"], "BLOCKED")
+
+    def test_strict_fails_conditional(self):
+        self.assertEqual(main(["SC-01", "--require-clear"], root=self.root), 2)
+
+    def test_draft_has_no_proof(self):
+        self.m["theorems"] = []
+        self.m["status"] = "DRAFT"
+        self.save()
+        self.assertEqual(verify(self.root, "SC-01")["proof"], "NO_THEOREM_LISTED")
+
+
+if __name__ == "__main__":
+    unittest.main()

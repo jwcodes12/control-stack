@@ -1,0 +1,190 @@
+{
+  "schema": "sc01-vm-failed-attempt/1",
+  "recorded_at": "2026-10-08T18:54:35.785040+00:00",
+  "source_commit": "9d4d58a7b14b82a097b09c9e3a23bbab719ebbbf",
+  "config_hash": "255c3c3c393a350019d6e90305c434aca45d5c044a4e805cc645dd7f86cc59c7",
+  "config": {
+    "schema": "sc01-qemu-pair/1",
+    "accelerator": "tcg",
+    "vms": [
+      {
+        "name": "VM-A",
+        "role": "sender+gateway",
+        "cpu_affinity": [
+          0
+        ],
+        "numa_node": 0,
+        "qemu_argv": [
+          "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+          "-no-user-config",
+          "-nodefaults",
+          "-machine",
+          "virt-11.1,memory-backend=ram",
+          "-accel",
+          "tcg,thread=single",
+          "-cpu",
+          "cortex-a57",
+          "-smp",
+          "1",
+          "-m",
+          "512M",
+          "-object",
+          "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-serial",
+          "stdio",
+          "-no-reboot",
+          "-qmp",
+          "unix:/var/tmp/sc01-vm-pair-20261008-v4/vm-A/qmp.sock,server=on,wait=off",
+          "-kernel",
+          "/var/tmp/sc01-vm-pair-20261008-v4/vm-A/kernel",
+          "-initrd",
+          "/var/tmp/sc01-vm-pair-20261008-v4/vm-A/initramfs.gz",
+          "-append",
+          "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+          "-drive",
+          "file=/var/tmp/sc01-vm-pair-20261008-v4/vm-A/state.raw,format=raw,if=none,id=state",
+          "-device",
+          "virtio-blk-device,drive=state",
+          "-netdev",
+          "socket,id=link,listen=127.0.0.1:19401",
+          "-device",
+          "virtio-net-device,netdev=link,mac=52:54:00:00:00:01"
+        ],
+        "images": {
+          "kernel": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v4/vm-A/kernel",
+            "initial_sha256": "af8ad21e222dbff8c89909e1ef7b8b7607dd58188b2f3067128aac4f646d212d"
+          },
+          "initramfs.gz": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v4/vm-A/initramfs.gz",
+            "initial_sha256": "f69697d89975d4803d5843aad22c04d398fddffeaafa771841cb7420f9f96b4f"
+          },
+          "state.raw": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v4/vm-A/state.raw",
+            "initial_sha256": "89787a8223cc5dac02ee20d6711661a27d38d6605ae43c293410b5af91be28c7"
+          }
+        }
+      },
+      {
+        "name": "VM-B",
+        "role": "receiver",
+        "cpu_affinity": [
+          1
+        ],
+        "numa_node": 0,
+        "qemu_argv": [
+          "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+          "-no-user-config",
+          "-nodefaults",
+          "-machine",
+          "virt-11.1,memory-backend=ram",
+          "-accel",
+          "tcg,thread=single",
+          "-cpu",
+          "cortex-a57",
+          "-smp",
+          "1",
+          "-m",
+          "512M",
+          "-object",
+          "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-serial",
+          "stdio",
+          "-no-reboot",
+          "-qmp",
+          "unix:/var/tmp/sc01-vm-pair-20261008-v4/vm-B/qmp.sock,server=on,wait=off",
+          "-kernel",
+          "/var/tmp/sc01-vm-pair-20261008-v4/vm-B/kernel",
+          "-initrd",
+          "/var/tmp/sc01-vm-pair-20261008-v4/vm-B/initramfs.gz",
+          "-append",
+          "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+          "-drive",
+          "file=/var/tmp/sc01-vm-pair-20261008-v4/vm-B/state.raw,format=raw,if=none,id=state",
+          "-device",
+          "virtio-blk-device,drive=state",
+          "-netdev",
+          "socket,id=link,connect=127.0.0.1:19401",
+          "-device",
+          "virtio-net-device,netdev=link,mac=52:54:00:00:00:02"
+        ],
+        "images": {
+          "kernel": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v4/vm-B/kernel",
+            "initial_sha256": "af8ad21e222dbff8c89909e1ef7b8b7607dd58188b2f3067128aac4f646d212d"
+          },
+          "initramfs.gz": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v4/vm-B/initramfs.gz",
+            "initial_sha256": "923fd15c41e1648a9971233c3a257b8460a5bd5cacd72f71b917f196f93d0940"
+          },
+          "state.raw": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v4/vm-B/state.raw",
+            "initial_sha256": "fa5d27d31b6f57b323044890fdd120fbc2d97dd56860503a671f616e1457f065"
+          }
+        }
+      }
+    ],
+    "qemu": {
+      "version": "QEMU emulator version 11.1.2",
+      "path": "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+      "sha256": "082f9b5a505375e5931a787659c09b511c0742e829ad25b775bfc11f72d32782"
+    },
+    "image_lock_sha256": "32222123a98db253805fbee22f5478daa414e1ff721d94f44cd28ccaa112203c",
+    "source_hashes": {
+      "gateway/gateway.py": "3e3ab093c9ad0f6ba2f82204f4d7088326e78d83067d7b9fbf68e0b620ca0d53",
+      "gateway/scenario/contract.json": "b15961943dfc715d299671ac99fbcd01a9ea408e5239d66bb3b8f329ec89700d",
+      "gateway/scenario/agents/diagnose.py": "a338db19def3a5b2af45ebdca5aad254a2da12f827368512d64d374a0a89b191",
+      "gateway/scenario/agents/repair.py": "b6b8257c1d51fdfac24edcaa9c7948834cf89aea3101dcae0dd6580745856857",
+      "gateway/scenario/agents/preflight.py": "3f0010a5f23a868654686605c897068176cc381a1ee3f3b3f538b1719acf287c",
+      "gateway/vm/guest.py": "5db243172f3375dae1277bf8f310bf6dc9fbe10423de1d3da98a6360b66e431f",
+      "gateway/vm/init.sh": "c69cccbfcef25a596e4f1f84a0a21971625cc3f22b90b212c0341883f06637b7",
+      "gateway/vm/init_guest.sh": "80630ddfbde61b552c874f8f5dc4a5be4c6266e3ddfdc6a49a5ab2c97fdaec9a",
+      "gateway/vm/provision.py": "d210560c9f1b844d653d842e04f6fda43a9fb5b7fbbdd7bc126993c6660bf1f7"
+    },
+    "host": {
+      "kernel": "6.12.0-206.104.3.3.el9uek.aarch64",
+      "numa": {
+        "0": [
+          0,
+          1
+        ]
+      },
+      "cpu_cache_sharing": {
+        "/sys/devices/system/cpu/cpu0/cache/index2/shared_cpu_list": "0-1",
+        "/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list": "0-1",
+        "/sys/devices/system/cpu/cpu0/cache/index1/shared_cpu_list": "0-1"
+      }
+    },
+    "management": "Independent serial pipes and QMP sockets to a trusted host supervisor; never relayed to agents",
+    "network": "One QEMU socket link; only VM-A gateway and VM-B trusted receiver service use guest interfaces",
+    "limits": [
+      "shared host OS and QEMU trusted",
+      "physical cache/timing effects unresolved",
+      "host services can run on both pinned CPUs",
+      "host NUMA node and storage backend shared",
+      "configuration check is not a complete observation or leakage certificate"
+    ]
+  },
+  "command": [
+    "python3",
+    "gateway/vm/run_usefulness.py",
+    "--config",
+    "gateway/vm/configs/local-20261008.json",
+    "--output",
+    "gateway/vm/receipts/usefulness-20261008.json"
+  ],
+  "exit_code": 1,
+  "status": "blocked",
+  "observed_error": "RuntimeError: guest supervisor response failure: {'event': 'error', 'error_type': 'OSError'}",
+  "completed_lifetimes": null,
+  "scope": "Failed replay startup. No full usefulness receipt produced; no result pooled; not evidence of a passing or failing completion gate.",
+  "completion_status": "No completed-lifetime records were preserved by the failed invocation."
+}

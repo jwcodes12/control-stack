@@ -1,0 +1,170 @@
+{
+  "schema": "sc01-qemu-pair/1",
+  "accelerator": "tcg",
+  "vms": [
+    {
+      "name": "VM-A",
+      "role": "sender+gateway",
+      "cpu_affinity": [
+        0
+      ],
+      "numa_node": 0,
+      "qemu_argv": [
+        "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+        "-no-user-config",
+        "-nodefaults",
+        "-machine",
+        "virt-11.1,memory-backend=ram",
+        "-accel",
+        "tcg,thread=single",
+        "-cpu",
+        "cortex-a57",
+        "-smp",
+        "1",
+        "-m",
+        "512M",
+        "-object",
+        "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-serial",
+        "stdio",
+        "-no-reboot",
+        "-qmp",
+        "unix:/var/tmp/sc01-vm-pair-20261008-final/vm-A/qmp.sock,server=on,wait=off",
+        "-kernel",
+        "/var/tmp/sc01-vm-pair-20261008-final/vm-A/kernel",
+        "-initrd",
+        "/var/tmp/sc01-vm-pair-20261008-final/vm-A/initramfs.gz",
+        "-append",
+        "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+        "-drive",
+        "file=/var/tmp/sc01-vm-pair-20261008-final/vm-A/state.raw,format=raw,if=none,id=state",
+        "-device",
+        "virtio-blk-device,drive=state",
+        "-netdev",
+        "socket,id=link,listen=127.0.0.1:19401",
+        "-device",
+        "virtio-net-pci,netdev=link,mac=52:54:00:00:00:01"
+      ],
+      "images": {
+        "kernel": {
+          "path": "/var/tmp/sc01-vm-pair-20261008-final/vm-A/kernel",
+          "initial_sha256": "af8ad21e222dbff8c89909e1ef7b8b7607dd58188b2f3067128aac4f646d212d"
+        },
+        "initramfs.gz": {
+          "path": "/var/tmp/sc01-vm-pair-20261008-final/vm-A/initramfs.gz",
+          "initial_sha256": "65e0c1ca4a8bc049dabb0aab8016525a1ddc1e9939ab99bbb41a55adfa7fad72"
+        },
+        "state.raw": {
+          "path": "/var/tmp/sc01-vm-pair-20261008-final/vm-A/state.raw",
+          "initial_sha256": "f3c27dee6d6cfe99c46d2aea82e6b7a9ad22ccaf3c25f3a9703a569a4fa8a456"
+        }
+      }
+    },
+    {
+      "name": "VM-B",
+      "role": "receiver",
+      "cpu_affinity": [
+        1
+      ],
+      "numa_node": 0,
+      "qemu_argv": [
+        "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+        "-no-user-config",
+        "-nodefaults",
+        "-machine",
+        "virt-11.1,memory-backend=ram",
+        "-accel",
+        "tcg,thread=single",
+        "-cpu",
+        "cortex-a57",
+        "-smp",
+        "1",
+        "-m",
+        "512M",
+        "-object",
+        "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-serial",
+        "stdio",
+        "-no-reboot",
+        "-qmp",
+        "unix:/var/tmp/sc01-vm-pair-20261008-final/vm-B/qmp.sock,server=on,wait=off",
+        "-kernel",
+        "/var/tmp/sc01-vm-pair-20261008-final/vm-B/kernel",
+        "-initrd",
+        "/var/tmp/sc01-vm-pair-20261008-final/vm-B/initramfs.gz",
+        "-append",
+        "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+        "-drive",
+        "file=/var/tmp/sc01-vm-pair-20261008-final/vm-B/state.raw,format=raw,if=none,id=state",
+        "-device",
+        "virtio-blk-device,drive=state",
+        "-netdev",
+        "socket,id=link,connect=127.0.0.1:19401",
+        "-device",
+        "virtio-net-pci,netdev=link,mac=52:54:00:00:00:02"
+      ],
+      "images": {
+        "kernel": {
+          "path": "/var/tmp/sc01-vm-pair-20261008-final/vm-B/kernel",
+          "initial_sha256": "af8ad21e222dbff8c89909e1ef7b8b7607dd58188b2f3067128aac4f646d212d"
+        },
+        "initramfs.gz": {
+          "path": "/var/tmp/sc01-vm-pair-20261008-final/vm-B/initramfs.gz",
+          "initial_sha256": "8e21086153923b3bf568d7259bcd4bb6b66bb1ee379dfd52890599092d70c0cc"
+        },
+        "state.raw": {
+          "path": "/var/tmp/sc01-vm-pair-20261008-final/vm-B/state.raw",
+          "initial_sha256": "f4c8548bf2e812c38da61ca0e3b402d9d35e1dbd5e75a5062a27827bd7d3e9ca"
+        }
+      }
+    }
+  ],
+  "qemu": {
+    "version": "QEMU emulator version 11.1.2",
+    "path": "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+    "sha256": "082f9b5a505375e5931a787659c09b511c0742e829ad25b775bfc11f72d32782"
+  },
+  "image_lock_sha256": "32222123a98db253805fbee22f5478daa414e1ff721d94f44cd28ccaa112203c",
+  "source_hashes": {
+    "gateway/gateway.py": "3e3ab093c9ad0f6ba2f82204f4d7088326e78d83067d7b9fbf68e0b620ca0d53",
+    "gateway/scenario/contract.json": "b15961943dfc715d299671ac99fbcd01a9ea408e5239d66bb3b8f329ec89700d",
+    "gateway/scenario/agents/diagnose.py": "a338db19def3a5b2af45ebdca5aad254a2da12f827368512d64d374a0a89b191",
+    "gateway/scenario/agents/repair.py": "b6b8257c1d51fdfac24edcaa9c7948834cf89aea3101dcae0dd6580745856857",
+    "gateway/scenario/agents/preflight.py": "3f0010a5f23a868654686605c897068176cc381a1ee3f3b3f538b1719acf287c",
+    "gateway/vm/guest.py": "48288483e859387a57ca1e42d9656b0790e5082adc1b91d59ccf8b99b1b92b3a",
+    "gateway/vm/init.sh": "c69cccbfcef25a596e4f1f84a0a21971625cc3f22b90b212c0341883f06637b7",
+    "gateway/vm/init_guest.sh": "80630ddfbde61b552c874f8f5dc4a5be4c6266e3ddfdc6a49a5ab2c97fdaec9a",
+    "gateway/vm/provision.py": "b6bea2548a76d6bfa285fc7ee29212dbb413bd8d5b98e6d2fd08827c74c4f53e"
+  },
+  "host": {
+    "kernel": "6.12.0-206.104.3.3.el9uek.aarch64",
+    "numa": {
+      "0": [
+        0,
+        1
+      ]
+    },
+    "cpu_cache_sharing": {
+      "/sys/devices/system/cpu/cpu0/cache/index2/shared_cpu_list": "0-1",
+      "/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list": "0-1",
+      "/sys/devices/system/cpu/cpu0/cache/index1/shared_cpu_list": "0-1"
+    }
+  },
+  "management": "Independent serial pipes and QMP sockets to a trusted host supervisor; never relayed to agents",
+  "network": "One QEMU socket link; only VM-A gateway and VM-B trusted receiver service use guest interfaces",
+  "limits": [
+    "shared host OS and QEMU trusted",
+    "physical cache/timing effects unresolved",
+    "host services can run on both pinned CPUs",
+    "host NUMA node and storage backend shared",
+    "configuration check is not a complete observation or leakage certificate"
+  ]
+}

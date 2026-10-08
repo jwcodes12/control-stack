@@ -1,0 +1,18 @@
+name: vm-isolation
+on:
+  push:
+    paths: ['gateway/vm/**', '.github/workflows/vm-isolation.yml']
+  pull_request:
+    paths: ['gateway/vm/**', '.github/workflows/vm-isolation.yml']
+  workflow_dispatch:
+jobs:
+  configuration-controls:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check saved configuration and resource rejection fixtures
+        run: |
+          python3 gateway/vm/check_isolation.py --config gateway/vm/configs/local-20261008-final.json --receipt gateway/vm/receipts/qemu-provision-20261008-linkfix.json
+          python3 gateway/vm/test_isolation.py
+      - name: Verify saved VM usefulness receipt (gate failure remains recorded)
+        run: python3 gateway/vm/check_usefulness.py gateway/vm/receipts/usefulness-20261008-linkfix.json

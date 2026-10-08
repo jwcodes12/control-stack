@@ -1,0 +1,74 @@
+{
+  "schema": "sc01-local-vm-feasibility/1",
+  "captured_at": "2026-10-08T17:55:24.504915+00:00",
+  "source_commit": "8eab8ca21d4082c1dbd69fb5dee284795538917d",
+  "read_only_checks": [
+    {
+      "command": [
+        "sudo",
+        "-n",
+        "dmesg"
+      ],
+      "exit": 0,
+      "stdout": "[    0.000000] smccc: KVM: hypervisor services detected (0x00000000 0x00000000 0x00000000 0x00000003)\n[    0.017730] CPU: All CPU(s) started at EL1\n[    0.023016] DMI: QEMU KVM Virtual Machine, BIOS 1.6.6 08/22/2023\n[    0.296809] kvm [1]: HYP mode not available",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rpm",
+        "-q",
+        "qemu-kvm",
+        "qemu-kvm-core",
+        "qemu-system-aarch64-core"
+      ],
+      "exit": 3,
+      "stdout": "package qemu-kvm is not installed\npackage qemu-kvm-core is not installed\npackage qemu-system-aarch64-core is not installed\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "cat",
+        "/proc/self/status"
+      ],
+      "exit": 0,
+      "stdout": "Cpus_allowed_list:\t0-1\nMems_allowed_list:\t0",
+      "stderr": ""
+    }
+  ],
+  "kvm_device_exists": false,
+  "cache_cpu_sharing": {
+    "/sys/devices/system/cpu/cpu0/cache/index2/shared_cpu_list": "0-1",
+    "/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list": "0-1",
+    "/sys/devices/system/cpu/cpu0/cache/index1/shared_cpu_list": "0-1"
+  },
+  "outcome": "Hardware KVM unavailable. QEMU full-system TCG has an ARM Linux package, but it has not been installed or boot-tested. Proceeding with TCG requires accepting a changed isolation assumption.",
+  "qemu_package_lookup": {
+    "command": [
+      "brew",
+      "info",
+      "--json=v2",
+      "qemu"
+    ],
+    "exit": 0,
+    "result": {
+      "name": "qemu",
+      "versions": {
+        "stable": "11.1.2",
+        "head": "HEAD",
+        "bottle": true
+      },
+      "bottle_platforms": [
+        "arm64_linux"
+      ],
+      "arm64_linux_bottle": {
+        "cellar": "/home/linuxbrew/.linuxbrew/Cellar",
+        "url": "https://ghcr.io/v2/homebrew/core/qemu/blobs/sha256:5384f71ff89562d961f49c410d4ff413a6a66c901379c198725531dd4cde61c7",
+        "sha256": "5384f71ff89562d961f49c410d4ff413a6a66c901379c198725531dd4cde61c7"
+      }
+    }
+  },
+  "guest_boot_performed": false,
+  "network_or_acl_settings_changed": false,
+  "kernel_or_module_settings_changed": false,
+  "finished_at": "2026-10-08T17:56:06.971614+00:00"
+}

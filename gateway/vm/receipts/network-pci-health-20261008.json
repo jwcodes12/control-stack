@@ -1,0 +1,631 @@
+{
+  "schema": "sc01-qemu-provision-receipt/1",
+  "captured_at": "2026-10-08T19:08:46.338466+00:00",
+  "config_hash": "f657dcccb9a38168467c3ec92dc01ca9caf58dda3d6919b9b21a72e0ba198d11",
+  "config": {
+    "schema": "sc01-qemu-pair/1",
+    "accelerator": "tcg",
+    "vms": [
+      {
+        "name": "VM-A",
+        "role": "sender+gateway",
+        "cpu_affinity": [
+          0
+        ],
+        "numa_node": 0,
+        "qemu_argv": [
+          "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+          "-no-user-config",
+          "-nodefaults",
+          "-machine",
+          "virt-11.1,memory-backend=ram",
+          "-accel",
+          "tcg,thread=single",
+          "-cpu",
+          "cortex-a57",
+          "-smp",
+          "1",
+          "-m",
+          "512M",
+          "-object",
+          "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-serial",
+          "stdio",
+          "-no-reboot",
+          "-qmp",
+          "unix:/var/tmp/sc01-vm-pair-20261008-v7/vm-A/qmp.sock,server=on,wait=off",
+          "-kernel",
+          "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/kernel",
+          "-initrd",
+          "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/initramfs.gz",
+          "-append",
+          "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+          "-drive",
+          "file=/var/tmp/sc01-vm-pair-20261008-v7/vm-A/state.raw,format=raw,if=none,id=state",
+          "-device",
+          "virtio-blk-device,drive=state",
+          "-netdev",
+          "socket,id=link,listen=127.0.0.1:19401",
+          "-device",
+          "virtio-net-pci,netdev=link,mac=52:54:00:00:00:01"
+        ],
+        "images": {
+          "kernel": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/kernel",
+            "initial_sha256": "af8ad21e222dbff8c89909e1ef7b8b7607dd58188b2f3067128aac4f646d212d"
+          },
+          "initramfs.gz": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/initramfs.gz",
+            "initial_sha256": "d52f287827cfe60dded1a6d2ae37c9f4c9407af0b93296b5cdd2d4a6e27f284c"
+          },
+          "state.raw": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/state.raw",
+            "initial_sha256": "76da0349efebc5cf7f3e8431a20ae75d1cb7a3851ae21486e9140253ee08ac59"
+          }
+        }
+      },
+      {
+        "name": "VM-B",
+        "role": "receiver",
+        "cpu_affinity": [
+          1
+        ],
+        "numa_node": 0,
+        "qemu_argv": [
+          "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+          "-no-user-config",
+          "-nodefaults",
+          "-machine",
+          "virt-11.1,memory-backend=ram",
+          "-accel",
+          "tcg,thread=single",
+          "-cpu",
+          "cortex-a57",
+          "-smp",
+          "1",
+          "-m",
+          "512M",
+          "-object",
+          "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+          "-display",
+          "none",
+          "-monitor",
+          "none",
+          "-serial",
+          "stdio",
+          "-no-reboot",
+          "-qmp",
+          "unix:/var/tmp/sc01-vm-pair-20261008-v7/vm-B/qmp.sock,server=on,wait=off",
+          "-kernel",
+          "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/kernel",
+          "-initrd",
+          "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/initramfs.gz",
+          "-append",
+          "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+          "-drive",
+          "file=/var/tmp/sc01-vm-pair-20261008-v7/vm-B/state.raw,format=raw,if=none,id=state",
+          "-device",
+          "virtio-blk-device,drive=state",
+          "-netdev",
+          "socket,id=link,connect=127.0.0.1:19401",
+          "-device",
+          "virtio-net-pci,netdev=link,mac=52:54:00:00:00:02"
+        ],
+        "images": {
+          "kernel": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/kernel",
+            "initial_sha256": "af8ad21e222dbff8c89909e1ef7b8b7607dd58188b2f3067128aac4f646d212d"
+          },
+          "initramfs.gz": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/initramfs.gz",
+            "initial_sha256": "e55a5a67fe6ebd99af95e542fce6ba0100694e2a533091e17761cee5a5cb4804"
+          },
+          "state.raw": {
+            "path": "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/state.raw",
+            "initial_sha256": "c2634515491dc311ea21738b12570f31944707deca0408fced6c7622116d46cd"
+          }
+        }
+      }
+    ],
+    "qemu": {
+      "version": "QEMU emulator version 11.1.2",
+      "path": "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+      "sha256": "082f9b5a505375e5931a787659c09b511c0742e829ad25b775bfc11f72d32782"
+    },
+    "image_lock_sha256": "32222123a98db253805fbee22f5478daa414e1ff721d94f44cd28ccaa112203c",
+    "source_hashes": {
+      "gateway/gateway.py": "3e3ab093c9ad0f6ba2f82204f4d7088326e78d83067d7b9fbf68e0b620ca0d53",
+      "gateway/scenario/contract.json": "b15961943dfc715d299671ac99fbcd01a9ea408e5239d66bb3b8f329ec89700d",
+      "gateway/scenario/agents/diagnose.py": "a338db19def3a5b2af45ebdca5aad254a2da12f827368512d64d374a0a89b191",
+      "gateway/scenario/agents/repair.py": "b6b8257c1d51fdfac24edcaa9c7948834cf89aea3101dcae0dd6580745856857",
+      "gateway/scenario/agents/preflight.py": "3f0010a5f23a868654686605c897068176cc381a1ee3f3b3f538b1719acf287c",
+      "gateway/vm/guest.py": "48288483e859387a57ca1e42d9656b0790e5082adc1b91d59ccf8b99b1b92b3a",
+      "gateway/vm/init.sh": "c69cccbfcef25a596e4f1f84a0a21971625cc3f22b90b212c0341883f06637b7",
+      "gateway/vm/init_guest.sh": "80630ddfbde61b552c874f8f5dc4a5be4c6266e3ddfdc6a49a5ab2c97fdaec9a",
+      "gateway/vm/provision.py": "d210560c9f1b844d653d842e04f6fda43a9fb5b7fbbdd7bc126993c6660bf1f7"
+    },
+    "host": {
+      "kernel": "6.12.0-206.104.3.3.el9uek.aarch64",
+      "numa": {
+        "0": [
+          0,
+          1
+        ]
+      },
+      "cpu_cache_sharing": {
+        "/sys/devices/system/cpu/cpu0/cache/index2/shared_cpu_list": "0-1",
+        "/sys/devices/system/cpu/cpu0/cache/index0/shared_cpu_list": "0-1",
+        "/sys/devices/system/cpu/cpu0/cache/index1/shared_cpu_list": "0-1"
+      }
+    },
+    "management": "Independent serial pipes and QMP sockets to a trusted host supervisor; never relayed to agents",
+    "network": "One QEMU socket link; only VM-A gateway and VM-B trusted receiver service use guest interfaces",
+    "limits": [
+      "shared host OS and QEMU trusted",
+      "physical cache/timing effects unresolved",
+      "host services can run on both pinned CPUs",
+      "host NUMA node and storage backend shared",
+      "configuration check is not a complete observation or leakage certificate"
+    ]
+  },
+  "live": {
+    "VM-A": {
+      "pid": 1707891,
+      "actual_argv": [
+        "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+        "-no-user-config",
+        "-nodefaults",
+        "-machine",
+        "virt-11.1,memory-backend=ram",
+        "-accel",
+        "tcg,thread=single",
+        "-cpu",
+        "cortex-a57",
+        "-smp",
+        "1",
+        "-m",
+        "512M",
+        "-object",
+        "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-serial",
+        "stdio",
+        "-no-reboot",
+        "-qmp",
+        "unix:/var/tmp/sc01-vm-pair-20261008-v7/vm-A/qmp.sock,server=on,wait=off",
+        "-kernel",
+        "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/kernel",
+        "-initrd",
+        "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/initramfs.gz",
+        "-append",
+        "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+        "-drive",
+        "file=/var/tmp/sc01-vm-pair-20261008-v7/vm-A/state.raw,format=raw,if=none,id=state",
+        "-device",
+        "virtio-blk-device,drive=state",
+        "-netdev",
+        "socket,id=link,listen=127.0.0.1:19401",
+        "-device",
+        "virtio-net-pci,netdev=link,mac=52:54:00:00:00:01"
+      ],
+      "thread_cpu_affinity": {
+        "1707891": [
+          0
+        ],
+        "1707895": [
+          0
+        ],
+        "1707897": [
+          0
+        ],
+        "1707898": [
+          0
+        ],
+        "1707914": [
+          0
+        ]
+      },
+      "qmp": {
+        "greeting": {
+          "QMP": {
+            "version": {
+              "qemu": {
+                "micro": 2,
+                "minor": 1,
+                "major": 11
+              },
+              "package": ""
+            },
+            "capabilities": [
+              "oob"
+            ]
+          }
+        },
+        "query-status": {
+          "status": "running",
+          "running": true
+        },
+        "query-cpus-fast": [
+          {
+            "thread-id": 1707898,
+            "qom-type": "cortex-a57-arm-cpu",
+            "props": {
+              "core-id": 0,
+              "thread-id": 0,
+              "socket-id": 0,
+              "cluster-id": 0
+            },
+            "qom-path": "/machine/unattached/device[0]",
+            "cpu-index": 0,
+            "target": "aarch64"
+          }
+        ],
+        "query-block": [
+          {
+            "io-status": "ok",
+            "device": "state",
+            "locked": false,
+            "removable": false,
+            "inserted": {
+              "iops_rd": 0,
+              "detect_zeroes": "off",
+              "active": true,
+              "image": {
+                "limits": {
+                  "request-alignment": 1,
+                  "min-mem-alignment": 1,
+                  "opt-mem-alignment": 4096,
+                  "max-iov": 1024
+                },
+                "virtual-size": 268435456,
+                "filename": "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/state.raw",
+                "format": "raw",
+                "actual-size": 135659520,
+                "dirty-flag": false
+              },
+              "iops_wr": 0,
+              "ro": false,
+              "children": [
+                {
+                  "node-name": "#block031",
+                  "child": "file"
+                }
+              ],
+              "node-name": "#block195",
+              "backing_file_depth": 0,
+              "drv": "raw",
+              "iops": 0,
+              "bps_wr": 0,
+              "write_threshold": 0,
+              "encrypted": false,
+              "bps": 0,
+              "bps_rd": 0,
+              "cache": {
+                "no-flush": false,
+                "direct": false,
+                "writeback": true
+              },
+              "file": "/var/tmp/sc01-vm-pair-20261008-v7/vm-A/state.raw"
+            },
+            "qdev": "/machine/peripheral-anon/device[0]",
+            "type": "unknown"
+          }
+        ],
+        "query-chardev": [
+          {
+            "frontend-open": true,
+            "filename": "unix:/var/tmp/sc01-vm-pair-20261008-v7/vm-A/qmp.sock,server=on",
+            "label": "compat_monitor0"
+          },
+          {
+            "frontend-open": true,
+            "filename": "stdio",
+            "label": "serial0"
+          }
+        ],
+        "query-memory-devices": []
+      },
+      "guest": {
+        "role": "A",
+        "boot_id": "89e8500f-3c19-4aa9-9b38-a72c6ccbc422",
+        "kernel": "6.18.55-0-virt",
+        "agent": {
+          "netns": 4026532135,
+          "pidns": 4026532133,
+          "effective_capabilities": "0000000000000000",
+          "no_new_privileges": "1",
+          "interfaces": [
+            "lo"
+          ],
+          "routes4": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \n",
+          "host_netns": 4026531833,
+          "host_pidns": 4026531836
+        },
+        "guest_routes4": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \neth0\t000200C0\t00000000\t0001\t0\t0\t0\tFCFFFFFF\t0\t0\t0                                                                               \n",
+        "guest_addresses": "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000\n    inet 127.0.0.1/8 scope host lo\n       valid_lft forever preferred_lft forever\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000\n    inet 192.0.2.1/30 scope global eth0\n       valid_lft forever preferred_lft forever\n",
+        "guest_interfaces": [
+          "eth0",
+          "lo"
+        ],
+        "source_hashes": {
+          "gateway.py": "3e3ab093c9ad0f6ba2f82204f4d7088326e78d83067d7b9fbf68e0b620ca0d53",
+          "guest.py": "48288483e859387a57ca1e42d9656b0790e5082adc1b91d59ccf8b99b1b92b3a",
+          "contract.json": "b15961943dfc715d299671ac99fbcd01a9ea408e5239d66bb3b8f329ec89700d",
+          "diagnose.py": "a338db19def3a5b2af45ebdca5aad254a2da12f827368512d64d374a0a89b191",
+          "preflight.py": "3f0010a5f23a868654686605c897068176cc381a1ee3f3b3f538b1719acf287c",
+          "repair.py": "b6b8257c1d51fdfac24edcaa9c7948834cf89aea3101dcae0dd6580745856857"
+        }
+      },
+      "boot_log": []
+    },
+    "VM-B": {
+      "pid": 1707893,
+      "actual_argv": [
+        "/home/linuxbrew/.linuxbrew/Cellar/qemu/11.1.2/bin/qemu-system-aarch64",
+        "-no-user-config",
+        "-nodefaults",
+        "-machine",
+        "virt-11.1,memory-backend=ram",
+        "-accel",
+        "tcg,thread=single",
+        "-cpu",
+        "cortex-a57",
+        "-smp",
+        "1",
+        "-m",
+        "512M",
+        "-object",
+        "memory-backend-ram,id=ram,size=512M,merge=off,prealloc=on,share=off",
+        "-display",
+        "none",
+        "-monitor",
+        "none",
+        "-serial",
+        "stdio",
+        "-no-reboot",
+        "-qmp",
+        "unix:/var/tmp/sc01-vm-pair-20261008-v7/vm-B/qmp.sock,server=on,wait=off",
+        "-kernel",
+        "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/kernel",
+        "-initrd",
+        "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/initramfs.gz",
+        "-append",
+        "console=ttyAMA0 rdinit=/init panic=-1 quiet",
+        "-drive",
+        "file=/var/tmp/sc01-vm-pair-20261008-v7/vm-B/state.raw,format=raw,if=none,id=state",
+        "-device",
+        "virtio-blk-device,drive=state",
+        "-netdev",
+        "socket,id=link,connect=127.0.0.1:19401",
+        "-device",
+        "virtio-net-pci,netdev=link,mac=52:54:00:00:00:02"
+      ],
+      "thread_cpu_affinity": {
+        "1707893": [
+          1
+        ],
+        "1707896": [
+          1
+        ],
+        "1707903": [
+          1
+        ],
+        "1707904": [
+          1
+        ],
+        "1707905": [
+          1
+        ],
+        "1707928": [
+          1
+        ]
+      },
+      "qmp": {
+        "greeting": {
+          "QMP": {
+            "version": {
+              "qemu": {
+                "micro": 2,
+                "minor": 1,
+                "major": 11
+              },
+              "package": ""
+            },
+            "capabilities": [
+              "oob"
+            ]
+          }
+        },
+        "query-status": {
+          "status": "running",
+          "running": true
+        },
+        "query-cpus-fast": [
+          {
+            "thread-id": 1707904,
+            "qom-type": "cortex-a57-arm-cpu",
+            "props": {
+              "core-id": 0,
+              "thread-id": 0,
+              "socket-id": 0,
+              "cluster-id": 0
+            },
+            "qom-path": "/machine/unattached/device[0]",
+            "cpu-index": 0,
+            "target": "aarch64"
+          }
+        ],
+        "query-block": [
+          {
+            "io-status": "ok",
+            "device": "state",
+            "locked": false,
+            "removable": false,
+            "inserted": {
+              "iops_rd": 0,
+              "detect_zeroes": "off",
+              "active": true,
+              "image": {
+                "limits": {
+                  "request-alignment": 1,
+                  "min-mem-alignment": 1,
+                  "opt-mem-alignment": 4096,
+                  "max-iov": 1024
+                },
+                "virtual-size": 268435456,
+                "filename": "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/state.raw",
+                "format": "raw",
+                "actual-size": 135659520,
+                "dirty-flag": false
+              },
+              "iops_wr": 0,
+              "ro": false,
+              "children": [
+                {
+                  "node-name": "#block055",
+                  "child": "file"
+                }
+              ],
+              "node-name": "#block118",
+              "backing_file_depth": 0,
+              "drv": "raw",
+              "iops": 0,
+              "bps_wr": 0,
+              "write_threshold": 0,
+              "encrypted": false,
+              "bps": 0,
+              "bps_rd": 0,
+              "cache": {
+                "no-flush": false,
+                "direct": false,
+                "writeback": true
+              },
+              "file": "/var/tmp/sc01-vm-pair-20261008-v7/vm-B/state.raw"
+            },
+            "qdev": "/machine/peripheral-anon/device[0]",
+            "type": "unknown"
+          }
+        ],
+        "query-chardev": [
+          {
+            "frontend-open": true,
+            "filename": "unix:/var/tmp/sc01-vm-pair-20261008-v7/vm-B/qmp.sock,server=on",
+            "label": "compat_monitor0"
+          },
+          {
+            "frontend-open": true,
+            "filename": "stdio",
+            "label": "serial0"
+          }
+        ],
+        "query-memory-devices": []
+      },
+      "guest": {
+        "role": "B",
+        "boot_id": "d528a038-49bd-482b-ae7c-84605f0a7bdc",
+        "kernel": "6.18.55-0-virt",
+        "agent": {
+          "netns": 4026532135,
+          "pidns": 4026532133,
+          "effective_capabilities": "0000000000000000",
+          "no_new_privileges": "1",
+          "interfaces": [
+            "lo"
+          ],
+          "routes4": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \n",
+          "host_netns": 4026531833,
+          "host_pidns": 4026531836
+        },
+        "guest_routes4": "Iface\tDestination\tGateway \tFlags\tRefCnt\tUse\tMetric\tMask\t\tMTU\tWindow\tIRTT                                                       \neth0\t000200C0\t00000000\t0001\t0\t0\t0\tFCFFFFFF\t0\t0\t0                                                                               \n",
+        "guest_addresses": "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000\n    inet 127.0.0.1/8 scope host lo\n       valid_lft forever preferred_lft forever\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000\n    inet 192.0.2.2/30 scope global eth0\n       valid_lft forever preferred_lft forever\n",
+        "guest_interfaces": [
+          "eth0",
+          "lo"
+        ],
+        "source_hashes": {
+          "guest.py": "48288483e859387a57ca1e42d9656b0790e5082adc1b91d59ccf8b99b1b92b3a",
+          "repair.py": "b6b8257c1d51fdfac24edcaa9c7948834cf89aea3101dcae0dd6580745856857",
+          "contract.json": "b15961943dfc715d299671ac99fbcd01a9ea408e5239d66bb3b8f329ec89700d",
+          "diagnose.py": "a338db19def3a5b2af45ebdca5aad254a2da12f827368512d64d374a0a89b191",
+          "preflight.py": "3f0010a5f23a868654686605c897068176cc381a1ee3f3b3f538b1719acf287c",
+          "gateway.py": "3e3ab093c9ad0f6ba2f82204f4d7088326e78d83067d7b9fbf68e0b620ca0d53"
+        }
+      },
+      "boot_log": []
+    }
+  },
+  "verdict": "CONDITIONAL",
+  "scope": "Guest boot and configuration; no channel measurement",
+  "transport_health": {
+    "infrastructure_health": true
+  },
+  "network_after": {
+    "VM-A": {
+      "addresses": "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n    inet 127.0.0.1/8 scope host lo\n       valid_lft forever preferred_lft forever\n    inet6 ::1/128 scope host \n       valid_lft forever preferred_lft forever\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000\n    link/ether 52:54:00:00:00:01 brd ff:ff:ff:ff:ff:ff\n    inet 192.0.2.1/30 scope global eth0\n       valid_lft forever preferred_lft forever\n    inet6 fe80::5054:ff:fe00:1/64 scope link \n       valid_lft forever preferred_lft forever\n",
+      "neighbors": "IP address       HW type     Flags       HW address            Mask     Device\n192.0.2.2        0x1         0x2         52:54:00:00:00:02     *        eth0\n",
+      "counters": {
+        "tx_errors": "0",
+        "rx_length_errors": "0",
+        "rx_packets": "8",
+        "tx_carrier_errors": "0",
+        "tx_dropped": "0",
+        "rx_missed_errors": "0",
+        "rx_over_errors": "0",
+        "tx_aborted_errors": "0",
+        "rx_crc_errors": "0",
+        "rx_frame_errors": "0",
+        "rx_nohandler": "0",
+        "tx_fifo_errors": "0",
+        "multicast": "0",
+        "tx_packets": "13",
+        "tx_window_errors": "0",
+        "rx_bytes": "587",
+        "collisions": "0",
+        "rx_dropped": "0",
+        "tx_bytes": "1009",
+        "tx_heartbeat_errors": "0",
+        "rx_fifo_errors": "0",
+        "rx_errors": "0",
+        "tx_compressed": "0",
+        "rx_compressed": "0"
+      }
+    },
+    "VM-B": {
+      "addresses": "1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1000\n    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\n    inet 127.0.0.1/8 scope host lo\n       valid_lft forever preferred_lft forever\n    inet6 ::1/128 scope host \n       valid_lft forever preferred_lft forever\n2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000\n    link/ether 52:54:00:00:00:02 brd ff:ff:ff:ff:ff:ff\n    inet 192.0.2.2/30 scope global eth0\n       valid_lft forever preferred_lft forever\n    inet6 fe80::5054:ff:fe00:2/64 scope link \n       valid_lft forever preferred_lft forever\n",
+      "neighbors": "IP address       HW type     Flags       HW address            Mask     Device\n192.0.2.1        0x1         0x2         52:54:00:00:00:01     *        eth0\n",
+      "counters": {
+        "tx_errors": "0",
+        "rx_length_errors": "0",
+        "rx_packets": "6",
+        "tx_carrier_errors": "0",
+        "tx_dropped": "0",
+        "rx_missed_errors": "0",
+        "rx_over_errors": "0",
+        "tx_aborted_errors": "0",
+        "rx_crc_errors": "0",
+        "rx_frame_errors": "0",
+        "rx_nohandler": "0",
+        "tx_fifo_errors": "0",
+        "multicast": "0",
+        "tx_packets": "13",
+        "tx_window_errors": "0",
+        "rx_bytes": "423",
+        "collisions": "0",
+        "rx_dropped": "0",
+        "tx_bytes": "997",
+        "tx_heartbeat_errors": "0",
+        "rx_fifo_errors": "0",
+        "rx_errors": "0",
+        "tx_compressed": "0",
+        "rx_compressed": "0"
+      }
+    }
+  }
+}

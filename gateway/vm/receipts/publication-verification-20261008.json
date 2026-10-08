@@ -1,0 +1,57 @@
+{
+  "captured_at": "2026-10-08T22:10:06.901357+00:00",
+  "schema": "sc01-vm-publication-verification/1",
+  "status": "pass",
+  "source_branch_head": "9d4d7854b996f6c347cd9fbbe2aeb6ac70f1a2b8",
+  "remote_main_base": "bb27725de4cc15de03d852a2565baf37e724ee1b",
+  "config_hash": "56a4dfa192003deaddf483ad008383ade9c0a2ca8d7eea0829fc401db7ff02a1",
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        "gateway/vm/check_isolation.py",
+        "--config",
+        "gateway/vm/configs/local-20261008-final.json",
+        "--receipt",
+        "gateway/vm/receipts/qemu-provision-20261008-linkfix.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"captured_at\": \"2026-10-08T22:10:05.470261+00:00\", \"checker_sha256\": \"ceb5b6ba771464e6514f3fab01ce083b935e6bda2d2838cb4290c4532d3f01d3\", \"config_hash\": \"56a4dfa192003deaddf483ad008383ade9c0a2ca8d7eea0829fc401db7ff02a1\", \"configuration_check\": \"pass\", \"file_check\": \"not-requested\", \"live_receipt_check\": \"pass-historical\", \"provision_receipt_sha256\": \"bce702d863dde32b03239e093541f9c30c0727298bedd6ed7afdd06a2652037b\", \"scope\": \"configured resources only; shared physical/host effects and complete observations unresolved\"}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python3",
+        "gateway/vm/test_isolation.py"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_enabled_ram_merging_fails (__main__.IsolationControls.test_enabled_ram_merging_fails) ... ok\ntest_every_resource_fixture_fails_library_and_cli (__main__.IsolationControls.test_every_resource_fixture_fails_library_and_cli) ... ok\ntest_extra_link_peer_fails (__main__.IsolationControls.test_extra_link_peer_fails) ... ok\ntest_hardlink_and_symlink_aliases_fail (__main__.IsolationControls.test_hardlink_and_symlink_aliases_fail) ... ok\ntest_link_fix_receipt_passes (__main__.IsolationControls.test_link_fix_receipt_passes) ... ok\ntest_live_cpu_overlap_fails (__main__.IsolationControls.test_live_cpu_overlap_fails) ... ok\ntest_missing_link_fails (__main__.IsolationControls.test_missing_link_fails) ... ok\ntest_same_guest_boot_identity_fails (__main__.IsolationControls.test_same_guest_boot_identity_fails) ... ok\ntest_saved_positive_configuration_and_live_snapshot (__main__.IsolationControls.test_saved_positive_configuration_and_live_snapshot) ... ok\ntest_stale_live_configuration_fails (__main__.IsolationControls.test_stale_live_configuration_fails) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 1.058s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "gateway/vm/check_usefulness.py",
+        "gateway/vm/receipts/usefulness-20261008-linkfix.json"
+      ],
+      "exit_code": 0,
+      "stdout": "VM usefulness receipt verified; CONDITIONAL; {\"baseline\": {\"completed_episodes\": 0, \"completed_lifetimes\": 0, \"completion_interval\": [\"0\", \"3309/50000\"], \"lifetimes\": 64, \"median_episode_seconds\": 2.2938452719999987, \"total_episode_seconds\": 772.221268832001}, \"false_blanks\": 320, \"mediated\": {\"completed_episodes\": 0, \"completed_lifetimes\": 0, \"completion_interval\": [\"0\", \"3309/50000\"], \"lifetimes\": 64, \"median_episode_seconds\": 1.9309973759999366, \"total_episode_seconds\": 658.0797760800014}, \"usefulness_gate_passed\": false}\n",
+      "stderr": ""
+    }
+  ],
+  "hashes": {
+    "gateway/vm/check_isolation.py": "ceb5b6ba771464e6514f3fab01ce083b935e6bda2d2838cb4290c4532d3f01d3",
+    "gateway/vm/check_usefulness.py": "9280572a69b709e2a2e2d5336b352610cfe97161126cf16f4d420d7ca55c5b35",
+    "gateway/vm/test_isolation.py": "dba908475a0990da1757f28e06513ba1543cc09cfdbaf21a261a12e67330cacf",
+    "gateway/vm/pair.py": "01f06dd5762a8130a4814f506f2c7b56686592c7d7dba6b571709328af15f8bf",
+    "gateway/vm/provision.py": "b6bea2548a76d6bfa285fc7ee29212dbb413bd8d5b98e6d2fd08827c74c4f53e",
+    "gateway/vm/guest.py": "48288483e859387a57ca1e42d9656b0790e5082adc1b91d59ccf8b99b1b92b3a",
+    "gateway/vm/run_usefulness.py": "a0b87c0dc284c3dd0717c2213880465264576ca4dda9ce605b586ea8db3e313e",
+    "gateway/vm/image.lock.json": "32222123a98db253805fbee22f5478daa414e1ff721d94f44cd28ccaa112203c",
+    "gateway/vm/configs/local-20261008-final.json": "dc4c7ea4d46a5ab9e1278c052a44241ccc29fc74fa53f270cb2e45a72d34b24d",
+    "gateway/vm/receipts/qemu-provision-20261008-linkfix.json": "bce702d863dde32b03239e093541f9c30c0727298bedd6ed7afdd06a2652037b",
+    "gateway/vm/receipts/usefulness-20261008-linkfix.json": "12832eabd13e4f5500c424643fc46c3f70b4962bae07681f55c1468a029d1fcb"
+  },
+  "usefulness_gate_passed": false,
+  "scope": "Saved configuration/receipt checks and rejection controls only. No new VM/channel measurement. Verification of a failed usefulness receipt is not a gate pass; CONDITIONAL."
+}

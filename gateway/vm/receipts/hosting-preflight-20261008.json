@@ -1,0 +1,232 @@
+{
+  "captured_at": "2026-10-08T17:48:06.059594+00:00",
+  "results": [
+    {
+      "host": "100.77.156.51",
+      "port": 22,
+      "reachable": false,
+      "error": "timed out"
+    },
+    {
+      "host": "100.77.156.51",
+      "port": 8006,
+      "reachable": false,
+      "error": "timed out"
+    },
+    {
+      "host": "100.112.124.105",
+      "port": 22,
+      "reachable": true
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "ConnectTimeout=6",
+        "-o",
+        "ConnectionAttempts=1",
+        "claude-lxc",
+        "hostname; id; command -v qm pvesh ssh; test -e /dev/kvm && ls -l /dev/kvm"
+      ],
+      "exit": 255,
+      "stdout": "",
+      "stderr": "tailscale: tailnet policy does not permit you to SSH as user \"opc\"\nConnection closed by 100.112.124.105 port 22\n"
+    },
+    {
+      "imds_reachable": true,
+      "fields": {
+        "displayName": "claude-code-dev",
+        "region": "iad",
+        "canonicalRegionName": "us-ashburn-1",
+        "availabilityDomain": "wwYD:US-ASHBURN-AD-1",
+        "shape": "VM.Standard.A1.Flex",
+        "shapeConfig": {
+          "maxVnicAttachments": 2,
+          "memoryInGBs": 16.0,
+          "networkingBandwidthInGbps": 2.0,
+          "ocpus": 2.0
+        },
+        "id": "ocid1.instance.oc1.iad.anuwcljrvmk5vxyc2ddlzyw2s5ltkcimbhdd4pc2d6d375b6ozfj3xw5vrua",
+        "compartmentId": "ocid1.tenancy.oc1..aaaaaaaa3rpftwya5fsxmgbkaksrrb5ikv4yul3st7tqgh2u3ovmywlyk2kq",
+        "tenantId": "ocid1.tenancy.oc1..aaaaaaaa3rpftwya5fsxmgbkaksrrb5ikv4yul3st7tqgh2u3ovmywlyk2kq"
+      }
+    },
+    {
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=yes",
+        "-o",
+        "ConnectTimeout=6",
+        "root@claude-lxc",
+        "hostname; id; command -v qm pvesh ssh; ls -l /dev/kvm; ssh -G localbox-pve | sed -n \"1,12p\""
+      ],
+      "exit": 255,
+      "stdout": "",
+      "stderr": "tailscale: tailnet policy does not permit you to SSH as user \"root\"\nConnection closed by 100.112.124.105 port 22\n"
+    }
+  ],
+  "local": {
+    "architecture": "aarch64",
+    "kernel": "6.12.0-206.104.3.3.el9uek.aarch64",
+    "dev_kvm_exists": false,
+    "oci_config_exists": false,
+    "oci_cli": null,
+    "oci_sdk_available": false,
+    "vm_tools": {
+      "virsh": null,
+      "qemu-system-aarch64": null,
+      "qemu-system-x86_64": null,
+      "cloud-init": "/usr/bin/cloud-init",
+      "terraform": null,
+      "tofu": null
+    },
+    "cloud_auth_env_names": [],
+    "libvirt_socket_exists": false
+  },
+  "oci_identity_endpoint_status": {
+    "cert.pem": 200,
+    "intermediate.pem": 200,
+    "key.pem": 200
+  },
+  "updated_at": "2026-10-08T17:48:50.868446+00:00",
+  "supplemental_checks": [
+    {
+      "command": [
+        "uname",
+        "-a"
+      ],
+      "exit": 0,
+      "stdout": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64 aarch64 GNU/Linux\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "lscpu"
+      ],
+      "exit": 0,
+      "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  2\nOn-line CPU(s) list:                     0,1\nVendor ID:                               ARM\nModel name:                              Neoverse-N1\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per socket:                      2\nSocket(s):                               1\nStepping:                                r3p1\nBogoMIPS:                                50.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0,1\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "tailscale",
+        "status",
+        "--json"
+      ],
+      "exit": 0,
+      "stdout": {
+        "BackendState": "Running",
+        "Self": {
+          "HostName": "claude-code-dev",
+          "TailscaleIPs": [
+            "100.82.110.116",
+            "fd7a:115c:a1e0::953a:6e74"
+          ],
+          "Online": true
+        },
+        "Peers": [
+          {
+            "HostName": "localbox-pve",
+            "DNSName": "localbox-pve.tail995b4a.ts.net.",
+            "TailscaleIPs": [
+              "100.77.156.51",
+              "fd7a:115c:a1e0::b433:9c34"
+            ],
+            "Online": true
+          },
+          {
+            "HostName": "claude-lxc",
+            "DNSName": "claude-lxc.tail995b4a.ts.net.",
+            "TailscaleIPs": [
+              "100.112.124.105",
+              "fd7a:115c:a1e0::7e2e:7c6a"
+            ],
+            "Online": true
+          }
+        ]
+      },
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ssh",
+        "-G",
+        "localbox-pve"
+      ],
+      "exit": 0,
+      "stdout": "user root\nhostname 100.77.156.51\nport 22\nidentityfile ~/.ssh/localbox_pve_ed25519",
+      "stderr": "Pseudo-terminal will not be allocated because stdin is not a terminal.\n"
+    }
+  ],
+  "oci_instance_principal_check": {
+    "sdk_version": "2.187.2",
+    "started_at": "2026-10-08T17:50:10.292143+00:00",
+    "auth_method": "InstancePrincipalsSecurityTokenSigner",
+    "mutating_api_calls": 0,
+    "authenticated": true,
+    "checks": [
+      {
+        "operation": "list_instances",
+        "error": {
+          "status": 404,
+          "code": "NotAuthorizedOrNotFound",
+          "message": "Authorization failed or requested resource not found.",
+          "operation_name": "list_instances",
+          "opc_request_id": null
+        }
+      },
+      {
+        "operation": "list_vcns",
+        "error": {
+          "status": 404,
+          "code": "NotAuthorizedOrNotFound",
+          "message": "Authorization failed or requested resource not found.",
+          "operation_name": "list_vcns",
+          "opc_request_id": null
+        }
+      },
+      {
+        "operation": "list_subnets",
+        "error": {
+          "status": 404,
+          "code": "NotAuthorizedOrNotFound",
+          "message": "Authorization failed or requested resource not found.",
+          "operation_name": "list_subnets",
+          "opc_request_id": null
+        }
+      }
+    ],
+    "finished_at": "2026-10-08T17:50:12.341220+00:00",
+    "probe_source": "import sys,json,concurrent.futures\nfrom pathlib import Path\nfrom datetime import datetime,timezone\nsys.path.insert(0,'/tmp/sc01-oci-sdk-20261008')\nimport oci\npath=Path('/tmp/sc01-host-preflight.json')\nreceipt=json.loads(path.read_text())\ncompartment=receipt['results'][4]['fields']['compartmentId']\nrecord={'sdk_version':oci.__version__,'started_at':datetime.now(timezone.utc).isoformat(),'auth_method':'InstancePrincipalsSecurityTokenSigner','mutating_api_calls':0}\n\ndef error(e):\n if isinstance(e,oci.exceptions.ServiceError):\n  return {k:getattr(e,k,None) for k in ['status','code','message','operation_name','opc_request_id']}\n return {'exception_type':type(e).__name__}\ntry:\n signer=oci.auth.signers.InstancePrincipalsSecurityTokenSigner(retry_strategy=oci.retry.NoneRetryStrategy(),timeout=(5,10))\n record['authenticated']=True\n compute=oci.core.ComputeClient({},signer=signer,timeout=(5,10),retry_strategy=oci.retry.NoneRetryStrategy())\n network=oci.core.VirtualNetworkClient({},signer=signer,timeout=(5,10),retry_strategy=oci.retry.NoneRetryStrategy())\n def run(name,call):\n  try:\n   response=call(compartment_id=compartment,limit=10)\n   return {'operation':name,'status':response.status,'opc_request_id':response.headers.get('opc-request-id'),'count_first_page':len(response.data),'has_next_page':bool(response.headers.get('opc-next-page')),'items':[{k:getattr(item,k,None) for k in ['id','display_name','lifecycle_state']} for item in response.data]}\n  except Exception as e:return {'operation':name,'error':error(e)}\n with concurrent.futures.ThreadPoolExecutor() as pool:\n  jobs=[pool.submit(run,n,c) for n,c in [('list_instances',compute.list_instances),('list_vcns',network.list_vcns),('list_subnets',network.list_subnets)]]\n  record['checks']=[j.result() for j in jobs]\nexcept Exception as e:\n record['authenticated']=False\n record['auth_error']=error(e)\nrecord['finished_at']=datetime.now(timezone.utc).isoformat()\nrecord['probe_source']=Path(__file__).read_text()\nreceipt['oci_instance_principal_check']=record\npath.write_text(json.dumps(receipt,indent=2)+'\\n')\nprint(json.dumps({k:v for k,v in record.items() if k!='probe_source'},indent=2))\n"
+  },
+  "schema": "sc01-vm-hosting-preflight/1",
+  "scope": "Step 1 read-only hosting assessment; not a VM configuration or isolation receipt",
+  "source_commit": "1fa87006434fbb30e39f3dc8e72eb2a2267421ba",
+  "branch": "sc01-vm-host-check-20261008",
+  "decision": {
+    "status": "BLOCKED",
+    "selected_host": null,
+    "reason": "No option verified usable with current access; Proxmox direct TCP times out, checked claude-lxc SSH users denied, OCI list APIs return NotAuthorizedOrNotFound, local /dev/kvm absent."
+  },
+  "scope_limits": [
+    "No VM provisioned or config inspected",
+    "No OCI launch attempted; list errors do not prove all profiles/compartments unusable",
+    "No ACL or network setting modified",
+    "No new channel or usefulness experiment run",
+    "No assurance assumption discharged"
+  ],
+  "temporary_sdk": {
+    "directory": "/tmp/sc01-oci-sdk-20261008",
+    "version": "2.187.2",
+    "system_install": false,
+    "credentials_persisted": false
+  },
+  "finalized_at": "2026-10-08T17:51:29.618847+00:00"
+}

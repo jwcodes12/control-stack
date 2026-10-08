@@ -478,3 +478,7 @@ lake env lean scenarios/SC-13/claim.lean
 - `added` `tools/build_status.py`
 - `added` `tools/check_scenario.py`
 - `added` `tools/test_check_scenario.py`
+
+## SC-01 source-hash rebind in this work branch
+
+After relocating the reviewed declarations, the unchanged historical SC-01 verifier still reads and kernel-queries its original `ControlStack/Leakage.lean` and `ControlStack/Necessity.lean` paths. Those paths now import the new definitions **and repeat exactly the theorem axiom queries named in the original assurance manifest**. The two corresponding SHA-256 bindings in `assurance/sc01-safety-case.json` are updated to the new *facade source bytes*. This is a versioned binding change in the assurance metadata, **not** a change to any historical experiment, cache receipt, preregistration, measured result or theorem statement. The unchanged verifier must still be executed to demonstrate steps 1–4 actually pass; it was not run in the current network-restricted shell.

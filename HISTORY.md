@@ -6,7 +6,7 @@
 - Moved six reviewed main theorem implementations without changing their bytes; old Lean module names now import canonical definitions. Generated one source-derived theorem registry (Markdown + JSON) with registry-link checking; did not promote recorded validation to new verification.
 - Reconciled SC-27 as a draft attestation scenario; C's dispatch theorem is only a narrower bridge and does not establish independent attestation.
 - Known outstanding: no networked shell clone, no elan/lake build or Python full suite run in this environment. See [comparison](reviews/structure-merge/comparison.md) and [remaining steps](STRUCTURE-PLAN.md).
-- Every integration commit uses `[skip ci]`; no push to `main`. No frozen prereg/evidence receipt touched.
+- Every integration commit uses `[skip ci]`; no push to `main`. No frozen prereg/evidence receipt touched. SC-01 assurance manifest source SHA-256 bindings for the two relocated compat facades were explicitly re-pinned; this is metadata, not a regenerated experimental receipt.
 
 
 - **Session 7 continuation (2026-10-07).** Corrected the VCVio defer game so a missed service check keeps the trusted replacement in place and continues, matching the ledger recursion. The operational game and exact `ENNReal` recursion compile; the calibrated real-valued bridge remains open.

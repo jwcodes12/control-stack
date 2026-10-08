@@ -25,6 +25,7 @@ import ControlStack.SafetyCaseSC01
 import ControlStack.ComposeCoverage
 import ControlStack.MultiStep
 import ControlStack.ScenarioACore
+import ControlStack.AuditBudget
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.

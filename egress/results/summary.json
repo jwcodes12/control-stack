@@ -6,13 +6,13 @@
     "cases": 62,
     "scripted_cases": 58,
     "packet_statistics": {
-      "received": 1460,
+      "received": 1454,
       "dropped": 0
     },
     "observed_mirror_syns": 69,
     "orphan_syns": 0,
     "traced_gateway_connects": 69,
-    "oracle_regressions": 7,
+    "oracle_regressions": 9,
     "mutations": [
       "namespace rejected",
       "failed forbidden SYN detected",
@@ -26,5 +26,13 @@
     "allow": 4,
     "local": 1,
     "scope-limited": 6
+  },
+  "experimental": {
+    "files": {
+      "egress/experimental/outer_accounting.py": "f12007c6e1db0d959c3f60ba2f979050bf51f631bf3650d65a4e7bb16550fe5a"
+    },
+    "status": "bounded-calibration-pass",
+    "evidence": "egress/results/local-outer-accounting.json",
+    "scope": "Loopback-only outer namespace, two traced senders, eight initial TCP/UDP transmissions; no sandbox integration or universal attribution."
   }
 }

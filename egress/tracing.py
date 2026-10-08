@@ -7,8 +7,9 @@ def connects(text):
     for line in text.splitlines():
         if 'connect(' not in line or 'sa_family=AF_INET' not in line: continue
         timestamp = re.search(r'(\d+\.\d+)\s+connect\(',line)
-        ip = re.search(r'inet_addr\("([^"]+)"\)',line)
-        port = re.search(r'sin_port=htons\((\d+)\)',line)
+        ipv6 = 'sa_family=AF_INET6' in line
+        ip = re.search(r'inet_pton\(AF_INET6, "([^"]+)"',line) if ipv6 else re.search(r'inet_addr\("([^"]+)"\)',line)
+        port = re.search(r'sin6_port=htons\((\d+)\)',line) if ipv6 else re.search(r'sin_port=htons\((\d+)\)',line)
         if not (timestamp and ip and port): raise ValueError('unparsed network connect trace: '+line)
         records.append({'t':float(timestamp.group(1)), 'ip':ip.group(1), 'port':int(port.group(1)), 'protocol':'tcp', 'raw':line})
     return records

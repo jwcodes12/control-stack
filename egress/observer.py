@@ -33,6 +33,9 @@ def decode_packet(data):
             else: size = (p[offset+1]+(2 if proto==51 else 1))*(4 if proto==51 else 8)
             proto = next_proto; offset += size
             if len(p)<offset: return None
+            # Non-initial fragments start in arbitrary payload, not an extension
+            # header. Preserve their address-level evidence without reading ports.
+            if fragmented: break
         src, dst = socket.inet_ntop(socket.AF_INET6, p[8:24]), socket.inet_ntop(socket.AF_INET6, p[24:40])
     else: return None
     has_ports = not fragmented and proto in (6,17) and len(p)>=offset+4

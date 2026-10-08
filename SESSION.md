@@ -1,3 +1,19 @@
+
+## SC-03 publication authorization — 2026-10-08
+
+John clarified that Git pushes are permitted and the external-send restriction
+concerns emails/messages to people. Publishing the prepared private branch
+`egress-r10-controls` and running GitHub CI are authorized. The completed local
+follow-up is included; unrelated destination prototypes and review metadata are
+excluded. Auditgate is unchanged.
+
+Publication checks: `python3 egress/check_evidence.py` (receipt hashes, 62 controls,
+three mutations and eight-flow calibration), `python3 egress/test_oracle.py`
+(nine tests), `egress/check_lean.sh` (six theorem axiom checks) and
+`git diff --check` passed. Remote results will be recorded after the push.
+Next engineering step: integrate the gateway/sandbox into the isolated outer
+topology; general process attribution remains unresolved.
+
 > **SESSION 6 CONTINUATION (2026-10-07).** The sharper adaptive bound now compiles in standalone modules and in a separate kernel-gated proofport against the actual setup and protocol definitions. The proof uses only standard axioms. The frozen statement remains unchanged; a separate strengthening still needs registration and red-team review.
 > The anonymized private export was refreshed with these modules and pushed as snapshot commit `98fe35f`.
 > **SESSION 6 STATUS (2026-10-07).** Stratified VCVio survival, seeded factorization and classwise end-to-end safety compile with standard axioms.

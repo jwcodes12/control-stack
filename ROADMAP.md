@@ -4,14 +4,17 @@
 
 Implemented test-only launcher/gateway/adapter, actual namespace validator, host packet and syscall observers,
 pinned dependency install/compile/test, 62 passing full-suite controls, three successful mutation checks,
-seven oracle regressions, and six standalone Lean theorem checks (`lake build ControlStack` also passes).
+nine oracle regressions, and six standalone Lean theorem checks (the original full `lake build ControlStack` passed).
 See `egress/README.md`, `egress/results/summary.json`, `egress/FIDELITY.md` and `assurance/egress-boundary-v1.json`.
 Reachability only; CONDITIONAL; no production deployment or remote CI result claimed. Auditgate untouched.
 Astra and approved Opus 5.5 reviews produced oracle fixes. Next: all-destination process attribution in a
-disposable outer topology and an actual GitHub workflow run after publication is authorized.
-A bounded local CLI follow-up is scheduled for 09:30:31 UTC on 2026-10-08 (five hours after scheduling;
-account reset time unavailable). Remote/export publication remains pending.
-
+disposable outer topology and an actual GitHub workflow run on the authorized private branch.
+The authorized follow-up after 09:30:31 UTC fixed IPv6 trace/fragment observer bugs and
+refreshed full/mutation receipts. A bounded loopback-only outer-namespace experiment passed:
+eight initial TCP/UDP transmissions, two independently traced sender PIDs, zero drops,
+missing-trace mutation detected. General attribution remains unresolved; next is integrating
+the gateway/sandbox into that isolated topology. See `reviews/egress-follow-up-2026-10-08.md`.
+No rate-limit error occurred; account reset time remains unavailable. Git pushes and GitHub CI are authorized (2026-10-08); publication is being completed on `egress-r10-controls`.
 
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in

@@ -40,5 +40,30 @@ class OracleTests(unittest.TestCase):
 
     def test_wheel_is_deterministic(self): self.assertEqual(wheel(),wheel())
 
+    def test_ipv6_connect_cannot_disappear_from_trace(self):
+        from tracing import connects, check
+        text = '123 1.000000 connect(7, {sa_family=AF_INET6, sin6_port=htons(443), inet_pton(AF_INET6, "::1", &sin6_addr)}, 28) = -1 ECONNREFUSED'
+        records = connects(text)
+        self.assertEqual([(r['ip'],r['port']) for r in records],[('::1',443)])
+        policy = {'allow':{'mirror.internal:443':['::1',443]}}
+        self.assertTrue(check(records,[],policy))
+        self.assertFalse(check(records,[{'decision':'allow','t':.5,'ip':'::1','port':443}],policy))
+        with self.assertRaises(ValueError): connects(text.replace('inet_pton','unknown_address'))
+
+    def test_noninitial_ipv6_fragment_remains_visible(self):
+        import socket, struct
+        from observer import decode_packet
+        # Next-header names destination options, but this fragment starts in the
+        # middle of that header. Its first payload bytes are deliberately short.
+        header = struct.pack('!IHBB16s16s',6<<28,10,44,64,
+                             socket.inet_pton(socket.AF_INET6,'::1'),
+                             socket.inet_pton(socket.AF_INET6,'::1'))
+        fragment = struct.pack('!BBHI',60,0,8,123)+b'\xff\xff'
+        event = decode_packet(b'\0'*12+b'\x86\xdd'+header+fragment)
+        self.assertIsNotNone(event)
+        self.assertTrue(event['fragmented'])
+        self.assertIsNone(event['port'])
+        self.assertEqual(event['dst'],'::1')
+
 
 if __name__=='__main__': unittest.main()

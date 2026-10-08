@@ -1,3 +1,5 @@
+> **SESSION 8 FINAL (2026-10-08).** See ROADMAP "Session 8 status note". Latest export commit 4a6cbeb (CI green:
+> fast, lean-covert, auditgate-db). SC-03 and SC-16 paused; next external-review round to answer is chatgpt-10.md.
 > **SESSION 8 RESULTS (2026-10-07).** Export fixed: root `ControlStack.lean` imports every proof module; full `lake build` passes; pushed (`feefc34`).
 > - `DeferMono.lean`: monotone defer bound (lower bounds on recall/halt/service ⇒ catastrophe ≤ catV).
 > - `ComposeGame.lean`: trusted+untrusted composition, product bound (1−r)+r·τ·L·(n_s+1)/(n_h+1) with fresh trusted coins; tight at n_h=0.

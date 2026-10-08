@@ -32,7 +32,8 @@ Status legend:
     fixed or documented: [disposition](reviews/adversarial-2026-10-08/disposition.md).
   - NOT ledger-verified. The proofledger foreign-family red team plus Lean `Witness` is the recommended next gate,
     for statements rather than proofs.
-- **Next.**
+- **Next.** Work that needs no testing is planned in [STRUCTURE-PLAN.md](STRUCTURE-PLAN.md): scenario folders, a
+  generic case checker, a theorem registry, adversary classes and gap-closing theory.
   1. Owner: SC-01 deadline or hardware.
   2. Proofledger red team of the headline statements, with Sol/Astra and Gemini as foreign families.
   3. Runtime F4/F7 implementations with correspondence tests.

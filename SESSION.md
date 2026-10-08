@@ -1,3 +1,19 @@
+> **SC-03 egress slice (2026-10-08, Sol).** Implemented `egress/` launcher, strict pinned-peer gateway, adapter,
+> actual namespace validator, independent packet/syscall observers, bounded attacker suite and pinned wheel usefulness task.
+> Final serial runs: 62/62 full cases pass; namespace, failed-SYN and direct-mirror mutations detected; 34 parser-only cases
+> are an explicit partial pass; unprivileged full mode exits 2/blocked (CAP_NET_RAW absent). Zero packet drops, no orphan
+> mirror SYNs. Seven oracle regressions pass; `egress/check_lean.sh` checks six theorems with standard axioms;
+> `lake build ControlStack` passes (existing VCVio deprecation warnings). `egress/check_evidence.py` validates source hashes
+> and stored receipts. An early concurrent fixture run contaminated observation windows; it was discarded, a host-wide
+> abstract-socket serialization lock was added, and all recorded final receipts were rerun serially.
+> R10 source fetched from jwcodes12/control-stack; tracker #1. Astra and approved Opus 5.5 reviewed an earlier snapshot;
+> dispositions are in `egress/REVIEW-DISPOSITIONS.md`. Strict response/task completion, packet-loss checks, complete mountpoint
+> allowlist, namespace-wide socket-FD checks, absolute header deadline, host strace and SYN provenance were added.
+> `.github/workflows/egress.yml` configured; no remote CI run or production sandbox deployment claimed. Auditgate untouched.
+> Next: all-destination process-attributed accounting in a disposable outer topology; remote publication/CI remains pending.
+> A bounded independent CLI follow-up timer is active for 2026-10-08 09:30:31 UTC; prompt/log directory:
+> `/home/opc/handoff/control-stack-egress/`. This is five hours after scheduling, not a confirmed account reset timestamp.
+
 > **SESSION 8 FINAL (2026-10-08).** See ROADMAP "Session 8 status note". Latest export commit 4a6cbeb (CI green:
 > fast, lean-covert, auditgate-db). SC-03 and SC-16 paused; next external-review round to answer is chatgpt-10.md.
 > **SESSION 8 RESULTS (2026-10-07).** Export fixed: root `ControlStack.lean` imports every proof module; full `lake build` passes; pushed (`feefc34`).

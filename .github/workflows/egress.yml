@@ -1,0 +1,43 @@
+name: egress-boundary
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  negative-controls:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux test prerequisites
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap openssl strace
+      - name: Oracle regressions
+        run: |
+          /usr/bin/python3 egress/test_oracle.py
+          /usr/bin/python3 egress/check_evidence.py
+      - name: Parser regression (explicit partial result)
+        run: /usr/bin/python3 egress/suite.py --gateway-only --output egress/results/ci-parser.json
+      - name: Full isolated suite (capability failure fails this job)
+        run: sudo /usr/bin/python3 egress/suite.py --output egress/results/ci-full.json
+      - name: Shared namespace is rejected
+        run: sudo /usr/bin/python3 egress/suite.py --self-check-shared-net --output egress/results/ci-namespace-mutation.json
+      - name: Failed forbidden SYN is detected independently
+        run: sudo /usr/bin/python3 egress/suite.py --self-check-packet-oracle --output egress/results/ci-packet-mutation.json
+      - name: Direct mirror traffic without gateway provenance is detected
+        run: sudo /usr/bin/python3 egress/suite.py --self-check-direct-mirror --output egress/results/ci-mirror-mutation.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: egress-outcome-matrix
+          path: egress/results/ci-*.json
+  lean-egress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned Lean toolchain
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          ~/.elan/bin/elan toolchain install "$(cat lean-toolchain)"
+      - name: Kernel check and verify axiom reports (no Mathlib/VCVio download needed)
+        run: PATH=$HOME/.elan/bin:$PATH egress/check_lean.sh

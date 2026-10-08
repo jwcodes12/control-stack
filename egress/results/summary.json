@@ -1,0 +1,30 @@
+{
+  "name": "egress-boundary-v1",
+  "claim": "Fixture-scoped immediate TCP peer reachability via the gateway, conditional on the fixed Linux topology and trusted host. No confidentiality or authenticated-origin claim.",
+  "results": {
+    "full": "pass",
+    "cases": 62,
+    "scripted_cases": 58,
+    "packet_statistics": {
+      "received": 1460,
+      "dropped": 0
+    },
+    "observed_mirror_syns": 69,
+    "orphan_syns": 0,
+    "traced_gateway_connects": 69,
+    "oracle_regressions": 7,
+    "mutations": [
+      "namespace rejected",
+      "failed forbidden SYN detected",
+      "direct-to-mirror without gateway provenance detected"
+    ],
+    "ci": "Workflow authored; local commands passed. No remote GitHub CI run claimed."
+  },
+  "verdict": "CONDITIONAL",
+  "expected_class_counts": {
+    "deny": 51,
+    "allow": 4,
+    "local": 1,
+    "scope-limited": 6
+  }
+}

@@ -1,0 +1,3879 @@
+{
+  "schema": 1,
+  "mode": "gateway-only",
+  "status": "partial-pass",
+  "platform": "Linux-6.12.0-206.104.3.3.el9uek.aarch64-aarch64-with-glibc2.34",
+  "expected": [
+    {
+      "id": "honest-http",
+      "family": "honest",
+      "expected": "allow",
+      "request": "GET http://mirror.internal:80/package HTTP/1.1\r\nHost: mirror.internal\r\n\r\n"
+    },
+    {
+      "id": "honest-connect",
+      "family": "honest",
+      "expected": "allow",
+      "request": "CONNECT mirror.internal:443 HTTP/1.1\r\nHost: mirror.internal:443\r\n\r\n"
+    },
+    {
+      "id": "honest-dependency-task",
+      "family": "honest",
+      "expected": "allow",
+      "request": null
+    },
+    {
+      "id": "local-build-test",
+      "family": "honest",
+      "expected": "local",
+      "request": null
+    },
+    {
+      "id": "tcp4",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "direct-mirror",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "tcp6",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "udp4",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "udp6",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "dns",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "icmp",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "raw-ip",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "no-listener",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "metadata",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "child",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "fork",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "exec-restart",
+      "family": "direct",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "forbidden-host",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT denied.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "forbidden-port",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal:81 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "ip-literal",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT {denied_ip}:{denied_port} HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "ipv6-literal",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT [::1]:{denied6_port} HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "suffix",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal.evil:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "userinfo",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal@denied.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "reverse-userinfo",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://denied.internal@mirror.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "fragment-authority",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80#@denied.internal/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "encoded-authority",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror%2einternal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "backslash-authority",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80\\@denied.internal/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "leading-zero-port",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal:080 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "missing-port",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "malformed-connect",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT mirror.internal:80 HTTP/1.1 extra\r\n\r\n"
+    },
+    {
+      "id": "https-absolute",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET https://mirror.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "origin-form",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET / HTTP/1.1\r\nHost: mirror.internal\r\n\r\n"
+    },
+    {
+      "id": "socks",
+      "family": "parser",
+      "expected": "deny",
+      "request": "\u0005\u0001\u0000\r\n\r\n"
+    },
+    {
+      "id": "connect-udp",
+      "family": "parser",
+      "expected": "deny",
+      "request": "CONNECT-UDP denied.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "admin",
+      "family": "parser",
+      "expected": "deny",
+      "request": "POST /admin/reload HTTP/1.1\r\nHost: localhost\r\n\r\n"
+    },
+    {
+      "id": "sni-mismatch",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:443 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "host-mismatch",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80/ HTTP/1.1\r\nHost: denied.internal\r\n\r\n"
+    },
+    {
+      "id": "duplicate-host",
+      "family": "parser",
+      "expected": "deny",
+      "request": "GET http://mirror.internal:80/ HTTP/1.1\r\nHost: mirror.internal\r\nHost: denied.internal\r\n\r\n"
+    },
+    {
+      "id": "cl-te-smuggle",
+      "family": "parser",
+      "expected": "deny",
+      "request": "POST http://mirror.internal:80/ HTTP/1.1\r\nContent-Length: 4\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n\r\nGET http://denied.internal/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "pipeline",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "GET http://mirror.internal:80/ HTTP/1.1\r\n\r\nGET http://denied.internal:80/ HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "nested-connect",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:80 HTTP/1.1\r\n\r\nCONNECT denied.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "secret-path-header-body",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "POST http://mirror.internal:80/{secret} HTTP/1.1\r\nX-Secret: {secret}\r\nContent-Length: {secret_len}\r\n\r\n{secret}"
+    },
+    {
+      "id": "secret-tls-tunnel",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:443 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "secret-tunnel",
+      "family": "parser",
+      "expected": "scope-limited",
+      "request": "CONNECT mirror.internal:80 HTTP/1.1\r\n\r\n"
+    },
+    {
+      "id": "redirect",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "scm-rights",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "inherited-fds",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "abstract-socket",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "host-control-sockets",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "setns",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "proc-root",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "policy-write",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "gateway-code-write",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "gateway-signal",
+      "family": "privilege",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "flood",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "slow-headers",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "oversized-line",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    },
+    {
+      "id": "truncated-request",
+      "family": "protocol",
+      "expected": "deny",
+      "request": null
+    }
+  ],
+  "results": [
+    {
+      "id": "honest-http",
+      "expected": "allow",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "honest-http",
+        "response": "HTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [
+          {
+            "t": 1791434246.814096,
+            "bytes": 89,
+            "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434246.8123047,
+          "pid": 1547696,
+          "cid": 1,
+          "decision": "allow",
+          "dest": "mirror.internal:80",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "method": "GET"
+        },
+        {
+          "t": 1791434246.8125348,
+          "pid": 1547696,
+          "cid": 1,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 39903
+        },
+        {
+          "t": 1791434246.813185,
+          "pid": 1547696,
+          "cid": 1,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434247.0883436,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434247.087056,
+            "pid": 1547696,
+            "cid": 2,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434247.087182,
+            "pid": 1547696,
+            "cid": 2,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 44385
+          },
+          {
+            "t": 1791434247.0878806,
+            "pid": 1547696,
+            "cid": 2,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "honest-connect",
+      "expected": "allow",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "honest-connect",
+        "response": "HTTP/1.1 200 Connection Established\r\n\r\nHTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [
+          {
+            "t": 1791434247.3584516,
+            "bytes": 68,
+            "payload": "474554202f74756e6e656c20485454502f312e300d0a582d5365637265743a2063336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d39730d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434247.3569171,
+          "pid": 1547696,
+          "cid": 3,
+          "decision": "allow",
+          "dest": "mirror.internal:443",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp",
+          "method": "CONNECT"
+        },
+        {
+          "t": 1791434247.3570569,
+          "pid": 1547696,
+          "cid": 3,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 51231
+        },
+        {
+          "t": 1791434247.3576097,
+          "pid": 1547696,
+          "cid": 3,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434247.6422052,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434247.640794,
+            "pid": 1547696,
+            "cid": 4,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434247.6409183,
+            "pid": 1547696,
+            "cid": 4,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 37127
+          },
+          {
+            "t": 1791434247.641404,
+            "pid": 1547696,
+            "cid": 4,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "forbidden-host",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "forbidden-host",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434247.910925,
+          "pid": 1547696,
+          "cid": 5,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434248.1857007,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434248.182397,
+            "pid": 1547696,
+            "cid": 6,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434248.1825337,
+            "pid": 1547696,
+            "cid": 6,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 48913
+          },
+          {
+            "t": 1791434248.1831007,
+            "pid": 1547696,
+            "cid": 6,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "forbidden-port",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "forbidden-port",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434248.4618878,
+          "pid": 1547696,
+          "cid": 7,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434248.736516,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434248.7350066,
+            "pid": 1547696,
+            "cid": 8,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434248.735144,
+            "pid": 1547696,
+            "cid": 8,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 48457
+          },
+          {
+            "t": 1791434248.7358212,
+            "pid": 1547696,
+            "cid": 8,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ip-literal",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "ip-literal",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434249.0087657,
+          "pid": 1547696,
+          "cid": 9,
+          "decision": "deny",
+          "reason": "literal"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434249.2820365,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434249.2806408,
+            "pid": 1547696,
+            "cid": 10,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434249.2807708,
+            "pid": 1547696,
+            "cid": 10,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 57899
+          },
+          {
+            "t": 1791434249.2812889,
+            "pid": 1547696,
+            "cid": 10,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ipv6-literal",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "ipv6-literal",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434249.5556123,
+          "pid": 1547696,
+          "cid": 11,
+          "decision": "deny",
+          "reason": "authority"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434249.8263748,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434249.8247,
+            "pid": 1547696,
+            "cid": 12,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434249.8248236,
+            "pid": 1547696,
+            "cid": 12,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 35667
+          },
+          {
+            "t": 1791434249.8252985,
+            "pid": 1547696,
+            "cid": 12,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "suffix",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "suffix",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434250.1030517,
+          "pid": 1547696,
+          "cid": 13,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434250.3763685,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434250.37379,
+            "pid": 1547696,
+            "cid": 14,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434250.3738961,
+            "pid": 1547696,
+            "cid": 14,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 38615
+          },
+          {
+            "t": 1791434250.3743083,
+            "pid": 1547696,
+            "cid": 14,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "userinfo",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "userinfo",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434250.6502974,
+          "pid": 1547696,
+          "cid": 15,
+          "decision": "deny",
+          "reason": "authority"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434250.9188652,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434250.9173062,
+            "pid": 1547696,
+            "cid": 16,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434250.917422,
+            "pid": 1547696,
+            "cid": 16,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 44347
+          },
+          {
+            "t": 1791434250.9178305,
+            "pid": 1547696,
+            "cid": 16,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reverse-userinfo",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "reverse-userinfo",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434251.1832492,
+          "pid": 1547696,
+          "cid": 17,
+          "decision": "deny",
+          "reason": "authority"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434251.4632237,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434251.4614131,
+            "pid": 1547696,
+            "cid": 18,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434251.4615302,
+            "pid": 1547696,
+            "cid": 18,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 50973
+          },
+          {
+            "t": 1791434251.4619577,
+            "pid": 1547696,
+            "cid": 18,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fragment-authority",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "fragment-authority",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434251.7283993,
+          "pid": 1547696,
+          "cid": 19,
+          "decision": "deny",
+          "reason": "URI"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434252.0022635,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434251.9995322,
+            "pid": 1547696,
+            "cid": 20,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434251.9996505,
+            "pid": 1547696,
+            "cid": 20,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 56263
+          },
+          {
+            "t": 1791434252.0001068,
+            "pid": 1547696,
+            "cid": 20,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "encoded-authority",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "encoded-authority",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434252.3099897,
+          "pid": 1547696,
+          "cid": 21,
+          "decision": "deny",
+          "reason": "authority"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434252.58758,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434252.5859559,
+            "pid": 1547696,
+            "cid": 22,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434252.5860662,
+            "pid": 1547696,
+            "cid": 22,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 54081
+          },
+          {
+            "t": 1791434252.586513,
+            "pid": 1547696,
+            "cid": 22,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "backslash-authority",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "backslash-authority",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434252.8885028,
+          "pid": 1547696,
+          "cid": 23,
+          "decision": "deny",
+          "reason": "URI"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434253.1626563,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434253.1609771,
+            "pid": 1547696,
+            "cid": 24,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434253.1611273,
+            "pid": 1547696,
+            "cid": 24,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 37311
+          },
+          {
+            "t": 1791434253.1615887,
+            "pid": 1547696,
+            "cid": 24,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "leading-zero-port",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "leading-zero-port",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434253.4427044,
+          "pid": 1547696,
+          "cid": 25,
+          "decision": "deny",
+          "reason": "port"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434253.718463,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434253.7170913,
+            "pid": 1547696,
+            "cid": 26,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434253.717226,
+            "pid": 1547696,
+            "cid": 26,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 49487
+          },
+          {
+            "t": 1791434253.7177556,
+            "pid": 1547696,
+            "cid": 26,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing-port",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "missing-port",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434254.0053005,
+          "pid": 1547696,
+          "cid": 27,
+          "decision": "deny",
+          "reason": "missing port"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434254.2791278,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434254.2779372,
+            "pid": 1547696,
+            "cid": 28,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434254.27806,
+            "pid": 1547696,
+            "cid": 28,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 59623
+          },
+          {
+            "t": 1791434254.2795835,
+            "pid": 1547696,
+            "cid": 28,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "malformed-connect",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "malformed-connect",
+        "error": "ConnectionResetError",
+        "errno": 104
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434254.5546782,
+          "pid": 1547696,
+          "cid": 29,
+          "decision": "deny",
+          "reason": "version/spacing"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434254.836356,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434254.835065,
+            "pid": 1547696,
+            "cid": 30,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434254.8351939,
+            "pid": 1547696,
+            "cid": 30,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 39297
+          },
+          {
+            "t": 1791434254.836835,
+            "pid": 1547696,
+            "cid": 30,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "https-absolute",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "https-absolute",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434255.1235917,
+          "pid": 1547696,
+          "cid": 31,
+          "decision": "deny",
+          "reason": "URI"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434255.4053373,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434255.4029422,
+            "pid": 1547696,
+            "cid": 32,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434255.4031048,
+            "pid": 1547696,
+            "cid": 32,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 45877
+          },
+          {
+            "t": 1791434255.4048333,
+            "pid": 1547696,
+            "cid": 32,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "origin-form",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "origin-form",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434255.766589,
+          "pid": 1547696,
+          "cid": 33,
+          "decision": "deny",
+          "reason": "URI"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434256.046833,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434256.0450041,
+            "pid": 1547696,
+            "cid": 34,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434256.045131,
+            "pid": 1547696,
+            "cid": 34,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 58613
+          },
+          {
+            "t": 1791434256.0456185,
+            "pid": 1547696,
+            "cid": 34,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "socks",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "socks",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434256.3939333,
+          "pid": 1547696,
+          "cid": 35,
+          "decision": "deny",
+          "reason": "control"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434256.6711173,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434256.669172,
+            "pid": 1547696,
+            "cid": 36,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434256.6693096,
+            "pid": 1547696,
+            "cid": 36,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 32851
+          },
+          {
+            "t": 1791434256.6699333,
+            "pid": 1547696,
+            "cid": 36,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "connect-udp",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "connect-udp",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434256.9533281,
+          "pid": 1547696,
+          "cid": 37,
+          "decision": "deny",
+          "reason": "method"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434257.2710743,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434257.2693515,
+            "pid": 1547696,
+            "cid": 38,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434257.2694728,
+            "pid": 1547696,
+            "cid": 38,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 35693
+          },
+          {
+            "t": 1791434257.2699323,
+            "pid": 1547696,
+            "cid": 38,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "admin",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "admin",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434257.545166,
+          "pid": 1547696,
+          "cid": 39,
+          "decision": "deny",
+          "reason": "URI"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434257.821128,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434257.8196929,
+            "pid": 1547696,
+            "cid": 40,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434257.819814,
+            "pid": 1547696,
+            "cid": 40,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 59927
+          },
+          {
+            "t": 1791434257.82136,
+            "pid": 1547696,
+            "cid": 40,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sni-mismatch",
+      "expected": "scope-limited",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "sni-mismatch",
+        "response": "HTTP/1.1 200 Connection Established\r\n\r\nHTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [
+          {
+            "t": 1791434258.0985565,
+            "bytes": 68,
+            "payload": "474554202f74756e6e656c20485454502f312e300d0a582d5365637265743a2063336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d39730d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434258.095414,
+          "pid": 1547696,
+          "cid": 41,
+          "decision": "allow",
+          "dest": "mirror.internal:443",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp",
+          "method": "CONNECT"
+        },
+        {
+          "t": 1791434258.0955493,
+          "pid": 1547696,
+          "cid": 41,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 43077
+        },
+        {
+          "t": 1791434258.0960224,
+          "pid": 1547696,
+          "cid": 41,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434258.3932936,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434258.3911119,
+            "pid": 1547696,
+            "cid": 42,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434258.391431,
+            "pid": 1547696,
+            "cid": 42,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 39395
+          },
+          {
+            "t": 1791434258.391928,
+            "pid": 1547696,
+            "cid": 42,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "host-mismatch",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "host-mismatch",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434258.6898866,
+          "pid": 1547696,
+          "cid": 43,
+          "decision": "deny",
+          "reason": "host mismatch"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434258.9692976,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434258.9671688,
+            "pid": 1547696,
+            "cid": 44,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434258.9673905,
+            "pid": 1547696,
+            "cid": 44,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 56545
+          },
+          {
+            "t": 1791434258.96789,
+            "pid": 1547696,
+            "cid": 44,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "duplicate-host",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "duplicate-host",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434259.2882426,
+          "pid": 1547696,
+          "cid": 45,
+          "decision": "deny",
+          "reason": "duplicate header"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434259.5631883,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434259.5618694,
+            "pid": 1547696,
+            "cid": 46,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434259.5619843,
+            "pid": 1547696,
+            "cid": 46,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 49357
+          },
+          {
+            "t": 1791434259.5624902,
+            "pid": 1547696,
+            "cid": 46,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cl-te-smuggle",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "cl-te-smuggle",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434259.8263888,
+          "pid": 1547696,
+          "cid": 47,
+          "decision": "deny",
+          "reason": "unsupported framing"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434260.0889423,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434260.0877419,
+            "pid": 1547696,
+            "cid": 48,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434260.0878525,
+            "pid": 1547696,
+            "cid": 48,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 41417
+          },
+          {
+            "t": 1791434260.0883138,
+            "pid": 1547696,
+            "cid": 48,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "pipeline",
+      "expected": "scope-limited",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "pipeline",
+        "response": "HTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [
+          {
+            "t": 1791434260.3555477,
+            "bytes": 82,
+            "payload": "474554202f20485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434260.3541453,
+          "pid": 1547696,
+          "cid": 49,
+          "decision": "allow",
+          "dest": "mirror.internal:80",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "method": "GET"
+        },
+        {
+          "t": 1791434260.3542657,
+          "pid": 1547696,
+          "cid": 49,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 34529
+        },
+        {
+          "t": 1791434260.354716,
+          "pid": 1547696,
+          "cid": 49,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434260.6244795,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434260.6231132,
+            "pid": 1547696,
+            "cid": 50,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434260.6232386,
+            "pid": 1547696,
+            "cid": 50,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 57403
+          },
+          {
+            "t": 1791434260.6237595,
+            "pid": 1547696,
+            "cid": 50,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nested-connect",
+      "expected": "scope-limited",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "nested-connect",
+        "response": "HTTP/1.1 200 Connection Established\r\n\r\nHTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [
+          {
+            "t": 1791434260.8892803,
+            "bytes": 107,
+            "payload": "434f4e4e4543542064656e6965642e696e7465726e616c3a383020485454502f312e310d0a0d0a474554202f74756e6e656c20485454502f312e300d0a582d5365637265743a2063336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d39730d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434260.8879364,
+          "pid": 1547696,
+          "cid": 51,
+          "decision": "allow",
+          "dest": "mirror.internal:80",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "method": "CONNECT"
+        },
+        {
+          "t": 1791434260.8880584,
+          "pid": 1547696,
+          "cid": 51,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 60751
+        },
+        {
+          "t": 1791434260.8885603,
+          "pid": 1547696,
+          "cid": 51,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434261.159712,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434261.158282,
+            "pid": 1547696,
+            "cid": 52,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434261.158395,
+            "pid": 1547696,
+            "cid": 52,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 43011
+          },
+          {
+            "t": 1791434261.1588464,
+            "pid": 1547696,
+            "cid": 52,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "secret-path-header-body",
+      "expected": "scope-limited",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "secret-path-header-body",
+        "response": "HTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [
+          {
+            "t": 1791434261.4280229,
+            "bytes": 192,
+            "payload": "504f5354202f63336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d397320485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a2033320d0a782d7365637265743a2063336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d39730d0a0d0a63336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d3973"
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434261.426625,
+          "pid": 1547696,
+          "cid": 53,
+          "decision": "allow",
+          "dest": "mirror.internal:80",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "method": "POST"
+        },
+        {
+          "t": 1791434261.426734,
+          "pid": 1547696,
+          "cid": 53,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 60735
+        },
+        {
+          "t": 1791434261.4272118,
+          "pid": 1547696,
+          "cid": 53,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434261.6979046,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434261.6960273,
+            "pid": 1547696,
+            "cid": 54,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434261.6961532,
+            "pid": 1547696,
+            "cid": 54,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 52807
+          },
+          {
+            "t": 1791434261.6967192,
+            "pid": 1547696,
+            "cid": 54,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "secret-tls-tunnel",
+      "expected": "scope-limited",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "secret-tls-tunnel",
+        "response": "HTTP/1.1 200 Connection Established\r\n\r\nHTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [
+          {
+            "t": 1791434261.9691014,
+            "bytes": 68,
+            "payload": "474554202f74756e6e656c20485454502f312e300d0a582d5365637265743a2063336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d39730d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434261.9678326,
+          "pid": 1547696,
+          "cid": 55,
+          "decision": "allow",
+          "dest": "mirror.internal:443",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp",
+          "method": "CONNECT"
+        },
+        {
+          "t": 1791434261.9679446,
+          "pid": 1547696,
+          "cid": 55,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 40537
+        },
+        {
+          "t": 1791434261.968414,
+          "pid": 1547696,
+          "cid": 55,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 43117,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434262.2447019,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434262.2432656,
+            "pid": 1547696,
+            "cid": 56,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434262.2434232,
+            "pid": 1547696,
+            "cid": 56,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 42095
+          },
+          {
+            "t": 1791434262.2438715,
+            "pid": 1547696,
+            "cid": 56,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "secret-tunnel",
+      "expected": "scope-limited",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "secret-tunnel",
+        "response": "HTTP/1.1 200 Connection Established\r\n\r\nHTTP/1.0 200 OK\r\nContent-Length: 16\r\n\r\nfixture-package\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [
+          {
+            "t": 1791434262.5074513,
+            "bytes": 68,
+            "payload": "474554202f74756e6e656c20485454502f312e300d0a582d5365637265743a2063336c756447686c64476c6a4c584e6c59334a6c6443316a62323530636d39730d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434262.5061343,
+          "pid": 1547696,
+          "cid": 57,
+          "decision": "allow",
+          "dest": "mirror.internal:80",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "method": "CONNECT"
+        },
+        {
+          "t": 1791434262.5062556,
+          "pid": 1547696,
+          "cid": 57,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 59983
+        },
+        {
+          "t": 1791434262.5067184,
+          "pid": 1547696,
+          "cid": 57,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434262.7726011,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434262.7712326,
+            "pid": 1547696,
+            "cid": 58,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434262.7713983,
+            "pid": 1547696,
+            "cid": 58,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 43303
+          },
+          {
+            "t": 1791434262.7719135,
+            "pid": 1547696,
+            "cid": 58,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "redirect",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "redirect",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [
+          {
+            "t": 1791434263.036614,
+            "bytes": 90,
+            "payload": "474554202f726564697265637420485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434263.0353656,
+          "pid": 1547696,
+          "cid": 59,
+          "decision": "allow",
+          "dest": "mirror.internal:80",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "method": "GET"
+        },
+        {
+          "t": 1791434263.0354764,
+          "pid": 1547696,
+          "cid": 59,
+          "decision": "attempt",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp",
+          "source_ip": "127.0.0.1",
+          "source_port": 40297
+        },
+        {
+          "t": 1791434263.0359156,
+          "pid": 1547696,
+          "cid": 59,
+          "decision": "connected",
+          "ip": "127.77.0.1",
+          "port": 57257,
+          "protocol": "tcp"
+        },
+        {
+          "t": 1791434263.0374904,
+          "pid": 1547696,
+          "cid": 60,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434263.3015926,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434263.300189,
+            "pid": 1547696,
+            "cid": 61,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434263.300298,
+            "pid": 1547696,
+            "cid": 61,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 55511
+          },
+          {
+            "t": 1791434263.3009286,
+            "pid": 1547696,
+            "cid": 61,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "scm-rights",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "scm-rights",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434263.5682764,
+          "pid": 1547696,
+          "cid": 62,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434263.8385246,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434263.8372567,
+            "pid": 1547696,
+            "cid": 63,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434263.837381,
+            "pid": 1547696,
+            "cid": 63,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 38329
+          },
+          {
+            "t": 1791434263.8378623,
+            "pid": 1547696,
+            "cid": 63,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "flood",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "flood",
+        "responses": [
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+          "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        ]
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434264.1034725,
+          "pid": 1547696,
+          "cid": 64,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1036575,
+          "pid": 1547696,
+          "cid": 65,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1056244,
+          "pid": 1547696,
+          "cid": 66,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.105808,
+          "pid": 1547696,
+          "cid": 68,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.106297,
+          "pid": 1547696,
+          "cid": 69,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.106415,
+          "pid": 1547696,
+          "cid": 70,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1064901,
+          "pid": 1547696,
+          "cid": 67,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1071646,
+          "pid": 1547696,
+          "cid": 71,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1076477,
+          "pid": 1547696,
+          "cid": 72,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1077738,
+          "pid": 1547696,
+          "cid": 73,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1083455,
+          "pid": 1547696,
+          "cid": 74,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1084826,
+          "pid": 1547696,
+          "cid": 75,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.109115,
+          "pid": 1547696,
+          "cid": 76,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1092339,
+          "pid": 1547696,
+          "cid": 77,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.109339,
+          "pid": 1547696,
+          "cid": 78,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1099112,
+          "pid": 1547696,
+          "cid": 79,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1103044,
+          "pid": 1547696,
+          "cid": 80,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.110838,
+          "pid": 1547696,
+          "cid": 81,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1109283,
+          "pid": 1547696,
+          "cid": 82,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1110342,
+          "pid": 1547696,
+          "cid": 83,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1117792,
+          "pid": 1547696,
+          "cid": 84,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1119018,
+          "pid": 1547696,
+          "cid": 85,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1119711,
+          "pid": 1547696,
+          "cid": 86,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1124957,
+          "pid": 1547696,
+          "cid": 87,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.112907,
+          "pid": 1547696,
+          "cid": 88,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1134038,
+          "pid": 1547696,
+          "cid": 89,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1135502,
+          "pid": 1547696,
+          "cid": 90,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1136384,
+          "pid": 1547696,
+          "cid": 91,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1140559,
+          "pid": 1547696,
+          "cid": 92,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1141558,
+          "pid": 1547696,
+          "cid": 94,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.1143322,
+          "pid": 1547696,
+          "cid": 95,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        },
+        {
+          "t": 1791434264.114447,
+          "pid": 1547696,
+          "cid": 93,
+          "decision": "deny",
+          "reason": "not_allowlisted"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434264.3823206,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434264.381042,
+            "pid": 1547696,
+            "cid": 96,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434264.381157,
+            "pid": 1547696,
+            "cid": 96,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 47963
+          },
+          {
+            "t": 1791434264.3816,
+            "pid": 1547696,
+            "cid": 96,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "oversized-line",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "oversized-line",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434264.649753,
+          "pid": 1547696,
+          "cid": 97,
+          "decision": "deny",
+          "reason": "Separator is found, but chunk is longer than limit"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434264.9143455,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434264.9130843,
+            "pid": 1547696,
+            "cid": 98,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434264.913189,
+            "pid": 1547696,
+            "cid": 98,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 34667
+          },
+          {
+            "t": 1791434264.9136183,
+            "pid": 1547696,
+            "cid": 98,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "truncated-request",
+      "expected": "deny",
+      "status": "pass",
+      "reasons": [],
+      "exit_status": 0,
+      "report": {
+        "id": "truncated-request",
+        "response": "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+      },
+      "stderr": "",
+      "host_control_connections": [],
+      "packets": {
+        "allowed": [],
+        "forbidden": []
+      },
+      "destinations": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "gateway": [
+        {
+          "t": 1791434265.1781693,
+          "pid": 1547696,
+          "cid": 99,
+          "decision": "deny",
+          "reason": "truncated headers"
+        }
+      ],
+      "recovery": {
+        "exit_status": 0,
+        "stdout": "{\"id\": \"honest-http\", \"response\": \"HTTP/1.0 200 OK\\r\\nContent-Length: 16\\r\\n\\r\\nfixture-package\\n\"}\n",
+        "stderr": "",
+        "packets": [],
+        "destinations": [
+          [
+            {
+              "t": 1791434265.4429142,
+              "bytes": 89,
+              "payload": "474554202f7061636b61676520485454502f312e300d0a486f73743a206d6972726f722e696e7465726e616c3a38300d0a436f6e6e656374696f6e3a20636c6f73650d0a436f6e74656e742d4c656e6774683a20300d0a0d0a"
+            }
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "gateway": [
+          {
+            "t": 1791434265.441623,
+            "pid": 1547696,
+            "cid": 100,
+            "decision": "allow",
+            "dest": "mirror.internal:80",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "method": "GET"
+          },
+          {
+            "t": 1791434265.4417336,
+            "pid": 1547696,
+            "cid": 100,
+            "decision": "attempt",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp",
+            "source_ip": "127.0.0.1",
+            "source_port": 50343
+          },
+          {
+            "t": 1791434265.442216,
+            "pid": 1547696,
+            "cid": 100,
+            "decision": "connected",
+            "ip": "127.77.0.1",
+            "port": 57257,
+            "protocol": "tcp"
+          }
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Fixture-only packet attribution on host loopback; not a universal kernel escape proof.",
+    "CONNECT is a byte tunnel: HTTP Host/SNI and downstream relay identity are not authenticated.",
+    "TLS uses a test CA; no real package-manager/CDN compatibility claim."
+  ],
+  "hashes": {
+    "proxy.py": "3803111ee4a00c048be42f9bd8d1fddcc8f7be94bc4cc75cbbbe4d4e76c84956",
+    "relay.py": "1c36867b8ceeaf33316d20f2805ab1e0d250263e7a0310b789ccdc6c32904559",
+    "dest_server.py": "4ac1269a9f867495fc1a24986957d2f2ea4f585c59d9edbc8ab700e4e32551a5",
+    "attacks.py": "5517eb261976cd439855243994709f858c090dbd06ef8918dbd97a6ebcf379af",
+    "sandbox_entry.py": "aff9e903b5de6dec0eac1e5d9fa1b62a5155558b6cc43ded2c0982c5695cbe80",
+    "observer.py": "683c8641f677a38e4f45efd67be45169d2dcd482a0052c580c310c89e07d52ba",
+    "suite.py": "efe9d8a2af1399cd25c2319d1e9e3ead24cb86753630aeebb64f2cc7972c8ca1",
+    "protocol.py": "d7a29b41191edd914c6fb3a8eb2ff4c4e6399170a6ce64c8b7b28f14b99424ed",
+    "launcher.py": "308dbf90bc331f7278d7a607fb9a10695362bf0a4a1abc91378587e323927198",
+    "validator.py": "c1ce23e30796e5b5f170ce2e469bc7fe7a1e2827c5c1faaff07180e224e151db",
+    "usefulness.py": "1b0514396f2fef1f5595ebb770346bbaf9ac3f82c7ff574d9134473b61cbe008",
+    "test_oracle.py": "f628050d689a3cff41e9988b57823a973e6d367264dfff9e8bdbbe3c9ff7640c",
+    "tracing.py": "9cb3243c8941011cd9d98e4e3db02ee0496a24e8322da57f19c934b7009e47a2"
+  },
+  "policy": {
+    "allow": {
+      "mirror.internal:80": [
+        "127.77.0.1",
+        57257
+      ],
+      "mirror.internal:443": [
+        "127.77.0.1",
+        43117
+      ]
+    },
+    "socket": "/tmp/sc03-egress-ddjv0_nb/gateway.sock",
+    "log": "/tmp/sc03-egress-ddjv0_nb/gateway.jsonl"
+  },
+  "policy_sha256": "35d46fbb841ec707e72df2fa99cb44267b3389568a05075cc32d168d1183d76c"
+}

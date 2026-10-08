@@ -1,0 +1,350 @@
+[
+  {
+    "id": "honest-http",
+    "family": "honest",
+    "expected": "allow",
+    "request": "GET http://mirror.internal:80/package HTTP/1.1\r\nHost: mirror.internal\r\n\r\n"
+  },
+  {
+    "id": "honest-connect",
+    "family": "honest",
+    "expected": "allow",
+    "request": "CONNECT mirror.internal:443 HTTP/1.1\r\nHost: mirror.internal:443\r\n\r\n"
+  },
+  {
+    "id": "honest-dependency-task",
+    "family": "honest",
+    "expected": "allow",
+    "request": null
+  },
+  {
+    "id": "local-build-test",
+    "family": "honest",
+    "expected": "local",
+    "request": null
+  },
+  {
+    "id": "tcp4",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "direct-mirror",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "tcp6",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "udp4",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "udp6",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "dns",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "icmp",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "raw-ip",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "no-listener",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "metadata",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "child",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "fork",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "exec-restart",
+    "family": "direct",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "forbidden-host",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT denied.internal:80 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "forbidden-port",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT mirror.internal:81 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "ip-literal",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT {denied_ip}:{denied_port} HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "ipv6-literal",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT [::1]:{denied6_port} HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "suffix",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT mirror.internal.evil:80 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "userinfo",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://mirror.internal@denied.internal:80/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "reverse-userinfo",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://denied.internal@mirror.internal:80/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "fragment-authority",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://mirror.internal:80#@denied.internal/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "encoded-authority",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://mirror%2einternal:80/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "backslash-authority",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://mirror.internal:80\\@denied.internal/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "leading-zero-port",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT mirror.internal:080 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "missing-port",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT mirror.internal HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "malformed-connect",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT mirror.internal:80 HTTP/1.1 extra\r\n\r\n"
+  },
+  {
+    "id": "https-absolute",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET https://mirror.internal:80/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "origin-form",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET / HTTP/1.1\r\nHost: mirror.internal\r\n\r\n"
+  },
+  {
+    "id": "socks",
+    "family": "parser",
+    "expected": "deny",
+    "request": "\u0005\u0001\u0000\r\n\r\n"
+  },
+  {
+    "id": "connect-udp",
+    "family": "parser",
+    "expected": "deny",
+    "request": "CONNECT-UDP denied.internal:80 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "admin",
+    "family": "parser",
+    "expected": "deny",
+    "request": "POST /admin/reload HTTP/1.1\r\nHost: localhost\r\n\r\n"
+  },
+  {
+    "id": "sni-mismatch",
+    "family": "parser",
+    "expected": "scope-limited",
+    "request": "CONNECT mirror.internal:443 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "host-mismatch",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://mirror.internal:80/ HTTP/1.1\r\nHost: denied.internal\r\n\r\n"
+  },
+  {
+    "id": "duplicate-host",
+    "family": "parser",
+    "expected": "deny",
+    "request": "GET http://mirror.internal:80/ HTTP/1.1\r\nHost: mirror.internal\r\nHost: denied.internal\r\n\r\n"
+  },
+  {
+    "id": "cl-te-smuggle",
+    "family": "parser",
+    "expected": "deny",
+    "request": "POST http://mirror.internal:80/ HTTP/1.1\r\nContent-Length: 4\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n\r\nGET http://denied.internal/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "pipeline",
+    "family": "parser",
+    "expected": "scope-limited",
+    "request": "GET http://mirror.internal:80/ HTTP/1.1\r\n\r\nGET http://denied.internal:80/ HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "nested-connect",
+    "family": "parser",
+    "expected": "scope-limited",
+    "request": "CONNECT mirror.internal:80 HTTP/1.1\r\n\r\nCONNECT denied.internal:80 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "secret-path-header-body",
+    "family": "parser",
+    "expected": "scope-limited",
+    "request": "POST http://mirror.internal:80/{secret} HTTP/1.1\r\nX-Secret: {secret}\r\nContent-Length: {secret_len}\r\n\r\n{secret}"
+  },
+  {
+    "id": "secret-tls-tunnel",
+    "family": "parser",
+    "expected": "scope-limited",
+    "request": "CONNECT mirror.internal:443 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "secret-tunnel",
+    "family": "parser",
+    "expected": "scope-limited",
+    "request": "CONNECT mirror.internal:80 HTTP/1.1\r\n\r\n"
+  },
+  {
+    "id": "redirect",
+    "family": "protocol",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "scm-rights",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "inherited-fds",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "abstract-socket",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "host-control-sockets",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "setns",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "proc-root",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "policy-write",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "gateway-code-write",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "gateway-signal",
+    "family": "privilege",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "flood",
+    "family": "protocol",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "slow-headers",
+    "family": "protocol",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "oversized-line",
+    "family": "protocol",
+    "expected": "deny",
+    "request": null
+  },
+  {
+    "id": "truncated-request",
+    "family": "protocol",
+    "expected": "deny",
+    "request": null
+  }
+]

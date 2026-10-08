@@ -1,3 +1,11 @@
+> **SC-03 egress handoff (2026-10-08).** See `egress/README.md`, `egress/FIDELITY.md`,
+> `egress/results/summary.json`, `assurance/egress-boundary-v1.json` and `reviews/dialogue/sol-11.md`.
+> 62 full controls and three oracle/validator mutations pass; seven oracle regressions, six Lean axiom checks and
+> full `lake build ControlStack` pass. Stored receipts are checked by `egress/check_evidence.py`.
+> Safe test-only defaults; reachability only; CONDITIONAL; auditgate untouched. No remote CI or production deployment.
+> Next: all-destination process attribution in disposable topology. Timer 2026-10-08 09:30:31 UTC launches one bounded
+> workspace-write CLI follow-up; logs/prompt in `/home/opc/handoff/control-stack-egress/`. Export/publication pending.
+
 > **ROADMAP.md** (added 2026-10-07 at John's request) is the one-page status plan: completed / in flight / next / open
 > assumptions / needs John. Keep it current whenever a row changes status, and mirror it into the GitHub export.
 

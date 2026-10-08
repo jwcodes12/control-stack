@@ -9,7 +9,14 @@ Done:
   the full `lake build ControlStack` passes (3717 jobs).
 - `tools/check_sc01_case.py` reworked (exit 3 on a refuted hypothesis); multi-axis assumptions in
   `assurance/sc01-safety-case.json`.
-- `tools/ctrlcert.py` and `tools/test_ctrlcert.py`.
+- `tools/ctrlcert.py` and `tools/test_ctrlcert.py` (`audit --fpr` reports false-positive budget exhaustion).
+- Primitives:
+  - `Gate.lean`: the shared reference-monitor interface, plus the `withHalt` absorbing-shutdown combinator.
+  - `GateClients.lean`: AuditDispatch, AuditGate and EgressGate as clients; F4 content-addressed artefact gate;
+    F7 exact-payload approval.
+  - `Lease.lean`: F5 leases, revocation and a global cap across forks.
+  - `Necessity.lean`: adds false-positive audit exhaustion.
+- Full status map: `PRIMITIVES-AND-SCENARIOS.md`.
 
 Separate branch (main checkout): `sc01-vm-host-check-20261008`.
 - `cda2b10`: link-race fix.

@@ -210,3 +210,28 @@ three mutations and eight-flow calibration), `python3 egress/test_oracle.py`
 `git diff --check` passed. Remote results will be recorded after the push.
 Next engineering step: integrate the gateway/sandbox into the isolated outer
 topology; general process attribution remains unresolved.
+
+## SC-03 remote egress CI — 2026-10-08
+
+Private branch `egress-r10-controls` pushed at `b30177e`.
+[Egress CI](https://github.com/jwcodes12/control-stack/actions/runs/37784398180) passed both jobs: 62/62 full controls, three
+mutations, nine oracle regressions and six Lean axiom checks. Downloaded outcome
+artifacts confirm 1,454 kernel-counted packets and zero drops in full mode; all
+three mutation receipts also have zero drops. Existing fast/auditgate checks
+passed; the covert-channel Lean job is still running as of this entry.
+General attribution remains unresolved; gateway/sandbox integration in the isolated
+outer topology is the next engineering step. Auditgate source is unchanged.
+
+## SC-03 publication complete — 2026-10-08
+
+Private branch `egress-r10-controls` is pushed at `7efd2dcf6f3b7786bfdedbc0c9b35e7d1ca1e610`.
+Both latest-commit workflows passed:
+- [egress-boundary](https://github.com/jwcodes12/control-stack/actions/runs/37784927374): negative controls and Lean egress jobs passed. Downloaded artifacts confirm 62/62 full controls, all three detected mutations and zero packet drops; parser remains an explicit 34-control partial pass.
+- [fast-checks](https://github.com/jwcodes12/control-stack/actions/runs/37784927391): fast, auditgate-db and lean-covert passed. The slow full VCVio job is dispatch-only and was skipped on push; no new full-project remote build is claimed.
+
+Local publication checks: receipt/hash checker, nine oracle regressions, six Lean
+axiom checks and whitespace checks passed. The export checkout is clean and tracks
+the pushed branch. Auditgate source and remote main are unchanged. Tracker #1
+records publication, verification and the remaining gateway/sandbox integration
+work; general process attribution remains unresolved. Git pushes and CI are
+authorized; emails/messages to people still require approval.

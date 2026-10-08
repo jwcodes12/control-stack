@@ -2,11 +2,11 @@
 > `egress/results/summary.json`, `assurance/egress-boundary-v1.json` and `reviews/dialogue/sol-11.md`.
 > 62 full controls and three oracle/validator mutations pass; nine oracle regressions and six Lean axiom checks pass.
 > The original full `lake build ControlStack` passed. Stored receipts are checked by `egress/check_evidence.py`.
-> Safe test-only defaults; reachability only; CONDITIONAL; auditgate untouched. No remote CI or production deployment.
+> Safe test-only defaults; reachability only; CONDITIONAL; auditgate untouched. Remote egress CI passed; no production deployment.
 > Authorized follow-up completed after 09:30:31 UTC: IPv6 trace/fragment fixes, refreshed receipts and isolated
 > eight-flow/two-PID outer accounting calibration; zero drops and missing-trace mutation detected.
 > Next: integrate gateway/sandbox into that disposable topology; general attribution remains unresolved.
-> See `reviews/egress-follow-up-2026-10-08.md`; export/publication pending. Timer prompt/logs remain in
+> See `reviews/egress-follow-up-2026-10-08.md`; private branch published and egress CI passed at `b30177e`. Timer prompt/logs remain in
 > `/home/opc/handoff/control-stack-egress/`. No rate-limit error/reset timestamp was observed.
 
 > **ROADMAP.md** (added 2026-10-07 at John's request) is the one-page status plan: completed / in flight / next / open
@@ -149,3 +149,17 @@ three mutations and eight-flow calibration), `python3 egress/test_oracle.py`
 `git diff --check` passed. Remote results will be recorded after the push.
 Next engineering step: integrate the gateway/sandbox into the isolated outer
 topology; general process attribution remains unresolved.
+
+## SC-03 publication complete — 2026-10-08
+
+Private branch `egress-r10-controls` is pushed at `7efd2dcf6f3b7786bfdedbc0c9b35e7d1ca1e610`.
+Both latest-commit workflows passed:
+- [egress-boundary](https://github.com/jwcodes12/control-stack/actions/runs/37784927374): negative controls and Lean egress jobs passed. Downloaded artifacts confirm 62/62 full controls, all three detected mutations and zero packet drops; parser remains an explicit 34-control partial pass.
+- [fast-checks](https://github.com/jwcodes12/control-stack/actions/runs/37784927391): fast, auditgate-db and lean-covert passed. The slow full VCVio job is dispatch-only and was skipped on push; no new full-project remote build is claimed.
+
+Local publication checks: receipt/hash checker, nine oracle regressions, six Lean
+axiom checks and whitespace checks passed. The export checkout is clean and tracks
+the pushed branch. Auditgate source and remote main are unchanged. Tracker #1
+records publication, verification and the remaining gateway/sandbox integration
+work; general process attribution remains unresolved. Git pushes and CI are
+authorized; emails/messages to people still require approval.

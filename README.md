@@ -9,7 +9,7 @@ step (a bubblewrap mount-table model).
 
 **Scenario portfolio:** [SCENARIO-CATALOG.md](SCENARIO-CATALOG.md) — 28 proposed threat scenarios, eight reusable proof/checker families, research references, prioritization, and a Claude review request.
 
-**Current status: [STATUS.md](STATUS.md)** (generated from scenario manifests; historical [ROADMAP.md](ROADMAP.md) retained) (completed, in flight, next, open assumptions). **Then [STACK.md](STACK.md)**: one row per guarantee, with its assumptions, the protocols it speaks to and its
+**Current status: [STATUS.md](STATUS.md)** (generated from scenario manifests; historical [ROADMAP.md](ROADMAP.md) retained). **Then [STACK.md](STACK.md)**: one row per guarantee, with its assumptions, the protocols it speaks to and its
 status. The model and assumptions A1–A11 are in [DESIGN.md](DESIGN.md) §2.
 
 ## Reading guide

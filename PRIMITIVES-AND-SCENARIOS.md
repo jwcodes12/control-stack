@@ -16,13 +16,13 @@ No scenario is DEPLOYMENT_ASSURED, and none is close.
 
 | family | what exists | status | what is left |
 |---|---|---|---|
-| **F1 capability confinement** | `SANDBOXF1/2` (bubblewrap mount model); `EgressGate` (+ runtime egress slice: 62 controls, CI); `AuditDispatch`; Cedar pinned as a dependency | verified (sandbox model), proved, runtime | (1) EgressGate assumes policy integrity by definition: make it an explicit trusted-host hypothesis or model tampering. (2) **A shared reference-monitor interface**: one Lean `Gate` (state, request, decision, invariant) with EgressGate, AuditDispatch and AuditGate as clients. This was the earlier roadmap item 5 and is not started. (3) A real Cedar-policy client. |
+| **F1 capability confinement** | `SANDBOXF1/2` (bubblewrap mount model); `EgressGate` (+ runtime egress slice: 62 controls, CI); `AuditDispatch`; Cedar pinned as a dependency | verified (sandbox model), proved, runtime | (1) EgressGate assumes policy integrity by definition: make it an explicit trusted-host hypothesis or model tampering. (2) ~~shared reference-monitor interface~~ **done**: `Gate.lean` (`Spec.trace_safe`, `NoAgentEffects`, `withHalt`), with AuditDispatch, AuditGate and EgressGate as clients in `GateClients.lean`. (3) A real Cedar-policy client. |
 | **F2 bounded observation** | `CovertChannel`, `GatewayModel`, `GatewayCore` (+ 2000-trace difftest), `SideChannel`, `ScenarioACore`, **`Leakage`** (sequential transfer: stateful side channels with feedback) | proved; Python correspondence tested | (1) A Python↔core refinement proof (currently a differential test). (2) **The runtime observation boundary**: refuted on a single host (cache bit 64/64); the QEMU pair shares host hardware and has no channel measurement. (3) Variable or observable episode counts as a first-class tree mass (the theory exists in `Leakage.mass`; it has no instance). |
-| **F3 stateful temporal invariant** | `LifetimeLedger` (no-rollback necessary); `AuditGate` invariant (+ PostgreSQL outcome matrix); `DeferGame`/`DeferMono` | proved, runtime (auditgate, ledger controls) | (1) **check-before-effect and absorbing shutdown** as one reusable primitive (SC-25, SC-13); scaffold assumptions A1–A4 and A11 are still unenforced (🔒 John). (2) Crash, restart and TOCTOU models for the gate itself. |
-| **F4 integrity / provenance** | nothing in Lean; SC-16 provenance gate paused | missing | A content-addressed artefact gate: only the exact reviewed hash can be deployed or consumed; hash binding at use; replay. Small, and SC-16/17/18/21/27 all reuse it. |
+| **F3 stateful temporal invariant** | `LifetimeLedger` (no-rollback necessary); `AuditGate` invariant (+ PostgreSQL outcome matrix); `DeferGame`/`DeferMono` | proved, runtime (auditgate, ledger controls) | (1) absorbing shutdown is now generic: `Gate.withHalt` adds a trusted halt to any gate (`halt_absorbing`, `halt_freezes`) and the spec lifts (`withHalt_spec`). Still missing: the runtime enforcement of scaffold assumptions A1–A4 and A11 (🔒 John), and a general check-before-effect ordering for asynchronous harms. (2) Crash, restart and TOCTOU models for the gate itself. |
+| **F4 integrity / provenance** | `GateClients.Artifact`: content-addressed deploy gate. `deployed_reviewed`; `deployed_is_reviewed` (under collision resistance); `collision_breaks` (necessity) | proved (model); no runtime | A runtime client (a git or OCI digest gate) with correspondence; signing-key custody; "reviewed ≠ harmless". SC-16/17/18/21/27 reuse it. |
 | **F5 quotas, leases, revocation** | `LifetimeLedger` (per-lineage cap), `AuditBudget` | proved | Cross-process/global accounting (forked workers), lease expiry and revocation ("no work after revoke"), and restart-safe counters (SC-14, SC-28). |
 | **F6 conditional probabilistic control** | UMPROT/UMADAPT/UMDEFER/UMCERT/TMCERT/TMLIP/TMGAC (verified); Compose*, `MultiStep`, `AuditBudget`, **`Leakage.audit_leak_bound`**, **`audit_adaptive_hidden`** (proved); 44 Lean-checked empirical certificates | verified + proved; certificates CONDITIONAL, near-vacuous at N = 100 | (1) **An audit budget where honest rounds consume audits** (false positives) and score-triggered audits; imperfect auditors. (2) **Adaptive coverage**: history-dependent attack-content laws (Astra rank 4). (3) Joint collusion plus side channel: UM bad-row pass ≤ L·Σc·h. (4) Fresh prospective data (thousands of attacks) for a non-vacuous certificate. |
-| **F7 two-party / typed approval** | nothing | missing | Signed exact-payload approval with expiry and replay protection (SC-26, SC-10, SC-16). |
+| **F7 two-party / typed approval** | `GateClients.Approval`: exact payload, expiry and nonce. `approval_safe` (approved, unexpired, no replay); `replay_without_nonce` (necessity) | proved (model); no runtime | A runtime signer (a distinct principal's key; unforgeability is a premise); a human may approve a harmful payload (SC-26, SC-10, SC-16). |
 | **F8 composition** | `Leakage.seq_transfer` (adaptive sequential composition of leakage); `ComposeGame`/`ComposeAvg` (monitors); `Necessity` witnesses for naive products | proved | Multi-agent global budgets (SC-28); composition across F1 + F2 (a confined action can still carry a 1-bit command; `one_bit_coordinates`); one shared adversary semantics. Both consultants said the general calculus should wait until two clients need the same interface. |
 
 **Cross-cutting tooling**
@@ -57,14 +57,11 @@ What is missing:
    one, the selected scenario has no passing usefulness evidence on any isolated configuration.
 2. **Red-team the new results.** Run a two-family ledger red team of `Leakage`, `Necessity`, `MultiStep`,
    `AuditBudget`, `SideChannel` and `GatewayCore`. Today they are proved, not verified.
-3. **Build the missing primitives, cheapest first:**
-   - the F1/F3 shared gate interface, with EgressGate, AuditDispatch and AuditGate as clients;
-   - the F4 hash-bound artefact gate;
-   - the F3 check-before-effect and absorbing-halt primitive;
-   - F7 approval;
-   - F5 leases.
-
-   Each is small. Together they cover most of Wave 1 and Wave 2.
+3. **Primitives.** The shared gate interface, F4 artefact gate, F7 approval and generic absorbing halt are now proved
+   models (`Gate.lean`, `GateClients.lean`). Left:
+   - F5 leases and revocation, and global counters;
+   - runtime implementations of F4 and F7 with correspondence tests, as was done for the egress and auditgate
+     slices.
 4. **Wave 1 on one real setting (BashArena):** SC-08, SC-09, SC-13 and SC-25 with the shared gate, plus an
    honest-task baseline. The catalog requires the usefulness measurement alongside safety.
 5. **F6 theory gaps:** false-positive audit budgets, adaptive coverage, and joint collusion plus side channel.

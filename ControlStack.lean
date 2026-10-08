@@ -28,6 +28,8 @@ import ControlStack.ScenarioACore
 import ControlStack.AuditBudget
 import ControlStack.Leakage
 import ControlStack.Necessity
+import ControlStack.Gate
+import ControlStack.GateClients
 
 /-!
 Root module of the interface-level (VCVio) Lake project, so that `lake build` checks every proof file.

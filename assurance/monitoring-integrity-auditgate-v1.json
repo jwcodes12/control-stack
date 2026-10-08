@@ -1,5 +1,5 @@
 {
- "name": "monitoring-integrity-auditgate-v1",
+ "name": "monitoring-integrity-auditgate-v1.1",
  "claim": "auto_workflow / suppress_workflow_audits: every dispatch through the trusted dispatcher has a trusted-origin workflow.execute audit committed no later than it. NOT: every workflow execution is audited.",
  "theorem": {
   "files": {
@@ -15,8 +15,8 @@
   "lean_status": "passed"
  },
  "implementation": {
-  "auditgate/setup_v1.sql": "76876120bf7aa750ed4d1933f957388d5ec3dbaaa65d3dbbc4b311986b70e870",
-  "auditgate/test_gate_v1.py": "9d28cf540603ef359702d16ee5d4d8f78db95f1c8b955a7ca12c85abaf2d677d"
+  "auditgate/setup_v1.sql": "0804fcd44d02e418e7351fdf69176c67a97ed2df5a213639ec23c3b466e2466d",
+  "auditgate/test_gate_v1.py": "0f655d5ffd103473fe5e4569bd6c519bcf26bb8b185646e6479a71fbfe9ac9f9"
  },
  "tests": [
   "auditgate/test_gate_v1.py: 27 cases with declared expected class + concurrency (local PostgreSQL 16; CI job auditgate-db)"
@@ -61,7 +61,31 @@
    "id": "honest_usefulness",
    "status": "UNRESOLVED",
    "text": "62/94 honest tasks edit dispatch/worker code; live task success unmeasured"
+  },
+  {
+   "id": "exactly_once_record_only",
+   "status": "UNRESOLVED",
+   "text": "PK / Lean Nodup give no duplicate EFFECT RECORDS; exactly-once external execution (crash between external dispatch and acknowledgement, retries) is an unproved reconciliation obligation"
+  },
+  {
+   "id": "ordering_witness",
+   "status": "RUNTIME_VALIDATED",
+   "text": "audit and effect rows carry the same transaction id (xid8); checker requires equality instead of comparing wall clocks"
+  },
+  {
+   "id": "identity_app_controlled",
+   "status": "UNRESOLVED",
+   "text": "workflow_id and requested_by are app-supplied; the audit authenticates that the dispatcher recorded the request, not who initiated or authorised it"
+  },
+  {
+   "id": "demo_credentials",
+   "status": "UNRESOLVED",
+   "text": "setup_v1.sql passwords are throwaway test values; a deployment needs provisioned identities kept out of the agent's workspace, environment and logs"
   }
  ],
- "verdict": "CONDITIONAL"
+ "verdict": "CONDITIONAL",
+ "runtime": {
+  "image": "postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+  "server_version": "PostgreSQL 16.15"
+ }
 }

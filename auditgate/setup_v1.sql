@@ -1,4 +1,5 @@
--- v1 (after reviews/dialogue/chatgpt-06.md): authority over the EFFECT, trusted-origin audit, typed checker.
+-- v1.1 (after chatgpt-06 and chatgpt-08): authority over the EFFECT, trusted-origin audit, typed checker,
+-- transactional ordering witness. DEMO CREDENTIALS BELOW ARE FOR THROWAWAY TEST DATABASES ONLY; never deploy them.
 CREATE ROLE trusted_owner NOLOGIN;
 CREATE ROLE app LOGIN PASSWORD 'app' NOSUPERUSER NOCREATEROLE NOCREATEDB NOREPLICATION NOBYPASSRLS;
 CREATE ROLE dispatcher LOGIN PASSWORD 'dispatcher' NOSUPERUSER NOCREATEROLE NOCREATEDB NOREPLICATION NOBYPASSRLS;
@@ -14,11 +15,13 @@ GRANT USAGE ON SEQUENCE audit.request_id_seq TO app;
 -- mandatory, trusted-origin audit: NO app write privileges at all
 CREATE TABLE audit.execution_audit (request_id bigint PRIMARY KEY REFERENCES audit.request(id),
                                     workflow_id int NOT NULL, requested_by text NOT NULL,
-                                    audited_at timestamptz NOT NULL DEFAULT clock_timestamp());
+                                    audited_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+                                    xact xid8 NOT NULL DEFAULT pg_current_xact_id());
 GRANT SELECT ON audit.execution_audit TO app;
 -- the effect authorisation: FK => an effect cannot exist without its audit row (enforced by PostgreSQL)
 CREATE TABLE audit.effect (request_id bigint PRIMARY KEY REFERENCES audit.execution_audit(request_id),
-                           dispatched_at timestamptz NOT NULL DEFAULT clock_timestamp());
+                           dispatched_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+                           xact xid8 NOT NULL DEFAULT pg_current_xact_id());
 GRANT SELECT ON audit.effect TO app;
 -- optional app-generated events: separate, typed, reserved types and oversized metadata rejected
 CREATE TABLE audit.app_event (id bigserial PRIMARY KEY, event_type text NOT NULL, metadata jsonb NOT NULL,
@@ -41,9 +44,10 @@ BEGIN
 END $$;
 REVOKE ALL ON FUNCTION audit.dispatch_next() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION audit.dispatch_next() TO dispatcher;
--- reviewer-free checker: typed columns, no casts; returns rows that VIOLATE effect => audit (FK makes it empty)
+-- reviewer-free checker: typed columns, no casts. Ordering witness is TRANSACTIONAL, not wall-clock (chatgpt-08
+-- note 2): the audit row and the effect row must carry the same transaction id, i.e. they committed atomically.
+-- Rows returned VIOLATE effect => audit-in-the-same-transaction (the FK alone guarantees existence).
 CREATE VIEW audit.violations AS
   SELECT e.request_id FROM audit.effect e
-  WHERE NOT EXISTS (SELECT 1 FROM audit.execution_audit a WHERE a.request_id = e.request_id
-                    AND a.audited_at <= e.dispatched_at);
+  WHERE NOT EXISTS (SELECT 1 FROM audit.execution_audit a WHERE a.request_id = e.request_id AND a.xact = e.xact);
 RESET ROLE;

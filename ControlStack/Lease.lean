@@ -37,7 +37,7 @@ structure St where
   now : ℕ
   leases : List LeaseRec
   revoked : List ℕ
-  holder : List (ℕ × ℕ)          -- (worker, lease id)
+  holder : List (ℕ × ℕ)          -- (worker, lease id), newest first: the newest assignment wins
   work : List (ℕ × ℕ × ℕ)        -- effect log: (lease id, cost, time)
 
 inductive Op where
@@ -60,11 +60,11 @@ def step (cap : ℕ) (s : St) : Op → St
   | .tick => { s with now := s.now + 1 }
   | .issue l w =>
     if l.id ∈ s.leases.map LeaseRec.id then s
-    else { s with leases := s.leases ++ [l], holder := s.holder ++ [(w, l.id)] }
+    else { s with leases := s.leases ++ [l], holder := (w, l.id) :: s.holder }
   | .revoke id => { s with revoked := s.revoked ++ [id] }
   | .fork w w' =>
     match leaseOf s w with
-    | some id => { s with holder := s.holder ++ [(w', id)] }
+    | some id => { s with holder := (w', id) :: s.holder }
     | none => s
   | .restart => s
   | .work w c =>
@@ -257,8 +257,15 @@ theorem fork_without_lease_accounting :
     spent (ops.foldl (step 100) init).work 0 = 5 := by
   decide
 
+/-- newest assignment wins: a reissued lease (or a fork onto an existing worker) takes effect -/
+theorem reissue_takes_effect :
+    let ops := [Op.issue ⟨0, 5, 100⟩ 1, .issue ⟨1, 5, 100⟩ 1, .work 1 3]
+    spent (ops.foldl (step 100) init).work 1 = 3 ∧ spent (ops.foldl (step 100) init).work 0 = 0 := by
+  decide
+
 end ControlStack.Lease
 
 #print axioms ControlStack.Lease.lease_safe
 #print axioms ControlStack.Lease.revoke_absorbing
 #print axioms ControlStack.Lease.fork_without_lease_accounting
+#print axioms ControlStack.Lease.reissue_takes_effect

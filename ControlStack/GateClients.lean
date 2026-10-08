@@ -10,8 +10,8 @@ Existing gates, now instances (each reuses the gate's own step lemma; nothing is
 New primitives:
 - **F4 content-addressed artefact gate** (`Artifact`): a deploy names a hash. It succeeds only if a trusted reviewer
   reviewed content with that hash, and it deploys the stored content with that hash. `deployed_reviewed`: every
-  deployed artefact's hash was reviewed. `deployed_is_reviewed`: if the hash is injective on the contents involved,
-  the deployed content IS reviewed content. `collision_breaks`: with a collision, unreviewed content is deployed, so
+  deployed artefact's hash was reviewed. `deployed_is_reviewed`: if no two contents that appear in the run (stored
+  or reviewed) collide, the deployed content IS reviewed content. Global injectivity is not assumed. `collision_breaks`: with a collision, unreviewed content is deployed, so
   collision resistance cannot be dropped. The agent may write arbitrary content to the store at any time; what it
   cannot do is change the content behind a reviewed hash. Not claimed: that reviewed content is harmless.
 - **F7 exact-payload approval** (`Approval`): an irreversible transaction executes only if an approval for exactly that
@@ -128,29 +128,38 @@ def sys (hash : C → H) : System (St C H) (Op C H) C where
   effects := fun s => s.deployed
 
 def Inv (hash : C → H) (s : St C H) : Prop :=
-  s.reviewed = s.reviewedContent.map hash ∧ ∀ c ∈ s.deployed, hash c ∈ s.reviewed
+  s.reviewed = s.reviewedContent.map hash ∧ (∀ c ∈ s.deployed, hash c ∈ s.reviewed) ∧ ∀ c ∈ s.deployed, c ∈ s.store
 
 theorem step_inv (hash : C → H) (s : St C H) (o : Op C H) (h : Inv hash s) : Inv hash (step hash s o) := by
-  obtain ⟨h1, h2⟩ := h
+  obtain ⟨h1, h2, h3⟩ := h
   cases o with
-  | put c => exact ⟨h1, h2⟩
-  | review c =>
-    refine ⟨by simp [step, h1], fun d hd => ?_⟩
+  | put c =>
+    refine ⟨h1, h2, fun d hd => ?_⟩
     simp only [step, List.mem_append] at hd ⊢
-    exact Or.inl (h2 d hd)
+    exact Or.inl (h3 d hd)
+  | review c =>
+    refine ⟨by simp [step, h1], fun d hd => ?_, fun d hd => ?_⟩
+    · simp only [step, List.mem_append] at hd ⊢
+      exact Or.inl (h2 d hd)
+    · simp only [step] at hd ⊢; exact h3 d hd
   | deploy hh =>
     simp only [step]
     split_ifs with hr
     · cases hf : s.store.find? (fun c => hash c = hh) with
-      | none => exact ⟨h1, h2⟩
+      | none => exact ⟨h1, h2, h3⟩
       | some c =>
         have hc : hash c = hh := by simpa using List.find?_some hf
-        refine ⟨h1, fun d hd => ?_⟩
-        simp only [List.mem_append, List.mem_singleton] at hd
-        rcases hd with hd | rfl
-        · exact h2 d hd
-        · rw [hc]; exact hr
-    · exact ⟨h1, h2⟩
+        have hcs : c ∈ s.store := List.mem_of_find?_eq_some hf
+        refine ⟨h1, fun d hd => ?_, fun d hd => ?_⟩
+        · simp only [List.mem_append, List.mem_singleton] at hd
+          rcases hd with hd | rfl
+          · exact h2 d hd
+          · rw [hc]; exact hr
+        · simp only [List.mem_append, List.mem_singleton] at hd
+          rcases hd with hd | rfl
+          · exact h3 d hd
+          · exact hcs
+    · exact ⟨h1, h2, h3⟩
 
 theorem prefix_step (hash : C → H) (s : St C H) (o : Op C H) : s.deployed <+: (step hash s o).deployed := by
   cases o with
@@ -167,24 +176,29 @@ def spec (hash : C → H) : Spec (sys hash) where
   ok := fun s c => hash c ∈ s.reviewed
   step_inv := step_inv hash
   log_prefix := prefix_step hash
-  inv_ok := fun _ h c hc => h.2 c hc
+  inv_ok := fun _ h c hc => h.2.1 c hc
 
 /-- **Every deployed artefact's hash was reviewed**, after any interleaving of agent and reviewer operations. -/
 theorem deployed_reviewed (hash : C → H) (ops : List (Op C H)) :
     ∀ c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).deployed,
       hash c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).reviewed :=
-  ((spec hash).trace_safe _ ops ⟨rfl, by simp⟩).2.2
+  ((spec hash).trace_safe _ ops ⟨rfl, by simp, by simp⟩).2.2
 
-/-- with no hash collisions, **the deployed content is reviewed content** -/
-theorem deployed_is_reviewed (hash : C → H) (hinj : Function.Injective hash) (ops : List (Op C H)) :
+/-- if the hash has no collision AMONG THE CONTENTS THAT APPEAR in the run (stored or reviewed), **the deployed
+content is reviewed content**. Only collisions an adversary actually produced matter; no global injectivity is
+assumed (a real hash compresses, so it is never globally injective). -/
+theorem deployed_is_reviewed (hash : C → H) (ops : List (Op C H))
+    (hinj : Set.InjOn hash {c | c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).store ∨
+                                c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).reviewedContent}) :
     ∀ c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).deployed,
       c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).reviewedContent := by
   intro c hc
-  have hinv := ((spec hash).trace_safe ⟨[], [], [], []⟩ ops ⟨rfl, by simp⟩).1
-  have h := hinv.2 c hc
+  have hinv := ((spec hash).trace_safe ⟨[], [], [], []⟩ ops ⟨rfl, by simp, by simp⟩).1
+  have h := hinv.2.1 c hc
   rw [hinv.1] at h
   obtain ⟨c', hc', heq⟩ := List.mem_map.1 h
-  rwa [← hinj heq]
+  have : c' = c := hinj (Or.inr hc') (Or.inl (hinv.2.2 c hc)) heq
+  rwa [← this]
 
 /-- **Collision resistance cannot be dropped**: with hash ≡ (), the reviewer reads `true`, the agent stores `false`
 first, and deploying the reviewed hash ships the unreviewed `false`. -/

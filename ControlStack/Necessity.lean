@@ -13,8 +13,9 @@ necessary in every weaker form (see NECESSITY.md for the exact scope of each wit
   independent of the secret bit m (each has least certificate mass 1), yet together they reveal m with certainty
   (success 1 = 2 × the blind value 1/2). Composition needs the joint or sequential domination of `Leakage.seq_transfer`
   (the second output's certificate given the first has mass 2).
-- `shared_score_product_unsound`: two control layers (e.g. a monitor flag and an audit trigger) driven by the same
-  score each miss an attack with probability 1/10. Their joint miss probability is 1/10, not the product 1/100.
+- `shared_score_product_unsound` (ILLUSTRATION, not a witness against a stack theorem; adversarial review
+  2026-10-08): two layers fired by the same score miss together w.p. 1/10, not 1/100. This is just P(A ∩ A) = P(A).
+  The stack-level counterpart is `ComposeBlindSpot` and the fresh-coins premise of `ComposeGame`.
 -/
 import ControlStack.CovertChannel
 import ControlStack.ScenarioAUsefulness

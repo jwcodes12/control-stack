@@ -81,7 +81,7 @@ if __name__=="__main__":
     data=inventory();md=markdown(data)
     file=ROOT/"scenarios/THEOREM-REGISTRY.md"
     if args.check:
-        if file.read_text()!=md:
+        if file.read_text()!=md or (ROOT/"scenarios/theorem-registry.json").read_text()!=json.dumps(data,indent=2)+"\n":
             raise SystemExit("Theorem registry drift: run python3 tools/build_theorem_registry.py")
         print(f"registry current ({len(data)} rows)")
     else:

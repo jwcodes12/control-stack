@@ -1,0 +1,16 @@
+name: generated-assurance-indexes
+on:
+  push:
+    paths: ['scenarios/**', 'tools/build_status.py', 'tools/build_theorem_registry.py', '.github/workflows/generated-assurance-indexes.yml']
+  pull_request:
+    paths: ['scenarios/**', 'tools/build_status.py', 'tools/build_theorem_registry.py', '.github/workflows/generated-assurance-indexes.yml']
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: python3 tools/build_status.py --check
+      - run: python3 tools/build_theorem_registry.py --check

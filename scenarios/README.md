@@ -8,7 +8,7 @@ Static structural, proof-record and SHA checks (no Lean invocation):
 
 For machine output use --json; for nonzero exit on unresolved/refuted applicability, failed receipts or unbound evidence use --require-clear. Neither mode independently kernel-checks Lean or authorizes a deployment claim. Each assumption must have separate proof, evidence and applicability axes. Failure and success from distinct environments must never be pooled. SC-01's later VM usefulness replay fails with 0/64 lifetimes in both conditions at the frozen 0.25-second deadline.
 
-Existing source code, historical assurance files and module names are not moved, preserving CI and imports.
+Historical assurance files, runtime evidence receipts and old Lean module names remain at their original paths. Six reviewed proof implementations were relocated byte-for-byte into Core/Families/Witnesses, and compatibility facades preserve their old imports.
 
 ## Merge canonical paths
 

@@ -1,5 +1,10 @@
 # Circle effort: pickup notes (2026-10-08)
 
+## Consolidated implementation links
+
+Structural follow-up: [scenarios](scenarios/README.md), [theorem registry](THEOREM-REGISTRY.md), [adversary classes](ADVERSARY-CLASSES.md), [current roadmap](ROADMAP.md), and [merge comparison](reviews/structure-merge/comparison.md). `ControlStack/Core/Gate.lean` and `ControlStack/Core/Leakage.lean` hold the reviewed main proofs; old imports are preserved. The branch does not claim mathematical novelty or a new clean Lean build.
+
+
 Start with [ROADMAP.md](ROADMAP.md) ("Status at a glance"), then:
 - [PRIMITIVES-AND-SCENARIOS.md](PRIMITIVES-AND-SCENARIOS.md): status of F1–F8 and of all 28 scenarios;
 - [STRUCTURE-PLAN.md](STRUCTURE-PLAN.md): work that needs no testing. Read its "check first" note about the three

@@ -1,5 +1,10 @@
 # control-stack: Lean-verified, capability-free guarantees for AI control
 
+## Structure and verification entry points
+
+Start at [ROADMAP.md](ROADMAP.md) for canonical status; [scenarios/](scenarios/README.md) for 28 conditional/draft scenario bundles; [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md) for generated source inventory; [ADVERSARY-CLASSES.md](ADVERSARY-CLASSES.md) for strategy scope; and [reviews/structure-merge/comparison.md](reviews/structure-merge/comparison.md) for the unverified branch comparison. A scenario checker pass confirms metadata integrity, **not** deployment safety.
+
+
 Machine-checked worst-case bounds for **untrusted monitoring with upfront honeypot tests** (a trusted mediator, a
 shutdown rule, audits), stated so that the adversary (a colluding generator and monitor with a shared seed) is
 universally quantified. Around that core: usefulness identities, converses for nonadaptive and adaptive testers, an

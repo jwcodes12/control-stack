@@ -1,0 +1,16 @@
+name: scenario-metadata
+on:
+  push:
+    paths: ['scenarios/**', 'tools/check_scenarios.py', 'tools/test_check_scenarios.py', 'THEOREM-REGISTRY.json', '.github/workflows/scenario-metadata.yml']
+  pull_request:
+    paths: ['scenarios/**', 'tools/check_scenarios.py', 'tools/test_check_scenarios.py', 'THEOREM-REGISTRY.json', '.github/workflows/scenario-metadata.yml']
+  workflow_dispatch:
+jobs:
+  static-bundles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python3 -m unittest tools.test_check_scenarios
+      - run: python3 tools/check_scenarios.py

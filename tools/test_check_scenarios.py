@@ -32,6 +32,9 @@ class CheckerTests(unittest.TestCase):
             "evidence": [], "assumptions": [{"id": "boundary", "text": "exclusive gate",
                 "proof": "THEOREM_VERIFIED", "evidence": "NOT_RUN", "applicability": "UNRESOLVED"}]
         }
+        (self.root / "THEOREM-REGISTRY.json").write_text(
+            json.dumps([{"key": "sample.lean::foo", "status": "SOURCE_ONLY"}]))
+        (self.bundle / "claim.lean").write_text("#check foo\n")
         self.save()
 
     def tearDown(self):
@@ -77,6 +80,11 @@ class CheckerTests(unittest.TestCase):
 
     def test_strict_fails_conditional(self):
         self.assertEqual(main(["SC-01", "--require-clear"], root=self.root), 2)
+
+    def test_unregistered_theorem_fails_closed(self):
+        (self.root / "THEOREM-REGISTRY.json").write_text("[]")
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
 
     def test_draft_has_no_proof(self):
         self.m["theorems"] = []

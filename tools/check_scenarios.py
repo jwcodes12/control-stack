@@ -84,6 +84,29 @@ def verify(root, sid):
         need(x.get("recorded_status") in {"KERNEL_CHECK_RECORDED", "NOT_CHECKED"},
              f"{sid}: unsupported theorem status")
         artifact(root, x, "proof")
+    # Registry is a source-derived lexical inventory, NOT a kernel verification.
+    # Manifest names and claim commands cannot be invented or self-promoted.
+    if proofs:
+        registry_file = root / "THEOREM-REGISTRY.json"
+        need(registry_file.is_file(), f"{sid}: missing generated theorem registry")
+        records = json.loads(registry_file.read_text())
+        need(isinstance(records, list), f"{sid}: invalid theorem registry")
+        registered = {item["key"] for item in records
+                      if isinstance(item, dict) and isinstance(item.get("key"), str)}
+        claim = file_at(root, f"scenarios/{sid}/claim.lean").read_text()
+        for x in proofs:
+            local = x["name"].rsplit(".", 1)[-1]
+            key = f"{x['path']}::{local}"
+            need(key in registered, f"{sid}: theorem absent from registry: {key}")
+            source = file_at(root, x["path"]).read_text()
+            need(re.search(r"(?m)^\s*(?:(?:private|protected)\s+)?"
+                           r"(?:theorem|lemma)\s+" + re.escape(local) + r"\b", source) is not None,
+                 f"{sid}: theorem not declared in cited source: {key}")
+            need(any(re.search(r"(?m)^\s*#" + cmd + r"\s+" +
+                               re.escape(x["name"]) + r"\s*$", claim)
+                     for cmd in ("check", "print axioms")),
+                 f"{sid}: claim.lean does not check named theorem: {x['name']}")
+
     failed, unbound = [], []
     for x in evs:
         need(isinstance(x, dict) and isinstance(x.get("purpose"), str) and x["purpose"],

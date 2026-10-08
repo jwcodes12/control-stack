@@ -6,6 +6,7 @@ record until separately audited. Never promote from filename or compilation
 history; reviewed annotations carry their own recorded provenance and assumptions.
 """
 import argparse
+import json
 import hashlib
 import json
 import re
@@ -86,18 +87,29 @@ def render():
     return "\n".join(lines) + "\n"
 
 
+def render_json():
+    columns = ("key", "family", "scenarios", "adversary", "premises", "status", "witness", "record", "blob_sha1_prefix")
+    return json.dumps([dict(zip(columns, row)) for row in inventory()], indent=2, ensure_ascii=False) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    dest = ROOT / "THEOREM-REGISTRY.md"
-    text = render()
+    md_path = ROOT / "THEOREM-REGISTRY.md"
+    json_path = ROOT / "THEOREM-REGISTRY.json"
+    markdown = render()
+    machine = render_json()
     if args.check:
-        if not dest.exists() or dest.read_text() != text:
+        if not md_path.exists() or md_path.read_text() != markdown:
             raise SystemExit("THEOREM-REGISTRY.md is stale")
+        if not json_path.exists() or json_path.read_text() != machine:
+            raise SystemExit("THEOREM-REGISTRY.json is stale")
+        print(f"registry consistent: {len(inventory())} declarations")
     else:
-        dest.write_text(text)
-        print(f"wrote {dest}")
+        md_path.write_text(markdown)
+        json_path.write_text(machine)
+        print(f"wrote {md_path} and {json_path}")
 
 
 if __name__ == "__main__":

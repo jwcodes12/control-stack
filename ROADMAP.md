@@ -1,5 +1,21 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
 
+## Canonical structure-merge status
+
+This is the **single status entry point**. The source-derived scenario index is [scenarios/INDEX.md](scenarios/INDEX.md), and the source-derived theorem registry is [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md). Their status fields are not deployment assurance. The independent comparison is [reviews/structure-merge/comparison.md](reviews/structure-merge/comparison.md).
+
+### Structure integration (work branch; validation pending)
+
+- SC-01, SC-03 and SC-13 have named proof references and remain **conditional**, not deployment assured; SC-27 remains **draft** because audit-dispatch integrity does not prove independently attested evidence.
+- 28 scenario folders exist: **3 conditional, 25 draft**. A scenario folder is not a tested safety case.
+- Reviewed main proof definitions now live under `ControlStack/Core/`, `ControlStack/Families/` and `ControlStack/Witnesses/`, with old imports preserved. C contributes policy-tamper and shared-state gate candidate proofs.
+- The theorem registry is a lexical source inventory (849 declarations at integration), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
+- **Required before approval:** actual Lean 4.34.0 clean build, standard-axiom audit, Python tests, SC-01 unchanged receipt steps 1–4, mutation/fail-closed controls, and independent correspondence review. A failed host-bound OpenSSL receipt must not be regenerated or mistaken for a changed proof.
+- C's four active-bundle observations were reconciled conservatively: SC-01's frozen VM usefulness gate and single-host side-channel gate failed; SC-03 proves only a narrow immediate-peer model; SC-13 assumes exclusive trusted dispatch; SC-27 still lacks independently rooted attestation.
+
+The older time-stamped results below are **historical**, not a new successful verification of this work branch.
+
+
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
 [STACK.md](STACK.md); this file is the one-page plan.
 

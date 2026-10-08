@@ -1,196 +1,210 @@
-[
- {
-  "case": "honest: request execution",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": ""
- },
- {
-  "case": "honest: dispatcher runs it",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": "1"
- },
- {
-  "case": "honest: app event",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": ""
- },
- {
-  "case": "honest: read audits",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": "1"
- },
- {
-  "case": "honest: own-schema migration",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": ""
- },
- {
-  "case": "forge mandatory audit",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table execution_audit"
- },
- {
-  "case": "reserved type via app_event",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "DETAIL:  Failing row contains (2, workflow.execute, {\"executionId\": 1})."
- },
- {
-  "case": "malformed id in app_event",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": ""
- },
- {
-  "case": "oversized metadata",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "DETAIL:  Failing row contains (4, x, {\"a\": \"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...)."
- },
- {
-  "case": "deeply nested metadata",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": ""
- },
- {
-  "case": "bounded flood of app events",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": ""
- },
- {
-  "case": "app performs effect directly",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table effect"
- },
- {
-  "case": "app calls dispatcher",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for function dispatch_next"
- },
- {
-  "case": "app sets request_id",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table request"
- },
- {
-  "case": "delete mandatory audit",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table execution_audit"
- },
- {
-  "case": "update mandatory audit",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table execution_audit"
- },
- {
-  "case": "delete request (cascade attempt)",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table request"
- },
- {
-  "case": "truncate",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table execution_audit"
- },
- {
-  "case": "drop FK",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  must be owner of table effect"
- },
- {
-  "case": "replica mode",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied to set parameter \"session_replication_role\""
- },
- {
-  "case": "replace dispatcher fn",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for schema audit"
- },
- {
-  "case": "self-grant",
-  "expected": "ALLOWED_BUT_SAFE",
-  "got": "ALLOWED_BUT_SAFE",
-  "rc": 0,
-  "msg": "WARNING:  no privileges were granted for \"effect\""
- },
- {
-  "case": "become owner",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  must be owner of table effect"
- },
- {
-  "case": "set role dispatcher",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied to set role \"dispatcher\""
- },
- {
-  "case": "create role",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "DETAIL:  Only roles with the CREATEROLE attribute may create roles."
- },
- {
-  "case": "dispatcher forges effect without audit",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table effect"
- },
- {
-  "case": "dispatcher deletes audit",
-  "expected": "DENIED",
-  "got": "DENIED",
-  "rc": 3,
-  "msg": "ERROR:  permission denied for table execution_audit"
- },
- {
-  "case": "concurrent dispatchers (4x, 20 requests)",
-  "expected": "no duplicate, none pending, invariant",
-  "got": "dup=0 pending=0 violations=0"
- }
-]
+{
+ "server_version": "PostgreSQL 16.15 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+ "roles": [
+  "app super=false createrole=false replication=false",
+  "dispatcher super=false createrole=false replication=false",
+  "trusted_owner super=false createrole=false replication=false"
+ ],
+ "grants": [
+  "app:app_event:SELECT",
+  "app:effect:SELECT",
+  "app:execution_audit:SELECT",
+  "app:request:SELECT"
+ ],
+ "matrix": [
+  {
+   "case": "honest: request execution",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": ""
+  },
+  {
+   "case": "honest: dispatcher runs it",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": "1"
+  },
+  {
+   "case": "honest: app event",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": ""
+  },
+  {
+   "case": "honest: read audits",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": "1"
+  },
+  {
+   "case": "honest: own-schema migration",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": ""
+  },
+  {
+   "case": "forge mandatory audit",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table execution_audit"
+  },
+  {
+   "case": "reserved type via app_event",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "DETAIL:  Failing row contains (2, workflow.execute, {\"executionId\": 1})."
+  },
+  {
+   "case": "malformed id in app_event",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": ""
+  },
+  {
+   "case": "oversized metadata",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "DETAIL:  Failing row contains (4, x, {\"a\": \"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...)."
+  },
+  {
+   "case": "deeply nested metadata",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": ""
+  },
+  {
+   "case": "bounded flood of app events",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": ""
+  },
+  {
+   "case": "app performs effect directly",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table effect"
+  },
+  {
+   "case": "app calls dispatcher",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for function dispatch_next"
+  },
+  {
+   "case": "app sets request_id",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table request"
+  },
+  {
+   "case": "delete mandatory audit",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table execution_audit"
+  },
+  {
+   "case": "update mandatory audit",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table execution_audit"
+  },
+  {
+   "case": "delete request (cascade attempt)",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table request"
+  },
+  {
+   "case": "truncate",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table execution_audit"
+  },
+  {
+   "case": "drop FK",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  must be owner of table effect"
+  },
+  {
+   "case": "replica mode",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied to set parameter \"session_replication_role\""
+  },
+  {
+   "case": "replace dispatcher fn",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for schema audit"
+  },
+  {
+   "case": "self-grant",
+   "expected": "ALLOWED_BUT_SAFE",
+   "got": "ALLOWED_BUT_SAFE",
+   "rc": 0,
+   "msg": "WARNING:  no privileges were granted for \"effect\""
+  },
+  {
+   "case": "become owner",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  must be owner of table effect"
+  },
+  {
+   "case": "set role dispatcher",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied to set role \"dispatcher\""
+  },
+  {
+   "case": "create role",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "DETAIL:  Only roles with the CREATEROLE attribute may create roles."
+  },
+  {
+   "case": "dispatcher forges effect without audit",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table effect"
+  },
+  {
+   "case": "dispatcher deletes audit",
+   "expected": "DENIED",
+   "got": "DENIED",
+   "rc": 3,
+   "msg": "ERROR:  permission denied for table execution_audit"
+  },
+  {
+   "case": "concurrent dispatchers (4x, 20 requests)",
+   "expected": "no duplicate, none pending, invariant",
+   "got": "dup=0 pending=0 violations=0"
+  }
+ ]
+}

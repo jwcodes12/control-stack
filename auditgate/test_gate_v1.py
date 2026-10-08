@@ -101,7 +101,13 @@ def main():
     ok &= conc
     matrix.append({"case": "concurrent dispatchers (4x, 20 requests)", "expected": "no duplicate, none pending, invariant",
                    "got": f"dup={dup} pending={pend} violations={v}"})
-    json.dump(matrix, open(os.path.join(os.path.dirname(__file__), "outcome_matrix.json"), "w"), indent=1)
+    _, version = SU("SELECT version();")
+    _, roles = SU("SELECT rolname||' super='||rolsuper||' createrole='||rolcreaterole||' replication='||rolreplication "
+                  "FROM pg_roles WHERE rolname IN ('app','dispatcher','trusted_owner') ORDER BY 1;")
+    _, grants = SU("SELECT grantee||':'||table_name||':'||privilege_type FROM information_schema.role_table_grants "
+                   "WHERE table_schema='audit' AND grantee IN ('app','dispatcher') ORDER BY 1;")
+    out = {"server_version": version, "roles": roles.splitlines(), "grants": grants.splitlines(), "matrix": matrix}
+    json.dump(out, open(os.path.join(os.path.dirname(__file__), "outcome_matrix.json"), "w"), indent=1)
     print("ALL AS EXPECTED" if ok else "MISMATCH"); sys.exit(0 if ok else 1)
 
 

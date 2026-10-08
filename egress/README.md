@@ -46,7 +46,10 @@ unavailable prerequisite. `--gateway-only` is explicitly `partial-pass`, never
 isolation evidence. A missing namespace, packet observer, strace, dropped capture
 packets or crashed attacker cannot silently become a successful denial. CI runs
 full mode and all three mutations as mandatory steps and uploads artifacts on failure.
-CI has been configured; local results do not establish a remote CI run.
+The private branch passed [remote egress CI](https://github.com/jwcodes12/control-stack/actions/runs/37784398180) on
+2026-10-08 at `b30177e`: 62 full controls, all three mutations, nine oracle
+regressions and six Lean theorem checks; zero packet drops. The outer-topology
+calibration is checked from its stored receipt, not rerun by this workflow.
 
 ## Components and integration
 

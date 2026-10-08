@@ -6,15 +6,15 @@ Implemented test-only launcher/gateway/adapter, actual namespace validator, host
 pinned dependency install/compile/test, 62 passing full-suite controls, three successful mutation checks,
 nine oracle regressions, and six standalone Lean theorem checks (the original full `lake build ControlStack` passed).
 See `egress/README.md`, `egress/results/summary.json`, `egress/FIDELITY.md` and `assurance/egress-boundary-v1.json`.
-Reachability only; CONDITIONAL; no production deployment or remote CI result claimed. Auditgate untouched.
+Reachability only; CONDITIONAL; no production deployment. Auditgate untouched.
 Astra and approved Opus 5.5 reviews produced oracle fixes. Next: all-destination process attribution in a
-disposable outer topology and an actual GitHub workflow run on the authorized private branch.
+disposable outer topology in the isolated disposable topology; the egress GitHub workflow now passes.
 The authorized follow-up after 09:30:31 UTC fixed IPv6 trace/fragment observer bugs and
 refreshed full/mutation receipts. A bounded loopback-only outer-namespace experiment passed:
 eight initial TCP/UDP transmissions, two independently traced sender PIDs, zero drops,
 missing-trace mutation detected. General attribution remains unresolved; next is integrating
 the gateway/sandbox into that isolated topology. See `reviews/egress-follow-up-2026-10-08.md`.
-No rate-limit error occurred; account reset time remains unavailable. Git pushes and GitHub CI are authorized (2026-10-08); publication is being completed on `egress-r10-controls`.
+No rate-limit error occurred; account reset time remains unavailable. Private branch `egress-r10-controls` is published (2026-10-08). [Egress CI](https://github.com/jwcodes12/control-stack/actions/runs/37784398180) passed on `b30177e`: 62/62 controls, three mutations, zero packet drops and six Lean theorem checks. Git pushes and CI are authorized; direct messages to people still require approval.
 
 
 What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in

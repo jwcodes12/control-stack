@@ -122,3 +122,14 @@ disposition in `reviews/external-critique-2026-10-07.md` and `reviews/related-wo
   - a completion target forces risk ≥ α₀·u.
 - **Proposed next direction (awaiting John):** Lean-check a Games-for-AI-Control trusted-monitoring certificate
   (merges with N1b), or port SOUNDGATE's gate model so that A4/A5/A11 become consequences of complete mediation.
+
+## SC-03 remote egress CI — 2026-10-08
+
+Private branch `egress-r10-controls` pushed at `b30177e`.
+[Egress CI](https://github.com/jwcodes12/control-stack/actions/runs/37784398180) passed both jobs: 62/62 full controls, three
+mutations, nine oracle regressions and six Lean axiom checks. Downloaded outcome
+artifacts confirm 1,454 kernel-counted packets and zero drops in full mode; all
+three mutation receipts also have zero drops. Existing fast/auditgate checks
+passed; the covert-channel Lean job is still running as of this entry.
+General attribution remains unresolved; gateway/sandbox integration in the isolated
+outer topology is the next engineering step. Auditgate source is unchanged.

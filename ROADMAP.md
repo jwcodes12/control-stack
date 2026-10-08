@@ -35,8 +35,8 @@ channels. Monitor-based bad-action safety is a separate optional second scenario
 
 | Order | Remaining milestone | Acceptance criterion |
 |---|---|---|
-| 1 | Complete the selected scenario contract and usefulness viability gate | Fix actual honest task, baseline/completion target, episode/lifetime horizon, receiver lineage and complete observation inventory; measure actual task success under the channel budget. |
-| 2, in parallel | Enforce lifetime accounting and test residual channels | Required ledger on the certified path, trusted lineage, serialized durable charges, restart/missing-state/rollback controls; targeted shared-kernel/channel falsification with remaining assumptions explicit. |
+| 1 — completed for fixed catalog | Complete the selected scenario contract and usefulness viability gate | Fix actual honest task, baseline/completion target, episode/lifetime horizon, receiver lineage and complete observation inventory; measure actual task success under the channel budget. |
+| 2 — ledger controls pass; cache channel found | Enforce lifetime accounting and test residual channels | Required ledger on the certified path, trusted lineage, serialized durable charges, restart/missing-state/rollback controls; targeted shared-kernel/channel falsification with remaining assumptions explicit. |
 | 3 | Targeted gateway/model correspondence | Validate schema/cardinality, blanking, delivery and lifetime charge behavior; consider a small proved executable core; retain explicit Python/OS correspondence assumptions. |
 | 4 | One reproducible conditional safety/usefulness case | One command checks the theorem/config, runtime evidence, actual task-success measurement, exact revision bindings and unresolved obligations. |
 | 5 | Demonstrate reusable interfaces with a second client | Common evidence/obligation format and small genuinely shared proof interfaces; optional monitor scenario must specify its protocol/content coverage before calibrating error rates. |
@@ -115,8 +115,8 @@ Goal: one end-to-end, independently checkable safety case, optimising for how mu
 
 | priority | work | definition of success | status |
 |---|---|---|---|
-| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | 🔄 `CATASTROPHE-SPEC.md` fixes exact recovery, machine receivers and finite channels (k = 32, P ≤ 2^-16, 16-bit lifetime budget); actual honest task, usefulness floor and horizon remain to be fixed |
-| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1: `gateway/` (schema channels, fail-closed, default-deny) running in a bubblewrap two-instance harness; side channels (files, network, stderr, exit code, duration) closed in tests; red-team within the Lean bound. Residual: shared kernel state (page cache timing) needs VM isolation |
+| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | 🔄 `CATASTROPHE-SPEC.md` fixes exact recovery, machine receivers and finite channels (k = 32, P ≤ 2^-16, 16-bit lifetime budget); fixed eight-fault repair task, 90% usefulness floor and five-episode horizon now measured; cache observation boundary fails |
+| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1: `gateway/` (schema channels, fail-closed, default-deny) running in a bubblewrap two-instance harness; selected scripted probes pass; a real shared-cache probe decoded a secret bit in 64/64 trials at constant NULL gateway view. Stronger isolation is the next blocker |
 | P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | 🔄 `GatewayModel.lean` proves the end-to-end bound for the gateway model; Python matches the model on 300 adversarial traces (differential test); remaining assumptions in `gateway/CORRESPONDENCE.md` |
 | P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |
 | P1 | trusted/untrusted composition | Lean bound for the actual joint protocol incl. shared state and audit budget | 🔄 (`ComposeGame`, `ComposeAvg`, `ComposeBlindSpot`) |
@@ -152,3 +152,25 @@ Every guarantee is conditional on these. None is discharged by anything here:
 ## Maintenance
 Update this file whenever a row changes status: verified, frozen, started, or dropped. Also update the matching row in
 STACK.md, and note the change in HISTORY.md when a new snapshot is exported.
+
+## SC-01 repair milestone — 2026-10-08
+
+Implemented the contract/usefulness milestone and durable SQLite lifetime charging.
+See `gateway/scenario/README.md`, the two preregistrations, source-bound receipts
+and `ControlStack/ScenarioARepair.lean`. Contract preregistration: `1001024`.
+Baseline and mediated repair each passed 320/320 episodes and 64/64 lifetimes;
+simultaneous completion lower bound 93.382% exceeds the 90% floor. Ten ledger
+controls, five scenario/oracle/evidence-mutation tests, ten gateway tests, selected
+harness probes, three new standard-axiom Lean checks and full
+`lake build ControlStack` (3,691 jobs) passed. Both final receipt verifiers passed.
+
+The targeted shared-cache experiment decoded one secret bit in 64/64 trials with
+a constant NULL gateway view. This falsifies the sole-transcript premise in the
+current harness. It does not demonstrate full-secret recovery; the finite-view
+Lean bound remains model-only and the case stays CONDITIONAL. Initial results
+and corresponding changed source snapshots are retained, not pooled.
+
+Next blocker: stronger isolation or a justified bound covering all receiver
+observations, followed by repeat probes and gateway/model correspondence. Valid
+host snapshot rollback, statistical runtime independence and workload transport
+remain assumptions. Auditgate untouched. Private tracker: GitHub issue #2.

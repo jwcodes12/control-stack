@@ -93,15 +93,16 @@ def covert_manifest() -> dict:
         "implementation": {f: sha(ROOT / f) for f in ("gateway/gateway.py", "gateway/harness.py")},
         "configuration": {"secret_bits": 32, "lifetime_budget_bits": 16, "bound": "2^-16"},
         "tests": ["gateway/test_gateway.py (10 tests)", "gateway/difftest.py (300 traces vs Lean model, 0 mismatches)",
-                  "gateway/test_harness.py (bubblewrap side channels; red team within bound)"],
+                  "gateway/test_harness.py (scripted probes only; selected encoder within model bound)",
+                  "gateway/scenario/cache_probe.py (sole-view premise falsification; not full-secret recovery)"],
         "assumptions": [
             A("counting_bound", "THEOREM_VERIFIED", "covert_bound / covert_bound_lifetime"),
             A("gateway_model_bound", "THEOREM_VERIFIED", "GatewayModel.gateway_bound for the modelled state machine"),
             A("python_refines_model", "UNRESOLVED", "Python gateway matches the Lean model on 300 adversarial traces "
                                                    "(differential test), not proved"),
             A("only_channel", "UNRESOLVED", "the receiver observes nothing outside the delivered view: bubblewrap "
-                                             "harness closes files/network/stderr/exit code/duration in tests; shared "
-                                             "kernel state (page-cache timing) remains"),
+                                             "harness tested selected file/network/stderr/exit-code/duration probes; shared "
+                                             "page-cache probe demonstrates an unmediated bit (gateway/scenario/results/local-cache.json), so the sole-view premise is falsified in that setup"),
             A("lifetime_scope", "UNRESOLVED", "every receiver that can share memory with another is in one ledger "
                                                "lineage; the deployment must define lineages"),
             A("secret_independence", "UNRESOLVED", "m independent of the shared seed and receiver inputs (true in the "

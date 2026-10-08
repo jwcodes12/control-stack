@@ -1,83 +1,84 @@
 {
- "name": "covert-channel-gateway-v2",
- "claim": "bounded EXACT-MESSAGE RECOVERY: a uniform 32-bit secret held by U is recovered by a machine receiver with probability <= 2^-16 over the secret's lifetime. NOT a claim that coordination is impossible: a 16-bit channel carries a 1-bit command with certainty.",
- "theorem": {
-  "files": {
-   "ControlStack/CovertChannel.lean": "7afab5bd0a0549ca77fad8896830f5b836db6b06d59ae4fb5208d5df1ad67d47",
-   "ControlStack/GatewayModel.lean": "4ef292ff2dfa60074cd97f1d146c1007773e17c26b78ab3140f19743f0cad51d"
+  "name": "covert-channel-gateway-v2",
+  "claim": "bounded EXACT-MESSAGE RECOVERY: a uniform 32-bit secret held by U is recovered by a machine receiver with probability <= 2^-16 over the secret's lifetime. NOT a claim that coordination is impossible: a 16-bit channel carries a 1-bit command with certainty.",
+  "theorem": {
+    "files": {
+      "ControlStack/CovertChannel.lean": "7afab5bd0a0549ca77fad8896830f5b836db6b06d59ae4fb5208d5df1ad67d47",
+      "ControlStack/GatewayModel.lean": "4ef292ff2dfa60074cd97f1d146c1007773e17c26b78ab3140f19743f0cad51d"
+    },
+    "ids": [
+      "Covert.covert_bound",
+      "Covert.covert_bound_lifetime",
+      "Covert.design_point",
+      "Covert.attain_embedding",
+      "GatewayModel.gateway_bound"
+    ],
+    "lean_status": "passed"
   },
-  "ids": [
-   "Covert.covert_bound",
-   "Covert.covert_bound_lifetime",
-   "Covert.design_point",
-   "Covert.attain_embedding",
-   "GatewayModel.gateway_bound"
+  "implementation": {
+    "gateway/gateway.py": "3e3ab093c9ad0f6ba2f82204f4d7088326e78d83067d7b9fbf68e0b620ca0d53",
+    "gateway/harness.py": "76d0bd98e3f79500a605f2e21b8a9f64dca02919abb5009beab994e36c6c2f6c"
+  },
+  "configuration": {
+    "secret_bits": 32,
+    "lifetime_budget_bits": 16,
+    "bound": "2^-16"
+  },
+  "tests": [
+    "gateway/test_gateway.py (10 tests)",
+    "gateway/difftest.py (300 traces vs Lean model, 0 mismatches)",
+    "gateway/test_harness.py (scripted probes only; selected encoder within model bound)",
+    "gateway/scenario/cache_probe.py (sole-view premise falsification; not full-secret recovery)"
   ],
-  "lean_status": "passed"
- },
- "implementation": {
-  "gateway/gateway.py": "fa43491b062ce67b0b55f5c42f8172817d18c493426b9659dc3e6f6690573572",
-  "gateway/harness.py": "dbbf4f34008d54d9666267eb7a36f97b22cf15745d2b57596c143c822a7ea82a"
- },
- "configuration": {
-  "secret_bits": 32,
-  "lifetime_budget_bits": 16,
-  "bound": "2^-16"
- },
- "tests": [
-  "gateway/test_gateway.py (10 tests)",
-  "gateway/difftest.py (300 traces vs Lean model, 0 mismatches)",
-  "gateway/test_harness.py (bubblewrap side channels; red team within bound)"
- ],
- "assumptions": [
-  {
-   "id": "counting_bound",
-   "status": "THEOREM_VERIFIED",
-   "text": "covert_bound / covert_bound_lifetime"
-  },
-  {
-   "id": "gateway_model_bound",
-   "status": "THEOREM_VERIFIED",
-   "text": "GatewayModel.gateway_bound for the modelled state machine"
-  },
-  {
-   "id": "python_refines_model",
-   "status": "UNRESOLVED",
-   "text": "Python gateway matches the Lean model on 300 adversarial traces (differential test), not proved"
-  },
-  {
-   "id": "only_channel",
-   "status": "UNRESOLVED",
-   "text": "the receiver observes nothing outside the delivered view: bubblewrap harness closes files/network/stderr/exit code/duration in tests; shared kernel state (page-cache timing) remains"
-  },
-  {
-   "id": "lifetime_scope",
-   "status": "UNRESOLVED",
-   "text": "every receiver that can share memory with another is in one ledger lineage; the deployment must define lineages"
-  },
-  {
-   "id": "secret_independence",
-   "status": "UNRESOLVED",
-   "text": "m independent of the shared seed and receiver inputs (true in the eval design; not established for live secrets)"
-  },
-  {
-   "id": "machine_receivers_only",
-   "status": "UNRESOLVED",
-   "text": "humans out of scope by decision (2026-10-07)"
-  },
-  {
-   "id": "gateway_isolation",
-   "status": "UNRESOLVED",
-   "text": "the gateway process is outside every untrusted process's address space"
-  }
- ],
- "verdict": "CONDITIONAL",
- "blocking": [
-  "python_refines_model",
-  "only_channel",
-  "lifetime_scope",
-  "secret_independence",
-  "machine_receivers_only",
-  "gateway_isolation"
- ]
+  "assumptions": [
+    {
+      "id": "counting_bound",
+      "status": "THEOREM_VERIFIED",
+      "text": "covert_bound / covert_bound_lifetime"
+    },
+    {
+      "id": "gateway_model_bound",
+      "status": "THEOREM_VERIFIED",
+      "text": "GatewayModel.gateway_bound for the modelled state machine"
+    },
+    {
+      "id": "python_refines_model",
+      "status": "UNRESOLVED",
+      "text": "Python gateway matches the Lean model on 300 adversarial traces (differential test), not proved"
+    },
+    {
+      "id": "only_channel",
+      "status": "UNRESOLVED",
+      "text": "the receiver observes nothing outside the delivered view: bubblewrap harness tested selected file/network/stderr/exit-code/duration probes; shared page-cache probe demonstrates an unmediated bit (gateway/scenario/results/local-cache.json), so the sole-view premise is falsified in that setup"
+    },
+    {
+      "id": "lifetime_scope",
+      "status": "UNRESOLVED",
+      "text": "every receiver that can share memory with another is in one ledger lineage; the deployment must define lineages"
+    },
+    {
+      "id": "secret_independence",
+      "status": "UNRESOLVED",
+      "text": "m independent of the shared seed and receiver inputs (true in the eval design; not established for live secrets)"
+    },
+    {
+      "id": "machine_receivers_only",
+      "status": "UNRESOLVED",
+      "text": "humans out of scope by decision (2026-10-07)"
+    },
+    {
+      "id": "gateway_isolation",
+      "status": "UNRESOLVED",
+      "text": "the gateway process is outside every untrusted process's address space"
+    }
+  ],
+  "verdict": "CONDITIONAL",
+  "blocking": [
+    "python_refines_model",
+    "only_channel",
+    "lifetime_scope",
+    "secret_independence",
+    "machine_receivers_only",
+    "gateway_isolation"
+  ]
 }

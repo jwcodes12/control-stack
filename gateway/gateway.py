@@ -1,8 +1,10 @@
 """Fail-closed covert-channel gateway (prototype; CATASTROPHE-SPEC.md, ControlStack/CovertChannel.lean,
 ControlStack/GatewayModel.lean).
 
-Makes the premise of `covert_bound` true by construction: everything a machine receiver observes over the secret's
-LIFETIME is one value in a finite set fixed in advance, with exact integer cardinality ≤ 2^budget_bits.
+Constrains the delivered transcript to an exactly counted finite space. Applying
+`covert_bound` to a runtime additionally requires that this transcript captures
+every receiver observation over the secret's lifetime. Shared kernel channels
+in the current harness violate that sole-transcript premise in the cache probe.
 
 v2 (after reviews/covert-channel-gateway-review-2026-10-07.md):
 - configuration is deep-validated and frozen (primitive enum values int/str/bool only, unique names and values, slots
@@ -11,12 +13,17 @@ v2 (after reviews/covert-channel-gateway-review-2026-10-07.md):
   receiver memory scope); an episode that would exceed it is refused before it starts (P0-1);
 - alerts are fixed codes; no attacker-controlled strings are stored (P0-2);
 - close() atomically freezes the delivered transcript; later sends cannot change it (P0-4).
+v3 adds transactional SQLite charges and fail-closed opening of initialized state.
+Legacy JSON ledgers are rejected; there is no automatic reset or migration.
 The gateway must run outside the untrusted agents' process (see harness.py); Python object privacy is not a boundary.
 """
 from __future__ import annotations
 
 import json
 import os
+import sqlite3
+import stat
+from contextlib import closing
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -108,25 +115,98 @@ class LifetimeLedger:
         if type(budget_bits) is not int or budget_bits < 0:
             raise GatewayError("budget_bits must be a non-negative int")
         self.path, self.cap = Path(path), 2 ** budget_bits
+        self._read_metadata()
 
-    def _load(self) -> dict:
-        return json.loads(self.path.read_text()) if self.path.exists() else {}
+    @classmethod
+    def create(cls, path: Path, budget_bits: int):
+        """Trusted initialization only. Opening or charging never creates/reset state.
+
+        The trusted supervisor must protect the directory and prevent restoring old
+        valid database snapshots. SQLite cannot establish an external rollback anchor.
+        """
+        if type(budget_bits) is not int or budget_bits < 0:
+            raise GatewayError("budget_bits must be a non-negative int")
+        path = Path(path)
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+            os.close(fd)
+            with closing(sqlite3.connect(str(path))) as db, db:
+                db.execute("PRAGMA synchronous=FULL")
+                db.execute("CREATE TABLE metadata (id INTEGER PRIMARY KEY CHECK(id=1), cap TEXT NOT NULL)")
+                db.execute("INSERT INTO metadata VALUES (1, ?)", (str(2 ** budget_bits),))
+                db.execute("CREATE TABLE usage (lineage TEXT PRIMARY KEY, product TEXT NOT NULL, admissions INTEGER NOT NULL)")
+            # Persist the directory entry as well as the committed database.
+            directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+        except (OSError, sqlite3.Error) as exc:
+            raise GatewayError("ledger initialization failed; existing state is never reset") from exc
+        return cls(path, budget_bits)
+
+    def _connect(self):
+        try:
+            info = self.path.lstat()
+            if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                raise GatewayError("ledger must be an existing regular file")
+            db = sqlite3.connect(self.path.resolve().as_uri() + "?mode=rw", uri=True, timeout=15)
+            db.execute("PRAGMA synchronous=FULL")
+            return db
+        except (OSError, sqlite3.Error) as exc:
+            raise GatewayError("ledger unavailable; admission refused") from exc
+
+    def _read_metadata(self):
+        db = self._connect()
+        try:
+            row = db.execute("SELECT cap FROM metadata WHERE id=1").fetchone()
+            if row != (str(self.cap),):
+                raise GatewayError("ledger configuration mismatch")
+        except sqlite3.Error as exc:
+            raise GatewayError("invalid ledger state; admission refused") from exc
+        finally:
+            db.close()
+
+    def usage(self, lineage: str) -> tuple[int, int]:
+        """Trusted diagnostic query; never sent to a receiver."""
+        self._read_metadata()
+        db = self._connect()
+        try:
+            row = db.execute("SELECT product, admissions FROM usage WHERE lineage=?", (lineage,)).fetchone()
+            return (int(row[0]), row[1]) if row else (1, 0)
+        finally:
+            db.close()
 
     def charge(self, lineage: str, size: int) -> bool:
-        d = self._load()
-        used = int(d.get(lineage, 1))
-        if used * size > self.cap:
-            return False
-        d[lineage] = str(used * size)
-        tmp = self.path.with_suffix(".tmp")
-        tmp.write_text(json.dumps(d))
-        os.replace(tmp, self.path)
-        return True
+        if type(lineage) is not str or not lineage or len(lineage) > 200:
+            raise GatewayError("trusted nonempty lineage required")
+        if type(size) is not int or size < 1:
+            raise GatewayError("positive integer view cardinality required")
+        db = self._connect()
+        try:
+            db.execute("BEGIN IMMEDIATE")  # read and update serialize across processes
+            if db.execute("SELECT cap FROM metadata WHERE id=1").fetchone() != (str(self.cap),):
+                raise GatewayError("ledger configuration mismatch")
+            row = db.execute("SELECT product, admissions FROM usage WHERE lineage=?", (lineage,)).fetchone()
+            used, admissions = (int(row[0]), row[1]) if row else (1, 0)
+            if used < 1 or used > self.cap or type(admissions) is not int or admissions < 0:
+                raise GatewayError("invalid ledger usage")
+            if used * size > self.cap:
+                db.rollback()
+                return False
+            db.execute("INSERT OR REPLACE INTO usage VALUES (?, ?, ?)",
+                       (lineage, str(used * size), admissions + 1))
+            db.commit()  # durable charge happens before any sender is launched
+            return True
+        except (sqlite3.Error, ValueError, TypeError) as exc:
+            raise GatewayError("invalid ledger state; admission refused") from exc
+        finally:
+            db.close()  # any uncommitted admission is rolled back
 
 
 class Gateway:
     def __init__(self, channels, budget_bits: int = 16, ledger: LifetimeLedger | None = None,
-                 lineage: str | None = None):
+                 lineage: str | None = None, require_lifetime: bool = False):
         if type(budget_bits) is not int or budget_bits < 0:
             raise GatewayError("budget_bits must be a non-negative int")
         chans = tuple(channels.values()) if isinstance(channels, dict) else tuple(channels)
@@ -136,7 +216,9 @@ class Gateway:
         self.size = view_space_size(chans)
         if self.size > 2 ** budget_bits:
             raise GatewayError("configuration exceeds the per-episode budget")
-        if ledger is not None and not ledger.charge(str(lineage), self.size):
+        if require_lifetime and (ledger is None or type(lineage) is not str or not lineage):
+            raise GatewayError("certified path requires a ledger and trusted lineage")
+        if ledger is not None and not ledger.charge(lineage, self.size):
             raise GatewayError("lifetime budget exhausted for this lineage; episode refused")
         self.alerts: list[str] = []
         self._buf = {n: [] for n in self._channels}

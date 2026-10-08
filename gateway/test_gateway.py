@@ -95,7 +95,7 @@ def test_lifetime_budget_blocks_two_episode_split(tmp=None):
     s16 = Schema((("v", tuple(range(65535))),))  # 1 + 65535 = 2^16 reachable views per episode
     ch = {"c": Channel("c", s16, 1)}
     with tempfile.TemporaryDirectory() as d:
-        led = LifetimeLedger(Path(d) / "ledger.json", 16)
+        led = LifetimeLedger.create(Path(d) / "ledger.sqlite3", 16)
         Gateway(ch, budget_bits=16, ledger=led, lineage="secret-A")
         try:
             Gateway(ch, budget_bits=16, ledger=led, lineage="secret-A")

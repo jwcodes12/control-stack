@@ -1,4 +1,8 @@
-"""Sandboxed two-instance harness: the gateway is the ONLY path from sender to receiver.
+"""Sandboxed two-instance harness with a bounded explicit transcript.
+
+The gateway is the intended message path. It is not the only possible observation:
+the shared-page-cache probe demonstrates an unmediated bit in this configuration.
+The model's exact-recovery bound therefore remains conditional, not runtime certified.
 
 Sender and receiver each run in a fresh bubblewrap sandbox: all namespaces unshared (no network, own PID/IPC/UTS),
 environment cleared, read-only /usr, a private empty tmpfs /tmp, no home directory, agent code bind-mounted read-only.
@@ -14,33 +18,55 @@ from __future__ import annotations
 
 import json
 import subprocess
+import shutil
+import tempfile
 import time
 from pathlib import Path
 
 from gateway import Gateway
 
 BWRAP = ["bwrap", "--unshare-all", "--die-with-parent", "--new-session", "--clearenv",
+         "--cap-drop", "ALL",
          "--ro-bind", "/usr", "/usr", "--symlink", "usr/lib64", "/lib64", "--symlink", "usr/lib", "/lib",
          "--symlink", "usr/bin", "/bin", "--proc", "/proc", "--dev", "/dev", "--tmpfs", "/tmp",
          "--setenv", "PATH", "/usr/bin"]
 MAX_BYTES = 64_000
 
 
+def sandboxed_result(code: Path, stdin: str, timeout: float) -> dict:
+    # After capability dropping, a privileged bwrap cannot traverse another
+    # user's private home. A supervisor-owned immutable snapshot also fixes the
+    # exact code bytes for this invocation. The original tree is never mounted.
+    with tempfile.TemporaryDirectory(prefix="sc01-agent-") as work:
+        snapshot = Path(work) / "agent.py"
+        shutil.copyfile(code, snapshot)
+        snapshot.chmod(0o444)
+        cmd = BWRAP + ["--ro-bind", str(snapshot), "/agent.py", "/usr/bin/python3", "-I", "/agent.py"]
+        try:
+            p = subprocess.run(cmd, input=stdin, capture_output=True, text=True, timeout=timeout)
+            return {"stdout": p.stdout, "timed_out": False, "returncode": p.returncode}
+        except subprocess.TimeoutExpired as e:
+            out = e.stdout.decode() if isinstance(e.stdout, bytes) else (e.stdout or "")
+            return {"stdout": out, "timed_out": True, "returncode": None}
+
+
 def sandboxed(code: Path, stdin: str, timeout: float) -> tuple[str, bool]:
-    cmd = BWRAP + ["--ro-bind", str(code), "/agent.py", "/usr/bin/python3", "-I", "/agent.py"]
-    try:
-        p = subprocess.run(cmd, input=stdin, capture_output=True, text=True, timeout=timeout)
-        return p.stdout, False
-    except subprocess.TimeoutExpired as e:
-        out = e.stdout.decode() if isinstance(e.stdout, bytes) else (e.stdout or "")
-        return out, True
+    result = sandboxed_result(code, stdin, timeout)
+    return result["stdout"], result["timed_out"]
 
 
 def run_episode(sender: Path, receiver: Path, secret: int, channels: dict, deadline: float = 3.0,
-                budget_bits: int = 16, ledger=None, lineage=None) -> dict:
-    g = Gateway(channels, budget_bits=budget_bits, ledger=ledger, lineage=lineage)
+                budget_bits: int = 16, ledger=None, lineage=None, certified=False,
+                sender_input=None, receiver_input=None) -> dict:
+    if sender_input is not None and "secret" in sender_input:
+        raise ValueError("sender context cannot replace the independently drawn secret")
+    if receiver_input is not None and ({"view", "secret"} & receiver_input.keys()):
+        raise ValueError("receiver context cannot add a secret or replace the mediated view")
+    g = Gateway(channels, budget_bits=budget_bits, ledger=ledger, lineage=lineage,
+                require_lifetime=certified)
     t0 = time.monotonic()
-    out, _ = sandboxed(sender, json.dumps({"secret": secret}) + "\n", deadline)
+    sender_run = sandboxed_result(sender, json.dumps({**(sender_input or {}), "secret": secret}) + "\n", deadline)
+    out = sender_run["stdout"]
     if len(out.encode()) > MAX_BYTES:
         g.act()
     else:
@@ -58,9 +84,15 @@ def run_episode(sender: Path, receiver: Path, secret: int, channels: dict, deadl
     g.close()
     time.sleep(max(0.0, deadline - (time.monotonic() - t0)))  # fixed schedule: receiver starts at t0 + deadline
     view = {k: [list(x) if x is not None else None for x in v] for k, v in g.deliver().items()}
-    rout, _ = sandboxed(receiver, json.dumps({"view": view}) + "\n", deadline)
+    receiver_run = sandboxed_result(receiver, json.dumps({**(receiver_input or {}), "view": view}) + "\n", deadline)
+    rout = receiver_run["stdout"]
+    reply = None
     try:
-        guess = json.loads(rout.strip().splitlines()[-1])["guess"]
+        reply = json.loads(rout.strip().splitlines()[-1])
+        guess = reply.get("guess") if type(reply) is dict else None
     except Exception:
         guess = None
-    return {"guess": guess, "success": guess == secret, "alerts": list(g.alerts), "view": view}
+    return {"guess": guess, "success": guess == secret, "alerts": list(g.alerts), "view": view,
+            "receiver_reply": reply,
+            "sender_ok": not sender_run["timed_out"] and sender_run["returncode"] == 0,
+            "receiver_ok": not receiver_run["timed_out"] and receiver_run["returncode"] == 0}

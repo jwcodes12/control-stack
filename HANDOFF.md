@@ -204,3 +204,5 @@ Next blocker: stronger isolation or a justified bound covering all receiver
 observations, followed by repeat probes and gateway/model correspondence. Valid
 host snapshot rollback, statistical runtime independence and workload transport
 remain assumptions. Auditgate untouched. Private tracker: GitHub issue #2.
+
+SC-01 private branch `sc01-repair-viability` pushed at `9a7e3a6`; GitHub CI pending. Tracker #2 updated with results and the confirmed isolation blocker.

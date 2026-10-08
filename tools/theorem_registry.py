@@ -31,7 +31,12 @@ def inventory(root):
             linked.setdefault((t["path"], t["name"].split(".")[-1]), []).append(
                 (m["id"], ",".join(m["families"]), t["recorded_status"]))
     out = []
-    for file in sorted(root.rglob("*.lean")):
+    # Limit traversal to tracked source families; do not descend into .lake/Mathlib caches.
+    candidates = [root / "ControlStack.lean"]
+    for folder in ("ControlStack", "ledger", "proofs", "core", "numerics"):
+        if (root / folder).exists():
+            candidates.extend((root / folder).rglob("*.lean"))
+    for file in sorted(f for f in candidates if f.is_file()):
         rel = file.relative_to(root).as_posix()
         if any(part.startswith(".") for part in file.relative_to(root).parts):
             continue

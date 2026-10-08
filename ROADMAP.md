@@ -1,4 +1,46 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-07, session 8)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
+
+What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
+[STACK.md](STACK.md); this file is the one-page plan.
+
+Status legend:
+- ✅ **verified**: a frozen ledger statement whose proof passed the Lean gate (standard axioms only), after a red team
+  by two foreign model families and an orchestrator fidelity audit;
+- ✅ **proved**: a VCVio-level file checked with `lake env lean` and `#print axioms` (not ledger-gated);
+- 🔄 in progress;
+- ⏳ planned;
+- 🔒 blocked on a decision by John.
+
+## Status at a glance — 2026-10-08 (evening)
+
+- **SC-01 (selected scenario).** Theory complete for a bounded interface, including stateful side channels with
+  feedback (`Leakage`).
+  - Single host: usefulness 320/320, but the side certificate is REFUTED (checker exit 3).
+  - QEMU pair ([VM status](gateway/vm/STATUS.md)):
+    - Link race fixed: QEMU `socket,connect=` never retries; the listener now starts first and the pair is required
+      to be ESTABLISHED. Config `56a4dfa1` is unchanged; 8/8 health; 10/10 controls.
+    - The frozen usefulness gate FAILED (0/64 in both conditions): all 640 agent runs exceeded the 0.25 s deadline
+      under TCG emulation.
+  - 🔒 Owner decision: a preregistered deadline amendment, or hardware isolation. Either way the probability bound
+    stays a separate obligation (`gateway/vm/BOUND.md`).
+- **Primitives.** Every family F1–F8 now has at least a proved model: shared `Gate`, F4 artefact, F7 approval,
+  F5 leases, absorbing halt. F4, F5 and F7 have no runtime implementation. See
+  [PRIMITIVES-AND-SCENARIOS.md](PRIMITIVES-AND-SCENARIOS.md).
+- **Review status.**
+  - The new Lean (Leakage, Necessity, Gate, GateClients, Lease, LeakWitness) is proved, with standard axioms only.
+  - Adversarially reviewed by Gemini 3.1 Pro and Opus 5.5 (same family as the author). All substantive findings are
+    fixed or documented: [disposition](reviews/adversarial-2026-10-08/disposition.md).
+  - NOT ledger-verified. The proofledger foreign-family red team plus Lean `Witness` is the recommended next gate,
+    for statements rather than proofs.
+- **Next.** Work that needs no testing is planned in [STRUCTURE-PLAN.md](STRUCTURE-PLAN.md): scenario folders, a
+  generic case checker, a theorem registry, adversary classes and gap-closing theory.
+  1. Owner: SC-01 deadline or hardware.
+  2. Proofledger red team of the headline statements, with Sol/Astra and Gemini as foreign families.
+  3. Runtime F4/F7 implementations with correspondence tests.
+  4. Wave 1 on BashArena (SC-08/09/13/25).
+  5. Open F6 theory: a positive policy under false positives, imperfect auditors, adaptive coverage, collusion plus
+     side channel.
+  6. Human expert review (🔒).
 
 ## SC-03 egress update (2026-10-08)
 
@@ -16,17 +58,29 @@ missing-trace mutation detected. General attribution remains unresolved; next is
 the gateway/sandbox into that isolated topology. See `reviews/egress-follow-up-2026-10-08.md`.
 No rate-limit error occurred; account reset time remains unavailable. Private branch `egress-r10-controls` is published (2026-10-08). [Egress CI](https://github.com/jwcodes12/control-stack/actions/runs/37784398180) passed on `b30177e`: 62/62 controls, three mutations, zero packet drops and six Lean theorem checks. Git pushes and CI are authorized; direct messages to people still require approval.
 
+## Circle effort (2026-10-08)
 
-What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
-[STACK.md](STACK.md); this file is the one-page plan.
+Consultation: `reviews/circle-consult-2026-10-08/`. Astra (gpt-6-astra, xhigh) and Fable (claude-fable-5-1) reviewed
+adversarially. Both said not to build a general certificate calculus now, because its combinators are classical. The
+value they see is conditional accounting, refutation and experiment design. Remaining work across all primitives and
+scenarios: [PRIMITIVES-AND-SCENARIOS.md](PRIMITIVES-AND-SCENARIOS.md). Witness scopes:
+[NECESSITY.md](NECESSITY.md).
 
-Status legend:
-- ✅ **verified**: a frozen ledger statement whose proof passed the Lean gate (standard axioms only), after a red team
-  by two foreign model families and an orchestrator fidelity audit;
-- ✅ **proved**: a VCVio-level file checked with `lake env lean` and `#print axioms` (not ledger-gated);
-- 🔄 in progress;
-- ⏳ planned;
-- 🔒 blocked on a decision by John.
+| item | what it gives | status |
+|---|---|---|
+| `Leakage.lean` | one leakage-transfer principle: an adversary informed through dominated, history-dependent kernels is worth ≤ mass(c) blind adversaries. Instances: `covert_seq`/`covert_side_bound`/`sc01_adaptive_target` (side channels with state and feedback; replaces `dom_pi`'s independence premise); `audit_leak_bound`/`audit_leak_prod` (leakage-sensitive adaptive auditing; catch flags are free, `cval_live`); `audit_adaptive_hidden` (adaptive attackers gain nothing against a hidden random schedule, formalising AuditBudget's remark) | ✅ proved; after review: support-restricted `audit_leak_bound` (hypotheses only on size-B schedules), `covert_seq_seed` (seed-dependent certificates), corrected `survInd` prose. Informative only near "no side channel" at the SC-01 design point (~0.15 bits over 5 episodes) |
+| `Necessity.lean` | witnesses: seed-correlated secret (strict for \|M\| ≥ 2, bridged to `successProb`), correlated lifetimes break the gate (9/10 vs 1/80), marginal side certificates do not compose; plus a policy comparison (first-come auditing under false positives, 7/8 vs 3/4) and one illustration (shared score), labelled as such | ✅ proved |
+| `LeakWitness.lean` | a REAL leak for `audit_leak_bound`: BSC(ε) leak of the schedule, every hypothesis discharged, survival ≤ 1 − ε (attainment = 1 − ε by hand only) | ✅ proved |
+| `tools/check_sc01_case.py` | proof / binding / evidence / applicability reported separately; exit 3 when a hypothesis is refuted; invokes the cache-receipt verifier; manifest assumptions carry provenance, testability, refuting lemma and experiment, and scoped witnesses | ✅ verdict HYPOTHESIS_REFUTED (exit 3) |
+| `Gate.lean`, `GateClients.lean` | shared reference-monitor interface (F1/F3): `Spec.trace_safe`, `NoAgentEffects`, `withHalt` (absorbing shutdown for any gate; the spec lifts). Clients: AuditDispatch, AuditGate and EgressGate (existing gates; their step lemmas are reused) plus two new primitives: F4 content-addressed artefact gate (`deployed_is_reviewed` under collision resistance; `collision_breaks`) and F7 exact-payload approval (`approval_safe`: approved, unexpired, no replay; `replay_without_nonce`). After review: injectivity only on contents in the run; actor separation (`agent_cannot_approve`, `agent_cannot_review`); `replay_if_nonces_lost` (nonce durability is a premise) | ✅ proved (models only; no runtime for F4/F7) |
+| adversarial review | Gemini 3.1 Pro + Opus 5.5 on all new Lean: no unsound proof; 3 + 13 model/definition/prose defects. [Disposition](reviews/adversarial-2026-10-08/disposition.md) | ✅ fixed or documented |
+| `Lease.lean` | F5 as a gate client: `lease_safe` (per-lease spend over all forked workers ≤ budget, global cap, work only under unexpired issued leases), `work_count_le` (each unit costs ≥ 1, so units ≤ budget), `revoke_absorbing`, `revoked_worker_stays_stopped` (forks only to fresh workers), `agent_cannot_issue`, `fork_without_lease_accounting` (necessity) | ✅ proved (model; durability across restarts holds by definition) |
+| `tools/ctrlcert.py` | researcher CLI: `channel`, `probe`, `audit`, `hazard`, `samples`, `diagnose`. Each number comes with its theorem, premises and refuting measurement; `--lean` emits a compiled instantiation. `diagnose` classifies LASR BigCodeBench as MARGIN and LinuxArena as PROTOCOL | ✅ tests pass; emitted Lean compiles |
+
+## Lean track (2026-10-08)
+
+See [LEAN-TRACK.md](LEAN-TRACK.md): side channels, usefulness gate, lifetime ledger, gateway core, SC-01 case
+checker, coverage composition, multi-step attacks, audit budget.
 
 ## Current priorities after Astra/Opus xhigh consultation (2026-10-08)
 

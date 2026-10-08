@@ -59,3 +59,17 @@ the bounded exact-secret-recovery contract, measured honest usefulness, lifetime
 accounting and complete observation. Monitor-based safety is a separate optional
 scenario; egress attribution remains a supporting/separate reachability milestone.
 No product code, auditgate source, theorem or assurance assumption status changed.
+
+## 2026-10-08: circle effort (export)
+
+- Adversarial consultation (Astra, Fable): don't build a general certificate calculus.
+- Lean, proved with standard axioms only (not ledger-verified):
+  - `Leakage`: leakage transfer with stateful side channels and leakage-sensitive adaptive auditing;
+  - `LeakWitness`;
+  - `Necessity`: witnesses;
+  - `Gate` / `GateClients`: shared gate interface, F4 artefact gate, F7 approval;
+  - `Lease`: F5.
+- The SC-01 checker separates applicability and exits 3 when a hypothesis is refuted.
+- `ctrlcert` researcher CLI.
+- Adversarial review by Gemini 3.1 Pro and Opus 5.5: findings fixed or documented.
+- Pickup notes: `CIRCLE.md`. Plan for work that needs no testing: `STRUCTURE-PLAN.md`.

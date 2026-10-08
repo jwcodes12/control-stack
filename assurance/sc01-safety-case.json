@@ -129,7 +129,9 @@
   "ControlStack/ScenarioACore.lean": "600f17f90661bd4e6ee3cedcce8a27eaab6692e0e9045e46d40c4d04cfde7d82",
   "ControlStack/ComposeCoverage.lean": "66836abdc45b3a70893749a9752909c73832ee85d61183851f6c9009f91b66db",
   "ControlStack/MultiStep.lean": "c84cf17fd263c0d678621c994da4d1433d7e0e954243e396a736c45b4bd426cf",
-  "ControlStack/AuditBudget.lean": "e22f5086a5c679c4e4548b3fd157a77509e9f1ab3a8efd84fa59bd1bfacd9661"
+  "ControlStack/AuditBudget.lean": "e22f5086a5c679c4e4548b3fd157a77509e9f1ab3a8efd84fa59bd1bfacd9661",
+  "ControlStack/Leakage.lean": "179e0abb057d6041eea6a7cac9a8e5a62acc06764e877eb7b3294a979a651304",
+  "ControlStack/Necessity.lean": "5fdff1a73905f7488ff9c3d355299b2dfcc712015f075ab60171a9e76571b24f"
  },
  "evidence": {
   "usefulness_receipt": "gateway/scenario/results/local-full.json",
@@ -138,58 +140,173 @@
  "assumptions": [
   {
    "id": "counting_and_side_bounds",
-   "status": "THEOREM_VERIFIED",
-   "text": "covert_bound, side_bound, repair_side_target, repair_one_bit_attained (one clean side bit already exceeds 2^-16)"
+   "status": "THEOREM_PROVED_MODEL_ONLY",
+   "text": "covert_bound, side_bound, repair_side_target, repair_one_bit_attained (one clean side bit already exceeds 2^-16)",
+   "provenance": "theorem_model",
+   "testability": "proved",
+   "refutation": null,
+   "witness": [
+    {
+     "lean": "CovertChannel.attain_embedding",
+     "scope": "|V|/|M| is exact over unrestricted encoders on that carrier"
+    }
+   ],
+   "evidence": "Lean, standard axioms; proved, not ledger red-teamed"
   },
   {
    "id": "gateway_core_semantics",
-   "status": "THEOREM_VERIFIED",
-   "text": "multi-channel core: refusal blanks, close freezes, reachable views counted exactly (= Python view_space_size), end-to-end core_bound; SC-01's nine-view episode carrier is derived from the core (ScenarioACore.prefixEquiv, five_episode_core_bound end-to-end over raw traces)"
+   "status": "THEOREM_PROVED_MODEL_ONLY",
+   "text": "multi-channel core: refusal blanks, close freezes, reachable views counted exactly (= Python view_space_size), end-to-end core_bound; SC-01's nine-view episode carrier is derived from the core (ScenarioACore.prefixEquiv, five_episode_core_bound end-to-end over raw traces)",
+   "provenance": "theorem_model",
+   "testability": "proved",
+   "refutation": null,
+   "witness": [],
+   "evidence": "Lean, standard axioms; proved, not ledger red-teamed"
   },
   {
    "id": "python_refines_core",
    "status": "TESTED_NOT_PROVED",
-   "text": "Python Gateway matches GatewayCore on 2000 random multi-channel traces incl. unknown channels, overflow, side actions and post-close events (difftest_core.py); no refinement proof"
+   "text": "Python Gateway matches GatewayCore on 2000 random multi-channel traces incl. unknown channels, overflow, side actions and post-close events (difftest_core.py); no refinement proof",
+   "provenance": "implementation_correspondence",
+   "testability": "refutable_by_measurement",
+   "refutation": {
+    "statistic": "any Python/Lean mismatch on a generated trace",
+    "lemma": null,
+    "experiment": "gateway/difftest_core.py (random multi-channel traces)"
+   },
+   "witness": [],
+   "evidence": "2000 random traces, 0 mismatches; passing tests do not establish refinement"
   },
   {
    "id": "ledger_model",
-   "status": "THEOREM_VERIFIED",
-   "text": "ledger_safe / ledger_five: restore-free traces of charges, aborts, reopens and corruption admit <= 5 nine-view episodes per lineage; restore_breaks shows no-rollback is necessary"
+   "status": "THEOREM_PROVED_MODEL_ONLY",
+   "text": "ledger_safe / ledger_five: restore-free traces of charges, aborts, reopens and corruption admit <= 5 nine-view episodes per lineage; restore_breaks shows no-rollback is necessary",
+   "provenance": "theorem_model",
+   "testability": "proved",
+   "refutation": null,
+   "witness": [
+    {
+     "lean": "LifetimeLedger.restore_breaks",
+     "scope": "unaccounted rollback breaks this ledger invariant; does not exclude restoration with external accounting"
+    }
+   ],
+   "evidence": "Lean, standard axioms; proved, not ledger red-teamed"
   },
   {
    "id": "ledger_correspondence",
    "status": "UNRESOLVED",
-   "text": "SQLite serialises charges (BEGIN IMMEDIATE), COMMIT is atomic and durable, admission is reported only after COMMIT; covered by Python controls, not proved"
+   "text": "SQLite serialises charges (BEGIN IMMEDIATE), COMMIT is atomic and durable, admission is reported only after COMMIT; covered by Python controls, not proved",
+   "provenance": "implementation_correspondence",
+   "testability": "refutable_by_measurement",
+   "refutation": {
+    "statistic": "an admitted sixth episode or a double charge under concurrency or crash injection",
+    "lemma": null,
+    "experiment": "ledger controls (concurrent admission, restart, missing/corrupt state)"
+   },
+   "witness": [],
+   "evidence": "ten Python ledger controls pass; SQLite atomicity and durability are assumed"
   },
   {
    "id": "no_snapshot_restore",
    "status": "ASSUMPTION",
-   "text": "no operator restores an older valid ledger snapshot; necessary by restore_breaks; undetectable by SQLite alone"
+   "text": "no operator restores an older valid ledger snapshot; necessary by restore_breaks; undetectable by SQLite alone",
+   "provenance": "trust_base",
+   "testability": "not_testable_in_harness",
+   "refutation": null,
+   "witness": [
+    {
+     "lean": "LifetimeLedger.restore_breaks",
+     "scope": "one restore of an older snapshot breaks the per-lineage cap"
+    }
+   ],
+   "evidence": "none; needs an external anchor (e.g. an append-only log outside the host)"
   },
   {
    "id": "fixed_episode_count",
    "status": "ASSUMPTION",
-   "text": "the receiver always gets exactly five episode views and nothing reveals how many ran; necessity proved: a visible variable count (0..5 episodes) attains 66430/2^32 > 2^-16 (ScenarioACore.varObs_breaks_target)"
+   "text": "the receiver always gets exactly five episode views and nothing reveals how many ran; necessity proved: a visible variable count (0..5 episodes) attains 66430/2^32 > 2^-16 (ScenarioACore.varObs_breaks_target)",
+   "provenance": "model_premise",
+   "testability": "refutable_by_measurement",
+   "refutation": {
+    "statistic": "receiver distinguishes the number of delivered episodes better than chance",
+    "lemma": "ScenarioACore.varObs_breaks_target",
+    "experiment": "probe where the sender influences launch/delivery (crash, timeout) and the receiver guesses the count"
+   },
+   "witness": [
+    {
+     "lean": "ScenarioACore.varObs_breaks_target",
+     "scope": "a visible variable count CONTROLLED BY THE ENCODER gives 66430 views > 2^16; a count independent of the secret need not break the target"
+    }
+   ],
+   "evidence": "not measured"
   },
   {
    "id": "side_certificate",
    "status": "UNRESOLVED",
-   "text": "every receiver observation outside the transcript comes from a fixed side kernel with domination mass <= 65536/59049 (~1.11); per-episode independent noisy bits need crossover >= ~0.49"
+   "text": "every receiver observation outside the transcript comes from a fixed side kernel with domination mass <= 65536/59049 (~1.11); per-episode independent noisy bits need crossover >= ~0.49",
+   "provenance": "empirical_premise",
+   "testability": "refutable_by_measurement",
+   "refutation": {
+    "statistic": "one-sided lower bound p_lo on single-bit recovery with a constant gateway view",
+    "lemma": "SafetyCaseSC01.bit_refutes (refuted when 2 p_lo > 65536/59049)",
+    "experiment": "PREREG-SC01-CACHE.md shared-page-cache probe"
+   },
+   "witness": [
+    {
+     "lean": "ScenarioASide.repair_one_bit_attained",
+     "scope": "one noiseless side bit attains 2*59049/2^32 > 2^-16; does not show every kernel above mass 1.11 breaks the target"
+    },
+    {
+     "lean": "Necessity.marginal_certs_dont_compose",
+     "scope": "per-channel certificates do not multiply; the certificate must dominate the joint (sequential) side output"
+    }
+   ],
+   "evidence": "cache probe 64/64, one-sided lower 95427/100000 => mass >= 1.909",
+   "adaptive_form": "Leakage.sc01_adaptive_target: per-episode certificates may depend on the visible history and the side kernel may carry state across episodes (feedback); the target holds if the product of worst-case per-episode masses is <= 65536/59049. This replaces the no-feedback premise of SideChannel.dom_pi."
   },
   {
    "id": "secret_independence",
    "status": "ASSUMPTION",
-   "text": "the secret is uniform and independent of the shared seed and the receiver's inputs"
+   "text": "the secret is uniform and independent of the shared seed and the receiver's inputs",
+   "provenance": "eval_design",
+   "testability": "not_testable_in_harness",
+   "refutation": null,
+   "witness": [
+    {
+     "lean": "Necessity.seed_secret_breaks_covert",
+     "scope": "a secret equal to the shared seed is recovered with certainty from a constant view"
+    }
+   ],
+   "evidence": "true by construction in the eval (independent RNG); not checkable for deployment signals correlated with shared context"
   },
   {
    "id": "independent_lifetimes",
    "status": "ASSUMPTION",
-   "text": "usefulness: lifetimes complete independently with a common probability (binomial model behind false_pass_le)"
+   "text": "usefulness: lifetimes complete independently with a common probability (binomial model behind false_pass_le)",
+   "provenance": "empirical_premise",
+   "testability": "refutable_by_measurement",
+   "refutation": {
+    "statistic": "dependence between lifetime outcomes (e.g. clustering of failures in time or by host state)",
+    "lemma": "Necessity.correlated_lifetimes_break_gate",
+    "experiment": "preregistered dependence test on lifetime outcomes; low power at 64/64"
+   },
+   "witness": [
+    {
+     "lean": "Necessity.correlated_lifetimes_break_gate",
+     "scope": "perfectly correlated lifetimes with marginal 9/10 pass the gate w.p. 9/10, not <= 1/80"
+    }
+   ],
+   "evidence": "not measured; all 128 lifetimes completed, so no dependence is observable in this sample"
   },
   {
    "id": "trusted_lineage",
    "status": "ASSUMPTION",
-   "text": "the trusted supervisor assigns lineages so that every receiver able to share memory with another is in one lineage"
+   "text": "the trusted supervisor assigns lineages so that every receiver able to share memory with another is in one lineage",
+   "provenance": "trust_base",
+   "testability": "not_testable_in_harness",
+   "refutation": null,
+   "witness": [],
+   "evidence": "supervisor-assigned; no measurement can show completeness of lineages"
   }
  ],
  "verdict": "CONDITIONAL",
@@ -231,6 +348,45 @@
     "budget_example",
     "budget_example_observable"
    ]
+  },
+  {
+   "file": "ControlStack/Leakage.lean",
+   "namespace": "ControlStack.Leakage",
+   "theorems": [
+    "transfer",
+    "covert_from_transfer",
+    "seq_transfer",
+    "seq_transfer_const",
+    "mass_le_prod",
+    "mass_const",
+    "covert_seq",
+    "episode_dom",
+    "sc01_adaptive_target",
+    "cval_live",
+    "blind_audit",
+    "audit_leak_bound",
+    "audit_leak_prod",
+    "audit_adaptive_hidden"
+   ]
+  },
+  {
+   "file": "ControlStack/Necessity.lean",
+   "namespace": "ControlStack.Necessity",
+   "theorems": [
+    "seed_secret_breaks_covert",
+    "correlated_lifetimes_break_gate",
+    "marginal_certs_dont_compose",
+    "shared_score_product_unsound"
+   ]
   }
- ]
+ ],
+ "assumption_axes": {
+  "provenance": "theorem_model | implementation_correspondence | model_premise | empirical_premise | eval_design | trust_base",
+  "testability": "proved | refutable_by_measurement | not_testable_in_harness",
+  "refutation": "the statistic, the lemma that turns it into a refutation, and the experiment; null if no measurement can refute it",
+  "witness": "Lean results showing that dropping the premise outright breaks the bound, with the exact scope of each",
+  "status": "current evidential status; a failed refutation attempt means not refuted, never established",
+  "note": "THEOREM_PROVED_MODEL_ONLY = compiles with standard axioms (lake env lean + #print axioms); not ledger red-teamed (ROADMAP 'proved', not 'verified')"
+ },
+ "verdict_semantics": "The manifest's verdict is the claim TYPE (conditional). The checker computes APPLICABILITY: CONDITIONAL when no hypothesis is refuted by evidence, HYPOTHESIS_REFUTED otherwise. Neither is a safety certificate."
 }

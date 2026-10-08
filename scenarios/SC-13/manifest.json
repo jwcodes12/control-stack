@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "id": "SC-13",
+  "title": "Trusted audit dispatch and monitoring integrity (narrow case)",
+  "claim_scope": "Recorded dispatcher effects have an audit row appended before or with the effect in the model. Does not protect every monitoring configuration, authenticate originator identity, or prove all workflow execution is mediated.",
+  "declared_status": "CONDITIONAL",
+  "sources": [
+    "assurance/monitoring-integrity-auditgate-v1.json",
+    "SCENARIO-CATALOG.md"
+  ],
+  "proofs": [
+    {
+      "file": "ControlStack/AuditDispatch.lean",
+      "theorem": "ControlStack.AuditDispatch.trace_safe",
+      "sha256": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646",
+      "adversary_class": "TRACE_ARBITRARY",
+      "status_recorded": "PROVED_RECORDED"
+    },
+    {
+      "file": "ControlStack/AuditDispatch.lean",
+      "theorem": "ControlStack.AuditDispatch.dispatch_audit_first",
+      "sha256": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646",
+      "adversary_class": "TRACE_ARBITRARY",
+      "status_recorded": "PROVED_RECORDED"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "audit-proof",
+      "path": "ControlStack/AuditDispatch.lean",
+      "sha256": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "audit-sql",
+      "path": "auditgate/setup_v1.sql",
+      "sha256": "0804fcd44d02e418e7351fdf69176c67a97ed2df5a213639ec23c3b466e2466d",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "audit-fixture",
+      "path": "auditgate/test_gate_v1.py",
+      "sha256": "0f655d5ffd103473fe5e4569bd6c519bcf26bb8b185646e6479a71fbfe9ac9f9",
+      "kind": "SOURCE"
+    }
+  ],
+  "axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Does not assert all logging and shutdown surfaces are outside adversary control.",
+      "evidence_ids": []
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "PG test matrix is finite; model-to-executable refinement not established.",
+      "evidence_ids": [
+        "audit-fixture"
+      ]
+    },
+    "environment_boundary": {
+      "status": "ASSUMED",
+      "note": "Broker credentials and DB-role isolation must hold in actual environment.",
+      "evidence_ids": []
+    },
+    "lifetime_and_composition": {
+      "status": "SUPPORTED",
+      "note": "Arbitrary modeled interleavings and crashes preserve the audit invariant.",
+      "evidence_ids": [
+        "audit-proof"
+      ]
+    },
+    "usefulness": {
+      "status": "UNRESOLVED",
+      "note": "No representative end-user workload usefulness lower bound.",
+      "evidence_ids": []
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "Only model and fixture have been examined; independent deployment review missing.",
+      "evidence_ids": []
+    }
+  },
+  "premises": [
+    {
+      "id": "threat_coverage_obligation",
+      "axis": "threat_coverage",
+      "status": "UNRESOLVED",
+      "text": "Does not assert all logging and shutdown surfaces are outside adversary control."
+    },
+    {
+      "id": "runtime_correspondence_obligation",
+      "axis": "runtime_correspondence",
+      "status": "UNRESOLVED",
+      "text": "PG test matrix is finite; model-to-executable refinement not established."
+    },
+    {
+      "id": "environment_boundary_obligation",
+      "axis": "environment_boundary",
+      "status": "ASSUMED",
+      "text": "Broker credentials and DB-role isolation must hold in actual environment."
+    },
+    {
+      "id": "lifetime_and_composition_obligation",
+      "axis": "lifetime_and_composition",
+      "status": "SUPPORTED",
+      "text": "Arbitrary modeled interleavings and crashes preserve the audit invariant."
+    },
+    {
+      "id": "usefulness_obligation",
+      "axis": "usefulness",
+      "status": "UNRESOLVED",
+      "text": "No representative end-user workload usefulness lower bound."
+    },
+    {
+      "id": "independent_review_obligation",
+      "axis": "independent_review",
+      "status": "UNRESOLVED",
+      "text": "Only model and fixture have been examined; independent deployment review missing."
+    }
+  ],
+  "negative_tests": [
+    "auditgate/test_gate_v1.py"
+  ]
+}

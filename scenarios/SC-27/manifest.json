@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "id": "SC-27",
+  "title": "Monitoring evidence tamper-resistance and assurance provenance",
+  "claim_scope": "Only the append-only audit dispatch subclaim is currently modeled. Signed, hash-bound manifest attestation and independent source verification for assurance bundles are NOT proved or enforced.",
+  "declared_status": "CONDITIONAL",
+  "sources": [
+    "assurance/monitoring-integrity-auditgate-v1.json",
+    "SCENARIO-CATALOG.md"
+  ],
+  "proofs": [
+    {
+      "file": "ControlStack/AuditDispatch.lean",
+      "theorem": "ControlStack.AuditDispatch.trace_safe",
+      "sha256": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646",
+      "adversary_class": "TRACE_ARBITRARY",
+      "status_recorded": "PROVED_RECORDED"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "audit-proof",
+      "path": "ControlStack/AuditDispatch.lean",
+      "sha256": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "audit-fixture",
+      "path": "auditgate/test_gate_v1.py",
+      "sha256": "0f655d5ffd103473fe5e4569bd6c519bcf26bb8b185646e6479a71fbfe9ac9f9",
+      "kind": "SOURCE"
+    }
+  ],
+  "axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Artifact forgery is not equivalent to database audit dispatch.",
+      "evidence_ids": []
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "No independently verified attestation chain.",
+      "evidence_ids": []
+    },
+    "environment_boundary": {
+      "status": "UNRESOLVED",
+      "note": "CI signing/isolation and immutable evidence storage not established.",
+      "evidence_ids": []
+    },
+    "lifetime_and_composition": {
+      "status": "UNRESOLVED",
+      "note": "No cross-commit append-only binding theorem.",
+      "evidence_ids": []
+    },
+    "usefulness": {
+      "status": "UNRESOLVED",
+      "note": "No representative evidence generation utility measure.",
+      "evidence_ids": []
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "No independent chain-of-custody review.",
+      "evidence_ids": []
+    }
+  },
+  "premises": [
+    {
+      "id": "threat_coverage_obligation",
+      "axis": "threat_coverage",
+      "status": "UNRESOLVED",
+      "text": "Artifact forgery is not equivalent to database audit dispatch."
+    },
+    {
+      "id": "runtime_correspondence_obligation",
+      "axis": "runtime_correspondence",
+      "status": "UNRESOLVED",
+      "text": "No independently verified attestation chain."
+    },
+    {
+      "id": "environment_boundary_obligation",
+      "axis": "environment_boundary",
+      "status": "UNRESOLVED",
+      "text": "CI signing/isolation and immutable evidence storage not established."
+    },
+    {
+      "id": "lifetime_and_composition_obligation",
+      "axis": "lifetime_and_composition",
+      "status": "UNRESOLVED",
+      "text": "No cross-commit append-only binding theorem."
+    },
+    {
+      "id": "usefulness_obligation",
+      "axis": "usefulness",
+      "status": "UNRESOLVED",
+      "text": "No representative evidence generation utility measure."
+    },
+    {
+      "id": "independent_review_obligation",
+      "axis": "independent_review",
+      "status": "UNRESOLVED",
+      "text": "No independent chain-of-custody review."
+    }
+  ],
+  "negative_tests": [
+    "auditgate/test_gate_v1.py"
+  ]
+}

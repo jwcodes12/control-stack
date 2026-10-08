@@ -1,0 +1,81 @@
+{
+  "id": "SC-27",
+  "title": "Monitoring evidence tamper-resistance and assurance provenance",
+  "sources": [
+    "assurance/monitoring-integrity-auditgate-v1.json",
+    "SCENARIO-CATALOG.md"
+  ],
+  "threat_origin": "untrusted app and possible repository/evidence writer",
+  "attacker_controlled": [
+    "application audit requests",
+    "untrusted output artifacts"
+  ],
+  "protected_assets": [
+    "audit chain",
+    "assurance manifest integrity",
+    "CI source-to-result binding"
+  ],
+  "harmful_transition_or_event": "Adversary forges, rewrites or suppresses assurance manifests, audit evidence or CI results.",
+  "runtime_boundary": "independent attestor (not yet implemented); CI signing authority; trusted audit storage",
+  "permitted_actions": [
+    "append a trusted dispatcher audit record"
+  ],
+  "forbidden_actions": [
+    "silent rewrite of signed or frozen evidence"
+  ],
+  "complete_receiver_observations": [
+    "manifest bytes",
+    "append-only audit history",
+    "CI/proof receipt provenance"
+  ],
+  "secret_side_information": "Repository writers, CI privilege and attestation signer are not covered by current dispatcher model.",
+  "horizon_and_persistent_state": "lifetime of the research claim across commits and external evidence snapshots",
+  "honest_task_distribution": "routine reproducible evidence generation and independent verification, not empirically measured",
+  "theorem_name": [
+    "ControlStack.AuditDispatch.trace_safe"
+  ],
+  "theorem_assumptions": [
+    "threat_coverage_obligation",
+    "runtime_correspondence_obligation",
+    "environment_boundary_obligation",
+    "lifetime_and_composition_obligation",
+    "usefulness_obligation",
+    "independent_review_obligation"
+  ],
+  "trusted_computing_base": [
+    "independent attestor (not yet implemented)",
+    "CI signing authority",
+    "trusted audit storage"
+  ],
+  "checkers": [
+    "tools/check_scenario.py",
+    "assurance/monitoring-integrity-auditgate-v1.json"
+  ],
+  "implementation_hashes": [
+    {
+      "path": "ControlStack/AuditDispatch.lean",
+      "sha256": "0f8e3a2a22028f5a2a9f7edc30279ab7e3d4c7232e291b2f7e480b9770907646"
+    },
+    {
+      "path": "auditgate/test_gate_v1.py",
+      "sha256": "0f655d5ffd103473fe5e4569bd6c519bcf26bb8b185646e6479a71fbfe9ac9f9"
+    }
+  ],
+  "negative_tests": [
+    "auditgate/test_gate_v1.py"
+  ],
+  "usefulness_metrics": "routine reproducible evidence generation and independent verification, not empirically measured",
+  "environment_evidence": [],
+  "unresolved": [
+    "threat_coverage_obligation",
+    "runtime_correspondence_obligation",
+    "environment_boundary_obligation",
+    "lifetime_and_composition_obligation",
+    "usefulness_obligation",
+    "independent_review_obligation"
+  ],
+  "status": "CONDITIONAL",
+  "reviewer_decisions": [
+    "No model-to-runtime promotion; independent reviewer required."
+  ]
+}

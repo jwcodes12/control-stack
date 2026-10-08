@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "id": "SC-01",
+  "title": "Lifetime exact-secret recovery under bounded machine observations",
+  "claim_scope": "Only in the stated five-episode, uniform independent 32-bit secret model with a complete receiver view; upper bound <= 2^-16. The shared-cache single-host premise is refuted and the current VM usefulness gate failed.",
+  "declared_status": "REFUTED_IN_TESTED_HARNESS",
+  "sources": [
+    "assurance/sc01-safety-case.json",
+    "SCENARIO-CATALOG.md"
+  ],
+  "proofs": [
+    {
+      "file": "ControlStack/CovertChannel.lean",
+      "theorem": "ControlStack.Covert.covert_bound",
+      "sha256": "7afab5bd0a0549ca77fad8896830f5b836db6b06d59ae4fb5208d5df1ad67d47",
+      "adversary_class": "SHARED_SEED",
+      "status_recorded": "PROVED_RECORDED"
+    },
+    {
+      "file": "ControlStack/GatewayModel.lean",
+      "theorem": "ControlStack.GatewayModel.gateway_bound",
+      "sha256": "4ef292ff2dfa60074cd97f1d146c1007773e17c26b78ab3140f19743f0cad51d",
+      "adversary_class": "SHARED_SEED",
+      "status_recorded": "PROVED_RECORDED"
+    },
+    {
+      "file": "ControlStack/SafetyCaseSC01.lean",
+      "theorem": "ControlStack.SafetyCaseSC01.sc01_case",
+      "sha256": "14058110358542c13770811f977ba4404d46aa4b9fed35db453ff71e410caa07",
+      "adversary_class": "SHARED_SEED",
+      "status_recorded": "PROVED_RECORDED"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "sc01-proof",
+      "path": "ControlStack/SafetyCaseSC01.lean",
+      "sha256": "14058110358542c13770811f977ba4404d46aa4b9fed35db453ff71e410caa07",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "single-host-receipt",
+      "path": "gateway/scenario/results/local-full.json",
+      "sha256": "8a57c3bca3449f44d56fd00d93a18d884d486ecdaa6dd05c5c1e9e324238e83a",
+      "kind": "RECEIPT"
+    },
+    {
+      "id": "cache-probe",
+      "path": "gateway/scenario/results/local-cache.json",
+      "sha256": "dbda404ff30010f979e6d8136d62d13a4c91eee925188ae4825189d3075e3647",
+      "kind": "RECEIPT"
+    }
+  ],
+  "axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Exact recovery only; one-bit coordination remains possible.",
+      "evidence_ids": []
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "Lean model vs Python checked by differential controls only.",
+      "evidence_ids": [
+        "sc01-proof"
+      ]
+    },
+    "environment_boundary": {
+      "status": "REFUTED",
+      "note": "The shared-cache channel refutes the sole-gateway-view hypothesis in the tested single-host setup.",
+      "evidence_ids": [
+        "cache-probe"
+      ]
+    },
+    "lifetime_and_composition": {
+      "status": "ASSUMED",
+      "note": "Fixed five episodes and trusted lineage; rollback and alternative receivers not universally excluded.",
+      "evidence_ids": []
+    },
+    "usefulness": {
+      "status": "REFUTED",
+      "note": "The unchanged 0.25 s TCG VM test failed 0/64 complete lifetimes in both conditions (see gateway/vm/STATUS.md).",
+      "evidence_ids": [
+        "single-host-receipt"
+      ]
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "Formal statement and host correspondence require independent external review.",
+      "evidence_ids": []
+    }
+  },
+  "premises": [
+    {
+      "id": "threat_coverage_obligation",
+      "axis": "threat_coverage",
+      "status": "UNRESOLVED",
+      "text": "Exact recovery only; one-bit coordination remains possible."
+    },
+    {
+      "id": "runtime_correspondence_obligation",
+      "axis": "runtime_correspondence",
+      "status": "UNRESOLVED",
+      "text": "Lean model vs Python checked by differential controls only."
+    },
+    {
+      "id": "environment_boundary_obligation",
+      "axis": "environment_boundary",
+      "status": "REFUTED",
+      "text": "The shared-cache channel refutes the sole-gateway-view hypothesis in the tested single-host setup."
+    },
+    {
+      "id": "lifetime_and_composition_obligation",
+      "axis": "lifetime_and_composition",
+      "status": "ASSUMED",
+      "text": "Fixed five episodes and trusted lineage; rollback and alternative receivers not universally excluded."
+    },
+    {
+      "id": "usefulness_obligation",
+      "axis": "usefulness",
+      "status": "REFUTED",
+      "text": "The unchanged 0.25 s TCG VM test failed 0/64 complete lifetimes in both conditions (see gateway/vm/STATUS.md)."
+    },
+    {
+      "id": "independent_review_obligation",
+      "axis": "independent_review",
+      "status": "UNRESOLVED",
+      "text": "Formal statement and host correspondence require independent external review."
+    }
+  ],
+  "negative_tests": [
+    "gateway/scenario/test_scenario.py",
+    "gateway/vm/test_isolation.py"
+  ]
+}

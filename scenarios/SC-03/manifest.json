@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "id": "SC-03",
+  "title": "Immediate-peer egress boundary for a pinned test topology",
+  "claim_scope": "All immediate TCP peer attempts in the fixed disposable namespace fixture flow through a pinned gateway on the modeled trace. No bound on application payloads, allowed CONNECT destinations, other host deputies or real-world confidentiality.",
+  "declared_status": "CONDITIONAL",
+  "sources": [
+    "assurance/egress-boundary-v1.json",
+    "SCENARIO-CATALOG.md"
+  ],
+  "proofs": [
+    {
+      "file": "ControlStack/EgressGate.lean",
+      "theorem": "ControlStack.EgressGate.trace_safe",
+      "sha256": "b491ec0accf6be75e7355667012b173760c5278b7180a31f4c4990ffad9f2af6",
+      "adversary_class": "TRACE_ARBITRARY",
+      "status_recorded": "PROVED_RECORDED"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "egress-proof",
+      "path": "ControlStack/EgressGate.lean",
+      "sha256": "b491ec0accf6be75e7355667012b173760c5278b7180a31f4c4990ffad9f2af6",
+      "kind": "SOURCE"
+    },
+    {
+      "id": "egress-receipt",
+      "path": "egress/results/local-full.json",
+      "sha256": "8629085f3931ccc905e61cbd98e38d51ed6d55883de7dbb04a9d0725d0da0124",
+      "kind": "RECEIPT"
+    },
+    {
+      "id": "egress-oracle",
+      "path": "egress/test_oracle.py",
+      "sha256": "e6059e000664def24b25494882ea87e6e51872b9ac1c85ab710bbf4a2ad1f8e0",
+      "kind": "SOURCE"
+    }
+  ],
+  "axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Peer reachability is narrower than confidentiality or prevention of host-deputy traffic.",
+      "evidence_ids": []
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "Fixture mutation controls support, not prove, Python/OS refinement.",
+      "evidence_ids": [
+        "egress-receipt"
+      ]
+    },
+    "environment_boundary": {
+      "status": "ASSUMED",
+      "note": "Kernel/host integrity and arbitrary destination process attribution are open.",
+      "evidence_ids": []
+    },
+    "lifetime_and_composition": {
+      "status": "UNRESOLVED",
+      "note": "No lifetime or multiple-worker budget theorem for this scenario.",
+      "evidence_ids": []
+    },
+    "usefulness": {
+      "status": "SUPPORTED",
+      "note": "Pinned install/build/test fixture exercised (not a production or LinuxArena utility claim).",
+      "evidence_ids": [
+        "egress-receipt"
+      ]
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "Model reviewed; host deployment correspondence not independently certified.",
+      "evidence_ids": []
+    }
+  },
+  "premises": [
+    {
+      "id": "threat_coverage_obligation",
+      "axis": "threat_coverage",
+      "status": "UNRESOLVED",
+      "text": "Peer reachability is narrower than confidentiality or prevention of host-deputy traffic."
+    },
+    {
+      "id": "runtime_correspondence_obligation",
+      "axis": "runtime_correspondence",
+      "status": "UNRESOLVED",
+      "text": "Fixture mutation controls support, not prove, Python/OS refinement."
+    },
+    {
+      "id": "environment_boundary_obligation",
+      "axis": "environment_boundary",
+      "status": "ASSUMED",
+      "text": "Kernel/host integrity and arbitrary destination process attribution are open."
+    },
+    {
+      "id": "lifetime_and_composition_obligation",
+      "axis": "lifetime_and_composition",
+      "status": "UNRESOLVED",
+      "text": "No lifetime or multiple-worker budget theorem for this scenario."
+    },
+    {
+      "id": "usefulness_obligation",
+      "axis": "usefulness",
+      "status": "SUPPORTED",
+      "text": "Pinned install/build/test fixture exercised (not a production or LinuxArena utility claim)."
+    },
+    {
+      "id": "independent_review_obligation",
+      "axis": "independent_review",
+      "status": "UNRESOLVED",
+      "text": "Model reviewed; host deployment correspondence not independently certified."
+    }
+  ],
+  "negative_tests": [
+    "egress/test_oracle.py",
+    "egress/attacks.py"
+  ]
+}

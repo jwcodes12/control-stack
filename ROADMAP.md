@@ -90,6 +90,14 @@ Goal: one end-to-end, independently checkable safety case, optimising for how mu
 | P3 | more mathematics | general balanced-schedule attainment (draft `ledger-drafts/UMADAPTF3-draft.lean`, shelved), sharper bounds | ⏸ demoted |
 | — | human review | one AI-control researcher reads the specification and correspondence | 🔒 John |
 
+## Session 8 status note (2026-10-08)
+- Done this session: covert-channel bound, gateway prototype and Lean model; preregistered empirical certificates;
+  LinuxArena replay (negative result for lexical host policy); auditgate v1.1 (database-level monitoring-integrity
+  gate, Lean invariants, PostgreSQL outcome matrix in CI) with a documented no-go for auto_workflow as deployed.
+- Paused in this session: SC-03 (network egress boundary) and SC-16 (provenance gate). Work on them was interrupted
+  repeatedly in this session; requirements for SC-03 are in reviews/dialogue/chatgpt-08.md and chatgpt-10.md.
+- Dialogue with the external reviewer: latest rounds are chatgpt-10.md (awaiting a Claude round 11).
+
 ## 4. Open assumptions (what the stack does NOT give)
 Every guarantee is conditional on these. None is discharged by anything here:
 - the mediator's domination constant L (or δ), and honeypot constructibility and coverage (A9);

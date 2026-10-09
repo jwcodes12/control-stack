@@ -1,0 +1,38 @@
+name: final-merged-branch-acceptance
+on:
+  push:
+    branches:
+      - structure-branch-audit-20261008
+    paths:
+      - .github/workflows/final-merged-branch-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  read-only-final-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: b4493224d6758449c2cea1bc65dc257fe6886393
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Source integrity and index regression
+        run: |
+          git rev-parse HEAD
+          python3 tools/build_registry.py --check
+          python3 tools/build_status.py --check
+          python3 tools/check_scenarios.py
+          python3 -m unittest tools.test_check_scenarios
+          python3 tools/test_ctrlcert.py
+      - name: Install pinned Lean toolchain
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Download pinned Lean cache
+        run: lake exe cache get
+      - name: Full exact-work-commit Lean build
+        run: lake build ControlStack
+      - name: All 28 claims, standard axioms, SC-01 checks 1-4
+        run: bash tools/verify_structure_merge.sh

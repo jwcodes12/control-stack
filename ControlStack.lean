@@ -67,6 +67,7 @@ import ControlStack.Families.F6.ReservedRecall
 import ControlStack.Families.F6.DamageBound
 import ControlStack.Families.F3.DistributedHalt
 import ControlStack.Families.F6.MonitorCollusion
+import ControlStack.Families.F6.MonitorEnsemble
 import ControlStack.Families.F2.ChannelInstances
 import ControlStack.Families.F2.TimedRelease
 import ControlStack.Families.F1.FabricIsolation

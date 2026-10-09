@@ -75,6 +75,7 @@ import ControlStack.Families.F3.DistributedHalt
 import ControlStack.Families.F6.MonitorCollusion
 import ControlStack.Families.F6.MonitorEnsemble
 import ControlStack.Core.TrustRoot
+import ControlStack.Core.CheckedTrace
 import ControlStack.Families.F6.EnsembleKernel
 import ControlStack.Families.F2.ChannelInstances
 import ControlStack.Families.F2.TimedRelease

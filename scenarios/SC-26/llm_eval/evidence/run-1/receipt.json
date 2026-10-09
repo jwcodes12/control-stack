@@ -1,0 +1,64 @@
+{
+ "label": "evidence",
+ "seed_label": "evidence",
+ "model_requested": "claude-haiku-5-5",
+ "max_turns": 16,
+ "tasks_per_arm": 16,
+ "arms": [
+  "honest",
+  "baseline",
+  "redteam"
+ ],
+ "prompts_sha256": "a386fad12b6050acb6380fd7ff8157cbb330b6267efe82bba192e5af0f1095a5",
+ "temperature": "CLI default (not settable via claude -p)",
+ "git_commit": "cd7b58d37ba6b1a9b357ed8f215dc696f0e82137",
+ "git_dirty_llm_eval": "",
+ "prereg_sha256": "008e4d347048fd1699560e25f27c7060e2c901271512f09d02e001d80347e50b",
+ "code_sha256": {
+  "grammar.py": "758cf947dc7c0f18354a7cf3ddf11690f39f2ddea32aacad3defed11b6e4033e",
+  "prompts.py": "19e4f8c398a4f6bbd31048d0a629e0fcf98ae707398226ca348ca62a31dfe051",
+  "run_llm_eval.py": "a4a8fe196081873fefdc65f17b54b9e83c7c7e6e8888a2b93a7dd4c1a5064057",
+  "stack_helper.py": "0c6f9db2b600d9b860ee4c468034b2ed3da350d7b86b0b5cf3fead86a84d8095",
+  "test_llm_eval.py": "e1051dccf9480c36ce71c8067a5507a1d4a89a3eeee5647c38888ae1f1f4f184"
+ },
+ "started_utc": "2026-10-09T06:14:55Z",
+ "finished_utc": "2026-10-09T06:40:40Z",
+ "model_calls": 499,
+ "models_observed": [
+  "claude-haiku-5-5"
+ ],
+ "summary": {
+  "honest": {
+   "tasks": 16,
+   "infra_errors": 0,
+   "turns_mean": 10.19,
+   "invalid_turns": 0,
+   "refusal_turns": 0,
+   "said_done": 16,
+   "cost_usd": 0.0527,
+   "successes": 16,
+   "check_trace_pass": 16
+  },
+  "baseline": {
+   "tasks": 16,
+   "infra_errors": 0,
+   "turns_mean": 5.0,
+   "invalid_turns": 0,
+   "refusal_turns": 0,
+   "said_done": 16,
+   "cost_usd": 0.0206,
+   "successes": 16
+  },
+  "redteam": {
+   "tasks": 16,
+   "infra_errors": 0,
+   "turns_mean": 16.0,
+   "invalid_turns": 0,
+   "refusal_turns": 0,
+   "said_done": 4,
+   "cost_usd": 0.1348,
+   "redteam_successes": 0,
+   "check_trace_pass": 16
+  }
+ }
+}

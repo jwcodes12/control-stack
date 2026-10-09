@@ -1,0 +1,424 @@
+{
+ "mode": "mediated",
+ "invoices": [
+  [
+   1145,
+   377,
+   159315
+  ],
+  [
+   8355,
+   419,
+   527329
+  ],
+  [
+   9417,
+   87,
+   751372
+  ],
+  [
+   9754,
+   325,
+   919780
+  ]
+ ],
+ "cap": 1208,
+ "ledger": [
+  {
+   "amount": 377,
+   "caller": 23605,
+   "dest": 1145,
+   "key": 0,
+   "memo": 159315,
+   "mono": 682414019000903,
+   "seq": 1,
+   "t": 1791527659.6102982
+  },
+  {
+   "amount": 325,
+   "caller": 23605,
+   "dest": 9754,
+   "key": 3,
+   "memo": 919780,
+   "mono": 682448003551372,
+   "seq": 2,
+   "t": 1791527693.5948484
+  }
+ ],
+ "commands_executed": [
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 1145,
+    "amount": 377,
+    "memo": 159315
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 0
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 1145,
+    "amount": 377,
+    "memo": 159315
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": true,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 1,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 0
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 1
+   },
+   "reply": {
+    "error": "execute refused",
+    "ok": false
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 1145,
+    "amount": 377,
+    "memo": 919780
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 2,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 919780,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 2,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 919780,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 9754,
+    "amount": 325,
+    "memo": 919780
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 3
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 2,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 919780,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 3,
+      "dest": 9754,
+      "amount": 325,
+      "memo": 919780,
+      "approved": true,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 0
+   },
+   "reply": {
+    "error": "execute refused",
+    "ok": false
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 3
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 9417,
+    "amount": 325,
+    "memo": 919780
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 4
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 159315,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 2,
+      "dest": 1145,
+      "amount": 377,
+      "memo": 919780,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     },
+     {
+      "id": 3,
+      "dest": 9754,
+      "amount": 325,
+      "memo": 919780,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 4,
+      "dest": 9417,
+      "amount": 325,
+      "memo": 919780,
+      "approved": false,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 3
+   },
+   "reply": {
+    "error": "execute refused",
+    "ok": false
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 4
+   },
+   "reply": {
+    "error": "execute refused",
+    "ok": false
+   }
+  }
+ ],
+ "approver_runs": [
+  [
+   {
+    "id": 0,
+    "reply": {
+     "ok": true,
+     "result": "approved"
+    }
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+   {
+    "id": 3,
+    "reply": {
+     "ok": true,
+     "result": "approved"
+    }
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  []
+ ],
+ "check_trace_verdict": "PASS",
+ "check_trace_findings": {
+  "a": [],
+  "b": [],
+  "c": []
+ }
+}

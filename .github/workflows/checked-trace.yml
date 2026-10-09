@@ -1,0 +1,31 @@
+name: checked-trace-kernel
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/Core/CheckedTrace.lean'
+      - 'ControlStack.lean'
+      - '.github/workflows/checked-trace.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Kernel-build proof and negative examples, report axioms
+        run: |
+          set -euo pipefail
+          lake exe cache get
+          lake build ControlStack.Core.CheckedTrace
+          lake env lean ControlStack/Core/CheckedTrace.lean 2>&1 | tee checked-trace-axioms.log
+          if grep -Eq 'sorryAx|error:' checked-trace-axioms.log; then exit 1; fi
+      - name: Verify source registries
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py --check

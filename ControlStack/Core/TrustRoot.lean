@@ -34,8 +34,8 @@ Results (all by `decide`, i.e. kernel evaluation of the finite graph):
 - `portfolio_roots`: the whole portfolio rests on all 12 roots: 7 technical, 5 residual;
 - `root_sharing`: the most-shared root is the residual `measured_rates` (26 of 28 scenarios); the most-shared
   technical roots are kernel mediation (21) and issuer authenticity (20);
-- `correspondence_table`: model–runtime correspondence is discharged by the scenario's OWN refinement for SC-07, SC-16,
-  SC-18, SC-25, SC-26, SC-27, SC-28; SC-01, SC-13 rest on implementation_conformance alone.
+- `correspondence_table`: model–runtime correspondence is discharged by the scenario's OWN refinement for SC-07,
+  SC-16, SC-18, SC-25, SC-26, SC-27, SC-28; SC-01, SC-13 rest on implementation_conformance alone.
 -- END GENERATED: summary
 Ledgers for tools/cert_ledger.py:
 - `sc26RootLedger` ("SC-26 rests on: …");

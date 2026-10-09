@@ -23,13 +23,25 @@
       "path": "ControlStack/Scenarios/SC15Review.lean",
       "sha256": "6fb0abcd2e245a5f00add878a8e9e156305320990e19f3777df18821c9c1566b",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.sc15_safe_authenticated",
+      "path": "ControlStack/Scenarios/AuthInstancesB.lean",
+      "sha256": "b4a909d2955b7b1cd83c80cf026883fe9eaf6949566243d2db9a24991a5de39d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.forged15_merges_without_auth",
+      "path": "ControlStack/Scenarios/AuthInstancesB.lean",
+      "sha256": "b4a909d2955b7b1cd83c80cf026883fe9eaf6949566243d2db9a24991a5de39d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [],
   "assumptions": [
     {
       "id": "credential_separation",
-      "text": "Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1).",
+      "text": "Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). Reduced in Lean (sc15_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). CI results carry no principal: CI trustworthiness stays a separate premise.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",

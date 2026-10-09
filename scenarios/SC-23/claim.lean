@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesB
 import ControlStack.Scenarios.SC23IsolationV2
 import ControlStack.Scenarios.SC23Isolation
 import ControlStack.Scenarios.SC23Injection
@@ -33,3 +34,7 @@ import ControlStack.Scenarios.SC23Injection
 #print axioms ControlStack.SC23IsolationV2.w1_impossible_v2
 #check ControlStack.SC23IsolationV2.sc23v2_safe_authenticated
 #print axioms ControlStack.SC23IsolationV2.sc23v2_safe_authenticated
+#check ControlStack.AuthInstances.sc23_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc23_safe_authenticated
+#check ControlStack.AuthInstances.forged23_acts_without_auth
+#print axioms ControlStack.AuthInstances.forged23_acts_without_auth

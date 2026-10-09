@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC28Budget
 #check ControlStack.SC28.sc28_safe
 #check ControlStack.SC28.revoked_lease_stops
@@ -21,3 +22,7 @@ import ControlStack.Scenarios.SC28Budget
 #print axioms ControlStack.SC28.reported_cost_breaks
 #print axioms ControlStack.SC28.rollback_double_spends
 #print axioms ControlStack.SC28.no_halt_check_breaks
+#check ControlStack.AuthInstances.sc28_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc28_safe_authenticated
+#check ControlStack.AuthInstances.forged28_consumes_without_auth
+#print axioms ControlStack.AuthInstances.forged28_consumes_without_auth

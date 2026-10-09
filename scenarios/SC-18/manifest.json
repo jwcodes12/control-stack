@@ -30,6 +30,18 @@
       "path": "ControlStack/Scenarios/SC18Logging.lean",
       "sha256": "2aa331d47cdca2d1af62df2f1be24fde50d2bc617aa64215efa774055301c0a1",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.sc18_safe_authenticated",
+      "path": "ControlStack/Scenarios/AuthInstancesB.lean",
+      "sha256": "b4a909d2955b7b1cd83c80cf026883fe9eaf6949566243d2db9a24991a5de39d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.forged18_redirects_without_auth",
+      "path": "ControlStack/Scenarios/AuthInstancesB.lean",
+      "sha256": "b4a909d2955b7b1cd83c80cf026883fe9eaf6949566243d2db9a24991a5de39d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -49,7 +61,7 @@
   "assumptions": [
     {
       "id": "credential_separation",
-      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1). Reduced in Lean (sc18_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). The admin-sink premise is needed only for trusted-issued operations.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",

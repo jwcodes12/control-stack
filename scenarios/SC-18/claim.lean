@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesB
 import ControlStack.Scenarios.SC18Logging
 #check ControlStack.SC18.sc18_safe
 #check ControlStack.SC18.config_untampered
@@ -17,3 +18,7 @@ import ControlStack.Scenarios.SC18Logging
 #print axioms ControlStack.SC18.fail_open_outage_breaks
 #print axioms ControlStack.SC18.watchdog_off_silent_release
 #print axioms ControlStack.SC18.no_halt_check_breaks
+#check ControlStack.AuthInstances.sc18_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc18_safe_authenticated
+#check ControlStack.AuthInstances.forged18_redirects_without_auth
+#print axioms ControlStack.AuthInstances.forged18_redirects_without_auth

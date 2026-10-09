@@ -23,13 +23,25 @@
       "path": "ControlStack/Scenarios/SC20Data.lean",
       "sha256": "c12aa5c3a270c4d325f206e9be240e13f618db1d05a6414ab05e688addeddff2",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.sc20_safe_authenticated",
+      "path": "ControlStack/Scenarios/AuthInstancesB.lean",
+      "sha256": "b4a909d2955b7b1cd83c80cf026883fe9eaf6949566243d2db9a24991a5de39d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.forged20_trains_without_auth",
+      "path": "ControlStack/Scenarios/AuthInstancesB.lean",
+      "sha256": "b4a909d2955b7b1cd83c80cf026883fe9eaf6949566243d2db9a24991a5de39d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [],
   "assumptions": [
     {
       "id": "credential_separation",
-      "text": "Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1).",
+      "text": "Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). Reduced in Lean (sc20_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",

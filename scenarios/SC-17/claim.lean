@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC17Drift
 import ControlStack.Scenarios.SC17Infra
 #check ControlStack.SC17.sc17_safe
@@ -20,3 +21,7 @@ import ControlStack.Scenarios.SC17Infra
 #print axioms ControlStack.SC17Drift.drift_bounded
 #check ControlStack.SC17Drift.drift_lifetime
 #print axioms ControlStack.SC17Drift.drift_lifetime
+#check ControlStack.AuthInstances.sc17_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc17_safe_authenticated
+#check ControlStack.AuthInstances.forged17_applies_without_auth
+#print axioms ControlStack.AuthInstances.forged17_applies_without_auth

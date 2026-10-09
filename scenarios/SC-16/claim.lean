@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC16Disjoint
 import ControlStack.Scenarios.SC16Deploy
 #check ControlStack.SC16.sc16_safe
@@ -22,3 +23,7 @@ import ControlStack.Scenarios.SC16Deploy
 #print axioms ControlStack.SC16Disjoint.sc16_safe_disjoint
 #check ControlStack.SC16Disjoint.overlap_reviewer_is_agent
 #print axioms ControlStack.SC16Disjoint.overlap_reviewer_is_agent
+#check ControlStack.AuthInstances.sc16_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc16_safe_authenticated
+#check ControlStack.AuthInstances.forged16_deploys_without_auth
+#print axioms ControlStack.AuthInstances.forged16_deploys_without_auth

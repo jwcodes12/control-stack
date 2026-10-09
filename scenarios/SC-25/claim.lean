@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC25Content
 import ControlStack.Scenarios.SC25Audit
 #check ControlStack.SC25.sc25_safe
@@ -28,3 +29,7 @@ import ControlStack.Scenarios.SC25Audit
 #print axioms ControlStack.SC25Content.sc25_content_safe
 #check ControlStack.SC25Content.digest_only_executes_unaudited
 #print axioms ControlStack.SC25Content.digest_only_executes_unaudited
+#check ControlStack.AuthInstances.sc25_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc25_safe_authenticated
+#check ControlStack.AuthInstances.forged25_executes_without_auth
+#print axioms ControlStack.AuthInstances.forged25_executes_without_auth

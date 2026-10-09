@@ -24,13 +24,25 @@
       "path": "ControlStack/Scenarios/SC19Prod.lean",
       "sha256": "3e38c9f587f8ea36703f26d3b15b9e8ba14c4358c478f5952a8e945d3368653d",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.sc19_safe_authenticated",
+      "path": "ControlStack/Scenarios/AuthInstancesA.lean",
+      "sha256": "74399488cfef70c81cd91e86f85be5f0ea5a6ac84f56b20638ba522bd90e96a4",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AuthInstances.forged19_destroys_without_auth",
+      "path": "ControlStack/Scenarios/AuthInstancesA.lean",
+      "sha256": "74399488cfef70c81cd91e86f85be5f0ea5a6ac84f56b20638ba522bd90e96a4",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [],
   "assumptions": [
     {
       "id": "credential_separation",
-      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1). Reduced in Lean (sc19_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",

@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.AuthInstancesB
 import ControlStack.Scenarios.SC12Persistence
 #check ControlStack.SC12.sc12_safe
 #check ControlStack.SC12.no_fire_after_end
@@ -15,3 +16,7 @@ import ControlStack.Scenarios.SC12Persistence
 #print axioms ControlStack.SC12.parent_only_revocation_survives
 #print axioms ControlStack.SC12.foreign_registration_survives
 #print axioms ControlStack.SC12.no_halt_check_breaks
+#check ControlStack.AuthInstances.sc12_safe_authenticated
+#print axioms ControlStack.AuthInstances.sc12_safe_authenticated
+#check ControlStack.AuthInstances.forged12_spawns_without_auth
+#print axioms ControlStack.AuthInstances.forged12_spawns_without_auth

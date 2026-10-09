@@ -1,5 +1,5 @@
 name: lean-structure-integration-once
-# Halt-liveness kernel replay wave (2026-10-08)
+# Halt-liveness kernel replay: fix import order and add targeted gate (2026-10-08)
 on:
   push:
     branches:
@@ -49,6 +49,8 @@ jobs:
           python3 --version
       - name: Download pinned Lean build cache
         run: lake exe cache get
+      - name: Fast kernel replay of new halt-liveness module
+        run: lake build ControlStack.HaltLiveness
       - name: Clean compilation of ControlStack
         run: lake build ControlStack
       - name: All scenario claims and Python acceptance replay

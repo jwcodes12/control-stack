@@ -1,3 +1,5 @@
+import ControlStack.Gate
+
 /-!
 Conditional halt liveness under *bounded delivery* by a trusted scheduler.
 
@@ -8,7 +10,6 @@ Without any scheduled halt, an untrusted sequence of ordinary requests never
 sets the halt bit. This is a transition-system theorem, NOT an OS/scheduler
 refinement or a guarantee that a real halt is delivered.
 -/
-import ControlStack.Gate
 
 namespace ControlStack.HaltLiveness
 

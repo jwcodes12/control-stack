@@ -1,6 +1,8 @@
 name: generated-assurance-indexes
 on:
   push:
+    branches-ignore:
+      - lean-validation-run-20261008
     paths: ['ControlStack/**', 'proofs/**', 'ledger/**', 'scenarios/**', 'registry/**', 'tools/build_registry.py', 'tools/build_status.py', '.github/workflows/generated-assurance-indexes.yml']
   pull_request:
     paths: ['ControlStack/**', 'proofs/**', 'ledger/**', 'scenarios/**', 'registry/**', 'tools/build_registry.py', 'tools/build_status.py', '.github/workflows/generated-assurance-indexes.yml']

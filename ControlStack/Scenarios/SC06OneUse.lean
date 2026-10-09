@@ -168,12 +168,11 @@ theorem step_inv (R : Roles) (s : State) (op : Event) (h : Inv R s) :
       · simpa [step, hh] using h
       · simpa [step, hh] using addEntry R s h ⟨s.entries.length, r, w, v⟩
   | confirm issuer cid r tool eid v =>
-      by_cases hh : s.halted
-      · simpa [step, hh] using h
-      · by_cases ok : issuer ∈ R.users ∧ cid ∉ s.confirmations.map Confirmation.id
-        · have hh' := addConfirmation R s h ⟨cid, issuer, r, tool, eid, v⟩ ok.1
-          simpa only [step, hh, ok] using hh'
-        · simpa only [step, hh, ok] using h
+      simp only [step]
+      split_ifs with hhalt hallow
+      · exact h
+      · exact addConfirmation R s h ⟨cid, issuer, r, tool, eid, v⟩ hallow.1
+      · exact h
   | act r tool eid cid =>
       by_cases hh : s.halted
       · simpa [step, hh] using h

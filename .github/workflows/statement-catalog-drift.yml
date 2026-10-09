@@ -7,6 +7,21 @@ on:
       - 'proofs/*.lean'
       - 'ledger/*.lean'
       - 'registry/annotations.json'
+      - 'tools/build_registry.py'
+      - 'tools/build_statement_catalog.py'
+      - 'THEOREM-REGISTRY.md'
+      - 'THEOREM-REGISTRY.json'
+      - 'LEAN-STATEMENTS-NORMAL-FORM.md'
+      - '.github/workflows/statement-catalog-drift.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'ControlStack/**/*.lean'
+      - 'proofs/*.lean'
+      - 'ledger/*.lean'
+      - 'registry/annotations.json'
+      - 'tools/build_registry.py'
+      - 'tools/build_statement_catalog.py'
       - 'THEOREM-REGISTRY.md'
       - 'THEOREM-REGISTRY.json'
       - 'LEAN-STATEMENTS-NORMAL-FORM.md'

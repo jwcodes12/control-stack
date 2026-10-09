@@ -47,6 +47,12 @@ jobs:
           set -euo pipefail
           lake env lean reviews/fidelity-repro/Countermodels.lean 2>&1 | tee countermodels.log
           echo "ALL COUNTERMODEL PROOFS CHECKED"
+      - name: Kernel-check independent F5/F7 principal-binding witnesses
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean reviews/english-lean-fidelity-witnesses.lean 2>&1 | tee principal-witnesses.log
+          echo "BOTH PRINCIPAL-BINDING WITNESSES CHECKED"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -54,4 +60,5 @@ jobs:
           path: |
             elaboration.log
             countermodels.log
+            principal-witnesses.log
           if-no-files-found: ignore

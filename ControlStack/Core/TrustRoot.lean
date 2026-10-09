@@ -280,7 +280,8 @@ def depsOf : Prem → List Dep
   | .versionedWrites => [.prem .antiRollback, .root .implementationConformance]
 
 /-- the qualified name of scenario `sc`'s refinement theorem `decl` (`ControlStack.SC<sc>Refinement.<decl>`) -/
-def refName (sc : ℕ) (decl : String) : String := "ControlStack.SC" ++ toString sc ++ "Refinement." ++ decl
+def refName (sc : ℕ) (decl : String) : String :=
+  "ControlStack.SC" ++ (if sc < 10 then "0" else "") ++ toString sc ++ "Refinement." ++ decl
 
 /-- each scenario's OWN refinement theorem (criterion 3): the formal part of `model_runtime_correspondence` for that
 scenario only; `none`: no refinement, so the premise rests on `implementation_conformance` alone -/

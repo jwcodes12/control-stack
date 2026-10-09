@@ -936,5 +936,103 @@
   "status": "PROVED_RECORDED",
   "necessity_witness": "recover_halt_witness",
   "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09; forward simulation to SC26 model"
+ },
+ "ControlStack/Scenarios/SC05Signal.lean::cap_does_not_prevent": {
+  "family": "F2",
+  "scenarios": [
+   "SC-05"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "The prohibited action can only be executed through the gate.",
+   "Claimed zero secret-dependence of outputs holds in the deployment (observation c"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "forbidden_executes_without_gate",
+  "record": "scenarios/SC-05/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC06Artifacts.lean::sc06_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-06"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Operations carrying trusted identities (reviewer, approver, admin, user) are tho",
+   "Every cross-agent artifact read passes the typed canonicaliser."
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "raw_path_breaks; no_canonicalisation_breaks; no_provenance_check_breaks",
+  "record": "scenarios/SC-06/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC14Runaway.lean::sc14_safe": {
+  "family": "F5",
+  "scenarios": [
+   "SC-14"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Operations carrying trusted identities (reviewer, approver, admin, user) are tho",
+   "The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids o"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "aggregate_cap_breaks; reported_cost_breaks; rate_burst_breaks; rollback_double_spends",
+  "record": "scenarios/SC-14/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC15Review.lean::sc15_safe": {
+  "family": "F4",
+  "scenarios": [
+   "SC-15"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Operations carrying trusted identities (reviewer, approver, admin, user) are tho",
+   "Reviews and tests are adequate to detect backdoors (semantic; not formalisable h"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "stale_review_breaks; declared_paths_breaks; ci_other_content_breaks; self_review_breaks",
+  "record": "scenarios/SC-15/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC20Data.lean::sc20_safe": {
+  "family": "F4",
+  "scenarios": [
+   "SC-20"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Operations carrying trusted identities (reviewer, approver, admin, user) are tho",
+   "Allowlisted sources and reviewers provide clean data (semantic)."
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "no_quarantine_breaks; edit_after_freeze_breaks; unlisted_source_breaks",
+  "record": "scenarios/SC-20/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/EvalIntegrity.lean::sc21_safe": {
+  "family": "F4",
+  "scenarios": [
+   "SC-21"
+  ],
+  "adversary": "NON_ADAPTIVE",
+  "premises": [
+   "Operations carrying trusted identities (reviewer, approver, admin, user) are tho",
+   "The re-execution sample is hidden from the agent until after publication."
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "suppression_breaks; modified_evaluator_breaks; overwrite_after_check_breaks; observable_sample_nogo",
+  "record": "scenarios/SC-21/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/EvalIntegrity.lean::sc22_unreplicated_misreport": {
+  "family": "F6",
+  "scenarios": [
+   "SC-22"
+  ],
+  "adversary": "NON_ADAPTIVE",
+  "premises": [
+   "The replication sample is hidden until after reporting.",
+   "Independent replication detects a misreported finding when sampled (perfect reca"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "observable_sample_nogo",
+  "record": "scenarios/SC-22/manifest.json; kernel-checked locally 2026-10-09; model only"
  }
 }

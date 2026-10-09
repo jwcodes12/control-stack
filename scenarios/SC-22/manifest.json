@@ -2,67 +2,71 @@
   "schema_version": 1,
   "id": "SC-22",
   "title": "Agent misreports interpretability or research findings",
-  "bad_event": "Agent misreports interpretability or research findings",
-  "adversary": "Untrusted agent with scenario-specific authority; full feasible action set requires specification.",
-  "refutation": "A concrete executable trace produces the catalog bad event despite enforcing the candidate property: Verify data lineage and reproducible numerical computation; semantic truthfulness still needs independent experts or empirical checks",
-  "scope": "Catalog-only draft. Origin: ControlArena SAE Interp Sabotage. Feasibility estimate: L for full claim. Not a selected deployment.",
+  "bad_event": "k misreported findings escape a hidden independent-replication sample of size B with probability above C(N−k,B)/C(N,B).",
+  "adversary": "NON_ADAPTIVE misreported set; replication sample hidden.",
+  "refutation": "Misreports surviving above the bound, or a known sample (observable_sample_nogo).",
+  "scope": "Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted.",
   "families": [
-    "F4",
     "F6"
   ],
-  "status": "DRAFT",
-  "theorems": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.EvalIntegrity.sc22_unreplicated_misreport",
+      "path": "ControlStack/Scenarios/EvalIntegrity.lean",
+      "sha256": "48a646749d221657c6e8acf3ddec7adf52823ac4a216737b24afeadb04d8714b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.EvalIntegrity.observable_sample_nogo",
+      "path": "ControlStack/Scenarios/EvalIntegrity.lean",
+      "sha256": "48a646749d221657c6e8acf3ddec7adf52823ac4a216737b24afeadb04d8714b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
   "evidence": [],
   "assumptions": [
     {
-      "id": "threat_model_completeness",
-      "text": "Complete reachable attacker actions and affected assets must be enumerated.",
+      "id": "sample_hidden",
+      "text": "The replication sample is hidden until after reporting.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "correspondence",
-      "text": "A trusted effect gate must enforce the relevant policy against every alternate path.",
+      "id": "replication_detects",
+      "text": "Independent replication detects a misreported finding when sampled (perfect recall assumed; see ReservedRecall for imperfect recall).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
-    },
-    {
-      "id": "honest_usefulness",
-      "text": "A frozen representative honest-task distribution and acceptance floor must be measured.",
-      "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including excluded attack classes."
+      "note": "Not independently established; Lean model only."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "The model-to-runtime relation lacks independently checked refinement evidence."
+      "note": "Not independently established; Lean model only."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Exclusive enforcement and receiver observation boundary remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Lifetime state, concurrency, and composition premises remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "An honest-task success baseline and test population remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent fidelity, provenance or assurance approval."
+      "note": "Not independently established; Lean model only."
     }
   }
 }

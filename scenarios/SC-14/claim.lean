@@ -1,2 +1,5 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Scenarios.SC14Runaway
+#check ControlStack.SC14.sc14_safe
+#check ControlStack.SC14.halt_freezes
+#print axioms ControlStack.SC14.sc14_safe
+#print axioms ControlStack.SC14.halt_freezes

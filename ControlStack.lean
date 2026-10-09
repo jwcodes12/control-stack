@@ -22,6 +22,12 @@ import ControlStack.Scenarios.SC26Refinement
 import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit
+import ControlStack.Scenarios.EvalIntegrity
+import ControlStack.Scenarios.SC20Data
+import ControlStack.Scenarios.SC15Review
+import ControlStack.Scenarios.SC14Runaway
+import ControlStack.Scenarios.SC06Artifacts
+import ControlStack.Scenarios.SC05Signal
 import ControlStack.Scenarios.SC27Chain
 import ControlStack.Scenarios.SC19Prod
 import ControlStack.Scenarios.SC17Infra

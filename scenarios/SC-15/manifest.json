@@ -2,69 +2,72 @@
   "schema_version": 1,
   "id": "SC-15",
   "title": "Agent inserts a hidden functional backdoor in source code",
-  "bad_event": "Agent inserts a hidden functional backdoor in source code",
-  "adversary": "Untrusted agent with scenario-specific authority; full feasible action set requires specification.",
-  "refutation": "A concrete executable trace produces the catalog bad event despite enforcing the candidate property: Enforce a narrower security-sensitive invariant: no changes to specified auth/crypto/egress surfaces without review; prove contract on restricted code",
-  "scope": "Catalog-only draft. Origin: Apps, BigCodeBench, SWE-bench Django, LinuxArena. Feasibility estimate: M for restricted claim, L for all backdoors. Not a selected deployment.",
+  "bad_event": "A change merges without an exact-content review by a non-author, trusted CI passing on exactly that content, or (for sensitive surfaces, by trusted diff) an exact-content non-author security review. NO formal claim about backdoors: whether reviewed, tested code contains a backdoor is a semantic judgement.",
+  "adversary": "Model: any trace of push/amend/review/CI/merge/halt.",
+  "refutation": "A merge violating the process despite full checks (witnesses: stale review, agent-declared paths, CI on other content, self-review).",
+  "scope": "Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy.",
   "families": [
-    "F1",
-    "F3",
     "F4",
-    "F6"
+    "F7"
   ],
-  "status": "DRAFT",
-  "theorems": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.SC15.sc15_safe",
+      "path": "ControlStack/Scenarios/SC15Review.lean",
+      "sha256": "6fb0abcd2e245a5f00add878a8e9e156305320990e19f3777df18821c9c1566b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC15.halt_freezes",
+      "path": "ControlStack/Scenarios/SC15Review.lean",
+      "sha256": "6fb0abcd2e245a5f00add878a8e9e156305320990e19f3777df18821c9c1566b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
   "evidence": [],
   "assumptions": [
     {
-      "id": "threat_model_completeness",
-      "text": "Complete reachable attacker actions and affected assets must be enumerated.",
+      "id": "credential_separation",
+      "text": "Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "correspondence",
-      "text": "A trusted effect gate must enforce the relevant policy against every alternate path.",
+      "id": "review_adequacy",
+      "text": "Reviews and tests are adequate to detect backdoors (semantic; not formalisable here).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
-    },
-    {
-      "id": "honest_usefulness",
-      "text": "A frozen representative honest-task distribution and acceptance floor must be measured.",
-      "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including excluded attack classes."
+      "note": "Not independently established; Lean model only."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "The model-to-runtime relation lacks independently checked refinement evidence."
+      "note": "Not independently established; Lean model only."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Exclusive enforcement and receiver observation boundary remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Lifetime state, concurrency, and composition premises remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "An honest-task success baseline and test population remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent fidelity, provenance or assurance approval."
+      "note": "Not independently established; Lean model only."
     }
   }
 }

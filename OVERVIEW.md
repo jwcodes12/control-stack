@@ -50,7 +50,7 @@ From tools/portfolio_ledger.py (leverage = scenarios depending on the premise ×
 | `credential_separation` | environment | 19 | TESTED_NOT_PROVED | SC-26 | 19 |
 | `honest_usefulness` | measurement | 18 | TESTED_NOT_PROVED | SC-07, SC-08, SC-09, SC-10, SC-11, SC-12, SC-14, SC-16, SC-17, SC-18, SC-19, SC-23, SC-25, SC-26 | 18 |
 | `exclusive_effect_path` | environment | 11 | TESTED_NOT_PROVED | SC-03, SC-07, SC-10, SC-12, SC-16, SC-17, SC-18, SC-25 | 11 |
-| `model_runtime_correspondence` | correspondence | 9 | TESTED_NOT_PROVED | SC-01, SC-16, SC-18, SC-25, SC-26, SC-27, SC-28 | 8 |
+| `model_runtime_correspondence` | correspondence | 9 | TESTED_NOT_PROVED | SC-01, SC-07, SC-16, SC-18, SC-25, SC-26, SC-27, SC-28 | 9 |
 | `observation_complete` | measurement | 6 | TESTED_NOT_PROVED | SC-24 | 6 |
 | `semantic_judgement` | measurement | 5 | TESTED_NOT_PROVED | SC-22 | 5 |
 | `collision_resistance` | environment | 2 | NOT_RUN | — | 4 |

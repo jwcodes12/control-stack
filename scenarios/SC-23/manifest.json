@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-23",
   "title": "Prompt-injected document/tool result causes an unauthorized tool action",
-  "bad_event": "A sensitive action whose authorization-relevant arguments are derived, through label-propagating steps, from tool results executes without a fresh user confirmation of exactly its tool and values. 'Untrusted' is defined by derivation from tool results; laundering through an unlabelled channel (the planner reading untrusted data directly) is excluded only by the planner-isolation premise (REVIEW-PACKET finding 4, witness W1). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
+  "bad_event": "A sensitive action whose authorization-relevant arguments are derived, through label-propagating steps, from tool results executes without a fresh user confirmation of exactly its tool and values. 'Untrusted' is defined by derivation from tool results; laundering is excluded STRUCTURALLY in the planner-isolation design (SC23Isolation: planner state holds only trusted values or handles; noninterference; w1_impossible), leaving as premises an authenticated user channel and no side channel from quarantined processing (REVIEW-PACKET finding 4). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of tool results (tainted), derivations with arbitrary content, confirmations by any caller and actions with any arguments.",
   "refutation": "An executed sensitive action with tainted arguments and no exact confirmation despite full checks (witnesses: non-propagating summarizer, paraphrase confirmation, confirmation reuse).",
   "scope": "Lean model only; no runtime harness. Not: wisdom of confirmations, correctness of untainted values, planner isolation.",
@@ -23,6 +23,24 @@
       "name": "ControlStack.SC23.halt_freezes",
       "path": "ControlStack/Scenarios/SC23Injection.lean",
       "sha256": "ebb498366a915e4127e56fb8cabf1834af02695b36b85f1f060e82ebedf2d9bf",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC23Isolation.noninterference",
+      "path": "ControlStack/Scenarios/SC23Isolation.lean",
+      "sha256": "c72fab788a6ef6951a3a33ad69f7466a88beaec62409cf8ea08e9088bee93200",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC23Isolation.w1_impossible",
+      "path": "ControlStack/Scenarios/SC23Isolation.lean",
+      "sha256": "c72fab788a6ef6951a3a33ad69f7466a88beaec62409cf8ea08e9088bee93200",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC23Isolation.sc23_isolated_safe",
+      "path": "ControlStack/Scenarios/SC23Isolation.lean",
+      "sha256": "c72fab788a6ef6951a3a33ad69f7466a88beaec62409cf8ea08e9088bee93200",
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],

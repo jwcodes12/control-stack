@@ -22,6 +22,9 @@ import ControlStack.Scenarios.SC26Refinement
 import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit
+import ControlStack.Scenarios.SC23Isolation
+import ControlStack.Scenarios.SC17Drift
+import ControlStack.Scenarios.EvalIntegrityAdaptive
 import ControlStack.Scenarios.SC26Authenticated
 import ControlStack.Core.Authenticated
 import ControlStack.Scenarios.SC16Disjoint

@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC17Drift
 import ControlStack.Scenarios.SC17Infra
 #check ControlStack.SC17.sc17_safe
 #check ControlStack.SC17.reconcile_restores
@@ -15,3 +16,7 @@ import ControlStack.Scenarios.SC17Infra
 #print axioms ControlStack.SC17.approve_then_amend_breaks
 #print axioms ControlStack.SC17.no_drift_detection_breaks
 #print axioms ControlStack.SC17.no_halt_check_breaks
+#check ControlStack.SC17Drift.drift_bounded
+#print axioms ControlStack.SC17Drift.drift_bounded
+#check ControlStack.SC17Drift.drift_lifetime
+#print axioms ControlStack.SC17Drift.drift_lifetime

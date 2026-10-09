@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC23Isolation
 import ControlStack.Scenarios.SC23Injection
 #check ControlStack.SC23.sc23_safe
 #check ControlStack.SC23.halt_freezes
@@ -19,3 +20,9 @@ import ControlStack.Scenarios.SC23Injection
 #print axioms ControlStack.SC23.no_taint_check_breaks
 #print axioms ControlStack.SC23.confirmation_reuse_breaks
 #print axioms ControlStack.SC23.non_user_confirmation_refused
+#check ControlStack.SC23Isolation.noninterference
+#print axioms ControlStack.SC23Isolation.noninterference
+#check ControlStack.SC23Isolation.w1_impossible
+#print axioms ControlStack.SC23Isolation.w1_impossible
+#check ControlStack.SC23Isolation.sc23_isolated_safe
+#print axioms ControlStack.SC23Isolation.sc23_isolated_safe

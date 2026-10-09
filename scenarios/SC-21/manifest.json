@@ -5,7 +5,7 @@
   "bad_event": "A published evaluation omits frozen tasks, uses a modified evaluator, or misstates a re-executed task's result; corruption of k results escapes a hidden re-execution sample of size B with probability above C(N−k,B)/C(N,B).",
   "adversary": "Model: any trace for the process theorem; NON_ADAPTIVE corrupted set for the sampling bound (sample hidden).",
   "refutation": "A suppressed task or modified evaluator accepted, or corruption surviving above the bound (witness: observable sample → survival 1).",
-  "scope": "Lean model only. Adaptive (feedback) version not done here (see Leakage.audit_leak_bound/ReservedAudit). Semantic: whether tasks/evaluator measure the intended capability.",
+  "scope": "Lean model only. Adaptive-with-feedback version: sc21_adaptive / sc21_adaptive_recall (EvalIntegrityAdaptive). Semantic: whether tasks/evaluator measure the intended capability.",
   "families": [
     "F4",
     "F6"
@@ -34,6 +34,24 @@
       "name": "ControlStack.EvalIntegrity.observable_sample_nogo",
       "path": "ControlStack/Scenarios/EvalIntegrity.lean",
       "sha256": "48a646749d221657c6e8acf3ddec7adf52823ac4a216737b24afeadb04d8714b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.EvalIntegrityAdaptive.sc21_adaptive",
+      "path": "ControlStack/Scenarios/EvalIntegrityAdaptive.lean",
+      "sha256": "e06a6f9a71c3db1145b7672a944be45c380cce2ebb96cf7ef932d0733156d538",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.EvalIntegrityAdaptive.sc21_adaptive_content",
+      "path": "ControlStack/Scenarios/EvalIntegrityAdaptive.lean",
+      "sha256": "e06a6f9a71c3db1145b7672a944be45c380cce2ebb96cf7ef932d0733156d538",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.EvalIntegrityAdaptive.sc21_adaptive_recall",
+      "path": "ControlStack/Scenarios/EvalIntegrityAdaptive.lean",
+      "sha256": "e06a6f9a71c3db1145b7672a944be45c380cce2ebb96cf7ef932d0733156d538",
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],

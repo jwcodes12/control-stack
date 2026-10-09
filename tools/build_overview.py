@@ -123,6 +123,21 @@ def runtime_evidence(m):
     return list(runs.values())
 
 
+def recorded_failures(m):
+    """manifest evidence entries with outcome FAIL that are not preregistered run directories (e.g. SC-01's
+    historical receipts): [(path, purpose, binding)]"""
+    return [(e["path"], e.get("purpose", ""), e.get("binding")) for e in m["evidence"]
+            if e.get("outcome") == "FAIL" and not re.search(r"/evidence/run-[^/]+/", e["path"])]
+
+
+def evidence_cell(m):
+    parts = ["%s %s %s" % r for r in runtime_evidence(m)]
+    for path, purpose, binding in recorded_failures(m):
+        pur = purpose if len(purpose) <= 70 else purpose[:67].rstrip() + "..."
+        parts.append("recorded FAIL: %s%s (%s)" % (path, ", %s" % binding.lower() if binding else "", pur))
+    return "; ".join(parts) or "— (Lean only)"
+
+
 def open_premise(sid, rows):
     mine = [r for r in rows if sid in r["scenarios"]]
     if not mine:
@@ -235,7 +250,7 @@ def render(lean_roots=False):
     for sid, m in ms.items():
         t = strongest(m)
         thm = "`%s`: %s" % (short_name(t["name"]), doc_of(t)) if t else "—"
-        ev = "; ".join("%s %s %s" % (p, r, v) for p, r, v in runtime_evidence(m)) or "— (Lean only)"
+        ev = evidence_cell(m)
         op = open_premise(sid, rows)
         opt = "`%s` (%s, leverage %d)" % (op["id"], op["kind"], op["leverage"]) if op else "—"
         rr = fmt_roots(roots.get(int(sid.split("-")[1]), []), rnames)

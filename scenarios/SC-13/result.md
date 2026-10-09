@@ -26,7 +26,7 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 
 | theorem | file | reading |
 |---|---|---|
-| `trace_safe` | `ControlStack/AuditDispatch.lean` | (no docstring) |
+| `trace_safe` | `ControlStack/AuditDispatch.lean` | SC-13 audit-before-effect (model): `Inv` is preserved by any trace of app and dispatcher operations, so every effect has an audit row and no id is effected twice; the audit list only grows. |
 | `app_cannot_effect` | `ControlStack/AuditDispatch.lean` | app-only transitions never create effects: the app cannot invoke the effect |
 
 ### Necessity witnesses

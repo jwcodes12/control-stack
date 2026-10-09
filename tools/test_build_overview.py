@@ -65,6 +65,16 @@ class Rules(unittest.TestCase):
         self.assertIn(("label correctness", ["SC-03"]), lim)
         self.assertIn(("kernel exploits", ["SC-02"]), lim)
 
+    def test_recorded_failures(self):
+        m = {"id": "SC-01", "evidence": [
+            {"path": "scenarios/SC-01/evidence/run-1/verdicts.json", "outcome": "FAIL", "purpose": "p"},
+            {"path": "gateway/r.json", "outcome": "FAIL", "purpose": "historical", "binding": "UNBOUND"},
+            {"path": "gateway/ok.json", "outcome": "PASS", "purpose": "x"}]}
+        self.assertEqual(B.recorded_failures(m), [("gateway/r.json", "historical", "UNBOUND")])
+        with mock.patch.object(B, "runtime_evidence", return_value=[]):
+            self.assertEqual(B.evidence_cell(m), "recorded FAIL: gateway/r.json, unbound (historical)")
+            self.assertEqual(B.evidence_cell({"evidence": []}), "— (Lean only)")
+
     def test_esc(self):
         self.assertEqual(B.esc("a|b\nc"), "a\\|b c")
 

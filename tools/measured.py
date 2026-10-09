@@ -119,6 +119,51 @@ def cp_lower(k, n, delta):
     return lo
 
 
+CACHE = os.path.join(REPO, "tools", ".cache", "measured-bounds.json")   # gitignored; safe to delete
+CACHE_VERSION = 1              # bump when certified_lower's arithmetic changes
+_MEMO = {}
+
+
+def _cache_key(k, n, delta):
+    return "v%d|%d|%d|%d|%s" % (CACHE_VERSION, DIGITS, k, n, Fraction(delta).limit_denominator(10 ** 9))
+
+
+def _load_cache(path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def certified_lower_cached(k, n, delta, cache_path=None):
+    """certified_lower, memoised per process and in a small JSON cache keyed by (version, DIGITS, k, n, delta).
+    The bound is a pure function of those, so a hit returns exactly what the exact check returned when it ran."""
+    key = _cache_key(k, n, delta)
+    if key in _MEMO:
+        return _MEMO[key]
+    path = CACHE if cache_path is None else cache_path
+    disk = _load_cache(path) if path else {}
+    if key in disk:
+        num, den, tail = disk[key]
+        out = (Fraction(num, den), tail)
+    else:
+        out = certified_lower(k, n, delta)
+        if path:
+            disk[key] = [out[0].numerator, out[0].denominator, out[1]]
+            try:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                tmp = path + ".tmp"
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(disk, f, sort_keys=True)
+                os.replace(tmp, path)
+            except OSError:
+                pass           # read-only tree: just recompute next time
+    _MEMO[key] = out
+    return out
+
+
 def certified_lower(k, n, delta):
     """(r0 Fraction, tail float): r0 = r_low rounded down to DIGITS, with P_{r0}(S >= k) <= delta checked exactly"""
     delta = Fraction(delta).limit_denominator(10 ** 9)
@@ -300,7 +345,7 @@ def collect(delta, ledger, measurement_only=False):
             r["ledger_member"] = r["scenario"] in info.get("scenarios", [])
             if measurement_only and r["kind"] != "measurement":
                 continue
-            r0, tail = certified_lower(r["k"], r["n"], delta)
+            r0, tail = certified_lower_cached(r["k"], r["n"], delta)
             r.update({"point": round(r["k"] / r["n"], 6) if r["n"] else None, "delta": delta,
                       "r_low": float(r0), "r_low_rational": "%d/%d" % (r0.numerator, r0.denominator),
                       "tail_at_r_low": tail, "check": "exact (integer arithmetic)"})

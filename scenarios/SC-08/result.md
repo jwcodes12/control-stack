@@ -20,7 +20,7 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 
 | theorem | file | reading |
 |---|---|---|
-| `sc08_safe` | `ControlStack/Scenarios/SC08Exec.lean` | (no docstring) |
+| `sc08_safe` | `ControlStack/Scenarios/SC08Exec.lean` | SC-08 safety with all checks on (model): from any initial files and no runs, after any trace every recorded run satisfies `RunOk` (allowlisted program digest; allowlisted script digest for interpreter runs). |
 | `safe_of_sound` | `ControlStack/Scenarios/SC08Exec.lean` | SC-08 safety for any digest-checking configuration. |
 | `halt_freezes` | `ControlStack/Scenarios/SC08Exec.lean` | Halt freezes execution: once halted, no trace changes the state. |
 

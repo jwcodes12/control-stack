@@ -123,6 +123,9 @@ theorem step_safe (p : Policy) (s : State) (a : Action)
 def run (p : Policy) (s : State) (actions : List Action) : State :=
   actions.foldl (step p) s
 
+/-- **SC-03 pinned-peer safety (model):** `Invariant` is preserved by any action sequence, so every recorded
+connection attempt came from the gateway to a policy-pinned peer and an active sandbox has a safe topology. Linux
+isolation and parser correctness are premises, not proved here. -/
 theorem trace_safe (p : Policy) (s : State) (actions : List Action)
     (h : Invariant p s) : Invariant p (run p s actions) := by
   induction actions generalizing s with

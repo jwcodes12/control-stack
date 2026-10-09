@@ -82,6 +82,7 @@ import ControlStack.Core.Cert
 import ControlStack.Core.Measured
 import ControlStack.Core.AntiRollback
 import ControlStack.Families.F5.EscrowBudget
+import ControlStack.Families.F4.AttestedKeyRelease
 import ControlStack.Families.F5.EscrowBudgetMsg
 import ControlStack.Witnesses.CovertNoGo
 import ControlStack.Witnesses.Necessity

@@ -165,6 +165,9 @@ theorem safe_of_sound (E : Env) {C : Checks} (hC : Sound C) (files : List (ℕ �
     Good E (run E C ⟨files, [], false⟩ ops) :=
   run_good E hC _ ops (by simp [Good])
 
+/-- **SC-08 safety with all checks on (model):** from any initial files and no runs, after any trace every recorded
+run satisfies `RunOk` (allowlisted program digest; allowlisted script digest for interpreter runs). This is
+`safe_of_sound` at the `full` configuration. -/
 theorem sc08_safe (E : Env) (files : List (ℕ × ℕ)) (ops : List Op) : Good E (run E full ⟨files, [], false⟩ ops) :=
   safe_of_sound E sound_full files ops
 

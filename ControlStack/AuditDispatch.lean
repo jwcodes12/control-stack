@@ -76,6 +76,9 @@ theorem dispatch_audit_first (s : St) (id : ℕ) (h : id ∈ s.requests ∧ id �
     (step s (.dispatch id)).audits = s.audits ++ [id] ∧ (step s (.dispatch id)).effects = s.effects ++ [id] := by
   simp [step, h]
 
+/-- **SC-13 audit-before-effect (model):** `Inv` is preserved by any trace of app and dispatcher operations, so every
+effect has an audit row and no id is effected twice; the audit list only grows. That real effects happen only through
+the dispatcher is a deployment premise. -/
 theorem trace_safe (s : St) (ops : List Op) (h : Inv s) :
     Inv (run s ops) ∧ s.audits <+: (run s ops).audits := by
   induction ops generalizing s with

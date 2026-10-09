@@ -56,6 +56,37 @@ class Bound(unittest.TestCase):
         self.assertEqual(M.certified_lower(0, 10, 0.05)[0], 0)
 
 
+class Cache(unittest.TestCase):
+    def test_cached_equals_uncached(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "c.json")
+            for k, n, delta in ((5, 5, 0.05), (2047, 20000, 0.05), (0, 9, 0.05), (16, 16, 0.01)):
+                M._MEMO.clear()
+                cold = M.certified_lower_cached(k, n, delta, cache_path=path)
+                M._MEMO.clear()
+                warm = M.certified_lower_cached(k, n, delta, cache_path=path)        # from disk
+                self.assertEqual(cold, warm)
+                self.assertEqual(cold, M.certified_lower(k, n, delta))
+            with open(path, "w") as f:
+                f.write("not json")                                                   # corrupt cache: recompute
+            M._MEMO.clear()
+            self.assertEqual(M.certified_lower_cached(5, 5, 0.05, cache_path=path), M.certified_lower(5, 5, 0.05))
+
+    def test_collect_identical_cold_and_warm(self):
+        old = M.CACHE
+        with tempfile.TemporaryDirectory() as d:
+            try:
+                M.CACHE = os.path.join(d, "c.json")
+                M._MEMO.clear()
+                cold, _ = M.collect(0.05, M.read_ledger())
+                M._MEMO.clear()
+                warm, _ = M.collect(0.05, M.read_ledger())
+                self.assertEqual(cold, warm)
+            finally:
+                M.CACHE = old
+                M._MEMO.clear()
+
+
 class Repo(unittest.TestCase):
     def test_ledger(self):
         led = M.read_ledger()

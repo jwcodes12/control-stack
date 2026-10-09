@@ -6,6 +6,16 @@
 **Review artifact:** reviews/english-lean-fidelity-audit.md  
 **Review type:** independent assistant source-semantic adversarial review, **not** a kernel replay, external human attestation, or deployment certification.
 
+> **Follow-up kernel replay, 2026-10-09:** The limitations below accurately
+> describe the original source-level review phase. Subsequent independent
+> GitHub Actions checks **successfully built the original pinned Lean source,
+> printed selected elaborated theorem types and axioms, replayed five ledger
+> Claim/Witness families, and compiled three isolated countermodels**.
+> The supplement [english-lean-fidelity-kernel-replay.md](english-lean-fidelity-kernel-replay.md)
+> records the exact commands, source pin, results, and CI links. The follow-up
+> establishes no deployed-system correspondence and does not constitute a
+> complete elaborated review of all 865 declarations.
+
 ## 1. Executive verdict
 
 **No deployment-wide, adversary-independent bound on real-world catastrophe is established by the reviewed material.** This is principally an **applicability/composition gap**, not evidence that the proved Lean implications are logically false. Indeed, ROADMAP.md:3-20, PRIMITIVES-AND-SCENARIOS.md:3-13, CATASTROPHE-SPEC.md:1-14, ADVERSARY-CLASSES.md:1-27, and trusted_stack/README.md:1-23 already warn against that inference. Do not retroactively label these explicitly qualified documents as falsely advertising deployable assurance.

@@ -15,10 +15,9 @@ against the pinned commit before running.
 - **Interface-level toolchain:** `leanprover/lean4:v4.34.0`. `lake exe cache get`,
   `lake build`, and `lake env lean reviews/fidelity-repro/Elaboration.lean`.
   The elaboration probe prints actual theorem declarations with implicit
-  binders exposed and their axiom dependencies. **Source build and elaboration
-  probe passed** in [interface CI run 37887000889](https://github.com/jwcodes12/control-stack/actions/runs/37887000889);
-  that run's overall status is failure solely because the separate reproduction
-  file had one unresolved finite proof obligation.
+  binders exposed and their axiom dependencies. **The source build, elaboration
+  and all three new countermodels passed** in
+  [final interface CI run 37888419347](https://github.com/jwcodes12/control-stack/actions/runs/37888419347).
 - **Ledger toolchain:** `leanprover/lean4:v4.35.0-rc3`. The repository's
   `ledger-check/check.py --emit` assembles original statements, transitive
   proof dependencies, claim proofs, and witness proofs for UMPROTF1, UMADAPTF1,
@@ -73,11 +72,21 @@ against the original `ControlStack` modules without changing them. These are
   from marginals alone. The repository theorem explicitly specifies product
   sampling and is not contradicted.
 
-The first two witnesses compiled and emitted only standard axioms in
-[interface CI run 37887723710](https://github.com/jwcodes12/control-stack/actions/runs/37887723710).
-The third had one remaining decidable finite-cardinality proof obligation in
-that run; the corrected source is in the later branch commit. **Do not call the
-combined countermodel suite PASS until a green CI run establishes it.**
+**All three isolated witnesses passed as Lean theorems** with axiom
+dependencies limited to `propext`, `Classical.choice`, and `Quot.sound`:
+[successful interface CI run 37888419347](https://github.com/jwcodes12/control-stack/actions/runs/37888419347).
+The earlier red CI runs were caused by incorrect proof-script syntax or an
+unclosed decidable finite-cardinality goal in this NEW reproduction file. They
+do not indicate any change or defect in the original theorems.
+
+In addition, the original project already contains kernel-checked negative
+examples covering the same kind of applicability limits:
+`ControlStack.GateClients.Artifact.collision_breaks` (hash collisions),
+`ControlStack.GateClients.Approval.replay_if_nonces_lost` (nonce rollback),
+`ControlStack.Lease.fork_without_lease_accounting` (unmetered fork),
+and `ControlStack.GateComposition.confused_deputy_counterexample`
+(cross-gate delegated authority). These come from the unchanged source
+build; the new countermodel file neither replaces nor modifies them.
 
 ## What remains unestablished
 

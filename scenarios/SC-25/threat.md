@@ -19,3 +19,4 @@ _Generated from manifest.json._
 - `ControlStack/Scenarios/AuthInstancesA.lean`
 - `ControlStack/Scenarios/SC25Audit.lean`
 - `ControlStack/Scenarios/SC25Content.lean`
+- `ControlStack/Scenarios/SC25Refinement.lean`

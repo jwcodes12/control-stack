@@ -55,6 +55,18 @@
       "path": "ControlStack/Scenarios/AuthInstancesA.lean",
       "sha256": "74399488cfef70c81cd91e86f85be5f0ea5a6ac84f56b20638ba522bd90e96a4",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC25Refinement.concrete_safe",
+      "path": "ControlStack/Scenarios/SC25Refinement.lean",
+      "sha256": "12237af4fff816c3d26f79d22834b494c64ab03da7c3682a809244608a14f364",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC25Refinement.concrete_content_safe",
+      "path": "ControlStack/Scenarios/SC25Refinement.lean",
+      "sha256": "12237af4fff816c3d26f79d22834b494c64ab03da7c3682a809244608a14f364",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -103,6 +115,14 @@
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "model_runtime_correspondence",
+      "text": "Two links: concrete event machine (journaled items, auditor/approver own logs, single-threaded atomic fire, expiry sweep, crash/restart) → SC25 model: PROVED (SC25Refinement.simulation/concrete_safe/concrete_content_safe); Python runtime → concrete machine: TESTED (scenarios/SC-25/evidence/run-1 reconciliation), not proved.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
@@ -111,8 +131,8 @@
       "note": "Not independently established."
     },
     "runtime_correspondence": {
-      "status": "UNRESOLVED",
-      "note": "Not independently established."
+      "status": "ASSUMED",
+      "note": "Event-structure refinement proved in Lean (SC25Refinement); Python-to-event-machine link tested only (reconcile.py)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",

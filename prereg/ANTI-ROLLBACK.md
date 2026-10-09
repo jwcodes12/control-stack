@@ -7,7 +7,7 @@
 1. Replace the status line with `Status: FROZEN <date>` and fill §8.
 2. Commit this file together with `experiments/anti-rollback/harness/`.
 
-The runner refuses `--kind evidence` while this file contains `Status: DRAFT`.
+The runner refuses `--kind evidence` while the status line above still says DRAFT.
 
 ## 1. Claim under test and scope
 

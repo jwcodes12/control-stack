@@ -1788,7 +1788,7 @@ theorem measured_recall_number : (91 / 100 : ℝ) ^ 5 + 1 / 100 = 6340321451 / 1
 
 ### 218. refinementOf_own
 
-Source: ControlStack/Core/TrustRoot.lean:297 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:299 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem refinementOf_own (sc : ℕ) (t : String) (h : refinementOf sc = some t) : ∃ d, t = refName sc d
@@ -1796,7 +1796,7 @@ theorem refinementOf_own (sc : ℕ) (t : String) (h : refinementOf sc = some t) 
 
 ### 219. allPrems_complete
 
-Source: ControlStack/Core/TrustRoot.lean:343 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:345 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem allPrems_complete : ∀ p : Prem, p ∈ allPrems
@@ -1804,7 +1804,7 @@ theorem allPrems_complete : ∀ p : Prem, p ∈ allPrems
 
 ### 220. graph_total
 
-Source: ControlStack/Core/TrustRoot.lean:346 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:348 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem graph_total : ∀ s ∈ scenarios, ∀ p ∈ s.2, p ∈ allPrems
@@ -1812,7 +1812,7 @@ theorem graph_total : ∀ s ∈ scenarios, ∀ p ∈ s.2, p ∈ allPrems
 
 ### 221. graph_discharged
 
-Source: ControlStack/Core/TrustRoot.lean:348 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:350 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem graph_discharged : ∀ p ∈ allPrems, depsOf p ≠ []
@@ -1820,7 +1820,7 @@ theorem graph_discharged : ∀ p ∈ allPrems, depsOf p ≠ []
 
 ### 222. graph_reduces
 
-Source: ControlStack/Core/TrustRoot.lean:352 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:354 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem graph_reduces : ∀ p ∈ allPrems, rootsF fuel p = rootsF (fuel + 1) p ∧ rootsF 4 p = rootsF fuel p
@@ -1828,15 +1828,15 @@ theorem graph_reduces : ∀ p ∈ allPrems, rootsF fuel p = rootsF (fuel + 1) p 
 
 ### 223. scenario_roots_table
 
-Source: ControlStack/Core/TrustRoot.lean:357 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:359 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
-theorem scenario_roots_table : scenarios.map (fun s => (s.1, scenarioRoots s.1)) = [(1, [.kernelMediation, .measuredRates, .implementationConformance]), (2, [.kernelMediation, .measuredRates]), (3, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (4, [.kernelMediation, .measuredRates, .implementationConformance]), (5, [.kernelMediation, .measuredRates]), (6, [.issuerAuthenticity, .kernelMediation, .implementationConformance]), (7, [.kernelMediation, .measuredRates]), (8, [.issuerAuthenticity, .kernelMediation, .collisionResistance, .measuredRates]), (9, [.issuerAuthenticity, .kernelMediation, .measuredRates, .orgConfiguration]), (10, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (11, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (12, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (13, [.issuerAuthenticity, .kernelMediation, .measuredRates, .implementationConformance]), (14, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates]), (15, [.issuerAuthenticity, .measuredRates, .humanJudgement]), (16, [.issuerAuthenticity, .kernelMediation, .collisionResistance, .measuredRates, .orgConfiguration, .implementationConformance]), (17, [.issuerAuthenticity, .kernelMediation, .measuredRates, .humanJudgement]), (18, [.issuerAuthenticity, .kernelMediation, .monotonicAnchor, .measuredRates, .implementationConformance]), (19, [.issuerAuthenticity, .monotonicAnchor, .measuredRates, .implementationConformance]), (20, [.issuerAuthenticity, .measuredRates, .humanJudgement]), (21, [.issuerAuthenticity, .kernelMediation, .keyCustody, .measuredRates]), (22, [.kernelMediation, .keyCustody, .measuredRates, .humanJudgement]), (23, [.issuerAuthenticity, .kernelMediation, .measuredRates, .implementationConformance]), (24, [.kernelMediation, .keyCustody, .measuredRates]), (25, [.issuerAuthenticity, .kernelMediation, .measuredRates, .humanJudgement, .implementationConformance]), (26, [.issuerAuthenticity, .monotonicAnchor, .measuredRates, .humanJudgement, .orgConfiguration, .implementationConformance, .externalContract]), (27, [.independentWitness, .collisionResistance, .implementationConformance]), (28, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates, .implementationConformance])]
+theorem scenario_roots_table : scenarios.map (fun s => (s.1, scenarioRoots s.1)) = [(1, [.kernelMediation, .measuredRates, .implementationConformance]), (2, [.kernelMediation, .measuredRates]), (3, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (4, [.kernelMediation, .measuredRates, .implementationConformance]), (5, [.kernelMediation, .measuredRates]), (6, [.issuerAuthenticity, .kernelMediation, .implementationConformance]), (7, [.kernelMediation, .measuredRates, .implementationConformance]), (8, [.issuerAuthenticity, .kernelMediation, .collisionResistance, .measuredRates]), (9, [.issuerAuthenticity, .kernelMediation, .measuredRates, .orgConfiguration]), (10, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (11, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (12, [.issuerAuthenticity, .kernelMediation, .measuredRates]), (13, [.issuerAuthenticity, .kernelMediation, .measuredRates, .implementationConformance]), (14, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates]), (15, [.issuerAuthenticity, .measuredRates, .humanJudgement]), (16, [.issuerAuthenticity, .kernelMediation, .collisionResistance, .measuredRates, .orgConfiguration, .implementationConformance]), (17, [.issuerAuthenticity, .kernelMediation, .measuredRates, .humanJudgement]), (18, [.issuerAuthenticity, .kernelMediation, .monotonicAnchor, .measuredRates, .implementationConformance]), (19, [.issuerAuthenticity, .monotonicAnchor, .measuredRates, .implementationConformance]), (20, [.issuerAuthenticity, .measuredRates, .humanJudgement]), (21, [.issuerAuthenticity, .kernelMediation, .keyCustody, .measuredRates]), (22, [.kernelMediation, .keyCustody, .measuredRates, .humanJudgement]), (23, [.issuerAuthenticity, .kernelMediation, .measuredRates, .implementationConformance]), (24, [.kernelMediation, .keyCustody, .measuredRates]), (25, [.issuerAuthenticity, .kernelMediation, .measuredRates, .humanJudgement, .implementationConformance]), (26, [.issuerAuthenticity, .monotonicAnchor, .measuredRates, .humanJudgement, .orgConfiguration, .implementationConformance, .externalContract]), (27, [.independentWitness, .collisionResistance, .implementationConformance]), (28, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates, .implementationConformance])]
 ~~~
 
 ### 224. portfolio_roots
 
-Source: ControlStack/Core/TrustRoot.lean:389 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:391 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem portfolio_roots : allRoots.filter (fun r => decide (∃ s ∈ scenarios, r ∈ scenarioRoots s.1)) = allRoots ∧ (allRoots.filter Root.technical).length = 7
@@ -1844,7 +1844,7 @@ theorem portfolio_roots : allRoots.filter (fun r => decide (∃ s ∈ scenarios,
 
 ### 225. root_sharing
 
-Source: ControlStack/Core/TrustRoot.lean:396 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:398 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem root_sharing : (scenarios.filter (fun s => decide (Root.measuredRates ∈ scenarioRoots s.1))).length = 26 ∧ (scenarios.filter (fun s => decide (Root.kernelMediation ∈ scenarioRoots s.1))).length = 21 ∧ (scenarios.filter (fun s => decide (Root.issuerAuthenticity ∈ scenarioRoots s.1))).length = 20 ∧ ∀ r ∈ allRoots, (scenarios.filter (fun s => decide (r ∈ scenarioRoots s.1))).length ≤ 26
@@ -1852,10 +1852,10 @@ theorem root_sharing : (scenarios.filter (fun s => decide (Root.measuredRates �
 
 ### 226. correspondence_table
 
-Source: ControlStack/Core/TrustRoot.lean:405 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/TrustRoot.lean:407 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
-theorem correspondence_table : (scenarios.filter (fun s => decide (Prem.modelRuntimeCorrespondence ∈ s.2))).map (fun s => (s.1, refinementOf s.1)) = [(1, none), (13, none), (16, some (refName 16 "concrete_safe")), (18, some (refName 18 "concrete_safe")), (25, some (refName 25 "concrete_safe")), (26, some (refName 26 "concrete_safe")), (27, some (refName 27 "concrete_ext_safe")), (28, some (refName 28 "concrete_safe"))]
+theorem correspondence_table : (scenarios.filter (fun s => decide (Prem.modelRuntimeCorrespondence ∈ s.2))).map (fun s => (s.1, refinementOf s.1)) = [(1, none), (7, some (refName 7 "concrete_safe")), (13, none), (16, some (refName 16 "concrete_safe")), (18, some (refName 18 "concrete_safe")), (25, some (refName 25 "concrete_safe")), (26, some (refName 26 "concrete_safe")), (27, some (refName 27 "concrete_ext_safe")), (28, some (refName 28 "concrete_safe"))]
 ~~~
 
 ## ControlStack/CovertChannel.lean

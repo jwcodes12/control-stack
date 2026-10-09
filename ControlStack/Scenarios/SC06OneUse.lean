@@ -242,9 +242,72 @@ theorem useful_foreign_action :
        [⟨3, 2, 7, 1, 42⟩] := by
   decide
 
+/-! ## Explicit check-removal counterexamples -/
+
+/-- Artificial weakened step that removes *only* the consumed-confirmation
+guard from the sensitive action path. It is not a deployed configuration. -/
+def weakStep (R : Roles) (s : State) : Event → State
+  | .act r tool eid cid =>
+      if s.halted then s else
+      match s.entries.find? (fun e => e.id = eid) with
+      | none => s
+      | some e =>
+          match s.confirmations.find? (fun c => c.id = cid) with
+          | none => s
+          | some c =>
+              if allowed R {s with effects := []} r tool eid cid e c then
+                { s with effects := ⟨cid, r, tool, eid, e.val⟩ :: s.effects }
+              else s
+  | ev => step R s ev
+
+def weakRun (R : Roles) (s : State) (es : List Event) : State :=
+  es.foldl (weakStep R) s
+
+/-- Exactly the check being proved necessary: allowing reuse produces two
+abstract sensitive effects from a single approval, whereas the strong gate
+produces only one. -/
+theorem disabling_consumption_duplicates_effect :
+    (weakRun R0 init [
+      .ingest 2 1 42,
+      .confirm 5 3 2 7 0 42,
+      .act 2 7 0 3,
+      .act 2 7 0 3]).effects =
+      [⟨3, 2, 7, 0, 42⟩, ⟨3, 2, 7, 0, 42⟩] ∧
+    (run R0 init [
+      .ingest 2 1 42,
+      .confirm 5 3 2 7 0 42,
+      .act 2 7 0 3,
+      .act 2 7 0 3]).effects =
+      [⟨3, 2, 7, 0, 42⟩] := by
+  decide
+
+/-- Distinct legitimate confirmations still permit multiple effect attempts
+with the same data, one attempt per separate user-issued confirmation. -/
+theorem distinct_confirmations_allow_two_effects :
+    (run R0 init [
+      .ingest 2 1 42,
+      .confirm 5 3 2 7 0 42,
+      .confirm 5 4 2 7 0 42,
+      .act 2 7 0 3,
+      .act 2 7 0 4]).effects =
+      [⟨4, 2, 7, 0, 42⟩, ⟨3, 2, 7, 0, 42⟩] := by
+  decide
+
+/-- An admin HALT prevents subsequent sensitive effects in the model. -/
+theorem halt_stops_foreign_action :
+    (run R0 init [
+      .ingest 2 1 42,
+      .confirm 5 3 2 7 0 42,
+      .halt 9,
+      .act 2 7 0 3]).effects = [] := by
+  decide
+
 end ControlStack.SC06OneUse
 
 #print axioms ControlStack.SC06OneUse.scoped_safe
 #print axioms ControlStack.SC06OneUse.duplicate_use_blocked
 #print axioms ControlStack.SC06OneUse.provenance_handle_not_value_alias
 #print axioms ControlStack.SC06OneUse.useful_foreign_action
+#print axioms ControlStack.SC06OneUse.disabling_consumption_duplicates_effect
+#print axioms ControlStack.SC06OneUse.distinct_confirmations_allow_two_effects
+#print axioms ControlStack.SC06OneUse.halt_stops_foreign_action

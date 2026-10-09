@@ -1,0 +1,73 @@
+name: original-branch-extra-checks
+on:
+  push:
+    branches:
+      - structure-branch-audit-20261008
+    paths:
+      - .github/workflows/original-branch-extra-checks.yml
+permissions:
+  contents: read
+jobs:
+  A-generated-indexes:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cbec4db5ea670e8a4585175b3b2f9d420d3ef3be
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 tools/build_status.py --check
+      - run: python3 tools/build_theorem_registry.py --check
+  B-original-Lean-claims:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fe330a55c1dc667b9e1e5877b3ad4383cd047690
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Cache and build original B commit
+        run: |
+          lake exe cache get
+          lake build ControlStack >/tmp/B-root-build.log 2>&1 || { tail -n 130 /tmp/B-root-build.log; exit 1; }
+          grep -E 'Build completed successfully' /tmp/B-root-build.log | tail -n 2
+      - name: Individually elaborate 28 B claims; inspect axiom reports
+        shell: bash
+        run: |
+          set -euo pipefail
+          logfile=/tmp/B-claims.log
+          : > "$logfile"
+          count=0
+          for p in scenarios/SC-{01..28}/claim.lean; do
+            echo "$p"
+            lake env lean "$p" >> "$logfile" 2>&1 || { cat "$logfile"; exit 1; }
+            count=$((count+1))
+          done
+          python3 - "$logfile" <<'PY'
+          import re,sys
+          text=open(sys.argv[1]).read()
+          allowed={'propext','Classical.choice','Quot.sound'}
+          for report in re.findall(r"'[^']+' depends on axioms: \[([^\]]*)\]",text):
+              got={s.strip() for s in report.split(',') if s.strip()}
+              if got-allowed: raise SystemExit(f'nonstandard: {got-allowed}')
+          assert 'sorryAx' not in text and 'error:' not in text
+          print('B original 28 claim elaborations succeeded; printed axioms standard')
+          PY
+  merged-registry-drift:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 7a96a2c2330a5f9d88b0c82adb2ba952a82ba886
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 tools/build_registry.py --check
+      - run: python3 tools/build_status.py --check
+      - run: python3 -m unittest tools.test_check_scenarios

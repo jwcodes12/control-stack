@@ -210,8 +210,16 @@ def main(argv=None, root=ROOT):
             print("FAIL:", e, file=sys.stderr)
     if errors:
         return 1
-    return 2 if args.require_clear and any(r["applicability"] !=
-                        "NOT_INDEPENDENTLY_REVIEWED" for r in reports) else 0
+    if args.require_clear:
+        # Exit 3 means an observed refutation/failure, distinct from unresolved
+        # prerequisites (exit 2). Bare lint remains zero on valid metadata.
+        if any(r["usefulness"] == "FAILED_RECORDED" or r["failed_receipts"] or
+               any(x.endswith(":REFUTED") for x in
+                   r["scope_blockers"] + r["blocking_assumptions"]) for r in reports):
+            return 3
+        return 2 if any(r["applicability"] != "NOT_INDEPENDENTLY_REVIEWED"
+                        for r in reports) else 0
+    return 0
 
 
 if __name__ == "__main__":

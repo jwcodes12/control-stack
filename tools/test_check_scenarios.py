@@ -130,6 +130,11 @@ class CheckerTests(unittest.TestCase):
     def test_strict_fails_conditional(self):
         self.assertEqual(main(["SC-01", "--require-clear"], root=self.root), 2)
 
+    def test_strict_returns_three_on_refuted_usefulness(self):
+        self.m["scope_axes"]["usefulness"]["status"] = "REFUTED"
+        self.save()
+        self.assertEqual(main(["SC-01", "--require-clear"], root=self.root), 3)
+
     def test_unregistered_theorem_fails_closed(self):
         (self.root / "THEOREM-REGISTRY.json").write_text("[]")
         with self.assertRaises(Invalid):

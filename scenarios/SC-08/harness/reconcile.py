@@ -12,6 +12,7 @@ records equals the number of executions with a script (each benign program write
 import copy
 import json
 import os
+from collections import Counter
 
 
 def load_jsonl(path):
@@ -29,14 +30,32 @@ def reconcile(allow, launcher, sentinel):
         why = []
         if r.get("script") is None:
             why.append("interpreter ran without a script")
+        elif not r.get("config", {}).get("by_path") and "script_digest" not in r:
+            why.append("executed script has no checked digest (cannot establish content identity)")
         elif "script_digest" in r and r["script_digest"] not in allow["scripts"]:
             why.append("launcher executed a script whose digest is not allowlisted")
-        if "program_digest" in r and r["program_digest"] not in allow["interpreters"]:
+        if not r.get("config", {}).get("by_path") and "program_digest" not in r:
+            why.append("executed interpreter has no checked digest (cannot establish content identity)")
+        elif "program_digest" in r and r["program_digest"] not in allow["interpreters"]:
             why.append("launcher executed a program whose digest is not allowlisted")
         if why:
             defects.append({"source": "launcher", "seq": r["seq"], "why": why})
     with_script = sum(1 for r in execs if r.get("script") is not None and r.get("rc") == 0)
     consistent = with_script == len(sentinel)
+    # A matching count is not a content-to-execution correspondence: an
+    # allowlisted A may be logged while an allowlisted B actually ran.
+    # The deployed fd-pinned mode records the executed script digest, so
+    # compare MULTISETS. Legacy --by-path is an intentionally weakened
+    # negative control without a trustworthy script digest.
+    deployed_only = all(not r.get("config", {}).get("by_path") for r in execs)
+    if deployed_only:
+        expected = Counter(r.get("script_digest") for r in execs
+                           if r.get("script") is not None and r.get("rc") == 0)
+        observed = Counter(s.get("self_sha256") for s in sentinel)
+        if expected != observed:
+            consistent = False
+            defects.append({"source": "reconciliation", "why": "successful execution digests differ from sentinel digests",
+                            "expected": dict(expected), "observed": dict(observed)})
     return {"executions": len(execs), "sentinel_records": len(sentinel), "consistent": consistent,
             "defects": defects, "ok": not defects and consistent}
 

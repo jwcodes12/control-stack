@@ -1,0 +1,27 @@
+name: structure-merge-readonly-acceptance
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  structural-and-lean-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pin and install Lean toolchain
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Verify pinned version and source-only drift checks
+        run: |
+          lean --version
+          lake --version
+          python3 tools/build_registry.py --check
+          python3 tools/build_status.py --check
+          python3 tools/check_scenarios.py
+      - name: Read-only full pinned Lean and SC-01 acceptance
+        run: bash tools/verify_structure_merge.sh

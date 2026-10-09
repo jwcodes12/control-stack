@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "id": "SC-01",
+  "title": "Lifetime-bounded exact secret recovery",
+  "bad_event": "A machine receiver recovers a uniform 32-bit secret beyond the specified 2^-16 exact-recovery bound.",
+  "adversary": "Adaptive colluding sender and machine receiver with shared seed; persistent lineage and potentially side observations.",
+  "refutation": "Exhibit a receiver-visible channel absent from the finite transcript, a ledger rollback, variable episode count, or statistically supported recovery beyond the budget.",
+  "scope": "Five-episode eight-fault repair fixture; single-host and VM experimental environments are distinct.",
+  "families": [
+    "F2",
+    "F8"
+  ],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.SafetyCaseSC01.sc01_case",
+      "path": "ControlStack/SafetyCaseSC01.lean",
+      "sha256": "14058110358542c13770811f977ba4404d46aa4b9fed35db453ff71e410caa07",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.GatewayCore.core_bound",
+      "path": "ControlStack/GatewayCore.lean",
+      "sha256": "1df293efd063932675362e7e58091e0c58b11f6f19e72499a0cf054538a71cd4",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.Covert.covert_bound_lifetime",
+      "path": "ControlStack/CovertChannel.lean",
+      "sha256": "7afab5bd0a0549ca77fad8896830f5b836db6b06d59ae4fb5208d5df1ad67d47",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "gateway/scenario/results/local-full.json",
+      "sha256": "8a57c3bca3449f44d56fd00d93a18d884d486ecdaa6dd05c5c1e9e324238e83a",
+      "purpose": "Historical single-host repair usefulness: 64/64",
+      "outcome": "PASS"
+    },
+    {
+      "path": "gateway/scenario/results/local-cache.json",
+      "sha256": "dbda404ff30010f979e6d8136d62d13a4c91eee925188ae4825189d3075e3647",
+      "purpose": "Historical shared-cache channel falsification, not a VM claim",
+      "outcome": "FAIL"
+    },
+    {
+      "path": "gateway/vm/receipts/usefulness-20261008-linkfix.json",
+      "sha256": null,
+      "binding": "UNBOUND",
+      "purpose": "VM QEMU TCG usefulness at frozen 0.25s: baseline 0/64, mediated 0/64",
+      "outcome": "FAIL"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "finite_lifetime_transcript",
+      "text": "Transcript cardinality is 9^5 under fixed five padded views.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "complete_receiver_observations",
+      "text": "All VM receiver observations, including timing and side channels, are accounted for.",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "side_kernel",
+      "text": "A fixed side-kernel domination certificate holds within 65536/59049.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "OBSERVED_FAILURE",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "ledger_correspondence",
+      "text": "Durable serialized charges, lineage scope and no rollback refine the Lean ledger.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "independent_lifetimes",
+      "text": "The usefulness binomial model applies to this exact environment.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "vm_usefulness",
+      "text": "Honest task meets the frozen confidence/probability floor on the VM host.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "OBSERVED_FAILURE",
+      "applicability": "UNRESOLVED",
+      "usefulness": "OBSERVED_FAILURE"
+    }
+  ],
+  "scope_axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Threat coverage has not been independently established, including any excluded attack class."
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "The modeled machine and concrete runtime have not been fully matched by independent refinement evidence."
+    },
+    "environment_boundary": {
+      "status": "REFUTED",
+      "note": "Existing shared-cache single-host probe refutes sole-gateway receiver visibility in that tested harness."
+    },
+    "lifetime_and_composition": {
+      "status": "ASSUMED",
+      "note": "Five episodes and durable exclusive lineage charging are modeled; host-level correspondence is unproven."
+    },
+    "usefulness": {
+      "status": "REFUTED",
+      "note": "Frozen QEMU TCG VM completion gate failed 0/64 baseline and 0/64 mediated lifetimes at 0.25 s."
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "No independent statement-fidelity and evidence-provenance approval."
+    }
+  }
+}

@@ -1,5 +1,10 @@
 # Primitives and scenarios: what exists and what is left (2026-10-08)
 
+## Consolidated source paths
+
+The scenario schema and scope records are at [scenarios/](scenarios/README.md); declarations and adversary scopes are in [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md) and [ADVERSARY-CLASSES.md](ADVERSARY-CLASSES.md). Relocated reviewed theorems live in `ControlStack/Core/Leakage.lean`, `ControlStack/Core/Gate.lean`, `ControlStack/Families/F4/GateClients.lean`, `ControlStack/Families/F5/Lease.lean` and `ControlStack/Witnesses/{Necessity,LeakWitness}.lean`. Old module paths are compatibility imports; the original names and namespaces remain stable. The [ROADMAP](ROADMAP.md) is canonical for status.
+
+
 > Update after adversarial review (Gemini 3.1 Pro, Opus 5.5):
 > - Lease now bounds the number of units and refuses forks onto existing workers.
 > - Artifact assumes injectivity only on contents in the run.

@@ -1,5 +1,14 @@
 # HISTORY
 
+## 2026-10-08 — structure merge work branch (not yet verified)
+
+- From exact main `18c1859`, selected B's single 28-case `scenarios/` tree and static checker, retained A's two CI roles, and ported C's Lean family scaffold, explicit policy tamper/dual-gate counterexample, adversary taxonomy and future prereg templates.
+- Moved six reviewed main theorem implementations without changing their bytes; old Lean module names now import canonical definitions. Generated one source-derived theorem registry (Markdown + JSON; 852 scanned theorem/lemma declarations after the inline-attribute and dotted-name fix) with registry-link checking; did not promote recorded validation to new verification.
+- Reconciled SC-27 as a draft attestation scenario; C's dispatch theorem is only a narrower bridge and does not establish independent attestation.
+- Known outstanding: no networked shell clone, no elan/lake build or Python full suite run in this environment. See [comparison](reviews/structure-merge/comparison.md) and [remaining steps](STRUCTURE-PLAN.md).
+- Every integration commit uses `[skip ci]`; no push to `main`. No frozen prereg/evidence receipt touched. SC-01 assurance manifest source SHA-256 bindings for the two relocated compat facades were explicitly re-pinned; this is metadata, not a regenerated experimental receipt.
+
+
 - **Session 7 continuation (2026-10-07).** Corrected the VCVio defer game so a missed service check keeps the trusted replacement in place and continues, matching the ledger recursion. The operational game and exact `ENNReal` recursion compile; the calibrated real-valued bridge remains open.
 - **Session 7 review (2026-10-07).** Two-family review of the finite-grid transfer draft returned `kill` for classical Bellman stability and `revise` for witness/formulation drift. No restatement or freeze was made; a new version needs a distinct theorem contribution.
 
@@ -73,3 +82,19 @@ No product code, auditgate source, theorem or assurance assumption status change
 - `ctrlcert` researcher CLI.
 - Adversarial review by Gemini 3.1 Pro and Opus 5.5: findings fixed or documented.
 - Pickup notes: `CIRCLE.md`. Plan for work that needs no testing: `STRUCTURE-PLAN.md`.
+
+## 2026-10-08 — independent scenario checker hardening [skip ci]
+
+On a separate `structure-merge-20261008-gpt6-finish` branch derived from the concurrently updated merge head: added a required fourth named-assumption usefulness status and six conservative scope review axes to 28 scenario manifests. SC-01 retains explicit shared-cache and VM usefulness failures; other unknown usefulness is NOT_RUN. Added fail-closed validation for missing/unsupported scope, duplicate JSON keys and lexical source declarations with regression test cases. Consolidated the three B draft preregistration documents into `prereg/` without changing frozen root `PREREG-*.md` or any experimental receipts. No Lean build, scenario experiments or full Python tests were executed in this environment because GitHub DNS resolution and Lean toolchain installation were unavailable. Nothing is deployment assured and no new mathematics is claimed.
+
+## 2026-10-08 — Clean integration CI acceptance [skip ci]
+
+GitHub Actions run [#37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641) **passed** with 3,743-job root Lean build, 28 Lean claim elaborations, 8 standard-only claim axiom reports, registry consistency (860 lexical declarations), 18 scenario mutation tests and 4 certifier tests. SC-01 checker phases 1–4 passed; the frozen prior-host OpenSSL cache-binding mismatch at phase 5 was isolated as expected and no historical receipt was changed. All 25 draft scenarios remain draft; 3 conditional cases are not deployment assured. See `reviews/structure-merge/hardening-validation.md`.
+
+## 2026-10-08 — Pinned independent A/B/C branch replay and halt-liveness acceptance [skip ci]
+
+Exact original A, B and C source SHAs independently passed `lake build ControlStack` (3,715 jobs each), 8/7/7 checker mutation tests, and B's 28 original Lean claim replays. A generated indexes pass. Original C generator drift was confirmed as an unmerged-branch defect; the merged 865-entry registry is current. Successful expanded model CI [#37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361) compiled the new conditional HALT delivery/freezing/necessity theorems with only `propext`/`Quot.sound`, plus full merged suite. No scheduler fairness, runtime attestation or deployment safety is inferred. [Evidence and comparison](reviews/structure-merge/comparison.md).
+
+## 2026-10-08 — Final exact integrated code acceptance PASS [skip ci]
+
+[CI #37877960110](https://github.com/jwcodes12/control-stack/actions/runs/37877960110) passed a fresh full Lean 4.34.0 build of 3,744 jobs and the 28 scenario claim replays, 18 checker tests, 4 certifier tests, registry consistency and unchanged SC-01 checks 1–4. Historical source-bound OpenSSL cache receipt remains an expected non-portable check, never regenerated. Main unmerged pending owner approval.

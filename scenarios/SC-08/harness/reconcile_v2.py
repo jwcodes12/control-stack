@@ -61,8 +61,11 @@ def reconcile_v2(allow, launcher, sentinel, *, pin_dir=None):
         else:
             if _hex(sd):
                 successful.append(sd)
-    if all_seq != sorted(set(all_seq)):
-        findings.append("launcher sequences are duplicated or out of order")
+    # The real launcher starts at 0 and increments for every logged request.
+    # Gaps can indicate missing records; even this cannot detect truncation
+    # and renumbering by an adversary who controls the log source.
+    if all_seq != list(range(len(launcher))):
+        findings.append("launcher sequences are not contiguous starting at zero")
     received = []
     for i, entry in enumerate(sentinel):
         if not isinstance(entry, dict):

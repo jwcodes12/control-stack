@@ -335,6 +335,41 @@ example :
       .act 2 7 0 3]).effects = [⟨3, 2, 7, 0, 42⟩] := by
   decide
 
+
+/-! ## Issuer and entry-provenance negative controls -/
+
+/-- A principal absent from the trusted user set cannot create a confirmation,
+    even if the context handle and payload otherwise match. -/
+theorem untrusted_issuer_cannot_confirm :
+    (run R0 init [
+      .ingest 2 1 42,
+      .confirm 6 3 2 7 0 42,
+      .act 2 7 0 3]).effects = [] := by
+  decide
+
+/-- A self-authored entry is not foreign context and cannot receive a valid
+    foreign-context confirmation. -/
+theorem self_authored_entry_cannot_confirm :
+    (run R0 init [
+      .ingest 2 2 42,
+      .confirm 5 3 2 7 0 42,
+      .act 2 7 0 3]).effects = [] := by
+  decide
+
+/-- Approval for a foreign entry cannot be replayed against another handle. -/
+theorem confirmation_cannot_cross_entry_handles :
+    (run R0 init [
+      .ingest 2 1 42,
+      .ingest 2 3 42,
+      .confirm 5 3 2 7 0 42,
+      .act 2 7 1 3]).effects = [] := by
+  decide
+
+/-- A principal not in the trusted admin set cannot HALT the modeled gate. -/
+theorem untrusted_halt_issuer_does_not_halt :
+    (run R0 init [.halt 6]).halted = false := by
+  decide
+
 end ControlStack.SC06OneUse
 
 #print axioms ControlStack.SC06OneUse.scoped_safe
@@ -344,3 +379,8 @@ end ControlStack.SC06OneUse
 #print axioms ControlStack.SC06OneUse.disabling_consumption_duplicates_effect
 #print axioms ControlStack.SC06OneUse.distinct_confirmations_allow_two_effects
 #print axioms ControlStack.SC06OneUse.halt_stops_foreign_action
+
+#print axioms ControlStack.SC06OneUse.untrusted_issuer_cannot_confirm
+#print axioms ControlStack.SC06OneUse.self_authored_entry_cannot_confirm
+#print axioms ControlStack.SC06OneUse.confirmation_cannot_cross_entry_handles
+#print axioms ControlStack.SC06OneUse.untrusted_halt_issuer_does_not_halt

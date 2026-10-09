@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any trace of spawn/schedule/fire/bypass/endSession/halt operations with arbitrary content.
 
-**Scope:** Lean model only; no runtime harness. Not: effects caused while the session was live. The check flag(s) registryOnly model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).
+**Scope:** Lean model only; no runtime harness. Not: effects caused while the session was live. The check flag(s) registryOnly model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-12/evidence/run-1), benign workloads, cgroup v2.
 
 **Refutation (what would show the claim wrong):** A trace where a lineage entity survives session end or a job fires after it, despite full checks (witnesses: registry bypass, parent-only revocation, foreign registration).
 

@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any trace of issue/work (any resource vector)/tick/expire/halt; rollback excluded by legal.
 
-**Scope:** Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment.
+**Scope:** Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment. Runtime: single-host preregistered reference run (scenarios/SC-14/evidence/run-1), benign workloads, cgroup v2.
 
 **Refutation (what would show the claim wrong):** A trace exceeding a per-resource cap or rate despite full checks (witnesses: aggregate-only cap, reported cost, rate burst, no expiry, rollback).
 

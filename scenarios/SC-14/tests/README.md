@@ -9,3 +9,13 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-14/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.SC14Runaway`
+
+## Harness
+
+- Unit tests: `python3 -m unittest discover -s scenarios/SC-14/harness -p 'test_*.py'`
+- Runner: `scenarios/SC-14/harness/run_sc14.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-14/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC14-MULTI-RESOURCE.md` (PASS)

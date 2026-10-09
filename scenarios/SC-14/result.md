@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 2 theorem reference(s), 0 of them necessity witnesses.
-- Runtime evidence: none (Lean model only).
+- Runtime evidence: preregistered reference run(s) `PREREG-SC14-MULTIRES-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -37,42 +37,57 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 ## Runtime evidence
 
-None. The scenario is supported by its Lean model only.
+- `scenarios/SC-14/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG SC-14 multi-resource run-1: H1 per-resource caps (CPU time, memory, pids) held against greedy benign jobs, H2 aggregate-only control let CPU exceed its cap (detected), H3 CPU rate limit, H4 expiry kill + refusal, H5 within-budget jobs complete; 5/5 reps; network egress not covered (see SC-07)
+
+  Preregistration: `PREREG-SC14-MULTIRES-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Per-resource caps hold | PASS | 5/5 repetitions passed |
+  | H2 | Control | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+  | H3 | Rate | PASS | 5/5 repetitions passed |
+  | H4 | Expiry | PASS | 5/5 repetitions passed |
+  | H5 | Usefulness | PASS | 5/5 repetitions passed |
+
+- `prereg/SC14-MULTI-RESOURCE.md` — recorded outcome **PASS**. Frozen preregistration
 
 ## Premises (from the manifest)
+
+**Evidence TESTED_NOT_PROVED:**
+
+- `trusted_meter`: The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids on one host). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `honest_usefulness`: Honest jobs fit their budgets. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_RUN)
 
 **Evidence NOT_RUN:**
 
 - `credential_separation`: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `trusted_meter`: The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids on one host). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `anti_rollback`: Ledger is never rolled back. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `honest_usefulness`: Honest jobs fit their budgets. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_RUN)
 
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment.
+- Scope (manifest): Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment. Runtime: single-host preregistered reference run (scenarios/SC-14/evidence/run-1), benign workloads, cgroup v2.
 - Not established as applying to a real deployment: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1) (`credential_separation`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids on one host) (`trusted_meter`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Ledger is never rolled back (`anti_rollback`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Honest jobs fit their budgets (`honest_usefulness`; applicability UNRESOLVED).
-- Scope axis `threat_coverage` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `environment_boundary` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `usefulness` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `independent_review` is UNRESOLVED: Not independently established; Lean model only.
+- Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
+- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
+- Scope axis `environment_boundary` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
+- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
+- Scope axis `usefulness` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
+- Scope axis `independent_review` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
 
 ## Done-criteria (RUNTIME-VM-HANDOFF.md §10), computed from the manifest
 
 | # | criterion | status | basis |
 |---|---|---|---|
-| 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
-| 2 | independently checked negative tests cover the bad actions and their bypasses | OPEN | no preregistered negative-control run |
+| 1 | a realistic honest task works under the declared mediation | RECORDED | premise `honest_usefulness` has evidence TESTED_NOT_PROVED and a preregistered single-host run passed |
+| 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | OPEN | no preregistered evidence run |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC14-MULTIRES-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

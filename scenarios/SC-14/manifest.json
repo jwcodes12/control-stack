@@ -5,7 +5,7 @@
   "bad_event": "Cumulative metered usage of some resource exceeds its cap, a rate window is exceeded, or work runs after expiry.",
   "adversary": "Model: any trace of issue/work (any resource vector)/tick/expire/halt; rollback excluded by legal.",
   "refutation": "A trace exceeding a per-resource cap or rate despite full checks (witnesses: aggregate-only cap, reported cost, rate burst, no expiry, rollback).",
-  "scope": "Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment.",
+  "scope": "Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment. Runtime: single-host preregistered reference run (scenarios/SC-14/evidence/run-1), benign workloads, cgroup v2.",
   "families": [
     "F5",
     "F3"
@@ -25,7 +25,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-14/evidence/run-1/verdicts.json",
+      "sha256": "809b25ec19f268ce6e0be962696a5b7374b9507cdc978cab4e7f3a7fc6b5a82a",
+      "purpose": "PREREG SC-14 multi-resource run-1: H1 per-resource caps (CPU time, memory, pids) held against greedy benign jobs, H2 aggregate-only control let CPU exceed its cap (detected), H3 CPU rate limit, H4 expiry kill + refusal, H5 within-budget jobs complete; 5/5 reps; network egress not covered (see SC-07)",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC14-MULTI-RESOURCE.md",
+      "sha256": "60ce149d2c4132d8eed8d1d99cbedbb6048a6b53bd04f85fb3e672eed05d8d32",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -39,7 +52,7 @@
       "id": "trusted_meter",
       "text": "The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids on one host).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -55,7 +68,7 @@
       "id": "honest_usefulness",
       "text": "Honest jobs fit their budgets.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }
@@ -63,27 +76,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1)."
     }
   }
 }

@@ -62,14 +62,15 @@ def validate(entries):
     return entries
 
 
-def lean_ledger(ledger="ControlStack.Cert.stackLedger", root=ROOT, timeout=1800):
-    """Run Lean to render a typed ledger as JSON."""
-    if not IDENT.match(ledger):
-        raise LedgerError(f"not a Lean identifier: {ledger!r}")
+def lean_ledger(ledger="ControlStack.Cert.stackLedger", root=ROOT, timeout=1800, imports=("ControlStack.Core.Cert",)):
+    """Run Lean to render a typed ledger as JSON. `imports`: modules to import (the one defining `ledger`)."""
+    for name in (ledger, *imports):
+        if not IDENT.match(name):
+            raise LedgerError(f"not a Lean identifier: {name!r}")
     with tempfile.TemporaryDirectory() as tmp:
         src = Path(tmp) / "LedgerOut.lean"
-        src.write_text("import ControlStack.Core.Cert\n"
-                       f"#eval IO.println (ControlStack.Cert.ledgerJson {ledger})\n")
+        head = "".join(f"import {m}\n" for m in dict.fromkeys(("ControlStack.Core.Cert", *imports)))
+        src.write_text(head + f"#eval IO.println (ControlStack.Cert.ledgerJson {ledger})\n")
         try:
             proc = subprocess.run(["lake", "env", "lean", str(src)], cwd=root, capture_output=True, text=True,
                                   timeout=timeout)
@@ -142,13 +143,16 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ledger", default="ControlStack.Cert.stackLedger",
                     help="Lean term of type List (String × PremiseKind)")
+    ap.add_argument("--import", dest="imports", action="append", default=[],
+                    help="extra Lean module to import (the one defining --ledger), e.g. ControlStack.Scenarios.LabStack")
     ap.add_argument("--json-file", type=Path, help="read a JSON ledger instead of running Lean")
     ap.add_argument("--check-manifest", type=Path, help="scenario manifest to check the ledger against")
     ap.add_argument("--registry", type=Path, default=ROOT / "THEOREM-REGISTRY.json")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     args = ap.parse_args(argv)
     try:
-        entries = validate(json.loads(args.json_file.read_text())) if args.json_file else lean_ledger(args.ledger)
+        entries = (validate(json.loads(args.json_file.read_text())) if args.json_file
+                   else lean_ledger(args.ledger, imports=("ControlStack.Core.Cert", *args.imports)))
     except (LedgerError, OSError, ValueError) as e:
         print(f"FAIL: {e}", file=sys.stderr)
         return 1

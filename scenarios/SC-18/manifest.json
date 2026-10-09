@@ -5,7 +5,7 @@
   "bad_event": "A response is released without a committed record in the trusted log, or more than T ticks after the last log acknowledgement, or the logging configuration is changed by a non-admin. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of request/log/ack/release/sink-outage/config-change/tick/halt operations (legal: admins only point config at the trusted sink).",
   "refutation": "A release without a trusted log record despite full checks (witnesses: release-before-log, agent-writable config, fail-open outage, watchdog off).",
-  "scope": "Lean model only; no runtime harness. Not: log review, post-commit tamper evidence.",
+  "scope": "Lean model only; no runtime harness. Not: log review, post-commit tamper evidence. Runtime: single-host log-before-release proxy reference run (scenarios/SC-18/evidence/run-1), benign client.",
   "families": [
     "F1",
     "F3",
@@ -32,7 +32,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-18/evidence/run-1/verdicts.json",
+      "sha256": "1a506d46c91e36b9a8efb13169f2d21e38276a7edd3769e8b872453fcadcdca4",
+      "purpose": "PREREG-SC18-LOGPROXY-v1 run-1: H1 every release logged (independent reconciliation), H2 sink hang → fail closed within T, H3 resume, H4 usefulness 100/100, H5 fail-open control fired; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC18-LOG-PROXY.md",
+      "sha256": "3627e789425a79792d66e93f513edccba78a01ff144cda498bfd78676243c2bd",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -46,7 +59,7 @@
       "id": "ack_durable",
       "text": "A sink acknowledgement means a durable commit.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -54,7 +67,7 @@
       "id": "single_release_path",
       "text": "release is the only path for responses to leave the node.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -62,7 +75,7 @@
       "id": "honest_usefulness",
       "text": "Serving availability under sink outages is acceptable (fail-closed costs availability).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }

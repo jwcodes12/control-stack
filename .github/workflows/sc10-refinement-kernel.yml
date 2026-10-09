@@ -6,6 +6,7 @@ on:
       - 'ControlStack/Scenarios/SC10Refinement.lean'
       - 'ControlStack/Scenarios/SC10Policy.lean'
       - '.github/workflows/sc10-refinement-kernel.yml'
+      - 'tools/test_sc10_restart_gap.py'
   workflow_dispatch:
 
 permissions:
@@ -17,6 +18,11 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: SC-10 restart negative witness (frozen harness)
+        run: python3 -m unittest tools.test_sc10_restart_gap -v
       - name: Install pinned Lean toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
       - name: Kernel-check SC-10 event simulation and control

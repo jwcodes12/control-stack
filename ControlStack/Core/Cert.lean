@@ -566,9 +566,9 @@ def stackLedgerJson : String := ledgerJson stackLedger
 def portfolioPremises : List (String × PremiseKind) :=
   [("credential_separation", .environment),
    ("honest_usefulness", .measurement),
-   ("observation_complete", .measurement),
    ("exclusive_effect_path", .environment),
-   ("semantic_judgement", .measurement)]
+   ("model_runtime_correspondence", .correspondence),
+   ("observation_complete", .measurement)]
 
 end Example
 

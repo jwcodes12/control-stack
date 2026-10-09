@@ -28,11 +28,13 @@ Results (all by `decide`, i.e. kernel evaluation of the finite graph):
   by something;
 - `graph_reduces`: the reduction reaches a fixpoint within the fuel bound, so the graph is acyclic and every
   scenario's premise set reduces completely to roots and theorems;
+-- BEGIN GENERATED: summary (tools/gen_trust_root.py; do not edit by hand)
 - `scenario_roots_table`: the root set of each of the 28 scenarios. Dependencies are conjunctive (every listed dep is
   needed), so the reachable root set is the unique minimal set of roots that suffices;
 - `portfolio_roots`: the whole portfolio rests on all 12 roots: 7 technical, 5 residual;
 - `root_sharing`: the most-shared root is the residual `measured_rates` (26 of 28 scenarios); the most-shared
   technical roots are kernel mediation (21) and issuer authenticity (20).
+-- END GENERATED: summary
 Ledgers for tools/cert_ledger.py:
 - `sc26RootLedger` ("SC-26 rests on: …");
 - `scenarioRootLedger` (every scenario);
@@ -198,7 +200,8 @@ def Prem.kind : Prem → PremiseKind
 def allPrems : List Prem :=
   [.credentialSeparation, .honestUsefulness, .observationComplete, .exclusiveEffectPath, .semanticJudgement, .policyIntegrity, .modelRuntimeCorrespondence, .canonicaliserComplete, .collisionResistance, .hiddenSample, .roleSeparation, .consumeByDigest, .honeypotIndistinguishable, .independentReview, .osKernelEnforcement, .rekeyIndependence, .sourceAttribution, .statisticalIndependence, .antiRollback, .trustedMeter, .deterministicReexecution, .durableAck, .exactPayloadDisplay, .finiteTranscript, .independentAnchor, .receiverIdempotency, .revocationEffective, .taintPropagation, .versionedWrites]
 
-/-- each scenario's normalised premises (from tools/portfolio_ledger.py) -/
+-- BEGIN GENERATED: scenarios (tools/gen_trust_root.py; do not edit by hand)
+/-- each scenario's normalised premises (generated from tools/portfolio_ledger.py) -/
 def scenarios : List (ℕ × List Prem) :=
   [(1, [.honestUsefulness, .observationComplete, .modelRuntimeCorrespondence, .statisticalIndependence, .finiteTranscript]),
    (2, [.observationComplete, .rekeyIndependence]),
@@ -217,7 +220,7 @@ def scenarios : List (ℕ × List Prem) :=
    (15, [.credentialSeparation, .semanticJudgement]),
    (16, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .modelRuntimeCorrespondence, .collisionResistance, .roleSeparation]),
    (17, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .semanticJudgement]),
-   (18, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .durableAck, .modelRuntimeCorrespondence]),
+   (18, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .modelRuntimeCorrespondence, .durableAck]),
    (19, [.credentialSeparation, .honestUsefulness, .versionedWrites]),
    (20, [.credentialSeparation, .semanticJudgement]),
    (21, [.credentialSeparation, .hiddenSample, .deterministicReexecution]),
@@ -228,6 +231,7 @@ def scenarios : List (ℕ × List Prem) :=
    (26, [.credentialSeparation, .honestUsefulness, .modelRuntimeCorrespondence, .roleSeparation, .independentReview, .receiverIdempotency]),
    (27, [.collisionResistance, .independentAnchor]),
    (28, [.credentialSeparation, .honestUsefulness, .antiRollback, .trustedMeter])]
+-- END GENERATED: scenarios
 
 /-! ## The dependency graph (a modelling judgement) -/
 
@@ -304,6 +308,7 @@ fuel bound, so the graph is acyclic). -/
 theorem graph_reduces : ∀ p ∈ allPrems, rootsF fuel p = rootsF (fuel + 1) p ∧ rootsF 4 p = rootsF fuel p := by
   decide
 
+-- BEGIN GENERATED: root tables (tools/gen_trust_root.py; do not edit by hand)
 /-- **The minimal root set of every scenario.** -/
 theorem scenario_roots_table : scenarios.map (fun s => (s.1, scenarioRoots s.1)) =
       [(1, [.kernelMediation, .measuredRates, .implementationConformance]),
@@ -342,14 +347,15 @@ theorem portfolio_roots :
     (allRoots.filter Root.technical).length = 7 := by
   decide
 
-/-- **Root sharing.** The most-shared root is the RESIDUAL `measured_rates` (26 of 28 scenarios: usefulness and recall
-figures). The most-shared technical roots are kernel mediation (21) and issuer authenticity (20). -/
+/-- **Root sharing.** The most-shared root is the RESIDUAL `measured_rates` (26 of 28 scenarios). The most-shared
+technical roots are kernel mediation (21) and issuer authenticity (20). -/
 theorem root_sharing :
     (scenarios.filter (fun s => decide (Root.measuredRates ∈ scenarioRoots s.1))).length = 26 ∧
     (scenarios.filter (fun s => decide (Root.kernelMediation ∈ scenarioRoots s.1))).length = 21 ∧
     (scenarios.filter (fun s => decide (Root.issuerAuthenticity ∈ scenarioRoots s.1))).length = 20 ∧
     ∀ r ∈ allRoots, (scenarios.filter (fun s => decide (r ∈ scenarioRoots s.1))).length ≤ 26 := by
   decide
+-- END GENERATED: root tables
 
 /-! ## Ledgers (printable with tools/cert_ledger.py) -/
 

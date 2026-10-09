@@ -118,7 +118,7 @@ class Check(unittest.TestCase):
         for want in ("build_registry.py --check", "build_status.py --check", "build_statement_catalog.py --check",
                      "build_results.py --check", "portfolio_ledger.py --check --no-lean", "stackmap.py --validate",
                      "check_scenarios.py", "unittest tools.test_check_scenarios", "check_sc26_case.py --skip-lean",
-                     "test_stackmap.py", "test_cstack.py"):
+                     "test_stackmap.py", "test_cstack.py", "gen_trust_root.py --check --no-lean"):
             self.assertTrue(any(want in a for a in argvs), want)
         self.assertFalse(any("test_trusted_stack_broker" in a for a in argvs))
 
@@ -128,6 +128,7 @@ class Check(unittest.TestCase):
         self.assertIn("claim SC-26", names)
         self.assertIn("check_sc26_case", names)
         self.assertTrue(any(n.startswith("assurance ledger --check") and "no Lean" not in n for n in names))
+        self.assertTrue(any(n.startswith("trust-root table --check") and "no Lean" not in n for n in names))
 
     def test_claim_axiom_scan(self):
         good = "'X.t' depends on axioms: [propext, Quot.sound]\n"

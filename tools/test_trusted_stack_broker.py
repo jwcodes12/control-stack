@@ -35,6 +35,17 @@ def by_uid(uid, socketpath, data):
     return json.loads(process.stdout)
 
 
+def disconnect_by_uid(uid, socketpath, data):
+    program = (
+        "import socket,sys; "
+        "s=socket.socket(socket.AF_UNIX); s.connect(sys.argv[1]); "
+        "s.shutdown(socket.SHUT_RD); s.sendall((sys.argv[2]+'\\n').encode()); "
+        "s.shutdown(socket.SHUT_WR); s.close()"
+    )
+    subprocess.run([sys.executable, "-c", program, str(socketpath), json.dumps(data)],
+                   check=True, preexec_fn=(lambda: os.setuid(uid)))
+
+
 def main():
     if os.geteuid() != 0:
         raise SystemExit("root required to simulate separate real Linux UIDs")
@@ -72,10 +83,19 @@ def main():
                 raise RuntimeError("broker socket not ready")
             content = b"test-only approved artifact"
             digest = hashlib.sha256(content).hexdigest()
+            checked = 0
             def call(uid, data, permitted):
+                nonlocal checked
                 reply = by_uid(uid, sockpath, data)
                 assert reply["ok"] is permitted, (uid, data, reply)
+                checked += 1
                 return reply
+            # An untrusted peer closes its receiving half before the reply.
+            # Old serve() propagated BrokenPipeError and killed the broker.
+            # Deliberately malformed frames cause no persistent state changes.
+            for _ in range(8):
+                disconnect_by_uid(AGENT, sockpath, {})
+            assert call(0, {"op": "state"}, True)["result"]["releases"] == 0
             call(AGENT, {"op": "stage", "body_b64": base64.b64encode(content).decode()}, True)
             call(AGENT, {"op": "review", "digest": digest}, False)
             call(REVIEWER, {"op": "review", "digest": digest}, True)
@@ -91,13 +111,19 @@ def main():
                        "destination": "staging/item", "lease_id": "lease1"}
             call(OTHER, release, False)
             call(AGENT, {**release, "uid": 0}, False)
-            call(AGENT, release, True)
+            # A valid request commits even when its acknowledgment is lost.
+            # Observe persistence through a separate trusted connection, then
+            # demonstrate that retry never duplicates the committed release.
+            disconnect_by_uid(AGENT, sockpath, release)
+            assert call(0, {"op": "state"}, True)["result"] == {
+                "global_cap": 2, "halted": False, "spent": 1, "releases": 1}
             call(AGENT, release, False)
             call(0, {"op": "halt"}, True)
             call(AGENT, {"op": "stage", "body_b64": base64.b64encode(b"x").decode()}, False)
             assert call(0, {"op": "state"}, True)["result"] == {
                 "global_cap": 2, "halted": True, "spent": 1, "releases": 1}
-            print("PASS: 13 real Unix peer-credential broker checks, 1 atomic release record; no external effects")
+            print(f"PASS: {checked} real Unix peer-credential broker checks, "
+                  "9 disconnected callers, 1 atomic release record; no external effects")
         finally:
             proc.terminate()
             try:

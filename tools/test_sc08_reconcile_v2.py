@@ -54,6 +54,13 @@ class ReconcileTests(unittest.TestCase):
     def test_duplicate_sequence_fails(self):
         self.assertFalse(check(ALLOW, [row(0), row(0)], [receipt(), receipt()])["ok"])
 
+    def test_sequence_gap_fails(self):
+        # Deleting an intermediate record must not preserve a good verdict.
+        self.assertFalse(check(ALLOW, [row(0), row(2)], [receipt(), receipt()])["ok"])
+
+    def test_nonzero_initial_sequence_fails(self):
+        self.assertFalse(check(ALLOW, [row(7)], [receipt()])["ok"])
+
     def test_wrong_parent_with_matching_digest_name_fails(self):
         r = row(0)
         r["executed_path"] = "/tmp/attacker/" + S1 + ".py"

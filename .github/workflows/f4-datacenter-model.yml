@@ -11,29 +11,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  refresh-generated:
-    if: github.event_name == 'pull_request' && github.head_ref == 'claude/datacenter-f4-20261009'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Regenerate stale source-derived files
-        run: |
-          python3 tools/build_statement_catalog.py
-          python3 tools/build_results.py
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add LEAN-STATEMENTS-NORMAL-FORM.md scenarios/SC-07/result.md
-          if ! git diff --cached --quiet; then
-            git commit -m 'Regenerate SC-07 results and statement catalog'
-            git push origin HEAD:${{ github.head_ref }}
-          fi
   generated-fast:
     runs-on: ubuntu-latest
     steps:

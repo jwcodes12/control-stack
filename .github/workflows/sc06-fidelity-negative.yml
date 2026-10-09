@@ -1,0 +1,26 @@
+name: sc06-fidelity-negative
+
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/Scenarios/SC06ConfirmationReuse.lean'
+      - 'ControlStack/Scenarios/SC06Artifacts.lean'
+      - '.github/workflows/sc06-fidelity-negative.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel-check SC-06 negative witnesses
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake build ControlStack.Scenarios.SC06ConfirmationReuse

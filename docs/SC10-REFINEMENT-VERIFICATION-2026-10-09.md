@@ -21,6 +21,32 @@ The `alpha` map's equality of recorded lists cannot establish that unrecorded ef
 do not exist. The proof uses `SC10.Dec` as an observation type; its fidelity to
 emitted JSON and to the actual accepted/denied effect must be checked separately.
 
+## Critical source-level incompatibility: non-atomic read/use
+
+The deployed reference PEP in `scenarios/SC-10/harness/pep.py` performs one
+`rpc(... latest ...)`, then separately evaluates the policy and writes the
+receipt. The Lean `SC10Policy.step(.decide)` and
+`SC10Refinement.stepC(.enforce)` combine that read and use into **one atomic
+step**. Therefore their trace simulation is NOT a proven simulation of
+arbitrarily concurrent PEP/store execution.
+
+`ControlStack/Scenarios/SC10ReadUseGap.lean` provides a model-level
+distinguishing witness: an admin write can occur between `readLatest` and
+`apply`, yielding an applied decision at version 0 when the latest version
+is 1. This is an executable Lean counterexample to the broad atomicity
+assumption, **not** evidence that the frozen preregistration experienced the
+race. Treat SC10 runtime correspondence as **BLOCKED BY UNMODELLED READ/USE
+INTERLEAVING**, not merely unverified. A future hardened evaluator would need
+an agreed linearization point at the actual effect, version revalidation or
+serializable store/effect locking, followed by new source-pinned, separately
+preregistered tests. Editing the frozen harness in place is prohibited.
+
+An independent negative regression in
+`tools/test_sc10_restart_gap.py` also exercises a second boundary: the
+unchanged reference store's append log survives a process restart while its
+active in-memory versions restart empty. The CI run for that regression
+has not yet been validated; this file does not claim an observed execution.
+
 ## Open and falsifiable implementation premises
 
 | ID | Requirement | Proposed falsification |

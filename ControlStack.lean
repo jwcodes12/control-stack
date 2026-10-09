@@ -63,6 +63,8 @@ import ControlStack.Families.F6.DamageBound
 import ControlStack.Families.F3.DistributedHalt
 import ControlStack.Families.F6.MonitorCollusion
 import ControlStack.Families.F2.ChannelInstances
+import ControlStack.Families.F1.FabricIsolation
+import ControlStack.Families.F2.GPUResidue
 import ControlStack.Core.Cert
 import ControlStack.Witnesses.CovertNoGo
 import ControlStack.Witnesses.Necessity

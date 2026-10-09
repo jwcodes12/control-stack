@@ -1,0 +1,302 @@
+[
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-0",
+   "digest": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "94f0b832356a420eb640c1bb61d2c297da4d555fe5e48be10317c39eec5eb996f37526b9213eeefb28b75b5addcc0da68f48ddd12bc2ff0335e69b555d90b90a",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6",
+   "target": "prod",
+   "review_sig": "94f0b832356a420eb640c1bb61d2c297da4d555fe5e48be10317c39eec5eb996f37526b9213eeefb28b75b5addcc0da68f48ddd12bc2ff0335e69b555d90b90a",
+   "tag": "app-0"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "24c1da014a5364e08f6e3ce394be3324",
+    "digest": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "00653b163f51795e55446f8c0b5a1af67701897aee8bbe3a3f5525f525c63b0fd7dc3af8136dfd6ceb0844b5d1cb353a2665bd0c749ba02d674f97692cbc8c04"
+   }
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "b234e2086e5e67ef347e95e1674ce4930490d948607c5877a465db3b51d1cc51",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-0",
+   "digest": "b234e2086e5e67ef347e95e1674ce4930490d948607c5877a465db3b51d1cc51"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "24c1da014a5364e08f6e3ce394be3324",
+    "digest": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "00653b163f51795e55446f8c0b5a1af67701897aee8bbe3a3f5525f525c63b0fd7dc3af8136dfd6ceb0844b5d1cb353a2665bd0c749ba02d674f97692cbc8c04"
+   },
+   "review_sig": "94f0b832356a420eb640c1bb61d2c297da4d555fe5e48be10317c39eec5eb996f37526b9213eeefb28b75b5addcc0da68f48ddd12bc2ff0335e69b555d90b90a",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0000-24c1da01.bin",
+   "sha": "89e29ab412dd19a7a086ce655b46754e09528ace6019cc2c594101a6dfe0b0d6",
+   "t": 683375478450209
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-1",
+   "digest": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "fedeee40d2707ccd8b72d6c8bff212729cf55137452f844c7f13759bd6138c04d7b7e7e150c8df546722c34ae6a3eb51c8fc73d1bbda7d06c369b125a231010b",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed",
+   "target": "prod",
+   "review_sig": "fedeee40d2707ccd8b72d6c8bff212729cf55137452f844c7f13759bd6138c04d7b7e7e150c8df546722c34ae6a3eb51c8fc73d1bbda7d06c369b125a231010b",
+   "tag": "app-1"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "5213ebcaae56d737bb1aec0276b563f2",
+    "digest": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed",
+    "target": "prod",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "441b9c3eb352e828e6d8c2106cc371e860adaad90ea10c1dbfec06038ec7428620a729c8c9bb2a22c9afa9114773b7c7f09c141c16647d965d903e04eca9a207"
+   }
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "f04e739308f469d570bcc4f3438ed1d2d63546f7d4f7d2ba12470bfc15153211",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-1",
+   "digest": "f04e739308f469d570bcc4f3438ed1d2d63546f7d4f7d2ba12470bfc15153211"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "5213ebcaae56d737bb1aec0276b563f2",
+    "digest": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed",
+    "target": "prod",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "441b9c3eb352e828e6d8c2106cc371e860adaad90ea10c1dbfec06038ec7428620a729c8c9bb2a22c9afa9114773b7c7f09c141c16647d965d903e04eca9a207"
+   },
+   "review_sig": "fedeee40d2707ccd8b72d6c8bff212729cf55137452f844c7f13759bd6138c04d7b7e7e150c8df546722c34ae6a3eb51c8fc73d1bbda7d06c369b125a231010b",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0001-5213ebca.bin",
+   "sha": "338d6cb4cb55315ade74e81d5d63e124939ccb6cad14f551cd11e8b9a90b71ed",
+   "t": 683375561291695
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-2",
+   "digest": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "bbd109ef3b6eb0867da3c5b319ce6c0a4c756e1646a1f499119853df487d2e9637f991c11c86251419f5a549d866f406e438450ae496b2ebdfaa8f72cb9e4008",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c",
+   "target": "prod",
+   "review_sig": "bbd109ef3b6eb0867da3c5b319ce6c0a4c756e1646a1f499119853df487d2e9637f991c11c86251419f5a549d866f406e438450ae496b2ebdfaa8f72cb9e4008",
+   "tag": "app-2"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "0603eae62515cccc3d30833dca7369d8",
+    "digest": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c",
+    "target": "prod",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "e0e3cdc5ed7e301183f5c523533c774f351397f1f8a4880af41c72d3ef9cbd2f79a4427b88d42aa68d741f2748848cbdc214afac7b2100fc8b0e7f58b2cd3e0f"
+   }
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "25031cdd69c22bdc829b87e2e3809848bd4ad4d1ea70e318f2e3b0826dc059a1",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-2",
+   "digest": "25031cdd69c22bdc829b87e2e3809848bd4ad4d1ea70e318f2e3b0826dc059a1"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "0603eae62515cccc3d30833dca7369d8",
+    "digest": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c",
+    "target": "prod",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "e0e3cdc5ed7e301183f5c523533c774f351397f1f8a4880af41c72d3ef9cbd2f79a4427b88d42aa68d741f2748848cbdc214afac7b2100fc8b0e7f58b2cd3e0f"
+   },
+   "review_sig": "bbd109ef3b6eb0867da3c5b319ce6c0a4c756e1646a1f499119853df487d2e9637f991c11c86251419f5a549d866f406e438450ae496b2ebdfaa8f72cb9e4008",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0002-0603eae6.bin",
+   "sha": "05fae41bc105a2835b536612a11b4696b553030379b7b968203fc362a44d679c",
+   "t": 683375645537702
+  }
+ }
+]

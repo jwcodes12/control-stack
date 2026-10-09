@@ -1,0 +1,2342 @@
+[
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-0",
+   "digest": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "5f13e06855b4da47ef6758058ec864e919a500585451733446edeeafc79ddcd0ac8bc69fd8cdde1225b3df813ce0dc3502869702841eb0c9fd01a6e949cdbe04",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a",
+   "target": "prod",
+   "review_sig": "5f13e06855b4da47ef6758058ec864e919a500585451733446edeeafc79ddcd0ac8bc69fd8cdde1225b3df813ce0dc3502869702841eb0c9fd01a6e949cdbe04",
+   "tag": "app-0"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "6a0297d37c936445ca717ad959521074",
+    "digest": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "81dd4f6608b730827ecdf545244725273ab9ad798daca0a84033a2e46fe7b8d4b8908edb53cf2bd183f65c4c4462cbf68d20ec033869deb27075b1fd8a246706"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "6a0297d37c936445ca717ad959521074",
+    "digest": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "81dd4f6608b730827ecdf545244725273ab9ad798daca0a84033a2e46fe7b8d4b8908edb53cf2bd183f65c4c4462cbf68d20ec033869deb27075b1fd8a246706"
+   },
+   "review_sig": "5f13e06855b4da47ef6758058ec864e919a500585451733446edeeafc79ddcd0ac8bc69fd8cdde1225b3df813ce0dc3502869702841eb0c9fd01a6e949cdbe04",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0000-6a0297d3.bin",
+   "sha": "0abb1230e249f020effe1085fa91f1db8ccdc6169fbed3a90a50d909ab90e50a",
+   "t": 683353606446750
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-1",
+   "digest": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "2a1c3ed01aa1cedaebd0cd275409f40423f335c1a4ba4bdf24f5fb0f4be725c724bbe7ef60b5db554cbdda58ad2619011aa05cefa20dbd5a3fbc416da3ebdb05",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2",
+   "target": "staging",
+   "review_sig": "2a1c3ed01aa1cedaebd0cd275409f40423f335c1a4ba4bdf24f5fb0f4be725c724bbe7ef60b5db554cbdda58ad2619011aa05cefa20dbd5a3fbc416da3ebdb05",
+   "tag": "app-1"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "b325c81abf2c8d8d4f374df40c847f85",
+    "digest": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2",
+    "target": "staging",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "84fda3a4bc43aed73ce7996e9d7ebcaf9621753d50dd7f9184a50a1bf02c6a62585a7cdf3af92999be379ce36f61f653f018152fc289f5ad93b5749dfb1a8f09"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "b325c81abf2c8d8d4f374df40c847f85",
+    "digest": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2",
+    "target": "staging",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "84fda3a4bc43aed73ce7996e9d7ebcaf9621753d50dd7f9184a50a1bf02c6a62585a7cdf3af92999be379ce36f61f653f018152fc289f5ad93b5749dfb1a8f09"
+   },
+   "review_sig": "2a1c3ed01aa1cedaebd0cd275409f40423f335c1a4ba4bdf24f5fb0f4be725c724bbe7ef60b5db554cbdda58ad2619011aa05cefa20dbd5a3fbc416da3ebdb05",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0001-b325c81a.bin",
+   "sha": "6342496284354665add84c2af007c2071476485d52c8dceb3aa0047a56e41ed2",
+   "t": 683353677091903
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-2",
+   "digest": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "8cc55d2d390295f1fcf9a7385a891349751cdb1033f3dd330f12b8f683de57a8ddddba3943f294e917c884669667226a61a2e7b0f87384a5ed9251579adcb90d",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d",
+   "target": "staging",
+   "review_sig": "8cc55d2d390295f1fcf9a7385a891349751cdb1033f3dd330f12b8f683de57a8ddddba3943f294e917c884669667226a61a2e7b0f87384a5ed9251579adcb90d",
+   "tag": "app-2"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "37cec0949e5081b162d3d8ceeaafa826",
+    "digest": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d",
+    "target": "staging",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "4c910f595c89924abdb7167072584dbad93c1620431f35b043a8b9583187d7b9b4b0170b93b3426a776a93d09185779d1ae4b7165d3ef7cb44436d9bd1aaa10b"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "37cec0949e5081b162d3d8ceeaafa826",
+    "digest": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d",
+    "target": "staging",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "4c910f595c89924abdb7167072584dbad93c1620431f35b043a8b9583187d7b9b4b0170b93b3426a776a93d09185779d1ae4b7165d3ef7cb44436d9bd1aaa10b"
+   },
+   "review_sig": "8cc55d2d390295f1fcf9a7385a891349751cdb1033f3dd330f12b8f683de57a8ddddba3943f294e917c884669667226a61a2e7b0f87384a5ed9251579adcb90d",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0002-37cec094.bin",
+   "sha": "c4560d7a00a6bc59dc1ae3ad39f407054622c6828b57260c9a9324bcc2f0e03d",
+   "t": 683353746696056
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-3",
+   "digest": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "62a85b6eeeefac3a57e31aa5bb08e13e45731c3b7e09d007380904514321b19309922c82d17d5dba4d8238e3a9d0438cebe27833a16f78629b8cd30346a2fd0d",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf",
+   "target": "prod",
+   "review_sig": "62a85b6eeeefac3a57e31aa5bb08e13e45731c3b7e09d007380904514321b19309922c82d17d5dba4d8238e3a9d0438cebe27833a16f78629b8cd30346a2fd0d",
+   "tag": "app-3"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "873b3fa5ad9111f3652933d840c6829f",
+    "digest": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf",
+    "target": "prod",
+    "tag": "app-3",
+    "approver": "approver-1",
+    "sig": "8cb15ce08cea3a1df690b9ef2c0ecd84f2bbecf597d24047bc7870d16c3879f0dbc149698a8670635b1717bb95e98b8800380aafb23a7dc663ee1fbb89f16204"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "873b3fa5ad9111f3652933d840c6829f",
+    "digest": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf",
+    "target": "prod",
+    "tag": "app-3",
+    "approver": "approver-1",
+    "sig": "8cb15ce08cea3a1df690b9ef2c0ecd84f2bbecf597d24047bc7870d16c3879f0dbc149698a8670635b1717bb95e98b8800380aafb23a7dc663ee1fbb89f16204"
+   },
+   "review_sig": "62a85b6eeeefac3a57e31aa5bb08e13e45731c3b7e09d007380904514321b19309922c82d17d5dba4d8238e3a9d0438cebe27833a16f78629b8cd30346a2fd0d",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0003-873b3fa5.bin",
+   "sha": "8da204aa0e43f2502270bf23e7df1cb62a008ce53a6556dbbcd3e38800d4faaf",
+   "t": 683353817688009
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-4",
+   "digest": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "816b06c0e2ae6be56d19e3e4ff01514904a9eb2b9a6b810182018e1fa0fd71996eb95416e584a7d3e34f594d716aa64d9ba18215d209718babea320233cc5604",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92",
+   "target": "staging",
+   "review_sig": "816b06c0e2ae6be56d19e3e4ff01514904a9eb2b9a6b810182018e1fa0fd71996eb95416e584a7d3e34f594d716aa64d9ba18215d209718babea320233cc5604",
+   "tag": "app-4"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "745e728431a77aa7f45c9549bc4f1119",
+    "digest": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92",
+    "target": "staging",
+    "tag": "app-4",
+    "approver": "approver-1",
+    "sig": "829a9de15751518035b9a3a2ad3389d0519a20c29da85085f0bf81388e51bd5f11f1194ec8ab712feeebffa9b2649f1f81df09160d07ac76d05f643bb57fa102"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "745e728431a77aa7f45c9549bc4f1119",
+    "digest": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92",
+    "target": "staging",
+    "tag": "app-4",
+    "approver": "approver-1",
+    "sig": "829a9de15751518035b9a3a2ad3389d0519a20c29da85085f0bf81388e51bd5f11f1194ec8ab712feeebffa9b2649f1f81df09160d07ac76d05f643bb57fa102"
+   },
+   "review_sig": "816b06c0e2ae6be56d19e3e4ff01514904a9eb2b9a6b810182018e1fa0fd71996eb95416e584a7d3e34f594d716aa64d9ba18215d209718babea320233cc5604",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0004-745e7284.bin",
+   "sha": "60a8bfa2345174d8df901659a8efc53b1dd2386ba4ed374fdf5ef007d3eb0d92",
+   "t": 683353888850683
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-5",
+   "digest": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "5d4a23ccd9f333cd20a43bc23bebc62fb867ffc34ecb7181efc21897fcc87db5d55aa49bfcdceaa6eabbb0694da0600e52cd31effa2638789576d178f90ff906",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7",
+   "target": "staging",
+   "review_sig": "5d4a23ccd9f333cd20a43bc23bebc62fb867ffc34ecb7181efc21897fcc87db5d55aa49bfcdceaa6eabbb0694da0600e52cd31effa2638789576d178f90ff906",
+   "tag": "app-5"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "2f264982177a0969f5303c1c46d64ff0",
+    "digest": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7",
+    "target": "staging",
+    "tag": "app-5",
+    "approver": "approver-1",
+    "sig": "4d44637021f7e4ea1f5e0eab57ca6b9cf410061a6b8228082e9d6b3413357e875b409c4c95a10af18531fea2d177900e34556cc935c97bb5d4758d455f5e3901"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "2f264982177a0969f5303c1c46d64ff0",
+    "digest": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7",
+    "target": "staging",
+    "tag": "app-5",
+    "approver": "approver-1",
+    "sig": "4d44637021f7e4ea1f5e0eab57ca6b9cf410061a6b8228082e9d6b3413357e875b409c4c95a10af18531fea2d177900e34556cc935c97bb5d4758d455f5e3901"
+   },
+   "review_sig": "5d4a23ccd9f333cd20a43bc23bebc62fb867ffc34ecb7181efc21897fcc87db5d55aa49bfcdceaa6eabbb0694da0600e52cd31effa2638789576d178f90ff906",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0005-2f264982.bin",
+   "sha": "f19ea1081d64b38fff758668ce3176bd196bc7a74444bad4c15eccf6075844f7",
+   "t": 683353963560441
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-6",
+   "digest": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "22777ed770515d75f5172d18677103102107bcb76531b70b80bce99d4cf1232ddc5e01e06fb5da06cce47a0d6ab8349c9e1956bdfcc21309b03f9f99adc2390b",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c",
+   "target": "prod",
+   "review_sig": "22777ed770515d75f5172d18677103102107bcb76531b70b80bce99d4cf1232ddc5e01e06fb5da06cce47a0d6ab8349c9e1956bdfcc21309b03f9f99adc2390b",
+   "tag": "app-6"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "29e5db8dd5ed749124e9d77efd0cb865",
+    "digest": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c",
+    "target": "prod",
+    "tag": "app-6",
+    "approver": "approver-1",
+    "sig": "78bd8bbc6cabc6ca961060cb51da6e61f4b638d55e254f02dd02c8f8089431c8adc7c52a48898550d0f27be237c9c2f706c53ab543251793fceed902384fc20f"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "29e5db8dd5ed749124e9d77efd0cb865",
+    "digest": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c",
+    "target": "prod",
+    "tag": "app-6",
+    "approver": "approver-1",
+    "sig": "78bd8bbc6cabc6ca961060cb51da6e61f4b638d55e254f02dd02c8f8089431c8adc7c52a48898550d0f27be237c9c2f706c53ab543251793fceed902384fc20f"
+   },
+   "review_sig": "22777ed770515d75f5172d18677103102107bcb76531b70b80bce99d4cf1232ddc5e01e06fb5da06cce47a0d6ab8349c9e1956bdfcc21309b03f9f99adc2390b",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0006-29e5db8d.bin",
+   "sha": "a848b86516113940b06503626e4b7a06814075ffc25fbaff8f1e6f293dbe837c",
+   "t": 683354032967313
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-7",
+   "digest": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "2a3efd18ec0ff0c019c5118fb340f5458dedf9a2b7d98ca8a97dbbcc01a240890214de15a5f352e52cb7d1108f03c698bba69ac6d5654ed409a193a794639505",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267",
+   "target": "staging",
+   "review_sig": "2a3efd18ec0ff0c019c5118fb340f5458dedf9a2b7d98ca8a97dbbcc01a240890214de15a5f352e52cb7d1108f03c698bba69ac6d5654ed409a193a794639505",
+   "tag": "app-7"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "0afed908cf6ee28110af77bbeca2ecf3",
+    "digest": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267",
+    "target": "staging",
+    "tag": "app-7",
+    "approver": "approver-1",
+    "sig": "ff65e281b4124781cc140c66dd09583b7b8bdc0cfb53f049d08ac28a34ddc7cd95562ea03eb4dde91c8e3f5f96f187c16241eef9fba2829424fc0cd6dbd0bf01"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "0afed908cf6ee28110af77bbeca2ecf3",
+    "digest": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267",
+    "target": "staging",
+    "tag": "app-7",
+    "approver": "approver-1",
+    "sig": "ff65e281b4124781cc140c66dd09583b7b8bdc0cfb53f049d08ac28a34ddc7cd95562ea03eb4dde91c8e3f5f96f187c16241eef9fba2829424fc0cd6dbd0bf01"
+   },
+   "review_sig": "2a3efd18ec0ff0c019c5118fb340f5458dedf9a2b7d98ca8a97dbbcc01a240890214de15a5f352e52cb7d1108f03c698bba69ac6d5654ed409a193a794639505",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0007-0afed908.bin",
+   "sha": "73c4b892d978b1c6c10fcaf17de8d41897767e4f9767b7dfafae7d896557e267",
+   "t": 683354102074665
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-8",
+   "digest": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "983fb14204b3f4c0e049c6f644c8a76ad26e5bbf874b98745432ba9917425c011ddf5de274f62795cb7e3a7e0b0dc75b16c1981d30344dcb8a5d69bb02544c03",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff",
+   "target": "staging",
+   "review_sig": "983fb14204b3f4c0e049c6f644c8a76ad26e5bbf874b98745432ba9917425c011ddf5de274f62795cb7e3a7e0b0dc75b16c1981d30344dcb8a5d69bb02544c03",
+   "tag": "app-8"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "c0f44b31a896d3a3a0952bf4297b5781",
+    "digest": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff",
+    "target": "staging",
+    "tag": "app-8",
+    "approver": "approver-1",
+    "sig": "1f7cb56fc3f5c9a1177f004bc3974d213576124610f5bea135a359c5cea800cc30b9811b2b29c4af30a964d4aad8197d78a6abbd826731866f42aa64a6cc160c"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "c0f44b31a896d3a3a0952bf4297b5781",
+    "digest": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff",
+    "target": "staging",
+    "tag": "app-8",
+    "approver": "approver-1",
+    "sig": "1f7cb56fc3f5c9a1177f004bc3974d213576124610f5bea135a359c5cea800cc30b9811b2b29c4af30a964d4aad8197d78a6abbd826731866f42aa64a6cc160c"
+   },
+   "review_sig": "983fb14204b3f4c0e049c6f644c8a76ad26e5bbf874b98745432ba9917425c011ddf5de274f62795cb7e3a7e0b0dc75b16c1981d30344dcb8a5d69bb02544c03",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0008-c0f44b31.bin",
+   "sha": "8366a8bbb2a76188ef729bfddf70692bd5f534f15ef16ef2efa312eed62c9dff",
+   "t": 683354172243218
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-9",
+   "digest": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "8799b48d7ab6505b7712ebbd998d48c9121898884c27d0ab0c481311b21077a550da20a5e6f8777d57ef99df4a28d64c3bbd6879b7458274cddf87a630c50808",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179",
+   "target": "prod",
+   "review_sig": "8799b48d7ab6505b7712ebbd998d48c9121898884c27d0ab0c481311b21077a550da20a5e6f8777d57ef99df4a28d64c3bbd6879b7458274cddf87a630c50808",
+   "tag": "app-9"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "b1b9b7ae332ece8f09d3ffbe98dcdf22",
+    "digest": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179",
+    "target": "prod",
+    "tag": "app-9",
+    "approver": "approver-1",
+    "sig": "5c9c8df062c53c2abeb446d4c14e11c2f476b2528855a0303240ec01cf54f74aacae686d6e58a3f9645272e72cf61af51b0d6df7d0ad1aa517d6c3900cf8440d"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "b1b9b7ae332ece8f09d3ffbe98dcdf22",
+    "digest": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179",
+    "target": "prod",
+    "tag": "app-9",
+    "approver": "approver-1",
+    "sig": "5c9c8df062c53c2abeb446d4c14e11c2f476b2528855a0303240ec01cf54f74aacae686d6e58a3f9645272e72cf61af51b0d6df7d0ad1aa517d6c3900cf8440d"
+   },
+   "review_sig": "8799b48d7ab6505b7712ebbd998d48c9121898884c27d0ab0c481311b21077a550da20a5e6f8777d57ef99df4a28d64c3bbd6879b7458274cddf87a630c50808",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0009-b1b9b7ae.bin",
+   "sha": "0e3ea5d34041546ac616ea8d5a1e5eb1c5039eaf4777b4b7f827deb09b936179",
+   "t": 683354243289412
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-10",
+   "digest": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "00ebe93cb8edb6f2a46c9bd5b6d8d66a9a124b36c5ab75ea09c3ce67f549f7954c9566606a2757fbb608f7a8f5d78fce47fa19cf6c8a2a5fea7110995ed3ca08",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c",
+   "target": "staging",
+   "review_sig": "00ebe93cb8edb6f2a46c9bd5b6d8d66a9a124b36c5ab75ea09c3ce67f549f7954c9566606a2757fbb608f7a8f5d78fce47fa19cf6c8a2a5fea7110995ed3ca08",
+   "tag": "app-10"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "85fbdb5ca7ed04015a8d211a1b9a6cd5",
+    "digest": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c",
+    "target": "staging",
+    "tag": "app-10",
+    "approver": "approver-1",
+    "sig": "3f2fcfa6e48edcb8ef33c2f7eda52566a3e31e59930df7899fca3984cd74b3773ed3dfe663c134f8c8688985449cf5df898e27daab4cedb591439574bc777003"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "85fbdb5ca7ed04015a8d211a1b9a6cd5",
+    "digest": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c",
+    "target": "staging",
+    "tag": "app-10",
+    "approver": "approver-1",
+    "sig": "3f2fcfa6e48edcb8ef33c2f7eda52566a3e31e59930df7899fca3984cd74b3773ed3dfe663c134f8c8688985449cf5df898e27daab4cedb591439574bc777003"
+   },
+   "review_sig": "00ebe93cb8edb6f2a46c9bd5b6d8d66a9a124b36c5ab75ea09c3ce67f549f7954c9566606a2757fbb608f7a8f5d78fce47fa19cf6c8a2a5fea7110995ed3ca08",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0010-85fbdb5c.bin",
+   "sha": "73f659c48888ab37c4c93e6901cff90a8855ffb6b13444969c4330c528a5373c",
+   "t": 683354314601206
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-11",
+   "digest": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "880c404a79fe89ae1e0a8c6d97a0d11d62fab893ff9775f5997bd56f6821f0ac1a9dfcd02a39c6b27eb37757dbe58097246b6dec393521b820df2cce188d920a",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac",
+   "target": "staging",
+   "review_sig": "880c404a79fe89ae1e0a8c6d97a0d11d62fab893ff9775f5997bd56f6821f0ac1a9dfcd02a39c6b27eb37757dbe58097246b6dec393521b820df2cce188d920a",
+   "tag": "app-11"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "9e35b292c1375133533b69aaf739ea1a",
+    "digest": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac",
+    "target": "staging",
+    "tag": "app-11",
+    "approver": "approver-1",
+    "sig": "d6c2737331fd6c6e0a94080f16fbe4109ef739a1c9d47d3472169390c9c61fe7c14f3e293caacbfc07a2a20fc41f9f45e032be34575e45051bb11133d6e8c00f"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "9e35b292c1375133533b69aaf739ea1a",
+    "digest": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac",
+    "target": "staging",
+    "tag": "app-11",
+    "approver": "approver-1",
+    "sig": "d6c2737331fd6c6e0a94080f16fbe4109ef739a1c9d47d3472169390c9c61fe7c14f3e293caacbfc07a2a20fc41f9f45e032be34575e45051bb11133d6e8c00f"
+   },
+   "review_sig": "880c404a79fe89ae1e0a8c6d97a0d11d62fab893ff9775f5997bd56f6821f0ac1a9dfcd02a39c6b27eb37757dbe58097246b6dec393521b820df2cce188d920a",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0011-9e35b292.bin",
+   "sha": "2799c8768fa267126187891578ceda557ef99c32b93c4860838aae394ac7c7ac",
+   "t": 683354383124037
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-12",
+   "digest": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "b85b993dbb84ee235745d9380364159f2935001da5c230b4669ff8f7685fd558dfa1f968b9ea1b23e6be82dea3493f28739278df00a74231e99494d6d8d3c701",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153",
+   "target": "prod",
+   "review_sig": "b85b993dbb84ee235745d9380364159f2935001da5c230b4669ff8f7685fd558dfa1f968b9ea1b23e6be82dea3493f28739278df00a74231e99494d6d8d3c701",
+   "tag": "app-12"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "2655a70bb63dada0c825a4e64764816a",
+    "digest": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153",
+    "target": "prod",
+    "tag": "app-12",
+    "approver": "approver-1",
+    "sig": "81688434f4e6194a8df82f26489af33acca1ce337520d274723cbccbf762b3a769f660a315c01a365d4b0db6fdbad4805ded71f6940974d4576428a559596d0f"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "2655a70bb63dada0c825a4e64764816a",
+    "digest": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153",
+    "target": "prod",
+    "tag": "app-12",
+    "approver": "approver-1",
+    "sig": "81688434f4e6194a8df82f26489af33acca1ce337520d274723cbccbf762b3a769f660a315c01a365d4b0db6fdbad4805ded71f6940974d4576428a559596d0f"
+   },
+   "review_sig": "b85b993dbb84ee235745d9380364159f2935001da5c230b4669ff8f7685fd558dfa1f968b9ea1b23e6be82dea3493f28739278df00a74231e99494d6d8d3c701",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0012-2655a70b.bin",
+   "sha": "ef5825befeab9f53500d6fba632c4d2a9ba5a50d7bd8f484734addd30b648153",
+   "t": 683354454985072
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-13",
+   "digest": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "ca60bedc0980f75625e482293114cb1c1e12a9f18f9ffa45514f65f880f4acb8aefe006f3722b6520562c94bef9568c53be762a4280387d633072fd2f14fa00d",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054",
+   "target": "staging",
+   "review_sig": "ca60bedc0980f75625e482293114cb1c1e12a9f18f9ffa45514f65f880f4acb8aefe006f3722b6520562c94bef9568c53be762a4280387d633072fd2f14fa00d",
+   "tag": "app-13"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "f5136e19bcb52605692a46aae1697afc",
+    "digest": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054",
+    "target": "staging",
+    "tag": "app-13",
+    "approver": "approver-1",
+    "sig": "e204b6c553857051442dc46232bfc33681fe9fed0bde574c4a661f647c06a824256bf1c65f01a1bdaa7b0cc1a12aa4b76303cf0cec3402c122961150f628a30e"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "f5136e19bcb52605692a46aae1697afc",
+    "digest": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054",
+    "target": "staging",
+    "tag": "app-13",
+    "approver": "approver-1",
+    "sig": "e204b6c553857051442dc46232bfc33681fe9fed0bde574c4a661f647c06a824256bf1c65f01a1bdaa7b0cc1a12aa4b76303cf0cec3402c122961150f628a30e"
+   },
+   "review_sig": "ca60bedc0980f75625e482293114cb1c1e12a9f18f9ffa45514f65f880f4acb8aefe006f3722b6520562c94bef9568c53be762a4280387d633072fd2f14fa00d",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0013-f5136e19.bin",
+   "sha": "07e48e9462adbfefce029d278ca1ce13a6c1061e5416097483b1079bb8526054",
+   "t": 683354522249262
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-14",
+   "digest": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "053e8890271967160631be82329222344756add676b795f423d3b7ab53a1c142c86983adbbc47bbd279087b0d580a5fd7844b54cb314fe05f131701f8243b500",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8",
+   "target": "staging",
+   "review_sig": "053e8890271967160631be82329222344756add676b795f423d3b7ab53a1c142c86983adbbc47bbd279087b0d580a5fd7844b54cb314fe05f131701f8243b500",
+   "tag": "app-14"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "4f08c7d254af2b1d7470d9dcdaf4686f",
+    "digest": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8",
+    "target": "staging",
+    "tag": "app-14",
+    "approver": "approver-1",
+    "sig": "e573f5b546a79eadbe4c09c7c14d804d0d690000996b093acb8ab01156e4cc1f81f4e5321a624218baddbef6594e0935873a098613ac7f8d705a5e34dad0cd0d"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "4f08c7d254af2b1d7470d9dcdaf4686f",
+    "digest": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8",
+    "target": "staging",
+    "tag": "app-14",
+    "approver": "approver-1",
+    "sig": "e573f5b546a79eadbe4c09c7c14d804d0d690000996b093acb8ab01156e4cc1f81f4e5321a624218baddbef6594e0935873a098613ac7f8d705a5e34dad0cd0d"
+   },
+   "review_sig": "053e8890271967160631be82329222344756add676b795f423d3b7ab53a1c142c86983adbbc47bbd279087b0d580a5fd7844b54cb314fe05f131701f8243b500",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0014-4f08c7d2.bin",
+   "sha": "c271a947705bb0de957cff0d89b433f66f67e5d92b581f68a370a2156662b0f8",
+   "t": 683354589299292
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-15",
+   "digest": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "ab527a42c59789bf625d3e64704437b55161b7956bc3b4019108fb15e97cf993c2a02b975945843788940472ab5f462bb25d17dd93d7b6c5a319120b136ded0b",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a",
+   "target": "prod",
+   "review_sig": "ab527a42c59789bf625d3e64704437b55161b7956bc3b4019108fb15e97cf993c2a02b975945843788940472ab5f462bb25d17dd93d7b6c5a319120b136ded0b",
+   "tag": "app-15"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "ef823a14247c9eb80972a0e3fa9b525d",
+    "digest": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a",
+    "target": "prod",
+    "tag": "app-15",
+    "approver": "approver-1",
+    "sig": "bc1609bbc779acf2e3d5f2a616be7fecf61fed87616876f69ff29f22d8a7b764f5374223f424310fa9a453b93ae93722f53b41dc3db271fdc04a94fcc5db0e02"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "ef823a14247c9eb80972a0e3fa9b525d",
+    "digest": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a",
+    "target": "prod",
+    "tag": "app-15",
+    "approver": "approver-1",
+    "sig": "bc1609bbc779acf2e3d5f2a616be7fecf61fed87616876f69ff29f22d8a7b764f5374223f424310fa9a453b93ae93722f53b41dc3db271fdc04a94fcc5db0e02"
+   },
+   "review_sig": "ab527a42c59789bf625d3e64704437b55161b7956bc3b4019108fb15e97cf993c2a02b975945843788940472ab5f462bb25d17dd93d7b6c5a319120b136ded0b",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0015-ef823a14.bin",
+   "sha": "6aad07bb942ece859be9a1d7dde514e9fb54ad98572a1e549aff77bfa0a04b0a",
+   "t": 683354655121720
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-16",
+   "digest": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "d90ab12711832f0f8fcc2cc33baf420771fc79e1963f7ae0eeb3969f05c1840eba80e88b2ddd87dcd24fec041e6867b4a6856db8a294b66e53ec03d7a3e65408",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c",
+   "target": "staging",
+   "review_sig": "d90ab12711832f0f8fcc2cc33baf420771fc79e1963f7ae0eeb3969f05c1840eba80e88b2ddd87dcd24fec041e6867b4a6856db8a294b66e53ec03d7a3e65408",
+   "tag": "app-16"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "ac0cee5b32d4f8fcb636a79c5b216038",
+    "digest": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c",
+    "target": "staging",
+    "tag": "app-16",
+    "approver": "approver-1",
+    "sig": "5ef31c5816a1474122b2e2603fc948fe1afcf7d85019d6b28cd4cbe15e77a0699a0b05c5faf1dd12c34d017d4ff0f375754012a1107fa663216d7d8bbfb06803"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "ac0cee5b32d4f8fcb636a79c5b216038",
+    "digest": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c",
+    "target": "staging",
+    "tag": "app-16",
+    "approver": "approver-1",
+    "sig": "5ef31c5816a1474122b2e2603fc948fe1afcf7d85019d6b28cd4cbe15e77a0699a0b05c5faf1dd12c34d017d4ff0f375754012a1107fa663216d7d8bbfb06803"
+   },
+   "review_sig": "d90ab12711832f0f8fcc2cc33baf420771fc79e1963f7ae0eeb3969f05c1840eba80e88b2ddd87dcd24fec041e6867b4a6856db8a294b66e53ec03d7a3e65408",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0016-ac0cee5b.bin",
+   "sha": "53b2caf5d2999af3ab77e64a7e586ed891cf96cb21f3e853d2cd51376c7f610c",
+   "t": 683354724747832
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-17",
+   "digest": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "eebb61659be2f02e843d58f6498568946ce3d715bc45c2a7b149ef44f7c4a92b27bd4663c68b68f33e732be7a58cafe0c9301a35646bee42f9fbd1a66b4b9e09",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e",
+   "target": "staging",
+   "review_sig": "eebb61659be2f02e843d58f6498568946ce3d715bc45c2a7b149ef44f7c4a92b27bd4663c68b68f33e732be7a58cafe0c9301a35646bee42f9fbd1a66b4b9e09",
+   "tag": "app-17"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "69e2524a7869528e720b058cc17ea3ed",
+    "digest": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e",
+    "target": "staging",
+    "tag": "app-17",
+    "approver": "approver-1",
+    "sig": "9f57f6ffec780690ab9d6665d8ce0f5fe4328b88932df28765e66b185801c74eb8df1fc1a281d011a57830757cf2c61144e6d2efd3702862384688132d188c03"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "69e2524a7869528e720b058cc17ea3ed",
+    "digest": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e",
+    "target": "staging",
+    "tag": "app-17",
+    "approver": "approver-1",
+    "sig": "9f57f6ffec780690ab9d6665d8ce0f5fe4328b88932df28765e66b185801c74eb8df1fc1a281d011a57830757cf2c61144e6d2efd3702862384688132d188c03"
+   },
+   "review_sig": "eebb61659be2f02e843d58f6498568946ce3d715bc45c2a7b149ef44f7c4a92b27bd4663c68b68f33e732be7a58cafe0c9301a35646bee42f9fbd1a66b4b9e09",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0017-69e2524a.bin",
+   "sha": "d8922acc42052ce4b96e8ab16df07bc47e5e4cef7493b77e636d1298804d476e",
+   "t": 683354793463384
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-18",
+   "digest": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "bab282dcd8662d2ce56e405c7f8b7b5efdb1e9315ddd3991c847e86bccbd0d1b9bf4b176cec4cd10d32639633256b57d4e6681917e0e4184d8e082ee0597020f",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d",
+   "target": "prod",
+   "review_sig": "bab282dcd8662d2ce56e405c7f8b7b5efdb1e9315ddd3991c847e86bccbd0d1b9bf4b176cec4cd10d32639633256b57d4e6681917e0e4184d8e082ee0597020f",
+   "tag": "app-18"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "2ad23cd61f2675885f896c1e21c4b37e",
+    "digest": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d",
+    "target": "prod",
+    "tag": "app-18",
+    "approver": "approver-1",
+    "sig": "4780bc51e9af258b6159d75cdac8509cf6a8d03decb6297f6dd122cf6a0a99f3d2c19e6e4acd6ff2c2da7136f8ee287c415263426e3706a6303823cc83c1160c"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "2ad23cd61f2675885f896c1e21c4b37e",
+    "digest": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d",
+    "target": "prod",
+    "tag": "app-18",
+    "approver": "approver-1",
+    "sig": "4780bc51e9af258b6159d75cdac8509cf6a8d03decb6297f6dd122cf6a0a99f3d2c19e6e4acd6ff2c2da7136f8ee287c415263426e3706a6303823cc83c1160c"
+   },
+   "review_sig": "bab282dcd8662d2ce56e405c7f8b7b5efdb1e9315ddd3991c847e86bccbd0d1b9bf4b176cec4cd10d32639633256b57d4e6681917e0e4184d8e082ee0597020f",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0018-2ad23cd6.bin",
+   "sha": "7f2792e8ebbe2b03f80912298b8e8c57082572b76624ec812580179d3fd5a08d",
+   "t": 683354863143376
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-19",
+   "digest": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "38cb21abfcabc37319838acf1d127150d7f01027fe24eca0121364fec02bf27b33f1f84201cde4f89f51690282f6cdcc33d7a544e8f0d208c604707b28906804",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3",
+   "target": "staging",
+   "review_sig": "38cb21abfcabc37319838acf1d127150d7f01027fe24eca0121364fec02bf27b33f1f84201cde4f89f51690282f6cdcc33d7a544e8f0d208c604707b28906804",
+   "tag": "app-19"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "7907114556a4788502df8e760abec4af",
+    "digest": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3",
+    "target": "staging",
+    "tag": "app-19",
+    "approver": "approver-1",
+    "sig": "8dda60272a4ce94b3cf7dae30884a79c50d2cc75315f19fb23a2b01ce0a889406da7771bcf91a248dc264a107117bb6e6db20a3127d0ed93fcb5caba84a6e80a"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "7907114556a4788502df8e760abec4af",
+    "digest": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3",
+    "target": "staging",
+    "tag": "app-19",
+    "approver": "approver-1",
+    "sig": "8dda60272a4ce94b3cf7dae30884a79c50d2cc75315f19fb23a2b01ce0a889406da7771bcf91a248dc264a107117bb6e6db20a3127d0ed93fcb5caba84a6e80a"
+   },
+   "review_sig": "38cb21abfcabc37319838acf1d127150d7f01027fe24eca0121364fec02bf27b33f1f84201cde4f89f51690282f6cdcc33d7a544e8f0d208c604707b28906804",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0019-79071145.bin",
+   "sha": "a4433522a5d7f8eb927f457eb0b153efc6b28d9e06dcf188fcf4e9fa2e734ba3",
+   "t": 683354939421776
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-20",
+   "digest": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "f83a6b331ab32c5a9c9362c6830277e5cc8912d461dbcf371d550d935ecf1f6eaeaf37a2a67f76ccc2b7d1df71f1e78c422a64db65561c9ed5b3ac361e960809",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b",
+   "target": "staging",
+   "review_sig": "f83a6b331ab32c5a9c9362c6830277e5cc8912d461dbcf371d550d935ecf1f6eaeaf37a2a67f76ccc2b7d1df71f1e78c422a64db65561c9ed5b3ac361e960809",
+   "tag": "app-20"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "4e0f23534ada1ca3971861745a6a08c1",
+    "digest": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b",
+    "target": "staging",
+    "tag": "app-20",
+    "approver": "approver-1",
+    "sig": "99255eef46438f0157855c175b4accd4d108f66b73bb2da1b3f9f72d79f0ee37924f0309e973fc1031b2367b2d3832f2121341466abf37246c692cb0f86db007"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "4e0f23534ada1ca3971861745a6a08c1",
+    "digest": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b",
+    "target": "staging",
+    "tag": "app-20",
+    "approver": "approver-1",
+    "sig": "99255eef46438f0157855c175b4accd4d108f66b73bb2da1b3f9f72d79f0ee37924f0309e973fc1031b2367b2d3832f2121341466abf37246c692cb0f86db007"
+   },
+   "review_sig": "f83a6b331ab32c5a9c9362c6830277e5cc8912d461dbcf371d550d935ecf1f6eaeaf37a2a67f76ccc2b7d1df71f1e78c422a64db65561c9ed5b3ac361e960809",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0020-4e0f2353.bin",
+   "sha": "10a838c4b758bb8701ea838c62753eb4c3c43e39f64f70ddca5a9d4d46e4540b",
+   "t": 683355018583298
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-21",
+   "digest": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "d3e7c87a8932018e6572906e16e5d620d1bb409d76516a88a8a57107fd72ed7654da7460fcb03096bc718ba45d7aa50f910c013a09cc8457253f3487ed781301",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e",
+   "target": "prod",
+   "review_sig": "d3e7c87a8932018e6572906e16e5d620d1bb409d76516a88a8a57107fd72ed7654da7460fcb03096bc718ba45d7aa50f910c013a09cc8457253f3487ed781301",
+   "tag": "app-21"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "32f8fca23e7367c8094ace5477c9ada0",
+    "digest": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e",
+    "target": "prod",
+    "tag": "app-21",
+    "approver": "approver-1",
+    "sig": "da22fd8efbee4961ad840532d99b3f7bc95a1692a36e8cc73279a8a30c810761491f5089da0514f7a7f1349df10904b55415a651375b51d11a4755d7f5a80d0d"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "32f8fca23e7367c8094ace5477c9ada0",
+    "digest": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e",
+    "target": "prod",
+    "tag": "app-21",
+    "approver": "approver-1",
+    "sig": "da22fd8efbee4961ad840532d99b3f7bc95a1692a36e8cc73279a8a30c810761491f5089da0514f7a7f1349df10904b55415a651375b51d11a4755d7f5a80d0d"
+   },
+   "review_sig": "d3e7c87a8932018e6572906e16e5d620d1bb409d76516a88a8a57107fd72ed7654da7460fcb03096bc718ba45d7aa50f910c013a09cc8457253f3487ed781301",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0021-32f8fca2.bin",
+   "sha": "0a82b03f3b585a1e6380c5f15a001c730000000f0e77ec19c73be8c2669ec27e",
+   "t": 683355092600135
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-22",
+   "digest": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "bb248717e484bc191a2cf6681daef8096c5eb00259c2b1b231ed44207a1e4896e77c2a1d0ea0512704f11e18c447dcc0712713c3178bf0160cea32e2f407a206",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23",
+   "target": "staging",
+   "review_sig": "bb248717e484bc191a2cf6681daef8096c5eb00259c2b1b231ed44207a1e4896e77c2a1d0ea0512704f11e18c447dcc0712713c3178bf0160cea32e2f407a206",
+   "tag": "app-22"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "9c5a8cdacc74e87c8f3cccd4ba668254",
+    "digest": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23",
+    "target": "staging",
+    "tag": "app-22",
+    "approver": "approver-1",
+    "sig": "a29df73a59d8ab462d5c6290238bb66060e7082852dd83ec44e53f5eb6a3c226b51655838a757d942b6a1ef8e532423e571c74ddb2aa532f91eac17359fdb90b"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "9c5a8cdacc74e87c8f3cccd4ba668254",
+    "digest": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23",
+    "target": "staging",
+    "tag": "app-22",
+    "approver": "approver-1",
+    "sig": "a29df73a59d8ab462d5c6290238bb66060e7082852dd83ec44e53f5eb6a3c226b51655838a757d942b6a1ef8e532423e571c74ddb2aa532f91eac17359fdb90b"
+   },
+   "review_sig": "bb248717e484bc191a2cf6681daef8096c5eb00259c2b1b231ed44207a1e4896e77c2a1d0ea0512704f11e18c447dcc0712713c3178bf0160cea32e2f407a206",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0022-9c5a8cda.bin",
+   "sha": "346ac9f64b167630388b408a91dee1a207b5870b3e66a5571d28f9d9fe77ba23",
+   "t": 683355165957131
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-23",
+   "digest": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "63562d554f222770072cf1cacd1c193460e3b8f43372872bb2c5abfd63f670c349cd169245a5c44474335aae2117b55c3ba796648fe4d0caf235eb21b0be6c09",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025",
+   "target": "staging",
+   "review_sig": "63562d554f222770072cf1cacd1c193460e3b8f43372872bb2c5abfd63f670c349cd169245a5c44474335aae2117b55c3ba796648fe4d0caf235eb21b0be6c09",
+   "tag": "app-23"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "80e6bf3b62866a20a47b6d7780376287",
+    "digest": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025",
+    "target": "staging",
+    "tag": "app-23",
+    "approver": "approver-1",
+    "sig": "e60066f67e0096517ac848aa5f3f29787a8ec7ec58accaeba2438a273d1a01fa5bf86bbed5e7f3c7f0ff3eadf980ae3ee2058d4e39074de2240425276c486903"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "80e6bf3b62866a20a47b6d7780376287",
+    "digest": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025",
+    "target": "staging",
+    "tag": "app-23",
+    "approver": "approver-1",
+    "sig": "e60066f67e0096517ac848aa5f3f29787a8ec7ec58accaeba2438a273d1a01fa5bf86bbed5e7f3c7f0ff3eadf980ae3ee2058d4e39074de2240425276c486903"
+   },
+   "review_sig": "63562d554f222770072cf1cacd1c193460e3b8f43372872bb2c5abfd63f670c349cd169245a5c44474335aae2117b55c3ba796648fe4d0caf235eb21b0be6c09",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0023-80e6bf3b.bin",
+   "sha": "15d5070a5f0200f15be9fdccd6f3513e40740622d5b236b0ddc579472e4a7025",
+   "t": 683355235328443
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-24",
+   "digest": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "40f9b647fa79db83cdc84646bfd08ab5add133c021d4c2ca7fc1609424e67fcb891527ab32940029bdf3a67aa1c2721d954f4b8cb9fb11af1a45179ed94ac10e",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f",
+   "target": "prod",
+   "review_sig": "40f9b647fa79db83cdc84646bfd08ab5add133c021d4c2ca7fc1609424e67fcb891527ab32940029bdf3a67aa1c2721d954f4b8cb9fb11af1a45179ed94ac10e",
+   "tag": "app-24"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "51af962f9b09ebccf2493609a668e422",
+    "digest": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f",
+    "target": "prod",
+    "tag": "app-24",
+    "approver": "approver-1",
+    "sig": "4a6320f3d7cc829d1592118d74ecae61755d28969ac79054ed5d42c9f908567fb50938e642015c5efa00a85c133a57af109c5a421285bbe69a86edb2d0159407"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "51af962f9b09ebccf2493609a668e422",
+    "digest": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f",
+    "target": "prod",
+    "tag": "app-24",
+    "approver": "approver-1",
+    "sig": "4a6320f3d7cc829d1592118d74ecae61755d28969ac79054ed5d42c9f908567fb50938e642015c5efa00a85c133a57af109c5a421285bbe69a86edb2d0159407"
+   },
+   "review_sig": "40f9b647fa79db83cdc84646bfd08ab5add133c021d4c2ca7fc1609424e67fcb891527ab32940029bdf3a67aa1c2721d954f4b8cb9fb11af1a45179ed94ac10e",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0024-51af962f.bin",
+   "sha": "abff924a3f14bfe6a7bfff9a124e3b34f873bd1ffc20694da1a2494d17e2442f",
+   "t": 683355309532240
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-25",
+   "digest": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "a40d786250d0885e26df7ddace85845ee20cf82fedf796fc11ad2289269ce2c32263cdef9cebf4810067e9f1bcd6bf175a80aa62c0d716d3e87f2c75b6a7af0c",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534",
+   "target": "staging",
+   "review_sig": "a40d786250d0885e26df7ddace85845ee20cf82fedf796fc11ad2289269ce2c32263cdef9cebf4810067e9f1bcd6bf175a80aa62c0d716d3e87f2c75b6a7af0c",
+   "tag": "app-25"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "c44f20f83bcc9edb4a33ddcee6b3200a",
+    "digest": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534",
+    "target": "staging",
+    "tag": "app-25",
+    "approver": "approver-1",
+    "sig": "457c3c3f80c48dae6dee2ef40419aa2c9d95d39fa6641d6a0aaf7fc179cf1fb0e3ce6d3a581e6ba5612108d8d94f69f632d3b86f342af1f5620dd59d80f2550e"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "c44f20f83bcc9edb4a33ddcee6b3200a",
+    "digest": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534",
+    "target": "staging",
+    "tag": "app-25",
+    "approver": "approver-1",
+    "sig": "457c3c3f80c48dae6dee2ef40419aa2c9d95d39fa6641d6a0aaf7fc179cf1fb0e3ce6d3a581e6ba5612108d8d94f69f632d3b86f342af1f5620dd59d80f2550e"
+   },
+   "review_sig": "a40d786250d0885e26df7ddace85845ee20cf82fedf796fc11ad2289269ce2c32263cdef9cebf4810067e9f1bcd6bf175a80aa62c0d716d3e87f2c75b6a7af0c",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0025-c44f20f8.bin",
+   "sha": "e656d264858a15260a457b6887ecb6174b56e593f377b53b688ade788f1a4534",
+   "t": 683355384143238
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-26",
+   "digest": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "e91394a5283325d860386f338b9c956adcb42f3b8301f362544c6c072dbba915d34057433e35f87ced14ea3013243a1009a7e45af8da6c585aeb1e73168e1304",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b",
+   "target": "staging",
+   "review_sig": "e91394a5283325d860386f338b9c956adcb42f3b8301f362544c6c072dbba915d34057433e35f87ced14ea3013243a1009a7e45af8da6c585aeb1e73168e1304",
+   "tag": "app-26"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "b8671492cf5f8437911136de3b05a33d",
+    "digest": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b",
+    "target": "staging",
+    "tag": "app-26",
+    "approver": "approver-1",
+    "sig": "b07a948a4771a4307d226e08c14513fc61b7d65e9dcc3a8f99de3bd3252d4cd1057b366365fa53fef7f9e927d803d671fcb0d1dc705d687eb53be2ddd8c88c08"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "b8671492cf5f8437911136de3b05a33d",
+    "digest": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b",
+    "target": "staging",
+    "tag": "app-26",
+    "approver": "approver-1",
+    "sig": "b07a948a4771a4307d226e08c14513fc61b7d65e9dcc3a8f99de3bd3252d4cd1057b366365fa53fef7f9e927d803d671fcb0d1dc705d687eb53be2ddd8c88c08"
+   },
+   "review_sig": "e91394a5283325d860386f338b9c956adcb42f3b8301f362544c6c072dbba915d34057433e35f87ced14ea3013243a1009a7e45af8da6c585aeb1e73168e1304",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0026-b8671492.bin",
+   "sha": "975f69ab8590d89f1ac13005e25544f6beebba6072259927aa303954c4483f0b",
+   "t": 683355467286204
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-27",
+   "digest": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "6e2215795827c1cd9052c40fe416fd72af84a041d0ffb68036c5b32042414f59f92d3cdacb5b1a5f65f79dc961ea9625674befc9815d8b0261d50424b2a75c0b",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658",
+   "target": "prod",
+   "review_sig": "6e2215795827c1cd9052c40fe416fd72af84a041d0ffb68036c5b32042414f59f92d3cdacb5b1a5f65f79dc961ea9625674befc9815d8b0261d50424b2a75c0b",
+   "tag": "app-27"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "1872b628c9870b7134447a401159e427",
+    "digest": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658",
+    "target": "prod",
+    "tag": "app-27",
+    "approver": "approver-1",
+    "sig": "efd6bc52985b8c90f9ed990334797a8aee5f904737efc8932e861dbd357e1390037494e0d58491b456a3ee5eca27dbbfbfdbdc098f281f0fe239abc9deaecf0c"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "1872b628c9870b7134447a401159e427",
+    "digest": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658",
+    "target": "prod",
+    "tag": "app-27",
+    "approver": "approver-1",
+    "sig": "efd6bc52985b8c90f9ed990334797a8aee5f904737efc8932e861dbd357e1390037494e0d58491b456a3ee5eca27dbbfbfdbdc098f281f0fe239abc9deaecf0c"
+   },
+   "review_sig": "6e2215795827c1cd9052c40fe416fd72af84a041d0ffb68036c5b32042414f59f92d3cdacb5b1a5f65f79dc961ea9625674befc9815d8b0261d50424b2a75c0b",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0027-1872b628.bin",
+   "sha": "baf54e7a4f6150118942505083c8569abcb3cc974dab39f81beafd5e61e91658",
+   "t": 683355536872317
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-28",
+   "digest": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "81e36b1e5559a397c91fca43047747b4b0b8b59b2f83ef586fa78124a242f7fc57bbc64572d5262464b2a4eade9d79537fa7daec534fd7d7939b2a23fad04b0f",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62",
+   "target": "staging",
+   "review_sig": "81e36b1e5559a397c91fca43047747b4b0b8b59b2f83ef586fa78124a242f7fc57bbc64572d5262464b2a4eade9d79537fa7daec534fd7d7939b2a23fad04b0f",
+   "tag": "app-28"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "1c970d404f92c15c282408b4d9c648c3",
+    "digest": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62",
+    "target": "staging",
+    "tag": "app-28",
+    "approver": "approver-1",
+    "sig": "68e6224506f41424d1f1169ba12f0ffd5c7717875838b1c627c1837866977756d721f83ab2549e1ca19eb68efd951dee0f5dd135420ebb57d8b4f551efdffb06"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "1c970d404f92c15c282408b4d9c648c3",
+    "digest": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62",
+    "target": "staging",
+    "tag": "app-28",
+    "approver": "approver-1",
+    "sig": "68e6224506f41424d1f1169ba12f0ffd5c7717875838b1c627c1837866977756d721f83ab2549e1ca19eb68efd951dee0f5dd135420ebb57d8b4f551efdffb06"
+   },
+   "review_sig": "81e36b1e5559a397c91fca43047747b4b0b8b59b2f83ef586fa78124a242f7fc57bbc64572d5262464b2a4eade9d79537fa7daec534fd7d7939b2a23fad04b0f",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0028-1c970d40.bin",
+   "sha": "c24618517a6343550987d24032c3acecae96c5bd7e95e80b0a941a1bc848ac62",
+   "t": 683355612109195
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-29",
+   "digest": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "cccc7ce1b680dbe8375c15c20364a99d9290f673c44413d7d4d6c7b17dd35217d6c2bd9d1bd81b9522d1ceace49b941bb72488288d1e55380256dae0c7634006",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600",
+   "target": "staging",
+   "review_sig": "cccc7ce1b680dbe8375c15c20364a99d9290f673c44413d7d4d6c7b17dd35217d6c2bd9d1bd81b9522d1ceace49b941bb72488288d1e55380256dae0c7634006",
+   "tag": "app-29"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "f6efe2570fb2f8bebf190c76642da39f",
+    "digest": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600",
+    "target": "staging",
+    "tag": "app-29",
+    "approver": "approver-1",
+    "sig": "df4706d72b4abc236fce82b56fc5f5536d3b86389c388e9e55ecede17124e5e21baac2a9a7a2174024041db6fc26e7627a409f1ee04abb23765d88dfe442250a"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "f6efe2570fb2f8bebf190c76642da39f",
+    "digest": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600",
+    "target": "staging",
+    "tag": "app-29",
+    "approver": "approver-1",
+    "sig": "df4706d72b4abc236fce82b56fc5f5536d3b86389c388e9e55ecede17124e5e21baac2a9a7a2174024041db6fc26e7627a409f1ee04abb23765d88dfe442250a"
+   },
+   "review_sig": "cccc7ce1b680dbe8375c15c20364a99d9290f673c44413d7d4d6c7b17dd35217d6c2bd9d1bd81b9522d1ceace49b941bb72488288d1e55380256dae0c7634006",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": true,
+   "file": "staging/0029-f6efe257.bin",
+   "sha": "f01dceaf3223677d9db52e7c4096c2e051f74fa044eb4b8803a647c11e7af600",
+   "t": 683355684634590
+  }
+ }
+]

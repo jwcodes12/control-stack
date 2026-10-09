@@ -5,7 +5,7 @@
   "bad_event": "At an apply, the resulting live permissions exceed the policy ceiling or differ from the approved desired state, or a diff is applied that an independent reviewer did not approve exactly. Out-of-band changes BETWEEN applies are reverted at the next reconcile, not prevented: with reconcile at least every W ticks and ≤ d mutations per tick, drift ≤ d·W grants and each lives < W ticks (SC17Drift.drift_bounded/drift_lifetime; REVIEW-PACKET finding 2). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any propose/amend/approve/apply/out-of-band-mutation/reconcile/halt trace.",
   "refutation": "A trace where live state exceeds the ceiling or an unapproved diff applies despite full checks (witnesses: text-only ceiling composition, approve-then-amend, no drift detection).",
-  "scope": "Lean model only. Out-of-band changes are reverted at the next apply/reconcile, not prevented in between.",
+  "scope": "Lean model only. Out-of-band changes are reverted at the next apply/reconcile, not prevented in between. Runtime: single-host reference run (scenarios/SC-17/evidence/run-1), benign workloads, one UID (role credential separation remains a premise).",
   "families": [
     "F1",
     "F4",
@@ -56,7 +56,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-17/evidence/run-1/verdicts.json",
+      "sha256": "d746047f8ef7e6b05ef8dc5337c78da5fb8cffb4d6ffae50bef6922eacf46cba",
+      "purpose": "PREREG-SC17-DRIFT-v1 run-1: H1 drift ≤ d·W+tol and lifetime ≤ W ticks+tol (every-mutation live log), H2 composed-escalation diff refused (ceiling on resulting state), H3 approve-then-amend refused, H4 usefulness, H5 reconciler-off and text-ceiling controls fired; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC17-DRIFT-RECONCILE.md",
+      "sha256": "b6038131d360274a0f09537917a31049e9a7d0ce809d7c6c9858a1cd92369733",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -70,7 +83,7 @@
       "id": "single_apply_path",
       "text": "The gate is the only writer of desired state; out-of-band mutation is detected at reconcile.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -86,7 +99,7 @@
       "id": "honest_usefulness",
       "text": "Honest infra changes pass review within acceptable latency.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }

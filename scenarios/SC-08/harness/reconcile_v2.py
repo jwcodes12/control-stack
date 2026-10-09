@@ -20,11 +20,13 @@ def _hex(x):
     return isinstance(x, str) and DIGEST.fullmatch(x) is not None
 
 
-def reconcile_v2(allow, launcher, sentinel):
+def reconcile_v2(allow, launcher, sentinel, *, pin_dir=None):
     """Return a detailed result without asserting anything about live kernel events."""
     findings = []
     if not isinstance(allow, dict) or not isinstance(launcher, list) or not isinstance(sentinel, list):
         return {"ok": False, "findings": ["invalid record container"], "executions": 0, "sentinel_records": 0}
+    if not isinstance(pin_dir, str) or not Path(pin_dir).is_absolute():
+        findings.append("trusted absolute pin directory was not supplied")
     progs = allow.get("interpreters")
     scripts = allow.get("scripts")
     if not isinstance(progs, list) or not isinstance(scripts, list) or not all(map(_hex, progs + scripts)):
@@ -49,8 +51,10 @@ def reconcile_v2(allow, launcher, sentinel):
         if entry.get("script") is None or not _hex(sd) or sd not in scripts:
             findings.append(f"launcher[{i}]: executed script digest missing or not allowlisted")
         pin = entry.get("executed_path")
-        if not isinstance(pin, str) or not _hex(sd) or Path(pin).name != sd + ".py":
-            findings.append(f"launcher[{i}]: script was not recorded as a digest-named pinned copy")
+        if (not isinstance(pin, str) or not Path(pin).is_absolute() or not _hex(sd)
+                or not isinstance(pin_dir, str) or not Path(pin_dir).is_absolute()
+                or Path(pin).resolve(strict=False) != (Path(pin_dir) / (sd + ".py")).resolve(strict=False)):
+            findings.append(f"launcher[{i}]: executed script path does not match its trusted pin directory and digest")
         rc = entry.get("rc")
         if rc != 0 or isinstance(rc, bool):
             findings.append(f"launcher[{i}]: execution did not exit successfully")
@@ -82,11 +86,12 @@ def main():
     p.add_argument("allowlist")
     p.add_argument("launcher_jsonl")
     p.add_argument("sentinel_jsonl")
+    p.add_argument("--pin-dir", required=True, help="trusted launcher-owned directory used for digest-named scripts")
     a = p.parse_args()
     allow = json.loads(Path(a.allowlist).read_text())
     def records(path):
         return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
-    verdict = reconcile_v2(allow, records(a.launcher_jsonl), records(a.sentinel_jsonl))
+    verdict = reconcile_v2(allow, records(a.launcher_jsonl), records(a.sentinel_jsonl), pin_dir=a.pin_dir)
     print(json.dumps(verdict, sort_keys=True, indent=2))
     return 0 if verdict["ok"] else 1
 

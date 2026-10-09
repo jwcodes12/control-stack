@@ -1,0 +1,43 @@
+name: f4-datacenter-model
+
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/Families/F4/**'
+      - 'ControlStack/Core/DatacenterRoots.lean'
+      - 'tools/portfolio_ledger.py'
+      - 'ASSURANCE-LEDGER.md'
+      - '.github/workflows/f4-datacenter-model.yml'
+  workflow_dispatch:
+
+jobs:
+  generated-fast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fast generated-file and manifest checks
+        run: python3 tools/cstack.py check --fast
+  lean-and-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Build F4 bound-nonce proofs and datacenter graph
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake build ControlStack.Families.F4.SessionBoundNonce ControlStack.Core.DatacenterRoots
+      - name: Check generated typed ledgers and scenario roots
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          python3 tools/portfolio_ledger.py --check
+          python3 tools/gen_trust_root.py --check
+          python3 tools/cstack.py check --fast

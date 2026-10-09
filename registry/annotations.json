@@ -880,5 +880,47 @@
   "status": "PROVED_RECORDED",
   "necessity_witness": "stego_fools_honeypots",
   "record": "scenarios/SC-24/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC17Infra.lean::sc17_safe": {
+  "family": "F4",
+  "scenarios": [
+   "SC-17"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "review by non-author of exact diff",
+   "ceiling evaluated on resulting state"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "text_ceiling_composition_breaks; approve_then_amend_breaks; no_drift_detection_breaks",
+  "record": "scenarios/SC-17/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC19Prod.lean::sc19_safe": {
+  "family": "F7",
+  "scenarios": [
+   "SC-19"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "trusted snapshot verifier",
+   "atomic affected count at commit"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "stale_snapshot_breaks; unverified_snapshot_breaks; blast_radius_race_breaks",
+  "record": "scenarios/SC-19/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC27Chain.lean::sc27_safe": {
+  "family": "F4",
+  "scenarios": [
+   "SC-27"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "chain head injective on accepted/anchored logs",
+   "independent anchoring witness"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "no_anchor_rollback_breaks; self_signed_breaks; unanchored_suffix_breaks; collision_breaks",
+  "record": "scenarios/SC-27/manifest.json; kernel-checked locally 2026-10-09; model only"
  }
 }

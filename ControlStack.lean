@@ -21,6 +21,9 @@ import ControlStack.Scenarios.SC26Transaction
 import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit
+import ControlStack.Scenarios.SC27Chain
+import ControlStack.Scenarios.SC19Prod
+import ControlStack.Scenarios.SC17Infra
 import ControlStack.Scenarios.SC10Policy
 import ControlStack.Scenarios.SC09Priv
 import ControlStack.Scenarios.SC08Exec
@@ -35,6 +38,7 @@ import ControlStack.Families.F6.DamageBound
 import ControlStack.Families.F3.DistributedHalt
 import ControlStack.Families.F6.MonitorCollusion
 import ControlStack.Families.F2.ChannelInstances
+import ControlStack.Core.Cert
 import ControlStack.Witnesses.CovertNoGo
 import ControlStack.Witnesses.Necessity
 import ControlStack.Witnesses.LeakWitness

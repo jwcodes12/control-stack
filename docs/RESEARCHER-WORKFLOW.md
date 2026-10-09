@@ -3,11 +3,13 @@
 This is the day-to-day loop, with exact commands. SC-26 is the reference: its model, harness, preregistration, review
 and evidence are a complete example (model `ControlStack/Scenarios/SC26Transaction.lean`, harness
 `scenarios/SC-26/harness/`, preregistration `prereg/SC26-TRANSACTION-GATE-v2.md`, review
-`reviews/sc26-2026-10-09/`, evidence run `scenarios/SC-26/evidence/run-1/`). Read [STACK-MAP.md](../STACK-MAP.md)
-for where a scenario sits in a real compute stack. [ROADMAP.md](../ROADMAP.md) is the canonical status.
+`reviews/sc26-2026-10-09/`, evidence `scenarios/SC-26/evidence/run-1/`, rechecker `tools/check_sc26_case.py`).
+[STACK-MAP.md](../STACK-MAP.md) places scenarios in a real compute stack, and
+[LAB-DEPLOYMENT-MAPPING.md](LAB-DEPLOYMENT-MAPPING.md) proposes (untested) lab realisations of each trusted component.
+[ROADMAP.md](../ROADMAP.md) is the canonical status.
 
-Nothing in this loop produces deployment assurance. Its output is a conditional claim with named premises, negative
-controls that fire, and a preserved receipt, whether the run passes or fails.
+Nothing in this loop produces deployment assurance. Its output is a conditional claim with named premises, firing
+negative controls and a preserved receipt, whether the run passes or fails.
 
 ## 0. Pick the component and the gap
 
@@ -16,8 +18,7 @@ python3 tools/stackmap.py --gaps                       # open premises, cheapest
 python3 tools/stackmap.py --researcher cloud_control_plane   # trusted role, premises, evidence, what to run
 ```
 
-Choose ONE effect and ONE trusted component. Write down the Bad event as an observable predicate on a log that
-something other than the gate writes: the bank ledger in SC-26, the cgroup and `/proc` view in SC-28.
+Choose ONE effect and ONE trusted component; state the Bad event on a log the gate does not write (SC-26: bank).
 
 ## 1. Write the spec and generate the skeleton
 
@@ -124,9 +125,9 @@ a new ID. Re-runs are allowed only for the infrastructure errors the prereg name
 
 ## 7. Review, then record
 
-1. **Adversarial review:** a foreign model family if possible, and say so when it is not. File the findings and a
-   disposition in `reviews/sc29-<date>/`, as in `reviews/sc26-2026-10-09/disposition.md` and
-   `opus-review-summary.md`.
+1. **Recheck and review.** Write a rechecker that recomputes verdicts from raw evidence and pins (pattern:
+   `tools/check_sc26_case.py`). Get a foreign-family review if possible (say so when not); file findings and a
+   disposition in `reviews/sc29-<date>/`, as in `reviews/sc26-2026-10-09/`.
 2. **Manifest:** update `scenarios/SC-29/manifest.json` only from grounded evidence. Each assumption gets its four
    axes, and the six `scope_axes` are required.
 3. **Stack map:** cite the new evidence in `stack/components.json`. The tool rejects a status the cited evidence does

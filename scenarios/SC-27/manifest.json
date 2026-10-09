@@ -2,67 +2,86 @@
   "schema_version": 1,
   "id": "SC-27",
   "title": "Tampered evidence and assurance manifests",
-  "bad_event": "An attacker alters or fabricates an assurance record so that an unsupported guarantee is accepted.",
-  "adversary": "Agent capable of changing workspace files, reports or CI evidence absent protected signing and immutable refs.",
-  "refutation": "Substitute a manifest, reuse a receipt from another source revision, forge a recorded proof status, or change the verifier while retaining a green label.",
-  "scope": "Research proposal for source-bound independent attestations; existing static SHA check is not trusted provenance.",
+  "bad_event": "A verifier accepts a manifest whose evidence log is not exactly a log independently anchored (modification, reordering, truncation or extension after anchoring).",
+  "adversary": "Model: a writer that can append, rewrite the whole log and publish its own heads.",
+  "refutation": "An accepted manifest that differs from every anchored log despite full checks (witnesses: no anchor/rollback, self-signed, unanchored suffix, hash collision).",
+  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally.",
   "families": [
-    "F3",
-    "F4"
+    "F4",
+    "F8"
   ],
-  "status": "DRAFT",
-  "theorems": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.SC27Chain.sc27_safe",
+      "path": "ControlStack/Scenarios/SC27Chain.lean",
+      "sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27Chain.tamper_after_anchor_detected",
+      "path": "ControlStack/Scenarios/SC27Chain.lean",
+      "sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27Chain.halt_freezes",
+      "path": "ControlStack/Scenarios/SC27Chain.lean",
+      "sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
   "evidence": [],
   "assumptions": [
     {
-      "id": "independent_verifier",
-      "text": "Verifier binary and policies are outside attacker write authority.",
+      "id": "independent_anchor",
+      "text": "An independently administered witness records heads (not the writer).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "immutable_attestation",
-      "text": "CI/proof receipts are independently signed and bound to revision, configuration, run and provenance.",
+      "id": "hash_injective_on_run",
+      "text": "Chain head is injective on accepted/anchored logs (collision resistance).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "source_bound_evidence",
-      "text": "Every claimed test/proof is checked against exact source and artifact hashes.",
+      "id": "anchor_frequency",
+      "text": "Anchoring happens soon enough that the pre-anchor window is acceptable.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including excluded attack classes."
+      "note": "Not independently established; Lean model only."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "The model-to-runtime relation lacks independently checked refinement evidence."
+      "note": "Not independently established; Lean model only."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Exclusive enforcement and receiver observation boundary remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Lifetime state, concurrency, and composition premises remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "An honest-task success baseline and test population remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent fidelity, provenance or assurance approval."
+      "note": "Not independently established; Lean model only."
     }
   }
 }

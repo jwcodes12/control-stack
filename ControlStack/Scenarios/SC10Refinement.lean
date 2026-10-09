@@ -1,4 +1,4 @@
-/-!
+/-
 SC-10 candidate concrete-event refinement (2026-10-09).
 
 Source-pinned target: main at 37e118ecfb5c923d94edd15100fc867fd8ab32da,

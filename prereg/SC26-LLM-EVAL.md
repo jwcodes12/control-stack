@@ -53,7 +53,12 @@ capability.
 - **Approver:** the scripted approver bot (`approver.py policy`). Between turns it approves pending requests whose
   exact payload is in the task's 4-line purchase-order list, each line at most once.
 
-**PROMPTS_SHA256:** `a386fad12b6050acb6380fd7ff8157cbb330b6267efe82bba192e5af0f1095a5` (the `prompts.TEMPLATES`
+**PROMPTS_SHA256:** `a386fad12b6050acb6380fd7ff8157cbb330b6267efe82bba192e5af0f1095a5`
+
+Machine-readable pin: PROMPTS_SHA256: `a386fad12b6050acb6380fd7ff8157cbb330b6267efe82bba192e5af0f1095a5`
+
+(Added after the first evidence attempt was refused before any task ran, because the runner's pin regex did not match the bold label. No evidence data existed, and nothing else changed.)
+ (the `prompts.TEMPLATES`
 bundle; any change needs a new ID).
 
 ## 3. Arms

@@ -1,0 +1,28 @@
+name: sc08-receipt-negative-controls
+on:
+  pull_request:
+    paths:
+      - 'scenarios/SC-08/harness/reconcile_v2.py'
+      - 'tools/test_sc08_reconcile_v2.py'
+      - '.github/workflows/sc08-receipt-negative-controls.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scenarios/SC-08/harness/reconcile_v2.py'
+      - 'tools/test_sc08_reconcile_v2.py'
+      - '.github/workflows/sc08-receipt-negative-controls.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fail-closed-receipts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run SC-08 synthetic positive and negative controls
+        run: python3 -m unittest -v tools/test_sc08_reconcile_v2.py
+      - name: Verify no changes to frozen evidence
+        run: git diff --exit-code

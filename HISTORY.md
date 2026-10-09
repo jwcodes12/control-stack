@@ -90,3 +90,7 @@ On a separate `structure-merge-20261008-gpt6-finish` branch derived from the con
 ## 2026-10-08 — Clean integration CI acceptance [skip ci]
 
 GitHub Actions run [#37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641) **passed** with 3,743-job root Lean build, 28 Lean claim elaborations, 8 standard-only claim axiom reports, registry consistency (860 lexical declarations), 18 scenario mutation tests and 4 certifier tests. SC-01 checker phases 1–4 passed; the frozen prior-host OpenSSL cache-binding mismatch at phase 5 was isolated as expected and no historical receipt was changed. All 25 draft scenarios remain draft; 3 conditional cases are not deployment assured. See `reviews/structure-merge/hardening-validation.md`.
+
+## 2026-10-08 — Pinned independent A/B/C branch replay and halt-liveness acceptance [skip ci]
+
+Exact original A, B and C source SHAs independently passed `lake build ControlStack` (3,715 jobs each), 8/7/7 checker mutation tests, and B's 28 original Lean claim replays. A generated indexes pass. Original C generator drift was confirmed as an unmerged-branch defect; the merged 865-entry registry is current. Successful expanded model CI [#37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361) compiled the new conditional HALT delivery/freezing/necessity theorems with only `propext`/`Quot.sound`, plus full merged suite. No scheduler fairness, runtime attestation or deployment safety is inferred. [Evidence and comparison](reviews/structure-merge/comparison.md).

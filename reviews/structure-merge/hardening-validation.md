@@ -35,3 +35,7 @@ bash tools/verify_structure_merge.sh
 ```
 
 The script does not modify experimental receipts, fixed deadlines or preregistrations. On a new host, it accepts precisely the expected step-5 historic OpenSSL host-binding failure **only after steps 1–4 pass**, and fails for any unrelated error. See the CI logs for the executed proof/test replay; do not treat the presence of the script as a substitute for running it.
+
+## Follow-up, 2026-10-08 — Independent branch and expanded Lean replay
+
+[Run #37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361) passed `ControlStack.HaltLiveness` kernel elaboration (standard-only axiom reports), full 3,744-job merged build, 28 scenario claim files, 18 metadata tests, 4 certifier tests, 865-record registry drift and original SC-01 phases 1–4. No evidence was rewritten. The single-host cache receipt still does not validate as a fresh host-bound receipt. The independent A/B/C exact-commit results, including C's original stale registry defect, are in [comparison.md](comparison.md). Source-level theorem scope annotations were expanded by 34; the remaining 821 unknown adversary scopes are not automatically promoted.

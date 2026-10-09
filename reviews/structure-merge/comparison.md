@@ -1,16 +1,16 @@
 # Structure-merge comparison — 2026-10-08
 
-**Baseline:** `origin/main` at `18c18590c5aa86b6f12def6d7416788eae232425`. Compared GitHub branch trees and inspected each branch's checker/tests/generators and sampled schemas. The GitHub API connection worked, but the shell could not resolve `github.com`; `elan`/`lake` are unavailable there. **No Python check, Lean build, or branch CI was executed.** Results below are source-level assessments, NOT pass claims. New working branch: `structure-merge-20261008`.
+**Baseline:** `origin/main` at `18c18590c5aa86b6f12def6d7416788eae232425`. Compared GitHub branch trees and inspected each branch's checker/tests/generators and sampled schemas. The first source audit ran where local shell networking and Lean were unavailable; the **subsequent independent GitHub-hosted CI reran each original A/B/C branch on its pinned original SHA**. The results below distinguish static tests, generators, individual claim replays and full Lean compilation. New working branch: `structure-merge-20261008`; no merge to main.
 
 | Branch | Changed-file delta vs main | Scenario folders | Theorem-backed/current bundles | Static safeguards | Executed tests/build |
 |---|---:|---:|---:|---|---|
-| A `scenario-architecture-20261008` | 132 | 28 | 4 active (SC-01,03,13,27), rest draft | 4 axes, path containment, duplicate JSON-key rejection, runner allowlist, metadata promotion denied | **NOT RUN** |
-| B `scenario-bundles-static-checker-20261008` | 205 | 28 | 3 conditional (SC-01,03,13), 25 draft | 3 statuses per named premise, source/evidence SHA-256, blocks self-deployment assurance; **not** proof replay | **NOT RUN** |
-| C `scenario-backbone-20261008` | 89 | 28 | 4 active case bundles, 24 draft-only | 6 applicability axes, required proof/evidence digests, can optionally replay Lean axiom queries, independent assurance refused | **NOT RUN** |
+| A `scenario-architecture-20261008` | 132 | 28 | 4 active (SC-01,03,13,27), rest draft | 4 axes, path containment, duplicate JSON-key rejection, runner allowlist, metadata promotion denied | **PASS** lint, 8 tests, generator drift, Lean build (3,715 jobs) |
+| B `scenario-bundles-static-checker-20261008` | 205 | 28 | 3 conditional (SC-01,03,13), 25 draft | 3 statuses per named premise, source/evidence SHA-256, blocks self-deployment assurance; **not** proof replay | **PASS** 7 tests, static lint, Lean build (3,715 jobs), 28 individual Lean claims |
+| C `scenario-backbone-20261008` | 89 | 28 | 4 active case bundles, 24 draft-only | 6 applicability axes, required proof/evidence digests, can optionally replay Lean axiom queries, independent assurance refused | **PASS** checker, 7 tests, 4 active Lean axiom replays, Lean build (3,715 jobs); **FAIL** original registry drift |
 
 ## What the checkers actually enforce
 
-**A.** `tools/check_scenario.py --all --lint` parses a single `scenario.json` per case, validates schema, reference paths, required per-axis assumptions (proof/evidence/applicability/usefulness), disallows arbitrary runners, rejects approved status, and avoids untrusted manifest-defined shell commands. `--verify` only hashes listed evidence and invokes the *fixed* SC-01 legacy tool when allowlisted; it does not re-check general Lean claims and **always returns code 3** even when there is no refutation, so it cannot meet a precise “exit 3 iff refuted” contract. `tests/test_scenarios.py` covers missing axis, invented verification, path traversal, runner injection and duplicate JSON keys. The two A workflows check scenario lint/tests and index drift; both are adapted to the chosen checker below. No actual pass result was observed.
+**A.** `tools/check_scenario.py --all --lint` parses a single `scenario.json` per case, validates schema, reference paths, required per-axis assumptions (proof/evidence/applicability/usefulness), disallows arbitrary runners, rejects approved status, and avoids untrusted manifest-defined shell commands. `--verify` only hashes listed evidence and invokes the *fixed* SC-01 legacy tool when allowlisted; it does not re-check general Lean claims and **always returns code 3** even when there is no refutation, so it cannot meet a precise “exit 3 iff refuted” contract. `tests/test_scenarios.py` covers missing axis, invented verification, path traversal, runner injection and duplicate JSON keys. The two A workflows check scenario lint/tests and index drift; both are adapted to the chosen checker below. This was independently replayed on the original SHA; see the CI matrix below.
 
 **B.** `tools/check_scenarios.py` validates existence of six bundle artifacts, source/evidence hashes (allows expressly `UNBOUND` evidence), all three statuses on each named assumption, failure accounting, and restricts manifest status to DRAFT/CONDITIONAL/FAILED. It reports `RECORDED_NOT_RECHECKED`, never elevates self-recorded `KERNEL_CHECK_RECORDED` to a new machine check, and never infers `deployment_assured`. Gaps found: original B checker did **not** require referenced theorem names in its generated registry or in `claim.lean`, does not run Lean, and does not prove provenance of evidence origin; several declared artifacts are intentionally unbound or failed. The merge adds registry/source/`#check` linkage but it remains lexical until Lean replay. `tools/test_check_scenarios.py` has mutations for assumptions, digests, traversal, failed receipts and refusal to clear a conditional case. No actual test result was observed.
 
@@ -24,7 +24,7 @@
 - Preserve original `PREREG-*.md`, original run evidence/receipts and the original SC-01 step-5 host-bound OpenSSL comparison. Future experiment templates under `prereg/` are clearly distinct from frozen preregistrations. No mathematical novelty claim.
 - Retain **ROADMAP.md** as the sole human status entry point; `scenarios/INDEX.md` is a generated scenario tally, not a second narrative status file.
 
-## Verification commands (required on a networked clone; NOT RUN here)
+## Verification commands (run on pinned networked GitHub CI)
 
 ```sh
 lake exe cache get
@@ -40,7 +40,29 @@ lake env lean scenarios/SC-03/claim.lean
 lake env lean scenarios/SC-13/claim.lean
 ```
 
-**Interpreting failures:** SC-01 steps 1–4 must pass; step 5's host-bound `/usr/bin/openssl` hash failure is expected on a fresh machine *only when it is the sole cause*. Any other error is a regression. Check generator drift, source registry links and mutation failure exit before signoff. Explicitly inspect the Lean axiom output (standard axioms only) and grep for `sorry`/unjustified `axiom` in new proof code. There is no basis to report those outcomes as passed until run.
+**Interpreting failures:** SC-01 steps 1–4 must pass; step 5's host-bound `/usr/bin/openssl` hash failure is expected on a fresh machine *only when it is the sole cause*. Any other error is a regression. Check generator drift, source registry links and mutation failure exit before signoff. Explicitly inspect the Lean axiom output (standard axioms only) and grep for `sorry`/unjustified `axiom` in new proof code. The listed merged-branch gates were executed in successful CI [#37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641) and expanded-theory CI [#37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361). The separately pinned A/B/C evaluation is documented below.
+
+## Independent replay on exact original commits (2026-10-08)
+
+| Source | Pinned original commit | Runner and checks | Result |
+|---|---|---|---|
+| **A** | `cbec4db5ea670e8a4585175b3b2f9d420d3ef3be` | [CI #37876990441](https://github.com/jwcodes12/control-stack/actions/runs/37876990441): `check_scenario.py --all --lint` (28/28), 8 unit/mutation tests, `lake build ControlStack` (3,715 jobs). [Extra #37877591251](https://github.com/jwcodes12/control-stack/actions/runs/37877591251): both `build_status.py --check` and `build_theorem_registry.py --check`. | **PASS** |
+| **B** | `fe330a55c1dc667b9e1e5877b3ad4383cd047690` | [CI #37876990441](https://github.com/jwcodes12/control-stack/actions/runs/37876990441): `check_scenarios.py` (28/28), 7 mutation tests, `lake build ControlStack` (3,715 jobs). [Extra #37877591251](https://github.com/jwcodes12/control-stack/actions/runs/37877591251): 28/28 original `claim.lean` individually elaborated; only standard printed axioms and no `sorryAx`. | **PASS** |
+| **C** | `e78a580412b5cfb2b96382e13ffb6ccda5f978f1` | [CI #37877138209](https://github.com/jwcodes12/control-stack/actions/runs/37877138209): four active case checkers, `lake build ControlStack` (3,715 jobs), and four active case Lean axiom replays **PASS**. [Extra #37877802725](https://github.com/jwcodes12/control-stack/actions/runs/37877802725): 7 mutations via correct direct-script invocation and refusal of self-assurance **PASS**. | **PASS except original registry drift** |
+
+### Original C failures and treatment
+
+- C's `python3 tools/build_registry.py --check` returns **nonzero**: `THEOREM-REGISTRY.md is stale` at the pinned original source commit. Regeneration followed by `--check` passed in a *disposable runner checkout*; no change was pushed to C. The merge's generated 865-entry theorem registry was checked in [#37877591251](https://github.com/jwcodes12/control-stack/actions/runs/37877591251) and is current.
+- The first exploratory C run [#37876990441](https://github.com/jwcodes12/control-stack/actions/runs/37876990441) used `python3 -m unittest tools.test_check_scenario`, which fails with `ModuleNotFoundError: check_scenario` because the original test script imports a sibling by filename. The correct `python3 tools/test_check_scenario.py` invocation passed **7 tests** in [#37877802725](https://github.com/jwcodes12/control-stack/actions/runs/37877802725). This was an audit-command error, not an underlying test failure.
+- C's original root module does **not** import `PolicyTamper.lean` or `GateComposition.lean`; a successful C original root build alone does not cover them. The two files are Git-blob-identical in the merged branch, where `ControlStack.lean` imports them and its full Lean build passed. C's original standalone source requires no speculative proof rewrite.
+
+### Final integration and frozen records
+
+The selected merged branch has **one** `scenarios/` tree and checker, 28 manifests/claims, **three conditional and 25 draft** scenarios, and one generated registry (865 declarations: 855 SOURCE_ONLY; 821 adversary UNKNOWN). Thirty-four candidate source-level scope annotations were added without an assurance promotion or independent statement-fidelity certification.
+
+[Expanded Lean acceptance #37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361) passed all 28 claim elaborations, 18 merged checker tests, 4 certifier tests, 865-record index drift and SC-01 unchanged steps 1–4. `ControlStack/HaltLiveness.lean` now contains four additional standard-axiom-only theorems concerning explicit trusted HALT delivery and its necessity witness. No actual scheduler fairness or OS-mediated halt property was attested.
+
+All original `PREREG-*.md`, scenario experiment receipts and VM receipts remain **byte-identical to main**. The SC-01 assurance manifest has only two source SHA-256 bindings updated, for relocated `ControlStack/Leakage.lean` and `ControlStack/Necessity.lean` compatibility facades; its claim, assumptions, evidence references and all historical receipts remain unchanged. These source-binding changes are necessary for the unchanged SC-01 checker steps 1–4 to pass. CI commits on disposable execution branches were needed to trigger Actions, but only `[skip ci]` commits were pushed to the work branch.
 
 ## Branch file inventory (changed paths relative to baseline)
 

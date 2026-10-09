@@ -2,7 +2,7 @@
 
 ## Consolidated implementation links
 
-Structural follow-up: [scenarios](scenarios/README.md), [theorem registry](THEOREM-REGISTRY.md), [adversary classes](ADVERSARY-CLASSES.md), [current roadmap](ROADMAP.md), and [merge comparison](reviews/structure-merge/comparison.md). `ControlStack/Core/Gate.lean` and `ControlStack/Core/Leakage.lean` hold the reviewed main proofs; old imports are preserved. The branch does not claim mathematical novelty or a new clean Lean build.
+Structural follow-up: [scenarios](scenarios/README.md), [theorem registry](THEOREM-REGISTRY.md), [adversary classes](ADVERSARY-CLASSES.md), [current roadmap](ROADMAP.md), and [merge comparison](reviews/structure-merge/comparison.md). `ControlStack/Core/Gate.lean` and `ControlStack/Core/Leakage.lean` hold the reviewed main proofs; old imports are preserved. The branch claims no mathematical novelty. The clean merged Lean build and 28 scenario claim elaborations passed in [GitHub CI #37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361); statement fidelity and runtime applicability remain separate.
 
 
 Start with [ROADMAP.md](ROADMAP.md) ("Status at a glance"), then:

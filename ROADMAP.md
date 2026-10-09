@@ -1,5 +1,9 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
 
+## Independently rebuilt original A/B/C integration (2026-10-08)
+
+The three original branches A, B, C passed separate pinned-root Lean builds and their source-branch scenario checkers (A 8/B 7/C 7 Python tests). B's 28 original claim files compiled independently. Original C `THEOREM-REGISTRY.md` was stale; the merged generator repaired this without altering C. The merged work branch now contains 865 source-indexed declarations, 34 new conservative source-scope annotations and 821 still unreviewed `UNKNOWN` adversary classifications. The expanded HALT delivery model compiled with standard-only axioms; scheduler fairness and concrete HALT implementation remain outside the proof. See [comparison](reviews/structure-merge/comparison.md) and [scope audit](reviews/structure-merge/theorem-scope-audit.md).
+
 ## Candidate hardening follow-up (structure-merge-20261008-gpt6-finish)
 
 The original work branch has continued evolving. This separate candidate preserves its existing validated-source inventory while expanding **all 28 scenario manifests** to cover named per-premise usefulness status and six explicit scope-assumption axes: threat coverage, runtime correspondence, environment, lifetime/composition, usefulness and independent review. Missing axes and an unsupported self-asserted `SUPPORTED` scope status are rejected by the static checker. This is schema-level diligence only and must not be presented as new Lean or runtime validation.
@@ -19,7 +23,7 @@ This is the **single status entry point**. The source-derived scenario index is 
 - SC-01, SC-03 and SC-13 have named proof references and remain **conditional**, not deployment assured; SC-27 remains **draft** because audit-dispatch integrity does not prove independently attested evidence.
 - 28 scenario folders exist: **3 conditional, 25 draft**. A scenario folder is not a tested safety case.
 - Reviewed main proof definitions now live under `ControlStack/Core/`, `ControlStack/Families/` and `ControlStack/Witnesses/`, with old imports preserved. C contributes policy-tamper and shared-state gate candidate proofs.
-- The theorem registry is a lexical source inventory (860 declarations after CI regeneration), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
+- The theorem registry is a lexical source inventory (865 declarations after CI regeneration), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
 - **Build/integration acceptance passed** in CI #37870787641. Remaining before operational approval: independent model-to-runtime correspondence review, complete threat observability/provenance, negative trials, and a separately approved viable SC-01 protocol. The historical OpenSSL receipt remains frozen and cannot be replayed as a new host's valid receipt.
 - C's four active-bundle observations were reconciled conservatively: SC-01's frozen VM usefulness gate and single-host side-channel gate failed; SC-03 proves only a narrow immediate-peer model; SC-13 assumes exclusive trusted dispatch; SC-27 still lacks independently rooted attestation.
 

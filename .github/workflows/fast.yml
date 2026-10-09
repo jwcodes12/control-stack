@@ -38,15 +38,14 @@ jobs:
   auditgate-db:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    services:
-      postgres:
-        image: postgres@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
-        env:
-          POSTGRES_PASSWORD: trusted
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 20
     steps:
+      - name: Start local PostgreSQL (avoid Docker Hub service pull limits)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql postgresql-client
+          sudo pg_ctlcluster $(pg_lsclusters --no-header | awk 'NR==1 {print $1, $2}') start || sudo service postgresql start
+          sudo -u postgres psql -v ON_ERROR_STOP=1 -c "ALTER USER postgres WITH PASSWORD 'trusted';"
+          PGPASSWORD=trusted pg_isready -h localhost -U postgres
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }

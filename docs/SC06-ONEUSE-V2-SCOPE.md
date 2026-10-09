@@ -16,6 +16,12 @@ kernel-checked in `SC06ConfirmationReuse.lean` (PR #26):
 
 ## New machine and safety theorem
 
+**Approval-time existence check (2026-10-09 repair):** The `confirm` transition requires an existing append-only context entry whose ID, reader, foreign writer and value match the proposed approval. A user event cannot pre-authorize an entry that will be ingested later. At `act`, the entry and one-use confirmation are checked again.
+
+The Lean file now includes kernel-checked `example ... := by decide` negative/positive controls: premature confirmation is not stored, future ingestion cannot activate that confirmation, a mismatched value fails, and correct post-ingestion confirmation permits one effect. Anonymous `example` declarations are intentionally not registered as named theorems.
+
+**Remaining premise:** In runtime, trusted ingestion, immutable and non-reusable entry handles, authenticated human approvals, complete effect mediation, causal ordering and receiver-side effects remain unproved.
+
 `ControlStack/Scenarios/SC06OneUse.lean` defines its *own* state and events.
 The trusted ingress event allocates context entry IDs; an authenticated user
 confirmation binds an **exact** (reader, tool, entry ID, value) tuple; a
@@ -29,7 +35,7 @@ that adds an effect. The proof uses a step-preserved invariant, then induction
 over traces. The theorem must pass pinned Lean CI and an independent
 statement-fidelity review before use as assurance.
 
-There are three `by decide` controls:
+There are three named theorem controls plus additional kernel-checked `example` controls:
 - a second action cannot spend the same confirmation twice;
 - approving one entry ID cannot authorize an equal-value different entry;
 - an honest foreign sensitive action is still achievable.

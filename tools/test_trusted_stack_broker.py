@@ -15,6 +15,7 @@ import tempfile
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from trusted_stack.client import request
 
 AGENT, REVIEWER, APPROVER, OTHER = 23501, 23502, 23503, 23504

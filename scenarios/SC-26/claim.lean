@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC26Liveness
 import ControlStack.Core.AuthenticatedAdv
 import ControlStack.Scenarios.SC26Authenticated
 import ControlStack.Scenarios.SC26Transaction
@@ -54,3 +55,19 @@ import ControlStack.Scenarios.SC26Refinement
 #print axioms ControlStack.SC26Authenticated.forged_approval_pays_without_auth
 #check ControlStack.AuthenticatedAdv.sc26_consent_from_honest_script
 #print axioms ControlStack.AuthenticatedAdv.sc26_consent_from_honest_script
+#check ControlStack.SC26Liveness.honest_progress
+#print axioms ControlStack.SC26Liveness.honest_progress
+#check ControlStack.SC26Liveness.progress_interleaved
+#print axioms ControlStack.SC26Liveness.progress_interleaved
+#check ControlStack.SC26Liveness.paid_once
+#print axioms ControlStack.SC26Liveness.paid_once
+#check ControlStack.SC26Liveness.halted_blocks
+#print axioms ControlStack.SC26Liveness.halted_blocks
+#check ControlStack.SC26Liveness.cap_exhausted_blocks
+#print axioms ControlStack.SC26Liveness.cap_exhausted_blocks
+#check ControlStack.SC26Liveness.Concrete.crash_tolerant_progress
+#print axioms ControlStack.SC26Liveness.Concrete.crash_tolerant_progress
+#check ControlStack.SC26Liveness.Concrete.crashes_forever_no_progress
+#print axioms ControlStack.SC26Liveness.Concrete.crashes_forever_no_progress
+#check ControlStack.SC26Liveness.Concrete.halted_concrete_no_progress
+#print axioms ControlStack.SC26Liveness.Concrete.halted_concrete_no_progress

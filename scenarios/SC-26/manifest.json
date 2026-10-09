@@ -74,6 +74,24 @@
       "path": "ControlStack/Core/AuthenticatedAdv.lean",
       "sha256": "2b73eeca941633bbd984ee20616b42fa831393a53b550e6bb06ba9768f293c57",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Liveness.honest_progress",
+      "path": "ControlStack/Scenarios/SC26Liveness.lean",
+      "sha256": "2e2c0361bbd9fb7349f4b659460c3ffeefc63c04132d4a3e467d6cd40c5efc06",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Liveness.progress_interleaved",
+      "path": "ControlStack/Scenarios/SC26Liveness.lean",
+      "sha256": "2e2c0361bbd9fb7349f4b659460c3ffeefc63c04132d4a3e467d6cd40c5efc06",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Liveness.Concrete.crash_tolerant_progress",
+      "path": "ControlStack/Scenarios/SC26Liveness.lean",
+      "sha256": "2e2c0361bbd9fb7349f4b659460c3ffeefc63c04132d4a3e467d6cd40c5efc06",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -143,7 +161,7 @@
     },
     {
       "id": "honest_usefulness",
-      "text": "The scripted honest client completes 64 invoices (16 with crashes) within 10 s each; floor 58/64. Recorded 64/64 by the preregistered runner; promotion to MET is reserved for an independent runner.",
+      "text": "The scripted honest client completes 64 invoices (16 with crashes) within 10 s each; floor 58/64. Recorded 64/64 by the preregistered runner; promotion to MET is reserved for an independent runner. Formal counterpart (SC26Liveness): honest_progress / progress_interleaved (approved, in-cap requests are paid despite any legal adversary interleaving unless halted or cap exhausted); crash_tolerant_progress on the concrete machine under a fairness premise (a recover after the last crash); halted_blocks / cap_exhausted_blocks are the availability prices of safety.",
       "proof": "NOT_APPLICABLE",
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",

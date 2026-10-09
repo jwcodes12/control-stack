@@ -1,0 +1,17 @@
+name: sc08-reconcile-v2
+on:
+  pull_request:
+    paths:
+      - 'scenarios/SC-08/harness/reconcile_v2.py'
+      - 'tools/test_sc08_reconcile_v2.py'
+      - '.github/workflows/sc08-reconcile-v2.yml'
+  workflow_dispatch:
+jobs:
+  negative-controls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest -v tools.test_sc08_reconcile_v2

@@ -1,0 +1,59 @@
+name: english-lean-fidelity-ledger
+on:
+  push:
+    branches: [fidelity-kernel-20261009]
+    paths:
+      - ".github/workflows/english-lean-ledger.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  proof-claims-elaboration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned ledger source
+        run: |
+          test "$(cat ledger-check/lean-toolchain)" = "leanprover/lean4:v4.35.0-rc3"
+          cat ledger-check/lakefile.toml
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Download pinned Mathlib cache
+        working-directory: ledger-check
+        run: |
+          set -euo pipefail
+          lean --version
+          lake exe cache get
+      - name: Run five proof-claim elaborations with axioms
+        run: |
+          set -euo pipefail
+          python3 ledger-check/check.py --emit /tmp/fidelity-ledger UMPROTF1 UMADAPTF1 UMADAPTF2 UMCERTF1 TMCERTF1
+          for cid in UMPROTF1 UMADAPTF1 UMADAPTF2 UMCERTF1 TMCERTF1; do
+            file="/tmp/fidelity-ledger/Check_${cid}.lean"
+            cat >> "$file" <<EOF
+          set_option pp.explicit true
+          set_option pp.universes true
+          set_option pp.maxDepth 65
+          #print PL_${cid}.Claim
+          #print PL_${cid}.Witness
+          #print axioms gate_claim
+          #print axioms gate_witness
+          EOF
+            echo "=== ${cid}: BEGIN elaborated claim and axiom report ==="
+            (cd ledger-check && lake env lean "$file") 2>&1 | tee "${cid}.log"
+            echo "=== ${cid}: CHECK PASSED ==="
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: english-lean-fidelity-ledger-logs
+          path: |
+            UMPROTF1.log
+            UMADAPTF1.log
+            UMADAPTF2.log
+            UMCERTF1.log
+            TMCERTF1.log
+          if-no-files-found: ignore

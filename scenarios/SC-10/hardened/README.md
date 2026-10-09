@@ -50,6 +50,36 @@ actual concurrent Unix socket requests with replayed ordering, rejection of a
 second store instance, and a distinct same-UID child process rejected by the
 kernel-observed PID gate.
 
+## Narrow, pre-effect semantics added
+
+The new `emit` operation never returns a separately spendable authorization
+token. Its **only effect** is an append-only `kind=effect` journal record,
+created by the same serialized policy-store operation that checks the latest
+admin-written allowlist. It records the exact host/payload, policy version and
+digest. If the host is currently denied or the store lacks a policy, no effect
+record is appended. An `emit` request must carry a bounded, nonempty
+`request_id`; identical repeats return the original record with
+`replayed=true`, including after journal replay on restart, without creating
+another effect. Reusing that ID for different content is rejected.
+
+Local negative tests check policy tightening before effect,
+replay after restart, duplicate suppression, malformed inputs and a forged
+effect that rehashes its predecessor but names a disallowed host.
+The reference suite passed **10/10 local tests** against the exact checked-in
+source blobs; GitHub CI remains a separate gate.
+
+**This does NOT prove** Linux/netfilter/firewall syscall mediation, arbitrary
+file writes, external network sends, DMA, execution, or any off-journal effect.
+A downstream consumer must not treat `decide` or `emit` replies as an
+unrestricted authorization capability. In particular, `emit` is a journaled
+effect only; making a real network effect would require the actuator itself
+to be inside a trusted, pre-effect enforcement boundary.
+
+A peer's PID is not a reliable security principal across process/UID
+compromise; replay IDs are not cryptographic credentials; SHA-256 chaining
+without an independent monotonic witness does not rule out a complete-prefix
+rollback by an actor with write access to the journal.
+
 ## Remaining proof, runtime and review obligations
 
 - Connect the real serialized socket requests and JSON receipts to a Lean

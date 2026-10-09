@@ -1,0 +1,48 @@
+name: trusted-broker
+on:
+  push:
+    paths: ['trusted_stack/**', 'tools/test_trusted_stack*', 'ControlStack/TrustedBroker.lean', 'ControlStack.lean', '.github/workflows/trusted-broker.yml']
+  pull_request:
+    paths: ['trusted_stack/**', 'tools/test_trusted_stack*', 'ControlStack/TrustedBroker.lean', 'ControlStack.lean', '.github/workflows/trusted-broker.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  transactions-and-live-identities:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
+      - run: sudo -n python3 tools/test_trusted_stack_broker.py
+      - run: sudo -n python3 tools/test_trusted_stack_mutations.py --live
+      - run: python3 tools/build_registry.py --check
+      - run: python3 tools/build_statement_catalog.py --check
+  pinned-joint-model:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: lake exe cache get
+      - run: lake build ControlStack
+      - name: Reject unexpected axioms in the new joint model
+        run: |
+          lake env lean ControlStack/TrustedBroker.lean > /tmp/broker-axioms.txt
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          output = Path('/tmp/broker-axioms.txt').read_text()
+          reports = re.findall(r"depends on axioms: \[([^\]]*)\]", output)
+          assert len(reports) == 10, output
+          allowed = {'propext', 'Quot.sound', 'Classical.choice'}
+          for report in reports:
+              assert set(map(str.strip, report.split(','))) <= allowed, report
+          assert 'sorryAx' not in output and 'error:' not in output, output
+          print(output)
+          PY

@@ -1,10 +1,26 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
 
+## Broker continuation — 2026-10-09
+
+The [joint transition report](reviews/broker-joint-transition-20261009/README.md)
+records ten new pinned Lean declarations for the reference broker's shared
+transaction state, plus bounded SQL/oracle differential checks, seven mutation
+controls and live disconnected-client/retry controls. Failed reply delivery no
+longer terminates the broker; database connections are explicitly closed.
+The current registry/catalog contain 875 source declarations. The sprint below
+and `completed.md` describe the original 865-declaration snapshot.
+
+The host preflight recorded **G0 BLOCKED_HOST**: no `/dev/kvm` on this aarch64
+machine. Native accelerated guest/usefulness testing remains open. Joint model
+safety has progressed; formal Python/SQL refinement, real external effects,
+anti-rollback/time trust, F6 adaptive imperfect auditing and independent expert
+review remain unfulfilled. No scenario or deployment-assurance status changed.
+
 ## Primitive completion sprint — 2026-10-09 (F1–F8)
 
 **Execution handoff:** detailed authorized-host/VM steps and exact evidence go/no-go gates are in [VM-HANDOFF.md](VM-HANDOFF.md). The source and CI completion record is [completed.md](completed.md).
 
-**Status:** All eight families have at least partial model-level results, NOT eight deployable primitives. The new `trusted_stack/` repository-only reference service implements a **single narrow action**: atomic authorization and append of a SQLite release record. It has no external harmful-effect adapter, no kernel-enforced universal interception and no side-channel secrecy guarantee. Its tests and CI are linked in the root `COMPLETED.md`. `LEAN-STATEMENTS-NORMAL-FORM.md` contains all **865** indexed source signatures (not kernel-elaborated normal forms).
+**Status:** All eight families have at least partial model-level results, NOT eight deployable primitives. The new `trusted_stack/` repository-only reference service implements a **single narrow action**: atomic authorization and append of a SQLite release record. It has no external harmful-effect adapter, no kernel-enforced universal interception and no side-channel secrecy guarantee. Its original tests and CI are linked in the root `completed.md`. The sprint's source catalog contained **865** indexed signatures; the continuation above records the current inventory (not kernel-elaborated normal forms).
 
 ### Open steps, prioritized with precise acceptance gates
 

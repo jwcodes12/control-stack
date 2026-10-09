@@ -1,5 +1,11 @@
 # Trusted-stack reference service — F1 / F3 / F4 / F5 / F7 / F8
 
+The [joint transaction model and continuation report](../reviews/broker-joint-transition-20261009/README.md)
+describe the new Lean shared-state invariants and bounded SQL/oracle checks.
+Run `python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v` and
+`sudo -n python3 tools/test_trusted_stack_mutations.py --live` to replay the
+reference and mutation checks on a disposable Linux host.
+
 This is a **narrow, non-production reference enforcement boundary**.
 The only modeled external effect is a durable record in SQLite's
 \`releases\` table. **It does not launch programs, deploy artifacts, execute

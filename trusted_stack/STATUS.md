@@ -1,5 +1,12 @@
 # Trusted-stack primitive implementation and remaining validity gates
 
+2026-10-09 continuation: the [joint transaction model and validation report](../reviews/broker-joint-transition-20261009/README.md)
+add shared-state Lean invariants, bounded differential tests and seven mutation
+controls. Live peer-credential tests cover disconnected callers and retry after
+a committed release loses its acknowledgment. The broker survives failed reply
+delivery. Formal SQL/runtime refinement and all actual-effect obligations remain
+open; the local native VM gate is BLOCKED_HOST because `/dev/kvm` is absent.
+
 Implemented as a reference control stack with a durable SQLite event gate:
 - trusted registrar identity from Linux SO_PEERCRED on an AF_UNIX socket;
 - distinct OS agent/reviewer/approver/admin UIDs;

@@ -20,33 +20,37 @@ theorem run_append {St Op Eff : Type} (G : System St Op Eff)
     G.run s (before ++ after) = G.run (G.run s before) after := by
   simp [System.run, List.foldl_append]
 
-/-- Inserting a trusted halt before an arbitrary suffix makes the halt bit sticky. -/
+/-- Inserting a trusted halt before an arbitrary after makes the halt bit sticky. -/
 theorem delivered_halt_absorbs {St Op Eff : Type} (G : System St Op Eff)
     (sh : St × Bool) (rest : List (HOp Op)) :
     (withHalt G).run sh (.halt :: rest) = (sh.1, true) := by
   rcases sh with ⟨s, b⟩
-  cases b <;> simp [System.run_cons, withHalt, halt_absorbing]
+  cases b
+  · change (withHalt G).run (s, true) rest = (s, true)
+    exact halt_absorbing G s rest
+  · change (withHalt G).run (s, true) rest = (s, true)
+    exact halt_absorbing G s rest
 
 /-- Scheduling premise: a trusted halt occurs strictly before the n-th
 position. This is an external scheduler obligation, not an axiom. -/
 def DeliveredWithin {Op : Type} (n : Nat) (ops : List (HOp Op)) : Prop :=
-  ∃ prefix suffix, ops = prefix ++ (.halt :: suffix) ∧ prefix.length < n
+  ∃ before after, ops = before ++ (.halt :: after) ∧ before.length < n
 
 /-- Bounded delivery implies the model has halted after this finite trace. -/
 theorem liveness_if_delivered {St Op Eff : Type} (G : System St Op Eff)
     (s : St) (n : Nat) (ops : List (HOp Op))
     (h : DeliveredWithin n ops) :
     ((withHalt G).run (s, false) ops).2 = true := by
-  rcases h with ⟨prefix, suffix, heq, _⟩
+  rcases h with ⟨before, after, heq, _⟩
   subst ops
   simp [run_append, delivered_halt_absorbs]
 
 /-- The effect log after a delivered trusted halt equals the log immediately
 before that halt, even if arbitrarily many operations follow. -/
 theorem effects_frozen_after_delivered_halt {St Op Eff : Type} (G : System St Op Eff)
-    (s : St) (prefix suffix : List (HOp Op)) :
-    (withHalt G).effects ((withHalt G).run (s, false) (prefix ++ (.halt :: suffix))) =
-      (withHalt G).effects ((withHalt G).run (s, false) prefix) := by
+    (s : St) (before after : List (HOp Op)) :
+    (withHalt G).effects ((withHalt G).run (s, false) (before ++ (.halt :: after))) =
+      (withHalt G).effects ((withHalt G).run (s, false) before) := by
   simp [run_append, delivered_halt_absorbs, withHalt]
 
 /-- Necessity witness: an arbitrarily long trace of *only* ordinary operations

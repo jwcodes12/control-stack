@@ -50,9 +50,13 @@ def main():
     ap.add_argument("--check-exec-delay", type=float, default=0.0)
     ap.add_argument("--by-path", action="store_true")
     ap.add_argument("--no-script-check", action="store_true")
+    ap.add_argument("--sealed-script", action="store_true", help="opt-in sealed memfd script loading (NOT frozen prereg)")
     ap.add_argument("--lifetime", type=float, default=30.0)
     a = ap.parse_args()
-    config = {"by_path": a.by_path, "no_script_check": a.no_script_check, "check_exec_delay": a.check_exec_delay}
+    if a.by_path and a.sealed_script:
+        ap.error("--by-path cannot be combined with --sealed-script")
+    config = {"by_path": a.by_path, "no_script_check": a.no_script_check,
+              "sealed_script": a.sealed_script, "check_exec_delay": a.check_exec_delay}
     allow = json.load(open(a.allowlist))
     os.makedirs(a.pin_dir, mode=0o700, exist_ok=True)
     os.chmod(a.pin_dir, 0o700)
@@ -111,6 +115,7 @@ def main():
             pfd = os.open(os.path.realpath(prog), os.O_RDONLY)
         except OSError as e:
             return log(dict(rec, decision="refused", why="cannot open program: %s" % e))
+        pinned_fd = None
         try:
             pd = hashlib.sha256(read_fd(pfd)).hexdigest()
             os.lseek(pfd, 0, os.SEEK_SET)
@@ -134,14 +139,20 @@ def main():
                 rec["script_digest"] = sd
                 if sd not in allow["scripts"] and not a.no_script_check:
                     return log(dict(rec, decision="refused", why="script digest not allowlisted"))
-                pinned = os.path.join(a.pin_dir, sd + ".py")
-                if not os.path.exists(pinned):
+                if a.sealed_script:
+                    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                    from sealed_script import sealed_script_fd, verified_script_path
+                    pinned_fd = sealed_script_fd(data)
+                    pinned = verified_script_path(pinned_fd)
+                else:
+                    pinned = os.path.join(a.pin_dir, sd + ".py")
+                if not a.sealed_script and not os.path.exists(pinned):
                     tmp = pinned + ".tmp"
                     with open(tmp, "wb") as fh:
                         fh.write(data)
                     os.chmod(tmp, 0o400)
                     os.rename(tmp, pinned)
-                elif hashlib.sha256(open(pinned, "rb").read()).hexdigest() != sd:
+                elif not a.sealed_script and hashlib.sha256(open(pinned, "rb").read()).hexdigest() != sd:
                     return log(dict(rec, decision="refused", why="pinned copy corrupted"))
             rec["t_check"] = time.monotonic_ns()
             time.sleep(a.check_exec_delay)
@@ -149,6 +160,8 @@ def main():
             rc = spawn(pfd, ["python3", "-I", "-S", "-B"] + ([pinned] if pinned else []))
             return log(dict(rec, decision="executed", executed_path=pinned, rc=rc))
         finally:
+            if pinned_fd is not None:
+                os.close(pinned_fd)
             os.close(pfd)
 
     path = os.path.join(a.dir, "agent.sock")

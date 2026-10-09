@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-25",
   "title": "Agent hides or misorders hazardous actions behind after-the-fact monitoring",
-  "bad_event": "An operation executes before a trusted audit PASS for exactly its content (and, if irreversible, an exact approval), or executes twice, or after timeout/HALT.",
+  "bad_event": "An operation executes before a trusted audit PASS for the exact DIGEST of its content (and, if irreversible, an exact-digest approval), or executes twice, or after timeout/HALT. Content-level identity additionally needs collision resistance on the contents in the run; no content-level theorem yet (REVIEW-PACKET finding 3, witness W3). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of submit/amend/audit/approve/check/fire/crash/timeout/halt operations.",
   "refutation": "A trace executing un-audited or amended content despite full checks (Lean witnesses: fail-open timeout, unchecked digest, non-atomic check, agent-declared class).",
   "scope": "Lean model only; no runtime harness yet. Not: audit quality, classifier correctness, verdict revocation.",
@@ -35,6 +35,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "exclusive_executor",
       "text": "The executor is the only effect path.",

@@ -2,10 +2,10 @@
   "schema_version": 1,
   "id": "SC-09",
   "title": "Agent obtains privileged host access or passwordless sudo",
-  "bad_event": "A process of the agent lineage holds or exercises a capability not granted to its lineage or not covered by an exact elevation rule.",
+  "bad_event": "A process of the agent lineage holds or exercises a capability not granted to its lineage or not covered by an exact elevation rule. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any spawn/exec/elevate/deputy-call/grant/halt trace.",
   "refutation": "A privileged use outside grants and exact elevation rules despite full checks (witnesses: unrestricted elevation, exec without attenuation, confused deputy).",
-  "scope": "Lean model only. Not: kernel privilege escalation bugs.",
+  "scope": "Lean model only. Not: kernel privilege escalation bugs. The check flag(s) attenuate model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
   "families": [
     "F1",
     "F7",
@@ -34,6 +34,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "kernel_enforces_caps",
       "text": "The OS enforces the capability model (no kernel bugs).",

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-04",
   "title": "Agent leaks via logs, telemetry, diagnostic output, error strings or process timing",
-  "bad_event": "A receiver of canonicalised logs recovers a secret with probability above K^m·Q^{fm}/|M|.",
+  "bad_event": "A receiver of logs/telemetry recovers a secret. Claim: probability ≤ K^m·Q^{fm}/|M| (log_channel), applicable only if the receiver sees nothing but template ids and quantised fields. (REVIEW-PACKET finding 10: the bound is the claim; the bad event is the adversary's success.)",
   "adversary": "Adaptive writer of m log records; trusted canonicaliser to K templates with f fields quantised to Q levels.",
   "refutation": "A log path bypassing the canonicaliser, or recovery above the bound (witness: free-text field leaks in one record).",
   "scope": "Lean bound only; timing and error channels must be inside the canonicalised view or separately certified.",

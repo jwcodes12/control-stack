@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-02",
   "title": "Sender communicates across multiple episodes to a persistent receiver",
-  "bad_event": "A persistent receiver recovers a k-bit secret with probability above Π L_e / 2^k across E episodes.",
+  "bad_event": "A persistent receiver recovers a k-bit secret across E episodes. Claim: probability ≤ Π L_e / 2^k (sc02_accumulated), applicable only if each episode's receiver view is dominated by its certificate (one-shot types fix the observation model). (REVIEW-PACKET finding 10: the bound is the claim; the bad event is the adversary's success.)",
   "adversary": "Adaptive sender with shared seed and hidden per-round state; receiver sees all rounds.",
   "refutation": "A measured recovery rate above the certificate, or an episode whose view is not dominated by its claimed certificate.",
   "scope": "Lean bound only; per-episode certificates L_e must be measured or enforced (cf. SC-01 refutation of complete observation on one host).",

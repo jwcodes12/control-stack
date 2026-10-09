@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-18",
   "title": "Agent disables inference logging or monitoring in model-serving infrastructure",
-  "bad_event": "A response is released without a committed record in the trusted log, or more than T ticks after the last log acknowledgement, or the logging configuration is changed by a non-admin.",
+  "bad_event": "A response is released without a committed record in the trusted log, or more than T ticks after the last log acknowledgement, or the logging configuration is changed by a non-admin. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of request/log/ack/release/sink-outage/config-change/tick/halt operations (legal: admins only point config at the trusted sink).",
   "refutation": "A release without a trusted log record despite full checks (witnesses: release-before-log, agent-writable config, fail-open outage, watchdog off).",
   "scope": "Lean model only; no runtime harness. Not: log review, post-commit tamper evidence.",
@@ -34,6 +34,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "ack_durable",
       "text": "A sink acknowledgement means a durable commit.",

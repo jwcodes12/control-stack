@@ -1,0 +1,1027 @@
+### CHECK ControlStack.SC26.sc26_safe
+ControlStack.SC26.sc26_safe : ∀ (R : ControlStack.SC26.Roles) (cap : ℕ) (ops : List ControlStack.SC26.Op),
+  (∀ o ∈ ops, ControlStack.SC26.legal R o) →
+    ControlStack.SC26.Good R cap (ControlStack.SC26.run R cap ControlStack.SC26.full ControlStack.SC26.init ops)
+### AXIOMS ControlStack.SC26.sc26_safe
+'ControlStack.SC26.sc26_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC26.safe_of_sound
+ControlStack.SC26.safe_of_sound : ∀ (R : ControlStack.SC26.Roles) (cap : ℕ) {C : ControlStack.SC26.Checks},
+  ControlStack.SC26.Sound C →
+    ∀ (ops : List ControlStack.SC26.Op),
+      (∀ o ∈ ops, ControlStack.SC26.legal R o) →
+        ControlStack.SC26.Good R cap (ControlStack.SC26.run R cap C ControlStack.SC26.init ops)
+### AXIOMS ControlStack.SC26.safe_of_sound
+'ControlStack.SC26.safe_of_sound' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC26.sc26_safe_disjoint
+ControlStack.SC26.sc26_safe_disjoint : ∀ (R : ControlStack.SC26.Roles) (cap : ℕ),
+  (∀ a ∈ R.approvers, a ∉ R.agents) →
+    ∀ (ops : List ControlStack.SC26.Op),
+      (∀ o ∈ ops, ControlStack.SC26.legal R o) →
+        ∀ e ∈ (ControlStack.SC26.run R cap ControlStack.SC26.full ControlStack.SC26.init ops).bank,
+          ∃ r a,
+            ControlStack.SC26.reqOf (ControlStack.SC26.run R cap ControlStack.SC26.full ControlStack.SC26.init ops)
+                  e.1 =
+                some r ∧
+              r.tx = e.2 ∧
+                (e.1, a, e.2) ∈
+                    (ControlStack.SC26.run R cap ControlStack.SC26.full ControlStack.SC26.init ops).approvals ∧
+                  a ∈ R.approvers ∧ a ∉ R.agents ∧ a ≠ r.requester
+### AXIOMS ControlStack.SC26.sc26_safe_disjoint
+'ControlStack.SC26.sc26_safe_disjoint' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC26.sc26_once
+ControlStack.SC26.sc26_once : ∀ (R : ControlStack.SC26.Roles) (cap : ℕ) (ops : List ControlStack.SC26.Op),
+  (ControlStack.SC26.run R cap ControlStack.SC26.full ControlStack.SC26.init ops).reserved.Nodup
+### AXIOMS ControlStack.SC26.sc26_once
+'ControlStack.SC26.sc26_once' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC26.halt_freezes
+ControlStack.SC26.halt_freezes : ∀ (R : ControlStack.SC26.Roles) (cap : ℕ) (s : ControlStack.SC26.St)
+  (ops : List ControlStack.SC26.Op),
+  (∀ o ∈ ops, ControlStack.SC26.legal R o) →
+    s.halted = true →
+      (ControlStack.SC26.run R cap ControlStack.SC26.full s ops).net = s.net ∧
+        ∀ e ∈ (ControlStack.SC26.run R cap ControlStack.SC26.full s ops).bank, e ∈ s.bank ∨ e ∈ s.net
+### AXIOMS ControlStack.SC26.halt_freezes
+'ControlStack.SC26.halt_freezes' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC26.honest_trace_pays
+ControlStack.SC26.honest_trace_pays : (ControlStack.SC26.run ControlStack.SC26.R0 20 ControlStack.SC26.full
+      ControlStack.SC26.init
+      [ControlStack.SC26.Op.request 1 ControlStack.SC26.tx1, ControlStack.SC26.Op.approve 2 0 ControlStack.SC26.tx1,
+        ControlStack.SC26.Op.execute 1 0, ControlStack.SC26.Op.deliver 0, ControlStack.SC26.Op.arrive 0,
+        ControlStack.SC26.Op.deliver 0, ControlStack.SC26.Op.arrive 0, ControlStack.SC26.Op.arrive 0]).bank =
+  [(0, ControlStack.SC26.tx1)]
+### AXIOMS ControlStack.SC26.honest_trace_pays
+'ControlStack.SC26.honest_trace_pays' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC26.Good
+def ControlStack.SC26.Good : ControlStack.SC26.Roles → ℕ → ControlStack.SC26.St → Prop :=
+fun R cap s =>
+  (∀ e ∈ s.bank,
+      ∃ r,
+        ControlStack.SC26.reqOf s e.1 = some r ∧ r.tx = e.2 ∧ e.1 ∈ s.reserved ∧ ControlStack.SC26.Approved R s e.1 r) ∧
+    (List.map Prod.fst s.bank).Nodup ∧ (List.map (fun e => e.2.amount) s.bank).sum ≤ cap
+### PRINT ControlStack.SC26.Approved
+def ControlStack.SC26.Approved : ControlStack.SC26.Roles → ControlStack.SC26.St → ℕ → ControlStack.SC26.Req → Prop :=
+fun R s k r => ∃ a, (k, a, r.tx) ∈ s.approvals ∧ a ∈ R.approvers ∧ a ≠ r.requester
+### PRINT ControlStack.SC26.reqOf
+def ControlStack.SC26.reqOf : ControlStack.SC26.St → ℕ → Option ControlStack.SC26.Req :=
+fun s id => List.find? (fun r => decide (r.id = id)) s.reqs
+### PRINT ControlStack.SC26.legal
+def ControlStack.SC26.legal : ControlStack.SC26.Roles → ControlStack.SC26.Op → Prop :=
+fun R x =>
+  match x with
+  | ControlStack.SC26.Op.bankCall c key tx => c ≠ R.gate
+  | x => True
+### PRINT ControlStack.SC26.full
+def ControlStack.SC26.full : ControlStack.SC26.Checks :=
+{ distinct := true, payload := true, nonce := true, cap := true, haltCheck := true, bankDedup := true,
+  bankAuth := true }
+### PRINT ControlStack.SC26.Sound
+structure ControlStack.SC26.Sound (C : ControlStack.SC26.Checks) : Prop
+number of parameters: 1
+fields:
+  ControlStack.SC26.Sound.distinct : C.distinct = true
+  ControlStack.SC26.Sound.payload : C.payload = true
+  ControlStack.SC26.Sound.cap : C.cap = true
+  ControlStack.SC26.Sound.dedup : C.bankDedup = true
+  ControlStack.SC26.Sound.auth : C.bankAuth = true
+constructor:
+  ControlStack.SC26.Sound.mk {C : ControlStack.SC26.Checks} (distinct : C.distinct = true) (payload : C.payload = true)
+    (cap : C.cap = true) (dedup : C.bankDedup = true) (auth : C.bankAuth = true) : ControlStack.SC26.Sound C
+### PRINT ControlStack.SC26.Checks
+structure ControlStack.SC26.Checks : Type
+number of parameters: 0
+fields:
+  ControlStack.SC26.Checks.distinct : Bool
+  ControlStack.SC26.Checks.payload : Bool
+  ControlStack.SC26.Checks.nonce : Bool
+  ControlStack.SC26.Checks.cap : Bool
+  ControlStack.SC26.Checks.haltCheck : Bool
+  ControlStack.SC26.Checks.bankDedup : Bool
+  ControlStack.SC26.Checks.bankAuth : Bool
+constructor:
+  ControlStack.SC26.Checks.mk (distinct payload nonce cap haltCheck bankDedup bankAuth : Bool) :
+    ControlStack.SC26.Checks
+### PRINT ControlStack.SC26.init
+def ControlStack.SC26.init : ControlStack.SC26.St :=
+{ next := 0, reqs := [], approvals := [], reserved := [], spent := 0, halted := false, bank := [], net := [] }
+### PRINT ControlStack.SC26.Roles
+structure ControlStack.SC26.Roles : Type
+number of parameters: 0
+fields:
+  ControlStack.SC26.Roles.agents : List ℕ
+  ControlStack.SC26.Roles.approvers : List ℕ
+  ControlStack.SC26.Roles.admins : List ℕ
+  ControlStack.SC26.Roles.gate : ℕ
+constructor:
+  ControlStack.SC26.Roles.mk (agents approvers admins : List ℕ) (gate : ℕ) : ControlStack.SC26.Roles
+### PRINT ControlStack.SC26.Tx
+structure ControlStack.SC26.Tx : Type
+number of parameters: 0
+fields:
+  ControlStack.SC26.Tx.dest : ℕ
+  ControlStack.SC26.Tx.amount : ℕ
+  ControlStack.SC26.Tx.memo : ℕ
+constructor:
+  ControlStack.SC26.Tx.mk (dest amount memo : ℕ) : ControlStack.SC26.Tx
+### PRINT ControlStack.SC26.Req
+structure ControlStack.SC26.Req : Type
+number of parameters: 0
+fields:
+  ControlStack.SC26.Req.id : ℕ
+  ControlStack.SC26.Req.requester : ℕ
+  ControlStack.SC26.Req.tx : ControlStack.SC26.Tx
+constructor:
+  ControlStack.SC26.Req.mk (id requester : ℕ) (tx : ControlStack.SC26.Tx) : ControlStack.SC26.Req
+### PRINT ControlStack.SC26.St
+structure ControlStack.SC26.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC26.St.next : ℕ
+  ControlStack.SC26.St.reqs : List ControlStack.SC26.Req
+  ControlStack.SC26.St.approvals : List (ℕ × ℕ × ControlStack.SC26.Tx)
+  ControlStack.SC26.St.reserved : List ℕ
+  ControlStack.SC26.St.spent : ℕ
+  ControlStack.SC26.St.halted : Bool
+  ControlStack.SC26.St.bank : List (ℕ × ControlStack.SC26.Tx)
+  ControlStack.SC26.St.net : List (ℕ × ControlStack.SC26.Tx)
+constructor:
+  ControlStack.SC26.St.mk (next : ℕ) (reqs : List ControlStack.SC26.Req)
+    (approvals : List (ℕ × ℕ × ControlStack.SC26.Tx)) (reserved : List ℕ) (spent : ℕ) (halted : Bool)
+    (bank net : List (ℕ × ControlStack.SC26.Tx)) : ControlStack.SC26.St
+### CHECK ControlStack.SC28.sc28_safe
+ControlStack.SC28.sc28_safe : ∀ (admins : List ℕ) (G : ℕ) (ops : List ControlStack.SC28.Op),
+  (∀ o ∈ ops, ControlStack.SC28.legal o) →
+    ControlStack.SC28.Good G (ControlStack.SC28.run admins G ControlStack.SC28.full ControlStack.SC28.init ops)
+### AXIOMS ControlStack.SC28.sc28_safe
+'ControlStack.SC28.sc28_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC28.honest_trace_works
+ControlStack.SC28.honest_trace_works : (ControlStack.SC28.run [9] 10 ControlStack.SC28.full ControlStack.SC28.init
+      [ControlStack.SC28.Op.issue 9 0 10, ControlStack.SC28.Op.assignTo 9 1 0, ControlStack.SC28.Op.work 1 3 3,
+        ControlStack.SC28.Op.restart, ControlStack.SC28.Op.work 1 4 4]).usage =
+  [(1, 0, 3), (1, 0, 4)]
+### AXIOMS ControlStack.SC28.honest_trace_works
+'ControlStack.SC28.honest_trace_works' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC28.Good
+def ControlStack.SC28.Good : ℕ → ControlStack.SC28.St → Prop :=
+fun G s =>
+  ControlStack.SC28.usedT s ≤ G ∧
+    (∀ (lid : ℕ), ControlStack.SC28.usedL s lid ≤ (ControlStack.SC28.budgetOf s lid).getD 0) ∧ s.usage.length ≤ G
+### PRINT ControlStack.SC28.legal
+def ControlStack.SC28.legal : ControlStack.SC28.Op → Prop :=
+fun x =>
+  match x with
+  | ControlStack.SC28.Op.rollback n => False
+  | x => True
+### PRINT ControlStack.SC28.full
+def ControlStack.SC28.full : ControlStack.SC28.Checks :=
+{ share := true, meter := true, global := true, haltCheck := true }
+### PRINT ControlStack.SC28.init
+def ControlStack.SC28.init : ControlStack.SC28.St :=
+{ leases := [], assign := [], revoked := [], ledger := [], usage := [], halted := false }
+### PRINT ControlStack.SC28.St
+structure ControlStack.SC28.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC28.St.leases : List (ℕ × ℕ)
+  ControlStack.SC28.St.assign : List (ℕ × ℕ)
+  ControlStack.SC28.St.revoked : List ℕ
+  ControlStack.SC28.St.ledger : List (ℕ × ℕ)
+  ControlStack.SC28.St.usage : List (ℕ × ℕ × ℕ)
+  ControlStack.SC28.St.halted : Bool
+constructor:
+  ControlStack.SC28.St.mk (leases assign : List (ℕ × ℕ)) (revoked : List ℕ) (ledger : List (ℕ × ℕ))
+    (usage : List (ℕ × ℕ × ℕ)) (halted : Bool) : ControlStack.SC28.St
+### PRINT ControlStack.SC28.Op
+inductive ControlStack.SC28.Op : Type
+number of parameters: 0
+constructors:
+ControlStack.SC28.Op.issue : ℕ → ℕ → ℕ → ControlStack.SC28.Op
+ControlStack.SC28.Op.assignTo : ℕ → ℕ → ℕ → ControlStack.SC28.Op
+ControlStack.SC28.Op.fork : ℕ → ℕ → ℕ → ℕ → ControlStack.SC28.Op
+ControlStack.SC28.Op.revoke : ℕ → ℕ → ControlStack.SC28.Op
+ControlStack.SC28.Op.work : ℕ → ℕ → ℕ → ControlStack.SC28.Op
+ControlStack.SC28.Op.restart : ControlStack.SC28.Op
+ControlStack.SC28.Op.rollback : ℕ → ControlStack.SC28.Op
+ControlStack.SC28.Op.halt : ℕ → ControlStack.SC28.Op
+### CHECK ControlStack.SC16.sc16_safe
+ControlStack.SC16.sc16_safe : ∀ (R : ControlStack.SC16.Roles) (h : ℕ → ℕ) (ops : List ControlStack.SC16.Op),
+  ControlStack.SC16.Good R h (ControlStack.SC16.run R h ControlStack.SC16.full ControlStack.SC16.init ops)
+### AXIOMS ControlStack.SC16.sc16_safe
+'ControlStack.SC16.sc16_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC16.sc16_reviewed_content
+ControlStack.SC16.sc16_reviewed_content : ∀ (R : ControlStack.SC16.Roles) (h : ℕ → ℕ) (ops : List ControlStack.SC16.Op),
+  Set.InjOn h
+      {c |
+        (∃ e ∈ (ControlStack.SC16.run R h ControlStack.SC16.full ControlStack.SC16.init ops).deployed, e.content = c) ∨
+          ∃ rv ∈ (ControlStack.SC16.run R h ControlStack.SC16.full ControlStack.SC16.init ops).reviews,
+            rv.content = c} →
+    ∀ e ∈ (ControlStack.SC16.run R h ControlStack.SC16.full ControlStack.SC16.init ops).deployed,
+      ∃ rv ∈ (ControlStack.SC16.run R h ControlStack.SC16.full ControlStack.SC16.init ops).reviews,
+        rv.content = e.content ∧ rv.reviewer ∈ R.reviewers ∧ rv.reviewer ≠ rv.stager
+### AXIOMS ControlStack.SC16.sc16_reviewed_content
+'ControlStack.SC16.sc16_reviewed_content' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC16.honest_trace_deploys
+ControlStack.SC16.honest_trace_deploys : (ControlStack.SC16.run ControlStack.SC16.R0 id ControlStack.SC16.full
+      ControlStack.SC16.init
+      [ControlStack.SC16.Op.stage 1 7, ControlStack.SC16.Op.review 2 7, ControlStack.SC16.Op.approve 3 0 7 5 0,
+        ControlStack.SC16.Op.deploy 1 0 5 7]).deployed =
+  [{ n := 0, target := 5, content := 7 }]
+### AXIOMS ControlStack.SC16.honest_trace_deploys
+'ControlStack.SC16.honest_trace_deploys' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC16.Good
+def ControlStack.SC16.Good : ControlStack.SC16.Roles → (ℕ → ℕ) → ControlStack.SC16.St → Prop :=
+fun R h s => (∀ e ∈ s.deployed, ControlStack.SC16.DepOk R h s e) ∧ (List.map ControlStack.SC16.Dep.n s.deployed).Nodup
+### PRINT ControlStack.SC16.full
+def ControlStack.SC16.full : ControlStack.SC16.Checks :=
+{ distinct := true, target := true, nonce := true, verify := true, haltCheck := true }
+### PRINT ControlStack.SC16.init
+def ControlStack.SC16.init : ControlStack.SC16.St :=
+{ cas := [], slots := [], reviews := [], approvals := [], used := [], deployed := [], halted := false }
+### PRINT ControlStack.SC16.Roles
+structure ControlStack.SC16.Roles : Type
+number of parameters: 0
+fields:
+  ControlStack.SC16.Roles.agents : List ℕ
+  ControlStack.SC16.Roles.reviewers : List ℕ
+  ControlStack.SC16.Roles.approvers : List ℕ
+  ControlStack.SC16.Roles.admins : List ℕ
+constructor:
+  ControlStack.SC16.Roles.mk (agents reviewers approvers admins : List ℕ) : ControlStack.SC16.Roles
+### PRINT ControlStack.SC16.St
+structure ControlStack.SC16.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC16.St.cas : List (ℕ × ℕ)
+  ControlStack.SC16.St.slots : List (ℕ × ℕ)
+  ControlStack.SC16.St.reviews : List ControlStack.SC16.Review
+  ControlStack.SC16.St.approvals : List ControlStack.SC16.Appr
+  ControlStack.SC16.St.used : List ℕ
+  ControlStack.SC16.St.deployed : List ControlStack.SC16.Dep
+  ControlStack.SC16.St.halted : Bool
+constructor:
+  ControlStack.SC16.St.mk (cas slots : List (ℕ × ℕ)) (reviews : List ControlStack.SC16.Review)
+    (approvals : List ControlStack.SC16.Appr) (used : List ℕ) (deployed : List ControlStack.SC16.Dep) (halted : Bool) :
+    ControlStack.SC16.St
+### CHECK ControlStack.SC25.sc25_safe
+ControlStack.SC25.sc25_safe : ∀ (R : ControlStack.SC25.Roles) (h : ℕ → ℕ) (cls : ℕ → Bool)
+  (ops : List ControlStack.SC25.Op),
+  ControlStack.SC25.Good R h cls (ControlStack.SC25.run R h cls ControlStack.SC25.full ControlStack.SC25.init ops)
+### AXIOMS ControlStack.SC25.sc25_safe
+'ControlStack.SC25.sc25_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC25.honest_reversible
+ControlStack.SC25.honest_reversible : List.map ControlStack.SC25.Exec.content
+    (ControlStack.SC25.run ControlStack.SC25.R0 id ControlStack.SC25.cls0 ControlStack.SC25.full ControlStack.SC25.init
+        [ControlStack.SC25.Op.submit 1 0 7 false, ControlStack.SC25.Op.audit 2 0 true, ControlStack.SC25.Op.check 0,
+          ControlStack.SC25.Op.fire 0]).executed =
+  [7]
+### AXIOMS ControlStack.SC25.honest_reversible
+'ControlStack.SC25.honest_reversible' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC25.honest_irreversible_with_crash
+ControlStack.SC25.honest_irreversible_with_crash : List.map ControlStack.SC25.Exec.content
+    (ControlStack.SC25.run ControlStack.SC25.R0 id ControlStack.SC25.cls0 ControlStack.SC25.full ControlStack.SC25.init
+        [ControlStack.SC25.Op.submit 1 0 100 true, ControlStack.SC25.Op.audit 2 0 true,
+          ControlStack.SC25.Op.approve 3 0, ControlStack.SC25.Op.check 0, ControlStack.SC25.Op.crash,
+          ControlStack.SC25.Op.fire 0, ControlStack.SC25.Op.check 0, ControlStack.SC25.Op.fire 0,
+          ControlStack.SC25.Op.fire 0]).executed =
+  [100]
+### AXIOMS ControlStack.SC25.honest_irreversible_with_crash
+'ControlStack.SC25.honest_irreversible_with_crash' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC25.Good
+def ControlStack.SC25.Good : ControlStack.SC25.Roles → (ℕ → ℕ) → (ℕ → Bool) → ControlStack.SC25.St → Prop :=
+fun R h cls s =>
+  (∀ e ∈ s.executed, ControlStack.SC25.ExecOk R h cls s e) ∧ (List.map ControlStack.SC25.Exec.id s.executed).Nodup
+### PRINT ControlStack.SC25.ExecOk
+def ControlStack.SC25.ExecOk : ControlStack.SC25.Roles →
+  (ℕ → ℕ) → (ℕ → Bool) → ControlStack.SC25.St → ControlStack.SC25.Exec → Prop :=
+fun R h cls s e =>
+  (∃ v ∈ List.take e.vlen s.verdicts,
+      v.id = e.id ∧ v.pass = true ∧ v.d = h e.content ∧ ∃ a, v.by_ = some a ∧ a ∈ R.auditors) ∧
+    (cls e.content = true →
+      ∃ ap ∈ List.take e.alen s.approvals,
+        ap.id = e.id ∧ ap.d = h e.content ∧ ap.approver ∈ R.approvers ∧ ap.approver ≠ e.submitter)
+### PRINT ControlStack.SC25.full
+def ControlStack.SC25.full : ControlStack.SC25.Checks :=
+{ digest := true, atomic := true, failOpen := false, trustedClass := true, haltCheck := true }
+### PRINT ControlStack.SC25.Checks
+structure ControlStack.SC25.Checks : Type
+number of parameters: 0
+fields:
+  ControlStack.SC25.Checks.digest : Bool
+  ControlStack.SC25.Checks.atomic : Bool
+  ControlStack.SC25.Checks.failOpen : Bool
+  ControlStack.SC25.Checks.trustedClass : Bool
+  ControlStack.SC25.Checks.haltCheck : Bool
+constructor:
+  ControlStack.SC25.Checks.mk (digest atomic failOpen trustedClass haltCheck : Bool) : ControlStack.SC25.Checks
+### PRINT ControlStack.SC25.init
+def ControlStack.SC25.init : ControlStack.SC25.St :=
+{ queue := [], verdicts := [], approvals := [], expired := [], checked := [], executed := [], halted := false }
+### PRINT ControlStack.SC25.Roles
+structure ControlStack.SC25.Roles : Type
+number of parameters: 0
+fields:
+  ControlStack.SC25.Roles.agents : List ℕ
+  ControlStack.SC25.Roles.auditors : List ℕ
+  ControlStack.SC25.Roles.approvers : List ℕ
+  ControlStack.SC25.Roles.admins : List ℕ
+constructor:
+  ControlStack.SC25.Roles.mk (agents auditors approvers admins : List ℕ) : ControlStack.SC25.Roles
+### PRINT ControlStack.SC25.St
+structure ControlStack.SC25.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC25.St.queue : List ControlStack.SC25.Item
+  ControlStack.SC25.St.verdicts : List ControlStack.SC25.Verdict
+  ControlStack.SC25.St.approvals : List ControlStack.SC25.Appr
+  ControlStack.SC25.St.expired : List ℕ
+  ControlStack.SC25.St.checked : List ℕ
+  ControlStack.SC25.St.executed : List ControlStack.SC25.Exec
+  ControlStack.SC25.St.halted : Bool
+constructor:
+  ControlStack.SC25.St.mk (queue : List ControlStack.SC25.Item) (verdicts : List ControlStack.SC25.Verdict)
+    (approvals : List ControlStack.SC25.Appr) (expired checked : List ℕ) (executed : List ControlStack.SC25.Exec)
+    (halted : Bool) : ControlStack.SC25.St
+### CHECK ControlStack.SC23.sc23_safe
+ControlStack.SC23.sc23_safe : ∀ (P : ControlStack.SC23.Policy) (ops : List ControlStack.SC23.Op),
+  ControlStack.SC23.Good P (ControlStack.SC23.run P ControlStack.SC23.full ControlStack.SC23.init ops)
+### AXIOMS ControlStack.SC23.sc23_safe
+'ControlStack.SC23.sc23_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC23.honest_untainted
+ControlStack.SC23.honest_untainted : (ControlStack.SC23.run ControlStack.SC23.P0 ControlStack.SC23.full
+      ControlStack.SC23.init [ControlStack.SC23.Op.userInput 0 42, ControlStack.SC23.Op.act 5 [0] 0]).executed =
+  [{ tool := 5, vals := [42], prov := false, conf := none }]
+### AXIOMS ControlStack.SC23.honest_untainted
+'ControlStack.SC23.honest_untainted' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC23.honest_confirmed
+ControlStack.SC23.honest_confirmed : (ControlStack.SC23.run ControlStack.SC23.P0 ControlStack.SC23.full
+      ControlStack.SC23.init
+      [ControlStack.SC23.Op.toolResult 0 66, ControlStack.SC23.Op.confirm 1 7 5 [66],
+        ControlStack.SC23.Op.act 5 [0] 7]).executed =
+  [{ tool := 5, vals := [66], prov := true, conf := some 7 }]
+### AXIOMS ControlStack.SC23.honest_confirmed
+'ControlStack.SC23.honest_confirmed' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC23.Good
+def ControlStack.SC23.Good : ControlStack.SC23.Policy → ControlStack.SC23.St → Prop :=
+fun P s =>
+  (∀ a ∈ s.executed, ControlStack.SC23.ActOk P s a) ∧ (List.filterMap ControlStack.SC23.Act.conf s.executed).Nodup
+### PRINT ControlStack.SC23.ActOk
+def ControlStack.SC23.ActOk : ControlStack.SC23.Policy → ControlStack.SC23.St → ControlStack.SC23.Act → Prop :=
+fun P s a =>
+  a.tool ∈ P.sensitive →
+    a.prov = true →
+      ∃ n, a.conf = some n ∧ ∃ cf ∈ s.confs, cf.n = n ∧ cf.tool = a.tool ∧ cf.vals = a.vals ∧ cf.by_ ∈ P.users
+### PRINT ControlStack.SC23.full
+def ControlStack.SC23.full : ControlStack.SC23.Checks :=
+{ propagate := true, taintCheck := true, exact := true, oneUse := true, haltCheck := true }
+### PRINT ControlStack.SC23.init
+def ControlStack.SC23.init : ControlStack.SC23.St :=
+{ store := [], confs := [], used := [], executed := [], halted := false }
+### PRINT ControlStack.SC23.Policy
+structure ControlStack.SC23.Policy : Type
+number of parameters: 0
+fields:
+  ControlStack.SC23.Policy.users : List ℕ
+  ControlStack.SC23.Policy.admins : List ℕ
+  ControlStack.SC23.Policy.sensitive : List ℕ
+constructor:
+  ControlStack.SC23.Policy.mk (users admins sensitive : List ℕ) : ControlStack.SC23.Policy
+### PRINT ControlStack.SC23.St
+structure ControlStack.SC23.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC23.St.store : List ControlStack.SC23.Val
+  ControlStack.SC23.St.confs : List ControlStack.SC23.Conf
+  ControlStack.SC23.St.used : List ℕ
+  ControlStack.SC23.St.executed : List ControlStack.SC23.Act
+  ControlStack.SC23.St.halted : Bool
+constructor:
+  ControlStack.SC23.St.mk (store : List ControlStack.SC23.Val) (confs : List ControlStack.SC23.Conf) (used : List ℕ)
+    (executed : List ControlStack.SC23.Act) (halted : Bool) : ControlStack.SC23.St
+### CHECK ControlStack.SC12.sc12_safe
+ControlStack.SC12.sc12_safe : ∀ (admins : List ℕ) (ops : List ControlStack.SC12.Op),
+  ControlStack.SC12.Good (ControlStack.SC12.run admins ControlStack.SC12.full ControlStack.SC12.init ops)
+### AXIOMS ControlStack.SC12.sc12_safe
+'ControlStack.SC12.sc12_safe' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.SC12.honest_session_lifecycle
+ControlStack.SC12.honest_session_lifecycle : have s :=
+  ControlStack.SC12.run [9] ControlStack.SC12.full ControlStack.SC12.init
+    [ControlStack.SC12.Op.start 9 1, ControlStack.SC12.Op.spawn 1 5 true 0, ControlStack.SC12.Op.fire 5,
+      ControlStack.SC12.Op.endSession 9 1, ControlStack.SC12.Op.fire 5];
+s.fired = [(5, 1, 0)] ∧ s.live = []
+### AXIOMS ControlStack.SC12.honest_session_lifecycle
+'ControlStack.SC12.honest_session_lifecycle' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC12.Good
+def ControlStack.SC12.Good : ControlStack.SC12.St → Prop :=
+fun s => ∀ e ∈ s.live, e.reg = true ∧ e.origin ∈ s.active ∧ e.origin ∉ s.ended
+### PRINT ControlStack.SC12.full
+def ControlStack.SC12.full : ControlStack.SC12.Checks :=
+{ registryOnly := true, lineage := true, revokeLineage := true, haltCheck := true }
+### PRINT ControlStack.SC12.init
+def ControlStack.SC12.init : ControlStack.SC12.St :=
+{ active := [], ended := [], live := [], fired := [], halted := false }
+### PRINT ControlStack.SC12.St
+structure ControlStack.SC12.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC12.St.active : List ℕ
+  ControlStack.SC12.St.ended : List ℕ
+  ControlStack.SC12.St.live : List ControlStack.SC12.Ent
+  ControlStack.SC12.St.fired : List (ℕ × ℕ × ℕ)
+  ControlStack.SC12.St.halted : Bool
+constructor:
+  ControlStack.SC12.St.mk (active ended : List ℕ) (live : List ControlStack.SC12.Ent) (fired : List (ℕ × ℕ × ℕ))
+    (halted : Bool) : ControlStack.SC12.St
+### CHECK ControlStack.SC18.sc18_safe
+ControlStack.SC18.sc18_safe : ∀ (admins : List ℕ) (trusted T : ℕ) (ops : List ControlStack.SC18.Op),
+  (∀ o ∈ ops, ControlStack.SC18.legal admins trusted o) →
+    ControlStack.SC18.Good T
+      (ControlStack.SC18.run admins trusted T ControlStack.SC18.full (ControlStack.SC18.init trusted) ops)
+### AXIOMS ControlStack.SC18.sc18_safe
+'ControlStack.SC18.sc18_safe' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.SC18.honest_logged_release
+ControlStack.SC18.honest_logged_release : have s :=
+  ControlStack.SC18.run [9] 0 2 ControlStack.SC18.full (ControlStack.SC18.init 0)
+    [ControlStack.SC18.Op.request 0, ControlStack.SC18.Op.logWrite 0, ControlStack.SC18.Op.release 0];
+s.released = [{ id := 0, llen := 1, clock := 0, lastAck := 0 }] ∧ s.logged = [0]
+### AXIOMS ControlStack.SC18.honest_logged_release
+'ControlStack.SC18.honest_logged_release' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC18.Good
+def ControlStack.SC18.Good : ℕ → ControlStack.SC18.St → Prop :=
+fun T s => (∀ r ∈ s.released, ControlStack.SC18.RelOk T s r) ∧ (List.map ControlStack.SC18.Rel.id s.released).Nodup
+### PRINT ControlStack.SC18.RelOk
+def ControlStack.SC18.RelOk : ℕ → ControlStack.SC18.St → ControlStack.SC18.Rel → Prop :=
+fun T s r => r.llen ≤ s.logged.length ∧ r.id ∈ List.take r.llen s.logged ∧ r.clock ≤ r.lastAck + T
+### PRINT ControlStack.SC18.legal
+def ControlStack.SC18.legal : List ℕ → ℕ → ControlStack.SC18.Op → Prop :=
+fun admins trusted x =>
+  match x with
+  | ControlStack.SC18.Op.setSink c v => c ∈ admins → v = trusted
+  | x => True
+### PRINT ControlStack.SC18.full
+def ControlStack.SC18.full : ControlStack.SC18.Checks :=
+{ logFirst := true, failOpen := false, cfgProtect := true, watchdog := true, haltCheck := true }
+### PRINT ControlStack.SC18.Checks
+structure ControlStack.SC18.Checks : Type
+number of parameters: 0
+fields:
+  ControlStack.SC18.Checks.logFirst : Bool
+  ControlStack.SC18.Checks.failOpen : Bool
+  ControlStack.SC18.Checks.cfgProtect : Bool
+  ControlStack.SC18.Checks.watchdog : Bool
+  ControlStack.SC18.Checks.haltCheck : Bool
+constructor:
+  ControlStack.SC18.Checks.mk (logFirst failOpen cfgProtect watchdog haltCheck : Bool) : ControlStack.SC18.Checks
+### PRINT ControlStack.SC18.init
+def ControlStack.SC18.init : ℕ → ControlStack.SC18.St :=
+fun trusted =>
+  { reqs := [], acked := [], logged := [], cfg := trusted, sinkUp := true, clock := 0, lastAck := 0, released := [],
+    halted := false }
+### PRINT ControlStack.SC18.St
+structure ControlStack.SC18.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC18.St.reqs : List ℕ
+  ControlStack.SC18.St.acked : List ℕ
+  ControlStack.SC18.St.logged : List ℕ
+  ControlStack.SC18.St.cfg : ℕ
+  ControlStack.SC18.St.sinkUp : Bool
+  ControlStack.SC18.St.clock : ℕ
+  ControlStack.SC18.St.lastAck : ℕ
+  ControlStack.SC18.St.released : List ControlStack.SC18.Rel
+  ControlStack.SC18.St.halted : Bool
+constructor:
+  ControlStack.SC18.St.mk (reqs acked logged : List ℕ) (cfg : ℕ) (sinkUp : Bool) (clock lastAck : ℕ)
+    (released : List ControlStack.SC18.Rel) (halted : Bool) : ControlStack.SC18.St
+### CHECK ControlStack.SC08.sc08_safe
+ControlStack.SC08.sc08_safe : ∀ (E : ControlStack.SC08.Env) (files : List (ℕ × ℕ)) (ops : List ControlStack.SC08.Op),
+  ControlStack.SC08.Good E
+    (ControlStack.SC08.run E ControlStack.SC08.full { files := files, ran := [], halted := false } ops)
+### AXIOMS ControlStack.SC08.sc08_safe
+'ControlStack.SC08.sc08_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC08.safe_of_sound
+ControlStack.SC08.safe_of_sound : ∀ (E : ControlStack.SC08.Env) {C : ControlStack.SC08.Checks},
+  ControlStack.SC08.Sound C →
+    ∀ (files : List (ℕ × ℕ)) (ops : List ControlStack.SC08.Op),
+      ControlStack.SC08.Good E (ControlStack.SC08.run E C { files := files, ran := [], halted := false } ops)
+### AXIOMS ControlStack.SC08.safe_of_sound
+'ControlStack.SC08.safe_of_sound' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC08.honest_execs
+ControlStack.SC08.honest_execs : (ControlStack.SC08.run ControlStack.SC08.E0 ControlStack.SC08.full ControlStack.SC08.s0
+      [ControlStack.SC08.Op.exec 1 none, ControlStack.SC08.Op.exec 4 (some 5)]).ran =
+  [(10, none), (20, some 30)]
+### AXIOMS ControlStack.SC08.honest_execs
+'ControlStack.SC08.honest_execs' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC08.Good
+def ControlStack.SC08.Good : ControlStack.SC08.Env → ControlStack.SC08.St → Prop :=
+fun E s => ∀ r ∈ s.ran, ControlStack.SC08.RunOk E r
+### PRINT ControlStack.SC08.RunOk
+def ControlStack.SC08.RunOk : ControlStack.SC08.Env → ℕ × Option ℕ → Prop :=
+fun E r => E.h r.1 ∈ E.allow ∧ (E.h r.1 ∈ E.interp → ∃ sc, r.2 = some sc ∧ E.h sc ∈ E.scripts)
+### PRINT ControlStack.SC08.full
+def ControlStack.SC08.full : ControlStack.SC08.Checks :=
+{ byDigest := true, noexec := true, scriptCheck := true, haltCheck := true }
+### PRINT ControlStack.SC08.Env
+structure ControlStack.SC08.Env : Type
+number of parameters: 0
+fields:
+  ControlStack.SC08.Env.h : ℕ → ℕ
+  ControlStack.SC08.Env.writable : ℕ → Bool
+  ControlStack.SC08.Env.noexecMount : ℕ → Bool
+  ControlStack.SC08.Env.allow : List ℕ
+  ControlStack.SC08.Env.interp : List ℕ
+  ControlStack.SC08.Env.scripts : List ℕ
+  ControlStack.SC08.Env.pathAllow : List ℕ
+  ControlStack.SC08.Env.admins : List ℕ
+constructor:
+  ControlStack.SC08.Env.mk (h : ℕ → ℕ) (writable noexecMount : ℕ → Bool)
+    (allow interp scripts pathAllow admins : List ℕ) : ControlStack.SC08.Env
+### PRINT ControlStack.SC08.St
+structure ControlStack.SC08.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC08.St.files : List (ℕ × ℕ)
+  ControlStack.SC08.St.ran : List (ℕ × Option ℕ)
+  ControlStack.SC08.St.halted : Bool
+constructor:
+  ControlStack.SC08.St.mk (files : List (ℕ × ℕ)) (ran : List (ℕ × Option ℕ)) (halted : Bool) : ControlStack.SC08.St
+### CHECK ControlStack.SC09.sc09_safe
+ControlStack.SC09.sc09_safe : ∀ (P : ControlStack.SC09.Policy) (ops : List ControlStack.SC09.Op),
+  ControlStack.SC09.Good P (ControlStack.SC09.run P ControlStack.SC09.full ControlStack.SC09.init ops)
+### AXIOMS ControlStack.SC09.sc09_safe
+'ControlStack.SC09.sc09_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC09.honest_privileged_work
+ControlStack.SC09.honest_privileged_work : (ControlStack.SC09.run ControlStack.SC09.P0 ControlStack.SC09.full
+      ControlStack.SC09.init
+      [ControlStack.SC09.Op.start 9 1 1, ControlStack.SC09.Op.grant 9 1 1 7, ControlStack.SC09.Op.use 1 7,
+        ControlStack.SC09.Op.elevate 1 50 3, ControlStack.SC09.Op.spawn 1 2 [7], ControlStack.SC09.Op.use 2 7]).used =
+  [{ lin := 1, cap := 7, via := none }, { lin := 1, cap := 8, via := some (50, 3) },
+    { lin := 1, cap := 7, via := none }]
+### AXIOMS ControlStack.SC09.honest_privileged_work
+'ControlStack.SC09.honest_privileged_work' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC09.Good
+structure ControlStack.SC09.Good (P : ControlStack.SC09.Policy) (s : ControlStack.SC09.St) : Prop
+number of parameters: 2
+fields:
+  ControlStack.SC09.Good.caps : ∀ q ∈ s.procs, ∀ c ∈ q.caps, (q.lin, c) ∈ s.granted
+  ControlStack.SC09.Good.uses : ∀ u ∈ s.used, ControlStack.SC09.UseOk P s u
+constructor:
+  ControlStack.SC09.Good.mk {P : ControlStack.SC09.Policy} {s : ControlStack.SC09.St}
+    (caps : ∀ q ∈ s.procs, ∀ c ∈ q.caps, (q.lin, c) ∈ s.granted) (uses : ∀ u ∈ s.used, ControlStack.SC09.UseOk P s u) :
+    ControlStack.SC09.Good P s
+### PRINT ControlStack.SC09.full
+def ControlStack.SC09.full : ControlStack.SC09.Checks :=
+{ attenuate := true, exactArgs := true, deputyCheck := true, haltCheck := true }
+### PRINT ControlStack.SC09.init
+def ControlStack.SC09.init : ControlStack.SC09.St :=
+{ procs := [], granted := [], used := [], halted := false }
+### PRINT ControlStack.SC09.Policy
+structure ControlStack.SC09.Policy : Type
+number of parameters: 0
+fields:
+  ControlStack.SC09.Policy.admins : List ℕ
+  ControlStack.SC09.Policy.elev : List ControlStack.SC09.Rule
+  ControlStack.SC09.Policy.fileCaps : ℕ → List ℕ
+constructor:
+  ControlStack.SC09.Policy.mk (admins : List ℕ) (elev : List ControlStack.SC09.Rule) (fileCaps : ℕ → List ℕ) :
+    ControlStack.SC09.Policy
+### PRINT ControlStack.SC09.St
+structure ControlStack.SC09.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC09.St.procs : List ControlStack.SC09.Proc
+  ControlStack.SC09.St.granted : List (ℕ × ℕ)
+  ControlStack.SC09.St.used : List ControlStack.SC09.Use
+  ControlStack.SC09.St.halted : Bool
+constructor:
+  ControlStack.SC09.St.mk (procs : List ControlStack.SC09.Proc) (granted : List (ℕ × ℕ))
+    (used : List ControlStack.SC09.Use) (halted : Bool) : ControlStack.SC09.St
+### CHECK ControlStack.SC10.sc10_safe
+ControlStack.SC10.sc10_safe : ∀ (E : ControlStack.SC10.Env),
+  E.h E.pinned = E.pinnedDigest →
+    ∀ (ops : List ControlStack.SC10.Op),
+      ControlStack.SC10.Good E (ControlStack.SC10.run E ControlStack.SC10.full ControlStack.SC10.init ops)
+### AXIOMS ControlStack.SC10.sc10_safe
+'ControlStack.SC10.sc10_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC10.honest_enforcement_and_build
+ControlStack.SC10.honest_enforcement_and_build : have s :=
+  ControlStack.SC10.run ControlStack.SC10.E0 ControlStack.SC10.full ControlStack.SC10.init
+    [ControlStack.SC10.Op.writePolicy 9 5, ControlStack.SC10.Op.decide 1, ControlStack.SC10.Op.build];
+s.decisions = [{ req := 1, ver := some 0, val := 5, curLen := 1 }] ∧ s.builds = [40]
+### AXIOMS ControlStack.SC10.honest_enforcement_and_build
+'ControlStack.SC10.honest_enforcement_and_build' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC10.Good
+structure ControlStack.SC10.Good (E : ControlStack.SC10.Env) (s : ControlStack.SC10.St) : Prop
+number of parameters: 2
+fields:
+  ControlStack.SC10.Good.decs : ∀ d ∈ s.decisions, ControlStack.SC10.DecOk E s d
+  ControlStack.SC10.Good.builds : ∀ b ∈ s.builds, E.h b = E.pinnedDigest
+constructor:
+  ControlStack.SC10.Good.mk {E : ControlStack.SC10.Env} {s : ControlStack.SC10.St}
+    (decs : ∀ d ∈ s.decisions, ControlStack.SC10.DecOk E s d) (builds : ∀ b ∈ s.builds, E.h b = E.pinnedDigest) :
+    ControlStack.SC10.Good E s
+### PRINT ControlStack.SC10.full
+def ControlStack.SC10.full : ControlStack.SC10.Checks :=
+{ adminOnly := true, fresh := true, singleEval := true, pinnedPath := true, haltCheck := true }
+### PRINT ControlStack.SC10.init
+def ControlStack.SC10.init : ControlStack.SC10.St :=
+{ versions := [], cache := none, altFile := 0, pathTool := 0, decisions := [], builds := [], halted := false }
+### PRINT ControlStack.SC10.Env
+structure ControlStack.SC10.Env : Type
+number of parameters: 0
+fields:
+  ControlStack.SC10.Env.admins : List ℕ
+  ControlStack.SC10.Env.h : ℕ → ℕ
+  ControlStack.SC10.Env.pinned : ℕ
+  ControlStack.SC10.Env.pinnedDigest : ℕ
+constructor:
+  ControlStack.SC10.Env.mk (admins : List ℕ) (h : ℕ → ℕ) (pinned pinnedDigest : ℕ) : ControlStack.SC10.Env
+### PRINT ControlStack.SC10.St
+structure ControlStack.SC10.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC10.St.versions : List (ℕ × ℕ)
+  ControlStack.SC10.St.cache : Option ℕ
+  ControlStack.SC10.St.altFile : ℕ
+  ControlStack.SC10.St.pathTool : ℕ
+  ControlStack.SC10.St.decisions : List ControlStack.SC10.Dec
+  ControlStack.SC10.St.builds : List ℕ
+  ControlStack.SC10.St.halted : Bool
+constructor:
+  ControlStack.SC10.St.mk (versions : List (ℕ × ℕ)) (cache : Option ℕ) (altFile pathTool : ℕ)
+    (decisions : List ControlStack.SC10.Dec) (builds : List ℕ) (halted : Bool) : ControlStack.SC10.St
+### CHECK ControlStack.SC17.sc17_safe
+ControlStack.SC17.sc17_safe : ∀ (E : ControlStack.SC17.Env) (g0 : List ControlStack.SC17.G)
+  (ops : List ControlStack.SC17.Op),
+  ControlStack.SC17.Good E (ControlStack.SC17.run E ControlStack.SC17.full (ControlStack.SC17.init g0) ops)
+### AXIOMS ControlStack.SC17.sc17_safe
+'ControlStack.SC17.sc17_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC17.honest_apply
+ControlStack.SC17.honest_apply : (ControlStack.SC17.run ControlStack.SC17.E0 ControlStack.SC17.full
+      (ControlStack.SC17.init [])
+      [ControlStack.SC17.Op.propose 1 0 ControlStack.SC17.dA, ControlStack.SC17.Op.approve 2 0,
+        ControlStack.SC17.Op.apply 0]).live =
+  [(1, 1, 1)]
+### AXIOMS ControlStack.SC17.honest_apply
+'ControlStack.SC17.honest_apply' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC17.Good
+def ControlStack.SC17.Good : ControlStack.SC17.Env → ControlStack.SC17.St → Prop :=
+fun E s => (∀ e ∈ s.applied, ControlStack.SC17.AppOk E s e) ∧ (List.map ControlStack.SC17.AppRec.id s.applied).Nodup
+### PRINT ControlStack.SC17.AppOk
+def ControlStack.SC17.AppOk : ControlStack.SC17.Env → ControlStack.SC17.St → ControlStack.SC17.AppRec → Prop :=
+fun E s e =>
+  E.allowed e.live = true ∧
+    e.live = e.desired ∧
+      ∃ a ∈ s.approvals, a.id = e.id ∧ a.diff = e.diff ∧ a.reviewer ∈ E.reviewers ∧ a.reviewer ≠ e.author
+### PRINT ControlStack.SC17.full
+def ControlStack.SC17.full : ControlStack.SC17.Checks :=
+{ exact := true, resultCheck := true, drift := true, haltCheck := true }
+### PRINT ControlStack.SC17.init
+def ControlStack.SC17.init : List ControlStack.SC17.G → ControlStack.SC17.St :=
+fun g0 =>
+  { desired := g0, live := g0, props := [], approvals := [], applied := [], done := [], flags := [], halted := false }
+### PRINT ControlStack.SC17.Env
+structure ControlStack.SC17.Env : Type
+number of parameters: 0
+fields:
+  ControlStack.SC17.Env.reviewers : List ℕ
+  ControlStack.SC17.Env.admins : List ℕ
+  ControlStack.SC17.Env.allowed : List ControlStack.SC17.G → Bool
+constructor:
+  ControlStack.SC17.Env.mk (reviewers admins : List ℕ) (allowed : List ControlStack.SC17.G → Bool) :
+    ControlStack.SC17.Env
+### CHECK ControlStack.SC19.sc19_safe
+ControlStack.SC19.sc19_safe : ∀ (E : ControlStack.SC19.Env) (ops : List ControlStack.SC19.Op),
+  ControlStack.SC19.Good E (ControlStack.SC19.run E ControlStack.SC19.full ControlStack.SC19.init ops)
+### AXIOMS ControlStack.SC19.sc19_safe
+'ControlStack.SC19.sc19_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC19.honest_destructive_change
+ControlStack.SC19.honest_destructive_change : (ControlStack.SC19.run ControlStack.SC19.E0 ControlStack.SC19.full
+      ControlStack.SC19.init
+      [ControlStack.SC19.Op.write 7 5, ControlStack.SC19.Op.snapshot 7, ControlStack.SC19.Op.verify 3 0,
+        ControlStack.SC19.Op.prepare 1 0 7, ControlStack.SC19.Op.approve 2 0,
+        ControlStack.SC19.Op.commit 0 0]).destroyed =
+  [{ id := 0, author := 1, t := 7, ver := 1, actual := 5, snap := 0 }]
+### AXIOMS ControlStack.SC19.honest_destructive_change
+'ControlStack.SC19.honest_destructive_change' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC19.Good
+def ControlStack.SC19.Good : ControlStack.SC19.Env → ControlStack.SC19.St → Prop :=
+fun E s =>
+  (∀ d ∈ s.destroyed, ControlStack.SC19.DestroyOk E s d) ∧ (List.map ControlStack.SC19.Destroy.id s.destroyed).Nodup
+### PRINT ControlStack.SC19.DestroyOk
+def ControlStack.SC19.DestroyOk : ControlStack.SC19.Env → ControlStack.SC19.St → ControlStack.SC19.Destroy → Prop :=
+fun E s d =>
+  d.actual ≤ E.R ∧
+    (∃ sn, s.snaps[d.snap]? = some sn ∧ sn.t = d.t ∧ sn.ver = d.ver) ∧
+      d.snap ∈ s.verified ∧ ∃ a ∈ s.approvals, a.1 = d.id ∧ a.2.1 ∈ E.approvers ∧ a.2.1 ≠ d.author
+### PRINT ControlStack.SC19.full
+def ControlStack.SC19.full : ControlStack.SC19.Checks :=
+{ fresh := true, verified := true, atomicCount := true, haltCheck := true }
+### PRINT ControlStack.SC19.init
+def ControlStack.SC19.init : ControlStack.SC19.St :=
+{ objs := [], snaps := [], verified := [], pending := [], approvals := [], destroyed := [], done := [],
+  halted := false }
+### PRINT ControlStack.SC19.Env
+structure ControlStack.SC19.Env : Type
+number of parameters: 0
+fields:
+  ControlStack.SC19.Env.approvers : List ℕ
+  ControlStack.SC19.Env.verifiers : List ℕ
+  ControlStack.SC19.Env.admins : List ℕ
+  ControlStack.SC19.Env.R : ℕ
+constructor:
+  ControlStack.SC19.Env.mk (approvers verifiers admins : List ℕ) (R : ℕ) : ControlStack.SC19.Env
+### CHECK ControlStack.SC27Chain.sc27_safe
+ControlStack.SC27Chain.sc27_safe : ∀ (E : ControlStack.SC27Chain.Env) (ops : List ControlStack.SC27Chain.Op),
+  Set.InjOn (ControlStack.SC27Chain.chainHead E.H E.h0)
+      {l |
+        l ∈ (ControlStack.SC27Chain.run E ControlStack.SC27Chain.full ControlStack.SC27Chain.init ops).accepted ∨
+          ∃ a ∈ (ControlStack.SC27Chain.run E ControlStack.SC27Chain.full ControlStack.SC27Chain.init ops).anchors,
+            a.2 = some l} →
+    ∀ m ∈ (ControlStack.SC27Chain.run E ControlStack.SC27Chain.full ControlStack.SC27Chain.init ops).accepted,
+      ∃ a ∈ (ControlStack.SC27Chain.run E ControlStack.SC27Chain.full ControlStack.SC27Chain.init ops).anchors,
+        a.2 = some m
+### AXIOMS ControlStack.SC27Chain.sc27_safe
+'ControlStack.SC27Chain.sc27_safe' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.SC27Chain.honest_accept
+ControlStack.SC27Chain.honest_accept : (ControlStack.SC27Chain.run ControlStack.SC27Chain.E0 ControlStack.SC27Chain.full
+      ControlStack.SC27Chain.init
+      [ControlStack.SC27Chain.Op.append 5, ControlStack.SC27Chain.Op.append 6, ControlStack.SC27Chain.Op.anchor,
+        ControlStack.SC27Chain.Op.verify [5, 6]]).accepted =
+  [[5, 6]]
+### AXIOMS ControlStack.SC27Chain.honest_accept
+'ControlStack.SC27Chain.honest_accept' depends on axioms: [propext, Quot.sound]
+### PRINT ControlStack.SC27Chain.full
+def ControlStack.SC27Chain.full : ControlStack.SC27Chain.Checks :=
+{ anchorCheck := true, independentOnly := true, noSuffix := true, haltCheck := true }
+### PRINT ControlStack.SC27Chain.init
+def ControlStack.SC27Chain.init : ControlStack.SC27Chain.St :=
+{ log := [], truth := [], anchors := [], accepted := [], halted := false }
+### PRINT ControlStack.SC27Chain.Env
+structure ControlStack.SC27Chain.Env : Type
+number of parameters: 0
+fields:
+  ControlStack.SC27Chain.Env.H : ℕ → ℕ → ℕ
+  ControlStack.SC27Chain.Env.h0 : ℕ
+  ControlStack.SC27Chain.Env.admins : List ℕ
+constructor:
+  ControlStack.SC27Chain.Env.mk (H : ℕ → ℕ → ℕ) (h0 : ℕ) (admins : List ℕ) : ControlStack.SC27Chain.Env
+### PRINT ControlStack.SC27Chain.St
+structure ControlStack.SC27Chain.St : Type
+number of parameters: 0
+fields:
+  ControlStack.SC27Chain.St.log : List ℕ
+  ControlStack.SC27Chain.St.truth : List ℕ
+  ControlStack.SC27Chain.St.anchors : List (ℕ × Option (List ℕ))
+  ControlStack.SC27Chain.St.accepted : List (List ℕ)
+  ControlStack.SC27Chain.St.halted : Bool
+constructor:
+  ControlStack.SC27Chain.St.mk (log truth : List ℕ) (anchors : List (ℕ × Option (List ℕ))) (accepted : List (List ℕ))
+    (halted : Bool) : ControlStack.SC27Chain.St
+### CHECK ControlStack.ReservedAudit.reserved_policy_bound
+@ControlStack.ReservedAudit.reserved_policy_bound : ∀ {N : ℕ} (k Bh Bf : ℕ),
+  Bh ≤ N →
+    ∀ (σ : List (ControlStack.Leakage.AOut Unit) → Bool → ℝ),
+      (∀ (g : List (ControlStack.Leakage.AOut Unit)), ControlStack.Covert.IsDist (σ g)) →
+        ∀ (φ : Finset (Fin N) → List (Bool × ControlStack.Leakage.AOut Unit) → Bool → Bool → ℝ),
+          (∀ (S : Finset (Fin N)) (h : List (Bool × ControlStack.Leakage.AOut Unit)) (a : Bool),
+              ControlStack.Covert.IsDist (φ S h a)) →
+            ∑ S,
+                ControlStack.ReservedAudit.pU N Bh S *
+                  ControlStack.Leakage.val (ControlStack.ReservedAudit.reservedK Bf σ φ S)
+                    (ControlStack.ReservedAudit.successInd k S) N [] ≤
+              ↑((N - k).choose Bh) / ↑(N.choose Bh)
+### AXIOMS ControlStack.ReservedAudit.reserved_policy_bound
+'ControlStack.ReservedAudit.reserved_policy_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.ReservedRecall.adaptive_recall_bound
+@ControlStack.ReservedRecall.adaptive_recall_bound : ∀ {N : ℕ} {Y : Type} [inst : Fintype Y] (k Bh : ℕ),
+  Bh ≤ N →
+    ∀ (r : ℝ),
+      0 ≤ r →
+        r ≤ 1 →
+          ∀ (K : Finset (Fin N) → List (Y × ControlStack.Leakage.AOut Unit) → Y × ControlStack.Leakage.AOut Unit → ℝ)
+            (σ : List (ControlStack.Leakage.AOut Unit) → Bool → ℝ),
+            (∀ (g : List (ControlStack.Leakage.AOut Unit)), ControlStack.Covert.IsDist (σ g)) →
+              (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                  ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)) (z : Y × ControlStack.Leakage.AOut Unit),
+                    0 ≤ K S h z) →
+                (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                    ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)), ∑ z, K S h z ≤ 1) →
+                  (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                      ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)) (a : Bool),
+                        ∑ y, K S h (y, a, (), false) ≤
+                          σ (List.map Prod.snd h) a *
+                            if ControlStack.Leakage.memN S (List.map Prod.snd h).length ∧ a = true then 1 - r else 1) →
+                    ∑ S,
+                        ControlStack.ReservedAudit.pU N Bh S *
+                          ControlStack.Leakage.val (K S) (ControlStack.ReservedRecall.recallSucc k) N [] ≤
+                      ControlStack.ReservedRecall.hypMiss N Bh k r
+### AXIOMS ControlStack.ReservedRecall.adaptive_recall_bound
+'ControlStack.ReservedRecall.adaptive_recall_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.ReservedRecall.hypMiss
+ControlStack.ReservedRecall.hypMiss : ℕ → ℕ → ℕ → ℝ → ℝ
+### AXIOMS ControlStack.ReservedRecall.hypMiss
+'ControlStack.ReservedRecall.hypMiss' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.DamageBound.damage_bound
+@ControlStack.DamageBound.damage_bound : ∀ {N : ℕ} {Y : Type} [inst : Fintype Y] [DecidableEq Y] (y0 : Y),
+  ∀ Bh ≤ N,
+    ∀ (r : ℝ),
+      0 ≤ r →
+        r ≤ 1 →
+          ∀ (K : Finset (Fin N) → List (Y × ControlStack.Leakage.AOut Unit) → Y × ControlStack.Leakage.AOut Unit → ℝ)
+            (σ : List (ControlStack.Leakage.AOut Unit) → Bool → ℝ),
+            (∀ (g : List (ControlStack.Leakage.AOut Unit)), ControlStack.Covert.IsDist (σ g)) →
+              (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                  ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)) (z : Y × ControlStack.Leakage.AOut Unit),
+                    0 ≤ K S h z) →
+                (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                    ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)), ∑ z, K S h z ≤ 1) →
+                  (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                      ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)) (a : Bool),
+                        ∑ y, K S h (y, a, (), false) ≤
+                          σ (List.map Prod.snd h) a *
+                            if ControlStack.Leakage.memN S (List.map Prod.snd h).length ∧ a = true then 1 - r else 1) →
+                    ∀ (D : ℝ),
+                      0 ≤ D →
+                        ∀ (dmg : List (ControlStack.Leakage.AOut Unit) → ℝ),
+                          (∀ (t : List (ControlStack.Leakage.AOut Unit)),
+                              dmg t ≤ D * ↑(ControlStack.DamageBound.ucX N t)) →
+                            ∑ S, ControlStack.ReservedAudit.pU N Bh S * ControlStack.Leakage.val (K S) dmg N [] ≤
+                              D * ∑ j ∈ Finset.range N, ControlStack.ReservedRecall.hypMiss N Bh (j + 1) r
+### AXIOMS ControlStack.DamageBound.damage_bound
+'ControlStack.DamageBound.damage_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.DamageBound.tail_bound
+@ControlStack.DamageBound.tail_bound : ∀ {N : ℕ} {Y : Type} [inst : Fintype Y] [DecidableEq Y] (y0 : Y) (j Bh : ℕ),
+  Bh ≤ N →
+    ∀ (r : ℝ),
+      0 ≤ r →
+        r ≤ 1 →
+          ∀ (K : Finset (Fin N) → List (Y × ControlStack.Leakage.AOut Unit) → Y × ControlStack.Leakage.AOut Unit → ℝ)
+            (σ : List (ControlStack.Leakage.AOut Unit) → Bool → ℝ),
+            (∀ (g : List (ControlStack.Leakage.AOut Unit)), ControlStack.Covert.IsDist (σ g)) →
+              (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                  ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)) (z : Y × ControlStack.Leakage.AOut Unit),
+                    0 ≤ K S h z) →
+                (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                    ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)), ∑ z, K S h z ≤ 1) →
+                  (∀ S ∈ ControlStack.AuditBudget.randomSchedules N Bh,
+                      ∀ (h : List (Y × ControlStack.Leakage.AOut Unit)) (a : Bool),
+                        ∑ y, K S h (y, a, (), false) ≤
+                          σ (List.map Prod.snd h) a *
+                            if ControlStack.Leakage.memN S (List.map Prod.snd h).length ∧ a = true then 1 - r else 1) →
+                    ∑ S,
+                        ControlStack.ReservedAudit.pU N Bh S *
+                          ControlStack.Leakage.val (K S) (ControlStack.DamageBound.pX N j) N [] ≤
+                      ControlStack.ReservedRecall.hypMiss N Bh j r
+### AXIOMS ControlStack.DamageBound.tail_bound
+'ControlStack.DamageBound.tail_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.DamageBound.ucX
+ControlStack.DamageBound.ucX : ℕ → List (ControlStack.Leakage.AOut Unit) → ℕ
+### AXIOMS ControlStack.DamageBound.ucX
+'ControlStack.DamageBound.ucX' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.DistributedHalt.fenced_after_eps
+ControlStack.DistributedHalt.fenced_after_eps : ∀ (t0 ε e0 G : ℕ) (evs : List (ℕ × ℕ)),
+  (∀ ev ∈ evs, ev.2 ≤ e0) →
+    List.countP (fun ev => decide (t0 + ε ≤ ev.1)) (ControlStack.DistributedHalt.sinkRun true t0 ε e0 G evs) = 0
+### AXIOMS ControlStack.DistributedHalt.fenced_after_eps
+'ControlStack.DistributedHalt.fenced_after_eps' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.DistributedHalt.landed_after_le
+ControlStack.DistributedHalt.landed_after_le : ∀ (n T t0 ρ Δ L : ℕ) (e lat : ℕ → ℕ → ℕ) (δ : ℕ → ℕ),
+  ControlStack.DistributedHalt.Rate ρ e →
+    ControlStack.DistributedHalt.HaltAbsorbs t0 δ e →
+      ControlStack.DistributedHalt.Delivered n Δ δ →
+        ControlStack.DistributedHalt.Latency L lat →
+          ControlStack.DistributedHalt.landedAfter n T t0 e lat ≤ n * ρ * (L + Δ)
+### AXIOMS ControlStack.DistributedHalt.landed_after_le
+'ControlStack.DistributedHalt.landed_after_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.DistributedHalt.accepts
+ControlStack.DistributedHalt.accepts : Bool → ℕ → ℕ → ℕ → ℕ × ℕ → Bool
+### AXIOMS ControlStack.DistributedHalt.accepts
+'ControlStack.DistributedHalt.accepts' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.sinkRun
+ControlStack.DistributedHalt.sinkRun : Bool → ℕ → ℕ → ℕ → ℕ → List (ℕ × ℕ) → List (ℕ × ℕ)
+### AXIOMS ControlStack.DistributedHalt.sinkRun
+'ControlStack.DistributedHalt.sinkRun' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.Rate
+ControlStack.DistributedHalt.Rate : ℕ → (ℕ → ℕ → ℕ) → Prop
+### AXIOMS ControlStack.DistributedHalt.Rate
+'ControlStack.DistributedHalt.Rate' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.HaltAbsorbs
+ControlStack.DistributedHalt.HaltAbsorbs : ℕ → (ℕ → ℕ) → (ℕ → ℕ → ℕ) → Prop
+### AXIOMS ControlStack.DistributedHalt.HaltAbsorbs
+'ControlStack.DistributedHalt.HaltAbsorbs' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.Delivered
+ControlStack.DistributedHalt.Delivered : ℕ → ℕ → (ℕ → ℕ) → Prop
+### AXIOMS ControlStack.DistributedHalt.Delivered
+'ControlStack.DistributedHalt.Delivered' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.Latency
+ControlStack.DistributedHalt.Latency : ℕ → (ℕ → ℕ → ℕ) → Prop
+### AXIOMS ControlStack.DistributedHalt.Latency
+'ControlStack.DistributedHalt.Latency' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.HoldsOld
+ControlStack.DistributedHalt.HoldsOld : ℕ → (ℕ → ℕ → ℕ) → Prop
+### AXIOMS ControlStack.DistributedHalt.HoldsOld
+'ControlStack.DistributedHalt.HoldsOld' does not depend on any axioms
+### CHECK ControlStack.DistributedHalt.landedAfter
+ControlStack.DistributedHalt.landedAfter : ℕ → ℕ → ℕ → (ℕ → ℕ → ℕ) → (ℕ → ℕ → ℕ) → ℕ
+### AXIOMS ControlStack.DistributedHalt.landedAfter
+'ControlStack.DistributedHalt.landedAfter' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.MonitorCollusion.pass_transfer
+@ControlStack.MonitorCollusion.pass_transfer : ∀ {V : Type} [inst : Fintype V] (Ph Pr β : V → ℝ),
+  ControlStack.Covert.IsDist Ph →
+    ControlStack.Covert.IsDist Pr →
+      (∀ (v : V), 0 ≤ β v ∧ β v ≤ 1) →
+        |ControlStack.MonitorCollusion.passRate Pr β - ControlStack.MonitorCollusion.passRate Ph β| ≤
+          ControlStack.MonitorCollusion.tv Ph Pr
+### AXIOMS ControlStack.MonitorCollusion.pass_transfer
+'ControlStack.MonitorCollusion.pass_transfer' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.MonitorCollusion.collusion_uniform
+@ControlStack.MonitorCollusion.collusion_uniform : ∀ {V : Type} [inst : Fintype V] (Ph Pr : V → ℝ),
+  ControlStack.Covert.IsDist Ph →
+    ControlStack.Covert.IsDist Pr →
+      ∀ (δ : V → Bool → ℝ),
+        (∀ (v : V), ControlStack.Covert.IsDist (δ v)) →
+          (∑ φ, 1 / 2 * ∑ v, (if φ = true then Pr v else Ph v) * ∑ a, δ v a * if a = φ then 1 else 0) ≤
+            (1 + ControlStack.MonitorCollusion.tv Pr Ph) / 2
+### AXIOMS ControlStack.MonitorCollusion.collusion_uniform
+'ControlStack.MonitorCollusion.collusion_uniform' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.ChannelInstances.gpu_bound
+@ControlStack.ChannelInstances.gpu_bound : ∀ {J : ℕ} {Ω M : Type} [inst : Fintype Ω] [inst_1 : Fintype M] [Nonempty M]
+  (m : ℕ) (ρ : Ω → ℝ) (enc : Ω → M → List (Bool × Fin J) → Bool → ℝ) (W : Bool → Fin J → ℝ)
+  (dec : Ω → List (Fin J) → M → ℝ),
+  ControlStack.Covert.IsDist ρ →
+    (∀ (ω : Ω) (x : M) (h : List (Bool × Fin J)), ControlStack.Covert.IsDist (enc ω x h)) →
+      (∀ (s : Bool) (o : Fin J), 0 ≤ W s o) →
+        (∀ (ω : Ω) (t : List (Fin J)), ControlStack.Covert.IsDist (dec ω t)) →
+          ∑ ω,
+              ρ ω *
+                ((↑(Fintype.card M))⁻¹ *
+                  ∑ x,
+                    ControlStack.Leakage.val (ControlStack.ChannelInstances.gpuK enc W ω x) (fun t => dec ω t x) m []) ≤
+            (∑ o, ControlStack.ChannelInstances.wmax W o) ^ m / ↑(Fintype.card M)
+### AXIOMS ControlStack.ChannelInstances.gpu_bound
+'ControlStack.ChannelInstances.gpu_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.ChannelInstances.log_channel
+@ControlStack.ChannelInstances.log_channel : ∀ {Ω M Y : Type} [inst : Fintype Ω] [inst_1 : Fintype M] [Nonempty M]
+  [inst_3 : Fintype Y] (Kt f Q m : ℕ) (ρ : Ω → ℝ)
+  (K : Ω → M → List (Y × Fin Kt × (Fin f → Fin Q)) → Y × Fin Kt × (Fin f → Fin Q) → ℝ)
+  (dec : Ω → List (Fin Kt × (Fin f → Fin Q)) → M → ℝ),
+  ControlStack.Covert.IsDist ρ →
+    (∀ (ω : Ω) (x : M) (h : List (Y × Fin Kt × (Fin f → Fin Q))) (z : Y × Fin Kt × (Fin f → Fin Q)), 0 ≤ K ω x h z) →
+      (∀ (ω : Ω) (x : M) (h : List (Y × Fin Kt × (Fin f → Fin Q))), ∑ z, K ω x h z ≤ 1) →
+        (∀ (ω : Ω) (t : List (Fin Kt × (Fin f → Fin Q))), ControlStack.Covert.IsDist (dec ω t)) →
+          ∑ ω, ρ ω * ((↑(Fintype.card M))⁻¹ * ∑ x, ControlStack.Leakage.val (K ω x) (fun t => dec ω t x) m []) ≤
+            ↑Kt ^ m * ↑Q ^ (f * m) / ↑(Fintype.card M)
+### AXIOMS ControlStack.ChannelInstances.log_channel
+'ControlStack.ChannelInstances.log_channel' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.ChannelInstances.sc02_accumulated
+@ControlStack.ChannelInstances.sc02_accumulated : ∀ {Ω Y O : Type} [inst : Fintype Ω] [inst_1 : Fintype Y]
+  [inst_2 : Fintype O] (k E : ℕ) (ρ : Ω → ℝ) (K : Ω → Fin (2 ^ k) → List (Y × O) → Y × O → ℝ) (c : List O → O → ℝ)
+  (L : ℕ → ℝ) (dec : Ω → List O → Fin (2 ^ k) → ℝ),
+  ControlStack.Covert.IsDist ρ →
+    (∀ (ω : Ω) (m : Fin (2 ^ k)) (h : List (Y × O)) (z : Y × O), 0 ≤ K ω m h z) →
+      (∀ (ω : Ω) (m : Fin (2 ^ k)), ControlStack.Leakage.Dominated (K ω m) c) →
+        (∀ (g : List O) (o : O), 0 ≤ c g o) →
+          (∀ (i : ℕ), 0 ≤ L i) →
+            (∀ (g : List O), ∑ o, c g o ≤ L g.length) →
+              (∀ (ω : Ω) (t : List O), ControlStack.Covert.IsDist (dec ω t)) →
+                ∑ ω, ρ ω * ((2 ^ k)⁻¹ * ∑ m, ControlStack.Leakage.val (K ω m) (fun t => dec ω t m) E []) ≤
+                  (∏ e ∈ Finset.range E, L e) / 2 ^ k
+### AXIOMS ControlStack.ChannelInstances.sc02_accumulated
+'ControlStack.ChannelInstances.sc02_accumulated' depends on axioms: [propext, Classical.choice, Quot.sound]
+### CHECK ControlStack.Compose.bridgeSpec
+@ControlStack.Compose.bridgeSpec : {St₁ St₂ Op₁ Op₂ Eff₁ Eff₂ : Type} →
+  {G₁ : ControlStack.Gate.System St₁ Op₁ Eff₁} →
+    {G₂ : ControlStack.Gate.System St₂ Op₂ Eff₂} →
+      (S₁ : ControlStack.Gate.Spec G₁) →
+        (S₂ : ControlStack.Gate.Spec G₂) →
+          (b : St₁ → St₂ → St₂) →
+            ControlStack.Compose.BridgeAdmissible S₁ S₂ b →
+              ControlStack.Gate.Spec (ControlStack.Compose.withBridge G₁ G₂ b)
+### AXIOMS ControlStack.Compose.bridgeSpec
+'ControlStack.Compose.bridgeSpec' depends on axioms: [propext, Quot.sound]
+### CHECK ControlStack.Compose.bridge_breaks_joint
+ControlStack.Compose.bridge_breaks_joint : have p :=
+  (ControlStack.Compose.withBridge ControlStack.Compose.flagGate ControlStack.Compose.inertGate
+        ControlStack.Compose.flagDeputy).run
+    { s₁ := false, s₂ := [], log := [] } [ControlStack.Compose.BOp.left (), ControlStack.Compose.BOp.bridge];
+p.log = [Sum.inr 0] ∧
+  (¬∀ e ∈ p.log, ControlStack.Compose.tagOk ControlStack.Compose.flagSpec ControlStack.Compose.inertSpec p e) ∧
+    ¬ControlStack.Compose.BridgeAdmissible ControlStack.Compose.flagSpec ControlStack.Compose.inertSpec
+        ControlStack.Compose.flagDeputy
+### AXIOMS ControlStack.Compose.bridge_breaks_joint
+'ControlStack.Compose.bridge_breaks_joint' depends on axioms: [propext]
+### CHECK ControlStack.Compose.BridgeAdmissible
+@ControlStack.Compose.BridgeAdmissible : {St₁ St₂ Op₁ Op₂ Eff₁ Eff₂ : Type} →
+  {G₁ : ControlStack.Gate.System St₁ Op₁ Eff₁} →
+    {G₂ : ControlStack.Gate.System St₂ Op₂ Eff₂} →
+      ControlStack.Gate.Spec G₁ → ControlStack.Gate.Spec G₂ → (St₁ → St₂ → St₂) → Prop
+### AXIOMS ControlStack.Compose.BridgeAdmissible
+'ControlStack.Compose.BridgeAdmissible' does not depend on any axioms
+### CHECK ControlStack.Compose.withBridge
+@ControlStack.Compose.withBridge : {St₁ St₂ Op₁ Op₂ Eff₁ Eff₂ : Type} →
+  ControlStack.Gate.System St₁ Op₁ Eff₁ →
+    ControlStack.Gate.System St₂ Op₂ Eff₂ →
+      (St₁ → St₂ → St₂) →
+        ControlStack.Gate.System (ControlStack.Compose.PSt St₁ St₂ Eff₁ Eff₂) (ControlStack.Compose.BOp Op₁ Op₂)
+          (Eff₁ ⊕ Eff₂)
+### AXIOMS ControlStack.Compose.withBridge
+'ControlStack.Compose.withBridge' does not depend on any axioms

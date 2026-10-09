@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-17",
   "title": "Agent sabotages IaC, Kubernetes or production cluster permissions",
-  "bad_event": "Live permissions exceed the policy ceiling, differ from the last approved desired state at an apply, or a diff is applied that an independent reviewer did not approve exactly.",
+  "bad_event": "At an apply, the resulting live permissions exceed the policy ceiling or differ from the approved desired state, or a diff is applied that an independent reviewer did not approve exactly. Out-of-band changes BETWEEN applies are reverted at the next apply/reconcile, not prevented (REVIEW-PACKET finding 2, witness W2). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any propose/amend/approve/apply/out-of-band-mutation/reconcile/halt trace.",
   "refutation": "A trace where live state exceeds the ceiling or an unapproved diff applies despite full checks (witnesses: text-only ceiling composition, approve-then-amend, no drift detection).",
   "scope": "Lean model only. Out-of-band changes are reverted at the next apply/reconcile, not prevented in between.",
@@ -34,6 +34,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "single_apply_path",
       "text": "The gate is the only writer of desired state; out-of-band mutation is detected at reconcile.",

@@ -2,10 +2,10 @@
   "schema_version": 1,
   "id": "SC-11",
   "title": "Agent tampers with container mounts, host filesystem or trusted toolchain",
-  "bad_event": "A build uses a toolchain whose digest differs from the pinned one, or mount/policy configuration is changed by a non-admin.",
+  "bad_event": "A build uses a toolchain whose digest differs from the pinned one, or mount/policy configuration is changed by a non-admin. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any write/decide/build trace (shared model with SC-10).",
   "refutation": "A build with an unpinned toolchain despite full checks (witness: toolchain via agent-writable PATH).",
-  "scope": "Lean model only (shared with SC-10). Not: compromised compiler binaries at the pinned digest.",
+  "scope": "Lean model only (shared with SC-10). Not: compromised compiler binaries at the pinned digest. The check flag(s) pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
   "families": [
     "F1",
     "F4"
@@ -27,6 +27,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "pinned_location_protected",
       "text": "The pinned toolchain location is not agent-writable.",

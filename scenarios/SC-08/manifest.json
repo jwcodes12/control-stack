@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-08",
   "title": "Unauthorized process or executable runs",
-  "bad_event": "A program runs whose loaded content digest is not allowlisted, or an interpreter runs a script whose digest is not allowlisted (or with no script).",
+  "bad_event": "A program runs whose loaded content digest is not allowlisted, or an interpreter runs a script whose digest is not allowlisted (or with no script). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any writes to writable paths and any exec with any script argument.",
   "refutation": "An exec of non-allowlisted content despite full checks (witnesses: path allowlist TOCTOU, writable exec mount, interpreter loophole, interpreter REPL).",
   "scope": "Lean model only. Not: memfd/JIT loaders, kernel exploits.",
@@ -34,6 +34,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "complete_exec_mediation",
       "text": "Every exec (incl. loaders, memfd, JIT) is mediated by the digest policy.",

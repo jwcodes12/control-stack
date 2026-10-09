@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-23",
   "title": "Prompt-injected document/tool result causes an unauthorized tool action",
-  "bad_event": "A sensitive action whose authorization-relevant arguments depend on untrusted data executes without a fresh user confirmation of exactly its tool and argument values.",
+  "bad_event": "A sensitive action whose authorization-relevant arguments are derived, through label-propagating steps, from tool results executes without a fresh user confirmation of exactly its tool and values. 'Untrusted' is defined by derivation from tool results; laundering through an unlabelled channel (the planner reading untrusted data directly) is excluded only by the planner-isolation premise (REVIEW-PACKET finding 4, witness W1). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of tool results (tainted), derivations with arbitrary content, confirmations by any caller and actions with any arguments.",
   "refutation": "An executed sensitive action with tainted arguments and no exact confirmation despite full checks (witnesses: non-propagating summarizer, paraphrase confirmation, confirmation reuse).",
   "scope": "Lean model only; no runtime harness. Not: wisdom of confirmations, correctness of untainted values, planner isolation.",
@@ -29,8 +29,16 @@
   "evidence": [],
   "assumptions": [
     {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
+    {
       "id": "provenance_truthful",
-      "text": "Labels reflect true provenance: the planner never reads untrusted data except through labelled values.",
+      "text": "Labels reflect true provenance: the planner never reads untrusted data except through labelled values. This premise carries the anti-laundering burden.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",

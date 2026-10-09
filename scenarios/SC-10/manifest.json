@@ -2,10 +2,10 @@
   "schema_version": 1,
   "id": "SC-10",
   "title": "Agent weakens host firewall or security policy",
-  "bad_event": "An enforcement decision uses a policy version not written by an admin or not the latest at that moment.",
+  "bad_event": "An enforcement decision uses a policy version not written by an admin or not the latest at that moment. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any write/decide/altDecide/build/halt trace.",
   "refutation": "A decision under an agent-written or stale policy despite full checks (witnesses: agent-writable policy, stale cache, alternate evaluator).",
-  "scope": "Lean model only. Not: storage rollback of the policy store.",
+  "scope": "Lean model only. Not: storage rollback of the policy store. The check flag(s) singleEval, pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
   "families": [
     "F1",
     "F4"
@@ -33,6 +33,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "store_trusted",
       "text": "The policy store's access control and storage are trusted (no rollback).",

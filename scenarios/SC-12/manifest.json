@@ -2,10 +2,10 @@
   "schema_version": 1,
   "id": "SC-12",
   "title": "Agent establishes persistence, spawns helpers or recursively replicates",
-  "bad_event": "After its session ends or HALT, an entity of the agent's lineage is still live or a scheduled job of that lineage fires.",
+  "bad_event": "After its session ends or HALT, an entity of the agent's lineage is still live or a scheduled job of that lineage fires. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of spawn/schedule/fire/bypass/endSession/halt operations with arbitrary content.",
   "refutation": "A trace where a lineage entity survives session end or a job fires after it, despite full checks (witnesses: registry bypass, parent-only revocation, foreign registration).",
-  "scope": "Lean model only; no runtime harness. Not: effects caused while the session was live.",
+  "scope": "Lean model only; no runtime harness. Not: effects caused while the session was live. The check flag(s) registryOnly model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
   "families": [
     "F1",
     "F3",
@@ -34,6 +34,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "registry_complete",
       "text": "Every creation path (processes, cron/at/systemd timers, cloud jobs, credentials) goes through the trusted registry.",

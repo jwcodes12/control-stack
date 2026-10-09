@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-19",
   "title": "Agent damages data or causes an irreversible live production side effect",
-  "bad_event": "A destructive commit affects more than R objects, lacks a verified snapshot at exactly the destroyed version, lacks a non-author approval, or commits twice.",
+  "bad_event": "A destructive commit affects more than R objects, lacks a verified snapshot at exactly the destroyed version, lacks a non-author approval, or commits twice. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any write/snapshot/verify/prepare/approve/commit/halt trace including concurrent writes.",
   "refutation": "A destructive commit without a fresh verified restore point or above R despite full checks (witnesses: stale snapshot, unverified snapshot, blast-radius race).",
   "scope": "Lean model only. Not: restore correctness beyond the trusted verifier, non-versioned side effects.",
@@ -28,6 +28,14 @@
   ],
   "evidence": [],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "trusted_verifier",
       "text": "Snapshot verification (restore test) is trusted and correct.",

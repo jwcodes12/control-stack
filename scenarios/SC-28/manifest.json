@@ -2,10 +2,10 @@
   "schema_version": 1,
   "id": "SC-28",
   "title": "Multiple agents individually within limits jointly exceed the overall budget",
-  "bad_event": "Total consumption across agents and all their descendants exceeds the global budget, a lease's lineage exceeds its budget, or work continues after revocation or HALT.",
+  "bad_event": "Total consumption across agents and all their descendants exceeds the global budget, a lease's lineage exceeds its budget, or work continues after revocation or HALT. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any trace of issue/fork/work/revoke/restart/halt operations (rollback excluded). Runtime evidence: benign workloads only (process trees incl. a session-detached daemon); no adversarial workloads were run.",
   "refutation": "A trace or measurement where summed metered usage exceeds G, a revoked lineage works, or processes survive HALT.",
-  "scope": "Lean joint model plus a single-host cgroup v2 mechanism check (CPU time, pids) with benign workloads. Not: adversarial workloads, GPUs, network/token spend, multi-host budgets, ledger rollback.",
+  "scope": "Lean joint model plus a single-host cgroup v2 mechanism check (CPU time, pids) with benign workloads. Not: adversarial workloads, GPUs, network/token spend, multi-host budgets, ledger rollback. The check flag(s) meter model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
   "families": [
     "F3",
     "F5",
@@ -53,6 +53,14 @@
     }
   ],
   "assumptions": [
+    {
+      "id": "credential_separation",
+      "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1).",
+      "proof": "NOT_PROVED",
+      "evidence": "NOT_RUN",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
+    },
     {
       "id": "trusted_meter",
       "text": "The meter sees every unit of consumption by every descendant (kernel cgroup accounting with launch-time placement).",

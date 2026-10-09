@@ -128,7 +128,7 @@ theorem addEntry (R : Roles) (s : State) (h : Inv R s) (e : Entry) :
     Inv R {s with entries := e :: s.entries} := by
   refine ⟨h.issuers, ?_, h.oneUse⟩
   intro x hx
-  exact (h.effects x hx).monoEntries x e
+  exact EffectOk.monoEntries x e (h.effects x hx)
 
 theorem addConfirmation (R : Roles) (s : State) (h : Inv R s)
     (c : Confirmation) (hc : c.issuer ∈ R.users) :
@@ -139,7 +139,7 @@ theorem addConfirmation (R : Roles) (s : State) (h : Inv R s)
     · subst a; exact hc
     · exact h.issuers a hold
   · intro x hx
-    exact (h.effects x hx).monoConfirmations x c
+    exact EffectOk.monoConfirmations x c (h.effects x hx)
 
 theorem addEffect (R : Roles) (s : State) (h : Inv R s)
     (x : Effect) (hx : EffectOk R s x)
@@ -176,7 +176,8 @@ theorem step_inv (R : Roles) (s : State) (op : Event) (h : Inv R s) :
             | none => simpa [step, hh, he, hc] using h
             | some c =>
                 by_cases hp : allowed R s r tool eid cid e c
-                · rcases hp with ⟨hs, heid, hr, hforeign, hcid, huser, hreader,
+                · have hp' := hp
+                  rcases hp with ⟨hs, heid, hr, hforeign, hcid, huser, hreader,
                                   htool, hentry, hval, hu⟩
                   have he_mem : e ∈ s.entries := List.mem_of_find?_eq_some he
                   have hc_mem : c ∈ s.confirmations := List.mem_of_find?_eq_some hc
@@ -184,8 +185,7 @@ theorem step_inv (R : Roles) (s : State) (op : Event) (h : Inv R s) :
                     ⟨hs, e, he_mem, c, hc_mem, heid, hr, hforeign, rfl,
                      hcid, huser, hreader, htool, hentry, hval⟩
                   have hi := addEffect R s h ⟨cid, r, tool, eid, e.val⟩ hx hu
-                  simpa [step, hh, he, hc, allowed, hs, heid, hr, hforeign,
-                    hcid, huser, hreader, htool, hentry, hval, hu] using hi
+                  simpa [step, hh, he, hc, hp'] using hi
                 · simpa [step, hh, he, hc, hp] using h
   | halt issuer =>
       by_cases hh : issuer ∈ R.admins

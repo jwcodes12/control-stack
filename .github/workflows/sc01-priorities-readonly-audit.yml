@@ -1,0 +1,55 @@
+name: sc01-priorities-readonly-audit
+on:
+  push:
+    branches:
+      - sc01-priorities-validation-20261008
+    paths:
+      - .github/workflows/sc01-priorities-readonly-audit.yml
+permissions:
+  contents: read
+jobs:
+  finite-transition-and-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Differentially check Python gateway vs independent finite model
+        run: python3 tools/test_gateway_correspondence.py -v
+      - name: Recheck original gateway regression without any new guest or channel probe
+        run: |
+          python3 gateway/test_gateway.py
+          python3 gateway/test_lifetime.py
+          python3 tools/test_ctrlcert.py
+          python3 tools/check_scenarios.py
+          python3 tools/build_registry.py --check
+      - name: Read-only x64 prospective host capability report
+        run: python3 tools/sc01_host_feasibility.py
+  lean-statement-kernel-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean via elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Build pinned source and replay actual claim statements
+        run: |
+          lake exe cache get
+          lake build ControlStack
+          lake env lean scenarios/SC-01/claim.lean
+          lake env lean scenarios/SC-13/claim.lean
+          lake env lean ControlStack/HaltLiveness.lean
+  arm-native-host-capability-only:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read-only aarch64 virtualization feasibility (no VM)
+        run: python3 tools/sc01_host_feasibility.py

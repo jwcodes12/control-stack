@@ -1,6 +1,8 @@
 name: vm-isolation
 on:
   push:
+    branches-ignore:
+      - sc01-priorities-validation-20261008
     paths: ['gateway/vm/**', '.github/workflows/vm-isolation.yml']
   pull_request:
     paths: ['gateway/vm/**', '.github/workflows/vm-isolation.yml']

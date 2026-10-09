@@ -1,6 +1,8 @@
 name: scenario-metadata
 on:
   push:
+    branches-ignore:
+      - sc01-priorities-validation-20261008
     paths: ['scenarios/**', 'tools/check_scenarios.py', 'tools/test_check_scenarios.py', 'THEOREM-REGISTRY.json', '.github/workflows/scenario-metadata.yml']
   pull_request:
     paths: ['scenarios/**', 'tools/check_scenarios.py', 'tools/test_check_scenarios.py', 'THEOREM-REGISTRY.json', '.github/workflows/scenario-metadata.yml']

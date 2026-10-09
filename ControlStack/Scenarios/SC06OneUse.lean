@@ -67,6 +67,14 @@ def allowed (R : Roles) (s : State) (r tool eid cid : ℕ)
   c.reader = r ∧ c.tool = tool ∧ c.entryId = eid ∧
   c.val = e.val ∧ cid ∉ s.effects.map Effect.confId
 
+/-- Constructive decision procedure; avoids noncomputable Classical.decEq
+in the executable transition function and finite negative controls. -/
+instance allowedDecidable (R : Roles) (s : State) (r tool eid cid : ℕ)
+    (e : Entry) (c : Confirmation) :
+    Decidable (allowed R s r tool eid cid e c) := by
+  unfold allowed
+  infer_instance
+
 def step (R : Roles) (s : State) : Event → State
   | .ingest r w v =>
       if s.halted then s else
@@ -164,8 +172,8 @@ theorem step_inv (R : Roles) (s : State) (op : Event) (h : Inv R s) :
       · simpa [step, hh] using h
       · by_cases ok : issuer ∈ R.users ∧ cid ∉ s.confirmations.map Confirmation.id
         · have hh' := addConfirmation R s h ⟨cid, issuer, r, tool, eid, v⟩ ok.1
-          simpa [step, hh, ok] using hh'
-        · simpa [step, hh, ok] using h
+          simpa only [step, hh, ok] using hh'
+        · simpa only [step, hh, ok] using h
   | act r tool eid cid =>
       by_cases hh : s.halted
       · simpa [step, hh] using h

@@ -17,7 +17,7 @@ and a trace checker, not by a refinement proof.
 | `client.py` | the only module untrusted children can import |
 | `check_trace.py` | (a) model replay of the trace, (b) model bank = real ledger, (c) independent reconciliation; `--self-test` |
 | `test_bank.py` | bank fixtures: auth, idempotency, `conflict` on a repeated key with a different payload |
-| `run_sc26.py` | live phases: attacks (A1–A15, A10b, A10c), controls, usefulness (64 invoices, 16 crashes), baseline |
+| `run_sc26.py` | live phases: attacks (A1–A16, A10b, A10c; A17 concurrent swarm; A18 HALT-under-flood probe, reported only; checker self-test), controls, usefulness (64 invoices, 16 crashes), baseline, h3 (Lean difftest) |
 
 ## Run
 
@@ -50,6 +50,15 @@ logged but never sent stay stranded (unpaid) and are listed by the gate's `dump`
 still land after the halt (A10c), as the model's `arrive` allows. `check_trace` reports it as `inflight_after_halt`
 info, not as a failure. A bank `conflict` (same key, different payload) is a hard error for the gate and is never
 marked delivered.
+
+v3 additions:
+- Every physical transmission to the bank, recovery re-sends included, is logged as `transmit`. This is not a model
+  operation. A `transmit` after the HALT fails c4.
+- Gate trace rows and bank access rows carry `CLOCK_MONOTONIC` stamps. The replay interleaves bank events into the
+  gate trace by that clock (ties go to the gate) and checks `Inv` at each step. The old append replay
+  (`--replay append`) runs as well, and both must be clean and reach the same final state.
+- Each request frame has a total 10 s read deadline, not a per-`recv` one. A timed-out client is dropped silently.
+- Server stderr goes to a file, never to an unread pipe.
 
 The checker replays the gate trace and then the bank log in bank order. Gate operations never read the bank, so this
 is a valid model trace with the same final state. One consequence is that the per-step `Inv` for bank events is

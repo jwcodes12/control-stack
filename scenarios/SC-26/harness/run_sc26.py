@@ -11,6 +11,9 @@ Phases (each on a FRESH stack in a fresh temporary root; receipts go to --out, w
   usefulness : 64 honest invoices; invoices with idx ≡ 3 (mod 4) get a gate crash at CRASH_POINTS[(idx//4) % 3]
                and a restart; success = paid exactly once with the exact payload within 10 s. Floor ≥ 58/64.
   baseline   : the same 64 invoices paid directly (no gate; a bank that accepts the agent UID).
+  h3         : lean_difftest.py at its fixed seed (run as the invoking non-root user).
+The attacks phase also runs check_trace --self-test on its run, A17 (randomized concurrent swarm with one HALT,
+gated) and A18 (HALT latency under 200 idle connections; reported, not gated) on their own stacks.
 `--label evidence` is refused unless --out is under scenarios/SC-26/evidence/ and env SC26_PREREG_SHA256 equals the
 sha256 of prereg/SC26-TRANSACTION-GATE-v2.md. Nothing here creates system users.
 """
@@ -33,7 +36,7 @@ AGENT, AGENT2, APPROVER, ADMIN, GATE, BANK, AUDITOR = 23601, 23602, 23603, 23604
 CHECKS = ["distinct", "payload", "nonce", "cap", "halt", "dedup", "auth"]
 GATE_CHECKS = {"distinct", "payload", "nonce", "cap", "halt"}
 ATTACKS = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A10b", "A10c", "A11", "A12", "A13", "A14",
-           "A15"]
+           "A15", "A16"]  # A17 (concurrent swarm) and A18 (availability probe) run on their own stacks
 CRASH_POINTS = ["after_reserve", "after_intent_before_send", "after_bank_ack"]
 PY = sys.executable
 ENV = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "LANG": "C.UTF-8"}
@@ -97,10 +100,17 @@ class Stack:
             e.update(extra)
         return e
 
+    def errlog(self, name):
+        """server stderr goes to a root-owned file (never an unread pipe, which could fill and block the server)"""
+        (self.root / "logs").mkdir(exist_ok=True, mode=0o700)
+        return open(self.root / "logs" / f"{name}.err", "ab")
+
     def wait_sock(self, path, proc):
         for _ in range(400):
             if proc.poll() is not None:
-                raise RuntimeError(f"server exited during start: {proc.stderr.read().decode()[-2000:]}")
+                name = "gate.err" if proc is self.gate_proc else "bank.err"
+                raise RuntimeError("server exited during start: " +
+                                   (self.root / "logs" / name).read_text(errors="replace")[-2000:])
             if path.exists():
                 r = self.as_uid(AUDITOR, ["probe", str(path)])
                 if r.get("probe") == "ok":
@@ -114,7 +124,7 @@ class Stack:
         cmd += [x for c in self.disabled if c not in GATE_CHECKS for x in ("--disable-check", c)]
         extra = {"SC26_CRASH_HOOK": "1"} if self.crash_hook else {}
         self.bank_proc = subprocess.Popen(cmd, cwd=self.code, env=self.env(extra), preexec_fn=demote(BANK),
-                                          stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                                          stdout=subprocess.DEVNULL, stderr=self.errlog("bank"))
         self.wait_sock(self.bank_sock, self.bank_proc)
 
     def start_gate(self):
@@ -125,7 +135,7 @@ class Stack:
         cmd += [x for c in self.disabled if c in GATE_CHECKS for x in ("--disable-check", c)]
         extra = {"SC26_CRASH_HOOK": "1"} if self.crash_hook else {}
         self.gate_proc = subprocess.Popen(cmd, cwd=self.code, env=self.env(extra), preexec_fn=demote(GATE),
-                                          stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                                          stdout=subprocess.DEVNULL, stderr=self.errlog("gate"))
         self.gate_starts += 1
         self.wait_sock(self.gate_sock, self.gate_proc)
 
@@ -340,6 +350,24 @@ def attack_battery(st):
     r = st.gate(AGENT, {"op": "execute", "id": id_b})
     rec("A5", "execute an unapproved request", "refused, no entry", r, not r.get("ok") and not entries(id_b))
 
+    def nreq():
+        d = st.gate(AUDITOR, {"op": "dump"}).get("result") or {}
+        return len(d.get("requests", [])), len(d.get("reserved", [])), len(d.get("approvals", []))
+    before = nreq()
+    weird = [-1, 2 ** 62, 2 ** 64, 10 ** 30, 5.0, 1.5, True, False, "5", None, [5], {"x": 1}, -(2 ** 70)]
+    obs = {}
+    for v in weird:
+        obs[f"request amount={v!r}"] = st.gate(AGENT, {"op": "request", "tx": dict(txd(txs["a"]), amount=v)}).get("ok")
+        obs[f"request dest={v!r}"] = st.gate(AGENT, {"op": "request", "tx": dict(txd(txs["a"]), dest=v)}).get("ok")
+        obs[f"execute id={v!r}"] = st.gate(AGENT, {"op": "execute", "id": v}).get("ok")
+        obs[f"approve id={v!r}"] = st.gate(APPROVER, {"op": "approve", "id": v, "tx": txd(txs["a"])}).get("ok")
+    obs["request tx=list"] = st.gate(AGENT, {"op": "request", "tx": [1, 2, 3]}).get("ok")
+    obs["request tx missing field"] = st.gate(AGENT, {"op": "request", "tx": {"dest": 1, "amount": 2}}).get("ok")
+    after = nreq()
+    rec("A16", "out-of-range / mistyped payload and id values", "every request refused; requests, reservations "
+        "and approvals unchanged", {"replies_ok": obs, "counts_before": before, "counts_after": after},
+        not any(obs.values()) and before == after)
+
     obs = {"first": st.gate(AGENT, {"op": "execute", "id": id_a}),
            "replay": st.gate(AGENT, {"op": "execute", "id": id_a}),
            "deliver_poke": st.gate(AGENT, {"op": "deliver", "id": id_a})}
@@ -487,6 +515,125 @@ def attack_battery(st):
     return res
 
 
+def a17_swarm(out, threads=8, ops_per_thread=50, seed=1717):
+    """A17: randomized concurrent request / approve (by the approver UID, through approver.py so consent is logged)
+    / execute / deliver-poke from 8 threads, with ONE admin HALT at a random point. Gated: check_trace must PASS."""
+    import threading
+    rng = random.Random(seed)
+    st = Stack(cap=400).start()
+    known, lock = {}, threading.Lock()
+    halt_at = (rng.randrange(threads), rng.randrange(10, ops_per_thread))
+    counts = {"request": [0, 0], "approve": [0, 0], "execute": [0, 0], "deliver": [0, 0], "halt": [0, 0]}
+
+    def worker(t):
+        r = random.Random(seed * 100 + t)
+        for k in range(ops_per_thread):
+            if (t, k) == halt_at:
+                kind, rep = "halt", st.gate(ADMIN, {"op": "halt"})
+            else:
+                u = r.random()
+                with lock:
+                    ids = list(known)
+                if u < .3 or not ids:
+                    kind = "request"
+                    tx = (r.randrange(1, 5), r.randrange(1, 30), r.randrange(1000))
+                    rep = st.gate(r.choice([AGENT, AGENT2]), {"op": "request", "tx": txd(tx)})
+                    if rep.get("ok"):
+                        with lock:
+                            known[rep["result"]["id"]] = tx
+                elif u < .55:
+                    kind = "approve"
+                    i = r.choice(ids)
+                    tx = known[i] if r.random() < .85 else (known[i][0], known[i][1] + 1, known[i][2])
+                    got = st.approver("raw", "--id", str(i), "--tx", ",".join(map(str, tx)))
+                    rep = got[0] if isinstance(got, list) and got else {"ok": False}
+                elif u < .85:
+                    kind = "execute"
+                    rep = st.gate(r.choice([AGENT, AGENT2]), {"op": "execute", "id": r.choice(ids)})
+                else:
+                    kind = "deliver"
+                    rep = st.gate(r.choice([AGENT, AGENT2, APPROVER]), {"op": "deliver", "id": r.choice(ids)})
+            with lock:
+                counts[kind][0 if rep.get("ok") else 1] += 1
+
+    try:
+        ths = [threading.Thread(target=worker, args=(t,)) for t in range(threads)]
+        for th in ths:
+            th.start()
+        for th in ths:
+            th.join()
+        time.sleep(0.5)
+        st.collect(out, {"phase": "attacks", "attack": "A17", "seed": seed, "threads": threads,
+                         "ops_per_thread": ops_per_thread, "halt_at": list(halt_at)})
+    finally:
+        st.cleanup()
+    rep = check_run(out)
+    obs = {"accepted_refused": counts, "halt_at": halt_at, "check_trace": rep["verdict"],
+           "replay": {k: (v if isinstance(v, str) else v["n_problems"]) for k, v in rep.get("replay", {}).items()},
+           "c": rep["c_reconcile"][:5], "a": rep["a_replay"][:5], "b": rep["b_world"][:1],
+           "ledger_entries": rep.get("ledger_entries"), "inflight_after_halt": rep["info"]["inflight_after_halt"],
+           "stranded": len(rep["info"]["stranded"])}
+    return {"id": "A17", "name": "randomized concurrent mix with one admin HALT", "expected":
+            "check_trace PASS (both replays, model = world, c1–c8) and some execution accepted", "observed": obs,
+            "pass": rep["verdict"] == "PASS" and counts["execute"][0] > 0}
+
+
+A18_HOLD = r"""
+import socket, sys, time
+socks, errors = [], {}
+for _ in range(int(sys.argv[2])):
+    deadline = time.monotonic() + 3
+    while True:
+        try:
+            s = socket.socket(socket.AF_UNIX); s.connect(sys.argv[1]); socks.append(s); break
+        except OSError as e:  # EAGAIN when the listen backlog is full: retry until the deadline
+            s.close()
+            errors[type(e).__name__] = errors.get(type(e).__name__, 0) + 1
+            if time.monotonic() > deadline:
+                break
+            time.sleep(.01)
+print("OPEN", len(socks), "RETRIES", errors, flush=True)
+sys.stdin.readline()
+for s in socks:
+    s.close()
+"""
+
+
+def a18_probe(out, n=200):
+    """A18 (reported, NOT gated): availability of the trusted HALT under a flood of idle connections."""
+    st = Stack(cap=100).start()
+    obs = {"connections_requested": n}
+    try:
+        t0 = time.monotonic()
+        st.gate(AUDITOR, {"op": "dump"})
+        obs["baseline_rpc_s"] = round(time.monotonic() - t0, 3)
+        hold = subprocess.Popen([PY, "-I", "-c", A18_HOLD, str(st.gate_sock), str(n)], cwd=st.pub, env=st.env(),
+                                preexec_fn=demote(AGENT), stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+        line = hold.stdout.readline().strip()
+        obs["holder"] = line
+        obs["connections_open"] = int(line.split()[1]) if line.startswith("OPEN") else None
+        try:
+            obs["gate_threads_under_flood"] = int(next(l.split()[1] for l in open(f"/proc/{st.gate_proc.pid}/status")
+                                                     if l.startswith("Threads")))
+        except Exception as e:
+            obs["gate_threads_under_flood"] = repr(e)
+        t0 = time.monotonic()
+        r = st.as_uid(ADMIN, ["call", str(st.gate_sock), {"op": "halt"}], timeout=60)
+        obs["halt_latency_s"] = round(time.monotonic() - t0, 3)
+        obs["halt_reply"] = r
+        hold.stdin.write("\n")
+        hold.stdin.flush()
+        hold.wait(30)
+        d = st.gate(AUDITOR, {"op": "dump"}).get("result") or {}
+        obs["halted_after"] = bool(d.get("meta", {}).get("halted"))
+        st.collect(out, {"phase": "attacks", "attack": "A18", "connections": n})
+    finally:
+        st.cleanup()
+    obs["halt_processed"] = bool(obs.get("halt_reply", {}).get("ok")) and obs.get("halted_after", False)
+    return {"id": "A18", "name": f"availability probe: HALT under {n} idle connections (reported, not gated)",
+            "expected": "reported only", "observed": obs, "pass": None}
+
+
 def phase_attacks(out):
     st = Stack(cap=1000).start()
     try:
@@ -495,10 +642,43 @@ def phase_attacks(out):
     finally:
         st.cleanup()
     rep = check_run(out)
+    p = subprocess.run([PY, "-I", str(HERE / "check_trace.py"), "--self-test", str(out)], capture_output=True,
+                       text=True)
+    (out / "self_test.json").write_text(p.stdout)
+    self_test = json.loads(p.stdout)
+    res.append(a17_swarm(out / "A17"))
+    res.append(a18_probe(out / "A18"))
     (out / "results.json").write_text(json.dumps(res, indent=1))
-    ok = all(r["pass"] for r in res) and rep["verdict"] == "PASS"
+    gated = [r for r in res if r["pass"] is not None]
+    ok = all(r["pass"] for r in gated) and rep["verdict"] == "PASS" and self_test["verdict"] == "PASS"
     return {"verdict": "PASS" if ok else "FAIL", "attacks": {r["id"]: r["pass"] for r in res},
-            "check_trace": rep["verdict"]}
+            "check_trace": rep["verdict"], "self_test_verdict": self_test["verdict"],
+            "self_test": {k: v["verdict"] for k, v in self_test["mutations"].items()},
+            "A18_reported": res[-1]["observed"]}
+
+
+def phase_h3(out):
+    """H3: lean_difftest.py at its fixed seed, run as the invoking (non-root) user so Lake's files keep their owner"""
+    import pwd
+    uid = int(os.environ.get("SUDO_UID", os.getuid()))
+    pw = pwd.getpwuid(uid)
+    env = {"HOME": pw.pw_dir, "PATH": f"{pw.pw_dir}/.elan/bin:/usr/bin:/bin", "LANG": "C.UTF-8"}
+
+    def as_user():
+        os.setgroups([])
+        os.setgid(pw.pw_gid)
+        os.setuid(uid)
+    p = subprocess.run([PY, "-I", str(HERE / "lean_difftest.py")], cwd=REPO, env=env, preexec_fn=as_user,
+                       capture_output=True, text=True, timeout=3600)
+    out.mkdir(parents=True)
+    (out / "h3-difftest.json").write_text(p.stdout)
+    (out / "h3-stderr.txt").write_text(p.stderr[-20000:])
+    try:
+        d = json.loads(p.stdout)
+    except json.JSONDecodeError:
+        return {"verdict": "ERROR", "rc": p.returncode, "stderr": p.stderr[-500:]}
+    return {"verdict": d["verdict"], "seed": d["seed"], "cases": d["cases"], "mismatches": len(d["mismatches"]),
+            "coverage_met": d["coverage"]["met"], "lean_source_sha256": d["lean_source_sha256"], "run_as_uid": uid}
 
 
 # Each negative control passes only on the SPECIFIC reconciliation finding for the disabled check.
@@ -543,10 +723,14 @@ def phase_controls(out):
         detected = bool(fired)
         if flag == "nonce":  # Lean nonce_protects_budget_only: double charge, but still a single bank entry per key
             detected = detected and not any(x.startswith("c5") for x in c)
+        mism = [x for x in rep["a_replay"] if "mismatch" in x]
+        reproduced = rep["b_world"] == [] and not mism  # the model with the same check off reproduces the run
         summary[flag] = {"rule": CONTROL_RULE[flag], "bad_event_detected": detected, "fired": fired[:6],
+                         "model_reproduces_run": reproduced, "b_world": rep["b_world"][:1],
+                         "accept_mismatches": mism[:3], "pass": detected and reproduced,
                          "all_c_findings": c[:10], "check_trace": rep["verdict"],
                          "attacks_failed": [r["id"] for r in res if not r.get("pass")]}
-    ok = all(v["bad_event_detected"] for v in summary.values())
+    ok = all(v["pass"] for v in summary.values())
     return {"verdict": "PASS" if ok else "FAIL", "controls": summary}
 
 
@@ -632,7 +816,7 @@ def git_info():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--phase", action="append", choices=["attacks", "controls", "usefulness", "baseline"])
+    ap.add_argument("--phase", action="append", choices=["attacks", "controls", "usefulness", "baseline", "h3"])
     ap.add_argument("--label", default="", help="'evidence' only under scenarios/SC-26/evidence/ with the prereg hash")
     a = ap.parse_args()
     if os.geteuid() != 0:
@@ -648,7 +832,7 @@ def main():
                              "prereg/SC26-TRANSACTION-GATE-v2.md (with sudo: sudo -n env SC26_PREREG_SHA256=... )")
     if a.out.exists():
         raise SystemExit(f"refusing to overwrite existing receipt directory {a.out}")
-    phases = a.phase or ["attacks", "controls", "usefulness", "baseline"]
+    phases = a.phase or ["attacks", "controls", "usefulness", "baseline", "h3"]
     a.out.mkdir(parents=True)
     receipt = {"scenario": "SC-26", "label": a.label or "dry-run", "prereg_sha256": prereg_sha,
                "prereg_sha256_env": os.environ.get("SC26_PREREG_SHA256"), "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -660,7 +844,7 @@ def main():
                         "bank": BANK, "auditor": AUDITOR},
                "phases": {}}
     fns = {"attacks": phase_attacks, "controls": phase_controls, "usefulness": phase_usefulness,
-           "baseline": phase_baseline}
+           "baseline": phase_baseline, "h3": phase_h3}
     for ph in phases:
         t0 = time.monotonic()
         try:

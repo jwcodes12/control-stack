@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Check one SC-26 run directory (written by run_sc26.py) against the Lean model and against independent records.
 
-(a) MODEL REPLAY: the gate's trace (its linearization) is replayed through model.py from `INIT`, followed by the
-    bank's access log in bank order: calls from the gate are `arrive key`, calls from anyone else `bankCall`. At every
+(a) MODEL REPLAY: the gate's trace (its linearization) and the bank's access log (calls from the gate are
+    `arrive key`, from anyone else `bankCall`) are replayed through model.py from `INIT` twice: interleaved by the
+    shared CLOCK_MONOTONIC stamps (ties: gate first), and with the bank log appended. Both must be clean. At every
     step: the runtime's accept/refuse equals the model's `guard`, an accepted request got the model's `next` as its
     id, and `Inv` holds (with the run's Checks; under a negative control `Inv` may fail, which is the point).
 (b) MODEL = WORLD: the final model bank equals the REAL bank ledger as a multiset of (key, payload).
@@ -10,7 +11,8 @@
     c1 it came from the gate credential and the gate logged a send for its key; c2 an approver-role UID's OWN
     consent log (principal = file owner) holds this key with exactly this payload ("payload mismatch" if only other
     payloads); c3 one such approver is neither the requester the gate recorded nor an agent; c4 its key's first send
-    precedes the first HALT (an entry sent before but landed after HALT is reported as info `inflight_after_halt`).
+    precedes the first HALT, and NO `transmit` (physical send, including recovery re-sends) is logged after the HALT
+    (an entry transmitted before but landed after the HALT is reported as info `inflight_after_halt`).
     Globally: c5 ledger keys unique; c6 ledger total ≤ cap; c7 gate spent = sum over its distinct reserved ids, and
     ≤ cap (no double charge); c8 no memo (invoice) paid twice.
 
@@ -43,7 +45,7 @@ def txt(d):
     return M.Tx(d["dest"], d["amount"], d["memo"])
 
 
-def check(data):
+def check(data, replay="both"):
     cfg, gate, ledger, access = data["config"], data["gate"], data["ledger"], data["access"]
     R = M.Roles(tuple(cfg["agents"]), tuple(cfg["approvers"]), tuple(cfg["admins"]), cfg["gate_uid"])
     cap = cfg["cap"]
@@ -51,9 +53,9 @@ def check(data):
     report = {"a_replay": [], "b_world": [], "c_reconcile": []}
 
     # ---- (a) ----
-    events = []
+    gate_ev, bank_ev = [], []
     for row in gate["trace"]:
-        if row["op"] == "malformed":
+        if row["op"] in ("malformed", "transmit"):  # transmit: physical send of a logged deliver, not a model op
             continue
         a = json.loads(row["args"])
         c = row["caller"]
@@ -70,11 +72,9 @@ def check(data):
         else:
             report["a_replay"].append(f"unknown trace op {row['op']}")
             continue
-        events.append((o, row))
-    # The bank's own serialization: every transfer call it received, in bank order. A call from the gate is the
-    # model's `arrive key` (the message was logged as `deliver` before it was sent); any other caller's call is the
-    # model's `bankCall`. Gate operations never read the bank, so appending these after the gate trace is a valid
-    # model trace with the same final state.
+        gate_ev.append(((row.get("mono"), 0, row["seq"]), o, row))
+    # The bank's own serialization: a transfer call from the gate is the model's `arrive key` (its `deliver` was
+    # logged before the send); a call from anyone else is the model's `bankCall`.
     for row in access:
         if row["op"] != "transfer":
             continue
@@ -82,19 +82,42 @@ def check(data):
             o = M.arrive(row["key"])
         else:
             o = M.bankCall(row["caller"], row["key"], (row["dest"], row["amount"], row["memo"]))
-        events.append((o, {"accepted": int(row["outcome"] != "refused"), "src": "bank", "seq": row["seq"]}))
-    s = M.INIT
-    for o, row in events:
-        g = M.guard(R, cap, C, s, o)
-        if bool(row["accepted"]) != g:
-            report["a_replay"].append(f"accept mismatch at {row.get('src', 'gate')}#{row['seq']}: runtime="
-                                      f"{bool(row['accepted'])} model={g} op={o}")
-        if o[0] == "request" and g and json.loads(row["result"]) != s.next:
-            report["a_replay"].append(f"request id mismatch at #{row['seq']}")
-        s = M.step(R, cap, C, s, o)
-        for v in M.inv(R, cap, s):
-            report["a_replay"].append(f"Inv.{v[0]} fails after #{row['seq']}: {v[1]}")
-            break
+        bank_ev.append(((row.get("mono"), 1, row["seq"]), o,
+                        {"accepted": int(row["outcome"] != "refused"), "src": "bank", "seq": row["seq"]}))
+    # Two replays. interleave: bank events placed into the gate trace by the shared CLOCK_MONOTONIC stamp (ties:
+    # gate first), so Inv is checked at the real-time order. append: bank events after the whole gate trace (valid
+    # because gate operations never read the bank). Both must be clean; their final states must agree.
+    have_mono = all(k[0] is not None for k, _, _ in gate_ev + bank_ev)
+    modes = {"append": gate_ev + bank_ev}
+    if have_mono:
+        modes["interleave"] = sorted(gate_ev + bank_ev, key=lambda e: e[0])
+    finals = {}
+    report["replay"] = {}
+    for mode, events in modes.items():
+        probs, s = [], M.INIT
+        for _, o, row in events:
+            g = M.guard(R, cap, C, s, o)
+            if bool(row["accepted"]) != g:
+                probs.append(f"accept mismatch at {row.get('src', 'gate')}#{row['seq']}: runtime="
+                             f"{bool(row['accepted'])} model={g} op={o}")
+            if o[0] == "request" and g and json.loads(row["result"]) != s.next:
+                probs.append(f"request id mismatch at #{row['seq']}")
+            s = M.step(R, cap, C, s, o)
+            for v in M.inv(R, cap, s):
+                probs.append(f"Inv.{v[0]} fails after {row.get('src', 'gate')}#{row['seq']}: {v[1]}")
+                break
+        finals[mode] = s
+        report["replay"][mode] = {"problems": probs[:20], "n_problems": len(probs), "model_good": M.good(R, cap, s)}
+    if not have_mono:
+        report["replay"]["interleave"] = "unavailable: run predates the shared-clock stamps"
+    primary = "interleave" if have_mono and replay != "append" else "append"
+    report["replay_mode"] = primary if replay != "both" or not have_mono else "both (interleave primary)"
+    report["a_replay"] += report["replay"][primary]["problems"]
+    if have_mono and replay == "both":
+        report["a_replay"] += ["append: " + x for x in report["replay"]["append"]["problems"]]
+        if finals["append"] != finals["interleave"]:
+            report["a_replay"].append("append and interleaved replays reach different final states")
+    s = finals[primary]
     report["model_good"] = M.good(R, cap, s)
 
     # ---- (b) ----
@@ -112,16 +135,24 @@ def check(data):
     # such approval by a UID that is neither the requester the gate recorded nor any agent.
     reqs = {r["id"]: r for r in gate["requests"]}
     agents = set(cfg["agents"])
+    bad = report["c_reconcile"]
     halts = [r for r in gate["trace"] if r["op"] == "halt" and r["accepted"]]
     halt_seq = halts[0]["seq"] if halts else None
-    halt_t = halts[0]["t"] if halts else None
-    sends = {}
+    use_mono = bool(halts) and halts[0].get("mono") is not None and all(e.get("mono") is not None for e in ledger)
+    halt_clock = (halts[0]["mono"] if use_mono else halts[0]["t"]) if halts else None
+    sends, transmits = {}, {}
     for r in gate["trace"]:
         if r["op"] == "deliver" and r["accepted"]:
             sends.setdefault(json.loads(r["args"])["id"], []).append(r["seq"])
+        if r["op"] == "transmit":
+            transmits.setdefault(json.loads(r["args"])["id"], []).append(r["seq"])
+    if halt_seq is not None:
+        for k, seqs in sorted(transmits.items()):
+            late = [q for q in seqs if q > halt_seq]
+            if late:
+                bad.append(f"c4 key {k}: transmit #{late[0]} logged after halt #{halt_seq}")
     consents = [(log["owner_uid"], e) for log in data["consent"] for e in log["entries"]
                 if log["owner_uid"] in cfg["approvers"]]
-    bad = report["c_reconcile"]
     info = report["info"] = {"inflight_after_halt": [], "stranded": gate.get("stranded", [])}
     for e in ledger:
         k, tx = e["key"], (e["dest"], e["amount"], e["memo"])
@@ -143,8 +174,11 @@ def check(data):
         if k in sends and halt_seq is not None:
             if sends[k][0] > halt_seq:
                 bad.append(f"c4 key {k}: first send #{sends[k][0]} after halt #{halt_seq}")
-            elif e["t"] > halt_t:
-                info["inflight_after_halt"].append({"key": k, "send_seq": sends[k][0], "halt_seq": halt_seq})
+            elif (e["mono"] if use_mono else e["t"]) > halt_clock:
+                pre = [q for q in transmits.get(k, sends[k]) if q < halt_seq]
+                if pre:  # landed after the halt, but its transmission preceded it
+                    info["inflight_after_halt"].append({"key": k, "send_seq": sends[k][0], "transmit_seq": pre[-1],
+                                                        "halt_seq": halt_seq, "clock": "mono" if use_mono else "t"})
     keys = [e["key"] for e in ledger]
     for k in sorted(set(keys)):
         if keys.count(k) > 1:
@@ -201,8 +235,10 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("run")
     p.add_argument("--self-test", action="store_true")
+    p.add_argument("--replay", choices=["both", "interleave", "append"], default="both",
+                   help="which model replay decides (a): both (default), or one of them for comparison")
     a = p.parse_args()
-    rep = self_test(a.run) if a.self_test else check(load(a.run))
+    rep = self_test(a.run) if a.self_test else check(load(a.run), a.replay)
     print(json.dumps(rep, indent=2, default=str))
     return 0 if rep["verdict"] == "PASS" else 1
 

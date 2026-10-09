@@ -20,6 +20,8 @@ a halt. Each time the bank processes the message is the model's `arrive` (the ba
 Recovery at startup, unless halted, re-sends every unacknowledged message and issues a new deliver for every
 reservation that was never sent. After a halt the gate makes NO bank call at all: intents committed but not sent
 stay stranded (unpaid, listed by `dump`); only messages already transmitted may still land (the model's `arrive`).
+Every physical transmission to the bank (first send or recovery re-send) is ALSO logged, as op `transmit` (not a
+model operation), under `dlock` and refused once halted; check_trace fails any transmit logged after a HALT.
 Refused operations are recorded with accepted=0 (model: identity step). Malformed requests are recorded as
 `malformed` and are not model operations.
 
@@ -52,7 +54,7 @@ CREATE TABLE IF NOT EXISTS reserved(id INTEGER PRIMARY KEY, seq INTEGER NOT NULL
 CREATE TABLE IF NOT EXISTS delivery(seq INTEGER PRIMARY KEY AUTOINCREMENT, id INTEGER NOT NULL,
   acked INTEGER NOT NULL DEFAULT 0, outcome TEXT);
 CREATE TABLE IF NOT EXISTS trace(seq INTEGER PRIMARY KEY AUTOINCREMENT, op TEXT NOT NULL, caller INTEGER NOT NULL,
-  args TEXT NOT NULL, accepted INTEGER NOT NULL, result TEXT, t REAL NOT NULL);
+  args TEXT NOT NULL, accepted INTEGER NOT NULL, result TEXT, t REAL NOT NULL, mono INTEGER NOT NULL);
 """
 
 
@@ -115,9 +117,11 @@ class Gate:
 
     @staticmethod
     def trace(c, op, caller, args, accepted, result=None):
-        c.execute("INSERT INTO trace(op,caller,args,accepted,result,t) VALUES(?,?,?,?,?,?)",
+        # mono: CLOCK_MONOTONIC (shared by all processes on one host), taken under the write lock, so it is
+        # increasing in seq; check_trace interleaves the bank's access log with this trace by it
+        c.execute("INSERT INTO trace(op,caller,args,accepted,result,t,mono) VALUES(?,?,?,?,?,?,?)",
                   (op, caller, json.dumps(args, sort_keys=True), int(accepted),
-                   None if result is None else json.dumps(result), time.time()))
+                   None if result is None else json.dumps(result), time.time(), time.monotonic_ns()))
 
     def txn(self, fn):
         c = self.conn()
@@ -201,14 +205,27 @@ class Gate:
                 cur = c.execute("INSERT INTO delivery(id) VALUES(?)", (id,))
                 return cur.lastrowid, r[1]
             got = self.txn(f)
-        if got is None:
-            raise Refused("deliver refused")
-        dseq, tx = got
-        self.hook("after_intent_before_send")
+            if got is None:
+                raise Refused("deliver refused")
+            dseq, tx = got
+            self.hook("after_intent_before_send")
+            if not self.log_transmit(dseq, id, "deliver"):  # same lock hold as the accepted deliver
+                return "stranded"
         return self.complete(dseq, id, tx)
 
+    def log_transmit(self, dseq, id, source):
+        """record a physical transmission of logged message `dseq` (NOT a model operation: the send of an already
+        logged `deliver`). Caller holds `dlock`. Refused (nothing is sent) once a halt has committed."""
+        def f(c):
+            if self.halted(c):
+                return False
+            self.trace(c, "transmit", self.uid, {"id": id, "dseq": dseq, "source": source}, True)
+            return True
+        return self.txn(f)
+
     def complete(self, dseq, id, tx):
-        """transmit a logged message to the bank (the bank's processing is the model's `arrive`), then acknowledge"""
+        """the physical send of a message whose `transmit` row is already logged (the bank's processing is the
+        model's `arrive`), then acknowledge"""
         try:
             reply = call(self.bank_socket, {"op": "transfer", "key": id, "dest": tx[0], "amount": tx[1],
                                             "memo": tx[2]})
@@ -244,7 +261,7 @@ class Gate:
             return
         for dseq, id in c.execute("SELECT seq, id FROM delivery WHERE acked=0 ORDER BY seq").fetchall():
             with self.dlock:  # a re-send is a new transmission: it must not overlap or follow a committed halt
-                if self.halted(c):
+                if not self.log_transmit(dseq, id, "recovery"):
                     return
                 self.complete(dseq, id, self.req_tx(c, id)[1])
         if not self.halted(c):

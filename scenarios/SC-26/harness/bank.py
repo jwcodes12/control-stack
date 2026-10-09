@@ -21,9 +21,10 @@ from common import Refused, serve, shape, nat  # noqa: E402
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS ledger(seq INTEGER PRIMARY KEY AUTOINCREMENT, key INTEGER NOT NULL {unique},
-  dest INTEGER NOT NULL, amount INTEGER NOT NULL, memo INTEGER NOT NULL, caller INTEGER NOT NULL, t REAL NOT NULL);
+  dest INTEGER NOT NULL, amount INTEGER NOT NULL, memo INTEGER NOT NULL, caller INTEGER NOT NULL, t REAL NOT NULL,
+  mono INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS access(seq INTEGER PRIMARY KEY AUTOINCREMENT, caller INTEGER NOT NULL, op TEXT NOT NULL,
-  key INTEGER, dest INTEGER, amount INTEGER, memo INTEGER, outcome TEXT NOT NULL, t REAL NOT NULL);
+  key INTEGER, dest INTEGER, amount INTEGER, memo INTEGER, outcome TEXT NOT NULL, t REAL NOT NULL, mono INTEGER);
 """
 
 
@@ -65,6 +66,7 @@ class Bank:
             k, d, a, m = (nat(req[x]) for x in ("key", "dest", "amount", "memo"))
             self.test_delay(m)
             c.execute("BEGIN IMMEDIATE")
+            mono = time.monotonic_ns()  # CLOCK_MONOTONIC, shared with the gate on one host; taken under the lock
             try:
                 if self.auth and uid != self.gate:
                     outcome = "refused"
@@ -73,11 +75,11 @@ class Bank:
                     # same key: idempotent repeat if the payload is identical, otherwise a hard conflict
                     outcome = "duplicate" if tuple(row) == (d, a, m) else "conflict"
                 else:
-                    c.execute("INSERT INTO ledger(key,dest,amount,memo,caller,t) VALUES(?,?,?,?,?,?)",
-                              (k, d, a, m, uid, time.time()))
+                    c.execute("INSERT INTO ledger(key,dest,amount,memo,caller,t,mono) VALUES(?,?,?,?,?,?,?)",
+                              (k, d, a, m, uid, time.time(), mono))
                     outcome = "applied"
-                c.execute("INSERT INTO access(caller,op,key,dest,amount,memo,outcome,t) VALUES(?,?,?,?,?,?,?,?)",
-                          (uid, op, k, d, a, m, outcome, time.time()))
+                c.execute("INSERT INTO access(caller,op,key,dest,amount,memo,outcome,t,mono) "
+                          "VALUES(?,?,?,?,?,?,?,?,?)", (uid, op, k, d, a, m, outcome, time.time(), mono))
                 c.execute("COMMIT")
             except BaseException:
                 c.execute("ROLLBACK")
@@ -90,8 +92,8 @@ class Bank:
             if uid != self.auditor:
                 c.execute("INSERT INTO access(caller,op,outcome,t) VALUES(?,?,?,?)", (uid, op, "refused", time.time()))
                 raise Refused("auditor only")
-            cols = ("seq,key,dest,amount,memo,caller,t" if op == "ledger"
-                    else "seq,caller,op,key,dest,amount,memo,outcome,t")
+            cols = ("seq,key,dest,amount,memo,caller,t,mono" if op == "ledger"
+                    else "seq,caller,op,key,dest,amount,memo,outcome,t,mono")
             rows = c.execute(f"SELECT {cols} FROM {op} ORDER BY seq").fetchall()
             return [dict(zip(cols.split(","), r)) for r in rows]
         raise Refused("unknown op")

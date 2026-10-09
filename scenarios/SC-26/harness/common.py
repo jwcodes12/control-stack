@@ -4,6 +4,7 @@ import os
 import socket
 import socketserver
 import struct
+import time
 from pathlib import Path
 
 MAX_FRAME = 65536
@@ -31,10 +32,18 @@ def tx_of(d):
     return (nat(d["dest"]), nat(d["amount"]), nat(d["memo"]))
 
 
+FRAME_DEADLINE_S = 10.0
+
+
 def read_frame(conn):
-    conn.settimeout(10)
+    """one request line within a TOTAL deadline (not per recv), so a trickling client cannot hold its thread"""
+    deadline = time.monotonic() + FRAME_DEADLINE_S
     buf = bytearray()
     while len(buf) <= MAX_FRAME and not buf.endswith(b"\n"):
+        left = deadline - time.monotonic()
+        if left <= 0:
+            raise Refused("frame deadline exceeded")
+        conn.settimeout(left)
         part = conn.recv(MAX_FRAME + 1 - len(buf))
         if not part:
             break
@@ -63,7 +72,14 @@ def make_handler(dispatch):
             uid = peer_uid(self.request)
             try:
                 req = read_frame(self.request)
-                reply = {"ok": True, "result": dispatch(uid, req)}
+            except OSError:  # idle/trickling client hit the frame deadline, or hung up: drop it silently
+                return
+            except (Refused, ValueError) as e:
+                req = None
+                reply = {"ok": False, "error": "malformed: " + (str(e) if isinstance(e, Refused) else type(e).__name__)}
+            try:
+                if req is not None:
+                    reply = {"ok": True, "result": dispatch(uid, req)}
             except Refused as e:
                 reply = {"ok": False, "error": str(e)}
             except (ValueError, TypeError, KeyError, json.JSONDecodeError) as e:

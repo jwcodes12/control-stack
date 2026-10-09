@@ -5,7 +5,7 @@
 **CONDITIONAL.** Tampered evidence and assurance manifests
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
-- Lean results: 3 theorem reference(s), 0 of them necessity witnesses.
+- Lean results: 7 theorem reference(s), 0 of them necessity witnesses.
 - Runtime evidence: preregistered reference run(s) `PREREG-SC27-ANCHOR-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
@@ -29,6 +29,10 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 | `sc27_safe` | `ControlStack/Scenarios/SC27Chain.lean` | SC-27 safety. If the chain head is injective on the lists in play (accepted manifests and independently anchored logs), every accepted manifest is exactly a log the independent witness anchored: modification, reordering, truncation or ex... |
 | `tamper_after_anchor_detected` | `ControlStack/Scenarios/SC27Chain.lean` | after anchoring, a modified or reordered log is not accepted |
 | `halt_freezes` | `ControlStack/Scenarios/SC27Chain.lean` | Halt freezes: once halted, no trace changes the state (nothing more is accepted). |
+| `sc27_ext_safe` | `ControlStack/Scenarios/SC27ExtensionOnly.lean` | SC-27, extension-only. If the chain head is injective on the accepted manifests and the anchored logs, every accepted manifest is an anchored log and a prefix of the witness's latest anchor. |
+| `tampered_never_anchored` | `ControlStack/Scenarios/SC27ExtensionOnly.lean` | A log that does not extend an anchored state is never anchored later. |
+| `anchors_chain` | `ControlStack/Scenarios/SC27ExtensionOnly.lean` | Anchors form a prefix chain: each anchored log is a prefix of every later anchored log and of the witness's latest anchor. |
+| `alarm_iff` | `ControlStack/Scenarios/SC27ExtensionOnly.lean` | Alarm soundness and completeness: an anchoring step raises a fork alarm exactly when current storage does not extend the last anchor; then nothing is anchored. |
 
 ### Necessity witnesses
 
@@ -71,7 +75,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — model strengthening pending.
+- Scope (manifest): Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite).
 - Not established as applying to a real deployment: An independently administered witness records heads (not the writer) (`independent_anchor`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Chain head is injective on accepted/anchored logs (collision resistance) (`hash_injective_on_run`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Anchoring happens soon enough that the pre-anchor window is acceptable (`anchor_frequency`; applicability UNRESOLVED).

@@ -33,7 +33,7 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-24](SC-24/) | Untrusted monitor colludes with generator or learns honeypot phase | CONDITIONAL | 4 |
 | [SC-25](SC-25/) | Agent hides or misorders hazardous actions behind after-the-fact monitoring | CONDITIONAL | 7 |
 | [SC-26](SC-26/) | Irreversible payment without exact, independent, one-use approval | CONDITIONAL | 13 |
-| [SC-27](SC-27/) | Tampered evidence and assurance manifests | CONDITIONAL | 3 |
+| [SC-27](SC-27/) | Tampered evidence and assurance manifests | CONDITIONAL | 7 |
 | [SC-28](SC-28/) | Multiple agents individually within limits jointly exceed the overall budget | CONDITIONAL | 9 |
 
 Counts and status are recorded metadata, not fresh Lean or runtime results.

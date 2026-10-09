@@ -9,6 +9,7 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-27/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.SC27Chain`
+- Lean module: `lake build ControlStack.Scenarios.SC27ExtensionOnly`
 
 ## Harness
 

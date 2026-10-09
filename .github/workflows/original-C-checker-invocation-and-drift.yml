@@ -1,0 +1,40 @@
+name: original-C-checker-invocation-and-drift
+on:
+  push:
+    branches:
+      - structure-branch-audit-20261008
+    paths:
+      - .github/workflows/original-C-checker-invocation-and-drift.yml
+permissions:
+  contents: read
+jobs:
+  C-original-checker-correct-invocation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: e78a580412b5cfb2b96382e13ffb6ccda5f978f1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Original C checker tests by direct script path
+        run: python3 tools/test_check_scenario.py
+      - name: Confirm original C registry drift (expected source defect)
+        run: |
+          if python3 tools/build_registry.py --check; then
+            echo "Original registry is current"
+          else
+            echo "Original C registry index is stale as reported; not modifying source branch"
+          fi
+      - name: Generator repair tested only in disposable checkout
+        run: |
+          python3 tools/build_registry.py
+          python3 tools/build_registry.py --check
+      - name: C refuses self-asserted assurance
+        run: |
+          if python3 tools/check_scenario.py --all --require-assured; then
+            echo "FAIL: unreviewed scenario auto-promoted"
+            exit 1
+          fi
+          echo "Self-assurance promotion correctly denied"

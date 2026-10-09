@@ -44,7 +44,6 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 | `quota_off_exceeds` | `ControlStack/Scenarios/SC07Liveness.lean` | without the quota check, 24 bits leave in one window (the H6 negative control's shape) |
 | `allowlist_off_leaks` | `ControlStack/Scenarios/SC07Liveness.lean` | without the allowlist check, bits reach a non-allowlisted destination |
 | `quota_rule_absent_breaks` | `ControlStack/Scenarios/SC07Refinement.lean` | The H6 control: no quota rule ⇒ the per-window bound fails. |
-| `quota_rule_absent_breaks` | `ControlStack/Scenarios/SC07Refinement.lean` | The H6 control: no quota rule ⇒ the per-window bound fails. |
 
 ## Runtime evidence
 

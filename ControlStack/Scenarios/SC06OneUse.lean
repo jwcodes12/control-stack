@@ -81,7 +81,9 @@ def step (R : Roles) (s : State) : Event → State
       { s with entries := ⟨s.entries.length, r, w, v⟩ :: s.entries }
   | .confirm issuer cid r tool eid v =>
       if s.halted then s else
-      if issuer ∈ R.users ∧ cid ∉ s.confirmations.map Confirmation.id then
+      if issuer ∈ R.users ∧ cid ∉ s.confirmations.map Confirmation.id ∧
+          (∃ e ∈ s.entries, e.id = eid ∧ e.reader = r ∧
+            e.writer ≠ r ∧ e.val = v) then
         { s with confirmations := ⟨cid, issuer, r, tool, eid, v⟩ :: s.confirmations }
       else s
   | .act r tool eid cid =>
@@ -307,6 +309,30 @@ theorem halt_stops_foreign_action :
       .confirm 5 3 2 7 0 42,
       .halt 9,
       .act 2 7 0 3]).effects = [] := by
+  decide
+
+/-! ## Kernel-checked chronology and binding controls -/
+
+/-- A user event referencing a nonexistent context entry must not reserve
+    an approval for a future entry with the same numeric handle. -/
+example :
+    (run R0 init [.confirm 5 3 2 7 0 42]).confirmations = [] ∧
+    (run R0 init [
+      .confirm 5 3 2 7 0 42,
+      .ingest 2 1 42,
+      .act 2 7 0 3]).effects = [] := by
+  decide
+
+/-- Confirmation is valid only after trusted ingestion and exact provenance
+    binding; a wrong stored value must not acquire an approval. -/
+example :
+    (run R0 init [
+      .ingest 2 1 42,
+      .confirm 5 3 2 7 0 43]).confirmations = [] ∧
+    (run R0 init [
+      .ingest 2 1 42,
+      .confirm 5 3 2 7 0 42,
+      .act 2 7 0 3]).effects = [⟨3, 2, 7, 0, 42⟩] := by
   decide
 
 end ControlStack.SC06OneUse

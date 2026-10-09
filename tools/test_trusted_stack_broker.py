@@ -9,6 +9,7 @@ import base64
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -27,8 +28,10 @@ def by_uid(uid, socketpath, data):
         "print(json.dumps(request(sys.argv[1],json.loads(sys.argv[2]))))"
     )
     process = subprocess.run([sys.executable, "-c", program, str(socketpath), json.dumps(data)],
-                             cwd=Path(__file__).resolve().parents[1], capture_output=True,
-                             text=True, check=True, preexec_fn=(lambda: os.setuid(uid)))
+                             cwd=socketpath.parent / "agent-import", capture_output=True,
+                             text=True, preexec_fn=(lambda: os.setuid(uid)))
+    if process.returncode:
+        raise RuntimeError(f"uid {uid}: child error: {process.stderr.strip()}")
     return json.loads(process.stdout)
 
 
@@ -38,6 +41,13 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         root.chmod(0o755)
+        # GitHub's checkout ancestors may be private to the runner UID.
+        # Give the deliberately untrusted child ONLY the public RPC client
+        # package in a separate readable directory, not the live source tree.
+        childdir = root / "agent-import"
+        childdir.mkdir(mode=0o755)
+        shutil.copytree(Path(__file__).resolve().parents[1] / "trusted_stack",
+                        childdir / "trusted_stack")
         state = root / "private"
         state.mkdir(mode=0o700)
         sockpath = root / "trusted.sock"

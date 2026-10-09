@@ -115,8 +115,11 @@ def audit_directory(root):
         sp, dp = folder / 'store.jsonl', folder / 'decisions.jsonl'
         if sp.exists() and dp.exists():
             results[folder.name] = check_trace(_jsonl(sp), _jsonl(dp))
-    return {'ok': bool(results) and all(r['ok'] for r in results.values()),
-            'tested_traces': len(results), 'runs': results}
+    expected = {f'r{rep}-h{hyp}' for rep in range(1, 6) for hyp in (1, 2, 3, 5)}
+    missing = sorted(expected - set(results))
+    return {'ok': not missing and all(r['ok'] for r in results.values()),
+            'tested_traces': len(results), 'expected_traces': len(expected),
+            'missing': missing, 'runs': results}
 
 
 def main():

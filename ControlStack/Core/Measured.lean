@@ -443,9 +443,13 @@ theorem measured_recall_example {Y : Type} [Fintype Y] (p : ℝ) (hp : 0 ≤ p �
 /-- the procedure name used in the recall ledger -/
 def recallProcedure : String := "held-out attack set, n = 200, one-sided Clopper-Pearson at s >= 190 -> r_low = 9/10"
 
-/-- **The instance ledger** (`ofMeasured` applied to the recall measurement): the kernel's trace premises, the
-homogeneity premise (the pitfall, stated as a correspondence obligation), the measured recall with δ = 1/100, and the
-sampling model. -/
+/-- **The instance ledger.** It lists:
+- the kernel's trace premises;
+- the homogeneity premise (the pitfall, stated as a correspondence obligation);
+- the measured recall with δ = 1/100, and the sampling model.
+It is NOT free text: `measuredRecallLedger_eq` proves it equal, by `rfl`, to the typed ledger of `recallPremises`,
+the premise list whose propositions are exactly the hypotheses and conclusion of `measured_recall_example`, plus the
+two premises `ProbCert.ofMeasured` appends (`ofMeasured_premises`). -/
 def measuredRecallLedger : List (String × PremiseKind) :=
   [("measured recall bound: N = 100, Bh = 10, k = 5, any adaptive attacker",
      .proofObligation "ControlStack.Measured.measured_recall_example"),
@@ -455,6 +459,101 @@ def measuredRecallLedger : List (String × PremiseKind) :=
    ("measured: " ++ recallProcedure, .measuredWithConfidence recallProcedure (1 / 100)),
    ("sampling model: " ++ recallProcedure ++ " samples i.i.d. from the deployment law, independent of deployment",
      .correspondence)]
+
+/-! ## The instance ledger, computed from the instance's premises -/
+
+/-- the two premises `ProbCert.ofMeasured` appends: the measured premise (its failure event has probability ≤ δ
+over the measurement) and the sampling model -/
+def measuredPremises {Ωm : Type} [Fintype Ωm] (procedure : String) (δ : ℚ) (μm : Ωm → ℝ) (G : Ωm → Prop) :
+    List Premise :=
+  [⟨"measured: " ++ procedure, .measuredWithConfidence procedure δ, prob μm (fun ω => ¬ G ω) ≤ δ⟩,
+   ⟨"sampling model: " ++ procedure ++ " samples i.i.d. from the deployment law, independent of deployment",
+     .correspondence, True⟩]
+
+/-- `ofMeasured` appends exactly `measuredPremises` -/
+theorem ofMeasured_premises {Ωm Ωd : Type} [Fintype Ωm] [Fintype Ωd] (μm : Ωm → ℝ) (hm0 : ∀ ω, 0 ≤ μm ω)
+    (hm1 : ∑ ω, μm ω = 1) (μd : Ωd → ℝ) (hd0 : ∀ ω, 0 ≤ μd ω) (hd1 : ∑ ω, μd ω = 1) (procedure : String) (δ : ℚ)
+    (G : Ωm → Prop) (bad : Ωm → Ωd → Prop) (ps : List Premise) (b : ℝ) (hb0 : 0 ≤ b)
+    (hcert : AllHold ps → ∀ ωm, G ωm → prob μd (bad ωm) ≤ b) :
+    (ProbCert.ofMeasured μm hm0 hm1 μd hd0 hd1 procedure δ G bad ps b hb0 hcert).premises =
+      ps ++ measuredPremises procedure δ μm G := rfl
+
+/-- the good measurement event: if the gate deploys (S ≥ 190), the true recall is ≥ 9/10 -/
+def recallGood (p : ℝ) (x : Fin 200 → Bool) : Prop := 190 ≤ cnt x → 9 / 10 ≤ p
+
+section Instance
+
+variable {Y : Type} [Fintype Y]
+
+/-- reserved audits: the attacker's strategy is a distribution, the kernel a sub-distribution on the schedules -/
+def reservedProp (K : Finset (Fin 100) → List (Y × AOut Unit) → Y × AOut Unit → ℝ)
+    (σ : List (AOut Unit) → Bool → ℝ) : Prop :=
+  (∀ g, IsDist (σ g)) ∧ (∀ S, S ∈ AuditBudget.randomSchedules 100 10 → ∀ h z, 0 ≤ K S h z) ∧
+    (∀ S, S ∈ AuditBudget.randomSchedules 100 10 → ∀ h, ∑ z, K S h z ≤ 1)
+
+/-- homogeneity: every history's recall is ≥ the measured population recall p -/
+def homogeneousProp (p : ℝ) (K : Finset (Fin 100) → List (Y × AOut Unit) → Y × AOut Unit → ℝ)
+    (σ : List (AOut Unit) → Bool → ℝ) : Prop :=
+  ∀ S, S ∈ AuditBudget.randomSchedules 100 10 → ∀ h (a : Bool),
+    ∑ y, K S h (y, (a, (), false)) ≤
+      σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - p else 1)
+
+/-- the conclusion of `measured_recall_example` -/
+def recallBoundProp (p : ℝ) (K : Finset (Fin 100) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) : Prop :=
+  ∑ x : Fin 200 → Bool, wB p x *
+      (if 190 ≤ cnt x then ∑ S : Finset (Fin 100), pU 100 10 S * val (K S) (recallSucc (N := 100) 5) 100 [] else 0)
+    ≤ (91 / 100) ^ 5 + 1 / 100
+
+/-- the instance's premises, each with the proposition the theorem uses: the proof obligation (the theorem's
+conclusion), the two kernel/correspondence premises, then `ofMeasured`'s measured and sampling-model premises -/
+def recallPremises (p : ℝ) (K : Finset (Fin 100) → List (Y × AOut Unit) → Y × AOut Unit → ℝ)
+    (σ : List (AOut Unit) → Bool → ℝ) : List Premise :=
+  [⟨"measured recall bound: N = 100, Bh = 10, k = 5, any adaptive attacker",
+     .proofObligation "ControlStack.Measured.measured_recall_example", recallBoundProp p K⟩,
+   ⟨"reserved audits: schedule uniform over 10-of-100 rounds, hidden from the attacker", .correspondence,
+     reservedProp K σ⟩,
+   ⟨"homogeneous recall: every history's recall >= the measured population recall (or: per-stratum minimum)",
+     .correspondence, homogeneousProp p K σ⟩] ++
+  measuredPremises recallProcedure (1 / 100) (wB p) (recallGood p)
+
+/-- **The ledger is the instance's ledger** (as `Cert.stack_ledger_eq`): for every p, kernel and attacker. -/
+theorem measuredRecallLedger_eq (p : ℝ) (K : Finset (Fin 100) → List (Y × AOut Unit) → Y × AOut Unit → ℝ)
+    (σ : List (AOut Unit) → Bool → ℝ) : typedLedger (recallPremises p K σ) = measuredRecallLedger := rfl
+
+/-- the measured premise is a THEOREM for the sampling model (n = 200 i.i.d. Bernoulli(p) trials, any true p):
+P_p(S ≥ 190 and p < 9/10) ≤ 1/100 (`cp_threshold`, `tail_200_190`) -/
+theorem recall_measured_holds (p : ℝ) (hp : 0 ≤ p ∧ p ≤ 1) :
+    prob (wB p) (fun x : Fin 200 → Bool => ¬ recallGood p x) ≤ ((1 / 100 : ℚ) : ℝ) := by
+  classical
+  have h := cp_threshold 200 190 (9 / 10) (1 / 100) (by norm_num) (by norm_num) (by norm_num) tail_200_190 p hp
+  push_cast
+  refine le_trans (le_of_eq ?_) h
+  unfold prob recallGood
+  apply Finset.sum_congr rfl; intro x _
+  by_cases hc : 190 ≤ cnt x
+  · by_cases hlt : p < 9 / 10
+    · rw [ite_eq_left (by intro h'; linarith [h' hc]), ite_eq_left (by rw [ite_eq_left hc]; exact hlt)]
+    · rw [ite_eq_right (by intro h'; exact h' (fun _ => by linarith)), ite_eq_right (by rw [ite_eq_left hc]; exact hlt)]
+  · rw [ite_eq_right (by intro h'; exact h' (fun h'' => absurd h'' hc)), ite_eq_right (by rw [ite_eq_right hc]; linarith [hp.1])]
+
+/-- **Every premise of the ledger is discharged except the two correspondence premises.** The proof obligation is
+`measured_recall_example`, and the measured premise is `recall_measured_holds`. The sampling model is recorded
+(`True`: that the real held-out set is this i.i.d. law is not a formal statement). What remains is exactly
+reserved audits and homogeneity. -/
+theorem recallPremises_hold (p : ℝ) (hp : 0 ≤ p ∧ p ≤ 1)
+    (K : Finset (Fin 100) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ)
+    (hres : reservedProp K σ) (hhom : homogeneousProp p K σ) : AllHold (recallPremises p K σ) := by
+  intro q hq
+  simp only [recallPremises, measuredPremises, List.cons_append, List.nil_append, List.mem_cons,
+    List.not_mem_nil, or_false] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl
+  · exact measured_recall_example p hp K σ hres.1 hres.2.1 hres.2.2 hhom
+  · exact hres
+  · exact hhom
+  · exact recall_measured_holds p hp
+  · trivial
+
+end Instance
 
 /-- the final number: (91/100)^5 + 1/100 = 6340321451/10^10 ≈ 0.634 -/
 theorem measured_recall_number : (91 / 100 : ℝ) ^ 5 + 1 / 100 = 6340321451 / 10 ^ 10 := by norm_num
@@ -472,5 +571,9 @@ end ControlStack.Measured
 #print axioms ControlStack.Measured.strata_union
 #print axioms ControlStack.Measured.measured_recall_example
 #print axioms ControlStack.Measured.measured_recall_number
+#print axioms ControlStack.Measured.ofMeasured_premises
+#print axioms ControlStack.Measured.measuredRecallLedger_eq
+#print axioms ControlStack.Measured.recall_measured_holds
+#print axioms ControlStack.Measured.recallPremises_hold
 
 #eval IO.println (ControlStack.Cert.ledgerJson ControlStack.Measured.measuredRecallLedger)

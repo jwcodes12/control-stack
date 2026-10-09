@@ -33,7 +33,9 @@ Results (all by `decide`, i.e. kernel evaluation of the finite graph):
   needed), so the reachable root set is the unique minimal set of roots that suffices;
 - `portfolio_roots`: the whole portfolio rests on all 12 roots: 7 technical, 5 residual;
 - `root_sharing`: the most-shared root is the residual `measured_rates` (26 of 28 scenarios); the most-shared
-  technical roots are kernel mediation (21) and issuer authenticity (20).
+  technical roots are kernel mediation (21) and issuer authenticity (20);
+- `correspondence_table`: model–runtime correspondence is discharged by the scenario's OWN refinement for SC-16,
+  SC-18, SC-25, SC-26, SC-27, SC-28; SC-01, SC-13 rest on implementation_conformance alone.
 -- END GENERATED: summary
 Ledgers for tools/cert_ledger.py:
 - `sc26RootLedger` ("SC-26 rests on: …");
@@ -46,6 +48,10 @@ Limits:
 - The dependency edges are a MODELLING JUDGEMENT. They mirror tools/portfolio_ledger.py's normalisation and the
   repository's theorems, and need review.
 - A reduction to a root does not discharge the root. It says what must be trusted, measured or reviewed.
+- Theorem edges are PER SCENARIO where the premise is scenario-specific (`scenarioDeps`). Model–runtime
+  correspondence is discharged only by the scenario's own refinement theorem (`refinementOf`, named from the scenario
+  number, `refinementOf_own`; table `correspondence_table`). A scenario without one rests on
+  `implementation_conformance` alone. Theorem edges never change roots.
 - Theorem edges name the repository theorem that discharges the formal part. Their applicability to the
   deployment is the remaining root.
 - No novelty is claimed.
@@ -249,8 +255,7 @@ def depsOf : Prem → List Dep
   | .exclusiveEffectPath => [.root .kernelMediation]
   | .semanticJudgement => [.root .humanJudgement, .root .measuredRates]
   | .policyIntegrity => [.prem .exclusiveEffectPath, .prem .credentialSeparation]
-  | .modelRuntimeCorrespondence =>
-    [.thm "ControlStack.SC26Refinement.concrete_safe", .root .implementationConformance]
+  | .modelRuntimeCorrespondence => [.root .implementationConformance]
   | .canonicaliserComplete => [.prem .exclusiveEffectPath, .root .implementationConformance]
   | .collisionResistance => [.root .collisionResistance]
   | .hiddenSample => [.root .keyCustody, .prem .observationComplete]
@@ -274,6 +279,30 @@ def depsOf : Prem → List Dep
   | .taintPropagation => [.prem .exclusiveEffectPath, .root .implementationConformance]
   | .versionedWrites => [.prem .antiRollback, .root .implementationConformance]
 
+/-- the qualified name of scenario `sc`'s refinement theorem `decl` (`ControlStack.SC<sc>Refinement.<decl>`) -/
+def refName (sc : ℕ) (decl : String) : String := "ControlStack.SC" ++ toString sc ++ "Refinement." ++ decl
+
+/-- each scenario's OWN refinement theorem (criterion 3): the formal part of `model_runtime_correspondence` for that
+scenario only; `none`: no refinement, so the premise rests on `implementation_conformance` alone -/
+def refinementOf : ℕ → Option String
+  | 16 => some (refName 16 "concrete_safe")
+  | 18 => some (refName 18 "concrete_safe")
+  | 25 => some (refName 25 "concrete_safe")
+  | 26 => some (refName 26 "concrete_safe")
+  | 27 => some (refName 27 "concrete_ext_safe")
+  | 28 => some (refName 28 "concrete_safe")
+  | _ => none
+
+/-- a refinement edge always names the scenario's own refinement module -/
+theorem refinementOf_own (sc : ℕ) (t : String) (h : refinementOf sc = some t) : ∃ d, t = refName sc d := by
+  unfold refinementOf at h
+  split at h <;> first | (cases h; exact ⟨_, rfl⟩) | exact absurd h (by simp)
+
+/-- how premise `p` is discharged FOR SCENARIO `sc`: `depsOf p`, plus, for model–runtime correspondence, the
+scenario's own refinement theorem (if any) -/
+def scenarioDeps (sc : ℕ) (p : Prem) : List Dep :=
+  (if p = .modelRuntimeCorrespondence then ((refinementOf sc).map Dep.thm).toList else []) ++ depsOf p
+
 /-- roots reachable from a premise, with a fuel bound -/
 def rootsF : ℕ → Prem → List Root
   | 0, _ => []
@@ -291,8 +320,23 @@ def rootsOf (p : Prem) : List Root := allRoots.filter fun r => decide (r ∈ roo
 /-- the premises of scenario `sc` -/
 def premsOf (sc : ℕ) : List Prem := ((scenarios.find? (·.1 = sc)).map Prod.snd).getD []
 
-/-- the roots scenario `sc` rests on, in canonical order -/
-def scenarioRoots (sc : ℕ) : List Root := allRoots.filter fun r => decide (∃ p ∈ premsOf sc, r ∈ rootsF fuel p)
+/-- roots of one dependency (theorem edges contribute none) -/
+def depRoots : Dep → List Root
+  | .root r => [r]
+  | .prem q => rootsF fuel q
+  | .thm _ => []
+
+/-- the theorem names of one dependency -/
+def depThms : Dep → List String
+  | .thm t => [t]
+  | _ => []
+
+/-- the roots scenario `sc` rests on, in canonical order, through its per-scenario discharge `scenarioDeps` -/
+def scenarioRoots (sc : ℕ) : List Root :=
+  allRoots.filter fun r => decide (∃ p ∈ premsOf sc, ∃ d ∈ scenarioDeps sc p, r ∈ depRoots d)
+
+/-- the theorem edges scenario `sc`'s premises are discharged with (top level) -/
+def scenarioThms (sc : ℕ) : List String := ((premsOf sc).flatMap fun p => (scenarioDeps sc p).flatMap depThms).dedup
 
 /-! ## Checks (by evaluation) -/
 
@@ -355,6 +399,21 @@ theorem root_sharing :
     (scenarios.filter (fun s => decide (Root.issuerAuthenticity ∈ scenarioRoots s.1))).length = 20 ∧
     ∀ r ∈ allRoots, (scenarios.filter (fun s => decide (r ∈ scenarioRoots s.1))).length ≤ 26 := by
   decide
+
+/-- **Model–runtime correspondence, per scenario.** For each scenario with that premise, the theorem edge is the
+scenario's OWN refinement (`none`: it rests on `implementation_conformance` alone). -/
+theorem correspondence_table :
+    (scenarios.filter (fun s => decide (Prem.modelRuntimeCorrespondence ∈ s.2))).map
+      (fun s => (s.1, refinementOf s.1)) =
+      [(1, none),
+       (13, none),
+       (16, some (refName 16 "concrete_safe")),
+       (18, some (refName 18 "concrete_safe")),
+       (25, some (refName 25 "concrete_safe")),
+       (26, some (refName 26 "concrete_safe")),
+       (27, some (refName 27 "concrete_ext_safe")),
+       (28, some (refName 28 "concrete_safe"))] := by
+  decide
 -- END GENERATED: root tables
 
 /-! ## Ledgers (printable with tools/cert_ledger.py) -/
@@ -390,3 +449,5 @@ end ControlStack.TrustRoot
 #print axioms ControlStack.TrustRoot.scenario_roots_table
 #print axioms ControlStack.TrustRoot.portfolio_roots
 #print axioms ControlStack.TrustRoot.root_sharing
+#print axioms ControlStack.TrustRoot.correspondence_table
+#print axioms ControlStack.TrustRoot.refinementOf_own

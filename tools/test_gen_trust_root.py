@@ -97,6 +97,21 @@ class Probe(unittest.TestCase):
         summary = g.summary_block(roots, counts)
         self.assertIn("rests on 3 of the 4 roots: 2 technical, 1 residual", summary)
 
+    def test_correspondence_lines(self):
+        extra = {}
+        g.parse_probe(PROBE + "\nREFINE 13|\nREFINE 16|ControlStack.SC16Refinement.concrete_safe\n"
+                      "THM ControlStack.SC16Refinement.concrete_safe", extra)
+        self.assertEqual(extra["refine"], [(13, None), (16, "ControlStack.SC16Refinement.concrete_safe")])
+        block = g.correspondence_block(extra["refine"])
+        self.assertIn('(13, none),\n       (16, some (refName 16 "concrete_safe"))]', block)
+        self.assertIn("SC-16; SC-13 rest on implementation_conformance alone.",
+                      " ".join(g.refine_summary(extra["refine"]).split()))
+        g.check_theorem_names(extra["thms"], ROOT)
+
+    def test_unknown_theorem_edge_fails(self):
+        with self.assertRaisesRegex(g.GenError, "not in THEOREM-REGISTRY"):
+            g.check_theorem_names({"ControlStack.SC99Refinement.concrete_safe"}, ROOT)
+
     def test_probe_failure_is_an_error(self):
         def runner(argv, **kw):
             return SimpleNamespace(returncode=1, stdout="", stderr="x.lean:1:0: error: boom")

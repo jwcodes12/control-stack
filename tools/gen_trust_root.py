@@ -24,6 +24,7 @@ Usage: gen_trust_root.py [--check] [--no-lean]
 Exit codes: 0 = ok / no drift; 1 = drift or error.
 """
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -132,6 +133,11 @@ EVAL = """#eval show IO Unit from do
     IO.println ("COUNT " ++ toString (repr r) ++ "|" ++
       toString (scenarios.filter (fun s => decide (r ∈ scenarioRoots s.1))).length ++ "|" ++ toString r.technical ++
       "|" ++ r.name)
+  for s in scenarios do
+    if Prem.modelRuntimeCorrespondence ∈ s.2 then
+      IO.println ("REFINE " ++ toString s.1 ++ "|" ++ (refinementOf s.1).getD "")
+    for t in scenarioThms s.1 do
+      IO.println ("THM " ++ t)
 """
 
 
@@ -150,10 +156,32 @@ def run_lean_probe(text, root=ROOT, runner=subprocess.run):
     out = (p.stdout or "") + (p.stderr or "")
     if p.returncode != 0 or "error" in out:
         raise GenError("Lean probe failed:\n" + "\n".join(out.strip().splitlines()[-20:]))
-    return parse_probe(out)
+    extra = {}
+    roots, counts = parse_probe(out, extra)
+    check_theorem_names(extra.get("thms", set()), root)
+    return roots, counts, extra.get("refine", [])
 
 
-def parse_probe(out):
+def check_theorem_names(names, root=ROOT):
+    """every theorem edge `ControlStack.<…>.<Module>.<decl>` must be a registry declaration `<…>/<Module>.lean::<decl>`
+    (fail closed: a renamed or missing theorem is an error)"""
+    reg = root / "THEOREM-REGISTRY.json"
+    if not names:
+        return
+    if not reg.is_file():
+        raise GenError("THEOREM-REGISTRY.json missing: cannot check theorem edges")
+    keys = {e["key"] for e in json.loads(reg.read_text(encoding="utf-8"))}
+    missing = []
+    for n in sorted(names):
+        parts = n.split(".")
+        if len(parts) < 3 or not any(k.endswith("/" + parts[-2] + ".lean::" + parts[-1]) for k in keys):
+            missing.append(n)
+    if missing:
+        raise GenError("theorem edges not in THEOREM-REGISTRY.json: " + ", ".join(missing))
+
+
+def parse_probe(out, extra=None):
+    """ROOTS/COUNT lines; REFINE/THM lines go into `extra` (dict) when given"""
     roots, counts = {}, []
     for ln in out.splitlines():
         ln = ln.strip().strip('"')
@@ -163,6 +191,11 @@ def parse_probe(out):
         elif ln.startswith("COUNT "):
             r, n, tech, name = ln[6:].split("|", 3)
             counts.append((short(r), int(n), tech == "true", name))
+        elif ln.startswith("REFINE ") and extra is not None:
+            sc, t = ln[7:].split("|", 1)
+            extra.setdefault("refine", []).append((int(sc), t or None))
+        elif ln.startswith("THM ") and extra is not None:
+            extra.setdefault("thms", set()).add(ln[4:].strip())
     if not roots or not counts:
         raise GenError("Lean probe printed no ROOTS/COUNT lines")
     return roots, counts
@@ -176,7 +209,22 @@ def plain(name):
     return name.split(" (")[0].replace("_", " ")
 
 
-def root_tables_block(roots, counts):
+def correspondence_block(refine):
+    if not refine:
+        return ""
+    rows = ",\n       ".join(f"({sc}, {'some (refName ' + str(sc) + ' "' + t.rsplit('.', 1)[-1] + '")' if t else 'none'})"
+                     for sc, t in refine)
+    return (
+        "\n/-- **Model–runtime correspondence, per scenario.** For each scenario with that premise, the theorem edge is the\n"
+        "scenario's OWN refinement (`none`: it rests on `implementation_conformance` alone). -/\n"
+        "theorem correspondence_table :\n"
+        "    (scenarios.filter (fun s => decide (Prem.modelRuntimeCorrespondence ∈ s.2))).map\n"
+        "      (fun s => (s.1, refinementOf s.1)) =\n"
+        f"      [{rows}] := by\n"
+        "  decide\n")
+
+
+def root_tables_block(roots, counts, refine=()):
     n_sc = len(roots)
     rows = [f"({sc}, [" + ", ".join("." + r for r in roots[sc]) + "])" for sc in sorted(roots)]
     all_roots = [c[0] for c in counts]
@@ -204,7 +252,7 @@ def root_tables_block(roots, counts):
         "theorem root_sharing :\n"
         f"    {conj} ∧\n"
         f"    ∀ r ∈ allRoots, (scenarios.filter (fun s => decide (r ∈ scenarioRoots s.1))).length ≤ {top} := by\n"
-        "  decide\n")
+        "  decide\n" + correspondence_block(list(refine)))
 
 
 def sharing_sentence(first, tech, n_sc):
@@ -216,7 +264,7 @@ def sharing_sentence(first, tech, n_sc):
     return s
 
 
-def summary_block(roots, counts):
+def summary_block(roots, counts, refine=()):
     n_sc = len(roots)
     used = [c for c in counts if c[1] > 0]
     n_tech = sum(1 for c in used if c[2])
@@ -234,7 +282,18 @@ def summary_block(roots, counts):
             "(every listed dep is\n"
             "  needed), so the reachable root set is the unique minimal set of roots that suffices;\n"
             f"- `portfolio_roots`: the whole portfolio rests on {which}: {n_tech} technical, {len(used) - n_tech} "
-            "residual;\n" + share + ".\n")
+            "residual;\n" + share + (";" if refine else ".") + "\n" + refine_summary(list(refine)))
+
+
+def refine_summary(refine):
+    if not refine:
+        return ""
+    own = ", ".join(f"SC-{sc:02d}" for sc, t in refine if t)
+    none = ", ".join(f"SC-{sc:02d}" for sc, t in refine if not t)
+    s = f"- `correspondence_table`: model–runtime correspondence is discharged by the scenario's OWN refinement for {own}"
+    if none:
+        s += f"; {none} rest on implementation_conformance alone"
+    return textwrap.fill(s + ".", width=118, subsequent_indent="  ") + "\n"
 
 
 # ---------------------------------------------------------------- main
@@ -242,9 +301,9 @@ def summary_block(roots, counts):
 def regenerate(text, root=ROOT, lean=True, runner=subprocess.run, rows=None):
     new = set_block(text, "scenarios", scenarios_block(text, root, rows))
     if lean:
-        roots, counts = run_lean_probe(new, root, runner)
-        new = set_block(new, "root tables", root_tables_block(roots, counts))
-        new = set_block(new, "summary", summary_block(roots, counts))
+        roots, counts, refine = run_lean_probe(new, root, runner)
+        new = set_block(new, "root tables", root_tables_block(roots, counts, refine))
+        new = set_block(new, "summary", summary_block(roots, counts, refine))
     return new
 
 

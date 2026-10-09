@@ -1,3 +1,4 @@
+import ControlStack.Core.AuthenticatedAdv
 import ControlStack.Scenarios.SC26Authenticated
 import ControlStack.Scenarios.SC26Transaction
 import ControlStack.Scenarios.SC26Refinement
@@ -51,3 +52,5 @@ import ControlStack.Scenarios.SC26Refinement
 #print axioms ControlStack.SC26Authenticated.sc26_safe_authenticated
 #check ControlStack.SC26Authenticated.forged_approval_pays_without_auth
 #print axioms ControlStack.SC26Authenticated.forged_approval_pays_without_auth
+#check ControlStack.AuthenticatedAdv.sc26_consent_from_honest_script
+#print axioms ControlStack.AuthenticatedAdv.sc26_consent_from_honest_script

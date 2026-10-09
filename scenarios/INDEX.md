@@ -29,10 +29,10 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-20](SC-20/) | Agent poisons a training/distillation dataset or hidden label | CONDITIONAL | 2 |
 | [SC-21](SC-21/) | Agent corrupts safety evaluations or selectively suppresses failures | CONDITIONAL | 7 |
 | [SC-22](SC-22/) | Agent misreports interpretability or research findings | CONDITIONAL | 2 |
-| [SC-23](SC-23/) | Prompt-injected document/tool result causes an unauthorized tool action | CONDITIONAL | 5 |
+| [SC-23](SC-23/) | Prompt-injected document/tool result causes an unauthorized tool action | CONDITIONAL | 8 |
 | [SC-24](SC-24/) | Untrusted monitor colludes with generator or learns honeypot phase | CONDITIONAL | 4 |
 | [SC-25](SC-25/) | Agent hides or misorders hazardous actions behind after-the-fact monitoring | CONDITIONAL | 5 |
-| [SC-26](SC-26/) | Irreversible payment without exact, independent, one-use approval | CONDITIONAL | 9 |
+| [SC-26](SC-26/) | Irreversible payment without exact, independent, one-use approval | CONDITIONAL | 10 |
 | [SC-27](SC-27/) | Tampered evidence and assurance manifests | CONDITIONAL | 3 |
 | [SC-28](SC-28/) | Multiple agents individually within limits jointly exceed the overall budget | CONDITIONAL | 4 |
 

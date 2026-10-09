@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC23IsolationV2
 import ControlStack.Scenarios.SC23Isolation
 import ControlStack.Scenarios.SC23Injection
 #check ControlStack.SC23.sc23_safe
@@ -26,3 +27,9 @@ import ControlStack.Scenarios.SC23Injection
 #print axioms ControlStack.SC23Isolation.w1_impossible
 #check ControlStack.SC23Isolation.sc23_isolated_safe
 #print axioms ControlStack.SC23Isolation.sc23_isolated_safe
+#check ControlStack.SC23IsolationV2.noninterference_authed
+#print axioms ControlStack.SC23IsolationV2.noninterference_authed
+#check ControlStack.SC23IsolationV2.w1_impossible_v2
+#print axioms ControlStack.SC23IsolationV2.w1_impossible_v2
+#check ControlStack.SC23IsolationV2.sc23v2_safe_authenticated
+#print axioms ControlStack.SC23IsolationV2.sc23v2_safe_authenticated

@@ -30,7 +30,7 @@ jobs:
           import re
           from pathlib import Path
           txt = Path("joint-broker-axioms.log").read_text()
-          groups = re.findall(r"depends on axioms: \\[([^\\]]*)\\]", txt)
+          groups = re.findall(r"depends on axioms: \[([^\]]*)\]", txt)
           assert len(groups) == 10, f"expected ten axiom reports, got {len(groups)}"
           accepted = {"propext", "Quot.sound", "Classical.choice"}
           assert all(set(map(str.strip, s.split(","))) <= accepted for s in groups)

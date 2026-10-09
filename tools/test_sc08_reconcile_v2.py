@@ -32,6 +32,15 @@ def check(allow, launcher, sentinel):
 
 
 class ReconcileTests(unittest.TestCase):
+    def test_both_streams_empty_fail_closed(self):
+        self.assertFalse(check(ALLOW, [], [])["ok"])
+
+    def test_missing_launcher_stream_fails(self):
+        self.assertFalse(check(ALLOW, [], [receipt()])["ok"])
+
+    def test_missing_sentinel_stream_fails(self):
+        self.assertFalse(check(ALLOW, [row(0)], [])["ok"])
+
     def test_good(self):
         self.assertTrue(check(ALLOW, [row(0), row(1, S2)], [receipt(S2), receipt()])["ok"])
 

@@ -1,0 +1,38 @@
+name: lean-structure-integration-once
+on:
+  push:
+    branches:
+      - lean-validation-run-20261008
+    paths:
+      - .github/workflows/lean-structure-integration.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lean-structure-integration-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  lean-and-python:
+    if: github.ref == 'refs/heads/lean-validation-run-20261008'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned Lean via elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Toolchain versions
+        run: |
+          lean --version
+          lake --version
+          python3 --version
+      - name: Download pinned Lean build cache
+        run: lake exe cache get
+      - name: Clean compilation of ControlStack
+        run: lake build ControlStack
+      - name: All scenario claims and Python acceptance replay
+        run: bash tools/verify_structure_merge.sh

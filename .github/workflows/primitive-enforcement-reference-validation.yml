@@ -26,6 +26,8 @@ jobs:
           python3 -m compileall -q trusted_stack tools/build_statement_catalog.py
           python3 tools/test_gateway_correspondence.py
           python3 tools/test_sc01_receiver_boundary.py
+      - name: Run actual SO_PEERCRED broker with distinct host UIDs (no external effects)
+        run: sudo -n python3 tools/test_trusted_stack_broker.py
       - name: Generate all Lean theorem source statements and audit completeness
         run: |
           python3 tools/build_registry.py --check

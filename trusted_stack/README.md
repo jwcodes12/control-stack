@@ -48,3 +48,31 @@ the absence of any non-broker harmful action route; subprocesses and
 confused deputies; meaning/harmlessness of the reviewed contents; real
 effect dispatch consistency and external-system commit. This code does not
 create a third-party attestation or resource usage meter.
+
+## F6 schedule slice
+
+`trusted_stack/audit.py` adds a **nondeployed**, precommitted uniformly
+random fixed-horizon audit reservation. Positive guarantee: in the *ideal
+model with a uniformly chosen hidden audit schedule and a predetermined
+set of k attack rounds*, the miss probability is the exact rational
+C(N-k,B)/C(N,B), regardless of false-positive responses in earlier rounds.
+The suite exhaustively checks that combinatorial identity for small N.
+This does not prove imperfect-recall, content-adaptive worst-case audits,
+observable audit schedules, catastrophic-effects interception, or that
+an external audit service executes the scheduled checks.
+
+## Live Linux peer-credential regression
+
+On a disposable trusted Linux host, run:
+
+```sh
+sudo -n python3 tools/test_trusted_stack_broker.py
+```
+
+This brings up the actual broker with one untrusted agent UID, a separate
+reviewer, a separate approver and the admin UID. It checks role spoofing,
+unauthorized review/approval, genuine positive release, nonce replay,
+and sticky halt using OS-provided SO_PEERCRED identities. It does not create
+a VM, provide production separation, or cause external effects.
+
+The live broker does **not accept caller-supplied release cost**: every authorized release is a fixed 1-unit charge. Real CPU, I/O, token and financial resource metering require a different trusted source of costs and are NOT enforced by this example.

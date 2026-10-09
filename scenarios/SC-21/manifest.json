@@ -55,7 +55,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-21/harness/evidence/run-1/receipt.json",
+      "sha256": "c514f2362be02fc1c807ed50b50aa1b240de29e75c156ac93ed0f88f1707c9ea",
+      "purpose": "PREREG-SC21-SAMPLING-v1 run-1 (20,000 trials/config): H1 fixed/adaptive no-leak adversaries within the proved bound; H2 bound tight for the fixed adversary (exact value inside CI); H3 imperfect recall within hypMiss; H4 leak adversary exceeds the bound, monotone in leak correlation (no-leak premise necessary); H5 pipeline soundness incl. mutations. Simulation of the theorem's model, not evidence about real agents.",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC21-SAMPLING.md",
+      "sha256": "f8b0b1ed413e1a19fe9eb8bde5720d865140b4a618563e5e6d66b1fa692e3d65",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -69,7 +82,7 @@
       "id": "sample_hidden",
       "text": "The re-execution sample is hidden from the agent until after publication.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -77,7 +90,7 @@
       "id": "deterministic_reexecution",
       "text": "Re-execution is deterministic or its tolerance is specified.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     }

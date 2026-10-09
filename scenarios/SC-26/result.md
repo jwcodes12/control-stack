@@ -1,4 +1,5 @@
 # SC-26 result
+<!-- hand-written -->
 
 **CONDITIONAL. The kernel-checked model and a preregistered single-host runtime run both PASS.**
 It is not deployment-assured. Recheck everything from source and raw data with:

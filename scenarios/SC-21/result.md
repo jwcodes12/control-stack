@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 7 theorem reference(s), 1 of them necessity witnesses.
-- Runtime evidence: none (Lean model only).
+- Runtime evidence: preregistered reference run(s) `PREREG-SC21-SAMPLING-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -38,15 +38,19 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 ## Runtime evidence
 
-None. The scenario is supported by its Lean model only.
+- `scenarios/SC-21/harness/evidence/run-1/receipt.json` — recorded outcome **PASS**. PREREG-SC21-SAMPLING-v1 run-1 (20,000 trials/config): H1 fixed/adaptive no-leak adversaries within the proved bound; H2 bound tight for the fixed adversary (exact value inside CI); H3 imperfect recall within hypMiss; H4 leak adversary exceeds the bound, monotone in leak correlation (no-leak premise necessary); H5 pipeline soundness incl. mutations. Simulation of the theorem's model, not evidence about real agents.
+- `prereg/SC21-SAMPLING.md` — recorded outcome **PASS**. Frozen preregistration
 
 ## Premises (from the manifest)
+
+**Evidence TESTED_NOT_PROVED:**
+
+- `sample_hidden`: The re-execution sample is hidden from the agent until after publication. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `deterministic_reexecution`: Re-execution is deterministic or its tolerance is specified. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 **Evidence NOT_RUN:**
 
 - `credential_separation`: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `sample_hidden`: The re-execution sample is hidden from the agent until after publication. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `deterministic_reexecution`: Re-execution is deterministic or its tolerance is specified. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 ## What does NOT hold
 
@@ -55,23 +59,23 @@ None. The scenario is supported by its Lean model only.
 - Not established as applying to a real deployment: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1) (`credential_separation`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: The re-execution sample is hidden from the agent until after publication (`sample_hidden`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Re-execution is deterministic or its tolerance is specified (`deterministic_reexecution`; applicability UNRESOLVED).
-- Scope axis `threat_coverage` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `environment_boundary` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `usefulness` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `independent_review` is UNRESOLVED: Not independently established; Lean model only.
+- Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-21/harness/evidence/run-1).
+- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-21/harness/evidence/run-1).
+- Scope axis `environment_boundary` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-21/harness/evidence/run-1).
+- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-21/harness/evidence/run-1).
+- Scope axis `usefulness` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-21/harness/evidence/run-1).
+- Scope axis `independent_review` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-21/harness/evidence/run-1).
 
 ## Done-criteria (RUNTIME-VM-HANDOFF.md §10), computed from the manifest
 
 | # | criterion | status | basis |
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
-| 2 | independently checked negative tests cover the bad actions and their bypasses | OPEN | no preregistered negative-control run |
+| 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | OPEN | no preregistered evidence run |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC21-SAMPLING-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

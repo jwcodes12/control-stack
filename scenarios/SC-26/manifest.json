@@ -56,6 +56,18 @@
       "path": "ControlStack/Scenarios/SC26Refinement.lean",
       "sha256": "fff6cd3e6fb98299c6d5a9e863597712564b848f9d43c3744cd68285de9b0129",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Authenticated.sc26_safe_authenticated",
+      "path": "ControlStack/Scenarios/SC26Authenticated.lean",
+      "sha256": "a649a8db6b6bf6bd20b1b49529b7e0b717dce6c0340eb78deaabb6d987f43603",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Authenticated.forged_approval_pays_without_auth",
+      "path": "ControlStack/Scenarios/SC26Authenticated.lean",
+      "sha256": "a649a8db6b6bf6bd20b1b49529b7e0b717dce6c0340eb78deaabb6d987f43603",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -93,7 +105,7 @@
   "assumptions": [
     {
       "id": "credential_separation",
-      "text": "Agents cannot act with the gate, approver or admin OS identity (SO_PEERCRED; private directories; no signals/ptrace across UIDs).",
+      "text": "Agents cannot act with the gate, approver or admin OS identity (SO_PEERCRED; private directories; no signals/ptrace across UIDs). Reduced to one explicit premise in Lean: with the Core/Authenticated wrapper (issuer = OS identity), sc26_safe_authenticated shows every payment's approval was ISSUED by a non-adversary approver; the remaining premise is that the platform-reported identity is the true issuer (SO_PEERCRED).",
       "proof": "NOT_PROVED",
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",

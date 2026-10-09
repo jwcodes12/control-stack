@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "SC-16",
   "title": "Agent ships code or config before trusted evaluation/approval",
-  "bad_event": "Content is deployed that was not reviewed by a non-stager reviewer, or to a target not approved, or twice under one approval, or after HALT. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem). Trusted review additionally needs role disjointness between agents and reviewers (no disjoint variant proved yet; REVIEW-PACKET finding 7, witness W4).",
+  "bad_event": "Content is deployed that was not reviewed by a non-stager reviewer, or to a target not approved, or twice under one approval, or after HALT. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem). Trusted review additionally needs role disjointness between agents and reviewers (sc16_safe_disjoint; REVIEW-PACKET finding 7 closed, witness W4 = overlap_reviewer_is_agent).",
   "adversary": "Model: any trace of stage/overwrite/review/approve/deploy/halt operations with arbitrary content (agent-pushable registry).",
   "refutation": "A trace that deploys unreviewed content or to an unapproved target despite full checks (Lean witnesses show each check is necessary).",
   "scope": "Lean model only; no runtime harness yet. Not: review competence, registry/signing infrastructure.",
@@ -29,6 +29,18 @@
       "name": "ControlStack.SC16.halt_freezes",
       "path": "ControlStack/Scenarios/SC16Deploy.lean",
       "sha256": "0bdc0f00ba22bbc211b6ccab597a2313ce744d749b9d079cd8145e1283e61df0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC16Disjoint.sc16_safe_disjoint",
+      "path": "ControlStack/Scenarios/SC16Disjoint.lean",
+      "sha256": "5e80fafe36c95ba745b6af0c6f712f528db5ee33b2d7b5223f92e48c0e07be1d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC16Disjoint.overlap_reviewer_is_agent",
+      "path": "ControlStack/Scenarios/SC16Disjoint.lean",
+      "sha256": "5e80fafe36c95ba745b6af0c6f712f528db5ee33b2d7b5223f92e48c0e07be1d",
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],

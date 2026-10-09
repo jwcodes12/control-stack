@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC26Authenticated
 import ControlStack.Scenarios.SC26Transaction
 import ControlStack.Scenarios.SC26Refinement
 #check ControlStack.SC26.sc26_safe
@@ -46,3 +47,7 @@ import ControlStack.Scenarios.SC26Refinement
 #print axioms ControlStack.SC26Refinement.concrete_safe
 #print axioms ControlStack.SC26Refinement.concrete_halt
 #print axioms ControlStack.SC26Refinement.recover_halt_witness
+#check ControlStack.SC26Authenticated.sc26_safe_authenticated
+#print axioms ControlStack.SC26Authenticated.sc26_safe_authenticated
+#check ControlStack.SC26Authenticated.forged_approval_pays_without_auth
+#print axioms ControlStack.SC26Authenticated.forged_approval_pays_without_auth

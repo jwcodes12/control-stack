@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC16Disjoint
 import ControlStack.Scenarios.SC16Deploy
 #check ControlStack.SC16.sc16_safe
 #check ControlStack.SC16.sc16_reviewed_content
@@ -17,3 +18,7 @@ import ControlStack.Scenarios.SC16Deploy
 #print axioms ControlStack.SC16.no_target_binding_breaks
 #print axioms ControlStack.SC16.no_nonce_redeploys
 #print axioms ControlStack.SC16.no_halt_check_breaks
+#check ControlStack.SC16Disjoint.sc16_safe_disjoint
+#print axioms ControlStack.SC16Disjoint.sc16_safe_disjoint
+#check ControlStack.SC16Disjoint.overlap_reviewer_is_agent
+#print axioms ControlStack.SC16Disjoint.overlap_reviewer_is_agent

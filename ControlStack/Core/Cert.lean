@@ -554,6 +554,15 @@ def stackLedgerDedup : List (String × PremiseKind) := stackLedger.dedup
 /-- JSON rendering of the stack's typed ledger (consumed by `tools/cert_ledger.py`) -/
 def stackLedgerJson : String := ledgerJson stackLedger
 
+/-- the five highest-leverage normalised premises of the scenario portfolio, with kinds, as ranked by
+`tools/portfolio_ledger.py` (ASSURANCE-LEDGER.md); `tools/test_portfolio_ledger.py` checks that the two agree -/
+def portfolioPremises : List (String × PremiseKind) :=
+  [("credential_separation", .environment),
+   ("honest_usefulness", .measurement),
+   ("observation_complete", .measurement),
+   ("exclusive_effect_path", .environment),
+   ("semantic_judgement", .measurement)]
+
 end Example
 
 end ControlStack.Cert

@@ -274,3 +274,64 @@ For proof ports also read/show the fully qualified structures PL_UMPROTF1.Claim,
 **Verdict:** meaningful conditional formal work, no demonstrated false Lean theorem from the material inspected, and no operational F1–F8 assurance certificate. **The biggest danger is promoting a correct theorem about a restricted event space into a real-world universal catastrophe bound.** Earlier repository documents mostly resist that promotion; keep those disclaimers. The F06 irreversible-harm-versus-survival witness is a concrete reason any future deployment headline must state *what the bad event is and when the effect occurs*.
 
 **Limitations of this artifact:** This is a substantial source-level adversarial audit, not the complete 865-declaration kernel-elaborated review demanded by the original ideal methodology. Unexecuted repro snippets and unreviewed modules are clearly flagged; no independent human, runtime or Lean acceptance claim is made.
+
+---
+
+## 10. Second-pass addendum: principal binding and independent countermodels (2026-10-09)
+
+**This is a separate, skeptical source-level pass, not acceptance of §§1–9 or prior reviewers' dispositions.** I independently read the Lean transition systems, selected UMPROT/UMCERT/TMCERT proof ports, SC-01 and SC-26 manifests, all F1–F8 headline definitions, the Python reference broker and the 865-entry registry. The **precise source-tree starting commit** was `bda1a50b8ef75bf0c79f3440a43f426f79cb4901` (Lean `v4.34.0`). The immediately preceding `083874048518b68d754f0c392ad0cb84f01174ba` differs from this source pin only by the addition of the initial Markdown fidelity audit. Thus the audited code is unchanged across those commits. A separate audit edit on `main` during this pass added prior F16/F17; this addendum preserves it and numbers new findings F18–F19.
+
+### Additional summary table
+
+| Theorem | English claim location | Fidelity verdict | Hidden assumption | Concrete witness | Required repair |
+|---|---|---|---|---|---|
+| `GateClients.Approval.approval_safe` | `PRIMITIVES-AND-SCENARIOS.md` F7; `SCENARIO-CATALOG.md` SC-26 | **PASS** for list/time/nonce; **HIGH applicability gap** for *agent-specific consent* | No authenticated executor is represented in `Op.execute` or `Tx P` | A different outside principal invokes the same `execute(t)`; identical Lean transition and accepted effect | Caller identity and authorization subject in the state and operations; negative impersonation theorem; runtime refinement |
+| `Lease.lease_safe` / `agent_cannot_issue` | `PRIMITIVES-AND-SCENARIOS.md` F5; SC-14/28 | **PASS** for logged costs; **HIGH applicability gap** for principal-isolated quotas | `Op.work(w,c)` trusts a submitted *worker number* without a caller identity | Other actor submits `work(1,1)` against worker 1's lease; quota is charged to 1 | Authenticated caller-to-worker ownership and delegation semantics |
+| `Artifact.deployed_is_reviewed` → `Controller.review` | F4 and `trusted_stack/README.md` | **MEDIUM** runtime semantics gap, **HIGH** if “reviewed content” is inferred from API alone | Lean `review(c)` represents content read; service `review(uid,digest)` can record approval without presenting bytes | Stage bytes, send digest to reviewer, authorize without reviewer viewing bytes | Binding between read bytes and signed review, then reviewed/deployed byte equality |
+| `GatewayCore.core_bound` / `sc01_case` | `CATASTROPHE-SPEC.md`, SC-01 | **PASS** for stated final view; **HIGH** for full receiver-observation reading | Complete observed output is assumed rather than proved | Add one sender-controlled unbudgeted bit; `2·9^5=118098 > 2^16` | Complete observation refinement, or an applicable side-kernel domination certificate |
+| `GateComposition.shared_invariants` | F8; SC-28 | **PASS** conditional; **HIGH** as a completed joint-system certificate | `hJoint` already assumes preservation under every joint action | An authenticated deputy uses A authority to cause a B effect | Discharge hJoint against concrete joint principal, effect, clock, and queue semantics |
+
+### F18 — HIGH applicability: F7 approval is not executor-bound
+
+**Exact source:** `ControlStack/Families/F4/GateClients.lean:240–267,307–313,329–341`, blob `c7f74d0ac576be24cb25f6cc3bb0f47a69fa6b08`. The actual declared `Tx P` has `payload`, `nonce` and `expiry`; `Op.execute(t)` has **no independently authenticated caller parameter**. `approval_safe` establishes matching membership of *modeled transactions* in a modeled approvals list, a logical expiry check, and no repeated nonce. `agent_cannot_approve` only proves that the constructor subset classified as `agentOp` cannot add approvals; it does not demonstrate operating-system principal separation.
+
+**Nonvacuous witness:** Let `P=Unit`, `t=((),7,0)`, start from `now=0`, then apply `[approve(t),execute(t)]`. The model appends `(t,0)` to executed. Whether the outside process that submitted `execute(t)` was intended recipient A or impersonator B makes no difference: the model has no such variable. The safety theorem stays true. Even inserting A into the general `payload P` does not prove binding to B's real authenticated identity. This is a precise non-entailment of caller-specific authorization, **not** a refutation of the Lean implication. The earlier adversarial review already acknowledged “actor separation” broadly (O-D9); the missing executor/approval *subject* relation is the more specific gap highlighted here. The SC-26 manifest is correctly marked DRAFT and should not be described as having solved it.
+
+**Correct English:** “Within the F7 transition system, every recorded transaction was in the approvals list, executed no later than its logical expiry, and used a nonce only once; no real-world agent, signer, or delegated authority was authenticated by this theorem.”
+
+**Formal repair:** Add `Caller`, `Signer`, `ApprovedFor`, permission/delegation policy, and distinct authenticated issuance and execution operations. Prove `executed e → e.caller = e.approvedFor ∨ delegated(e)` plus explicit refusal for unauthorized callers and a forward simulation for `SO_PEERCRED` identities. The Python broker checks agent UID against approval/lease records for *one release row*, an actual stronger implementation feature, but there is no demonstrated Lean-to-runtime correspondence for external transactions.
+
+### F19 — HIGH applicability: F5 worker-name spoofing is outside its safety predicate
+
+**Exact source:** `ControlStack/Families/F5/Lease.lean:58–104,204–214,274–293`, blob `442528a9c3543581d9a2ba0e9a9aedef326d4e5e`. `Op.work(w,c)` provides just a *chosen* worker ID and positive cost; `leaseOf` looks up that ID and applies available per-lease/global budget. The source documentation openly states “worker identities cannot be forged” is a missing runtime premise.
+
+**Nonvacuous witness:** With `cap=1` and an initially empty model, issue lease `(id=17,budget=1,expiry=0)` to worker `1`; then process `work(1,1)` at model time zero. Result: `work=[(17,1,0)]`. If a real unauthorized process can submit this worker number, it exhausts someone else's authorization budget while all Lean limits remain satisfied. An invocation's actual principal is not representable in this transition alphabet, so the model cannot distinguish a valid worker from an impersonator.
+
+**Correct English:** “The serialized finite model bounds positive-cost work entries *indexed by asserted worker IDs*; it does not itself prove the submitting actor owns that worker ID or credential.”
+
+**Formal repair:** Separate authenticated caller from target worker/lease, model fork/delegate authorization, and prove unauthorized callers cannot debit another agent's lease. Combine with the physical trusted meter, anti-rollback source, clock and no-bypass semantics. The `trusted_stack` broker's UID binding is useful **implementation evidence of a narrower single-release control**, not an established refinement of the multiworker Lean theorem.
+
+### Additional exact quantitative countermodel for F2
+
+The SC-01 five-episode carrier has `9^5 = 59049` possible final-view transcripts. Suppose the receiver observes in addition a *sender-controlled* binary side bit, without that bit contributing to the gateway budget. Then there are `2·59049 = 118098` possible observation pairs. A deterministic encoder can uniquely map 118098 of the `2^32` uniform secrets to those distinct pairs; a decoder recovers precisely those secrets and gets probability at least `118098/2^32 > 1/2^16`, because `118098 > 65536`. This violates the **stronger full-observation English claim** while satisfying `core_bound` on the `finalView` projection. One bit must really be controllable and receiver-visible for this witness. The previously recorded single-host cache-bit falsification supports that possibility *on that tested host*, not on a hypothetical future isolated VM. Additional random receiver noise without sender control would not be an equivalent witness.
+
+### Exact implementation correspondence, not just a label
+
+`trusted_stack/controller.py:171–179` accepts a digest in `review(self,uid,digest)` and registers reviewer UID if the digest is in the artifact table; the trusted reviewer is **not required by this API to fetch or inspect the actual stored bytes**. This differs from `GateClients.Artifact.Op.review(c)`, whose `reviewedContent` list *by definition* represents content the trusted reviewer read. An agent stages arbitrary `b`, a trusted-UID reviewer authorizes `SHA256(b)` without seeing `b`, and the resulting DB review entry meets the controller's rule. Other approval/lease checks can then authorize a SQLite row. This is a runnable control-flow counterexample to “review row entails inspected bytes,” **not a proof of actual code deployment** (the service has no external deploy adapter). `trusted_stack/README.md` already lists reviewer inspection as unverified; the exact API trace is the sharpening here.
+
+### Additional scope, independent reproduction, and sign-off
+
+The first-pass 865-declaration inventory was re-queried. This registry snapshot contains **855 SOURCE_ONLY / 10 PROVED_RECORDED** entries. These labels describe registry annotations, *not* comprehensive Lean proof validity, and should not override historical kernel records. The family coverage inventory, F01–F17 detailed findings, and priority ordering already in §§1–9 remain in force. In particular, independent inspection of F6 `survInd` confirms it measures *at least k attacks with no attacked round audited*, not prevented pre-effect damage; `ComposeGame` samples trusted/untrusted monitors with independent coins; `ComposeAvg.popJ` selects attack content from a fixed law even when timing is adaptive; and `TMCERTF1.claimAbsV` explicitly assumes `CoveredV`. These are scoped theorems, not demonstrated deployed certificates.
+
+**Independent elaboration status: INCONCLUSIVE.** This audit could not independently run the pinned Lean/lake executable, fresh `#print` / `#check` / `#print axioms` over all headline statements, or execute a full 865-declaration kernel pass. Quoted Lean types and definition semantics were recovered from the source, **not falsely represented as fresh elaborated types**. A separate candidate reproduction file is now at `reviews/english-lean-fidelity-witnesses.lean`, added in commit `0de1fd36dced3361614d691aea303285ced4676c`. It contains two `by decide` Lean witnesses for the F5/F7 constructor traces, but those proofs are **NOT RUN** and must be validated before being advertised as compiled. In the updated checkout run:
+
+```sh
+cat lean-toolchain
+lake env lean reviews/english-lean-fidelity-witnesses.lean
+lake build ControlStack
+# For the actual elaborated types, use the #print harness in §7.
+```
+
+**Repair priority by assurance gain:** (1) make every real dangerous effect pass an authenticated, trusted, check-before-effect adapter and prove a no-bypass refinement; (2) bind F5/F7 subjects to authenticated callers and a single global durable budget; (3) settle SC-01 complete observations and failed frozen usefulness on a suitable isolated host; (4) prove a real byte-inspection/provenance-to-deployment relation; (5) model F6 damage before detection and worst-case conditional recall; (6) verify common-state composition across deputies, concurrency, rollback and delayed effects; (7) then replay the full elaborated Lean goal/axiom inventory.
+
+**Second-pass verdict:** I found **no demonstrated contradiction inside a valid Lean theorem**. The substantial gaps are between the mathematical actions/effects/observations and the external powers of a real adversary. The most precise additional gaps are *executor identity absent from F7* and *caller identity absent from F5 work charges*. Neither undermines their honestly stated conditional ledger properties. No complete operational F1–F8 safety certificate follows from these sources.

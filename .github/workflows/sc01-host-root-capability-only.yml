@@ -1,0 +1,22 @@
+name: sc01-host-root-capability-only
+on:
+  push:
+    branches:
+      - sc01-priorities-validation-20261008
+    paths:
+      - .github/workflows/sc01-host-root-capability-only.yml
+permissions:
+  contents: read
+jobs:
+  read-only-kvm-ioctl:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Try read-only KVM API version via privileged runner process
+        run: sudo -n /usr/bin/python3 tools/sc01_host_feasibility.py
+      - name: Report only native x64 guest feasibility
+        run: |
+          uname -m
+          test -f gateway/vm/image.lock.json
+          echo 'Existing frozen SC-01 guests are aarch64; x64 KVM cannot accelerate those guest images.'

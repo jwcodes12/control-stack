@@ -1,0 +1,52 @@
+name: checked-trace-certificates
+
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/Core/CheckedTrace.lean'
+      - '.github/workflows/checked-trace.yml'
+      - 'ControlStack.lean'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate-source-index:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regenerate source-only registry and review catalog
+        run: |
+          python3 tools/build_registry.py
+          python3 tools/build_statement_catalog.py
+          python3 tools/build_results.py
+      - name: Commit generated, source-only documents to PR branch
+        run: |
+          git add THEOREM-REGISTRY.json THEOREM-REGISTRY.md LEAN-STATEMENTS-NORMAL-FORM.md scenarios/SC-07/result.md
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Regenerate source-only registry for checked trace certificates'
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          fi
+
+  lean-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel check all replay soundness corollaries
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake build ControlStack.Core.CheckedTrace

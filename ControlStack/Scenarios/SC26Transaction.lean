@@ -23,14 +23,21 @@ Main results:
 - `sc26_safe`: from the initial state, after any legal trace, every bank entry has a request with exactly that payload,
   a reservation, and an approval of exactly that payload by an approver who is not the requester; bank keys are
   unique; the bank's total amount is at most the cap.
+- `safe_of_sound`: the same for EVERY configuration with the payload, distinctness, cap, receiver-dedup and
+  receiver-authentication checks; `good_without_nonce`: the gate-side nonce is not needed for safety.
+- `sc26_once`: in the deployed configuration each request id is reserved and charged at most once.
+- `sc26_safe_disjoint`: with disjoint agent/approver roles, every payment's approver is not an agent.
 - `halt_freezes`: after a halt the gate sends nothing new; the bank gains only messages already in flight at the halt
   (`inflight_after_halt` shows they can still complete; `halt_freezes_quiescent`: with nothing in flight, the bank is
   frozen exactly).
 - `sys`/`spec`: the model is a client of the shared gate interface (`Core/Gate.lean`).
 
 Necessity witnesses (each removes one check or premise and exhibits a concrete bad trace):
-`payload_unchecked_breaks`, `no_dedup_retry_duplicates`, `no_cap_breaks`, `no_halt_check_breaks`,
-`gate_credential_leak_breaks`, `self_approval_without_distinct_check`. `nonce_protects_budget_only` records an honest
+`payload_unchecked_breaks`, `no_dedup_retry_duplicates`, `no_dedup_breaks_cap`, `no_cap_breaks`,
+`no_halt_check_breaks`, `no_bank_auth_breaks`, `gate_credential_leak_breaks`, `self_approval_without_distinct_check`
+(the distinctness check matters only when roles overlap). `same_payload_twice_is_good` records that exactly-once is
+per request id, not per business intent. `execute` does not check its caller (any principal may trigger execution of
+an approved request; harmless for `Good`). `nonce_protects_budget_only` records an honest
 nuance: with an idempotent bank the gate-side nonce is not needed for effect uniqueness; it protects budget accounting.
 
 Limits: this is the transition system. The runtime (`scenarios/SC-26/harness/`) is linked to it by a trace checker
@@ -105,6 +112,17 @@ deriving DecidableEq, Repr
 
 def full : Checks := ⟨true, true, true, true, true, true, true⟩
 
+/-- the checks the SAFETY property needs. The gate-side nonce and the halt check are not among them: with an
+idempotent receiver, uniqueness of effects comes from the receiver (adversarial review, Opus 5.5, D4). -/
+structure Sound (C : Checks) : Prop where
+  distinct : C.distinct = true
+  payload : C.payload = true
+  cap : C.cap = true
+  dedup : C.bankDedup = true
+  auth : C.bankAuth = true
+
+theorem sound_full : Sound full := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
 def init : St := ⟨0, [], [], [], 0, false, [], []⟩
 
 def reqOf (s : St) (id : ℕ) : Option Req := s.reqs.find? (fun r => r.id = id)
@@ -166,7 +184,6 @@ structure Inv (R : Roles) (cap : ℕ) (s : St) : Prop where
   appr_ok : ∀ ap ∈ s.approvals, ∃ r, reqOf s ap.1 = some r ∧ ap.2.2 = r.tx ∧ ap.2.1 ∈ R.approvers ∧
     ap.2.1 ≠ r.requester
   res_ok : ∀ k ∈ s.reserved, ∃ r, reqOf s k = some r ∧ Approved R s k r
-  res_nodup : s.reserved.Nodup
   spent_eq : s.spent = (s.reserved.map (amt s)).sum
   spent_le : s.spent ≤ cap
   bank_ok : ∀ e ∈ s.bank, e.1 ∈ s.reserved ∧ ∃ r, reqOf s e.1 = some r ∧ r.tx = e.2
@@ -184,8 +201,7 @@ theorem reqOf_append (s : St) (l : List Req) (k : ℕ) (r : Req) (h : reqOf s k 
   simp [List.find?_append, h]
 
 theorem inv_init (R : Roles) (cap : ℕ) : Inv R cap init :=
-  ⟨by simp [init], by simp [init], by simp [init], by simp [init], by simp [init], by simp [init], by simp [init],
-    by simp [init]⟩
+  ⟨by simp [init], by simp [init], by simp [init], by simp [init], by simp [init], by simp [init], by simp [init]⟩
 
 /-- states whose request lookups and approvals extend `s`'s -/
 structure Ext (s t : St) : Prop where
@@ -246,7 +262,7 @@ theorem inv_of_ext {R : Roles} {cap : ℕ} {s t : St} (h : Inv R cap s) (he : Ex
     Inv R cap t := by
   have hreq : ∀ k ∈ s.reserved, ∃ r, reqOf s k = some r := fun k hk =>
     let ⟨r, hr, _⟩ := h.res_ok k hk; ⟨r, hr⟩
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro ap hap
     by_cases hs : ap ∈ s.approvals
     · obtain ⟨r, hr, h1⟩ := h.appr_ok ap hs
@@ -256,7 +272,6 @@ theorem inv_of_ext {R : Roles} {cap : ℕ} {s t : St} (h : Inv R cap s) (he : Ex
     rw [hres] at hk
     obtain ⟨r, hr, ha⟩ := h.res_ok k hk
     exact ⟨r, he.req k r hr, ha.mono he⟩
-  · rw [hres]; exact h.res_nodup
   · rw [hsp, hres, sum_ext he s.reserved hreq]; exact h.spent_eq
   · rw [hsp]; exact h.spent_le
   · intro e hb
@@ -271,13 +286,13 @@ theorem inv_of_ext {R : Roles} {cap : ℕ} {s t : St} (h : Inv R cap s) (he : Ex
 
 theorem ext_refl (s : St) : Ext s s := ⟨fun _ _ h => h, fun _ h => h⟩
 
-theorem bankAppend_inv {R : Roles} {cap : ℕ} {s : St} (h : Inv R cap s) (k : ℕ) (r : Req) (hk : k ∈ s.reserved)
-    (hr : reqOf s k = some r) : Inv R cap (bankAppend full s k r.tx) := by
+theorem bankAppend_inv {R : Roles} {cap : ℕ} {C : Checks} (hdd : C.bankDedup = true) {s : St} (h : Inv R cap s)
+    (k : ℕ) (r : Req) (hk : k ∈ s.reserved) (hr : reqOf s k = some r) : Inv R cap (bankAppend C s k r.tx) := by
   unfold bankAppend
   by_cases hd : k ∈ s.bank.map Prod.fst
-  · simpa [full, hd] using h
-  · simp only [full, true_and, hd, ite_false]
-    refine ⟨h.appr_ok, h.res_ok, h.res_nodup, h.spent_eq, h.spent_le, ?_, ?_, h.net_ok⟩
+  · simpa [hdd, hd] using h
+  · simp only [hdd, true_and, hd, ite_false]
+    refine ⟨h.appr_ok, h.res_ok, h.spent_eq, h.spent_le, ?_, ?_, h.net_ok⟩
     · intro e he
       rcases List.mem_append.1 he with he | he
       · exact h.bank_ok e he
@@ -289,8 +304,8 @@ theorem bankAppend_inv {R : Roles} {cap : ℕ} {s : St} (h : Inv R cap s) (k : �
       rintro rfl
       exact hd ha
 
-theorem step_inv (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (h : Inv R cap s) :
-    Inv R cap (step R cap full s o) := by
+theorem step_inv (R : Roles) (cap : ℕ) {C : Checks} (hC : Sound C) (s : St) (o : Op) (ho : legal R o)
+    (h : Inv R cap s) : Inv R cap (step R cap C s o) := by
   cases o with
   | request c tx =>
     simp only [step]
@@ -308,7 +323,7 @@ theorem step_inv (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (h :
       · rename_i r hr
         split_ifs with h2
         · obtain ⟨hc, hd, hp⟩ := h2
-          simp only [full, forall_const] at hd hp
+          simp only [hC.distinct, hC.payload, forall_const] at hd hp
           refine inv_of_ext h ⟨fun _ _ hr => hr, fun _ hx => List.mem_append_left _ hx⟩ ?_ rfl rfl rfl rfl
           intro ap hap hn
           rcases List.mem_append.1 hap with hap | hap
@@ -324,22 +339,17 @@ theorem step_inv (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (h :
       · rename_i r hr
         split_ifs with h2
         · obtain ⟨⟨ap, hap, hid⟩, hn, hc⟩ := h2
-          simp only [full, forall_const] at hn hc
+          simp only [hC.cap, forall_const] at hc
           obtain ⟨r', hr', htx, happ, hne⟩ := h.appr_ok ap hap
           rw [hid, hr] at hr'
           cases hr'
           have happroved : Approved R s id r := ⟨ap.2.1, by
             obtain ⟨k, a, t⟩ := ap; simp only at hid htx; subst hid htx; exact hap, happ, hne⟩
-          refine ⟨h.appr_ok, ?_, ?_, ?_, ?_, ?_, h.bank_nodup, ?_⟩
+          refine ⟨h.appr_ok, ?_, ?_, ?_, ?_, h.bank_nodup, ?_⟩
           · intro k hk
             rcases List.mem_append.1 hk with hk | hk
             · exact h.res_ok k hk
             · simp at hk; subst hk; exact ⟨r, hr, happroved⟩
-          · refine List.nodup_append.2 ⟨h.res_nodup, List.nodup_singleton _, fun a ha b hb => ?_⟩
-            simp only [List.mem_singleton] at hb
-            subst hb
-            rintro rfl
-            exact hn ha
           · show s.spent + r.tx.amount = ((s.reserved ++ [id]).map (amt s)).sum
             rw [List.map_append, List.sum_append, ← h.spent_eq]
             simp [amt, hr]
@@ -358,7 +368,7 @@ theorem step_inv (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (h :
     · split
       · exact h
       · rename_i r hr
-        refine ⟨h.appr_ok, h.res_ok, h.res_nodup, h.spent_eq, h.spent_le, h.bank_ok, h.bank_nodup, ?_⟩
+        refine ⟨h.appr_ok, h.res_ok, h.spent_eq, h.spent_le, h.bank_ok, h.bank_nodup, ?_⟩
         intro m hm
         rcases List.mem_append.1 hm with hm | hm
         · exact h.net_ok m hm
@@ -372,10 +382,10 @@ theorem step_inv (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (h :
       have hmem : m ∈ s.net := List.mem_of_find?_eq_some hm
       obtain ⟨h1, r, hr, hx⟩ := h.net_ok m hmem
       rw [← hx]
-      exact bankAppend_inv h m.1 r h1 hr
+      exact bankAppend_inv hC.dedup h m.1 r h1 hr
   | bankCall c key tx =>
     simp only [legal] at ho
-    simpa [step, full, ho] using h
+    simpa [step, hC.auth, ho] using h
   | halt c =>
     simp only [step]
     split_ifs
@@ -385,21 +395,97 @@ theorem step_inv (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (h :
 theorem run_cons (R : Roles) (cap : ℕ) (C : Checks) (s : St) (o : Op) (ops : List Op) :
     run R cap C s (o :: ops) = run R cap C (step R cap C s o) ops := rfl
 
-theorem run_inv (R : Roles) (cap : ℕ) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) (h : Inv R cap s) :
-    Inv R cap (run R cap full s ops) := by
+theorem run_inv (R : Roles) (cap : ℕ) {C : Checks} (hC : Sound C) (s : St) (ops : List Op)
+    (hops : ∀ o ∈ ops, legal R o) (h : Inv R cap s) : Inv R cap (run R cap C s ops) := by
   induction ops generalizing s with
   | nil => exact h
   | cons o ops ih =>
     rw [run_cons]
-    exact ih _ (fun o' ho' => hops o' (List.mem_cons_of_mem o ho')) (step_inv R cap s o (hops o List.mem_cons_self) h)
+    exact ih _ (fun o' ho' => hops o' (List.mem_cons_of_mem o ho'))
+      (step_inv R cap hC s o (hops o List.mem_cons_self) h)
+
+/-- **Safety for every sound configuration.** The theorem needs only the payload, distinctness, cap, receiver-dedup
+and receiver-authentication checks; neither the gate-side nonce nor the halt check is needed for `Good`. -/
+theorem safe_of_sound (R : Roles) (cap : ℕ) {C : Checks} (hC : Sound C) (ops : List Op)
+    (hops : ∀ o ∈ ops, legal R o) : Good R cap (run R cap C init ops) :=
+  (run_inv R cap hC init ops hops (inv_init R cap)).good
+
+/-- the gate-side nonce is not needed for safety (it protects budget accounting: `nonce_protects_budget_only`) -/
+theorem good_without_nonce (R : Roles) (cap : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) :
+    Good R cap (run R cap { full with nonce := false } init ops) :=
+  safe_of_sound R cap ⟨rfl, rfl, rfl, rfl, rfl⟩ ops hops
 
 /-- **SC-26 safety.** After any legal trace from the initial state, every bank entry has a request with exactly that
 payload, a reservation, and an approval of exactly that payload by an approver who is not the requester; bank keys
 are unique; the bank's total is at most the cap. Adversary: any legal operation sequence (stateful, adaptive,
-including arbitrary delivery retries, crash recovery, duplicated or delayed messages); the only premise is credential separation (`legal`). -/
+including arbitrary delivery retries, crash recovery, duplicated or delayed messages). Formal premise: `legal` (no
+untrusted operation carries the gate's credential). Reading "approved by an approver" as CONSENT additionally needs
+credential separation for approvers (an `approve` carrying an approver identity is that approver's own act) and, for
+independence, role disjointness (`sc26_safe_disjoint`). Exactly-once is per request id, not per business intent
+(`same_payload_twice_is_good`); uniqueness of effects relies on the receiver's idempotency (`no_dedup_breaks_cap`). -/
 theorem sc26_safe (R : Roles) (cap : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) :
     Good R cap (run R cap full init ops) :=
-  (run_inv R cap init ops hops (inv_init R cap)).good
+  safe_of_sound R cap sound_full ops hops
+
+/-- with disjoint agent and approver roles, every payment's approver is not an agent at all -/
+theorem sc26_safe_disjoint (R : Roles) (cap : ℕ) (hdisj : ∀ a ∈ R.approvers, a ∉ R.agents) (ops : List Op)
+    (hops : ∀ o ∈ ops, legal R o) :
+    ∀ e ∈ (run R cap full init ops).bank, ∃ r a, reqOf (run R cap full init ops) e.1 = some r ∧ r.tx = e.2 ∧
+      (e.1, a, e.2) ∈ (run R cap full init ops).approvals ∧ a ∈ R.approvers ∧ a ∉ R.agents ∧ a ≠ r.requester := by
+  intro e he
+  obtain ⟨r, hr, hx, _, a, ha, happ, hne⟩ := (sc26_safe R cap ops hops).1 e he
+  exact ⟨r, a, hr, hx, hx ▸ ha, happ, hdisj a happ, hne⟩
+
+theorem bankAppend_reserved (C : Checks) (s : St) (k : ℕ) (tx : Tx) : (bankAppend C s k tx).reserved = s.reserved := by
+  unfold bankAppend; split_ifs <;> rfl
+
+/-- with the nonce check, a reservation (an approval's consumption) happens at most once per request id -/
+theorem step_res_nodup (R : Roles) (cap : ℕ) (C : Checks) (hn : C.nonce = true) (s : St) (o : Op)
+    (h : s.reserved.Nodup) : (step R cap C s o).reserved.Nodup := by
+  cases o with
+  | execute c id =>
+    simp only [step]
+    split_ifs with h1
+    · exact h
+    · split
+      · exact h
+      · split_ifs with h2
+        · obtain ⟨_, hn', _⟩ := h2
+          have hni : id ∉ s.reserved := hn' hn
+          refine List.nodup_append.2 ⟨h, List.nodup_singleton _, fun a ha b hb => ?_⟩
+          simp only [List.mem_singleton] at hb
+          subst hb
+          rintro rfl
+          exact hni ha
+        · exact h
+  | arrive key =>
+    simp only [step]; split
+    · exact h
+    · rw [bankAppend_reserved]; exact h
+  | bankCall c key tx =>
+    simp only [step]; split_ifs
+    · exact h
+    · rw [bankAppend_reserved]; exact h
+  | request c tx => simp only [step]; split_ifs <;> exact h
+  | approve c id tx =>
+    simp only [step]; split_ifs
+    · exact h
+    · split
+      · exact h
+      · split_ifs <;> exact h
+  | deliver id =>
+    simp only [step]; split_ifs
+    · exact h
+    · split <;> exact h
+    · exact h
+  | halt c => simp only [step]; split_ifs <;> exact h
+
+/-- **One use per approval** (deployed configuration): each request id is reserved, and charged, at most once -/
+theorem sc26_once (R : Roles) (cap : ℕ) (ops : List Op) : (run R cap full init ops).reserved.Nodup := by
+  suffices ∀ s, s.reserved.Nodup → (run R cap full s ops).reserved.Nodup from this init (by simp [init])
+  induction ops with
+  | nil => exact fun s h => h
+  | cons o ops ih => exact fun s h => ih _ (step_res_nodup R cap full rfl s o h)
 
 /-! ## Absorbing halt -/
 
@@ -511,7 +597,7 @@ def sys (R : Roles) (cap : ℕ) : System St {o : Op // legal R o} (ℕ × Tx) wh
 def spec (R : Roles) (cap : ℕ) : Spec (sys R cap) where
   Inv := Inv R cap
   ok := fun s e => ∃ r, reqOf s e.1 = some r ∧ r.tx = e.2 ∧ e.1 ∈ s.reserved ∧ Approved R s e.1 r
-  step_inv := fun s o h => step_inv R cap s o.1 o.2 h
+  step_inv := fun s o h => step_inv R cap sound_full s o.1 o.2 h
   log_prefix := fun s o => bank_prefix R cap full s o.1
   inv_ok := fun _ h e he => h.good.1 e he
 
@@ -559,6 +645,35 @@ theorem no_dedup_retry_duplicates :
     decide
   rw [this] at h
   simp at h
+
+/-- without receiver idempotency, repeated arrival of ONE approved message also breaks the cap: the gate's checks alone
+give neither exactly-once nor the cap (adversarial review, Opus 5.5, D4) -/
+theorem no_dedup_breaks_cap :
+    let s := run R0 20 { full with bankDedup := false } init
+      [.request 1 tx1, .approve 2 0 tx1, .execute 1 0, .deliver 0, .arrive 0, .arrive 0, .arrive 0]
+    (s.bank.map (fun e => e.2.amount)).sum = 30 ∧ s.spent = 10 := by
+  decide
+
+/-- without receiver authentication, an agent's direct call pays with no request or approval -/
+theorem no_bank_auth_breaks :
+    let s := run R0 20 { full with bankAuth := false } init [.bankCall 1 0 tx1]
+    s.bank = [(0, tx1)] ∧ ¬ Good R0 20 s := by
+  refine ⟨by decide, not_good_of (0, tx1) (by decide) ?_⟩
+  intro ap hap
+  have : (run R0 20 { full with bankAuth := false } init [.bankCall 1 0 tx1]).approvals = [] := by decide
+  rw [this] at hap
+  simp at hap
+
+/-- **Scope of "exactly once"**: it is per request id. Two requests with the same payload, each approved, are both
+paid, and `Good` holds. Business-level deduplication (one payment per invoice) is not part of the model. -/
+theorem same_payload_twice_is_good :
+    let ops : List Op := [.request 1 tx1, .request 1 tx1, .approve 2 0 tx1, .approve 2 1 tx1, .execute 1 0,
+      .execute 1 1, .deliver 0, .deliver 1, .arrive 0, .arrive 1]
+    (run R0 20 full init ops).bank = [(0, tx1), (1, tx1)] ∧ Good R0 20 (run R0 20 full init ops) :=
+  ⟨by decide, sc26_safe R0 20 _ (by
+    intro o ho
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at ho
+    rcases ho with h | h | h | h | h | h | h | h | h | h <;> subst h <;> trivial)⟩
 
 /-- without the cap check, two approved transactions exceed the cap -/
 theorem no_cap_breaks :
@@ -654,3 +769,10 @@ end ControlStack.SC26
 #print axioms ControlStack.SC26.self_approval_without_distinct_check
 #print axioms ControlStack.SC26.distinct_check_blocks_self_approval
 #print axioms ControlStack.SC26.nonce_protects_budget_only
+#print axioms ControlStack.SC26.safe_of_sound
+#print axioms ControlStack.SC26.good_without_nonce
+#print axioms ControlStack.SC26.sc26_safe_disjoint
+#print axioms ControlStack.SC26.sc26_once
+#print axioms ControlStack.SC26.no_dedup_breaks_cap
+#print axioms ControlStack.SC26.no_bank_auth_breaks
+#print axioms ControlStack.SC26.same_payload_twice_is_good

@@ -22,7 +22,7 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-13](SC-13/) | Trusted monitoring and audit dispatch | CONDITIONAL | 2 |
 | [SC-14](SC-14/) | Agent consumes runaway compute, tokens, network or budget | CONDITIONAL | 2 |
 | [SC-15](SC-15/) | Agent inserts a hidden functional backdoor in source code | CONDITIONAL | 4 |
-| [SC-16](SC-16/) | Agent ships code or config before trusted evaluation/approval | CONDITIONAL | 7 |
+| [SC-16](SC-16/) | Agent ships code or config before trusted evaluation/approval | CONDITIONAL | 9 |
 | [SC-17](SC-17/) | Agent sabotages IaC, Kubernetes or production cluster permissions | CONDITIONAL | 7 |
 | [SC-18](SC-18/) | Agent disables inference logging or monitoring in model-serving infrastructure | CONDITIONAL | 10 |
 | [SC-19](SC-19/) | Agent damages data or causes an irreversible live production side effect | CONDITIONAL | 4 |

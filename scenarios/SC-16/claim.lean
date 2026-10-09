@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC16Refinement
 import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC16Disjoint
 import ControlStack.Scenarios.SC16Deploy
@@ -27,3 +28,13 @@ import ControlStack.Scenarios.SC16Deploy
 #print axioms ControlStack.AuthInstances.sc16_safe_authenticated
 #check ControlStack.AuthInstances.forged16_deploys_without_auth
 #print axioms ControlStack.AuthInstances.forged16_deploys_without_auth
+#check ControlStack.SC16Refinement.simulation
+#print axioms ControlStack.SC16Refinement.simulation
+#check ControlStack.SC16Refinement.concrete_safe
+#print axioms ControlStack.SC16Refinement.concrete_safe
+#check ControlStack.SC16Refinement.concrete_reviewed_content
+#print axioms ControlStack.SC16Refinement.concrete_reviewed_content
+#check ControlStack.SC16Refinement.concrete_safe_disjoint
+#print axioms ControlStack.SC16Refinement.concrete_safe_disjoint
+#check ControlStack.SC16Refinement.by_tag_breaks
+#print axioms ControlStack.SC16Refinement.by_tag_breaks

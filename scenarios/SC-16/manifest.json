@@ -54,6 +54,18 @@
       "path": "ControlStack/Scenarios/AuthInstancesA.lean",
       "sha256": "74399488cfef70c81cd91e86f85be5f0ea5a6ac84f56b20638ba522bd90e96a4",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC16Refinement.concrete_safe",
+      "path": "ControlStack/Scenarios/SC16Refinement.lean",
+      "sha256": "f561f459306ce75a1ccdaff4a9b693e24dda863716851184bc9ca72e29ddddd0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC16Refinement.concrete_reviewed_content",
+      "path": "ControlStack/Scenarios/SC16Refinement.lean",
+      "sha256": "f561f459306ce75a1ccdaff4a9b693e24dda863716851184bc9ca72e29ddddd0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -110,6 +122,14 @@
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
+    },
+    {
+      "id": "model_runtime_correspondence",
+      "text": "Two links: concrete admission event machine (CAS, mutable tags, signed reviewer/approver logs with unforgeable signatures as premise, single-threaded atomic deploy) → SC16 model: PROVED (SC16Refinement.simulation/concrete_safe/concrete_reviewed_content/concrete_safe_disjoint); Python runtime → concrete machine: TESTED (scenarios/SC-16/evidence/run-1 reconciliation).",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
@@ -118,8 +138,8 @@
       "note": "Not independently established."
     },
     "runtime_correspondence": {
-      "status": "UNRESOLVED",
-      "note": "Not independently established."
+      "status": "ASSUMED",
+      "note": "Event-structure refinement proved in Lean (SC16Refinement); Python-to-event-machine link tested only (reconcile.py)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",

@@ -19,3 +19,4 @@ _Generated from manifest.json._
 - `ControlStack/Scenarios/AuthInstancesA.lean`
 - `ControlStack/Scenarios/SC16Deploy.lean`
 - `ControlStack/Scenarios/SC16Disjoint.lean`
+- `ControlStack/Scenarios/SC16Refinement.lean`

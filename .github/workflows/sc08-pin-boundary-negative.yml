@@ -1,0 +1,20 @@
+name: sc08-pin-boundary-negative
+on:
+  pull_request:
+    paths:
+      - 'scenarios/SC-08/harness/test_pin_isolation_boundary.py'
+      - 'docs/SC08-PIN-INTEGRITY-REVIEW-2026-10-09.md'
+      - '.github/workflows/sc08-pin-boundary-negative.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  same-uid-negative-witness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Execute permission boundary witness (not frozen SC-08 evidence)
+        run: python3 -m unittest discover -s scenarios/SC-08/harness -p test_pin_isolation_boundary.py -v

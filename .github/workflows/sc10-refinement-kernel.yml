@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'ControlStack/Scenarios/SC10Refinement.lean'
+      - 'ControlStack/Scenarios/SC10ReadUseGap.lean'
       - 'ControlStack/Scenarios/SC10Policy.lean'
       - '.github/workflows/sc10-refinement-kernel.yml'
       - 'tools/test_sc10_restart_gap.py'
@@ -29,4 +30,4 @@ jobs:
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
-          lake build ControlStack.Scenarios.SC10Refinement
+          lake build ControlStack.Scenarios.SC10Refinement ControlStack.Scenarios.SC10ReadUseGap

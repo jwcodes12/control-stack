@@ -4,6 +4,7 @@ on:
     paths:
       - '.github/workflows/english-lean-fidelity-reproduction.yml'
       - 'reviews/english-lean-fidelity-witnesses.lean'
+      - 'reviews/english-lean-fidelity-elaboration.lean'
       - 'reviews/trusted-stack-shared-state-countermodel.py'
   workflow_dispatch:
 
@@ -29,5 +30,7 @@ jobs:
         run: PATH=$HOME/.elan/bin:$PATH lake exe cache get
       - name: Build repository modules
         run: PATH=$HOME/.elan/bin:$PATH lake build ControlStack
+      - name: Print actual headline elaborated types and axioms
+        run: PATH=$HOME/.elan/bin:$PATH lake env lean reviews/english-lean-fidelity-elaboration.lean
       - name: Elaborate isolated principal fidelity witnesses
         run: PATH=$HOME/.elan/bin:$PATH lake env lean reviews/english-lean-fidelity-witnesses.lean

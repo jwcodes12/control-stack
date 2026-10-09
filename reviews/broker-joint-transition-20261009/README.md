@@ -55,6 +55,11 @@ live identity, mutation and pinned full Lean checks.
 - Existing gateway correspondence, receiver-boundary, gateway, lifetime,
   scenario/oracle, certifier, metadata mutation and VM configuration tests
   passed. The saved VM receipt verifier retained its failed usefulness gate.
+- All 28 scenario claim files compiled with standard-only reported axioms.
+  The original SC-01 case checker passed its 48 case and 38 supporting theorem
+  checks, 20 source bindings, differential checks and receipt verification; it
+  returned the expected exit 3, **HYPOTHESIS_REFUTED**, preserving the historical
+  shared-cache observation refutation. This is not a safety pass.
 - Generated registry/catalog/index drift checks are required after the new
   declarations. The current registry has 875 source-indexed declarations;
   the 821 existing UNKNOWN classifications remain unpromoted.

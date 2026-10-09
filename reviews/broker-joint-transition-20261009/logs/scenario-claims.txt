@@ -1,0 +1,68 @@
+ControlStack.SafetyCaseSC01.sc01_case :
+  (∀ {Ω S O : Type} [inst : Fintype Ω] [inst_1 : Fintype S] [inst_2 : Fintype O] (ρ : Ω → ℝ) (W : S → O → ℝ)
+      (c : O → ℝ),
+      (∀ (s : S) (o : O), W s o ≤ c o) →
+        (∀ (o : O), 0 ≤ c o) →
+          ∑ o, c o ≤ 65536 / 59049 →
+            ∀ (enc : Ω → Fin (2 ^ 32) → ControlStack.ScenarioARepair.Transcript × S → ℝ)
+              (dec : Ω → ControlStack.ScenarioARepair.Transcript × O → Fin (2 ^ 32) → ℝ),
+              ControlStack.Covert.IsDist ρ →
+                (∀ (ω : Ω) (m : Fin (2 ^ 32)), ControlStack.Covert.IsDist (enc ω m)) →
+                  (∀ (ω : Ω) (y : ControlStack.ScenarioARepair.Transcript × O), ControlStack.Covert.IsDist (dec ω y)) →
+                    ControlStack.SideChannel.sideSuccess ρ W enc dec ≤ 1 / 2 ^ 16) ∧
+    (∀ (p : ℝ), 0 ≤ p → p ≤ 9 / 10 → ControlStack.ScenarioAUsefulness.passProb p ≤ 1 / 80) ∧
+      (ControlStack.ScenarioAUsefulness.tail 64 (93382 / 100000) ≤ 1 / 80 ∧ 9 / 10 ≤ 93382 / 100000) ∧
+        ((ControlStack.GatewayCore.viewSpace (fun x => 1) fun x => 8) = 9 ∧
+            Fintype.card ControlStack.ScenarioARepair.Transcript = 9 ^ 5) ∧
+          ∀ {L : Type} [inst : DecidableEq L] (es : List (ControlStack.LifetimeLedger.Ev L)),
+            (∀ e ∈ es, ¬e.isRestore) →
+              (∀ e ∈ es, ∀ (ℓ : L) (k : ℕ), e = ControlStack.LifetimeLedger.Ev.charge ℓ k → k = 9) →
+                ∀ (ℓ : L),
+                  (List.filter (fun a => decide (a.1 = ℓ))
+                        (ControlStack.LifetimeLedger.run (2 ^ 16) (some fun x => 1, []) es).2).length ≤
+                    5
+ControlStack.GatewayCore.core_bound {C : ℕ} {R : Type} {S : Fin C → Type} {slots : Fin C → ℕ} {Ω M : Type} [Fintype Ω]
+  [Fintype M] [Nonempty M] [Fintype R] [(c : Fin C) → Fintype (S c)] [(c : Fin C) → DecidableEq (S c)]
+  [Fintype (ControlStack.GatewayCore.Ev C R)] (valid : (c : Fin C) → R → Option (S c)) (L : ℕ) (ρ : Ω → ℝ)
+  (enc : Ω → M → (Fin L → ControlStack.GatewayCore.Ev C R) → ℝ)
+  (dec : Ω → ControlStack.GatewayCore.View S slots → M → ℝ) (hρ : ControlStack.Covert.IsDist ρ)
+  (henc : ∀ (ω : Ω) (m : M), ControlStack.Covert.IsDist (enc ω m))
+  (hdec : ∀ (ω : Ω) (v : ControlStack.GatewayCore.View S slots), ControlStack.Covert.IsDist (dec ω v)) :
+  ∑ ω,
+      ρ ω *
+        ((↑(Fintype.card M))⁻¹ *
+          ∑ m,
+            ∑ tr,
+              enc ω m tr *
+                dec ω
+                  (ControlStack.GatewayCore.finalView
+                    (ControlStack.GatewayCore.runG valid ControlStack.GatewayCore.init (List.ofFn tr)))
+                  m) ≤
+    ↑(ControlStack.GatewayCore.viewSpace slots fun c => Fintype.card (S c)) / ↑(Fintype.card M)
+ControlStack.Covert.covert_bound_lifetime {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M] {E : ℕ} (V : Fin E → Type)
+  [(e : Fin E) → Fintype (V e)] [(e : Fin E) → DecidableEq (V e)] (ρ : Ω → ℝ) (enc : Ω → M → ((e : Fin E) → V e) → ℝ)
+  (dec : Ω → ((e : Fin E) → V e) → M → ℝ) (hρ : ControlStack.Covert.IsDist ρ)
+  (henc : ∀ (ω : Ω) (m : M), ControlStack.Covert.IsDist (enc ω m))
+  (hdec : ∀ (ω : Ω) (v : (e : Fin E) → V e), ControlStack.Covert.IsDist (dec ω v)) :
+  ControlStack.Covert.successProb ρ enc dec ≤ (∏ e, ↑(Fintype.card (V e))) / ↑(Fintype.card M)
+'ControlStack.SafetyCaseSC01.sc01_case' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ControlStack.GatewayCore.core_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ControlStack.Covert.covert_bound_lifetime' depends on axioms: [propext, Classical.choice, Quot.sound]
+ControlStack.EgressGate.trace_safe (p : ControlStack.EgressGate.Policy) (s : ControlStack.EgressGate.State)
+  (actions : List ControlStack.EgressGate.Action) (h : ControlStack.EgressGate.Invariant p s) :
+  ControlStack.EgressGate.Invariant p (ControlStack.EgressGate.run p s actions)
+ControlStack.EgressGate.step_safe (p : ControlStack.EgressGate.Policy) (s : ControlStack.EgressGate.State)
+  (a : ControlStack.EgressGate.Action) (h : ControlStack.EgressGate.Invariant p s) :
+  ControlStack.EgressGate.Invariant p (ControlStack.EgressGate.step p s a)
+'ControlStack.EgressGate.trace_safe' depends on axioms: [propext, Quot.sound]
+'ControlStack.EgressGate.step_safe' depends on axioms: [propext, Quot.sound]
+ControlStack.AuditDispatch.trace_safe (s : ControlStack.AuditDispatch.St) (ops : List ControlStack.AuditDispatch.Op)
+  (h : ControlStack.AuditDispatch.Inv s) :
+  ControlStack.AuditDispatch.Inv (ControlStack.AuditDispatch.run s ops) ∧
+    s.audits <+: (ControlStack.AuditDispatch.run s ops).audits
+ControlStack.AuditDispatch.app_cannot_effect (s : ControlStack.AuditDispatch.St) (o : ControlStack.AuditDispatch.Op)
+  (happ : ∀ (id : ℕ), o ≠ ControlStack.AuditDispatch.Op.dispatch id) :
+  (ControlStack.AuditDispatch.step s o).effects = s.effects
+'ControlStack.AuditDispatch.trace_safe' depends on axioms: [propext, Quot.sound]
+'ControlStack.AuditDispatch.app_cannot_effect' depends on axioms: [propext, Quot.sound]
+'ControlStack.AuditDispatch.trace_safe' depends on axioms: [propext, Quot.sound]

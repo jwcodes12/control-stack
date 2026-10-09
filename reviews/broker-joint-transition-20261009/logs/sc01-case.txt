@@ -1,0 +1,59 @@
+1. Lean (case chain)
+  lean ok: ControlStack/CovertChannel.lean (3 theorems)
+  lean ok: ControlStack/GatewayModel.lean (2 theorems)
+  lean ok: ControlStack/ScenarioARepair.lean (3 theorems)
+  lean ok: ControlStack/SideChannel.lean (5 theorems)
+  lean ok: ControlStack/ScenarioASide.lean (5 theorems)
+  lean ok: ControlStack/ScenarioAUsefulness.lean (5 theorems)
+  lean ok: ControlStack/LifetimeLedger.lean (3 theorems)
+  lean ok: ControlStack/GatewayCore.lean (7 theorems)
+  lean ok: ControlStack/SafetyCaseSC01.lean (4 theorems)
+  lean ok: ControlStack/ScenarioACore.lean (11 theorems)
+   Lean (supporting results outside the SC-01 chain)
+  lean ok: ControlStack/ComposeCoverage.lean (5 theorems)
+  lean ok: ControlStack/MultiStep.lean (8 theorems)
+  lean ok: ControlStack/AuditBudget.lean (7 theorems)
+  lean ok: ControlStack/Leakage.lean (14 theorems)
+  lean ok: ControlStack/Necessity.lean (4 theorems)
+2. hashes
+  20 files match
+3. gateway differential test
+  1000 traces; mismatches: 0; blanked: 777; with post-close events: 141; distinct views: 48
+  1000 traces; mismatches: 0; blanked: 696; with post-close events: 140; distinct views: 67
+4. usefulness receipt
+  receipt verified; both conditions 64/64, endpoint 93382/100000 = Lean endpoint64
+5. side-certificate hypothesis vs measured evidence
+  Cache probe receipt verified: 64/64, one-sided lower 95427/100000; no full-secret recovery claim.
+  single-bit recovery 64/64, one-sided lower 95427/100000 -> certificate mass >= 1.909 vs allowed 1.1099: REFUTED in this harness
+
+Assumptions (provenance | testability | status):
+  [THEOREM_PROVED_MODEL_ONLY] counting_and_side_bounds (theorem_model | proved): covert_bound, side_bound, repair_side_target, repair_one_bit_attained (one clean side bit already exceeds 2^-16)
+  [THEOREM_PROVED_MODEL_ONLY] gateway_core_semantics (theorem_model | proved): multi-channel core: refusal blanks, close freezes, reachable views counted exactly (= Python view_space_size), end-to-end core_bound; SC-01's nine-view episode carrier is derived from the core (ScenarioACore.prefixEquiv, five_episode_core_bound end-to-end over raw traces)
+  [TESTED_NOT_PROVED] python_refines_core (implementation_correspondence | refutable_by_measurement): Python Gateway matches GatewayCore on 2000 random multi-channel traces incl. unknown channels, overflow, side actions and post-close events (difftest_core.py); no refinement proof
+      refuted by: any Python/Lean mismatch on a generated trace; lemma: None; experiment: gateway/difftest_core.py (random multi-channel traces)
+  [THEOREM_PROVED_MODEL_ONLY] ledger_model (theorem_model | proved): ledger_safe / ledger_five: restore-free traces of charges, aborts, reopens and corruption admit <= 5 nine-view episodes per lineage; restore_breaks shows no-rollback is necessary
+  [UNRESOLVED] ledger_correspondence (implementation_correspondence | refutable_by_measurement): SQLite serialises charges (BEGIN IMMEDIATE), COMMIT is atomic and durable, admission is reported only after COMMIT; covered by Python controls, not proved
+      refuted by: an admitted sixth episode or a double charge under concurrency or crash injection; lemma: None; experiment: ledger controls (concurrent admission, restart, missing/corrupt state)
+  [ASSUMPTION] no_snapshot_restore (trust_base | not_testable_in_harness): no operator restores an older valid ledger snapshot; necessary by restore_breaks; undetectable by SQLite alone
+  [ASSUMPTION] fixed_episode_count (model_premise | refutable_by_measurement): the receiver always gets exactly five episode views and nothing reveals how many ran; necessity proved: a visible variable count (0..5 episodes) attains 66430/2^32 > 2^-16 (ScenarioACore.varObs_breaks_target)
+      refuted by: receiver distinguishes the number of delivered episodes better than chance; lemma: ScenarioACore.varObs_breaks_target; experiment: probe where the sender influences launch/delivery (crash, timeout) and the receiver guesses the count
+  [REFUTED_IN_CURRENT_HARNESS] side_certificate (empirical_premise | refutable_by_measurement): every receiver observation outside the transcript comes from a fixed side kernel with domination mass <= 65536/59049 (~1.11); per-episode independent noisy bits need crossover >= ~0.49
+      refuted by: one-sided lower bound p_lo on single-bit recovery with a constant gateway view; lemma: SafetyCaseSC01.bit_refutes (refuted when 2 p_lo > 65536/59049); experiment: PREREG-SC01-CACHE.md shared-page-cache probe
+      adaptive form: Leakage.sc01_adaptive_target: per-episode certificates may depend on the visible history and the side kernel may carry state across episodes (feedback); the target holds if the product of worst-case per-episode masses is <= 65536/59049. This replaces the no-feedback premise of SideChannel.dom_pi.
+  [ASSUMPTION] secret_independence (eval_design | not_testable_in_harness): the secret is uniform and independent of the shared seed and the receiver's inputs
+  [ASSUMPTION] independent_lifetimes (empirical_premise | refutable_by_measurement): usefulness: lifetimes complete independently with a common probability (binomial model behind false_pass_le)
+      refuted by: dependence between lifetime outcomes (e.g. clustering of failures in time or by host state); lemma: Necessity.correlated_lifetimes_break_gate; experiment: preregistered dependence test on lifetime outcomes; low power at 64/64
+  [ASSUMPTION] trusted_lineage (trust_base | not_testable_in_harness): the trusted supervisor assigns lineages so that every receiver able to share memory with another is in one lineage
+
+SUMMARY
+  proofs:         PASS (48 case + 38 supporting theorems; standard axioms; model-only, not red-teamed)
+  bindings:       PASS (20 file hashes)
+  correspondence: TESTED, NOT PROVED (Python/Lean difftest)
+  evidence:       usefulness receipt VALID; cache-probe receipt VALID
+  applicability:  NOT APPLICABLE to this harness: side_certificate is refuted by measured evidence
+  conditional model bound: P(exact recovery of a uniform 32-bit secret) <= 2^-16 IF every hypothesis holds;
+     premises no measurement in this harness can test: no_snapshot_restore, secret_independence, trusted_lineage
+     premises testable but not yet refuted: python_refines_core, ledger_correspondence, fixed_episode_count, independent_lifetimes
+  usefulness (model): a condition with completion <= 9/10 passes the gate w.p. <= 1/80 IF lifetimes are independent
+
+VERDICT: HYPOTHESIS_REFUTED (the safety conjunct does not apply to the current harness). This output is not a safety certificate.

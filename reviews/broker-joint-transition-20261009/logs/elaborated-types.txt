@@ -1,0 +1,228 @@
+structure ControlStack.TrustedBroker.Roles : Type
+number of parameters: 0
+fields:
+  ControlStack.TrustedBroker.Roles.agent : Nat → Prop
+  ControlStack.TrustedBroker.Roles.reviewer : Nat → Prop
+  ControlStack.TrustedBroker.Roles.approver : Nat → Prop
+  ControlStack.TrustedBroker.Roles.admin : Nat → Prop
+  ControlStack.TrustedBroker.Roles.separated : ∀ (uid : Nat),
+      self.agent uid → And (Not (self.reviewer uid)) (And (Not (self.approver uid)) (Not (self.admin uid)))
+constructor:
+  ControlStack.TrustedBroker.Roles.mk (agent reviewer approver admin : Nat → Prop)
+    (separated : ∀ (uid : Nat), agent uid → And (Not (reviewer uid)) (And (Not (approver uid)) (Not (admin uid)))) :
+    ControlStack.TrustedBroker.Roles
+structure ControlStack.TrustedBroker.State : Type
+number of parameters: 0
+fields:
+  ControlStack.TrustedBroker.State.cap : Nat
+  ControlStack.TrustedBroker.State.spent : Nat
+  ControlStack.TrustedBroker.State.releases : Nat
+  ControlStack.TrustedBroker.State.halted : Bool
+  ControlStack.TrustedBroker.State.artifacts : Nat → Bool
+  ControlStack.TrustedBroker.State.intact : Nat → Bool
+  ControlStack.TrustedBroker.State.reviews : Nat → Option Nat
+  ControlStack.TrustedBroker.State.approvals : Nat → Option ControlStack.TrustedBroker.Approval
+  ControlStack.TrustedBroker.State.leases : Nat → Option ControlStack.TrustedBroker.Lease
+  ControlStack.TrustedBroker.State.consumed : List Nat
+constructor:
+  ControlStack.TrustedBroker.State.mk (cap spent releases : Nat) (halted : Bool) (artifacts intact : Nat → Bool)
+    (reviews : Nat → Option Nat) (approvals : Nat → Option ControlStack.TrustedBroker.Approval)
+    (leases : Nat → Option ControlStack.TrustedBroker.Lease) (consumed : List Nat) : ControlStack.TrustedBroker.State
+def ControlStack.TrustedBroker.Safe : ControlStack.TrustedBroker.State → Prop :=
+fun s =>
+  And (@LE.le Nat instLENat s.spent s.cap)
+    (And (@LE.le Nat instLENat s.releases s.spent)
+      (And (@List.Nodup Nat s.consumed)
+        (∀ (k : Nat) (l : ControlStack.TrustedBroker.Lease),
+          @Eq (Option ControlStack.TrustedBroker.Lease) (s.leases k) (@some ControlStack.TrustedBroker.Lease l) →
+            @LE.le Nat instLENat l.used l.budget)))
+def ControlStack.TrustedBroker.Coherent : ControlStack.TrustedBroker.State → Prop :=
+fun s =>
+  ∀ (nonce : Nat),
+    Iff (@Membership.mem Nat (List Nat) (@List.instMembership Nat) s.consumed nonce)
+      (@Exists ControlStack.TrustedBroker.Approval fun a =>
+        And
+          (@Eq (Option ControlStack.TrustedBroker.Approval) (s.approvals nonce)
+            (@some ControlStack.TrustedBroker.Approval a))
+          (@Eq Bool a.used true))
+def ControlStack.TrustedBroker.Allowed : ControlStack.TrustedBroker.Roles →
+  ControlStack.TrustedBroker.State →
+    Nat →
+      ControlStack.TrustedBroker.Request →
+        ControlStack.TrustedBroker.Approval → ControlStack.TrustedBroker.Lease → Prop :=
+fun roles s now r a l =>
+  And (@Eq Bool s.halted false)
+    (And (roles.agent r.uid)
+      (And
+        (@Eq (Option ControlStack.TrustedBroker.Approval) (s.approvals r.nonce)
+          (@some ControlStack.TrustedBroker.Approval a))
+        (And (@Eq Bool a.used false)
+          (And (@Eq Nat a.digest r.digest)
+            (And (@Eq Nat a.destination r.destination)
+              (And (@Eq Nat a.agent r.uid)
+                (And (@Eq Nat a.lease r.lease)
+                  (And (roles.approver a.signer)
+                    (And (@LT.lt Nat instLTNat now a.expires)
+                      (And
+                        (@Eq (Option ControlStack.TrustedBroker.Lease) (s.leases r.lease)
+                          (@some ControlStack.TrustedBroker.Lease l))
+                        (And (@Eq Nat l.agent r.uid)
+                          (And (@Eq Bool l.revoked false)
+                            (And (@LT.lt Nat instLTNat now l.expires)
+                              (And
+                                (@LT.lt Nat instLTNat (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0))) r.cost)
+                                (And
+                                  (@LE.le Nat instLENat
+                                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) l.used r.cost) l.budget)
+                                  (And
+                                    (@LE.le Nat instLENat
+                                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) s.spent r.cost) s.cap)
+                                    (And (@Eq Bool (s.artifacts r.digest) true)
+                                      (And (@Eq Bool (s.intact r.digest) true)
+                                        (And
+                                          (@Exists Nat fun reviewer =>
+                                            @Eq (Option Nat) (s.reviews r.digest) (@some Nat reviewer))
+                                          (Not
+                                            (@Membership.mem Nat (List Nat) (@List.instMembership Nat) s.consumed
+                                              r.nonce)))))))))))))))))))))
+inductive ControlStack.TrustedBroker.Step : ControlStack.TrustedBroker.Roles →
+  ControlStack.TrustedBroker.State → ControlStack.TrustedBroker.State → Prop
+number of parameters: 2
+constructors:
+ControlStack.TrustedBroker.Step.deny : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State), ControlStack.TrustedBroker.Step roles s s
+ControlStack.TrustedBroker.Step.stage : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (uid digest : Nat),
+  @Eq Bool s.halted false →
+    roles.agent uid →
+      ControlStack.TrustedBroker.Step roles s
+        { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted,
+          artifacts := @ControlStack.TrustedBroker.put Bool s.artifacts digest true,
+          intact := @ControlStack.TrustedBroker.put Bool s.intact digest true, reviews := s.reviews,
+          approvals := s.approvals, leases := s.leases, consumed := s.consumed }
+ControlStack.TrustedBroker.Step.review : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (uid digest : Nat),
+  @Eq Bool s.halted false →
+    roles.reviewer uid →
+      @Eq Bool (s.artifacts digest) true →
+        ControlStack.TrustedBroker.Step roles s
+          { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted, artifacts := s.artifacts,
+            intact := s.intact,
+            reviews := @ControlStack.TrustedBroker.put (Option Nat) s.reviews digest (@some Nat uid),
+            approvals := s.approvals, leases := s.leases, consumed := s.consumed }
+ControlStack.TrustedBroker.Step.issue : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (uid key : Nat) (l : ControlStack.TrustedBroker.Lease) (now : Nat),
+  @Eq Bool s.halted false →
+    roles.admin uid →
+      roles.agent l.agent →
+        @Eq (Option ControlStack.TrustedBroker.Lease) (s.leases key) (@none ControlStack.TrustedBroker.Lease) →
+          @LT.lt Nat instLTNat (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0))) l.budget →
+            @Eq Nat l.used (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0))) →
+              @Eq Bool l.revoked false →
+                @LT.lt Nat instLTNat now l.expires →
+                  ControlStack.TrustedBroker.Step roles s
+                    { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted,
+                      artifacts := s.artifacts, intact := s.intact, reviews := s.reviews, approvals := s.approvals,
+                      leases :=
+                        @ControlStack.TrustedBroker.put (Option ControlStack.TrustedBroker.Lease) s.leases key
+                          (@some ControlStack.TrustedBroker.Lease l),
+                      consumed := s.consumed }
+ControlStack.TrustedBroker.Step.approve : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (uid nonce : Nat) (a : ControlStack.TrustedBroker.Approval)
+  (l : ControlStack.TrustedBroker.Lease) (now reviewer : Nat),
+  @Eq Bool s.halted false →
+    roles.approver uid →
+      @Eq Nat a.signer uid →
+        roles.agent a.agent →
+          @Eq (Option ControlStack.TrustedBroker.Approval) (s.approvals nonce)
+              (@none ControlStack.TrustedBroker.Approval) →
+            @Eq Bool a.used false →
+              @Eq (Option Nat) (s.reviews a.digest) (@some Nat reviewer) →
+                roles.reviewer reviewer →
+                  @Ne Nat reviewer uid →
+                    @Eq (Option ControlStack.TrustedBroker.Lease) (s.leases a.lease)
+                        (@some ControlStack.TrustedBroker.Lease l) →
+                      @Eq Nat l.agent a.agent →
+                        @Eq Bool l.revoked false →
+                          @LT.lt Nat instLTNat now l.expires →
+                            @LT.lt Nat instLTNat now a.expires →
+                              ControlStack.TrustedBroker.Step roles s
+                                { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted,
+                                  artifacts := s.artifacts, intact := s.intact, reviews := s.reviews,
+                                  approvals :=
+                                    @ControlStack.TrustedBroker.put (Option ControlStack.TrustedBroker.Approval)
+                                      s.approvals nonce (@some ControlStack.TrustedBroker.Approval a),
+                                  leases := s.leases, consumed := s.consumed }
+ControlStack.TrustedBroker.Step.revoke : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (uid key : Nat) (l : ControlStack.TrustedBroker.Lease),
+  @Eq Bool s.halted false →
+    roles.admin uid →
+      @Eq (Option ControlStack.TrustedBroker.Lease) (s.leases key) (@some ControlStack.TrustedBroker.Lease l) →
+        ControlStack.TrustedBroker.Step roles s
+          { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted, artifacts := s.artifacts,
+            intact := s.intact, reviews := s.reviews, approvals := s.approvals,
+            leases :=
+              @ControlStack.TrustedBroker.put (Option ControlStack.TrustedBroker.Lease) s.leases key
+                (@some ControlStack.TrustedBroker.Lease
+                  { agent := l.agent, budget := l.budget, used := l.used, expires := l.expires, revoked := true }),
+            consumed := s.consumed }
+ControlStack.TrustedBroker.Step.release : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (now : Nat) (r : ControlStack.TrustedBroker.Request)
+  (a : ControlStack.TrustedBroker.Approval) (l : ControlStack.TrustedBroker.Lease),
+  ControlStack.TrustedBroker.Allowed roles s now r a l →
+    ControlStack.TrustedBroker.Step roles s (ControlStack.TrustedBroker.committed s r a l)
+ControlStack.TrustedBroker.Step.halt : ∀ {roles : ControlStack.TrustedBroker.Roles}
+  (s : ControlStack.TrustedBroker.State) (uid : Nat),
+  roles.admin uid →
+    ControlStack.TrustedBroker.Step roles s
+      { cap := s.cap, spent := s.spent, releases := s.releases, halted := true, artifacts := s.artifacts,
+        intact := s.intact, reviews := s.reviews, approvals := s.approvals, leases := s.leases, consumed := s.consumed }
+theorem ControlStack.TrustedBroker.initial_safe : ∀ (cap : Nat),
+  ControlStack.TrustedBroker.Safe (ControlStack.TrustedBroker.initial cap) :=
+⋯
+theorem ControlStack.TrustedBroker.initial_coherent : ∀ (cap : Nat),
+  ControlStack.TrustedBroker.Coherent (ControlStack.TrustedBroker.initial cap) :=
+⋯
+theorem ControlStack.TrustedBroker.nonce_history_redundant : ∀ (s : ControlStack.TrustedBroker.State),
+  ControlStack.TrustedBroker.Coherent s →
+    ∀ (nonce : Nat) (a : ControlStack.TrustedBroker.Approval),
+      @Eq (Option ControlStack.TrustedBroker.Approval) (s.approvals nonce)
+          (@some ControlStack.TrustedBroker.Approval a) →
+        @Eq Bool a.used false → Not (@Membership.mem Nat (List Nat) (@List.instMembership Nat) s.consumed nonce) :=
+⋯
+theorem ControlStack.TrustedBroker.committed_nonce_unusable : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s : ControlStack.TrustedBroker.State) (r : ControlStack.TrustedBroker.Request)
+  (a : ControlStack.TrustedBroker.Approval) (l : ControlStack.TrustedBroker.Lease) (now : Nat)
+  (r' : ControlStack.TrustedBroker.Request) (a' : ControlStack.TrustedBroker.Approval)
+  (l' : ControlStack.TrustedBroker.Lease),
+  @Eq Nat r'.nonce r.nonce →
+    Not (ControlStack.TrustedBroker.Allowed roles (ControlStack.TrustedBroker.committed s r a l) now r' a' l') :=
+⋯
+theorem ControlStack.TrustedBroker.transaction_preserves : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s t : ControlStack.TrustedBroker.State),
+  ControlStack.TrustedBroker.Safe s → ControlStack.TrustedBroker.Step roles s t → ControlStack.TrustedBroker.Safe t :=
+⋯
+theorem ControlStack.TrustedBroker.transaction_coherent : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s t : ControlStack.TrustedBroker.State),
+  ControlStack.TrustedBroker.Coherent s →
+    ControlStack.TrustedBroker.Step roles s t → ControlStack.TrustedBroker.Coherent t :=
+⋯
+theorem ControlStack.TrustedBroker.halted_absorbing : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s t : ControlStack.TrustedBroker.State),
+  @Eq Bool s.halted true →
+    ControlStack.TrustedBroker.Step roles s t → And (@Eq Bool t.halted true) (@Eq Nat t.releases s.releases) :=
+⋯
+theorem ControlStack.TrustedBroker.trace_preserves : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s t : ControlStack.TrustedBroker.State),
+  ControlStack.TrustedBroker.Safe s → ControlStack.TrustedBroker.Trace roles s t → ControlStack.TrustedBroker.Safe t :=
+⋯
+theorem ControlStack.TrustedBroker.trace_coherent : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s t : ControlStack.TrustedBroker.State),
+  ControlStack.TrustedBroker.Coherent s →
+    ControlStack.TrustedBroker.Trace roles s t → ControlStack.TrustedBroker.Coherent t :=
+⋯
+theorem ControlStack.TrustedBroker.trace_halt_absorbing : ∀ (roles : ControlStack.TrustedBroker.Roles)
+  (s t : ControlStack.TrustedBroker.State),
+  @Eq Bool s.halted true →
+    ControlStack.TrustedBroker.Trace roles s t → And (@Eq Bool t.halted true) (@Eq Nat t.releases s.releases) :=
+⋯

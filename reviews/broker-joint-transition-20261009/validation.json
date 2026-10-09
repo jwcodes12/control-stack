@@ -1,0 +1,216 @@
+{
+  "schema": "broker-joint-transition-validation/1",
+  "run_id": "broker-joint-transition-20261009-11ccd4adfcc6",
+  "captured_at": "2026-10-09T04:55:51.997280+00:00",
+  "source_commit": "11ccd4adfcc6c4b3be0f3d61ee03471d4ad319ce",
+  "source_clean_tracked": true,
+  "host_gate": "BLOCKED_HOST",
+  "scope": "reference SQLite transactions and model only; no external effect or deployment assurance",
+  "host": {
+    "candidate_for_native_guest_acceleration": false,
+    "cpu_count": 2,
+    "frozen_guest_arch": "aarch64",
+    "host_arch": "aarch64",
+    "kvm_access_error_class": null,
+    "kvm_api_version": null,
+    "kvm_character_device": false,
+    "kvm_device_exists": false,
+    "qemu_aarch64_available": true,
+    "qemu_x86_64_available": true,
+    "role": "host capability diagnostic; not proof and not SC-01 usefulness evidence",
+    "same_arch_as_frozen_guest": true,
+    "schema": "sc01-host-capabilities/1"
+  },
+  "source_sha256": {
+    "ControlStack/TrustedBroker.lean": "728de615a5ecfd1f36985dc573a33ac8cb1dc5a8af5d9a2701dcee5fb9d11b56",
+    "ControlStack.lean": "5e69b5de0cee2d0807f7223ba68ecec2cc87635d856756bf188bd68afa4a3904",
+    "trusted_stack/controller.py": "bdc88050a92c7feeb929d6cffa3000d0b1f48bd72e318c7c9934b5adfc95683c",
+    "trusted_stack/server.py": "33e8da9d88cbf67f2473155f100a0629045ae1b77236b565d0766cc5d748cef6",
+    "trusted_stack/test_transition.py": "d23f9f0a172f6c17a35c7a62d79ba7054523a922bd2a96e37248fb75bed749c8",
+    "tools/test_trusted_stack_broker.py": "35873af6f79932b3b978a6188ee8823aef6630539be5b598a94e3923068921b9",
+    "tools/test_trusted_stack_mutations.py": "ea28db140f04146b4abc71b5b5b0ebaab36603ee96c66f42db3bf0df6ab0b33c",
+    "lean-toolchain": "8733782dc070a99b312039cda424f601b80f3be6f6f512627da5ba25adc27632",
+    "lake-manifest.json": "eed9eba5e6de535a09c2e89ecd2810bdca6da40e3cc42046ba61c784b6150542",
+    ".github/workflows/trusted-broker.yml": "2757eb29bc520ca4ee5e134d6343ed28340fe7ba92da8930b009adcda92b12f9",
+    "reviews/broker-joint-transition-20261009/Print.lean": "1a023e55398a5e16866835103d9398d386991e4759d6e24edfaa4fa04dd16a0a"
+  },
+  "checks": [
+    {
+      "name": "host-preflight",
+      "command": [
+        "python3",
+        "tools/sc01_host_feasibility.py"
+      ],
+      "started_at": "2026-10-09T04:55:15.520674+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/host-preflight.txt",
+      "sha256": "12d31f20ad60cba798cba5e837c24a280de89e9195ae6ce537b1bafbbeb31e1b"
+    },
+    {
+      "name": "reference-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "trusted_stack",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_at": "2026-10-09T04:55:15.567904+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/reference-tests.txt",
+      "sha256": "0c5d8e7fb35beb562490143830ead8f0a5038b5030773a239604e73efedde9ba"
+    },
+    {
+      "name": "live-broker",
+      "command": [
+        "sudo",
+        "-n",
+        "python3",
+        "tools/test_trusted_stack_broker.py"
+      ],
+      "started_at": "2026-10-09T04:55:31.473605+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/live-broker.txt",
+      "sha256": "357ff2cadf887b52d7e99dea13e2d3ba23ab88399e90b4557ce4402f2c58baa3"
+    },
+    {
+      "name": "mutations",
+      "command": [
+        "sudo",
+        "-n",
+        "python3",
+        "tools/test_trusted_stack_mutations.py",
+        "--live"
+      ],
+      "started_at": "2026-10-09T04:55:32.439921+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/mutations.txt",
+      "sha256": "37f1423ab8353b41d0dc02ad37c982fb34307cf1f1f1a1cfa303b2fd61698bf0"
+    },
+    {
+      "name": "lean-build",
+      "command": [
+        "lake",
+        "build",
+        "ControlStack"
+      ],
+      "started_at": "2026-10-09T04:55:41.446140+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/lean-build.txt",
+      "sha256": "e9e1313edb7f1544ab28e3b3a838b8c342d1a30601dd8f3cffc35a8332f82057"
+    },
+    {
+      "name": "broker-axioms",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "ControlStack/TrustedBroker.lean"
+      ],
+      "started_at": "2026-10-09T04:55:46.622226+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/broker-axioms.txt",
+      "sha256": "ef3c9ac92e51cff969f7d1ad24cec579885a3086439fe210a7a0ccfc04b32fea"
+    },
+    {
+      "name": "elaborated-types",
+      "command": [
+        "lake",
+        "env",
+        "lean",
+        "reviews/broker-joint-transition-20261009/Print.lean"
+      ],
+      "started_at": "2026-10-09T04:55:49.319116+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/elaborated-types.txt",
+      "sha256": "9c128004f5b16ea39092f08c0da370f1d9e509c242187ff1bde3d71fb4713076"
+    },
+    {
+      "name": "registry",
+      "command": [
+        "python3",
+        "tools/build_registry.py",
+        "--check"
+      ],
+      "started_at": "2026-10-09T04:55:51.409367+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/registry.txt",
+      "sha256": "cf78515988ee296be9d6715cf44588a57fd2722aa7141c8015998b951da763f9"
+    },
+    {
+      "name": "catalog",
+      "command": [
+        "python3",
+        "tools/build_statement_catalog.py",
+        "--check"
+      ],
+      "started_at": "2026-10-09T04:55:51.571954+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/catalog.txt",
+      "sha256": "db07be4c54140004eadc5b8480477955a6fda55e9c4b54f2b6ba7866b25d3882"
+    },
+    {
+      "name": "scenario-index",
+      "command": [
+        "python3",
+        "tools/build_status.py",
+        "--check"
+      ],
+      "started_at": "2026-10-09T04:55:51.799611+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/scenario-index.txt",
+      "sha256": "48df1eb70a28d7bb77a84d79ff20bba51348ba4df45c2b7ee917d03e69de6bd1"
+    },
+    {
+      "name": "scenario-scope",
+      "command": [
+        "python3",
+        "tools/check_scenarios.py"
+      ],
+      "started_at": "2026-10-09T04:55:51.879364+00:00",
+      "exit_code": 0,
+      "log": "reviews/broker-joint-transition-20261009/logs/scenario-scope.txt",
+      "sha256": "a4ad91871f364fe00d602cf061721fc1b8f05b07bf4630e7846fd9be69b23158"
+    }
+  ],
+  "scenario_claims": {
+    "count": 28,
+    "exit_code": 0,
+    "axiom_reports": 8,
+    "log_sha256": "343031646c233d8440daa5d17ee94100eb8c002270513e0ec70c2edc97e7b1ca"
+  },
+  "prior_additional_checks": {
+    "gateway_correspondence": 5,
+    "receiver_boundary": 3,
+    "gateway": 10,
+    "lifetime": 10,
+    "scenario_oracle": 5,
+    "ctrlcert": 4,
+    "metadata_mutations": 18,
+    "vm_configuration": 10,
+    "archived_vm_usefulness": "verified failure; baseline 0/64; mediated 0/64; gate false"
+  },
+  "unresolved": [
+    "native KVM host and separately pinned guest port",
+    "complete receiver observation",
+    "formal Python/SQL refinement",
+    "real external effects",
+    "clock and persistent rollback",
+    "imperfect adaptive F6 auditor",
+    "independent expert review"
+  ],
+  "existing_sc01_case": {
+    "exit_code": 3,
+    "verdict": "HYPOTHESIS_REFUTED",
+    "case_theorems": 48,
+    "supporting_theorems": 38,
+    "bound_files": 20,
+    "log": "reviews/broker-joint-transition-20261009/logs/sc01-case.txt",
+    "sha256": "cee70388d36ec0eede1d660205744a072a97e061c95416da37701c1cf13f5254",
+    "interpretation": "expected preserved applicability refutation, not a security pass"
+  }
+}

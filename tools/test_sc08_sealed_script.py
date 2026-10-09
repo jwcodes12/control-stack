@@ -68,7 +68,7 @@ class SealedScriptTests(unittest.TestCase):
 
     def test_kernel_seal_flags_reject_truncation(self):
         import fcntl
-        data = b"print('approved')\\n"
+        data = b"print('approved')\n"
         fd = sealed_script_fd(data)
         try:
             required = (fcntl.F_SEAL_WRITE | fcntl.F_SEAL_SHRINK |
@@ -102,10 +102,10 @@ class SealedScriptTests(unittest.TestCase):
                 raise OSError("injected F_ADD_SEALS failure")
             return actual_fcntl(fd, command, *args)
 
-        with mock.patch.object(sealed_script.os, "memfd_create", side_effect=record_create), \\
-             mock.patch.object(sealed_script.fcntl, "fcntl", side_effect=fail_add_seals):
-            with self.assertRaisesRegex(OSError, "injected F_ADD_SEALS failure"):
-                sealed_script_fd(b"print('approved')\\n")
+        with mock.patch.object(sealed_script.os, "memfd_create", side_effect=record_create):
+            with mock.patch.object(sealed_script.fcntl, "fcntl", side_effect=fail_add_seals):
+                with self.assertRaisesRegex(OSError, "injected F_ADD_SEALS failure"):
+                    sealed_script_fd(b"print('approved')\n")
         self.assertEqual(len(created), 1)
         with self.assertRaises(OSError):
             os.fstat(created[0])  # Failed sealing must not leave a usable descriptor.

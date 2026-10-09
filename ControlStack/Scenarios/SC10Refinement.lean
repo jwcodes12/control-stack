@@ -116,7 +116,8 @@ theorem simulation_step (K : Config) (s : CSt) (e : Event) :
     cases stopped <;> cases e <;>
       simp [stepC, alpha, envOf, abstractEvent, newest,
             SC10.step, SC10.full, SC10.latest] <;>
-      (split_ifs <;> simp_all)
+      (split_ifs <;> simp_all) <;>
+      (cases hlookup : log[log.length - 1]? <;> simp_all [hlookup])
 
 /-- Trace-level simulation is proved from per-event simulation. -/
 theorem simulation_run (K : Config) (s : CSt) (events : List Event) :

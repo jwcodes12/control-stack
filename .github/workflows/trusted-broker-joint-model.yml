@@ -1,0 +1,42 @@
+name: trusted-broker-joint-model
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/TrustedBroker.lean'
+      - 'ControlStack.lean'
+      - '.github/workflows/trusted-broker-joint-model.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  kernel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean 4
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Compile model, enumerate exact axiom dependencies and reject sorry
+        run: |
+          set -euo pipefail
+          lake exe cache get
+          lake build ControlStack.TrustedBroker
+          lake env lean ControlStack/TrustedBroker.lean 2>&1 | tee /tmp/broker-joint-axioms.log
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path('/tmp/broker-joint-axioms.log').read_text()
+          axioms=re.findall(r"depends on axioms: \[([^\]]*)\]",s)
+          assert len(axioms)==10, (len(axioms),s)
+          permitted={"propext","Quot.sound","Classical.choice"}
+          for report in axioms:
+              assert set(map(str.strip,report.split(",")))<=permitted, report
+          assert "sorryAx" not in s and "error:" not in s
+          print("PASS: 10 theorem axiom reports standard-only")
+          PY
+      - name: Source inventory synchronization
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py --check

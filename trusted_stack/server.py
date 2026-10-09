@@ -89,7 +89,13 @@ def serve(controller, path):
                         response = {"ok": True, "result": answer}
                     except (Denied, ValueError, TypeError, KeyError, json.JSONDecodeError, OSError):
                         response = {"ok": False, "error": "DENIED"}
-                    conn.sendall((json.dumps(response, sort_keys=True) + "\n").encode())
+                    try:
+                        conn.sendall((json.dumps(response, sort_keys=True) + "\n").encode())
+                    except OSError:
+                        # A caller can disconnect after a transaction commits.
+                        # Never kill the trusted service or undo that commit;
+                        # subsequent retry is rejected by the consumed nonce.
+                        pass
         finally:
             path.unlink(missing_ok=True)
 

@@ -46,7 +46,9 @@ Do not attach it to production network effects or frozen evidence directories.
 
 The tests cover unauthorized writes, invalid schema, tightened policy with
 decision receipts, restart replay, truncated or tampered journal rejection,
-and actual concurrent Unix socket requests with replayed ordering.
+actual concurrent Unix socket requests with replayed ordering, rejection of a
+second store instance, and a distinct same-UID child process rejected by the
+kernel-observed PID gate.
 
 ## Remaining proof, runtime and review obligations
 

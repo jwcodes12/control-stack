@@ -225,15 +225,15 @@ An annotation's PROVED_RECORDED / VERIFIED_RECORDED is **historical** and requir
 | ControlStack/Core/Measured.lean::recall_measured_holds | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 68c1d2357131 |
 | ControlStack/Core/Measured.lean::recallPremises_hold | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 68c1d2357131 |
 | ControlStack/Core/Measured.lean::measured_recall_number | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 68c1d2357131 |
-| ControlStack/Core/TrustRoot.lean::refinementOf_own | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::allPrems_complete | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::graph_total | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::graph_discharged | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::graph_reduces | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::scenario_roots_table | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::portfolio_roots | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::root_sharing | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
-| ControlStack/Core/TrustRoot.lean::correspondence_table | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 07dcb645eb66 |
+| ControlStack/Core/TrustRoot.lean::refinementOf_own | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::allPrems_complete | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::graph_total | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::graph_discharged | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::graph_reduces | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::scenario_roots_table | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::portfolio_roots | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::root_sharing | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
+| ControlStack/Core/TrustRoot.lean::correspondence_table | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 11033c9a46cb |
 | ControlStack/CovertChannel.lean::per_seed_le | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 506f4029746c |
 | ControlStack/CovertChannel.lean::covert_bound | F2 | SC-01, SC-02 | SHARED_SEED | uniform independent M; complete finite view | PROVED_RECORDED | attain_embedding | assurance/sc01-safety-case.json | 506f4029746c |
 | ControlStack/CovertChannel.lean::covert_bound_schema | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 506f4029746c |

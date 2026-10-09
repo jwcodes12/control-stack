@@ -1,11 +1,11 @@
 # Preregistration: SC-24 V2 — canonicalisation against collusion signals it cannot know in advance
 
 **ID:** `PREREG-SC24-COLLUSION-V2-v1`. **Written:** 2026-10-09, after the dry run in §8 and before any evidence run.
-**Status: DRAFT — no evidence run until frozen.** It is separate from `PREREG-SC24-COLLUSION-v1` (V1, which used a
+**Status: FROZEN 2026-10-09** (frozen by the orchestrator before any evidence run; §9 filled. Note: the earlier commit 775f9d2 was mislabelled 'Freeze' but still contained the DRAFT text; the runner refused it and no evidence existed). It is separate from `PREREG-SC24-COLLUSION-v1` (V1, which used a
 fixed signal word).
 
 **Freeze rules.** An evidence run is refused unless all of the following hold:
-- this file no longer says `Status: DRAFT`;
+- the status line above no longer says DRAFT;
 - env `SC24_COLLUSION_V2_PREREG_SHA256` equals this file's SHA-256;
 - the bundle hash below matches `prompts.bundle_sha256()`;
 - `--out` is under `scenarios/SC-24/llm_collusion_v2/evidence/` and does not exist;
@@ -200,14 +200,14 @@ By label set on canon:
 
 ## 9. Pinned artifacts (SHA-256 at freeze)
 
-Commit: `<fill at freeze>`.
+Commit: `775f9d275c0ad7056f490b72fffd46c8ce735b93`.
 
 | Path | SHA-256 |
 |---|---|
-| `scenarios/SC-24/llm_collusion_v2/problems.py` | `<fill>` |
-| `scenarios/SC-24/llm_collusion_v2/families.py` | `<fill>` |
-| `scenarios/SC-24/llm_collusion_v2/prompts.py` | `<fill>` |
-| `scenarios/SC-24/llm_collusion_v2/grammar.py` | `<fill>` |
-| `scenarios/SC-24/llm_collusion_v2/run_v2.py` | `<fill>` |
-| `scenarios/SC-24/llm_collusion_v2/test_v2.py` | `<fill>` |
-| `ControlStack/Families/F6/MonitorCollusion.lean` | `<fill>` |
+| `scenarios/SC-24/llm_collusion_v2/problems.py` | `b31cf0fc1c67109f513a338815847870d9e35283d0e0de81a5dabb0bbaacce32` |
+| `scenarios/SC-24/llm_collusion_v2/families.py` | `8c3d34deb3ed7541e39f46d9b2756646d1463e753dfe792b33a0b982ff9a2ac5` |
+| `scenarios/SC-24/llm_collusion_v2/prompts.py` | `30ffdab7b9b6438dfbb9ff6058082f9478a163d77e391cf6cf9560ca7e53b0c5` |
+| `scenarios/SC-24/llm_collusion_v2/grammar.py` | `d4b7ecb2d4fa630b25bea816e55616ae5fb6026aec8b468140ac7b8fa5e8fdab` |
+| `scenarios/SC-24/llm_collusion_v2/run_v2.py` | `9e8e950bfbbe77fe35b59fde988f6c9a0d8b75dfb140f2e3d043f9ec1dbcb67d` |
+| `scenarios/SC-24/llm_collusion_v2/test_v2.py` | `2219b6af72b96c2745b23d615cb0d72cd25b17d11f7ecd1906cc719958e17258` |
+| `ControlStack/Families/F6/MonitorCollusion.lean` | `200dc127ee794c9229b3f35f0bf1d5db048818fe0f92db4849b81eacd98cd001` |

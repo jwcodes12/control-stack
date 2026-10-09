@@ -43,7 +43,9 @@ theorem liveness_if_delivered {St Op Eff : Type} (G : System St Op Eff)
     ((withHalt G).run (s, false) ops).2 = true := by
   rcases h with ⟨before, after, heq, _⟩
   subst ops
-  simp [run_append, delivered_halt_absorbs]
+  rw [run_append]
+  rw [delivered_halt_absorbs]
+  rfl
 
 /-- The effect log after a delivered trusted halt equals the log immediately
 before that halt, even if arbitrarily many operations follow. -/
@@ -51,7 +53,9 @@ theorem effects_frozen_after_delivered_halt {St Op Eff : Type} (G : System St Op
     (s : St) (before after : List (HOp Op)) :
     (withHalt G).effects ((withHalt G).run (s, false) (before ++ (.halt :: after))) =
       (withHalt G).effects ((withHalt G).run (s, false) before) := by
-  simp [run_append, delivered_halt_absorbs, withHalt]
+  rw [run_append]
+  rw [delivered_halt_absorbs]
+  rfl
 
 /-- Necessity witness: an arbitrarily long trace of *only* ordinary operations
 does not halt automatically, regardless of its effects. Without scheduler

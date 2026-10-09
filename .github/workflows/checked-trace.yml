@@ -6,12 +6,23 @@ on:
       - 'ControlStack/Core/CheckedTrace.lean'
       - '.github/workflows/checked-trace.yml'
       - 'ControlStack.lean'
+      - 'scenarios/SC-08/harness/reconcile.py'
+      - 'tools/test_sc08_reconcile.py'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
+  sc08-reconciliation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fail-closed hash and multiset mutation checks
+        run: python3 tools/test_sc08_reconcile.py
   regenerate-source-index:
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest

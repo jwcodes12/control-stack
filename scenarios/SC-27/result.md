@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 9 theorem reference(s), 0 of them necessity witnesses.
-- Runtime evidence: preregistered reference run(s) `PREREG-SC27-ANCHOR-v1`.
+- Runtime evidence: preregistered reference run(s) `PREREG-SC27-ANCHOR-v1`, `PREREG-SC27-ANCHOR-v2`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -63,6 +63,20 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
   | H4 | Controls (NEGATIVE_CONTROL | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
 
 - `prereg/SC27-ANCHOR-CHAIN.md` — recorded outcome **PASS**. Frozen preregistration
+- `scenarios/SC-27/evidence/run-2/verdicts.json` — recorded outcome **PASS**. PREREG-SC27-ANCHOR-v2 run-2: v1 hypotheses re-pass with the fixed witness; H5 truncation-to-empty after anchoring now raises a fork alarm; H6 the frozen v1 witness stays silent on the same trace (runtime confirmation of the SC27Refinement finding); 5/5 reps
+
+  Preregistration: `PREREG-SC27-ANCHOR-v2`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Every post-anchor tamper kind is rejected | PASS | 5/5 repetitions passed |
+  | H2 |  | PASS | 5/5 repetitions passed |
+  | H3 |  | PASS | 5/5 repetitions passed |
+  | H4 | Controls (NEGATIVE_CONTROL | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+  | H5 | /H6 | PASS | 5/5 repetitions passed |
+  | H6 | Control: the frozen v1 witness stays silent (NEGATIVE_CONTROL; `SC27Refinement.empty_trunc | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
+- `prereg/SC27-ANCHOR-v2.md` — recorded outcome **PASS**. Frozen v2 preregistration
 
 ## Premises (from the manifest)
 
@@ -70,7 +84,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 - `independent_anchor`: An independently administered witness records heads (not the writer). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `anchor_frequency`: Anchoring happens soon enough that the pre-anchor window is acceptable. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `model_runtime_correspondence`: Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fix pending under a new prereg. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `model_runtime_correspondence`: Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fixed in harness_v2; confirmed by run-2 (PREREG-SC27-ANCHOR-v2). (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 **Evidence NOT_RUN:**
 
@@ -79,11 +93,11 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite). FINDING from the SC27Refinement proof: the run-1 witness does not alarm on truncation-to-empty (safety unaffected); fix pending (PREREG v2).
+- Scope (manifest): Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite). FINDING from the SC27Refinement proof: the run-1 witness did not alarm on truncation-to-empty (safety unaffected); FIXED in harness_v2 and confirmed by run-2 under PREREG-SC27-ANCHOR-v2 (v1 witness silent as control).
 - Not established as applying to a real deployment: An independently administered witness records heads (not the writer) (`independent_anchor`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Chain head is injective on accepted/anchored logs (collision resistance) (`hash_injective_on_run`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Anchoring happens soon enough that the pre-anchor window is acceptable (`anchor_frequency`; applicability UNRESOLVED).
-- Not established as applying to a real deployment: Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fix pending under a new prereg (`model_runtime_correspondence`; applicability UNRESOLVED).
+- Not established as applying to a real deployment: Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fixed in harness_v2; confirmed by run-2 (PREREG-SC27-ANCHOR-v2) (`model_runtime_correspondence`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
 - Scope axis `runtime_correspondence` is ASSUMED: Event-structure refinement proved (SC27Refinement); one alarm-completeness gap found in the runtime witness (truncation to empty).
 - Scope axis `environment_boundary` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
@@ -100,7 +114,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | PARTIAL | Lean refinement of a concrete event machine; the runtime is linked by trace checking, not by proof |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC27-ANCHOR-v1 |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC27-ANCHOR-v1, PREREG-SC27-ANCHOR-v2 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

@@ -5,7 +5,7 @@
   "bad_event": "A verifier accepts a manifest whose evidence log is not exactly a log independently anchored (modification, reordering, truncation or extension after anchoring).",
   "adversary": "Model: a writer that can append, rewrite the whole log and publish its own heads.",
   "refutation": "An accepted manifest that differs from every anchored log despite full checks (witnesses: no anchor/rollback, self-signed, unanchored suffix, hash collision).",
-  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite). FINDING from the SC27Refinement proof: the run-1 witness does not alarm on truncation-to-empty (safety unaffected); fix pending (PREREG v2).",
+  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite). FINDING from the SC27Refinement proof: the run-1 witness did not alarm on truncation-to-empty (safety unaffected); FIXED in harness_v2 and confirmed by run-2 under PREREG-SC27-ANCHOR-v2 (v1 witness silent as control).",
   "families": [
     "F4",
     "F8"
@@ -79,6 +79,18 @@
       "sha256": "b32756479820054b672b54054682cc211b5eaa4097fff878b1069592b66efaa0",
       "purpose": "Frozen preregistration",
       "outcome": "PASS"
+    },
+    {
+      "path": "scenarios/SC-27/evidence/run-2/verdicts.json",
+      "sha256": "540d70ea1686f63f157730b3bb3af421c038fd5bfd4019faaaa12dacf8fc46e6",
+      "purpose": "PREREG-SC27-ANCHOR-v2 run-2: v1 hypotheses re-pass with the fixed witness; H5 truncation-to-empty after anchoring now raises a fork alarm; H6 the frozen v1 witness stays silent on the same trace (runtime confirmation of the SC27Refinement finding); 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC27-ANCHOR-v2.md",
+      "sha256": "a840b5906fab42e90faab506b4c42fafedb2dda1338b2784df010ebe536a2b7a",
+      "purpose": "Frozen v2 preregistration",
+      "outcome": "PASS"
     }
   ],
   "assumptions": [
@@ -108,7 +120,7 @@
     },
     {
       "id": "model_runtime_correspondence",
-      "text": "Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fix pending under a new prereg.",
+      "text": "Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fixed in harness_v2; confirmed by run-2 (PREREG-SC27-ANCHOR-v2).",
       "proof": "THEOREM_VERIFIED",
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",

@@ -1018,7 +1018,7 @@ theorem verified_sound [DecidableEq S] (step : S → O → S) (rs : List (Receip
 
 ### 123. sc04_alphabet_card
 
-Source: ControlStack/Core/CheckedTrace.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc04_alphabet_card (templates fields levels : ℕ) : Fintype.card (SC04Alphabet templates fields levels) = templates * levels ^ fields
@@ -1026,7 +1026,7 @@ theorem sc04_alphabet_card (templates fields levels : ℕ) : Fintype.card (SC04A
 
 ### 124. sc06_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:103 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc06_receipts_sound (P : SC06.Policy) (rs : List (Receipt SC06.St SC06.Op)) (h : verified (SC06.step P SC06.full) (SC06.init) rs = true) : SC06.Good P (recordedEnd SC06.init rs)
@@ -1034,7 +1034,7 @@ theorem sc06_receipts_sound (P : SC06.Policy) (rs : List (Receipt SC06.St SC06.O
 
 ### 125. sc08_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc08_receipts_sound (E : SC08.Env) (files : List (ℕ × ℕ)) (rs : List (Receipt SC08.St SC08.Op)) (h : verified (SC08.step E SC08.full) (⟨files, [], false⟩ : SC08.St) rs = true) : SC08.Good E (recordedEnd (⟨files, [], false⟩ : SC08.St) rs)
@@ -1042,7 +1042,7 @@ theorem sc08_receipts_sound (E : SC08.Env) (files : List (ℕ × ℕ)) (rs : Lis
 
 ### 126. sc09_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:121 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:128 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc09_receipts_sound (P : SC09.Policy) (rs : List (Receipt SC09.St SC09.Op)) (h : verified (SC09.step P SC09.full) (SC09.init) rs = true) : SC09.Good P (recordedEnd SC09.init rs)
@@ -1050,7 +1050,7 @@ theorem sc09_receipts_sound (P : SC09.Policy) (rs : List (Receipt SC09.St SC09.O
 
 ### 127. sc10_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:130 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc10_receipts_sound (E : SC10.Env) (hpin : E.h E.pinned = E.pinnedDigest) (rs : List (Receipt SC10.St SC10.Op)) (h : verified (SC10.step E SC10.full) (SC10.init) rs = true) : SC10.Good E (recordedEnd SC10.init rs)
@@ -1058,7 +1058,7 @@ theorem sc10_receipts_sound (E : SC10.Env) (hpin : E.h E.pinned = E.pinnedDigest
 
 ### 128. sc14_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:139 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc14_receipts_sound (E : SC14.Env) (exp : ℕ) (rs : List (Receipt SC14.St SC14.Op)) (hops : ∀ o ∈ events rs, SC14.legal o) (h : verified (SC14.step E SC14.full) (SC14.init exp) rs = true) : SC14.Good E (recordedEnd (SC14.init exp) rs)
@@ -1066,7 +1066,7 @@ theorem sc14_receipts_sound (E : SC14.Env) (exp : ℕ) (rs : List (Receipt SC14.
 
 ### 129. sc15_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:148 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:155 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc15_receipts_sound (E : SC15.Env) (rs : List (Receipt SC15.St SC15.Op)) (h : verified (SC15.step E SC15.full) (SC15.init) rs = true) : ∀ c ∈ (recordedEnd SC15.init rs).merged, SC15.MergeOk E (recordedEnd SC15.init rs) c
@@ -1074,7 +1074,7 @@ theorem sc15_receipts_sound (E : SC15.Env) (rs : List (Receipt SC15.St SC15.Op))
 
 ### 130. sc17_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:157 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:164 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc17_receipts_sound (E : SC17.Env) (g0 : List SC17.G) (rs : List (Receipt SC17.St SC17.Op)) (h : verified (SC17.step E SC17.full) (SC17.init g0) rs = true) : SC17.Good E (recordedEnd (SC17.init g0) rs)
@@ -1082,7 +1082,7 @@ theorem sc17_receipts_sound (E : SC17.Env) (g0 : List SC17.G) (rs : List (Receip
 
 ### 131. sc19_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:166 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc19_receipts_sound (E : SC19.Env) (rs : List (Receipt SC19.St SC19.Op)) (h : verified (SC19.step E SC19.full) (SC19.init) rs = true) : SC19.Good E (recordedEnd SC19.init rs)
@@ -1090,7 +1090,7 @@ theorem sc19_receipts_sound (E : SC19.Env) (rs : List (Receipt SC19.St SC19.Op))
 
 ### 132. sc20_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:175 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:182 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc20_receipts_sound (E : SC20.Env) (rs : List (Receipt SC20.St SC20.Op)) (h : verified (SC20.step E SC20.full) (SC20.init) rs = true) : SC20.Good E (recordedEnd SC20.init rs)
@@ -1098,7 +1098,7 @@ theorem sc20_receipts_sound (E : SC20.Env) (rs : List (Receipt SC20.St SC20.Op))
 
 ### 133. sc23_receipts_sound
 
-Source: ControlStack/Core/CheckedTrace.lean:184 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Core/CheckedTrace.lean:191 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem sc23_receipts_sound (P : SC23.Policy) (rs : List (Receipt SC23.St SC23.Op)) (h : verified (SC23.step P SC23.full) (SC23.init) rs = true) : SC23.Good P (recordedEnd SC23.init rs)

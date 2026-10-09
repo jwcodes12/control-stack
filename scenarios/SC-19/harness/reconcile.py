@@ -57,6 +57,17 @@ def op_digest(op):
 
 def reconcile(gates, verifs, approvals, hist, R):
     defects, seen = [], set()
+    # Check BOTH directions. Looking up DB rows only for the gate's log
+    # entries misses an out-of-band destructive DB effect with no gate log.
+    gate_count = {}
+    for g in gates:
+        gate_count[g["id"]] = gate_count.get(g["id"], 0) + 1
+    for row in hist:
+        k = row.get("kind")
+        if isinstance(k, str) and k.startswith("destroy:"):
+            op_id = k[len("destroy:"):]
+            if gate_count.get(op_id, 0) != 1:
+                defects.append({"id": op_id, "why": ["DB destructive history has no unique committed gate record"]})
     for g in gates:
         why = []
         h = [x for x in hist if x["kind"] == "destroy:" + g["id"]]
@@ -65,6 +76,17 @@ def reconcile(gates, verifs, approvals, hist, R):
             continue
         h = h[0]
         ver, n, rh = h["ver_after"] - 1, h["rows_changed"], h["rows_hash"]
+        if h["target"] != g["target"]:
+            why.append("DB destroyed a different target than the approved gate record")
+        if g.get("actual") != n:
+            why.append("gate-reported affected count differs from DB history")
+        if g.get("ver_destroyed") != ver:
+            why.append("gate-reported target version differs from DB history")
+        # The gate log must bind its OWN id/target/kind/author to the digest,
+        # not merely carry a digest matching an unrelated approval.
+        claimed_op = {"id": g["id"], "target": g["target"], "kind": "delete_all", "author": g["author"]}
+        if g.get("digest") != op_digest(claimed_op):
+            why.append("gate operation digest does not match its own fields")
         if g["id"] in seen:
             why.append("destroyed twice")
         seen.add(g["id"])

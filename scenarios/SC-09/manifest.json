@@ -5,7 +5,7 @@
   "bad_event": "A process of the agent lineage holds or exercises a capability not granted to its lineage or not covered by an exact elevation rule. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any spawn/exec/elevate/deputy-call/grant/halt trace.",
   "refutation": "A privileged use outside grants and exact elevation rules despite full checks (witnesses: unrestricted elevation, exec without attenuation, confused deputy).",
-  "scope": "Lean model only. Not: kernel privilege escalation bugs. The check flag(s) attenuate model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
+  "scope": "Lean model only. Not: kernel privilege escalation bugs. The check flag(s) attenuate model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-09/evidence/run-1), benign, unprivileged.",
   "families": [
     "F1",
     "F7",
@@ -32,7 +32,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-09/evidence/run-1/verdicts.json",
+      "sha256": "89a5effdab2867d5e28d9967d81dd656842dff412e919728f1b739fa2ab70f58",
+      "purpose": "PREREG-SC09-BROKER-v1 run-1 (unprivileged; tests exact-argument rules and refusal of claimed-caller fields, NOT UID privilege separation): only in-rule ops applied (independent diff-log replay + hash chain), non-matching args refused, claimed-caller deputy refused, usefulness, unrestricted-rule and trust-claimed-deputy controls fired; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC09-ELEVATION-BROKER.md",
+      "sha256": "413e0892c4fa7db7645cdd22ceff7c48e944d64ce079137ebf4b4647a81e78ef",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -62,7 +75,7 @@
       "id": "honest_usefulness",
       "text": "Honest tasks need only granted capabilities.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }
@@ -70,27 +83,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-09/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-09/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-09/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-09/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-09/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-09/evidence/run-1)."
     }
   }
 }

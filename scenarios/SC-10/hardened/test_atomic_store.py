@@ -47,6 +47,18 @@ class AtomicStoreTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 AtomicPolicyJournal(path, admin_pid=9)
 
+    def test_second_store_instance_cannot_hold_same_journal(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "journal"
+            s = AtomicPolicyJournal(path, admin_pid=9)
+            try:
+                with self.assertRaises(BlockingIOError):
+                    AtomicPolicyJournal(path, admin_pid=9)
+            finally:
+                s.close()
+            recovered = AtomicPolicyJournal(path, admin_pid=9)
+            recovered.close()
+
     def test_unix_socket_concurrent_requests_are_serialized(self):
         if not sys.platform.startswith("linux") or not hasattr(socket, "SO_PEERCRED"):
             self.skipTest("requires Linux SO_PEERCRED")
@@ -78,6 +90,14 @@ class AtomicStoreTests(unittest.TestCase):
                     time.sleep(.03)
                 self.assertTrue(sock.exists())
                 self.assertTrue(rpc({"op": "write", "policy": {"allow": ["a"]}})["ok"])
+                child = subprocess.run(
+                    [sys.executable, "-c", (
+                        "import socket,json,sys; s=socket.socket(socket.AF_UNIX);"
+                        "s.connect(sys.argv[1]); s.sendall(b'{\"op\":\"write\",\"policy\":{\"allow\":[\"evil\"]}}\\n');"
+                        "print(s.recv(2048).decode().strip()); s.close()"), str(sock)],
+                    capture_output=True, text=True, timeout=8, check=True)
+                self.assertEqual(json.loads(child.stdout)["ok"], False)
+
                 def worker(i):
                     if i % 3 == 0:
                         return rpc({"op": "write", "policy": {"allow": [str(i)]}})

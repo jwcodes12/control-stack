@@ -20,6 +20,7 @@ from pathlib import Path
 
 
 @unittest.skipUnless(os.name == "posix" and hasattr(os, "getuid"), "requires Unix ownership semantics")
+@unittest.skipIf(hasattr(os, "geteuid") and os.geteuid() == 0, "root bypasses DAC; witness must run unprivileged")
 class PinIsolationWitness(unittest.TestCase):
     def test_same_uid_peer_can_replace_read_only_pinned_script(self):
         with tempfile.TemporaryDirectory(prefix="sc08-pin-negative-") as dirname:

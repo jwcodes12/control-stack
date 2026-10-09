@@ -5,7 +5,7 @@
 **CONDITIONAL.** Exfiltration of model weights or large sensitive datasets
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
-- Lean results: 10 theorem reference(s), 0 of them necessity witnesses.
+- Lean results: 14 theorem reference(s), 0 of them necessity witnesses.
 - Runtime evidence: preregistered reference run(s) `PREREG-SC07-EGRESSQ-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
@@ -30,6 +30,10 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 | `upload_completes` | `ControlStack/Scenarios/SC07Liveness.lean` | Under-quota uploads complete. |
 | `exfil_needs_windows` | `ControlStack/Scenarios/SC07Liveness.lean` | Exfiltration needs ⌈S/q⌉ windows, derived from this gateway's step: if S bits have been forwarded, at least ⌈S/q⌉ windows have been opened. |
 | `shared_quota_blocks` | `ControlStack/Scenarios/SC07Liveness.lean` | Availability price: another job's 6 bits in the same window leave only 2, so an honest 4-bit upload is dropped; in the next window it completes |
+| `concrete_safe` | `ControlStack/Scenarios/SC07Refinement.lean` | SC-07 gateway safety for the concrete nftables gateway (`SC07Liveness.sc07_safe` transferred). |
+| `concrete_wire_lt` | `ControlStack/Scenarios/SC07Refinement.lean` | On the wire, strictly below the quota: every window's forwarded IP bytes are < QUOTA (the crossing packet is dropped). |
+| `concrete_halt_freezes` | `ControlStack/Scenarios/SC07Refinement.lean` | HALT freezes forwarding (`SC07Liveness.halt_freezes` transferred): after a HALT, the forwarded log never changes. |
+| `sink_within_quota` | `ControlStack/Scenarios/SC07Refinement.lean` | The sink's count is within the quota, under the premise that the sink received at most the forwarded payload (TCP delivers each byte once): ≤ QUOTA − 1, hence ≤ QUOTA + TOL_QUOTA for every tolerance. |
 
 ### Necessity witnesses
 
@@ -63,6 +67,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 - `single_route`: The job's only route off-host is the trusted gateway. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `honest_usefulness`: Under-quota uploads complete byte-exact. Formal counterpart: SC07Liveness.lean (progress under interleaving; availability prices stated as witnesses). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_RUN)
+- `model_runtime_correspondence`: Lean forward simulation of the modeled nftables forward-chain into SC07Liveness: SC07Refinement.simulation_run/concrete_safe; assumes exact installed rules, kernel quota/drop semantics, no other network route, and payload/header bookkeeping. Python/nftables to this concrete model was tested on one host in SC-07 run-1, not formally established. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 **Evidence NOT_RUN:**
 
@@ -75,8 +80,9 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 - Not established as applying to a real deployment: The job's only route off-host is the trusted gateway (`single_route`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Bounds hold against encoding through allowed destinations, timing or covert channels (`adversarial_channels`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Under-quota uploads complete byte-exact. Formal counterpart: SC07Liveness.lean (progress under interleaving; availability prices stated as witnesses) (`honest_usefulness`; applicability UNRESOLVED).
+- Not established as applying to a real deployment: Lean forward simulation of the modeled nftables forward-chain into SC07Liveness: SC07Refinement.simulation_run/concrete_safe; assumes exact installed rules, kernel quota/drop semantics, no other network route, and payload/header bookkeeping. Python/nftables to this concrete model was tested on one host in SC-07 run-1, not formally established. (`model_runtime_correspondence`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Benign workloads only.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-07/evidence/run-1).
+- Scope axis `runtime_correspondence` is ASSUMED: Formal concrete-event to SC07Liveness refinement (SC07Refinement); gateway Python, nftables semantics and real packet traces only single-host-tested. No independent runtime correspondence guarantee.
 - Scope axis `environment_boundary` is ASSUMED: Single host; namespaces and nftables trusted.
 - Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-07/evidence/run-1).
 - Scope axis `usefulness` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-07/evidence/run-1).
@@ -88,7 +94,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | RECORDED | premise `honest_usefulness` has evidence TESTED_NOT_PROVED and a preregistered single-host run passed |
 | 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
-| 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
+| 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | PARTIAL | Lean refinement of a concrete event machine; the runtime is linked by trace checking, not by proof |
 | 4 | consequential side observations and failure channels are accounted for or bounded | ASSUMED | scope axis environment_boundary = ASSUMED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
 | 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC07-EGRESSQ-v1 |

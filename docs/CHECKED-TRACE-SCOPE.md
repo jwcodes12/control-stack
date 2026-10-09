@@ -26,3 +26,7 @@ Corollaries transfer existing safety statements to accepted receipts for **SC-06
 6. Only then update each scenario manifest's `model_runtime_correspondence`, add its own refinement edge to TrustRoot, regenerate the ledgers, and request independent English–Lean fidelity review.
 
 **Do not mark any of the eleven scenarios complete on the basis of the transcript theorem.** It is a reusable, independently replayable checking primitive, not real-runtime assurance.
+
+## Reproduction note
+
+The generated theorem registry and normal-form statement catalog are source-only inventories; the separate GitHub Actions Lean job must successfully elaborate the proof statements and show their permitted axiom dependencies before this layer can be merged.

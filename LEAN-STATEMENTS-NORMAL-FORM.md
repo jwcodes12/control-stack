@@ -2,7 +2,7 @@
 
 Every indexed theorem and lemma is listed with its source statement, registry metadata and source location; no proof bodies. This is NOT kernel-elaborated normal form: inherited section variables, typeclasses, namespace elaboration, coercions and definitions can hide important premises. Run Lean #print and #print axioms for authoritative statements. No deployment assurance is implied.
 
-Indexed declarations: 865; UNKNOWN adversary: 821; SOURCE_ONLY: 855.
+Indexed declarations: 1154; UNKNOWN adversary: 1097; SOURCE_ONLY: 1131.
 
 ## ControlStack/AdaptiveBalance.lean
 
@@ -562,9 +562,139 @@ Source: ControlStack/ComposeGame.lean:174 | Family: UNMAPPED | Adversary: UNKNOW
 theorem composed_tight : (Pr[= true | composedGame (fun x : Bool => x = true) (pure ()) (pure true) (fun x => pure x) (fun _ => (fun k : Fin 2 => decide (k = 0)) <$> $[0..1]) (fun _ _ => pure true) (fun _ _ => pure true) (fun _ _ _ => (fun k : Fin 2 => decide (k = 0)) <$> $[0..1]) 0 0 1 1]).toReal = 3 / 4 ∧ (3 / 4 : ℝ) = (1 - 1 / 2) + 1 / 2 * ((1 / 2 * 1) * (((0 : ℝ) + 1) / ((0 : ℝ) + 1)))
 ~~~
 
+## ControlStack/Core/Compose.lean
+
+### 68. lefts_append
+
+Source: ControlStack/Core/Compose.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+@[simp] theorem lefts_append (l m : List (Eff₁ ⊕ Eff₂)) : lefts (l ++ m) = lefts l ++ lefts m
+~~~
+
+### 69. rights_append
+
+Source: ControlStack/Core/Compose.lean:42 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+@[simp] theorem rights_append (l m : List (Eff₁ ⊕ Eff₂)) : rights (l ++ m) = rights l ++ rights m
+~~~
+
+### 70. lefts_inl
+
+Source: ControlStack/Core/Compose.lean:45 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+@[simp] theorem lefts_inl (l : List Eff₁) : lefts (l.map (Sum.inl : Eff₁ → Eff₁ ⊕ Eff₂)) = l
+~~~
+
+### 71. rights_inl
+
+Source: ControlStack/Core/Compose.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+@[simp] theorem rights_inl (l : List Eff₁) : rights (l.map (Sum.inl : Eff₁ → Eff₁ ⊕ Eff₂)) = []
+~~~
+
+### 72. lefts_inr
+
+Source: ControlStack/Core/Compose.lean:51 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+@[simp] theorem lefts_inr (l : List Eff₂) : lefts (l.map (Sum.inr : Eff₂ → Eff₁ ⊕ Eff₂)) = []
+~~~
+
+### 73. rights_inr
+
+Source: ControlStack/Core/Compose.lean:54 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+@[simp] theorem rights_inr (l : List Eff₂) : rights (l.map (Sum.inr : Eff₂ → Eff₁ ⊕ Eff₂)) = l
+~~~
+
+### 74. append_newEffects
+
+Source: ControlStack/Core/Compose.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem append_newEffects {St Op Eff : Type} (G : System St Op Eff) (s s' : St) (h : G.effects s <+: G.effects s') : G.effects s ++ newEffects G s s' = G.effects s'
+~~~
+
+### 75. prodInit_coherent
+
+Source: ControlStack/Core/Compose.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem prodInit_coherent (G₁ : System St₁ Op₁ Eff₁) (G₂ : System St₂ Op₂ Eff₂) (s₁ : St₁) (s₂ : St₂) : Coherent G₁ G₂ (prodInit G₁ G₂ s₁ s₂)
+~~~
+
+### 76. stepL_coherent
+
+Source: ControlStack/Core/Compose.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem stepL_coherent (G₁ : System St₁ Op₁ Eff₁) (G₂ : System St₂ Op₂ Eff₂) (p : PSt St₁ St₂ Eff₁ Eff₂) (s' : St₁) (hc : Coherent G₁ G₂ p) (hpre : G₁.effects p.s₁ <+: G₁.effects s') : Coherent G₁ G₂ (stepL G₁ p s')
+~~~
+
+### 77. stepR_coherent
+
+Source: ControlStack/Core/Compose.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem stepR_coherent (G₁ : System St₁ Op₁ Eff₁) (G₂ : System St₂ Op₂ Eff₂) (p : PSt St₁ St₂ Eff₁ Eff₂) (s' : St₂) (hc : Coherent G₁ G₂ p) (hpre : G₂.effects p.s₂ <+: G₂.effects s') : Coherent G₁ G₂ (stepR G₂ p s')
+~~~
+
+### 78. tagOk_of_coherent
+
+Source: ControlStack/Core/Compose.lean:121 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem tagOk_of_coherent {G₁ : System St₁ Op₁ Eff₁} {G₂ : System St₂ Op₂ Eff₂} (S₁ : Spec G₁) (S₂ : Spec G₂) (p : PSt St₁ St₂ Eff₁ Eff₂) (h1 : S₁.Inv p.s₁) (h2 : S₂.Inv p.s₂) (hc : Coherent G₁ G₂ p) : ∀ e ∈ p.log, tagOk S₁ S₂ p e
+~~~
+
+### 79. prod_trace_safe
+
+Source: ControlStack/Core/Compose.lean:153 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem prod_trace_safe {G₁ : System St₁ Op₁ Eff₁} {G₂ : System St₂ Op₂ Eff₂} (S₁ : Spec G₁) (S₂ : Spec G₂) (s₁ : St₁) (s₂ : St₂) (h1 : S₁.Inv s₁) (h2 : S₂.Inv s₂) (ops : List (Op₁ ⊕ Op₂)) : let p
+~~~
+
+### 80. prod_halt_freezes
+
+Source: ControlStack/Core/Compose.lean:172 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem prod_halt_freezes (G₁ : System St₁ Op₁ Eff₁) (G₂ : System St₂ Op₂ Eff₂) (p : PSt St₁ St₂ Eff₁ Eff₂) (ops : List (HOp (Op₁ ⊕ Op₂))) : let q
+~~~
+
+### 81. separate_halt_leaves_other_running
+
+Source: ControlStack/Core/Compose.lean:189 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem separate_halt_leaves_other_running : let q
+~~~
+
+### 82. admissible_of_step
+
+Source: ControlStack/Core/Compose.lean:238 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem admissible_of_step {G₁ : System St₁ Op₁ Eff₁} {G₂ : System St₂ Op₂ Eff₂} (S₁ : Spec G₁) (S₂ : Spec G₂) (b : St₁ → St₂ → St₂) (f : St₁ → St₂ → Op₂) (hb : ∀ s₁ s₂, b s₁ s₂ = G₂.step s₂ (f s₁ s₂)) : BridgeAdmissible S₁ S₂ b
+~~~
+
+### 83. bridge_breaks_joint
+
+Source: ControlStack/Core/Compose.lean:275 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bridge_breaks_joint : let p
+~~~
+
 ## ControlStack/Core/Gate.lean
 
-### 68. System.run_nil
+### 84. System.run_nil
 
 Source: ControlStack/Core/Gate.lean:41 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -572,7 +702,7 @@ Source: ControlStack/Core/Gate.lean:41 | Family: UNMAPPED | Adversary: UNKNOWN |
 @[simp] theorem System.run_nil {St Op Eff : Type} (G : System St Op Eff) (s : St) : G.run s [] = s
 ~~~
 
-### 69. System.run_cons
+### 85. System.run_cons
 
 Source: ControlStack/Core/Gate.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -580,7 +710,7 @@ Source: ControlStack/Core/Gate.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN |
 @[simp] theorem System.run_cons {St Op Eff : Type} (G : System St Op Eff) (s : St) (o : Op) (ops : List Op) : G.run s (o :: ops) = G.run (G.step s o) ops
 ~~~
 
-### 70. Spec.trace_safe
+### 86. Spec.trace_safe
 
 Source: ControlStack/Core/Gate.lean:55 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -588,7 +718,7 @@ Source: ControlStack/Core/Gate.lean:55 | Family: F3 | Adversary: TRACE_ARBITRARY
 theorem Spec.trace_safe {St Op Eff : Type} {G : System St Op Eff} (S : Spec G) (s : St) (ops : List Op) (h : S.Inv s) : S.Inv (G.run s ops) ∧ G.effects s <+: G.effects (G.run s ops) ∧ ∀ e ∈ G.effects (G.run s ops), S.ok (G.run s ops) e
 ~~~
 
-### 71. NoAgentEffects.agent_trace_inert
+### 87. NoAgentEffects.agent_trace_inert
 
 Source: ControlStack/Core/Gate.lean:70 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -596,7 +726,7 @@ Source: ControlStack/Core/Gate.lean:70 | Family: F3 | Adversary: TRACE_ARBITRARY
 theorem NoAgentEffects.agent_trace_inert {St Op Eff : Type} {G : System St Op Eff} {agent : Op → Prop} (H : NoAgentEffects G agent) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, agent o) : G.effects (G.run s ops) = G.effects s
 ~~~
 
-### 72. halt_absorbing
+### 88. halt_absorbing
 
 Source: ControlStack/Core/Gate.lean:97 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -604,7 +734,7 @@ Source: ControlStack/Core/Gate.lean:97 | Family: F3 | Adversary: TRACE_ARBITRARY
 theorem halt_absorbing {St Op Eff : Type} (G : System St Op Eff) (s : St) (ops : List (HOp Op)) : (withHalt G).run (s, true) ops = (s, true)
 ~~~
 
-### 73. halt_freezes
+### 89. halt_freezes
 
 Source: ControlStack/Core/Gate.lean:104 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -614,7 +744,7 @@ theorem halt_freezes {St Op Eff : Type} (G : System St Op Eff) (s : St) (ops : L
 
 ## ControlStack/Core/Leakage.lean
 
-### 74. transfer
+### 90. transfer
 
 Source: ControlStack/Core/Leakage.lean:54 | Family: F2 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -622,7 +752,7 @@ Source: ControlStack/Core/Leakage.lean:54 | Family: F2 | Adversary: SIDE_OBSERVI
 theorem transfer {X T A : Type} [Fintype X] [Fintype T] [Fintype A] (p : X → ℝ) (lik : X → T → ℝ) (c : T → ℝ) (δ : T → A → ℝ) (u : X → A → ℝ) (b : ℝ) (hp : ∀ x, 0 ≤ p x) (hc : ∀ x t, lik x t ≤ c t) (hc0 : ∀ t, 0 ≤ c t) (hδ : ∀ t, IsDist (δ t)) (hu : ∀ x a, 0 ≤ u x a) (hb : ∀ a, ∑ x, p x * u x a ≤ b) : ∑ x, p x * ∑ t, lik x t * ∑ a, δ t a * u x a ≤ (∑ t, c t) * b
 ~~~
 
-### 75. covert_from_transfer
+### 91. covert_from_transfer
 
 Source: ControlStack/Core/Leakage.lean:84 | Family: F2 | Adversary: NON_ADAPTIVE | Status: SOURCE_ONLY
 
@@ -630,7 +760,7 @@ Source: ControlStack/Core/Leakage.lean:84 | Family: F2 | Adversary: NON_ADAPTIVE
 theorem covert_from_transfer {M V : Type} [Fintype M] [Fintype V] [DecidableEq M] [Nonempty M] (enc : M → V → ℝ) (dec : V → M → ℝ) (henc : ∀ m, IsDist (enc m)) (hdec : ∀ v, IsDist (dec v)) : ∑ m, (Fintype.card M : ℝ)⁻¹ * ∑ v, enc m v * ∑ a, dec v a * (if a = m then 1 else 0) ≤ (Fintype.card V : ℝ) * (Fintype.card M : ℝ)⁻¹
 ~~~
 
-### 76. cval_nonneg
+### 92. cval_nonneg
 
 Source: ControlStack/Core/Leakage.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -638,7 +768,7 @@ Source: ControlStack/Core/Leakage.lean:119 | Family: UNMAPPED | Adversary: UNKNO
 theorem cval_nonneg (c : List O → O → ℝ) (B : List O → ℝ) (hc0 : ∀ g o, 0 ≤ c g o) (hB : ∀ g, 0 ≤ B g) : ∀ n g, 0 ≤ cval c B n g
 ~~~
 
-### 77. cval_mono
+### 93. cval_mono
 
 Source: ControlStack/Core/Leakage.lean:125 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -646,7 +776,7 @@ Source: ControlStack/Core/Leakage.lean:125 | Family: UNMAPPED | Adversary: UNKNO
 theorem cval_mono (c : List O → O → ℝ) (B B' : List O → ℝ) (hc0 : ∀ g o, 0 ≤ c g o) (hBB : ∀ g, B g ≤ B' g) : ∀ n g, cval c B n g ≤ cval c B' n g
 ~~~
 
-### 78. cval_wsum
+### 94. cval_wsum
 
 Source: ControlStack/Core/Leakage.lean:131 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -654,7 +784,7 @@ Source: ControlStack/Core/Leakage.lean:131 | Family: UNMAPPED | Adversary: UNKNO
 theorem cval_wsum {X : Type} [Fintype X] (c : List O → O → ℝ) (p : X → ℝ) (B : X → List O → ℝ) : ∀ n g, ∑ x, p x * cval c (B x) n g = cval c (fun t => ∑ x, p x * B x t) n g
 ~~~
 
-### 79. cval_smul
+### 95. cval_smul
 
 Source: ControlStack/Core/Leakage.lean:142 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -662,7 +792,7 @@ Source: ControlStack/Core/Leakage.lean:142 | Family: UNMAPPED | Adversary: UNKNO
 theorem cval_smul (c : List O → O → ℝ) (b : ℝ) (B : List O → ℝ) : ∀ n g, cval c (fun t => b * B t) n g = b * cval c B n g
 ~~~
 
-### 80. val_le_cval
+### 96. val_le_cval
 
 Source: ControlStack/Core/Leakage.lean:155 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -670,7 +800,7 @@ Source: ControlStack/Core/Leakage.lean:155 | Family: UNMAPPED | Adversary: UNKNO
 theorem val_le_cval (K : List (Y × O) → Y × O → ℝ) (c : List O → O → ℝ) (pay : List O → ℝ) (hK0 : ∀ h z, 0 ≤ K h z) (hdom : Dominated K c) (hc0 : ∀ g o, 0 ≤ c g o) (hpay : ∀ g, 0 ≤ pay g) : ∀ n h, val K pay n h ≤ cval c pay n (h.map Prod.snd)
 ~~~
 
-### 81. seq_transfer
+### 97. seq_transfer
 
 Source: ControlStack/Core/Leakage.lean:178 | Family: F8 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -678,7 +808,7 @@ Source: ControlStack/Core/Leakage.lean:178 | Family: F8 | Adversary: SIDE_OBSERV
 theorem seq_transfer {X : Type} [Fintype X] (p : X → ℝ) (K : X → List (Y × O) → Y × O → ℝ) (c : List O → O → ℝ) (pay : X → List O → ℝ) (B : List O → ℝ) (n : ℕ) (hp : ∀ x, 0 ≤ p x) (hK0 : ∀ x h z, 0 ≤ K x h z) (hdom : ∀ x, Dominated (K x) c) (hc0 : ∀ g o, 0 ≤ c g o) (hpay : ∀ x g, 0 ≤ pay x g) (hB : ∀ t, ∑ x, p x * pay x t ≤ B t) : ∑ x, p x * val (K x) (pay x) n [] ≤ cval c B n []
 ~~~
 
-### 82. seq_transfer_const
+### 98. seq_transfer_const
 
 Source: ControlStack/Core/Leakage.lean:192 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -686,7 +816,7 @@ Source: ControlStack/Core/Leakage.lean:192 | Family: UNMAPPED | Adversary: UNKNO
 theorem seq_transfer_const {X : Type} [Fintype X] (p : X → ℝ) (K : X → List (Y × O) → Y × O → ℝ) (c : List O → O → ℝ) (pay : X → List O → ℝ) (b : ℝ) (n : ℕ) (hp : ∀ x, 0 ≤ p x) (hK0 : ∀ x h z, 0 ≤ K x h z) (hdom : ∀ x, Dominated (K x) c) (hc0 : ∀ g o, 0 ≤ c g o) (hpay : ∀ x g, 0 ≤ pay x g) (hb : ∀ t, ∑ x, p x * pay x t ≤ b) : ∑ x, p x * val (K x) (pay x) n [] ≤ b * mass c n []
 ~~~
 
-### 83. mass_le_prod
+### 99. mass_le_prod
 
 Source: ControlStack/Core/Leakage.lean:204 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -694,7 +824,7 @@ Source: ControlStack/Core/Leakage.lean:204 | Family: UNMAPPED | Adversary: UNKNO
 theorem mass_le_prod (c : List O → O → ℝ) (Lr : ℕ → ℝ) (hc0 : ∀ g o, 0 ≤ c g o) (hLr0 : ∀ i, 0 ≤ Lr i) (hL : ∀ g, ∑ o, c g o ≤ Lr g.length) : ∀ n g, mass c n g ≤ ∏ j ∈ range n, Lr (g.length + j)
 ~~~
 
-### 84. mass_le_pow
+### 100. mass_le_pow
 
 Source: ControlStack/Core/Leakage.lean:224 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -702,7 +832,7 @@ Source: ControlStack/Core/Leakage.lean:224 | Family: UNMAPPED | Adversary: UNKNO
 theorem mass_le_pow (c : List O → O → ℝ) (L : ℝ) (hc0 : ∀ g o, 0 ≤ c g o) (hL0 : 0 ≤ L) (hL : ∀ g, ∑ o, c g o ≤ L) (n : ℕ) (g : List O) : mass c n g ≤ L ^ n
 ~~~
 
-### 85. mass_const
+### 101. mass_const
 
 Source: ControlStack/Core/Leakage.lean:229 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -710,7 +840,7 @@ Source: ControlStack/Core/Leakage.lean:229 | Family: UNMAPPED | Adversary: UNKNO
 theorem mass_const (w : O → ℝ) : ∀ n g, mass (fun _ o => w o) n g = (∑ o, w o) ^ n
 ~~~
 
-### 86. covert_seq
+### 102. covert_seq
 
 Source: ControlStack/Core/Leakage.lean:248 | Family: F2 | Adversary: SHARED_SEED | Status: SOURCE_ONLY
 
@@ -718,7 +848,7 @@ Source: ControlStack/Core/Leakage.lean:248 | Family: F2 | Adversary: SHARED_SEED
 theorem covert_seq {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M] (ρ : Ω → ℝ) (K : Ω → M → List (Y × O) → Y × O → ℝ) (c : List O → O → ℝ) (dec : Ω → List O → M → ℝ) (n : ℕ) (hρ : IsDist ρ) (hK0 : ∀ ω m h z, 0 ≤ K ω m h z) (hdom : ∀ ω m, Dominated (K ω m) c) (hc0 : ∀ g o, 0 ≤ c g o) (hdec : ∀ ω t, IsDist (dec ω t)) : ∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) n []) ≤ mass c n [] / (Fintype.card M : ℝ)
 ~~~
 
-### 87. covert_seq_seed
+### 103. covert_seq_seed
 
 Source: ControlStack/Core/Leakage.lean:270 | Family: F2 | Adversary: SHARED_SEED | Status: SOURCE_ONLY
 
@@ -726,7 +856,7 @@ Source: ControlStack/Core/Leakage.lean:270 | Family: F2 | Adversary: SHARED_SEED
 theorem covert_seq_seed {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M] (ρ : Ω → ℝ) (K : Ω → M → List (Y × O) → Y × O → ℝ) (c : Ω → List O → O → ℝ) (dec : Ω → List O → M → ℝ) (n : ℕ) (hρ : IsDist ρ) (hK0 : ∀ ω m h z, 0 ≤ K ω m h z) (hdom : ∀ ω m, Dominated (K ω m) (c ω)) (hc0 : ∀ ω g o, 0 ≤ c ω g o) (hdec : ∀ ω t, IsDist (dec ω t)) : ∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) n []) ≤ (∑ ω, ρ ω * mass (c ω) n []) / (Fintype.card M : ℝ)
 ~~~
 
-### 88. episode_dom
+### 104. episode_dom
 
 Source: ControlStack/Core/Leakage.lean:293 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -734,7 +864,7 @@ Source: ControlStack/Core/Leakage.lean:293 | Family: UNMAPPED | Adversary: UNKNO
 theorem episode_dom {V S Z : Type} [Fintype V] [Fintype S] [Fintype Z] (enc : List (S × (V × Z)) → V × S → ℝ) (W : List (S × (V × Z)) → S → Z → ℝ) (cs : List (V × Z) → Z → ℝ) (henc : ∀ h, IsDist (enc h)) (hcs0 : ∀ g z, 0 ≤ cs g z) (hW : ∀ h s z, W h s z ≤ cs (h.map Prod.snd) z) : Dominated (fun h (y : S × (V × Z)) => enc h (y.2.1, y.1) * W h y.1 y.2.2) (fun g o => cs g o.2)
 ~~~
 
-### 89. episode_mass
+### 105. episode_mass
 
 Source: ControlStack/Core/Leakage.lean:314 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -742,7 +872,7 @@ Source: ControlStack/Core/Leakage.lean:314 | Family: UNMAPPED | Adversary: UNKNO
 theorem episode_mass {V Z : Type} [Fintype V] [Fintype Z] (cs : List (V × Z) → Z → ℝ) (g : List (V × Z)) : ∑ o : V × Z, cs g o.2 = (Fintype.card V : ℝ) * ∑ z, cs g z
 ~~~
 
-### 90. sc01_adaptive_target
+### 106. sc01_adaptive_target
 
 Source: ControlStack/Core/Leakage.lean:322 | Family: F2 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -750,7 +880,7 @@ Source: ControlStack/Core/Leakage.lean:322 | Family: F2 | Adversary: SIDE_OBSERV
 theorem sc01_adaptive_target {Ω Y Z : Type} [Fintype Ω] [Fintype Y] [Fintype Z] (ρ : Ω → ℝ) (K : Ω → Fin (2 ^ 32) → List (Y × (Option (Fin 8) × Z)) → Y × (Option (Fin 8) × Z) → ℝ) (cs : List (Option (Fin 8) × Z) → Z → ℝ) (lam : ℕ → ℝ) (dec : Ω → List (Option (Fin 8) × Z) → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (hK0 : ∀ ω m h z, 0 ≤ K ω m h z) (hdom : ∀ ω m, Dominated (K ω m) (fun g o => cs g o.2)) (hcs0 : ∀ g z, 0 ≤ cs g z) (hlam : ∀ g, ∑ z, cs g z ≤ lam g.length) (hlam0 : ∀ i, 0 ≤ lam i) (hprod : ∏ i ∈ range 5, lam i ≤ 65536 / 59049) (hdec : ∀ ω t, IsDist (dec ω t)) : ∑ ω, ρ ω * ((Fintype.card (Fin (2 ^ 32)) : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) 5 []) ≤ (2 : ℝ)⁻¹ ^ 16
 ~~~
 
-### 91. covert_side_bound
+### 107. covert_side_bound
 
 Source: ControlStack/Core/Leakage.lean:348 | Family: F2 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -758,7 +888,7 @@ Source: ControlStack/Core/Leakage.lean:348 | Family: F2 | Adversary: SIDE_OBSERV
 theorem covert_side_bound {Ω M V Y Z : Type} [Fintype Ω] [Fintype M] [Nonempty M] [Fintype V] [Fintype Y] [Fintype Z] (ρ : Ω → ℝ) (K : Ω → M → List (Y × (V × Z)) → Y × (V × Z) → ℝ) (cs : List (V × Z) → Z → ℝ) (lam : ℕ → ℝ) (dec : Ω → List (V × Z) → M → ℝ) (n : ℕ) (hρ : IsDist ρ) (hK0 : ∀ ω m h z, 0 ≤ K ω m h z) (hdom : ∀ ω m, Dominated (K ω m) (fun g o => cs g o.2)) (hcs0 : ∀ g z, 0 ≤ cs g z) (hlam : ∀ g, ∑ z, cs g z ≤ lam g.length) (hlam0 : ∀ i, 0 ≤ lam i) (hdec : ∀ ω t, IsDist (dec ω t)) : ∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, val (K ω m) (fun t => dec ω t m) n []) ≤ (Fintype.card V : ℝ) ^ n * (∏ i ∈ range n, lam i) / (Fintype.card M : ℝ)
 ~~~
 
-### 92. cval_live
+### 108. cval_live
 
 Source: ControlStack/Core/Leakage.lean:381 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -766,7 +896,7 @@ Source: ControlStack/Core/Leakage.lean:381 | Family: UNMAPPED | Adversary: UNKNO
 theorem cval_live (st : O → Bool) (c : List O → O → ℝ) : ∀ n g, cval c (liveInd st) n g = liveInd st g * mass (dropStop st c) n g
 ~~~
 
-### 93. val_congr_on
+### 109. val_congr_on
 
 Source: ControlStack/Core/Leakage.lean:432 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -774,7 +904,7 @@ Source: ControlStack/Core/Leakage.lean:432 | Family: UNMAPPED | Adversary: UNKNO
 theorem val_congr_on {Y O : Type} [Fintype Y] [Fintype O] (K : List (Y × O) → Y × O → ℝ) (P : List O → Prop) (pay pay' : List O → ℝ) (hP : ∀ h y o, K h (y, o) ≠ 0 → P (h.map Prod.snd) → P (h.map Prod.snd ++ [o])) (hagree : ∀ t, P t → pay t = pay' t) : ∀ n h, P (h.map Prod.snd) → val K pay n h = val K pay' n h
 ~~~
 
-### 94. consistent_append
+### 110. consistent_append
 
 Source: ControlStack/Core/Leakage.lean:449 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -782,7 +912,7 @@ Source: ControlStack/Core/Leakage.lean:449 | Family: UNMAPPED | Adversary: UNKNO
 theorem consistent_append (S : Finset (Fin N)) (g : List (AOut Z)) (o : AOut Z) (hg : Consistent S g) (ho : o.2.2 = (o.1 && decide (memN S g.length))) : Consistent S (g ++ [o])
 ~~~
 
-### 95. surv_live
+### 111. surv_live
 
 Source: ControlStack/Core/Leakage.lean:462 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -790,7 +920,7 @@ Source: ControlStack/Core/Leakage.lean:462 | Family: UNMAPPED | Adversary: UNKNO
 theorem surv_live (k : ℕ) (S : Finset (Fin N)) (t : List (AOut Z)) (ht : Consistent S t) : survInd k S t = survInd k S t * liveInd caughtFlag t
 ~~~
 
-### 96. blind_audit
+### 112. blind_audit
 
 Source: ControlStack/Core/Leakage.lean:491 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -798,7 +928,7 @@ Source: ControlStack/Core/Leakage.lean:491 | Family: UNMAPPED | Adversary: UNKNO
 theorem blind_audit (k B : ℕ) (hB : B ≤ N) (t : List (AOut Z)) : ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) * survInd k S t ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ)
 ~~~
 
-### 97. liveInd_nonneg
+### 113. liveInd_nonneg
 
 Source: ControlStack/Core/Leakage.lean:511 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -806,7 +936,7 @@ Source: ControlStack/Core/Leakage.lean:511 | Family: UNMAPPED | Adversary: UNKNO
 theorem liveInd_nonneg {O : Type} (st : O → Bool) (t : List O) : 0 ≤ liveInd st t
 ~~~
 
-### 98. survInd_nonneg
+### 114. survInd_nonneg
 
 Source: ControlStack/Core/Leakage.lean:515 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -814,7 +944,7 @@ Source: ControlStack/Core/Leakage.lean:515 | Family: UNMAPPED | Adversary: UNKNO
 theorem survInd_nonneg (k : ℕ) (S : Finset (Fin N)) (t : List (AOut Z)) : 0 ≤ survInd k S t
 ~~~
 
-### 99. audit_leak_bound_all
+### 115. audit_leak_bound_all
 
 Source: ControlStack/Core/Leakage.lean:525 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -822,7 +952,7 @@ Source: ControlStack/Core/Leakage.lean:525 | Family: UNMAPPED | Adversary: UNKNO
 theorem audit_leak_bound_all (k B : ℕ) (hB : B ≤ N) (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ) (hK0 : ∀ S h z, 0 ≤ K S h z) (hK1 : ∀ S h, ∑ z, K S h z ≤ 1) (hcons : ∀ S h y o, K S h (y, o) ≠ 0 → o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length))) (hdom : ∀ S h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o) (hcl0 : ∀ g o, 0 ≤ cl g o) : ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) * val (K S) (survInd k S) N [] ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) * mass (dropStop caughtFlag cl) N []
 ~~~
 
-### 100. audit_leak_bound
+### 116. audit_leak_bound
 
 Source: ControlStack/Core/Leakage.lean:579 | Family: F6 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -830,7 +960,7 @@ Source: ControlStack/Core/Leakage.lean:579 | Family: F6 | Adversary: SIDE_OBSERV
 theorem audit_leak_bound (k B : ℕ) (hB : B ≤ N) (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h, ∑ z, K S h z ≤ 1) (hcons : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h y o, K S h (y, o) ≠ 0 → o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length))) (hdom : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o) (hcl0 : ∀ g o, 0 ≤ cl g o) : ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) * val (K S) (survInd k S) N [] ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) * mass (dropStop caughtFlag cl) N []
 ~~~
 
-### 101. audit_leak_prod
+### 117. audit_leak_prod
 
 Source: ControlStack/Core/Leakage.lean:616 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -838,7 +968,7 @@ Source: ControlStack/Core/Leakage.lean:616 | Family: UNMAPPED | Adversary: UNKNO
 theorem audit_leak_prod (k B : ℕ) (hB : B ≤ N) (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ) (Lr : ℕ → ℝ) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h, ∑ z, K S h z ≤ 1) (hcons : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h y o, K S h (y, o) ≠ 0 → o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length))) (hdom : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o) (hcl0 : ∀ g o, 0 ≤ cl g o) (hLr0 : ∀ i, 0 ≤ Lr i) (hL : ∀ g, ∑ o, dropStop caughtFlag cl g o ≤ Lr g.length) : ∑ S : Finset (Fin N), (if S ∈ AuditBudget.randomSchedules N B then (Nat.choose N B : ℝ)⁻¹ else 0) * val (K S) (survInd k S) N [] ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) * ∏ i ∈ range N, Lr i
 ~~~
 
-### 102. audit_adaptive_hidden
+### 118. audit_adaptive_hidden
 
 Source: ControlStack/Core/Leakage.lean:644 | Family: F6 | Adversary: ADAPTIVE_FEEDBACK | Status: SOURCE_ONLY
 
@@ -848,7 +978,7 @@ theorem audit_adaptive_hidden (k B : ℕ) (hB : B ≤ N) (σ : List (AOut Unit) 
 
 ## ControlStack/CovertChannel.lean
 
-### 103. per_seed_le
+### 119. per_seed_le
 
 Source: ControlStack/CovertChannel.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -856,7 +986,7 @@ Source: ControlStack/CovertChannel.lean:30 | Family: UNMAPPED | Adversary: UNKNO
 theorem per_seed_le {M V : Type} [Fintype M] [Fintype V] (enc : M → V → ℝ) (dec : V → M → ℝ) (henc : ∀ m, IsDist (enc m)) (hdec : ∀ v, IsDist (dec v)) : ∑ m, ∑ v, enc m v * dec v m ≤ (Fintype.card V : ℝ)
 ~~~
 
-### 104. covert_bound
+### 120. covert_bound
 
 Source: ControlStack/CovertChannel.lean:48 | Family: F2 | Adversary: SHARED_SEED | Status: PROVED_RECORDED
 
@@ -864,7 +994,7 @@ Source: ControlStack/CovertChannel.lean:48 | Family: F2 | Adversary: SHARED_SEED
 theorem covert_bound {Ω M V : Type} [Fintype Ω] [Fintype M] [Fintype V] [Nonempty M] (ρ : Ω → ℝ) (enc : Ω → M → V → ℝ) (dec : Ω → V → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : successProb ρ enc dec ≤ (Fintype.card V : ℝ) / (Fintype.card M : ℝ)
 ~~~
 
-### 105. covert_bound_schema
+### 121. covert_bound_schema
 
 Source: ControlStack/CovertChannel.lean:63 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -872,7 +1002,7 @@ Source: ControlStack/CovertChannel.lean:63 | Family: UNMAPPED | Adversary: UNKNO
 theorem covert_bound_schema {Ω M S : Type} [Fintype Ω] [Fintype M] [Fintype S] [Nonempty M] [DecidableEq S] (n : ℕ) (ρ : Ω → ℝ) (enc : Ω → M → (Fin n → S) → ℝ) (dec : Ω → (Fin n → S) → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : successProb ρ enc dec ≤ (Fintype.card S : ℝ) ^ n / (Fintype.card M : ℝ)
 ~~~
 
-### 106. attain_injective
+### 122. attain_injective
 
 Source: ControlStack/CovertChannel.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -880,7 +1010,7 @@ Source: ControlStack/CovertChannel.lean:72 | Family: UNMAPPED | Adversary: UNKNO
 theorem attain_injective {M V : Type} [Fintype M] [Fintype V] [DecidableEq M] [DecidableEq V] [Nonempty M] (code : M → V) (decode : V → M) (hinv : ∀ m, decode (code m) = m) : successProb (Ω
 ~~~
 
-### 107. design_point
+### 123. design_point
 
 Source: ControlStack/CovertChannel.lean:89 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -888,7 +1018,7 @@ Source: ControlStack/CovertChannel.lean:89 | Family: UNMAPPED | Adversary: UNKNO
 theorem design_point {Ω : Type} [Fintype Ω] (ρ : Ω → ℝ) (enc : Ω → Fin (2 ^ 32) → (Fin 16 → Bool) → ℝ) (dec : Ω → (Fin 16 → Bool) → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : successProb ρ enc dec ≤ 1 / 2 ^ 16
 ~~~
 
-### 108. attain_embedding
+### 124. attain_embedding
 
 Source: ControlStack/CovertChannel.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -896,7 +1026,7 @@ Source: ControlStack/CovertChannel.lean:100 | Family: UNMAPPED | Adversary: UNKN
 theorem attain_embedding {M V : Type} [Fintype M] [Fintype V] [DecidableEq M] [DecidableEq V] [Nonempty M] [Nonempty V] (e : V → M) (he : Function.Injective e) : successProb (Ω
 ~~~
 
-### 109. covert_bound_lifetime
+### 125. covert_bound_lifetime
 
 Source: ControlStack/CovertChannel.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -906,7 +1036,7 @@ theorem covert_bound_lifetime {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M
 
 ## ControlStack/CovertNoGo.lean
 
-### 110. controllable_leak
+### 126. controllable_leak
 
 Source: ControlStack/CovertNoGo.lean:22 | Family: F2 | Adversary: SHARED_SEED | Status: PROVED_RECORDED
 
@@ -914,7 +1044,7 @@ Source: ControlStack/CovertNoGo.lean:22 | Family: F2 | Adversary: SHARED_SEED | 
 theorem controllable_leak {M T V : Type} [Fintype M] [Fintype T] [DecidableEq M] [DecidableEq T] [DecidableEq V] (N : ℕ) (hN : 0 < N) (view : T → V) (realize : Fin N → T) (hdist : Function.Injective (fun i => view (realize i))) (e : Fin N → M) (he : Function.Injective e) : ∃ (enc : M → T → ℝ) (dec : V → M → ℝ), (∀ m, IsDist (enc m)) ∧ (∀ v, IsDist (dec v)) ∧ successView view enc dec = (N : ℝ) / (Fintype.card M : ℝ)
 ~~~
 
-### 111. one_bit_coordinates
+### 127. one_bit_coordinates
 
 Source: ControlStack/CovertNoGo.lean:73 | Family: F2 | Adversary: SHARED_SEED | Status: PROVED_RECORDED
 
@@ -924,7 +1054,7 @@ theorem one_bit_coordinates {T V : Type} [Fintype T] [DecidableEq T] [DecidableE
 
 ## ControlStack/DeferGame.lean
 
-### 112. deployV_step
+### 128. deployV_step
 
 Source: ControlStack/DeferGame.lean:58 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -932,7 +1062,7 @@ Source: ControlStack/DeferGame.lean:58 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem deployV_step {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) : Pr[= true | deployV Bad π M D A Halt Svc b (n+1) u h] = ∑ x, Pr[= x | π h] * ∑ z, Pr[= z | M x] * (Pr[= true | D z] * Pr[= true | (if Bad x then pure true else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,true)]) : ProbComp Bool)] + Pr[= false | D z] * (if u < b then Pr[= true | (if Bad x then (fun caught => !caught) <$> A h x z else deployV Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)]) : ProbComp Bool)] else Pr[= true | (if Bad x then do let halt ← Halt h x z if halt then pure false else do let caught ← Svc h x z if caught then pure false else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) else do let halt ← Halt h x z if halt then pure false else deployV Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) : ProbComp Bool)]))
 ~~~
 
-### 113. halt_then_prob
+### 129. halt_then_prob
 
 Source: ControlStack/DeferGame.lean:88 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -940,7 +1070,7 @@ Source: ControlStack/DeferGame.lean:88 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem halt_then_prob (H K : ProbComp Bool) : Pr[= true | do let halt ← H; if halt then pure false else K] = Pr[= false | H] * Pr[= true | K]
 ~~~
 
-### 114. halt_then_real
+### 130. halt_then_real
 
 Source: ControlStack/DeferGame.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -948,7 +1078,7 @@ Source: ControlStack/DeferGame.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem halt_then_real (H K : ProbComp Bool) : (Pr[= true | do let halt ← H; if halt then pure false else K]).toReal = (1 - (Pr[= true | H]).toReal) * (Pr[= true | K]).toReal
 ~~~
 
-### 115. halt_service_continue_real
+### 131. halt_service_continue_real
 
 Source: ControlStack/DeferGame.lean:101 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -956,7 +1086,7 @@ Source: ControlStack/DeferGame.lean:101 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem halt_service_continue_real (H S C : ProbComp Bool) : (Pr[= true | do let halt ← H if halt then pure false else do let caught ← S if caught then pure false else C]).toReal = (1 - (Pr[= true | H]).toReal) * (1 - (Pr[= true | S]).toReal) * (Pr[= true | C]).toReal
 ~~~
 
-### 116. calibrated_exhausted_benign_real
+### 132. calibrated_exhausted_benign_real
 
 Source: ControlStack/DeferGame.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -964,7 +1094,7 @@ Source: ControlStack/DeferGame.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem calibrated_exhausted_benign_real (H C : ProbComp Bool) (η : ℝ) (hH : (Pr[= true | H]).toReal = η) : (Pr[= true | do let halt ← H; if halt then pure false else C]).toReal = (1 - η) * (Pr[= true | C]).toReal
 ~~~
 
-### 117. calibrated_exhausted_bad_real
+### 133. calibrated_exhausted_bad_real
 
 Source: ControlStack/DeferGame.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -972,7 +1102,7 @@ Source: ControlStack/DeferGame.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem calibrated_exhausted_bad_real (H S C : ProbComp Bool) (η a c : ℝ) (hH : (Pr[= true | H]).toReal = η) (hS : (Pr[= true | S]).toReal = a) (hC : (Pr[= true | C]).toReal = c) : (Pr[= true | do let halt ← H if halt then pure false else do let caught ← S if caught then pure false else C]).toReal = (1 - η) * (1 - a) * c
 ~~~
 
-### 118. calibrated_audit_escape_real
+### 134. calibrated_audit_escape_real
 
 Source: ControlStack/DeferGame.lean:129 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -980,7 +1110,7 @@ Source: ControlStack/DeferGame.lean:129 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem calibrated_audit_escape_real (A : ProbComp Bool) (r : ℝ) (hA : (Pr[= true | A]).toReal = r) : (Pr[= true | (fun caught => !caught) <$> A]).toReal = 1 - r
 ~~~
 
-### 119. exhausted_benign_probability
+### 135. exhausted_benign_probability
 
 Source: ControlStack/DeferGame.lean:159 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -988,7 +1118,7 @@ Source: ControlStack/DeferGame.lean:159 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem exhausted_benign_probability (H C : ProbComp Bool) : Pr[= true | do let halt ← H if halt then pure false else C] = Pr[= false | H] * Pr[= true | C]
 ~~~
 
-### 120. exhausted_bad_then_probability
+### 136. exhausted_bad_then_probability
 
 Source: ControlStack/DeferGame.lean:169 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -996,7 +1126,7 @@ Source: ControlStack/DeferGame.lean:169 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem exhausted_bad_then_probability (H S C : ProbComp Bool) : Pr[= true | do let halt ← H if halt then pure false else do let caught ← S if caught then pure false else C] = Pr[= false | H] * Pr[= false | S] * Pr[= true | C]
 ~~~
 
-### 121. deployV_eq_catVE
+### 137. deployV_eq_catVE
 
 Source: ControlStack/DeferGame.lean:200 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1004,7 +1134,7 @@ Source: ControlStack/DeferGame.lean:200 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem deployV_eq_catVE {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b : ℕ) : ∀ n u h, Pr[= true | deployV Bad π M D A Halt Svc b n u h] = catVE Bad π M D A Halt Svc b n u h
 ~~~
 
-### 122. catVE_ne_top
+### 138. catVE_ne_top
 
 Source: ControlStack/DeferGame.lean:219 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1012,7 +1142,7 @@ Source: ControlStack/DeferGame.lean:219 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem catVE_ne_top {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) : catVE Bad π M D A Halt Svc b n u h ≠ ⊤
 ~~~
 
-### 123. catVE_transition_ne_top
+### 139. catVE_transition_ne_top
 
 Source: ControlStack/DeferGame.lean:229 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1020,7 +1150,7 @@ Source: ControlStack/DeferGame.lean:229 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem catVE_transition_ne_top {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) (x : X) (z : Z) : (Pr[= true | D z] * (if Bad x then 1 else catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,true)])) + Pr[= false | D z] * (if u < b then (if Bad x then Pr[= false | A h x z] else catVE Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)])) else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) else Pr[= false | Halt h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]))) ≠ ⊤
 ~~~
 
-### 124. catVE_inner_ne_top
+### 140. catVE_inner_ne_top
 
 Source: ControlStack/DeferGame.lean:274 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1028,7 +1158,7 @@ Source: ControlStack/DeferGame.lean:274 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem catVE_inner_ne_top {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) (x : X) : (∑ z, Pr[= z | M x] * (Pr[= true | D z] * (if Bad x then 1 else catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,true)])) + Pr[= false | D z] * (if u < b then (if Bad x then Pr[= false | A h x z] else catVE Bad π M D A Halt Svc b n (u+1) (h ++ [(x,z,false)])) else if Bad x then Pr[= false | Halt h x z] * Pr[= false | Svc h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)]) else Pr[= false | Halt h x z] * catVE Bad π M D A Halt Svc b n u (h ++ [(x,z,false)])))) ≠ ⊤
 ~~~
 
-### 125. catVE_toReal_eq_catV
+### 141. catVE_toReal_eq_catV
 
 Source: ControlStack/DeferGame.lean:296 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1036,7 +1166,7 @@ Source: ControlStack/DeferGame.lean:296 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem catVE_toReal_eq_catV {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b : ℕ) (r η : ℝ) (a : Service X Z) (hA : ∀ h x z, Bad x → (Pr[= true | A h x z]).toReal = r) (hH : ∀ h x z, (Pr[= true | Halt h x z]).toReal = η) (hS : ∀ h x z, Bad x → (Pr[= true | Svc h x z]).toReal = a h x z) : ∀ n u h, (catVE Bad π M D A Halt Svc b n u h).toReal = catV Bad (fun x z => (Pr[= z | M x]).toReal) (fun z => (Pr[= true | D z]).toReal) (fun h x => (Pr[= x | π h]).toReal) r η a b n u h
 ~~~
 
-### 126. defer_bridge
+### 142. defer_bridge
 
 Source: ControlStack/DeferGame.lean:330 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1046,7 +1176,7 @@ theorem defer_bridge : DeferBridgeClaim
 
 ## ControlStack/DeferMono.lean
 
-### 127. catVE_toReal_le_catV
+### 143. catVE_toReal_le_catV
 
 Source: ControlStack/DeferMono.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1054,7 +1184,7 @@ Source: ControlStack/DeferMono.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem catVE_toReal_le_catV {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (Halt : Hist X Z → X → Z → ProbComp Bool) (Svc : Hist X Z → X → Z → ProbComp Bool) (b : ℕ) (r η : ℝ) (a : Service X Z) (hA : ∀ h x z, Bad x → r ≤ (Pr[= true | A h x z]).toReal) (hH : ∀ h x z, η ≤ (Pr[= true | Halt h x z]).toReal) (hS : ∀ h x z, Bad x → a h x z ≤ (Pr[= true | Svc h x z]).toReal) : ∀ n u h, (catVE Bad π M D A Halt Svc b n u h).toReal ≤ catV Bad (fun x z => (Pr[= z | M x]).toReal) (fun z => (Pr[= true | D z]).toReal) (fun h x => (Pr[= x | π h]).toReal) r η a b n u h
 ~~~
 
-### 128. defer_mono
+### 144. defer_mono
 
 Source: ControlStack/DeferMono.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1064,7 +1194,7 @@ theorem defer_mono : DeferMonoClaim
 
 ## ControlStack/EgressGate.lean
 
-### 129. lookup_pinned
+### 145. lookup_pinned
 
 Source: ControlStack/EgressGate.lean:26 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1072,7 +1202,7 @@ Source: ControlStack/EgressGate.lean:26 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem lookup_pinned (p : Policy) (key : String) (peer : Peer) (h : lookup p key = some peer) : peer ∈ p.map Rule.peer
 ~~~
 
-### 130. direct_no_effect
+### 146. direct_no_effect
 
 Source: ControlStack/EgressGate.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1080,7 +1210,7 @@ Source: ControlStack/EgressGate.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem direct_no_effect (p : Policy) (s : State) (peer : Peer) (h : Invariant p s) : step p s (.directAttempt peer) = s
 ~~~
 
-### 131. step_safe
+### 147. step_safe
 
 Source: ControlStack/EgressGate.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1088,7 +1218,7 @@ Source: ControlStack/EgressGate.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem step_safe (p : Policy) (s : State) (a : Action) (h : Invariant p s) : Invariant p (step p s a)
 ~~~
 
-### 132. trace_safe
+### 148. trace_safe
 
 Source: ControlStack/EgressGate.lean:126 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
 
@@ -1096,7 +1226,7 @@ Source: ControlStack/EgressGate.lean:126 | Family: F1 | Adversary: TRACE_ARBITRA
 theorem trace_safe (p : Policy) (s : State) (actions : List Action) (h : Invariant p s) : Invariant p (run p s actions)
 ~~~
 
-### 133. failed_launch
+### 149. failed_launch
 
 Source: ControlStack/EgressGate.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1104,7 +1234,7 @@ Source: ControlStack/EgressGate.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem failed_launch (p : Policy) (s : State) (t : Topology) (h : safe t = false) : (step p s (.launch t)).active = false
 ~~~
 
-### 134. crash_closed
+### 150. crash_closed
 
 Source: ControlStack/EgressGate.lean:135 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1112,9 +1242,195 @@ Source: ControlStack/EgressGate.lean:135 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem crash_closed (p : Policy) (s : State) (key : String) : (step p (step p s .crashGateway) (.request key)).attempts = s.attempts
 ~~~
 
+## ControlStack/Families/F3/DistributedHalt.lean
+
+### 151. sum_window
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:57 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_window (T ρ lo hi : ℕ) (e : ℕ → ℕ) (P : ℕ → Prop) [DecidablePred P] (he : ∀ t, e t ≤ ρ) (hz : ∀ t, P t → e t ≠ 0 → lo ≤ t ∧ t < hi) : ∑ t ∈ range T, (if P t then e t else 0) ≤ ρ * (hi - lo)
+~~~
+
+### 152. initiated_after_le
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem initiated_after_le (n T t0 ρ Δ : ℕ) (e : ℕ → ℕ → ℕ) (δ : ℕ → ℕ) (hr : Rate ρ e) (hh : HaltAbsorbs t0 δ e) (hd : Delivered n Δ δ) : initiatedAfter n T t0 e ≤ ∑ i ∈ range n, ρ * δ i ∧ initiatedAfter n T t0 e ≤ n * ρ * Δ
+~~~
+
+### 153. landed_after_le
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem landed_after_le (n T t0 ρ Δ L : ℕ) (e lat : ℕ → ℕ → ℕ) (δ : ℕ → ℕ) (hr : Rate ρ e) (hh : HaltAbsorbs t0 δ e) (hd : Delivered n Δ δ) (hl : Latency L lat) : landedAfter n T t0 e lat ≤ n * ρ * (L + Δ)
+~~~
+
+### 154. foldl_sublist
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:143 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem foldl_sublist (fence : Bool) (t0 ε e0 G : ℕ) : ∀ (evs : List (ℕ × ℕ)) (s : List (ℕ × ℕ)), ∃ l, evs.foldl (sinkStep fence t0 ε e0 G) s = s ++ l ∧ l.Sublist (evs.filter (accepts fence t0 ε e0))
+~~~
+
+### 155. foldl_len
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:166 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem foldl_len (fence : Bool) (t0 ε e0 G : ℕ) : ∀ (evs : List (ℕ × ℕ)) (s : List (ℕ × ℕ)), s.length ≤ G → (evs.foldl (sinkStep fence t0 ε e0 G) s).length ≤ G
+~~~
+
+### 156. sink_sublist
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sink_sublist (fence : Bool) (t0 ε e0 G : ℕ) (evs : List (ℕ × ℕ)) : (sinkRun fence t0 ε e0 G evs).Sublist (evs.filter (accepts fence t0 ε e0))
+~~~
+
+### 157. sink_budget
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:189 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sink_budget (fence : Bool) (t0 ε e0 G : ℕ) (evs : List (ℕ × ℕ)) : (sinkRun fence t0 ε e0 G evs).length ≤ G
+~~~
+
+### 158. sink_count
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:193 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sink_count (fence : Bool) (t0 ε e0 G : ℕ) (evs : List (ℕ × ℕ)) (q : ℕ × ℕ → Bool) : (sinkRun fence t0 ε e0 G evs).countP q ≤ evs.countP (fun ev => q ev && accepts fence t0 ε e0 ev)
+~~~
+
+### 159. fenced_after_eps
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:201 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fenced_after_eps (t0 ε e0 G : ℕ) (evs : List (ℕ × ℕ)) (hold : ∀ ev ∈ evs, ev.2 ≤ e0) : (sinkRun true t0 ε e0 G evs).countP (fun ev => decide (t0 + ε ≤ ev.1)) = 0
+~~~
+
+### 160. listsum_range
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:219 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem listsum_range (f : ℕ → ℕ) (n : ℕ) : ((List.range n).map f).sum = ∑ i ∈ range n, f i
+~~~
+
+### 161. stream_countP
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:224 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem stream_countP (n T : ℕ) (e lat ep : ℕ → ℕ → ℕ) (q : ℕ × ℕ → Bool) : (stream n T e lat ep).countP q = ∑ i ∈ range n, ∑ t ∈ range T, (if q (t + lat i t, ep i t) = true then e i t else 0)
+~~~
+
+### 162. stream_epochs
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:239 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem stream_epochs (n T : ℕ) (e lat ep : ℕ → ℕ → ℕ) (e0 : ℕ) (hold : HoldsOld e0 ep) : ∀ ev ∈ stream n T e lat ep, ev.2 ≤ e0
+~~~
+
+### 163. fenced_window
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:248 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fenced_window (n T t0 ε e0 G ρ L : ℕ) (e lat ep : ℕ → ℕ → ℕ) (hr : Rate ρ e) (hl : Latency L lat) (hold : HoldsOld e0 ep) : (sinkRun true t0 ε e0 G (stream n T e lat ep)).countP (fun ev => decide (t0 ≤ ev.1)) ≤ n * ρ * (L + ε)
+~~~
+
+### 164. unfenced_composed
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:270 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem unfenced_composed (n T t0 ε e0 G ρ Δ L : ℕ) (e lat ep : ℕ → ℕ → ℕ) (δ : ℕ → ℕ) (hr : Rate ρ e) (hh : HaltAbsorbs t0 δ e) (hd : Delivered n Δ δ) (hl : Latency L lat) : (sinkRun false t0 ε e0 G (stream n T e lat ep)).countP (fun ev => decide (t0 ≤ ev.1)) ≤ min G (n * ρ * (L + Δ))
+~~~
+
+### 165. fenced_composed
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:285 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fenced_composed (n T t0 ε e0 G ρ L : ℕ) (e lat ep : ℕ → ℕ → ℕ) (hr : Rate ρ e) (hl : Latency L lat) (hold : HoldsOld e0 ep) : (sinkRun true t0 ε e0 G (stream n T e lat ep)).countP (fun ev => decide (t0 ≤ ev.1)) ≤ min G (n * ρ * (L + ε)) ∧ (sinkRun true t0 ε e0 G (stream n T e lat ep)).countP (fun ev => decide (t0 + ε ≤ ev.1)) = 0
+~~~
+
+### 166. foldl_all
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:295 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem foldl_all (fence : Bool) (t0 ε e0 G : ℕ) : ∀ (evs s : List (ℕ × ℕ)), (∀ ev ∈ evs, accepts fence t0 ε e0 ev = true) → s.length + evs.length ≤ G → evs.foldl (sinkStep fence t0 ε e0 G) s = s ++ evs
+~~~
+
+### 167. partition_count
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:315 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem partition_count (T t0 : ℕ) : ∑ i ∈ range 1, ∑ t ∈ range T, (if t0 ≤ t + 0 then partitionE i t else 0) = T - t0
+~~~
+
+### 168. stream_length
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:322 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem stream_length (n T : ℕ) (e lat ep : ℕ → ℕ → ℕ) : (stream n T e lat ep).length = ∑ i ∈ range n, ∑ t ∈ range T, e i t
+~~~
+
+### 169. partition_unbounded
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:329 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem partition_unbounded (t0 ε e0 M : ℕ) : ∃ T, M < (sinkRun false t0 ε e0 (T + 1) (stream 1 T partitionE (fun _ _ => 0) (fun _ _ => e0))).countP (fun ev => decide (t0 ≤ ev.1))
+~~~
+
+### 170. partition_fenced
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:346 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem partition_fenced (t0 ε e0 G T : ℕ) : (sinkRun true t0 ε e0 G (stream 1 T partitionE (fun _ _ => 0) (fun _ _ => e0))).countP (fun ev => decide (t0 ≤ ev.1)) ≤ ε
+~~~
+
+### 171. token_leak
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:355 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem token_leak (t0 ε e0 : ℕ) : (sinkRun true t0 ε e0 1 [(t0 + ε, e0 + 1)]).countP (fun ev => decide (t0 + ε ≤ ev.1)) = 1
+~~~
+
+### 172. example_unfenced
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:362 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem example_unfenced (T t0 ε e0 G : ℕ) (e lat ep : ℕ → ℕ → ℕ) (δ : ℕ → ℕ) (hr : Rate 10 e) (hh : HaltAbsorbs t0 δ e) (hd : Delivered 1000 5 δ) (hl : Latency 0 lat) : (sinkRun false t0 ε e0 G (stream 1000 T e lat ep)).countP (fun ev => decide (t0 ≤ ev.1)) ≤ 50000
+~~~
+
+### 173. example_fenced
+
+Source: ControlStack/Families/F3/DistributedHalt.lean:368 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem example_fenced (T t0 e0 G : ℕ) (e lat ep : ℕ → ℕ → ℕ) (hr : Rate 10 e) (hl : Latency 0 lat) (hold : HoldsOld e0 ep) : (sinkRun true t0 1 e0 G (stream 1000 T e lat ep)).countP (fun ev => decide (t0 ≤ ev.1)) ≤ 10000 ∧ (sinkRun true t0 1 e0 G (stream 1000 T e lat ep)).countP (fun ev => decide (t0 + 1 ≤ ev.1)) = 0
+~~~
+
 ## ControlStack/Families/F4/GateClients.lean
 
-### 135. dispatch_effects_prefix
+### 174. dispatch_effects_prefix
 
 Source: ControlStack/Families/F4/GateClients.lean:44 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1122,7 +1438,7 @@ Source: ControlStack/Families/F4/GateClients.lean:44 | Family: UNMAPPED | Advers
 theorem dispatch_effects_prefix (s : AuditDispatch.St) (o : AuditDispatch.Op) : s.effects <+: (AuditDispatch.step s o).effects
 ~~~
 
-### 136. dispatch_no_agent_effects
+### 175. dispatch_no_agent_effects
 
 Source: ControlStack/Families/F4/GateClients.lean:55 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1130,7 +1446,7 @@ Source: ControlStack/Families/F4/GateClients.lean:55 | Family: UNMAPPED | Advers
 theorem dispatch_no_agent_effects : NoAgentEffects dispatchSys (fun o => ∀ id, o ≠ .dispatch id)
 ~~~
 
-### 137. auditGate_prefix
+### 176. auditGate_prefix
 
 Source: ControlStack/Families/F4/GateClients.lean:65 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1138,7 +1454,7 @@ Source: ControlStack/Families/F4/GateClients.lean:65 | Family: UNMAPPED | Advers
 theorem auditGate_prefix (s : AuditGate.St) (o : AuditGate.Op) : s.executions <+: (AuditGate.step s o).executions
 ~~~
 
-### 138. egress_prefix
+### 177. egress_prefix
 
 Source: ControlStack/Families/F4/GateClients.lean:82 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1146,7 +1462,7 @@ Source: ControlStack/Families/F4/GateClients.lean:82 | Family: UNMAPPED | Advers
 theorem egress_prefix (p : EgressGate.Policy) (s : EgressGate.State) (a : EgressGate.Action) : s.attempts <+: (EgressGate.step p s a).attempts
 ~~~
 
-### 139. step_inv
+### 178. step_inv
 
 Source: ControlStack/Families/F4/GateClients.lean:138 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1154,7 +1470,7 @@ Source: ControlStack/Families/F4/GateClients.lean:138 | Family: UNMAPPED | Adver
 theorem step_inv (hash : C → H) (s : St C H) (o : Op C H) (h : Inv hash s) : Inv hash (step hash s o)
 ~~~
 
-### 140. prefix_step
+### 179. prefix_step
 
 Source: ControlStack/Families/F4/GateClients.lean:169 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1162,7 +1478,7 @@ Source: ControlStack/Families/F4/GateClients.lean:169 | Family: UNMAPPED | Adver
 theorem prefix_step (hash : C → H) (s : St C H) (o : Op C H) : s.deployed <+: (step hash s o).deployed
 ~~~
 
-### 141. deployed_reviewed
+### 180. deployed_reviewed
 
 Source: ControlStack/Families/F4/GateClients.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1170,7 +1486,7 @@ Source: ControlStack/Families/F4/GateClients.lean:187 | Family: UNMAPPED | Adver
 theorem deployed_reviewed (hash : C → H) (ops : List (Op C H)) : ∀ c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).deployed, hash c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).reviewed
 ~~~
 
-### 142. deployed_is_reviewed
+### 181. deployed_is_reviewed
 
 Source: ControlStack/Families/F4/GateClients.lean:195 | Family: F4 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1178,7 +1494,7 @@ Source: ControlStack/Families/F4/GateClients.lean:195 | Family: F4 | Adversary: 
 theorem deployed_is_reviewed (hash : C → H) (ops : List (Op C H)) (hinj : Set.InjOn hash {c | c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).store ∨ c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).reviewedContent}) : ∀ c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).deployed, c ∈ ((sys hash).run ⟨[], [], [], []⟩ ops).reviewedContent
 ~~~
 
-### 143. collision_breaks
+### 182. collision_breaks
 
 Source: ControlStack/Families/F4/GateClients.lean:210 | Family: F4 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1186,7 +1502,7 @@ Source: ControlStack/Families/F4/GateClients.lean:210 | Family: F4 | Adversary: 
 theorem collision_breaks : let s
 ~~~
 
-### 144. agent_cannot_review
+### 183. agent_cannot_review
 
 Source: ControlStack/Families/F4/GateClients.lean:222 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1194,7 +1510,7 @@ Source: ControlStack/Families/F4/GateClients.lean:222 | Family: UNMAPPED | Adver
 theorem agent_cannot_review (hash : C → H) (s : St C H) (o : Op C H) (ho : agentOp o) : (step hash s o).reviewed = s.reviewed ∧ (step hash s o).reviewedContent = s.reviewedContent
 ~~~
 
-### 145. step_inv
+### 184. step_inv
 
 Source: ControlStack/Families/F4/GateClients.lean:273 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1202,7 +1518,7 @@ Source: ControlStack/Families/F4/GateClients.lean:273 | Family: UNMAPPED | Adver
 theorem step_inv (s : St P) (o : Op P) (h : Inv s) : Inv (step s o)
 ~~~
 
-### 146. prefix_step
+### 185. prefix_step
 
 Source: ControlStack/Families/F4/GateClients.lean:292 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1210,7 +1526,7 @@ Source: ControlStack/Families/F4/GateClients.lean:292 | Family: UNMAPPED | Adver
 theorem prefix_step (s : St P) (o : Op P) : s.executed <+: (step s o).executed
 ~~~
 
-### 147. approval_safe
+### 186. approval_safe
 
 Source: ControlStack/Families/F4/GateClients.lean:307 | Family: F7 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1218,7 +1534,7 @@ Source: ControlStack/Families/F4/GateClients.lean:307 | Family: F7 | Adversary: 
 theorem approval_safe (ops : List (Op P)) : let s
 ~~~
 
-### 148. replay_without_nonce
+### 187. replay_without_nonce
 
 Source: ControlStack/Families/F4/GateClients.lean:322 | Family: F7 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1226,7 +1542,7 @@ Source: ControlStack/Families/F4/GateClients.lean:322 | Family: F7 | Adversary: 
 theorem replay_without_nonce : let t : Tx Unit
 ~~~
 
-### 149. agent_cannot_approve
+### 188. agent_cannot_approve
 
 Source: ControlStack/Families/F4/GateClients.lean:334 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1234,7 +1550,7 @@ Source: ControlStack/Families/F4/GateClients.lean:334 | Family: UNMAPPED | Adver
 theorem agent_cannot_approve (s : St P) (o : Op P) (ho : agentOp o) : (step s o).approvals = s.approvals
 ~~~
 
-### 150. replay_if_nonces_lost
+### 189. replay_if_nonces_lost
 
 Source: ControlStack/Families/F4/GateClients.lean:341 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1244,7 +1560,7 @@ theorem replay_if_nonces_lost : let t : Tx Unit
 
 ## ControlStack/Families/F5/Lease.lean
 
-### 151. spent_append
+### 190. spent_append
 
 Source: ControlStack/Families/F5/Lease.lean:107 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1252,7 +1568,7 @@ Source: ControlStack/Families/F5/Lease.lean:107 | Family: UNMAPPED | Adversary: 
 theorem spent_append (work : List (ℕ × ℕ × ℕ)) (e : ℕ × ℕ × ℕ) (id : ℕ) : spent (work ++ [e]) id = spent work id + (if e.1 = id then e.2.1 else 0)
 ~~~
 
-### 152. total_append
+### 191. total_append
 
 Source: ControlStack/Families/F5/Lease.lean:111 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1260,7 +1576,7 @@ Source: ControlStack/Families/F5/Lease.lean:111 | Family: UNMAPPED | Adversary: 
 theorem total_append (work : List (ℕ × ℕ × ℕ)) (e : ℕ × ℕ × ℕ) : total (work ++ [e]) = total work + e.2.1
 ~~~
 
-### 153. spent_eq_zero_of_absent
+### 192. spent_eq_zero_of_absent
 
 Source: ControlStack/Families/F5/Lease.lean:114 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1268,7 +1584,7 @@ Source: ControlStack/Families/F5/Lease.lean:114 | Family: UNMAPPED | Adversary: 
 theorem spent_eq_zero_of_absent (work : List (ℕ × ℕ × ℕ)) (id : ℕ) (h : ∀ e ∈ work, e.1 ≠ id) : spent work id = 0
 ~~~
 
-### 154. step_inv
+### 193. step_inv
 
 Source: ControlStack/Families/F5/Lease.lean:120 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1276,7 +1592,7 @@ Source: ControlStack/Families/F5/Lease.lean:120 | Family: UNMAPPED | Adversary: 
 theorem step_inv (cap : ℕ) (s : St) (o : Op) (h : Inv cap s) : Inv cap (step cap s o)
 ~~~
 
-### 155. prefix_step
+### 194. prefix_step
 
 Source: ControlStack/Families/F5/Lease.lean:180 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1284,7 +1600,7 @@ Source: ControlStack/Families/F5/Lease.lean:180 | Family: UNMAPPED | Adversary: 
 theorem prefix_step (cap : ℕ) (s : St) (o : Op) : s.work <+: (step cap s o).work
 ~~~
 
-### 156. lease_safe
+### 195. lease_safe
 
 Source: ControlStack/Families/F5/Lease.lean:204 | Family: F5 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1292,7 +1608,7 @@ Source: ControlStack/Families/F5/Lease.lean:204 | Family: F5 | Adversary: TRACE_
 theorem lease_safe (cap : ℕ) (ops : List Op) : let s
 ~~~
 
-### 157. revoke_step
+### 196. revoke_step
 
 Source: ControlStack/Families/F5/Lease.lean:213 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1300,7 +1616,7 @@ Source: ControlStack/Families/F5/Lease.lean:213 | Family: UNMAPPED | Adversary: 
 theorem revoke_step (cap : ℕ) (s : St) (o : Op) (id : ℕ) (hr : id ∈ s.revoked) : id ∈ (step cap s o).revoked ∧ ∃ δ, (step cap s o).work = s.work ++ δ ∧ ∀ e ∈ δ, e.1 ≠ id
 ~~~
 
-### 158. revoke_absorbing
+### 197. revoke_absorbing
 
 Source: ControlStack/Families/F5/Lease.lean:238 | Family: F5 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1308,7 +1624,7 @@ Source: ControlStack/Families/F5/Lease.lean:238 | Family: F5 | Adversary: TRACE_
 theorem revoke_absorbing (cap : ℕ) (s : St) (ops : List Op) (id : ℕ) (hr : id ∈ s.revoked) : ∃ δ, ((sys cap).run s ops).work = s.work ++ δ ∧ ∀ e ∈ δ, e.1 ≠ id
 ~~~
 
-### 159. length_le_sum
+### 198. length_le_sum
 
 Source: ControlStack/Families/F5/Lease.lean:252 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1316,7 +1632,7 @@ Source: ControlStack/Families/F5/Lease.lean:252 | Family: UNMAPPED | Adversary: 
 theorem length_le_sum (L : List (ℕ × ℕ × ℕ)) (h : ∀ e ∈ L, 1 ≤ e.2.1) : L.length ≤ (L.map (fun e => e.2.1)).sum
 ~~~
 
-### 160. work_count_le
+### 199. work_count_le
 
 Source: ControlStack/Families/F5/Lease.lean:264 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1324,7 +1640,7 @@ Source: ControlStack/Families/F5/Lease.lean:264 | Family: UNMAPPED | Adversary: 
 theorem work_count_le (cap : ℕ) (ops : List Op) : let s
 ~~~
 
-### 161. agent_cannot_issue
+### 200. agent_cannot_issue
 
 Source: ControlStack/Families/F5/Lease.lean:282 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1332,7 +1648,7 @@ Source: ControlStack/Families/F5/Lease.lean:282 | Family: UNMAPPED | Adversary: 
 theorem agent_cannot_issue (cap : ℕ) (s : St) (o : Op) (ho : agentOp o) : (step cap s o).leases = s.leases ∧ (step cap s o).revoked = s.revoked
 ~~~
 
-### 162. revoked_worker_stays_stopped
+### 201. revoked_worker_stays_stopped
 
 Source: ControlStack/Families/F5/Lease.lean:298 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1340,7 +1656,7 @@ Source: ControlStack/Families/F5/Lease.lean:298 | Family: UNMAPPED | Adversary: 
 theorem revoked_worker_stays_stopped : let ops
 ~~~
 
-### 163. zero_cost_refused
+### 202. zero_cost_refused
 
 Source: ControlStack/Families/F5/Lease.lean:304 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1348,7 +1664,7 @@ Source: ControlStack/Families/F5/Lease.lean:304 | Family: UNMAPPED | Adversary: 
 theorem zero_cost_refused : ([Op.issue ⟨0, 0, 100⟩ 1, .work 1 0, .work 1 0].foldl (step 100) init).work = []
 ~~~
 
-### 164. fork_without_lease_accounting
+### 203. fork_without_lease_accounting
 
 Source: ControlStack/Families/F5/Lease.lean:328 | Family: F5 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1356,7 +1672,7 @@ Source: ControlStack/Families/F5/Lease.lean:328 | Family: F5 | Adversary: TRACE_
 theorem fork_without_lease_accounting : let ops
 ~~~
 
-### 165. reissue_takes_effect
+### 204. reissue_takes_effect
 
 Source: ControlStack/Families/F5/Lease.lean:335 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1364,9 +1680,599 @@ Source: ControlStack/Families/F5/Lease.lean:335 | Family: UNMAPPED | Adversary: 
 theorem reissue_takes_effect : let ops
 ~~~
 
+## ControlStack/Families/F6/DamageBound.lean
+
+### 205. val_le_const
+
+Source: ControlStack/Families/F6/DamageBound.lean:64 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_le_const (K : List (Y × O) → Y × O → ℝ) (pay : List O → ℝ) (M : ℝ) (hK0 : ∀ h z, 0 ≤ K h z) (hK1 : ∀ h, ∑ z, K h z ≤ 1) (hM : 0 ≤ M) (hpay : ∀ t, pay t ≤ M) : ∀ n h, val K pay n h ≤ M
+~~~
+
+### 206. val_mono_on
+
+Source: ControlStack/Families/F6/DamageBound.lean:84 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_mono_on (K : List (Y × O) → Y × O → ℝ) (P : List O → Prop) (pay pay' : List O → ℝ) (hK0 : ∀ h z, 0 ≤ K h z) (hP : ∀ h y o, K h (y, o) ≠ 0 → P (h.map Prod.snd) → P (h.map Prod.snd ++ [o])) (hle : ∀ t, P t → pay t ≤ pay' t) : ∀ n h, P (h.map Prod.snd) → val K pay n h ≤ val K pay' n h
+~~~
+
+### 207. val_smul
+
+Source: ControlStack/Families/F6/DamageBound.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_smul (K : List (Y × O) → Y × O → ℝ) (c : ℝ) (pay : List O → ℝ) : ∀ n h, val K (fun t => c * pay t) n h = c * val K pay n h
+~~~
+
+### 208. val_add
+
+Source: ControlStack/Families/F6/DamageBound.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_add (K : List (Y × O) → Y × O → ℝ) (p q : List O → ℝ) : ∀ n h, val K (fun t => p t + q t) n h = val K p n h + val K q n h
+~~~
+
+### 209. val_finsum
+
+Source: ControlStack/Families/F6/DamageBound.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_finsum {ι : Type} (s : Finset ι) (K : List (Y × O) → Y × O → ℝ) (f : ι → List O → ℝ) : ∀ n h, val K (fun t => ∑ j ∈ s, f j t) n h = ∑ j ∈ s, val K (f j) n h
+~~~
+
+### 210. val_det
+
+Source: ControlStack/Families/F6/DamageBound.lean:131 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_det [DecidableEq Y] [DecidableEq O] (z0 : Y × O) (pay : List O → ℝ) : ∀ n h, val (fun _ z => if z = z0 then (1 : ℝ) else 0) pay n h = pay (h.map Prod.snd ++ List.replicate n z0.2)
+~~~
+
+### 211. pre_all
+
+Source: ControlStack/Families/F6/DamageBound.lean:161 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem pre_all (g : List (AOut Unit)) (hg : (g.all fun o => !caughtFlag o) = true) : pre g = g
+~~~
+
+### 212. pre_snoc
+
+Source: ControlStack/Families/F6/DamageBound.lean:170 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem pre_snoc (g : List (AOut Unit)) (o : AOut Unit) : pre (g ++ [o]) = if (g.all fun o => !caughtFlag o) = true then (if caughtFlag o = true then g else g ++ [o]) else pre g
+~~~
+
+### 213. attacked_snoc
+
+Source: ControlStack/Families/F6/DamageBound.lean:186 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem attacked_snoc (g : List (AOut Unit)) (o : AOut Unit) (i : ℕ) (h : attacked g i = true) : attacked (g ++ [o]) i = true
+~~~
+
+### 214. attackSet_snoc
+
+Source: ControlStack/Families/F6/DamageBound.lean:196 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem attackSet_snoc {N : ℕ} (g : List (AOut Unit)) (o : AOut Unit) : attackSet (N
+~~~
+
+### 215. ucX_mono
+
+Source: ControlStack/Families/F6/DamageBound.lean:202 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem ucX_mono (N : ℕ) (g : List (AOut Unit)) (o : AOut Unit) : ucX N g ≤ ucX N (g ++ [o])
+~~~
+
+### 216. ucX_stuck
+
+Source: ControlStack/Families/F6/DamageBound.lean:210 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem ucX_stuck (N : ℕ) (g : List (AOut Unit)) (o : AOut Unit) (h : (g.all fun o => !caughtFlag o) = false ∨ caughtFlag o = true) : ucX N (g ++ [o]) = ucX N g
+~~~
+
+### 217. ucX_le
+
+Source: ControlStack/Families/F6/DamageBound.lean:220 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem ucX_le (N : ℕ) (t : List (AOut Unit)) : ucX N t ≤ N
+~~~
+
+### 218. ucX_tail
+
+Source: ControlStack/Families/F6/DamageBound.lean:225 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem ucX_tail (N : ℕ) (t : List (AOut Unit)) : (ucX N t : ℝ) = ∑ j ∈ range N, (if j + 1 ≤ ucX N t then (1 : ℝ) else 0)
+~~~
+
+### 219. sum_point
+
+Source: ControlStack/Families/F6/DamageBound.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_point (z0 : Y × AOut Unit) (F : Y × AOut Unit → ℝ) : ∑ y, ∑ o, (if (y, o) = z0 then (1 : ℝ) else 0) * F (y, o) = F z0
+~~~
+
+### 220. val_frozen
+
+Source: ControlStack/Families/F6/DamageBound.lean:257 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem val_frozen (j : ℕ) (y0 : Y) (Kx : List (Y × AOut Unit) → Y × AOut Unit → ℝ) : ∀ n h, j ≤ ucX N (h.map Prod.snd) → val (freezeK N j y0 Kx) (pX N j) n h = 1
+~~~
+
+### 221. freeze_le
+
+Source: ControlStack/Families/F6/DamageBound.lean:273 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem freeze_le (j : ℕ) (y0 : Y) (Kx : List (Y × AOut Unit) → Y × AOut Unit → ℝ) (hK0 : ∀ h z, 0 ≤ Kx h z) (hK1 : ∀ h, ∑ z, Kx h z ≤ 1) : ∀ n h, val Kx (pX N j) n h ≤ val (freezeK N j y0 Kx) (pX N j) n h
+~~~
+
+### 222. pX_le_succ
+
+Source: ControlStack/Families/F6/DamageBound.lean:291 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem pX_le_succ (j : ℕ) (y0 : Y) (Kx : List (Y × AOut Unit) → Y × AOut Unit → ℝ) (hK0 : ∀ h z, 0 ≤ Kx h z) (n : ℕ) : val (freezeK N j y0 Kx) (pX N j) n [] ≤ val (freezeK N j y0 Kx) (recallSucc (N
+~~~
+
+### 223. tail_bound
+
+Source: ControlStack/Families/F6/DamageBound.lean:328 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem tail_bound (y0 : Y) (j Bh : ℕ) (hB : Bh ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hrec : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, K S h (y, (a, (), false)) ≤ σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - r else 1)) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) (pX N j) N [] ≤ hypMiss N Bh j r
+~~~
+
+### 224. expected_uc
+
+Source: ControlStack/Families/F6/DamageBound.lean:373 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem expected_uc (y0 : Y) (Bh : ℕ) (hB : Bh ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hrec : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, K S h (y, (a, (), false)) ≤ σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - r else 1)) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) (fun t => (ucX N t : ℝ)) N [] ≤ ∑ j ∈ range N, hypMiss N Bh (j + 1) r
+~~~
+
+### 225. damage_bound
+
+Source: ControlStack/Families/F6/DamageBound.lean:394 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem damage_bound (y0 : Y) (Bh : ℕ) (hB : Bh ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hrec : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, K S h (y, (a, (), false)) ≤ σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - r else 1)) (D : ℝ) (hD : 0 ≤ D) (dmg : List (AOut Unit) → ℝ) (hdD : ∀ t, dmg t ≤ D * ucX N t) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) dmg N [] ≤ D * ∑ j ∈ range N, hypMiss N Bh (j + 1) r
+~~~
+
+### 226. damage_cap_inflight
+
+Source: ControlStack/Families/F6/DamageBound.lean:423 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem damage_cap_inflight (y0 : Y) (Bh : ℕ) (hB : Bh ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hrec : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, K S h (y, (a, (), false)) ≤ σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - r else 1)) (D F G : ℝ) (hD : 0 ≤ D) (hF : 0 ≤ F) (hG : 0 ≤ G) (dmg : List (AOut Unit) → ℝ) (hdD : ∀ t, dmg t ≤ D * ucX N t + F) (hdG : ∀ t, dmg t ≤ G) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) dmg N [] ≤ min G (D * ∑ j ∈ range N, hypMiss N Bh (j + 1) r + F)
+~~~
+
+### 227. hypMiss_one
+
+Source: ControlStack/Families/F6/DamageBound.lean:473 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem hypMiss_one (B k : ℕ) : hypMiss N B k 1 = (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ)
+~~~
+
+### 228. sum_range_choose_succ
+
+Source: ControlStack/Families/F6/DamageBound.lean:481 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_range_choose_succ (B : ℕ) : ∀ n, ∑ m ∈ range n, Nat.choose m B = Nat.choose n (B + 1)
+~~~
+
+### 229. expected_r1
+
+Source: ControlStack/Families/F6/DamageBound.lean:487 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem expected_r1 (B : ℕ) (hB : B ≤ N) : ∑ j ∈ range N, hypMiss N B (j + 1) 1 = ((N : ℝ) - B) / (B + 1)
+~~~
+
+### 230. sum_pU_eq
+
+Source: ControlStack/Families/F6/DamageBound.lean:507 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_pU_eq (B : ℕ) (X : Finset (Fin N) → ℝ) : ∑ S : Finset (Fin N), pU N B S * X S = (Nat.choose N B : ℝ)⁻¹ * ∑ S ∈ AuditBudget.randomSchedules N B, X S
+~~~
+
+### 231. count_mem
+
+Source: ControlStack/Families/F6/DamageBound.lean:515 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem count_mem (B : ℕ) (hB1 : 1 ≤ B) (a : Fin N) : ((AuditBudget.randomSchedules N B).filter (fun S => a ∈ S)).card = Nat.choose (N - 1) (B - 1)
+~~~
+
+### 232. hyp_step
+
+Source: ControlStack/Families/F6/DamageBound.lean:529 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem hyp_step (B k : ℕ) (hB : B ≤ N) (hk : k < N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) : hypMiss N B (k + 1) r ≤ (1 - r * B / N) * hypMiss N B k r
+~~~
+
+### 233. hypMiss_zero
+
+Source: ControlStack/Families/F6/DamageBound.lean:645 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem hypMiss_zero (B : ℕ) (hB : B ≤ N) (r : ℝ) : hypMiss N B 0 r = 1
+~~~
+
+### 234. hyp_geom
+
+Source: ControlStack/Families/F6/DamageBound.lean:651 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem hyp_geom (B : ℕ) (hB : B ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) : ∀ k, k ≤ N → hypMiss N B k r ≤ (1 - r * B / N) ^ k
+~~~
+
+### 235. expected_geom
+
+Source: ControlStack/Families/F6/DamageBound.lean:672 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem expected_geom (B : ℕ) (hB : B ≤ N) (hB0 : 0 < B) (r : ℝ) (hr0 : 0 < r) (hr1 : r ≤ 1) : ∑ j ∈ range N, hypMiss N B (j + 1) r ≤ ((N : ℝ) - r * B) / (r * B)
+~~~
+
+### 236. no_halt_damage
+
+Source: ControlStack/Families/F6/DamageBound.lean:708 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_damage (N : ℕ) (D : ℝ) : val (fun (_ : List (Unit × AOut Unit)) z => if z = ((), ((true, (), true) : AOut Unit)) then (1 : ℝ) else 0) (fun t => D * (attackSet (N
+~~~
+
+### 237. no_cap_damage
+
+Source: ControlStack/Families/F6/DamageBound.lean:732 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_cap_damage (M : ℝ) : val (fun (_ : List (Unit × AOut Unit)) z => if z = ((), ((true, (), false) : AOut Unit)) then (1 : ℝ) else 0) (fun t => M * ucX 1 t) 1 [] = M
+~~~
+
+### 238. example_r1
+
+Source: ControlStack/Families/F6/DamageBound.lean:745 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem example_r1 : ∑ j ∈ range 100, hypMiss 100 10 (j + 1) 1 = 90 / 11
+~~~
+
+### 239. example_r_half
+
+Source: ControlStack/Families/F6/DamageBound.lean:749 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem example_r_half : ∑ j ∈ range 100, hypMiss 100 10 (j + 1) (1 / 2) ≤ 19
+~~~
+
+## ControlStack/Families/F6/ReservedAudit.lean
+
+### 240. pU_nonneg
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:70 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem pU_nonneg (N B : ℕ) (S : Finset (Fin N)) : 0 ≤ pU N B S
+~~~
+
+### 241. reserved_leak_bound_all
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:76 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reserved_leak_bound_all (k B : ℕ) (hB : B ≤ N) (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ) (hK0 : ∀ S h z, 0 ≤ K S h z) (hdom : ∀ S h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o) (hK1 : ∀ S h, ∑ z, K S h z ≤ 1) (hcl0 : ∀ g o, 0 ≤ cl g o) : ∑ S : Finset (Fin N), pU N B S * val (K S) (successInd k S) N [] ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) * mass (dropStop caughtFlag cl) N []
+~~~
+
+### 242. reserved_leak_bound
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:114 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reserved_leak_bound (k B : ℕ) (hB : B ≤ N) (K : Finset (Fin N) → List (Y × AOut Z) → Y × AOut Z → ℝ) (cl : List (AOut Z) → AOut Z → ℝ) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h, ∑ z, K S h z ≤ 1) (hdom : ∀ S, S ∈ AuditBudget.randomSchedules N B → ∀ h o, o.2.2 = false → ∑ y, K S h (y, o) ≤ cl (h.map Prod.snd) o) (hcl0 : ∀ g o, 0 ≤ cl g o) : ∑ S : Finset (Fin N), pU N B S * val (K S) (successInd k S) N [] ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) * mass (dropStop caughtFlag cl) N []
+~~~
+
+### 243. reserved_adaptive
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:157 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reserved_adaptive (k Bh : ℕ) (hB : Bh ≤ N) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hmarg : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, ∑ c : Bool, K S h (y, (a, (), c)) ≤ σ (h.map Prod.snd) a) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) (successInd k S) N [] ≤ (Nat.choose (N - k) Bh : ℝ) / (Nat.choose N Bh : ℝ)
+~~~
+
+### 244. flagRun_inv
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:202 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem flagRun_inv (Bf : ℕ) (fs : List Bool) (st : ℕ × ℕ) (h : st.2 = min st.1 Bf) : (fs.foldl (flagStep Bf) st).2 = min (fs.foldl (flagStep Bf) st).1 Bf
+~~~
+
+### 245. flagRun_audits_le
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:215 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem flagRun_audits_le (Bf : ℕ) (fs : List Bool) : (flagRun Bf fs).2 ≤ Bf
+~~~
+
+### 246. reservedK_nonneg
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:229 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reservedK_nonneg (Bf : ℕ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (φ : Finset (Fin N) → List (Bool × AOut Unit) → Bool → Bool → ℝ) (hφ : ∀ S h a, IsDist (φ S h a)) (S : Finset (Fin N)) (h : List (Bool × AOut Unit)) (z : Bool × AOut Unit) : 0 ≤ reservedK Bf σ φ S h z
+~~~
+
+### 247. sum_ite_bool
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:235 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_ite_bool (e : Bool) : ∑ c : Bool, (if c = e then (1 : ℝ) else 0) = 1
+~~~
+
+### 248. reservedK_sum_c
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:239 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reservedK_sum_c (Bf : ℕ) (σ : List (AOut Unit) → Bool → ℝ) (φ : Finset (Fin N) → List (Bool × AOut Unit) → Bool → Bool → ℝ) (S : Finset (Fin N)) (h : List (Bool × AOut Unit)) (y a : Bool) : ∑ c : Bool, reservedK Bf σ φ S h (y, (a, (), c)) = σ (h.map Prod.snd) a * φ S h a y
+~~~
+
+### 249. reservedK_sum
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:247 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reservedK_sum (Bf : ℕ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (φ : Finset (Fin N) → List (Bool × AOut Unit) → Bool → Bool → ℝ) (hφ : ∀ S h a, IsDist (φ S h a)) (S : Finset (Fin N)) (h : List (Bool × AOut Unit)) : ∑ z, reservedK Bf σ φ S h z ≤ 1
+~~~
+
+### 250. reserved_policy_bound
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:261 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reserved_policy_bound (k Bh Bf : ℕ) (hB : Bh ≤ N) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (φ : Finset (Fin N) → List (Bool × AOut Unit) → Bool → Bool → ℝ) (hφ : ∀ S h a, IsDist (φ S h a)) : ∑ S : Finset (Fin N), pU N Bh S * val (reservedK Bf σ φ S) (successInd k S) N [] ≤ (Nat.choose (N - k) Bh : ℝ) / (Nat.choose N Bh : ℝ)
+~~~
+
+### 251. flag_audits_le
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:281 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem flag_audits_le (Bf : ℕ) (flags : Fin N → Bool) : (univ.filter (fun i => Necessity.audited Bf flags i = true)).card ≤ Bf
+~~~
+
+### 252. reserved_total_le
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:308 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reserved_total_le (Bh Bf : ℕ) (S : Finset (Fin N)) (hS : S.card = Bh) (flags : Fin N → Bool) : (S ∪ univ.filter (fun i => Necessity.audited Bf flags i = true)).card ≤ Bh + Bf
+~~~
+
+### 253. sum_pU
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:326 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_pU (B : ℕ) (hB : B ≤ N) : ∑ S : Finset (Fin N), pU N B S = 1
+~~~
+
+### 254. sum_pU_disjoint
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:332 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_pU_disjoint (B k : ℕ) (A : Finset (Fin N)) (hA : A.card = k) : ∑ S : Finset (Fin N), pU N B S * (if Disjoint S A then 1 else 0) = (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ)
+~~~
+
+### 255. missRecall_const
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:346 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem missRecall_const (B : ℕ) (A : Finset (Fin N)) (r : ℝ) : missRecall B A (fun _ => r) = ∑ S : Finset (Fin N), pU N B S * (1 - r) ^ (S ∩ A).card
+~~~
+
+### 256. recall_miss_le
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:354 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem recall_miss_le (B k : ℕ) (hB : B ≤ N) (A : Finset (Fin N)) (hA : A.card = k) (r : ℝ) (rec : Fin N → ℝ) (hr0 : 0 ≤ r) (hrec : ∀ i, r ≤ rec i ∧ rec i ≤ 1) : missRecall B A rec ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) + (1 - (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ)) * (1 - r)
+~~~
+
+### 257. observable_reserved_nogo
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:392 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem observable_reserved_nogo {N Bh k : ℕ} (S : Finset (Fin N)) (hS : S.card = Bh) (hk : k ≤ N - Bh) : ∃ A : Finset (Fin N), A.card = k ∧ Disjoint S A
+~~~
+
+### 258. observable_and_exhausted
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:400 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem observable_and_exhausted : Disjoint ({0} : Finset (Fin 4)) {2, 3} ∧ ∀ i ∈ ({2, 3} : Finset (Fin 4)), Necessity.audited 1 (fun _ => true) i = false
+~~~
+
+### 259. recall_zero_vacuous
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:407 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem recall_zero_vacuous {N : ℕ} (B k : ℕ) (hB : B ≤ N) (A : Finset (Fin N)) : missRecall B A (fun _ => 0) = 1 ∧ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) + (1 - (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ)) * (1 - 0) = 1
+~~~
+
+### 260. reserved_example
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:419 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reserved_example (Bf : ℕ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (φ : Finset (Fin 100) → List (Bool × AOut Unit) → Bool → Bool → ℝ) (hφ : ∀ S h a, IsDist (φ S h a)) : ∑ S : Finset (Fin 100), pU 100 10 S * val (reservedK Bf σ φ S) (successInd 5 S) 100 [] ≤ (10104934117421 : ℝ) / 17310309456440
+~~~
+
+### 261. recall_example
+
+Source: ControlStack/Families/F6/ReservedAudit.lean:429 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem recall_example (A : Finset (Fin 100)) (hA : A.card = 5) (rec : Fin 100 → ℝ) (hrec : ∀ i, 1 / 2 ≤ rec i ∧ rec i ≤ 1) : missRecall 10 A rec ≤ ((10104934117421 : ℝ) / 17310309456440 + 1) / 2
+~~~
+
+## ControlStack/Families/F6/ReservedRecall.lean
+
+### 262. count_inter
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:53 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem count_inter (B k j : ℕ) (A : Finset (Fin N)) (hA : A.card = k) (hj : j ≤ B) : ((AuditBudget.randomSchedules N B).filter (fun S => (S ∩ A).card = j)).card = Nat.choose k j * Nat.choose (N - k) (B - j)
+~~~
+
+### 263. hypMiss_nonneg
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem hypMiss_nonneg (N B k : ℕ) (r : ℝ) (hr1 : r ≤ 1) : 0 ≤ hypMiss N B k r
+~~~
+
+### 264. missRecall_closed
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:116 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem missRecall_closed (B k : ℕ) (A : Finset (Fin N)) (hA : A.card = k) (r : ℝ) : missRecall B A (fun _ => r) = hypMiss N B k r
+~~~
+
+### 265. missRecall_anti
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:141 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem missRecall_anti (B : ℕ) (A A' : Finset (Fin N)) (hAA : A ⊆ A') (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) : missRecall B A' (fun _ => r) ≤ missRecall B A (fun _ => r)
+~~~
+
+### 266. miss_ge_k
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:150 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem miss_ge_k (B k : ℕ) (A : Finset (Fin N)) (hA : k ≤ A.card) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) : missRecall B A (fun _ => r) ≤ hypMiss N B k r
+~~~
+
+### 267. hypMiss_le_two_term
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:157 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem hypMiss_le_two_term (B k : ℕ) (hB : B ≤ N) (hk : k ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) : hypMiss N B k r ≤ (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ) + (1 - (Nat.choose (N - k) B : ℝ) / (Nat.choose N B : ℝ)) * (1 - r)
+~~~
+
+### 268. cval_factor
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:175 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem cval_factor (c f : List O → O → ℝ) (Φ : List O → ℝ) (B : List O → ℝ) (hΦ : ∀ g o, Φ (g ++ [o]) = Φ g * f g o) : ∀ n g, Φ g * cval (fun g o => c g o * f g o) B n g = cval c (fun t => B t * Φ t) n g
+~~~
+
+### 269. term_snoc
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:207 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem term_snoc (r : ℝ) (S : Finset (Fin N)) (g : List (AOut Unit)) (o : AOut Unit) (j : Fin N) : (if j ∈ S ∧ attNC (g ++ [o]) j = true then 1 - r else 1) = (if j ∈ S ∧ attNC g j = true then 1 - r else 1) * (if (j : ℕ) = g.length ∧ j ∈ S ∧ (o.1 = true ∧ o.2.2 = false) then 1 - r else 1)
+~~~
+
+### 270. prod_single_fac
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:230 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem prod_single_fac (r : ℝ) (S : Finset (Fin N)) (g : List (AOut Unit)) (o : AOut Unit) : ∏ j : Fin N, (if (j : ℕ) = g.length ∧ j ∈ S ∧ (o.1 = true ∧ o.2.2 = false) then 1 - r else 1) = fac r S g o
+~~~
+
+### 271. phi_snoc
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem phi_snoc (r : ℝ) (S : Finset (Fin N)) (g : List (AOut Unit)) (o : AOut Unit) : phi r S (g ++ [o]) = phi r S g * fac r S g o
+~~~
+
+### 272. phi_nil
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:257 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem phi_nil (r : ℝ) (S : Finset (Fin N)) : phi r S [] = 1
+~~~
+
+### 273. phi_live
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:261 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem phi_live (r : ℝ) (S : Finset (Fin N)) (t : List (AOut Unit)) (hl : (t.all fun o => !caughtFlag o) = true) : phi r S t = (1 - r) ^ (S ∩ attackSet (N
+~~~
+
+### 274. adaptive_recall_bound
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:292 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem adaptive_recall_bound {Y : Type} [Fintype Y] (k Bh : ℕ) (_hB : Bh ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hrec : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, K S h (y, (a, (), false)) ≤ σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - r else 1)) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) (recallSucc (N
+~~~
+
+### 275. adaptive_recall_two_term
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:377 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem adaptive_recall_two_term {Y : Type} [Fintype Y] (k Bh : ℕ) (hB : Bh ≤ N) (hk : k ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) (hK0 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h z, 0 ≤ K S h z) (hK1 : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h, ∑ z, K S h z ≤ 1) (hrec : ∀ S, S ∈ AuditBudget.randomSchedules N Bh → ∀ h (a : Bool), ∑ y, K S h (y, (a, (), false)) ≤ σ (h.map Prod.snd) a * (if memN S (h.map Prod.snd).length ∧ a = true then 1 - r else 1)) : ∑ S : Finset (Fin N), pU N Bh S * val (K S) (recallSucc (N
+~~~
+
+### 276. recall_instance_bound
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:402 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem recall_instance_bound (k Bh : ℕ) (hB : Bh ≤ N) (r : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) : ∑ S : Finset (Fin N), pU N Bh S * val (recallK r σ S) (recallSucc (N
+~~~
+
+### 277. recall_example
+
+Source: ControlStack/Families/F6/ReservedRecall.lean:424 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem recall_example (σ : List (AOut Unit) → Bool → ℝ) (hσ : ∀ g, IsDist (σ g)) : ∑ S : Finset (Fin 100), pU 100 10 S * val (recallK (1 / 2) σ S) (recallSucc (N
+~~~
+
 ## ControlStack/GateComposition.lean
 
-### 166. shared_invariants
+### 278. shared_invariants
 
 Source: ControlStack/GateComposition.lean:18 | Family: F8 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1374,7 +2280,7 @@ Source: ControlStack/GateComposition.lean:18 | Family: F8 | Adversary: TRACE_ARB
 theorem shared_invariants {S A : Type} (P Q : S → Prop) (step : S → A → S) (s : S) (actions : List A) (hJoint : ∀ (x : S) (a : A), P x → Q x → P (step x a) ∧ Q (step x a)) (h : P s ∧ Q s) : P (run step s actions) ∧ Q (run step s actions)
 ~~~
 
-### 167. confused_deputy_counterexample
+### 279. confused_deputy_counterexample
 
 Source: ControlStack/GateComposition.lean:45 | Family: F8 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1384,7 +2290,7 @@ theorem confused_deputy_counterexample : (unsafeDeputyStep { gateAApproved
 
 ## ControlStack/GatewayCore.lean
 
-### 168. frozen
+### 280. frozen
 
 Source: ControlStack/GatewayCore.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1392,7 +2298,7 @@ Source: ControlStack/GatewayCore.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN
 lemma frozen (valid : (c : Fin C) → R → Option (S c)) (st : GSt S slots) (v : View S slots) (h : st.snap = some v) (tr : List (Ev C R)) : runG valid st tr = st
 ~~~
 
-### 169. close_freezes
+### 281. close_freezes
 
 Source: ControlStack/GatewayCore.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1400,7 +2306,7 @@ Source: ControlStack/GatewayCore.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem close_freezes (valid : (c : Fin C) → R → Option (S c)) (pre post : List (Ev C R)) : finalView (runG valid (init (S
 ~~~
 
-### 170. blanked_stays
+### 282. blanked_stays
 
 Source: ControlStack/GatewayCore.lean:101 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1408,7 +2314,7 @@ Source: ControlStack/GatewayCore.lean:101 | Family: UNMAPPED | Adversary: UNKNOW
 lemma blanked_stays (valid : (c : Fin C) → R → Option (S c)) (st : GSt S slots) (hb : st.blanked = true) (hs : st.snap = none ∨ st.snap = some nullView) (tr : List (Ev C R)) : (runG valid st tr).blanked = true ∧ ((runG valid st tr).snap = none ∨ (runG valid st tr).snap = some nullView)
 ~~~
 
-### 171. finalView_blanked
+### 283. finalView_blanked
 
 Source: ControlStack/GatewayCore.lean:144 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1416,7 +2322,7 @@ Source: ControlStack/GatewayCore.lean:144 | Family: UNMAPPED | Adversary: UNKNOW
 lemma finalView_blanked (st : GSt S slots) (hb : st.blanked = true) (hs : st.snap = none ∨ st.snap = some nullView) : finalView st = nullView
 ~~~
 
-### 172. refusal_blanks
+### 284. refusal_blanks
 
 Source: ControlStack/GatewayCore.lean:152 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1424,7 +2330,7 @@ Source: ControlStack/GatewayCore.lean:152 | Family: UNMAPPED | Adversary: UNKNOW
 theorem refusal_blanks (valid : (c : Fin C) → R → Option (S c)) (pre post : List (Ev C R)) (e : Ev C R) (hpre : (runG valid (init (S
 ~~~
 
-### 173. other_blanks
+### 285. other_blanks
 
 Source: ControlStack/GatewayCore.lean:184 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1432,7 +2338,7 @@ Source: ControlStack/GatewayCore.lean:184 | Family: UNMAPPED | Adversary: UNKNOW
 theorem other_blanks (valid : (c : Fin C) → R → Option (S c)) (pre post : List (Ev C R)) (hpre : (runG valid (init (S
 ~~~
 
-### 174. card_prefixes
+### 286. card_prefixes
 
 Source: ControlStack/GatewayCore.lean:200 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1440,7 +2346,7 @@ Source: ControlStack/GatewayCore.lean:200 | Family: UNMAPPED | Adversary: UNKNOW
 theorem card_prefixes [∀ c, Fintype (S c)] [∀ c, DecidableEq (S c)] : Fintype.card (Prefixes S slots) = viewSpace slots (fun c => Fintype.card (S c))
 ~~~
 
-### 175. viewOf_reachable
+### 287. viewOf_reachable
 
 Source: ControlStack/GatewayCore.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1448,7 +2354,7 @@ Source: ControlStack/GatewayCore.lean:212 | Family: UNMAPPED | Adversary: UNKNOW
 lemma viewOf_reachable (st : GSt S slots) (h : ∀ c, (st.buf c).length ≤ slots c) : viewOf st ∈ Set.range (embedAll (S
 ~~~
 
-### 176. gstep_inv
+### 288. gstep_inv
 
 Source: ControlStack/GatewayCore.lean:217 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1456,7 +2362,7 @@ Source: ControlStack/GatewayCore.lean:217 | Family: UNMAPPED | Adversary: UNKNOW
 lemma gstep_inv (valid : (c : Fin C) → R → Option (S c)) (st : GSt S slots) (e : Ev C R) (h : Inv st) : Inv (gstep valid st e)
 ~~~
 
-### 177. runG_inv
+### 289. runG_inv
 
 Source: ControlStack/GatewayCore.lean:247 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1464,7 +2370,7 @@ Source: ControlStack/GatewayCore.lean:247 | Family: UNMAPPED | Adversary: UNKNOW
 lemma runG_inv (valid : (c : Fin C) → R → Option (S c)) (tr : List (Ev C R)) (st : GSt S slots) (h : Inv st) : Inv (runG valid st tr)
 ~~~
 
-### 178. view_reachable
+### 290. view_reachable
 
 Source: ControlStack/GatewayCore.lean:254 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1472,7 +2378,7 @@ Source: ControlStack/GatewayCore.lean:254 | Family: UNMAPPED | Adversary: UNKNOW
 theorem view_reachable (valid : (c : Fin C) → R → Option (S c)) (tr : List (Ev C R)) : finalView (runG valid (init (S
 ~~~
 
-### 179. core_bound
+### 291. core_bound
 
 Source: ControlStack/GatewayCore.lean:265 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1480,7 +2386,7 @@ Source: ControlStack/GatewayCore.lean:265 | Family: UNMAPPED | Adversary: UNKNOW
 theorem core_bound {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M] [Fintype R] [∀ c, Fintype (S c)] [∀ c, DecidableEq (S c)] [Fintype (Ev C R)] (valid : (c : Fin C) → R → Option (S c)) (L : ℕ) (ρ : Ω → ℝ) (enc : Ω → M → (Fin L → Ev C R) → ℝ) (dec : Ω → View S slots → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : (∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, ∑ tr, enc ω m tr * dec ω (finalView (runG valid (init (S
 ~~~
 
-### 180. sc01_episode_views
+### 292. sc01_episode_views
 
 Source: ControlStack/GatewayCore.lean:297 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1490,7 +2396,7 @@ theorem sc01_episode_views : viewSpace (C
 
 ## ControlStack/GatewayModel.lean
 
-### 181. blank_absorbing
+### 293. blank_absorbing
 
 Source: ControlStack/GatewayModel.lean:47 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1498,7 +2404,7 @@ Source: ControlStack/GatewayModel.lean:47 | Family: UNMAPPED | Adversary: UNKNOW
 theorem blank_absorbing {R S : Type} (valid : R → Option S) (slots : ℕ) (tr : List (Act R)) (st : St S) (h : st.blanked = true) : (tr.foldl (step valid slots) st).blanked = true
 ~~~
 
-### 182. other_blanks
+### 294. other_blanks
 
 Source: ControlStack/GatewayModel.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1506,7 +2412,7 @@ Source: ControlStack/GatewayModel.lean:61 | Family: UNMAPPED | Adversary: UNKNOW
 theorem other_blanks {R S : Type} (valid : R → Option S) (slots : ℕ) (pre post : List (Act R)) : deliver slots (run valid slots (pre ++ Act.other :: post)) = fun _ => none
 ~~~
 
-### 183. push_dist
+### 295. push_dist
 
 Source: ControlStack/GatewayModel.lean:74 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1514,7 +2420,7 @@ Source: ControlStack/GatewayModel.lean:74 | Family: UNMAPPED | Adversary: UNKNOW
 theorem push_dist {T V : Type} [Fintype T] [Fintype V] [DecidableEq V] (f : T → V) (p : T → ℝ) (hp : IsDist p) : IsDist (push f p)
 ~~~
 
-### 184. gateway_bound
+### 296. gateway_bound
 
 Source: ControlStack/GatewayModel.lean:84 | Family: F2 | Adversary: SHARED_SEED | Status: PROVED_RECORDED
 
@@ -1522,7 +2428,7 @@ Source: ControlStack/GatewayModel.lean:84 | Family: F2 | Adversary: SHARED_SEED 
 theorem gateway_bound {Ω M R S : Type} [Fintype Ω] [Fintype M] [Nonempty M] [Fintype R] [Fintype S] [DecidableEq S] (valid : R → Option S) (slots L : ℕ) (ρ : Ω → ℝ) (enc : Ω → M → (Fin L → Act R) → ℝ) (dec : Ω → (Fin slots → Option S) → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : (∑ ω, ρ ω * ((Fintype.card M : ℝ)⁻¹ * ∑ m, ∑ tr, enc ω m tr * dec ω (deliver slots (run valid slots (List.ofFn tr))) m)) ≤ ((Fintype.card S : ℝ) + 1) ^ slots / (Fintype.card M : ℝ)
 ~~~
 
-### 185. buf_le
+### 297. buf_le
 
 Source: ControlStack/GatewayModel.lean:111 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1530,7 +2436,7 @@ Source: ControlStack/GatewayModel.lean:111 | Family: UNMAPPED | Adversary: UNKNO
 theorem buf_le {R S : Type} (valid : R → Option S) (slots : ℕ) (tr : List (Act R)) (st : St S) (h : st.buf.length ≤ slots) : (tr.foldl (step valid slots) st).buf.length ≤ slots
 ~~~
 
-### 186. deliver_eq_embed
+### 298. deliver_eq_embed
 
 Source: ControlStack/GatewayModel.lean:138 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1538,7 +2444,7 @@ Source: ControlStack/GatewayModel.lean:138 | Family: UNMAPPED | Adversary: UNKNO
 theorem deliver_eq_embed {S : Type} (slots : ℕ) (st : St S) (h : st.buf.length ≤ slots) : deliver slots st = embedPrefix slots (toPrefix slots st h)
 ~~~
 
-### 187. gateway_bound_reachable
+### 299. gateway_bound_reachable
 
 Source: ControlStack/GatewayModel.lean:153 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1548,7 +2454,7 @@ theorem gateway_bound_reachable {Ω M R S : Type} [Fintype Ω] [Fintype M] [None
 
 ## ControlStack/HaltLiveness.lean
 
-### 188. run_append
+### 300. run_append
 
 Source: ControlStack/HaltLiveness.lean:18 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1556,7 +2462,7 @@ Source: ControlStack/HaltLiveness.lean:18 | Family: UNMAPPED | Adversary: UNKNOW
 theorem run_append {St Op Eff : Type} (G : System St Op Eff) (s : St) (before after : List Op) : G.run s (before ++ after) = G.run (G.run s before) after
 ~~~
 
-### 189. delivered_halt_absorbs
+### 301. delivered_halt_absorbs
 
 Source: ControlStack/HaltLiveness.lean:24 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1564,7 +2470,7 @@ Source: ControlStack/HaltLiveness.lean:24 | Family: F3 | Adversary: TRACE_ARBITR
 theorem delivered_halt_absorbs {St Op Eff : Type} (G : System St Op Eff) (sh : St × Bool) (rest : List (HOp Op)) : (withHalt G).run sh (.halt :: rest) = (sh.1, true)
 ~~~
 
-### 190. liveness_if_delivered
+### 302. liveness_if_delivered
 
 Source: ControlStack/HaltLiveness.lean:40 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1572,7 +2478,7 @@ Source: ControlStack/HaltLiveness.lean:40 | Family: F3 | Adversary: TRACE_ARBITR
 theorem liveness_if_delivered {St Op Eff : Type} (G : System St Op Eff) (s : St) (n : Nat) (ops : List (HOp Op)) (h : DeliveredWithin n ops) : ((withHalt G).run (s, false) ops).2 = true
 ~~~
 
-### 191. effects_frozen_after_delivered_halt
+### 303. effects_frozen_after_delivered_halt
 
 Source: ControlStack/HaltLiveness.lean:51 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1580,7 +2486,7 @@ Source: ControlStack/HaltLiveness.lean:51 | Family: F3 | Adversary: TRACE_ARBITR
 theorem effects_frozen_after_delivered_halt {St Op Eff : Type} (G : System St Op Eff) (s : St) (before after : List (HOp Op)) : (withHalt G).effects ((withHalt G).run (s, false) (before ++ (.halt :: after))) = (withHalt G).effects ((withHalt G).run (s, false) before)
 ~~~
 
-### 192. ordinary_operations_never_halt
+### 304. ordinary_operations_never_halt
 
 Source: ControlStack/HaltLiveness.lean:62 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1590,7 +2496,7 @@ theorem ordinary_operations_never_halt {St Op Eff : Type} (G : System St Op Eff)
 
 ## ControlStack/HoneypotBridgeProof.lean
 
-### 193. honeypotPasses_step
+### 305. honeypotPasses_step
 
 Source: ControlStack/HoneypotBridgeProof.lean:34 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1598,7 +2504,7 @@ Source: ControlStack/HoneypotBridgeProof.lean:34 | Family: UNMAPPED | Adversary:
 theorem honeypotPasses_step {X Z : Type} (H : ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (n k : ℕ) : Pr[= k | honeypotPasses H M D (n + 1)] = Pr[= true | H >>= M >>= D] * Pr[= k | (fun a => a + 1) <$> honeypotPasses H M D n] + Pr[= false | H >>= M >>= D] * Pr[= k | honeypotPasses H M D n]
 ~~~
 
-### 194. honeypotPasses_probOutput
+### 306. honeypotPasses_probOutput
 
 Source: ControlStack/HoneypotBridgeProof.lean:42 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1606,7 +2512,7 @@ Source: ControlStack/HoneypotBridgeProof.lean:42 | Family: UNMAPPED | Adversary:
 theorem honeypotPasses_probOutput {X Z : Type} (H : ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (n k : ℕ) : Pr[= k | honeypotPasses H M D n] = (n.choose k : ENNReal) * Pr[= true | H >>= M >>= D] ^ k * Pr[= false | H >>= M >>= D] ^ (n - k)
 ~~~
 
-### 195. bridge
+### 307. bridge
 
 Source: ControlStack/HoneypotBridgeProof.lean:76 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1616,7 +2522,7 @@ theorem bridge : BridgeClaim
 
 ## ControlStack/LifetimeLedger.lean
 
-### 196. pr_append_one
+### 308. pr_append_one
 
 Source: ControlStack/LifetimeLedger.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1624,7 +2530,7 @@ Source: ControlStack/LifetimeLedger.lean:61 | Family: UNMAPPED | Adversary: UNKN
 lemma pr_append_one (ℓ ℓ' : L) (k : ℕ) (adm : List (L × ℕ)) : pr ℓ' (adm ++ [(ℓ, k)]) = pr ℓ' adm * (if ℓ = ℓ' then k else 1)
 ~~~
 
-### 197. step_inv
+### 309. step_inv
 
 Source: ControlStack/LifetimeLedger.lean:69 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1632,7 +2538,7 @@ Source: ControlStack/LifetimeLedger.lean:69 | Family: UNMAPPED | Adversary: UNKN
 lemma step_inv (cap : ℕ) (s : Option (L → ℕ)) (adm : List (L × ℕ)) (e : Ev L) (he : ¬ e.isRestore) (h : Inv cap (s, adm)) : Inv cap ((step cap s e).1, adm ++ (step cap s e).2.toList)
 ~~~
 
-### 198. run_inv
+### 310. run_inv
 
 Source: ControlStack/LifetimeLedger.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1640,7 +2546,7 @@ Source: ControlStack/LifetimeLedger.lean:100 | Family: UNMAPPED | Adversary: UNK
 lemma run_inv (cap : ℕ) : ∀ (es : List (Ev L)) (st : Option (L → ℕ) × List (L × ℕ)), (∀ e ∈ es, ¬ e.isRestore) → Inv cap st → Inv cap (run cap st es) | [], st, _, h => h | e :: es, (s, adm), hes, h => by simp only [run] exact run_inv cap es _ (fun e' he' => hes e' (List.mem_cons_of_mem e he')) (step_inv cap s adm e (hes e List.mem_cons_self) h) theorem ledger_safe (cap : ℕ) (hcap : 1 ≤ cap) (es : List (Ev L)) (hes : ∀ e ∈ es, ¬ e.isRestore) (ℓ : L) : pr ℓ (run cap (some (fun _ => 1), []) es).2 ≤ cap
 ~~~
 
-### 199. ledger_safe
+### 311. ledger_safe
 
 Source: ControlStack/LifetimeLedger.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1648,7 +2554,7 @@ Source: ControlStack/LifetimeLedger.lean:110 | Family: UNMAPPED | Adversary: UNK
 theorem ledger_safe (cap : ℕ) (hcap : 1 ≤ cap) (es : List (Ev L)) (hes : ∀ e ∈ es, ¬ e.isRestore) (ℓ : L) : pr ℓ (run cap (some (fun _ => 1), []) es).2 ≤ cap
 ~~~
 
-### 200. restore_breaks
+### 312. restore_breaks
 
 Source: ControlStack/LifetimeLedger.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1656,7 +2562,7 @@ Source: ControlStack/LifetimeLedger.lean:118 | Family: UNMAPPED | Adversary: UNK
 theorem restore_breaks (cap : ℕ) (hcap : 2 ≤ cap) (ℓ : L) : cap < pr ℓ (run cap (some (fun _ => 1), []) [.charge ℓ cap, .restore (fun _ => 1), .charge ℓ cap]).2
 ~~~
 
-### 201. lifetime_secret_bound
+### 313. lifetime_secret_bound
 
 Source: ControlStack/LifetimeLedger.lean:128 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1666,7 +2572,7 @@ theorem lifetime_secret_bound {Ω M : Type} [Fintype Ω] [Fintype M] [Nonempty M
 
 ## ControlStack/MultiStep.lean
 
-### 202. V_zero
+### 314. V_zero
 
 Source: ControlStack/MultiStep.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1674,7 +2580,7 @@ Source: ControlStack/MultiStep.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN |
 @[simp] theorem V_zero {A : Type} [Fintype A] (π κ : List A → A → ℝ) (h : List A) : V π κ 0 h = 1
 ~~~
 
-### 203. V_succ
+### 315. V_succ
 
 Source: ControlStack/MultiStep.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1682,7 +2588,7 @@ Source: ControlStack/MultiStep.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem V_succ {A : Type} [Fintype A] (π κ : List A → A → ℝ) (k : ℕ) (h : List A) : V π κ (k + 1) h = ∑ a, π h a * (1 - κ h a) * V π κ k (h ++ [a])
 ~~~
 
-### 204. survival_bounds
+### 316. survival_bounds
 
 Source: ControlStack/MultiStep.lean:54 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1690,7 +2596,7 @@ Source: ControlStack/MultiStep.lean:54 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem survival_bounds {A : Type} [Fintype A] (π κ : List A → A → ℝ) (hπ : IsPolicy π) (hκ : IsMonitor κ) (k : ℕ) (h : List A) : 0 ≤ V π κ k h ∧ V π κ k h ≤ 1
 ~~~
 
-### 205. survival_le
+### 317. survival_le
 
 Source: ControlStack/MultiStep.lean:74 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1698,7 +2604,7 @@ Source: ControlStack/MultiStep.lean:74 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem survival_le {A : Type} [Fintype A] (π κ : List A → A → ℝ) (hπ : IsPolicy π) (hκ : IsMonitor κ) (c : ℝ) (hc1 : c ≤ 1) (hcκ : ∀ h a, c ≤ κ h a) (k : ℕ) (h : List A) : V π κ k h ≤ (1 - c) ^ k
 ~~~
 
-### 206. survival_const
+### 318. survival_const
 
 Source: ControlStack/MultiStep.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1706,7 +2612,7 @@ Source: ControlStack/MultiStep.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem survival_const {A : Type} [Fintype A] (π : List A → A → ℝ) (hπ : IsPolicy π) (c : ℝ) (k : ℕ) (h : List A) : V π (fun _ _ => c) k h = (1 - c) ^ k
 ~~~
 
-### 207. V_never
+### 319. V_never
 
 Source: ControlStack/MultiStep.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1714,7 +2620,7 @@ Source: ControlStack/MultiStep.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem V_never {A : Type} [Fintype A] (π : List A → A → ℝ) (hπ : IsPolicy π) (k : ℕ) (h : List A) : V π (fun _ _ => 0) k h = 1
 ~~~
 
-### 208. V_always
+### 320. V_always
 
 Source: ControlStack/MultiStep.lean:109 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1722,7 +2628,7 @@ Source: ControlStack/MultiStep.lean:109 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem V_always {A : Type} [Fintype A] (π : List A → A → ℝ) (k : ℕ) (h : List A) : V π (fun _ _ => 1) (k + 1) h = 0
 ~~~
 
-### 209. seeded_marginal
+### 321. seeded_marginal
 
 Source: ControlStack/MultiStep.lean:125 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1730,7 +2636,7 @@ Source: ControlStack/MultiStep.lean:125 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem seeded_marginal {A : Type} (c : ℝ) (h : List A) (a : A) : seededMarginal c h a = c
 ~~~
 
-### 210. seeded_survival
+### 322. seeded_survival
 
 Source: ControlStack/MultiStep.lean:129 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1738,7 +2644,7 @@ Source: ControlStack/MultiStep.lean:129 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem seeded_survival {A : Type} [Fintype A] (c : ℝ) (π : List A → A → ℝ) (hπ : IsPolicy π) (k : ℕ) (hk : 1 ≤ k) (h : List A) : V π (seededκ true) k h = 0 ∧ V π (seededκ false) k h = 1 ∧ seededSurvival c π k h = 1 - c
 ~~~
 
-### 211. pow_lt_self_of_two_le
+### 323. pow_lt_self_of_two_le
 
 Source: ControlStack/MultiStep.lean:139 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1746,7 +2652,7 @@ Source: ControlStack/MultiStep.lean:139 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem pow_lt_self_of_two_le (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) (k : ℕ) (hk : 2 ≤ k) : (1 - c) ^ k < 1 - c
 ~~~
 
-### 212. correlated_nogo
+### 324. correlated_nogo
 
 Source: ControlStack/MultiStep.lean:149 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1754,7 +2660,7 @@ Source: ControlStack/MultiStep.lean:149 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem correlated_nogo {A : Type} [Fintype A] (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) (π : List A → A → ℝ) (hπ : IsPolicy π) (k : ℕ) (hk : 2 ≤ k) (h : List A) : (∀ (h' : List A) (a : A), seededMarginal c h' a = c) ∧ seededSurvival c π k h = 1 - c ∧ V π (fun _ _ => c) k h = (1 - c) ^ k ∧ (1 - c) ^ k < seededSurvival c π k h
 ~~~
 
-### 213. Vs_eq
+### 325. Vs_eq
 
 Source: ControlStack/MultiStep.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1762,7 +2668,7 @@ Source: ControlStack/MultiStep.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem Vs_eq {A Θ : Type} [Fintype A] [Fintype Θ] (π : List A → A → ℝ) (κ : Θ → List A → A → ℝ) (k : ℕ) (h : List A) (w : Θ → ℝ) : Vs π κ k h w = ∑ θ, w θ * V π (κ θ) k h
 ~~~
 
-### 214. reachable_nonneg
+### 326. reachable_nonneg
 
 Source: ControlStack/MultiStep.lean:184 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1770,7 +2676,7 @@ Source: ControlStack/MultiStep.lean:184 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem reachable_nonneg {A Θ : Type} (ρ : Θ → ℝ) (κ : Θ → List A → A → ℝ) (hρ : ∀ θ, 0 ≤ ρ θ) (hκ : ∀ θ, IsMonitor (κ θ)) {h : List A} {w : Θ → ℝ} (hr : Reachable ρ κ h w) : ∀ θ, 0 ≤ w θ
 ~~~
 
-### 215. survival_avg
+### 327. survival_avg
 
 Source: ControlStack/MultiStep.lean:195 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1778,7 +2684,7 @@ Source: ControlStack/MultiStep.lean:195 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem survival_avg {A Θ : Type} [Fintype A] [Fintype Θ] (π : List A → A → ℝ) (hπ : IsPolicy π) (κ : Θ → List A → A → ℝ) (ρ : Θ → ℝ) (c : ℝ) (hc1 : c ≤ 1) (hpost : ∀ h w, Reachable ρ κ h w → ∀ a, c * ∑ θ, w θ ≤ ∑ θ, w θ * κ θ h a) (k : ℕ) : ∑ θ, ρ θ * V π (κ θ) k [] ≤ (1 - c) ^ k * ∑ θ, ρ θ
 ~~~
 
-### 216. seeded_violates_posterior
+### 328. seeded_violates_posterior
 
 Source: ControlStack/MultiStep.lean:225 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1786,7 +2692,7 @@ Source: ControlStack/MultiStep.lean:225 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem seeded_violates_posterior {A : Type} (c : ℝ) (hc0 : 0 < c) (hc1 : c < 1) (a b : A) : let ρ : Bool → ℝ
 ~~~
 
-### 217. survival_example
+### 329. survival_example
 
 Source: ControlStack/MultiStep.lean:235 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1796,7 +2702,7 @@ theorem survival_example {A : Type} [Fintype A] (π κ : List A → A → ℝ) (
 
 ## ControlStack/OutcomeProof.lean
 
-### 218. probOutput_isCat
+### 330. probOutput_isCat
 
 Source: ControlStack/OutcomeProof.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1804,7 +2710,7 @@ Source: ControlStack/OutcomeProof.lean:13 | Family: UNMAPPED | Adversary: UNKNOW
 theorem probOutput_isCat (c : ProbComp Outcome) : Pr[= true | isCat <$> c] = Pr[= Outcome.catastrophe | c]
 ~~~
 
-### 219. map_deployO
+### 331. map_deployO
 
 Source: ControlStack/OutcomeProof.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1812,7 +2718,7 @@ Source: ControlStack/OutcomeProof.lean:19 | Family: UNMAPPED | Adversary: UNKNOW
 theorem map_deployO {X Z : Type} (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n : ℕ) : ∀ u h, isCat <$> deployO Bad π M D A b n u h = deploy Bad π M D A b n u h
 ~~~
 
-### 220. marginal
+### 332. marginal
 
 Source: ControlStack/OutcomeProof.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1820,7 +2726,7 @@ Source: ControlStack/OutcomeProof.lean:30 | Family: UNMAPPED | Adversary: UNKNOW
 theorem marginal : MarginalClaim
 ~~~
 
-### 221. probOutput_auditO
+### 333. probOutput_auditO
 
 Source: ControlStack/OutcomeProof.lean:44 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1828,7 +2734,7 @@ Source: ControlStack/OutcomeProof.lean:44 | Family: UNMAPPED | Adversary: UNKNOW
 theorem probOutput_auditO (c : ProbComp Bool) (o : Outcome) : Pr[= o | (fun caught => if caught then Outcome.caught else Outcome.catastrophe) <$> c] = Pr[= true | c] * (if o = Outcome.caught then 1 else 0) + Pr[= false | c] * (if o = Outcome.catastrophe then 1 else 0)
 ~~~
 
-### 222. deployO_step
+### 334. deployO_step
 
 Source: ControlStack/OutcomeProof.lean:51 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1836,7 +2742,7 @@ Source: ControlStack/OutcomeProof.lean:51 | Family: UNMAPPED | Adversary: UNKNOW
 theorem deployO_step {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) (o : Outcome) : Pr[= o | deployO Bad π M D A b (n+1) u h] = ∑ x, Pr[= x | π h] * ∑ z, Pr[= z | M x] * (Pr[= true | D z] * Pr[= o | (if Bad x then pure .catastrophe else deployO Bad π M D A b n u (h ++ [(x, z, true)]) : ProbComp Outcome)] + Pr[= false | D z] * Pr[= o | (if u < b then (if Bad x then (fun caught => if caught then Outcome.caught else Outcome.catastrophe) <$> A h x z else deployO Bad π M D A b n (u + 1) (h ++ [(x, z, false)])) else pure .halted : ProbComp Outcome)])
 ~~~
 
-### 223. deployO_step_real
+### 335. deployO_step_real
 
 Source: ControlStack/OutcomeProof.lean:64 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1844,7 +2750,7 @@ Source: ControlStack/OutcomeProof.lean:64 | Family: UNMAPPED | Adversary: UNKNOW
 theorem deployO_step_real {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) (o : Outcome) : (Pr[= o | deployO Bad π M D A b (n+1) u h]).toReal = ∑ x, (Pr[= x | π h]).toReal * ∑ z, (Pr[= z | M x]).toReal * ((Pr[= true | D z]).toReal * (Pr[= o | (if Bad x then pure .catastrophe else deployO Bad π M D A b n u (h ++ [(x, z, true)]) : ProbComp Outcome)]).toReal + (1 - (Pr[= true | D z]).toReal) * (Pr[= o | (if u < b then (if Bad x then (fun caught => if caught then Outcome.caught else Outcome.catastrophe) <$> A h x z else deployO Bad π M D A b n (u + 1) (h ++ [(x, z, false)])) else pure .halted : ProbComp Outcome)]).toReal)
 ~~~
 
-### 224. deployO_rejected
+### 336. deployO_rejected
 
 Source: ControlStack/OutcomeProof.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1852,7 +2758,7 @@ Source: ControlStack/OutcomeProof.lean:87 | Family: UNMAPPED | Adversary: UNKNOW
 theorem deployO_rejected {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n : ℕ) : ∀ u h, Pr[= Outcome.rejected | deployO Bad π M D A b n u h] = 0
 ~~~
 
-### 225. deployLaw
+### 337. deployLaw
 
 Source: ControlStack/OutcomeProof.lean:99 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1860,7 +2766,7 @@ Source: ControlStack/OutcomeProof.lean:99 | Family: UNMAPPED | Adversary: UNKNOW
 theorem deployLaw : DeployLawClaim
 ~~~
 
-### 226. conservation
+### 338. conservation
 
 Source: ControlStack/OutcomeProof.lean:129 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1868,7 +2774,7 @@ Source: ControlStack/OutcomeProof.lean:129 | Family: UNMAPPED | Adversary: UNKNO
 theorem conservation : ConservationClaim
 ~~~
 
-### 227. nonneg
+### 339. nonneg
 
 Source: ControlStack/OutcomeProof.lean:154 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1876,7 +2782,7 @@ Source: ControlStack/OutcomeProof.lean:154 | Family: UNMAPPED | Adversary: UNKNO
 theorem nonneg : NonnegClaim
 ~~~
 
-### 228. deployO_rejected
+### 340. deployO_rejected
 
 Source: ControlStack/OutcomeProof.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1884,7 +2790,7 @@ Source: ControlStack/OutcomeProof.lean:171 | Family: UNMAPPED | Adversary: UNKNO
 theorem deployO_rejected' {X Z : Type} (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n : ℕ) : ∀ u h, Pr[= Outcome.rejected | deployO Bad π M D A b n u h] = 0
 ~~~
 
-### 229. probEvent_not_toReal
+### 341. probEvent_not_toReal
 
 Source: ControlStack/OutcomeProof.lean:190 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1892,7 +2798,7 @@ Source: ControlStack/OutcomeProof.lean:190 | Family: UNMAPPED | Adversary: UNKNO
 theorem probEvent_not_toReal {α : Type} (c : ProbComp α) (p : α → Prop) : (Pr[fun x => ¬ p x | c]).toReal = 1 - (Pr[p | c]).toReal
 ~~~
 
-### 230. gameLaw
+### 342. gameLaw
 
 Source: ControlStack/OutcomeProof.lean:199 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1900,7 +2806,7 @@ Source: ControlStack/OutcomeProof.lean:199 | Family: UNMAPPED | Adversary: UNKNO
 theorem gameLaw : GameLawClaim
 ~~~
 
-### 231. rateLink
+### 343. rateLink
 
 Source: ControlStack/OutcomeProof.lean:231 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1908,7 +2814,7 @@ Source: ControlStack/OutcomeProof.lean:231 | Family: UNMAPPED | Adversary: UNKNO
 theorem rateLink : RateLinkClaim
 ~~~
 
-### 232. binCDF_succ_zero
+### 344. binCDF_succ_zero
 
 Source: ControlStack/OutcomeProof.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1916,7 +2822,7 @@ Source: ControlStack/OutcomeProof.lean:251 | Family: UNMAPPED | Adversary: UNKNO
 theorem binCDF_succ_zero (n : ℕ) (f : ℝ) : binCDF (n + 1) 0 f = (1 - f) * binCDF n 0 f
 ~~~
 
-### 233. binCDF_succ_succ
+### 345. binCDF_succ_succ
 
 Source: ControlStack/OutcomeProof.lean:255 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1924,7 +2830,7 @@ Source: ControlStack/OutcomeProof.lean:255 | Family: UNMAPPED | Adversary: UNKNO
 theorem binCDF_succ_succ (n s : ℕ) (f : ℝ) : binCDF (n + 1) (s + 1) f = (1 - f) * binCDF n (s + 1) f + f * binCDF n s f
 ~~~
 
-### 234. wsum_const
+### 346. wsum_const
 
 Source: ControlStack/OutcomeProof.lean:275 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1932,7 +2838,7 @@ Source: ControlStack/OutcomeProof.lean:275 | Family: UNMAPPED | Adversary: UNKNO
 theorem wsum_const {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (φ : Z → ℝ) (μ : X → ℝ) (hM1 : ∀ x, ∑ z, M x z = 1) (hμ1 : ∑ x, μ x = 1) (a c : ℝ) : ∑ x, μ x * ∑ z, M x z * (φ z * a + (1 - φ z) * c) = (1 - flagRate M μ φ) * a + flagRate M μ φ * c
 ~~~
 
-### 235. catG_benign
+### 347. catG_benign
 
 Source: ControlStack/OutcomeProof.lean:297 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1940,7 +2846,7 @@ Source: ControlStack/OutcomeProof.lean:297 | Family: UNMAPPED | Adversary: UNKNO
 theorem catG_benign {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (R : Hist X Z → X → Z → ℝ) (b : ℕ) (hben : ∀ h x, π h x ≠ 0 → ¬ Bad x) : ∀ n u h, catG Bad M φ π R b n u h = 0 ∧ caughtG Bad M φ π R b n u h = 0
 ~~~
 
-### 236. complG_benign
+### 348. complG_benign
 
 Source: ControlStack/OutcomeProof.lean:312 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1948,7 +2854,7 @@ Source: ControlStack/OutcomeProof.lean:312 | Family: UNMAPPED | Adversary: UNKNO
 theorem complG_benign {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (μ : X → ℝ) (b : ℕ) (hM1 : ∀ x, ∑ z, M x z = 1) (hμ1 : ∑ x, μ x = 1) (hben : ∀ x, μ x ≠ 0 → ¬ Bad x) : ∀ n u h, u ≤ b → complG Bad M φ (fun _ => μ) b n u h = binCDF n (b - u) (flagRate M μ φ)
 ~~~
 
-### 237. benignRecursion
+### 349. benignRecursion
 
 Source: ControlStack/OutcomeProof.lean:341 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1956,7 +2862,7 @@ Source: ControlStack/OutcomeProof.lean:341 | Family: UNMAPPED | Adversary: UNKNO
 theorem benignRecursion : BenignRecursionClaim
 ~~~
 
-### 238. honest
+### 350. honest
 
 Source: ControlStack/OutcomeProof.lean:351 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1964,7 +2870,7 @@ Source: ControlStack/OutcomeProof.lean:351 | Family: UNMAPPED | Adversary: UNKNO
 theorem honest : HonestClaim
 ~~~
 
-### 239. binCDF_nonneg
+### 351. binCDF_nonneg
 
 Source: ControlStack/OutcomeProof.lean:387 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1972,7 +2878,7 @@ Source: ControlStack/OutcomeProof.lean:387 | Family: UNMAPPED | Adversary: UNKNO
 theorem binCDF_nonneg (n s : ℕ) (f : ℝ) (h0 : 0 ≤ f) (h1 : f ≤ 1) : 0 ≤ binCDF n s f
 ~~~
 
-### 240. pareto
+### 352. pareto
 
 Source: ControlStack/OutcomeProof.lean:392 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1980,7 +2886,7 @@ Source: ControlStack/OutcomeProof.lean:392 | Family: UNMAPPED | Adversary: UNKNO
 theorem pareto : ParetoClaim
 ~~~
 
-### 241. witness
+### 353. witness
 
 Source: ControlStack/OutcomeProof.lean:431 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -1990,7 +2896,7 @@ theorem witness : Witness
 
 ## ControlStack/PolicyTamper.lean
 
-### 242. policy_preserved_if_protected
+### 354. policy_preserved_if_protected
 
 Source: ControlStack/PolicyTamper.lean:31 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -1998,7 +2904,7 @@ Source: ControlStack/PolicyTamper.lean:31 | Family: F1 | Adversary: TRACE_ARBITR
 theorem policy_preserved_if_protected (p : Policy) (s : St) (ops : List Op) (h : s.activePolicy = p) : (run false s ops).activePolicy = p
 ~~~
 
-### 243. tamper_possible_if_writable
+### 355. tamper_possible_if_writable
 
 Source: ControlStack/PolicyTamper.lean:42 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: SOURCE_ONLY
 
@@ -2008,7 +2914,7 @@ theorem tamper_possible_if_writable (s : St) (replacement : Policy) : (step true
 
 ## ControlStack/RefinementProof.lean
 
-### 244. probOutput_true_add_false_one
+### 356. probOutput_true_add_false_one
 
 Source: ControlStack/RefinementProof.lean:6 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2016,7 +2922,7 @@ Source: ControlStack/RefinementProof.lean:6 | Family: UNMAPPED | Adversary: UNKN
 theorem probOutput_true_add_false_one (c : ProbComp Bool) : Pr[= true | c] + Pr[= false | c] = 1
 ~~~
 
-### 245. probOutput_false_toReal
+### 357. probOutput_false_toReal
 
 Source: ControlStack/RefinementProof.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2024,7 +2930,7 @@ Source: ControlStack/RefinementProof.lean:13 | Family: UNMAPPED | Adversary: UNK
 theorem probOutput_false_toReal (c : ProbComp Bool) : (Pr[= false | c]).toReal = 1 - (Pr[= true | c]).toReal
 ~~~
 
-### 246. probOutput_not_true
+### 358. probOutput_not_true
 
 Source: ControlStack/RefinementProof.lean:20 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2032,7 +2938,7 @@ Source: ControlStack/RefinementProof.lean:20 | Family: UNMAPPED | Adversary: UNK
 theorem probOutput_not_true (c : ProbComp Bool) : Pr[= true | (fun caught => !caught) <$> c] = Pr[= false | c]
 ~~~
 
-### 247. deploy_step
+### 359. deploy_step
 
 Source: ControlStack/RefinementProof.lean:24 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2040,7 +2946,7 @@ Source: ControlStack/RefinementProof.lean:24 | Family: UNMAPPED | Adversary: UNK
 theorem deploy_step {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) : Pr[= true | deploy Bad π M D A b (n+1) u h] = ∑ x, Pr[= x | π h] * ∑ z, Pr[= z | M x] * (Pr[= true | D z] * Pr[= true | (if Bad x then pure true else deploy Bad π M D A b n u (h ++ [(x, z, true)]) : ProbComp Bool)] + Pr[= false | D z] * Pr[= true | (if u < b then (if Bad x then (fun caught => !caught) <$> A h x z else deploy Bad π M D A b n (u + 1) (h ++ [(x, z, false)])) else pure false : ProbComp Bool)])
 ~~~
 
-### 248. deploy_step_real
+### 360. deploy_step_real
 
 Source: ControlStack/RefinementProof.lean:36 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2048,7 +2954,7 @@ Source: ControlStack/RefinementProof.lean:36 | Family: UNMAPPED | Adversary: UNK
 theorem deploy_step_real {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (π : Hist X Z → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (A : Hist X Z → X → Z → ProbComp Bool) (b n u : ℕ) (h : Hist X Z) : (Pr[= true | deploy Bad π M D A b (n+1) u h]).toReal = ∑ x, (Pr[= x | π h]).toReal * ∑ z, (Pr[= z | M x]).toReal * ((Pr[= true | D z]).toReal * (Pr[= true | (if Bad x then pure true else deploy Bad π M D A b n u (h ++ [(x, z, true)]) : ProbComp Bool)]).toReal + (1 - (Pr[= true | D z]).toReal) * (Pr[= true | (if u < b then (if Bad x then (fun caught => !caught) <$> A h x z else deploy Bad π M D A b n (u + 1) (h ++ [(x, z, false)])) else pure false : ProbComp Bool)]).toReal)
 ~~~
 
-### 249. toReal_probOutput_le_one
+### 361. toReal_probOutput_le_one
 
 Source: ControlStack/RefinementProof.lean:58 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2056,7 +2962,7 @@ Source: ControlStack/RefinementProof.lean:58 | Family: UNMAPPED | Adversary: UNK
 theorem toReal_probOutput_le_one {α : Type} (c : ProbComp α) (x : α) : (Pr[= x | c]).toReal ≤ 1
 ~~~
 
-### 250. toReal_probEvent_le_one
+### 362. toReal_probEvent_le_one
 
 Source: ControlStack/RefinementProof.lean:62 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2064,7 +2970,7 @@ Source: ControlStack/RefinementProof.lean:62 | Family: UNMAPPED | Adversary: UNK
 theorem toReal_probEvent_le_one {α : Type} (c : ProbComp α) (p : α → Prop) : (Pr[p | c]).toReal ≤ 1
 ~~~
 
-### 251. sum_toReal_probOutput
+### 363. sum_toReal_probOutput
 
 Source: ControlStack/RefinementProof.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2072,7 +2978,7 @@ Source: ControlStack/RefinementProof.lean:66 | Family: UNMAPPED | Adversary: UNK
 theorem sum_toReal_probOutput {α : Type} [Fintype α] (c : ProbComp α) : ∑ x, (Pr[= x | c]).toReal = 1
 ~~~
 
-### 252. catG_const
+### 364. catG_const
 
 Source: ControlStack/RefinementProof.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2080,7 +2986,7 @@ Source: ControlStack/RefinementProof.lean:72 | Family: UNMAPPED | Adversary: UNK
 theorem catG_const {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r : ℝ) (b : ℕ) : ∀ n u h, catG Bad M φ π (fun _ _ _ => r) b n u h = cat Bad M φ π r b n u h
 ~~~
 
-### 253. catG_congr
+### 365. catG_congr
 
 Source: ControlStack/RefinementProof.lean:80 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2088,7 +2994,7 @@ Source: ControlStack/RefinementProof.lean:80 | Family: UNMAPPED | Adversary: UNK
 theorem catG_congr {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (R R' : Hist X Z → X → Z → ℝ) (b : ℕ) (hR : ∀ h x z, Bad x → R h x z = R' h x z) : ∀ n u h, catG Bad M φ π R b n u h = catG Bad M φ π R' b n u h
 ~~~
 
-### 254. catG_le_cat
+### 366. catG_le_cat
 
 Source: ControlStack/RefinementProof.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2096,7 +3002,7 @@ Source: ControlStack/RefinementProof.lean:96 | Family: UNMAPPED | Adversary: UNK
 theorem catG_le_cat {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (R : Hist X Z → X → Z → ℝ) (r : ℝ) (b : ℕ) (hπ : ∀ h x, 0 ≤ π h x) (hM : ∀ x z, 0 ≤ M x z) (hφ0 : ∀ z, 0 ≤ φ z) (hφ1 : ∀ z, φ z ≤ 1) (hR : ∀ h x z, Bad x → r ≤ R h x z) : ∀ n u h, catG Bad M φ π R b n u h ≤ cat Bad M φ π r b n u h
 ~~~
 
-### 255. wsum_le
+### 367. wsum_le
 
 Source: ControlStack/RefinementProof.lean:122 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2104,7 +3010,7 @@ Source: ControlStack/RefinementProof.lean:122 | Family: UNMAPPED | Adversary: UN
 theorem wsum_le {Y : Type} [Fintype Y] (w f : Y → ℝ) (c : ℝ) (hw0 : ∀ y, 0 ≤ w y) (hw1 : ∑ y, w y = 1) (hf : ∀ y, f y ≤ c) : ∑ y, w y * f y ≤ c
 ~~~
 
-### 256. t3a
+### 368. t3a
 
 Source: ControlStack/RefinementProof.lean:128 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2112,7 +3018,7 @@ Source: ControlStack/RefinementProof.lean:128 | Family: UNMAPPED | Adversary: UN
 theorem t3a {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r A : ℝ) (b : ℕ) (hM0 : ∀ x z, 0 ≤ M x z) (hM1 : ∀ x, ∑ z, M x z = 1) (hφ0 : ∀ z, 0 ≤ φ z) (hφ1 : ∀ z, φ z ≤ 1) (hπ0 : ∀ h x, 0 ≤ π h x) (hπ1 : ∀ h, ∑ x, π h x = 1) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hbad : ∀ x, Bad x → ∑ z, M x z * φ z ≤ A) : ∀ n u h, cat Bad M φ π r b n u h ≤ (if u < b then 1 - r + r * A else A)
 ~~~
 
-### 257. final_dom
+### 369. final_dom
 
 Source: ControlStack/RefinementProof.lean:185 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2120,7 +3026,7 @@ Source: ControlStack/RefinementProof.lean:185 | Family: UNMAPPED | Adversary: UN
 theorem final_dom (S h L r A B : ℝ) (hS0 : 0 ≤ S) (hS1 : S ≤ 1) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hL : 0 ≤ L) (hA : A ≤ L * h) (hB : h * S ≤ B) : S * (1 - r + r * A) ≤ (1 - r) + r * (L * B)
 ~~~
 
-### 258. first_moment
+### 370. first_moment
 
 Source: ControlStack/RefinementProof.lean:198 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2128,7 +3034,7 @@ Source: ControlStack/RefinementProof.lean:198 | Family: UNMAPPED | Adversary: UN
 theorem first_moment (n s : ℕ) (h : ℝ) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) (hB : binCDF (n + 1) (s + 1) h ≤ 1) : ((n : ℝ) + 1) * (h * binCDF n s h) ≤ (s : ℝ) + 1
 ~~~
 
-### 259. first_moment
+### 371. first_moment
 
 Source: ControlStack/RefinementProof.lean:238 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2136,7 +3042,7 @@ Source: ControlStack/RefinementProof.lean:238 | Family: UNMAPPED | Adversary: UN
 theorem first_moment' (n s : ℕ) (h : ℝ) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) (hB : binCDF (n + 1) (s + 1) h ≤ 1) : h * binCDF n s h ≤ ((s : ℝ) + 1) / ((n : ℝ) + 1)
 ~~~
 
-### 260. deployG
+### 372. deployG
 
 Source: ControlStack/RefinementProof.lean:245 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2144,7 +3050,7 @@ Source: ControlStack/RefinementProof.lean:245 | Family: UNMAPPED | Adversary: UN
 theorem deployG : DeployGClaim
 ~~~
 
-### 261. deploy_le
+### 373. deploy_le
 
 Source: ControlStack/RefinementProof.lean:258 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2152,7 +3058,7 @@ Source: ControlStack/RefinementProof.lean:258 | Family: UNMAPPED | Adversary: UN
 theorem deploy_le : DeployClaim
 ~~~
 
-### 262. deploy_exact
+### 374. deploy_exact
 
 Source: ControlStack/RefinementProof.lean:264 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2160,7 +3066,7 @@ Source: ControlStack/RefinementProof.lean:264 | Family: UNMAPPED | Adversary: UN
 theorem deploy_exact : DeployExactClaim
 ~~~
 
-### 263. protocol
+### 375. protocol
 
 Source: ControlStack/RefinementProof.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2168,7 +3074,7 @@ Source: ControlStack/RefinementProof.lean:269 | Family: UNMAPPED | Adversary: UN
 theorem protocol : ProtocolClaim
 ~~~
 
-### 264. endToEnd
+### 376. endToEnd
 
 Source: ControlStack/RefinementProof.lean:286 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2176,7 +3082,7 @@ Source: ControlStack/RefinementProof.lean:286 | Family: UNMAPPED | Adversary: UN
 theorem endToEnd : EndToEndClaim
 ~~~
 
-### 265. attain
+### 377. attain
 
 Source: ControlStack/RefinementProof.lean:343 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2184,7 +3090,7 @@ Source: ControlStack/RefinementProof.lean:343 | Family: UNMAPPED | Adversary: UN
 theorem attain : AttainClaim
 ~~~
 
-### 266. witness
+### 378. witness
 
 Source: ControlStack/RefinementProof.lean:375 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2194,7 +3100,7 @@ theorem witness : Witness
 
 ## ControlStack/SafetyCaseSC01.lean
 
-### 267. step_adm
+### 379. step_adm
 
 Source: ControlStack/SafetyCaseSC01.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2202,7 +3108,7 @@ Source: ControlStack/SafetyCaseSC01.lean:25 | Family: UNMAPPED | Adversary: UNKN
 lemma step_adm {L : Type} [DecidableEq L] (cap : ℕ) (s : Option (L → ℕ)) (e : Ev L) (a : L × ℕ) (h : (step cap s e).2 = some a) : ∃ ℓ k, e = .charge ℓ k ∧ a = (ℓ, k)
 ~~~
 
-### 268. run_sizes
+### 380. run_sizes
 
 Source: ControlStack/SafetyCaseSC01.lean:32 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2210,7 +3116,7 @@ Source: ControlStack/SafetyCaseSC01.lean:32 | Family: UNMAPPED | Adversary: UNKN
 lemma run_sizes {L : Type} [DecidableEq L] (cap : ℕ) (K : ℕ) : ∀ (es : List (Ev L)) (st : Option (L → ℕ) × List (L × ℕ)), (∀ e ∈ es, ∀ ℓ k, e = .charge ℓ k → k = K) → (∀ a ∈ st.2, a.2 = K) → ∀ a ∈ (run cap st es).2, a.2 = K | [], st, _, h => h | e :: es, (s, adm), hes, h => by simp only [run] apply run_sizes cap K es _ (fun e' he' => hes e' (List.mem_cons_of_mem e he')) intro a ha rcases List.mem_append.1 ha with ha | ha · exact h a ha · cases hst : (step cap s e).2 with | none => simp [hst] at ha | some b => simp [hst] at ha; rw [ha] obtain ⟨ℓ, k, rfl, rfl⟩
 ~~~
 
-### 269. pr_const
+### 381. pr_const
 
 Source: ControlStack/SafetyCaseSC01.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2218,7 +3124,7 @@ Source: ControlStack/SafetyCaseSC01.lean:50 | Family: UNMAPPED | Adversary: UNKN
 lemma pr_const {L : Type} [DecidableEq L] (ℓ : L) (K : ℕ) (adm : List (L × ℕ)) (h : ∀ a ∈ adm, a.2 = K) : pr ℓ adm = K ^ (adm.filter (fun a => a.1 = ℓ)).length
 ~~~
 
-### 270. ledger_five
+### 382. ledger_five
 
 Source: ControlStack/SafetyCaseSC01.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2226,7 +3132,7 @@ Source: ControlStack/SafetyCaseSC01.lean:61 | Family: UNMAPPED | Adversary: UNKN
 theorem ledger_five {L : Type} [DecidableEq L] (es : List (Ev L)) (hes : ∀ e ∈ es, ¬ e.isRestore) (h9 : ∀ e ∈ es, ∀ ℓ k, e = .charge ℓ k → k = 9) (ℓ : L) : ((run (2 ^ 16) (some (fun _ => 1), []) es).2.filter (fun a => a.1 = ℓ)).length ≤ 5
 ~~~
 
-### 271. bit_refutes
+### 383. bit_refutes
 
 Source: ControlStack/SafetyCaseSC01.lean:78 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2234,7 +3140,7 @@ Source: ControlStack/SafetyCaseSC01.lean:78 | Family: UNMAPPED | Adversary: UNKN
 theorem bit_refutes {Ω S O : Type} [Fintype Ω] [Fintype S] [Fintype O] (ρ : Ω → ℝ) (W : S → O → ℝ) (c : O → ℝ) (hc : ∀ s o, W s o ≤ c o) (hc0 : ∀ o, 0 ≤ c o) (enc : Ω → Bool → Unit × S → ℝ) (dec : Ω → Unit × O → Bool → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω y, IsDist (dec ω y)) : 2 * sideSuccess ρ W enc dec ≤ ∑ o, c o
 ~~~
 
-### 272. refute_threshold
+### 384. refute_threshold
 
 Source: ControlStack/SafetyCaseSC01.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2242,7 +3148,7 @@ Source: ControlStack/SafetyCaseSC01.lean:87 | Family: UNMAPPED | Adversary: UNKN
 theorem refute_threshold : (2 : ℝ) * (5551 / 10000) > 65536 / 59049
 ~~~
 
-### 273. sc01_case
+### 385. sc01_case
 
 Source: ControlStack/SafetyCaseSC01.lean:95 | Family: F2 | Adversary: SIDE_OBSERVING | Status: PROVED_RECORDED
 
@@ -2252,7 +3158,7 @@ theorem sc01_case : (∀ {Ω S O : Type} [Fintype Ω] [Fintype S] [Fintype O] (�
 
 ## ControlStack/ScenarioACore.lean
 
-### 274. card_epPrefix
+### 386. card_epPrefix
 
 Source: ControlStack/ScenarioACore.lean:55 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2260,7 +3166,7 @@ Source: ControlStack/ScenarioACore.lean:55 | Family: UNMAPPED | Adversary: UNKNO
 theorem card_epPrefix : Fintype.card EpPrefix = 9
 ~~~
 
-### 275. epView_card
+### 387. epView_card
 
 Source: ControlStack/ScenarioACore.lean:60 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2268,7 +3174,7 @@ Source: ControlStack/ScenarioACore.lean:60 | Family: UNMAPPED | Adversary: UNKNO
 theorem epView_card : Fintype.card EpView = 9
 ~~~
 
-### 276. prefixToView_viewToPrefix
+### 388. prefixToView_viewToPrefix
 
 Source: ControlStack/ScenarioACore.lean:71 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2276,7 +3182,7 @@ Source: ControlStack/ScenarioACore.lean:71 | Family: UNMAPPED | Adversary: UNKNO
 lemma prefixToView_viewToPrefix (o : ScenarioARepair.View) : prefixToView (viewToPrefix o) = o
 ~~~
 
-### 277. viewToPrefix_prefixToView
+### 389. viewToPrefix_prefixToView
 
 Source: ControlStack/ScenarioACore.lean:74 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2284,7 +3190,7 @@ Source: ControlStack/ScenarioACore.lean:74 | Family: UNMAPPED | Adversary: UNKNO
 lemma viewToPrefix_prefixToView (p : EpPrefix) : viewToPrefix (prefixToView p) = p
 ~~~
 
-### 278. prefixEquiv_apply
+### 390. prefixEquiv_apply
 
 Source: ControlStack/ScenarioACore.lean:99 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2292,7 +3198,7 @@ Source: ControlStack/ScenarioACore.lean:99 | Family: UNMAPPED | Adversary: UNKNO
 theorem prefixEquiv_apply (p : EpPrefix) : prefixEquiv p = embedAll p 0 0
 ~~~
 
-### 279. epView_ext
+### 391. epView_ext
 
 Source: ControlStack/ScenarioACore.lean:102 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2300,7 +3206,7 @@ Source: ControlStack/ScenarioACore.lean:102 | Family: UNMAPPED | Adversary: UNKN
 lemma epView_ext (v w : EpView) (h : v 0 0 = w 0 0) : v = w
 ~~~
 
-### 280. embedAll_viewToPrefix
+### 392. embedAll_viewToPrefix
 
 Source: ControlStack/ScenarioACore.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2308,7 +3214,7 @@ Source: ControlStack/ScenarioACore.lean:110 | Family: UNMAPPED | Adversary: UNKN
 theorem embedAll_viewToPrefix (v : EpView) : embedAll (prefixEquiv.symm (v 0 0)) = v
 ~~~
 
-### 281. embedAll_surjective
+### 393. embedAll_surjective
 
 Source: ControlStack/ScenarioACore.lean:114 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2316,7 +3222,7 @@ Source: ControlStack/ScenarioACore.lean:114 | Family: UNMAPPED | Adversary: UNKN
 theorem embedAll_surjective : Function.Surjective (embedAll (C
 ~~~
 
-### 282. embedAll_injective
+### 394. embedAll_injective
 
 Source: ControlStack/ScenarioACore.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2324,7 +3230,7 @@ Source: ControlStack/ScenarioACore.lean:118 | Family: UNMAPPED | Adversary: UNKN
 theorem embedAll_injective : Function.Injective (embedAll (C
 ~~~
 
-### 283. reachable_eq_univ
+### 395. reachable_eq_univ
 
 Source: ControlStack/ScenarioACore.lean:124 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2332,7 +3238,7 @@ Source: ControlStack/ScenarioACore.lean:124 | Family: UNMAPPED | Adversary: UNKN
 theorem reachable_eq_univ : Set.range (embedAll (C
 ~~~
 
-### 284. delivered_view_coord
+### 396. delivered_view_coord
 
 Source: ControlStack/ScenarioACore.lean:130 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2340,7 +3246,7 @@ Source: ControlStack/ScenarioACore.lean:130 | Family: UNMAPPED | Adversary: UNKN
 theorem delivered_view_coord {R : Type} (valid : (c : Fin 1) → R → Option (Fin 8)) (tr : List (Ev 1 R)) : finalView (runG valid (init (S
 ~~~
 
-### 285. card_five_prefixes
+### 397. card_five_prefixes
 
 Source: ControlStack/ScenarioACore.lean:140 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2348,7 +3254,7 @@ Source: ControlStack/ScenarioACore.lean:140 | Family: UNMAPPED | Adversary: UNKN
 theorem card_five_prefixes : Fintype.card (Fin 5 → EpPrefix) = 59049
 ~~~
 
-### 286. lifetime_bound_prefixes
+### 398. lifetime_bound_prefixes
 
 Source: ControlStack/ScenarioACore.lean:145 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2356,7 +3262,7 @@ Source: ControlStack/ScenarioACore.lean:145 | Family: UNMAPPED | Adversary: UNKN
 theorem lifetime_bound_prefixes {Ω : Type} [Fintype Ω] (ρ : Ω → ℝ) (enc : Ω → Fin (2 ^ 32) → (Fin 5 → EpPrefix) → ℝ) (dec : Ω → (Fin 5 → EpPrefix) → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : successProb ρ enc dec ≤ (59049 : ℝ) / 2 ^ 32 ∧ (59049 : ℝ) / 2 ^ 32 ≤ 1 / 2 ^ 16
 ~~~
 
-### 287. five_episode_core_bound
+### 399. five_episode_core_bound
 
 Source: ControlStack/ScenarioACore.lean:163 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2364,7 +3270,7 @@ Source: ControlStack/ScenarioACore.lean:163 | Family: UNMAPPED | Adversary: UNKN
 theorem five_episode_core_bound {Ω R : Type} [Fintype Ω] [Fintype R] [Fintype (Ev 1 R)] (valid : (c : Fin 1) → R → Option (Fin 8)) (L : ℕ) (ρ : Ω → ℝ) (enc : Ω → Fin (2 ^ 32) → (Fin 5 → Fin L → Ev 1 R) → ℝ) (dec : Ω → (Fin 5 → EpView) → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : successProb ρ enc (fun ω tr m => dec ω (lifetimeView valid tr) m) ≤ (59049 : ℝ) / 2 ^ 32 ∧ (59049 : ℝ) / 2 ^ 32 ≤ 1 / 2 ^ 16
 ~~~
 
-### 288. card_varObs
+### 400. card_varObs
 
 Source: ControlStack/ScenarioACore.lean:202 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2372,7 +3278,7 @@ Source: ControlStack/ScenarioACore.lean:202 | Family: UNMAPPED | Adversary: UNKN
 theorem card_varObs : Fintype.card VarObs = 66430
 ~~~
 
-### 289. varObs_gt
+### 401. varObs_gt
 
 Source: ControlStack/ScenarioACore.lean:208 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2380,7 +3286,7 @@ Source: ControlStack/ScenarioACore.lean:208 | Family: UNMAPPED | Adversary: UNKN
 theorem varObs_gt : (2 : ℕ) ^ 16 < 66430
 ~~~
 
-### 290. varObsEmbed_injective
+### 402. varObsEmbed_injective
 
 Source: ControlStack/ScenarioACore.lean:216 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2388,7 +3294,7 @@ Source: ControlStack/ScenarioACore.lean:216 | Family: UNMAPPED | Adversary: UNKN
 theorem varObsEmbed_injective : Function.Injective varObsEmbed
 ~~~
 
-### 291. attainEnc_dist
+### 403. attainEnc_dist
 
 Source: ControlStack/ScenarioACore.lean:230 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2396,7 +3302,7 @@ Source: ControlStack/ScenarioACore.lean:230 | Family: UNMAPPED | Adversary: UNKN
 lemma attainEnc_dist {M V : Type} [Fintype V] [DecidableEq M] [DecidableEq V] [Nonempty V] (e : V → M) (he : Function.Injective e) (m : M) : IsDist (attainEnc e () m)
 ~~~
 
-### 292. attainDec_dist
+### 404. attainDec_dist
 
 Source: ControlStack/ScenarioACore.lean:244 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2404,7 +3310,7 @@ Source: ControlStack/ScenarioACore.lean:244 | Family: UNMAPPED | Adversary: UNKN
 lemma attainDec_dist {M V : Type} [Fintype M] [DecidableEq M] (e : V → M) (v : V) : IsDist (attainDec e () v)
 ~~~
 
-### 293. varObs_attain
+### 405. varObs_attain
 
 Source: ControlStack/ScenarioACore.lean:252 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2412,7 +3318,7 @@ Source: ControlStack/ScenarioACore.lean:252 | Family: UNMAPPED | Adversary: UNKN
 theorem varObs_attain : (∀ m, IsDist (attainEnc varObsEmbed () m)) ∧ (∀ v, IsDist (attainDec varObsEmbed () v)) ∧ successProb (Ω
 ~~~
 
-### 294. varObs_breaks_target
+### 406. varObs_breaks_target
 
 Source: ControlStack/ScenarioACore.lean:265 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2422,7 +3328,7 @@ theorem varObs_breaks_target : ∃ (enc : Unit → Fin (2 ^ 32) → VarObs → �
 
 ## ControlStack/ScenarioARepair.lean
 
-### 295. transcript_card
+### 407. transcript_card
 
 Source: ControlStack/ScenarioARepair.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2430,7 +3336,7 @@ Source: ControlStack/ScenarioARepair.lean:11 | Family: UNMAPPED | Adversary: UNK
 theorem transcript_card : Fintype.card Transcript = 59049
 ~~~
 
-### 296. repair_recovery
+### 408. repair_recovery
 
 Source: ControlStack/ScenarioARepair.lean:14 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2438,7 +3344,7 @@ Source: ControlStack/ScenarioARepair.lean:14 | Family: UNMAPPED | Adversary: UNK
 theorem repair_recovery {Ω : Type} [Fintype Ω] (ρ : Ω → ℝ) (enc : Ω → Fin (2 ^ 32) → Transcript → ℝ) (dec : Ω → Transcript → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω v, IsDist (dec ω v)) : successProb ρ enc dec ≤ (59049 : ℝ) / 2 ^ 32
 ~~~
 
-### 297. repair_target
+### 409. repair_target
 
 Source: ControlStack/ScenarioARepair.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2448,7 +3354,7 @@ theorem repair_target {Ω : Type} [Fintype Ω] (ρ : Ω → ℝ) (enc : Ω → F
 
 ## ControlStack/ScenarioASide.lean
 
-### 298. repair_side
+### 410. repair_side
 
 Source: ControlStack/ScenarioASide.lean:18 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2456,7 +3362,7 @@ Source: ControlStack/ScenarioASide.lean:18 | Family: UNMAPPED | Adversary: UNKNO
 theorem repair_side {Ω S O : Type} [Fintype Ω] [Fintype S] [Fintype O] (ρ : Ω → ℝ) (W : S → O → ℝ) (c : O → ℝ) (hc : ∀ s o, W s o ≤ c o) (hc0 : ∀ o, 0 ≤ c o) (enc : Ω → Fin (2 ^ 32) → Transcript × S → ℝ) (dec : Ω → Transcript × O → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω y, IsDist (dec ω y)) : sideSuccess ρ W enc dec ≤ 59049 * (∑ o, c o) / 2 ^ 32
 ~~~
 
-### 299. repair_side_target
+### 411. repair_side_target
 
 Source: ControlStack/ScenarioASide.lean:27 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2464,7 +3370,7 @@ Source: ControlStack/ScenarioASide.lean:27 | Family: UNMAPPED | Adversary: UNKNO
 theorem repair_side_target {Ω S O : Type} [Fintype Ω] [Fintype S] [Fintype O] (ρ : Ω → ℝ) (W : S → O → ℝ) (c : O → ℝ) (hc : ∀ s o, W s o ≤ c o) (hc0 : ∀ o, 0 ≤ c o) (hL : ∑ o, c o ≤ 65536 / 59049) (enc : Ω → Fin (2 ^ 32) → Transcript × S → ℝ) (dec : Ω → Transcript × O → Fin (2 ^ 32) → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω y, IsDist (dec ω y)) : sideSuccess ρ W enc dec ≤ 1 / 2 ^ 16
 ~~~
 
-### 300. card_obs
+### 412. card_obs
 
 Source: ControlStack/ScenarioASide.lean:41 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2472,7 +3378,7 @@ Source: ControlStack/ScenarioASide.lean:41 | Family: UNMAPPED | Adversary: UNKNO
 lemma card_obs : Fintype.card (Transcript × Bool) ≤ 2 ^ 32
 ~~~
 
-### 301. emb_inj
+### 413. emb_inj
 
 Source: ControlStack/ScenarioASide.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2480,7 +3386,7 @@ Source: ControlStack/ScenarioASide.lean:48 | Family: UNMAPPED | Adversary: UNKNO
 lemma emb_inj : Function.Injective emb
 ~~~
 
-### 302. repair_one_bit_attained
+### 414. repair_one_bit_attained
 
 Source: ControlStack/ScenarioASide.lean:56 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2488,7 +3394,7 @@ Source: ControlStack/ScenarioASide.lean:56 | Family: UNMAPPED | Adversary: UNKNO
 theorem repair_one_bit_attained : ∃ (enc : Unit → Fin (2 ^ 32) → Transcript × Bool → ℝ) (dec : Unit → Transcript × Bool → Fin (2 ^ 32) → ℝ), (∀ ω m, IsDist (enc ω m)) ∧ (∀ ω y, IsDist (dec ω y)) ∧ sideSuccess (fun _ => (1 : ℝ)) idKernel enc dec = 2 * 59049 / 2 ^ 32 ∧ (1 : ℝ) / 2 ^ 16 < 2 * 59049 / 2 ^ 32
 ~~~
 
-### 303. bsc_lifetime_ok
+### 415. bsc_lifetime_ok
 
 Source: ControlStack/ScenarioASide.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2496,7 +3402,7 @@ Source: ControlStack/ScenarioASide.lean:92 | Family: UNMAPPED | Adversary: UNKNO
 theorem bsc_lifetime_ok : (2 * (1 - (49 : ℝ) / 100)) ^ 5 ≤ 65536 / 59049
 ~~~
 
-### 304. bsc_lifetime_fails
+### 416. bsc_lifetime_fails
 
 Source: ControlStack/ScenarioASide.lean:94 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2506,7 +3412,7 @@ theorem bsc_lifetime_fails : (65536 : ℝ) / 59049 < (2 * (1 - (48 : ℝ) / 100)
 
 ## ControlStack/ScenarioAUsefulness.lean
 
-### 305. passProb_eq
+### 417. passProb_eq
 
 Source: ControlStack/ScenarioAUsefulness.lean:28 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2514,7 +3420,7 @@ Source: ControlStack/ScenarioAUsefulness.lean:28 | Family: UNMAPPED | Adversary:
 lemma passProb_eq (p : ℝ) : passProb p = 64 * p ^ 63 - 63 * p ^ 64
 ~~~
 
-### 306. passProb_mono
+### 418. passProb_mono
 
 Source: ControlStack/ScenarioAUsefulness.lean:34 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2522,7 +3428,7 @@ Source: ControlStack/ScenarioAUsefulness.lean:34 | Family: UNMAPPED | Adversary:
 lemma passProb_mono : MonotoneOn passProb (Set.Icc 0 1)
 ~~~
 
-### 307. false_pass_le
+### 419. false_pass_le
 
 Source: ControlStack/ScenarioAUsefulness.lean:55 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2530,7 +3436,7 @@ Source: ControlStack/ScenarioAUsefulness.lean:55 | Family: UNMAPPED | Adversary:
 theorem false_pass_le (p : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 9 / 10) : passProb p ≤ 1 / 80
 ~~~
 
-### 308. endpoint64
+### 420. endpoint64
 
 Source: ControlStack/ScenarioAUsefulness.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2538,7 +3444,7 @@ Source: ControlStack/ScenarioAUsefulness.lean:61 | Family: UNMAPPED | Adversary:
 theorem endpoint64 : tail 64 (93382 / 100000) ≤ 1 / 80 ∧ 1 / 80 < tail 64 (93383 / 100000)
 ~~~
 
-### 309. endpoint63
+### 421. endpoint63
 
 Source: ControlStack/ScenarioAUsefulness.lean:64 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2546,7 +3452,7 @@ Source: ControlStack/ScenarioAUsefulness.lean:64 | Family: UNMAPPED | Adversary:
 theorem endpoint63 : tail 63 (90438 / 100000) ≤ 1 / 80 ∧ 1 / 80 < tail 63 (90439 / 100000)
 ~~~
 
-### 310. reject62
+### 422. reject62
 
 Source: ControlStack/ScenarioAUsefulness.lean:69 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2554,7 +3460,7 @@ Source: ControlStack/ScenarioAUsefulness.lean:69 | Family: UNMAPPED | Adversary:
 theorem reject62 : 1 / 80 < tail 62 (9 / 10)
 ~~~
 
-### 311. endpoints_clear_floor
+### 423. endpoints_clear_floor
 
 Source: ControlStack/ScenarioAUsefulness.lean:75 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2562,9 +3468,1399 @@ Source: ControlStack/ScenarioAUsefulness.lean:75 | Family: UNMAPPED | Adversary:
 theorem endpoints_clear_floor : (9 : ℝ) / 10 ≤ 90438 / 100000 ∧ (90438 : ℝ) / 100000 ≤ 93382 / 100000
 ~~~
 
+## ControlStack/Scenarios/SC12Persistence.lean
+
+### 424. run_cons
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (admins : List ℕ) (C : Checks) (s : St) (o : Op) (ops : List Op) : run admins C s (o :: ops) = run admins C (step admins C s o) ops
+~~~
+
+### 425. inv_init
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:134 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init : Inv init
+~~~
+
+### 426. Inv.good
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:136 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Inv.good {s : St} (h : Inv s) : Good s
+~~~
+
+### 427. fireOk_mono
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:140 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fireOk_mono {s t : St} (hp : s.ended <+: t.ended) (f : ℕ × ℕ × ℕ) (h : FireOk s f) : FireOk t f
+~~~
+
+### 428. entOf_mem
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem entOf_mem {s : St} {id : ℕ} {e : Ent} (h : entOf s id = some e) : e ∈ s.live
+~~~
+
+### 429. step_inv
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:148 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (admins : List ℕ) (s : St) (o : Op) (h : Inv s) : Inv (step admins full s o)
+~~~
+
+### 430. run_inv
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:224 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (admins : List ℕ) (s : St) (ops : List Op) (h : Inv s) : Inv (run admins full s ops)
+~~~
+
+### 431. sc12_safe
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:231 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc12_safe (admins : List ℕ) (ops : List Op) : Good (run admins full init ops)
+~~~
+
+### 432. step_ended
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:234 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_ended (admins : List ℕ) (s : St) (o : Op) (h : Inv s) (sess : ℕ) (hs : sess ∈ s.ended) : sess ∈ (step admins full s o).ended ∧ (step admins full s o).fired.filter (fun f => f.2.1 = sess) = s.fired.filter (fun f => f.2.1 = sess)
+~~~
+
+### 433. no_fire_after_end
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:264 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_fire_after_end (admins : List ℕ) (s : St) (ops : List Op) (h : Inv s) (sess : ℕ) (hs : sess ∈ s.ended) : (run admins full s ops).fired.filter (fun f => f.2.1 = sess) = s.fired.filter (fun f => f.2.1 = sess)
+~~~
+
+### 434. step_halted
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:275 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (admins : List ℕ) (s : St) (o : Op) (hh : s.halted = true) : step admins full s o = s
+~~~
+
+### 435. halt_freezes
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:279 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes (admins : List ℕ) (s : St) (ops : List Op) (hh : s.halted = true) : run admins full s ops = s
+~~~
+
+### 436. fired_prefix
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:286 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fired_prefix (admins : List ℕ) (C : Checks) (s : St) (o : Op) : s.fired <+: (step admins C s o).fired
+~~~
+
+### 437. honest_session_lifecycle
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:315 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_session_lifecycle : let s
+~~~
+
+### 438. registry_bypass_survives
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:321 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem registry_bypass_survives : (run [9] { full with registryOnly
+~~~
+
+### 439. parent_only_revocation_survives
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:328 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem parent_only_revocation_survives : (run [9] { full with revokeLineage
+~~~
+
+### 440. foreign_registration_survives
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:335 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem foreign_registration_survives : (run [9] { full with lineage
+~~~
+
+### 441. no_halt_check_breaks
+
+Source: ControlStack/Scenarios/SC12Persistence.lean:342 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_check_breaks : (run [9] { full with haltCheck
+~~~
+
+## ControlStack/Scenarios/SC16Deploy.lean
+
+### 442. run_cons
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:147 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (R : Roles) (h : ℕ → ℕ) (C : Checks) (s : St) (o : Op) (ops : List Op) : run R h C s (o :: ops) = run R h C (step R h C s o) ops
+~~~
+
+### 443. inv_init
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init (R : Roles) (h : ℕ → ℕ) : Inv R h init
+~~~
+
+### 444. Inv.good
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Inv.good {R : Roles} {h : ℕ → ℕ} {s : St} (hi : Inv R h s) : Good R h s
+~~~
+
+### 445. apprOf_mem
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:178 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem apprOf_mem {s : St} {n : ℕ} {ap : Appr} (h : apprOf s n = some ap) : ap ∈ s.approvals ∧ ap.n = n
+~~~
+
+### 446. inv_of_mono
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_of_mono {R : Roles} {h : ℕ → ℕ} {s t : St} (hi : Inv R h s) (hrev : s.reviews ⊆ t.reviews) (happ : s.approvals ⊆ t.approvals) (hrevn : ∀ rv ∈ t.reviews, rv ∉ s.reviews → ReviewOk R h rv) (happn : ∀ ap ∈ t.approvals, ap ∉ s.approvals → ap.approver ∈ R.approvers) (hdep : t.deployed = s.deployed) (hused : t.used = s.used) : Inv R h t
+~~~
+
+### 447. doDeploy_inv
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:198 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem doDeploy_inv {R : Roles} {h : ℕ → ℕ} {s : St} (hi : Inv R h s) (n t x : ℕ) (ap : Appr) (hap : apprOf s n = some ap) (hrv : ∃ rv ∈ s.reviews, rv.d = ap.d) (hn : n ∉ s.used) (ht : t = ap.target) (hx : h x = ap.d) : Inv R h (doDeploy s n t x)
+~~~
+
+### 448. step_inv
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:218 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (R : Roles) (h : ℕ → ℕ) (s : St) (o : Op) (hi : Inv R h s) : Inv R h (step R h full s o)
+~~~
+
+### 449. run_inv
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:286 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (R : Roles) (h : ℕ → ℕ) (s : St) (ops : List Op) (hi : Inv R h s) : Inv R h (run R h full s ops)
+~~~
+
+### 450. sc16_safe
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:294 | Family: F4 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc16_safe (R : Roles) (h : ℕ → ℕ) (ops : List Op) : Good R h (run R h full init ops)
+~~~
+
+### 451. sc16_reviewed_content
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:299 | Family: F4 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc16_reviewed_content (R : Roles) (h : ℕ → ℕ) (ops : List Op) (hinj : Set.InjOn h {c | (∃ e ∈ (run R h full init ops).deployed, e.content = c) ∨ ∃ rv ∈ (run R h full init ops).reviews, rv.content = c}) : ∀ e ∈ (run R h full init ops).deployed, ∃ rv ∈ (run R h full init ops).reviews, rv.content = e.content ∧ rv.reviewer ∈ R.reviewers ∧ rv.reviewer ≠ rv.stager
+~~~
+
+### 452. step_halted
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:310 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (R : Roles) (h : ℕ → ℕ) (s : St) (o : Op) (hh : s.halted = true) : step R h full s o = s
+~~~
+
+### 453. halt_freezes
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:321 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes (R : Roles) (h : ℕ → ℕ) (s : St) (ops : List Op) (hh : s.halted = true) : run R h full s ops = s
+~~~
+
+### 454. deployed_prefix
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:329 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem deployed_prefix (R : Roles) (h : ℕ → ℕ) (C : Checks) (s : St) (o : Op) : s.deployed <+: (step R h C s o).deployed
+~~~
+
+### 455. honest_trace_deploys
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:363 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_trace_deploys : (run R0 id full init [.stage 1 7, .review 2 7, .approve 3 0 7 5 0, .deploy 1 0 5 7]).deployed = [⟨0, 5, 7⟩]
+~~~
+
+### 456. toctou_slot_breaks
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:369 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem toctou_slot_breaks : let s
+~~~
+
+### 457. verify_blocks_toctou
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:376 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem verify_blocks_toctou : (run R0 id full init [.stage 1 7, .writeSlot 1 0 7, .review 2 7, .approve 3 0 7 5 0, .writeSlot 1 0 666, .deploy 1 0 5 666]).deployed = []
+~~~
+
+### 458. collision_breaks
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:384 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem collision_breaks : let s
+~~~
+
+### 459. no_target_binding_breaks
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:390 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_target_binding_breaks : let s
+~~~
+
+### 460. self_review_without_distinct_check
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:399 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem self_review_without_distinct_check : let s
+~~~
+
+### 461. distinct_blocks_self_review
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:406 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem distinct_blocks_self_review : (run R1 id full init [.stage 1 7, .review 1 7, .approve 3 0 7 5 0, .deploy 1 0 5 7]).deployed = []
+~~~
+
+### 462. no_nonce_redeploys
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:411 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_nonce_redeploys : (run R0 id { full with nonce
+~~~
+
+### 463. no_halt_check_breaks
+
+Source: ControlStack/Scenarios/SC16Deploy.lean:418 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_check_breaks : (run R0 id { full with haltCheck
+~~~
+
+## ControlStack/Scenarios/SC18Logging.lean
+
+### 464. run_cons
+
+Source: ControlStack/Scenarios/SC18Logging.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (admins : List ℕ) (trusted T : ℕ) (C : Checks) (s : St) (o : Op) (ops : List Op) : run admins trusted T C s (o :: ops) = run admins trusted T C (step admins trusted T C s o) ops
+~~~
+
+### 465. inv_init
+
+Source: ControlStack/Scenarios/SC18Logging.lean:133 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init (trusted T : ℕ) : Inv trusted T (init trusted)
+~~~
+
+### 466. RelOk.mono
+
+Source: ControlStack/Scenarios/SC18Logging.lean:136 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem RelOk.mono {T : ℕ} {s t : St} (hp : s.logged <+: t.logged) {r : Rel} (h : RelOk T s r) : RelOk T t r
+~~~
+
+### 467. step_inv
+
+Source: ControlStack/Scenarios/SC18Logging.lean:142 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (admins : List ℕ) (trusted T : ℕ) (s : St) (o : Op) (ho : legal admins trusted o) (h : Inv trusted T s) : Inv trusted T (step admins trusted T full s o)
+~~~
+
+### 468. run_inv
+
+Source: ControlStack/Scenarios/SC18Logging.lean:207 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (admins : List ℕ) (trusted T : ℕ) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, legal admins trusted o) (h : Inv trusted T s) : Inv trusted T (run admins trusted T full s ops)
+~~~
+
+### 469. sc18_safe
+
+Source: ControlStack/Scenarios/SC18Logging.lean:219 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc18_safe (admins : List ℕ) (trusted T : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal admins trusted o) : Good T (run admins trusted T full (init trusted) ops)
+~~~
+
+### 470. config_untampered
+
+Source: ControlStack/Scenarios/SC18Logging.lean:225 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem config_untampered (admins : List ℕ) (trusted T : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal admins trusted o) : (run admins trusted T full (init trusted) ops).cfg = trusted
+~~~
+
+### 471. step_halted
+
+Source: ControlStack/Scenarios/SC18Logging.lean:231 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (admins : List ℕ) (trusted T : ℕ) (s : St) (o : Op) (hh : s.halted = true) : (step admins trusted T full s o).released = s.released ∧ (step admins trusted T full s o).halted = true
+~~~
+
+### 472. halt_freezes
+
+Source: ControlStack/Scenarios/SC18Logging.lean:240 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes (admins : List ℕ) (trusted T : ℕ) (s : St) (ops : List Op) (hh : s.halted = true) : (run admins trusted T full s ops).released = s.released
+~~~
+
+### 473. released_prefix
+
+Source: ControlStack/Scenarios/SC18Logging.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem released_prefix (admins : List ℕ) (trusted T : ℕ) (C : Checks) (s : St) (o : Op) : s.released <+: (step admins trusted T C s o).released
+~~~
+
+### 474. honest_logged_release
+
+Source: ControlStack/Scenarios/SC18Logging.lean:283 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_logged_release : let s
+~~~
+
+### 475. release_before_log_breaks
+
+Source: ControlStack/Scenarios/SC18Logging.lean:289 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem release_before_log_breaks : let s
+~~~
+
+### 476. agent_writable_config_breaks
+
+Source: ControlStack/Scenarios/SC18Logging.lean:297 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem agent_writable_config_breaks : let s
+~~~
+
+### 477. fail_open_outage_breaks
+
+Source: ControlStack/Scenarios/SC18Logging.lean:304 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fail_open_outage_breaks : (run [9] 0 2 { full with failOpen
+~~~
+
+### 478. watchdog_off_silent_release
+
+Source: ControlStack/Scenarios/SC18Logging.lean:312 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem watchdog_off_silent_release : (run [9] 0 2 { full with watchdog
+~~~
+
+### 479. no_halt_check_breaks
+
+Source: ControlStack/Scenarios/SC18Logging.lean:319 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_check_breaks : (run [9] 0 2 { full with haltCheck
+~~~
+
+## ControlStack/Scenarios/SC23Injection.lean
+
+### 480. run_cons
+
+Source: ControlStack/Scenarios/SC23Injection.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (P : Policy) (C : Checks) (s : St) (o : Op) (ops : List Op) : run P C s (o :: ops) = run P C (step P C s o) ops
+~~~
+
+### 481. inv_init
+
+Source: ControlStack/Scenarios/SC23Injection.lean:158 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init (P : Policy) : Inv P init
+~~~
+
+### 482. Inv.good
+
+Source: ControlStack/Scenarios/SC23Injection.lean:160 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Inv.good {P : Policy} {s : St} (hi : Inv P s) : Good P s
+~~~
+
+### 483. argsOf_mem
+
+Source: ControlStack/Scenarios/SC23Injection.lean:165 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem argsOf_mem {s : St} {args : List ℕ} {x : Val} (h : x ∈ argsOf s args) : x ∈ s.store
+~~~
+
+### 484. anyLabel_eq
+
+Source: ControlStack/Scenarios/SC23Injection.lean:169 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem anyLabel_eq {xs : List Val} (h : ∀ x ∈ xs, x.label = x.prov) : anyLabel xs = anyProv xs
+~~~
+
+### 485. inv_of_mono
+
+Source: ControlStack/Scenarios/SC23Injection.lean:177 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_of_mono {P : Policy} {s t : St} (hi : Inv P s) (hst : ∀ x ∈ t.store, x.label = x.prov) (hc : s.confs ⊆ t.confs) (hcn : ∀ cf ∈ t.confs, cf.by_ ∈ P.users) (he : t.executed = s.executed) (hu : t.used = s.used) : Inv P t
+~~~
+
+### 486. store_append
+
+Source: ControlStack/Scenarios/SC23Injection.lean:186 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem store_append {P : Policy} {s : St} (hi : Inv P s) (x : Val) (hx : x.label = x.prov) : Inv P { s with store
+~~~
+
+### 487. exec_free
+
+Source: ControlStack/Scenarios/SC23Injection.lean:193 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem exec_free {P : Policy} {s : St} (hi : Inv P s) (tool : ℕ) (args : List ℕ) (hc : tool ∉ P.sensitive ∨ anyLabel (argsOf s args) = false) : Inv P (doExec s ⟨tool, (argsOf s args).map Val.v, anyProv (argsOf s args), none⟩ [])
+~~~
+
+### 488. exec_conf
+
+Source: ControlStack/Scenarios/SC23Injection.lean:214 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem exec_conf {P : Policy} {s : St} (hi : Inv P s) (tool : ℕ) (args : List ℕ) (n : ℕ) (cf : Conf) (hcf : confOf s n = some cf) (ht : cf.tool = tool) (hv : cf.vals = (argsOf s args).map Val.v) (hu : n ∉ s.used) : Inv P (doExec s ⟨tool, (argsOf s args).map Val.v, anyProv (argsOf s args), some n⟩ [n])
+~~~
+
+### 489. step_inv
+
+Source: ControlStack/Scenarios/SC23Injection.lean:236 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (P : Policy) (s : St) (o : Op) (hi : Inv P s) : Inv P (step P full s o)
+~~~
+
+### 490. run_inv
+
+Source: ControlStack/Scenarios/SC23Injection.lean:292 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (P : Policy) (s : St) (ops : List Op) (hi : Inv P s) : Inv P (run P full s ops)
+~~~
+
+### 491. sc23_safe
+
+Source: ControlStack/Scenarios/SC23Injection.lean:300 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc23_safe (P : Policy) (ops : List Op) : Good P (run P full init ops)
+~~~
+
+### 492. step_halted
+
+Source: ControlStack/Scenarios/SC23Injection.lean:305 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (P : Policy) (s : St) (o : Op) (hh : s.halted = true) : step P full s o = s
+~~~
+
+### 493. halt_freezes
+
+Source: ControlStack/Scenarios/SC23Injection.lean:315 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes (P : Policy) (s : St) (ops : List Op) (hh : s.halted = true) : run P full s ops = s
+~~~
+
+### 494. executed_prefix
+
+Source: ControlStack/Scenarios/SC23Injection.lean:322 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem executed_prefix (P : Policy) (C : Checks) (s : St) (o : Op) : s.executed <+: (step P C s o).executed
+~~~
+
+### 495. honest_untainted
+
+Source: ControlStack/Scenarios/SC23Injection.lean:351 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_untainted : (run P0 full init [.userInput 0 42, .act 5 [0] 0]).executed = [⟨5, [42], false, none⟩]
+~~~
+
+### 496. honest_confirmed
+
+Source: ControlStack/Scenarios/SC23Injection.lean:356 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_confirmed : (run P0 full init [.toolResult 0 66, .confirm 1 7 5 [66], .act 5 [0] 7]).executed = [⟨5, [66], true, some 7⟩]
+~~~
+
+### 497. tainted_unconfirmed_blocked
+
+Source: ControlStack/Scenarios/SC23Injection.lean:361 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem tainted_unconfirmed_blocked : (run P0 full init [.toolResult 0 66, .act 5 [0] 0]).executed = []
+~~~
+
+### 498. summarizer_drops_taint
+
+Source: ControlStack/Scenarios/SC23Injection.lean:367 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem summarizer_drops_taint : (run P0 { full with propagate
+~~~
+
+### 499. paraphrase_confirmation_breaks
+
+Source: ControlStack/Scenarios/SC23Injection.lean:374 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem paraphrase_confirmation_breaks : let s
+~~~
+
+### 500. no_taint_check_breaks
+
+Source: ControlStack/Scenarios/SC23Injection.lean:381 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_taint_check_breaks : (run P0 { full with taintCheck
+~~~
+
+### 501. confirmation_reuse_breaks
+
+Source: ControlStack/Scenarios/SC23Injection.lean:387 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem confirmation_reuse_breaks : (run P0 { full with oneUse
+~~~
+
+### 502. non_user_confirmation_refused
+
+Source: ControlStack/Scenarios/SC23Injection.lean:396 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem non_user_confirmation_refused : (run P0 full init [.toolResult 0 66, .confirm 2 7 5 [66], .act 5 [0] 7]).executed = []
+~~~
+
+## ControlStack/Scenarios/SC25Audit.lean
+
+### 503. run_cons
+
+Source: ControlStack/Scenarios/SC25Audit.lean:172 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (C : Checks) (s : St) (o : Op) (ops : List Op) : run R h cls C s (o :: ops) = run R h cls C (step R h cls C s o) ops
+~~~
+
+### 504. inv_init
+
+Source: ControlStack/Scenarios/SC25Audit.lean:196 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) : Inv R h cls init
+~~~
+
+### 505. Inv.good
+
+Source: ControlStack/Scenarios/SC25Audit.lean:199 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Inv.good {R : Roles} {h : ℕ → ℕ} {cls : ℕ → Bool} {s : St} (hi : Inv R h cls s) : Good R h cls s
+~~~
+
+### 506. take_prefix
+
+Source: ControlStack/Scenarios/SC25Audit.lean:206 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem take_prefix {α : Type} {l m : List α} (hp : l <+: m) {n : ℕ} (hn : n ≤ l.length) : m.take n = l.take n
+~~~
+
+### 507. inv_of_mono
+
+Source: ControlStack/Scenarios/SC25Audit.lean:211 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_of_mono {R : Roles} {h : ℕ → ℕ} {cls : ℕ → Bool} {s t : St} (hi : Inv R h cls s) (hv : s.verdicts <+: t.verdicts) (ha : s.approvals <+: t.approvals) (hvn : ∀ v ∈ t.verdicts, v ∉ s.verdicts → ∃ a, v.by_ = some a ∧ a ∈ R.auditors) (han : ∀ ap ∈ t.approvals, ap ∉ s.approvals → ap.approver ∈ R.approvers) (he : t.executed = s.executed) : Inv R h cls t
+~~~
+
+### 508. mono_same
+
+Source: ControlStack/Scenarios/SC25Audit.lean:229 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem mono_same {R : Roles} {h : ℕ → ℕ} {cls : ℕ → Bool} {s t : St} (hi : Inv R h cls s) (hv : t.verdicts = s.verdicts) (ha : t.approvals = s.approvals) (he : t.executed = s.executed) : Inv R h cls t
+~~~
+
+### 509. audit_inv
+
+Source: ControlStack/Scenarios/SC25Audit.lean:235 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem audit_inv {R : Roles} {h : ℕ → ℕ} {cls : ℕ → Bool} {s : St} (hi : Inv R h cls s) (v : Verdict) (hv : ∃ a, v.by_ = some a ∧ a ∈ R.auditors) : Inv R h cls { s with verdicts
+~~~
+
+### 510. approve_inv
+
+Source: ControlStack/Scenarios/SC25Audit.lean:243 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem approve_inv {R : Roles} {h : ℕ → ℕ} {cls : ℕ → Bool} {s : St} (hi : Inv R h cls s) (ap : Appr) (ha : ap.approver ∈ R.approvers) : Inv R h cls { s with approvals
+~~~
+
+### 511. itemOf_id
+
+Source: ControlStack/Scenarios/SC25Audit.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem itemOf_id {s : St} {id : ℕ} {it : Item} (h : itemOf s id = some it) : it.id = id
+~~~
+
+### 512. fire_inv
+
+Source: ControlStack/Scenarios/SC25Audit.lean:254 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fire_inv {R : Roles} {h : ℕ → ℕ} {cls : ℕ → Bool} {s : St} (hi : Inv R h cls s) (id : ℕ) (it : Item) (hit : itemOf s id = some it) (hn : id ∉ s.executed.map Exec.id) (hval : Valid h cls full s it) : Inv R h cls { s with executed
+~~~
+
+### 513. step_inv
+
+Source: ControlStack/Scenarios/SC25Audit.lean:279 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (o : Op) (hi : Inv R h cls s) : Inv R h cls (step R h cls full s o)
+~~~
+
+### 514. run_inv
+
+Source: ControlStack/Scenarios/SC25Audit.lean:304 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (ops : List Op) (hi : Inv R h cls s) : Inv R h cls (run R h cls full s ops)
+~~~
+
+### 515. sc25_safe
+
+Source: ControlStack/Scenarios/SC25Audit.lean:314 | Family: F6 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc25_safe (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (ops : List Op) : Good R h cls (run R h cls full init ops)
+~~~
+
+### 516. step_expired
+
+Source: ControlStack/Scenarios/SC25Audit.lean:320 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_expired (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (o : Op) (id : ℕ) (hx : id ∈ s.expired) (hn : id ∉ s.executed.map Exec.id) : id ∈ (step R h cls full s o).expired ∧ id ∉ (step R h cls full s o).executed.map Exec.id
+~~~
+
+### 517. expired_never_executes
+
+Source: ControlStack/Scenarios/SC25Audit.lean:345 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem expired_never_executes (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (ops : List Op) (id : ℕ) (hx : id ∈ s.expired) (hn : id ∉ s.executed.map Exec.id) : id ∉ (run R h cls full s ops).executed.map Exec.id
+~~~
+
+### 518. step_halted
+
+Source: ControlStack/Scenarios/SC25Audit.lean:355 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (o : Op) (hh : s.halted = true) : (step R h cls full s o).executed = s.executed ∧ (step R h cls full s o).halted = true
+~~~
+
+### 519. halt_freezes
+
+Source: ControlStack/Scenarios/SC25Audit.lean:363 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (ops : List Op) (hh : s.halted = true) : (run R h cls full s ops).executed = s.executed
+~~~
+
+### 520. executed_prefix
+
+Source: ControlStack/Scenarios/SC25Audit.lean:374 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem executed_prefix (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (C : Checks) (s : St) (o : Op) : s.executed <+: (step R h cls C s o).executed
+~~~
+
+### 521. honest_reversible
+
+Source: ControlStack/Scenarios/SC25Audit.lean:407 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_reversible : ((run R0 id cls0 full init [.submit 1 0 7 false, .audit 2 0 true, .check 0, .fire 0]).executed.map Exec.content) = [7]
+~~~
+
+### 522. honest_irreversible_with_crash
+
+Source: ControlStack/Scenarios/SC25Audit.lean:414 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_irreversible_with_crash : ((run R0 id cls0 full init [.submit 1 0 100 true, .audit 2 0 true, .approve 3 0, .check 0, .crash, .fire 0, .check 0, .fire 0, .fire 0]).executed.map Exec.content) = [100]
+~~~
+
+### 523. audit_fail_blocks
+
+Source: ControlStack/Scenarios/SC25Audit.lean:420 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem audit_fail_blocks : (run R0 id cls0 full init [.submit 1 0 7 false, .audit 2 0 false, .check 0, .fire 0]).executed = []
+~~~
+
+### 524. fail_open_timeout_breaks
+
+Source: ControlStack/Scenarios/SC25Audit.lean:426 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fail_open_timeout_breaks : let s
+~~~
+
+### 525. digest_unchecked_breaks
+
+Source: ControlStack/Scenarios/SC25Audit.lean:433 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem digest_unchecked_breaks : let s
+~~~
+
+### 526. nonatomic_check_race_breaks
+
+Source: ControlStack/Scenarios/SC25Audit.lean:441 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem nonatomic_check_race_breaks : (run R0 id cls0 { full with atomic
+~~~
+
+### 527. agent_declared_class_breaks
+
+Source: ControlStack/Scenarios/SC25Audit.lean:450 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem agent_declared_class_breaks : let s
+~~~
+
+### 528. no_halt_check_breaks
+
+Source: ControlStack/Scenarios/SC25Audit.lean:458 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_check_breaks : (run R0 id cls0 { full with haltCheck
+~~~
+
+## ControlStack/Scenarios/SC26Transaction.lean
+
+### 529. sound_full
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:124 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sound_full : Sound full
+~~~
+
+### 530. reqOf_append
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:198 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reqOf_append (s : St) (l : List Req) (k : ℕ) (r : Req) (h : reqOf s k = some r) : reqOf { s with reqs
+~~~
+
+### 531. inv_init
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:203 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init (R : Roles) (cap : ℕ) : Inv R cap init
+~~~
+
+### 532. Approved.mono
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:211 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Approved.mono {R : Roles} {s t : St} {k : ℕ} {r : Req} (h : Ext s t) (ha : Approved R s k r) : Approved R t k r
+~~~
+
+### 533. amt_ext
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:216 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem amt_ext {s t : St} (h : Ext s t) (k : ℕ) (hk : ∃ r, reqOf s k = some r) : amt t k = amt s k
+~~~
+
+### 534. sum_ext
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:220 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_ext {s t : St} (h : Ext s t) (l : List ℕ) (hl : ∀ k ∈ l, ∃ r, reqOf s k = some r) : (l.map (amt t)).sum = (l.map (amt s)).sum
+~~~
+
+### 535. bank_sum
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:226 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bank_sum (s : St) (hb : ∀ e ∈ s.bank, ∃ r, reqOf s e.1 = some r ∧ r.tx = e.2) : (s.bank.map (fun e => e.2.amount)).sum = ((s.bank.map Prod.fst).map (amt s)).sum
+~~~
+
+### 536. sum_le_of_subperm
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:235 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem sum_le_of_subperm (f : ℕ → ℕ) (l₁ l₂ : List ℕ) (h : List.Subperm l₁ l₂) : (l₁.map f).sum ≤ (l₂.map f).sum
+~~~
+
+### 537. Inv.good
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:240 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Inv.good {R : Roles} {cap : ℕ} {s : St} (h : Inv R cap s) : Good R cap s
+~~~
+
+### 538. inv_of_ext
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:258 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_of_ext {R : Roles} {cap : ℕ} {s t : St} (h : Inv R cap s) (he : Ext s t) (happr : ∀ ap ∈ t.approvals, ap ∉ s.approvals → ∃ r, reqOf t ap.1 = some r ∧ ap.2.2 = r.tx ∧ ap.2.1 ∈ R.approvers ∧ ap.2.1 ≠ r.requester) (hres : t.reserved = s.reserved) (hsp : t.spent = s.spent) (hbank : t.bank = s.bank) (hnet : t.net = s.net) : Inv R cap t
+~~~
+
+### 539. ext_refl
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:287 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem ext_refl (s : St) : Ext s s
+~~~
+
+### 540. bankAppend_inv
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:289 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bankAppend_inv {R : Roles} {cap : ℕ} {C : Checks} (hdd : C.bankDedup = true) {s : St} (h : Inv R cap s) (k : ℕ) (r : Req) (hk : k ∈ s.reserved) (hr : reqOf s k = some r) : Inv R cap (bankAppend C s k r.tx)
+~~~
+
+### 541. step_inv
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:307 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (R : Roles) (cap : ℕ) {C : Checks} (hC : Sound C) (s : St) (o : Op) (ho : legal R o) (h : Inv R cap s) : Inv R cap (step R cap C s o)
+~~~
+
+### 542. run_cons
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:395 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (R : Roles) (cap : ℕ) (C : Checks) (s : St) (o : Op) (ops : List Op) : run R cap C s (o :: ops) = run R cap C (step R cap C s o) ops
+~~~
+
+### 543. run_inv
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:398 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (R : Roles) (cap : ℕ) {C : Checks} (hC : Sound C) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) (h : Inv R cap s) : Inv R cap (run R cap C s ops)
+~~~
+
+### 544. safe_of_sound
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:409 | Family: F8 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem safe_of_sound (R : Roles) (cap : ℕ) {C : Checks} (hC : Sound C) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) : Good R cap (run R cap C init ops)
+~~~
+
+### 545. good_without_nonce
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:414 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem good_without_nonce (R : Roles) (cap : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) : Good R cap (run R cap { full with nonce
+~~~
+
+### 546. sc26_safe
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:426 | Family: F7 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc26_safe (R : Roles) (cap : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) : Good R cap (run R cap full init ops)
+~~~
+
+### 547. sc26_safe_disjoint
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:431 | Family: F7 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc26_safe_disjoint (R : Roles) (cap : ℕ) (hdisj : ∀ a ∈ R.approvers, a ∉ R.agents) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) : ∀ e ∈ (run R cap full init ops).bank, ∃ r a, reqOf (run R cap full init ops) e.1 = some r ∧ r.tx = e.2 ∧ (e.1, a, e.2) ∈ (run R cap full init ops).approvals ∧ a ∈ R.approvers ∧ a ∉ R.agents ∧ a ≠ r.requester
+~~~
+
+### 548. bankAppend_reserved
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:439 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bankAppend_reserved (C : Checks) (s : St) (k : ℕ) (tx : Tx) : (bankAppend C s k tx).reserved = s.reserved
+~~~
+
+### 549. step_res_nodup
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:443 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_res_nodup (R : Roles) (cap : ℕ) (C : Checks) (hn : C.nonce = true) (s : St) (o : Op) (h : s.reserved.Nodup) : (step R cap C s o).reserved.Nodup
+~~~
+
+### 550. sc26_once
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:484 | Family: F7 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc26_once (R : Roles) (cap : ℕ) (ops : List Op) : (run R cap full init ops).reserved.Nodup
+~~~
+
+### 551. bankAppend_mem
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:492 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bankAppend_mem (C : Checks) (s : St) (k : ℕ) (tx : Tx) (e : ℕ × Tx) (he : e ∈ (bankAppend C s k tx).bank) : e ∈ s.bank ∨ e = (k, tx)
+~~~
+
+### 552. step_halted
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:503 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (R : Roles) (cap : ℕ) (s : St) (o : Op) (ho : legal R o) (hh : s.halted = true) : (step R cap full s o).net = s.net ∧ (step R cap full s o).halted = true ∧ ∀ e ∈ (step R cap full s o).bank, e ∈ s.bank ∨ e ∈ s.net
+~~~
+
+### 553. halt_freezes
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:532 | Family: F3 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem halt_freezes (R : Roles) (cap : ℕ) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) (hh : s.halted = true) : (run R cap full s ops).net = s.net ∧ ∀ e ∈ (run R cap full s ops).bank, e ∈ s.bank ∨ e ∈ s.net
+~~~
+
+### 554. halt_freezes_quiescent
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:547 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes_quiescent (R : Roles) (cap : ℕ) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) (hh : s.halted = true) (hq : ∀ m ∈ s.net, m ∈ s.bank) : ∀ e ∈ (run R cap full s ops).bank, e ∈ s.bank
+~~~
+
+### 555. bankAppend_prefix
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:554 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bankAppend_prefix (C : Checks) (s : St) (k : ℕ) (tx : Tx) : s.bank <+: (bankAppend C s k tx).bank
+~~~
+
+### 556. bank_prefix
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:560 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem bank_prefix (R : Roles) (cap : ℕ) (C : Checks) (s : St) (o : Op) : s.bank <+: (step R cap C s o).bank
+~~~
+
+### 557. not_good_of
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:613 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem not_good_of {R : Roles} {cap : ℕ} {s : St} (e : ℕ × Tx) (he : e ∈ s.bank) (hn : ∀ ap ∈ s.approvals, ap.1 = e.1 → ap.2.2 = e.2 → ap.2.1 ∈ R.approvers → False) : ¬ Good R cap s
+~~~
+
+### 558. honest_trace_pays
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:620 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_trace_pays : (run R0 20 full init [.request 1 tx1, .approve 2 0 tx1, .execute 1 0, .deliver 0, .arrive 0, .deliver 0, .arrive 0, .arrive 0]).bank = [(0, tx1)]
+~~~
+
+### 559. payload_unchecked_breaks
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:625 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem payload_unchecked_breaks : let s
+~~~
+
+### 560. no_dedup_retry_duplicates
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:637 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_dedup_retry_duplicates : let s
+~~~
+
+### 561. no_dedup_breaks_cap
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:651 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_dedup_breaks_cap : let s
+~~~
+
+### 562. no_bank_auth_breaks
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:658 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_bank_auth_breaks : let s
+~~~
+
+### 563. same_payload_twice_is_good
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:669 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem same_payload_twice_is_good : let ops : List Op
+~~~
+
+### 564. no_cap_breaks
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:679 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_cap_breaks : let s
+~~~
+
+### 565. no_halt_check_breaks
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:693 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_check_breaks : let C
+~~~
+
+### 566. halt_check_blocks
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:700 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_check_blocks : let s
+~~~
+
+### 567. inflight_after_halt
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:706 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inflight_after_halt : let s
+~~~
+
+### 568. gate_credential_leak_breaks
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:712 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem gate_credential_leak_breaks : let s
+~~~
+
+### 569. self_approval_without_distinct_check
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:724 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem self_approval_without_distinct_check : let s
+~~~
+
+### 570. distinct_check_blocks_self_approval
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:743 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem distinct_check_blocks_self_approval : (run R1 20 full init [.request 1 tx1, .approve 1 0 tx1, .execute 1 0, .deliver 0, .arrive 0]).bank = []
+~~~
+
+### 571. nonce_protects_budget_only
+
+Source: ControlStack/Scenarios/SC26Transaction.lean:749 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem nonce_protects_budget_only : let s
+~~~
+
+## ControlStack/Scenarios/SC28Budget.lean
+
+### 572. forkUpd_full_leases
+
+Source: ControlStack/Scenarios/SC28Budget.lean:105 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem forkUpd_full_leases (s : St) (p ch nl : ℕ) : (forkUpd full s p ch nl).1 = s.leases
+~~~
+
+### 573. run_cons
+
+Source: ControlStack/Scenarios/SC28Budget.lean:139 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_cons (admins : List ℕ) (G : ℕ) (C : Checks) (s : St) (o : Op) (ops : List Op) : run admins G C s (o :: ops) = run admins G C (step admins G C s o) ops
+~~~
+
+### 574. Inv.good
+
+Source: ControlStack/Scenarios/SC28Budget.lean:160 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Inv.good {G : ℕ} {s : St} (h : Inv G s) : Good G s
+~~~
+
+### 575. inv_init
+
+Source: ControlStack/Scenarios/SC28Budget.lean:163 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_init (G : ℕ) : Inv G init
+~~~
+
+### 576. budgetOf_append
+
+Source: ControlStack/Scenarios/SC28Budget.lean:167 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem budgetOf_append (s : St) (lid b : ℕ) (hfresh : budgetOf s lid = none) (l : ℕ) : budgetOf { s with leases
+~~~
+
+### 577. inv_of_same
+
+Source: ControlStack/Scenarios/SC28Budget.lean:178 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem inv_of_same {G : ℕ} {s t : St} (h : Inv G s) (hl : t.ledger = s.ledger) (hu : t.usage = s.usage) (hb : ∀ lid, (budgetOf s lid).getD 0 ≤ (budgetOf t lid).getD 0 ∨ spentL s lid = 0) : Inv G t
+~~~
+
+### 578. work_inv
+
+Source: ControlStack/Scenarios/SC28Budget.lean:191 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem work_inv {G : ℕ} {s : St} (h : Inv G s) (w lid a b ch : ℕ) (hch : a ≤ ch) (h1 : 1 ≤ ch) (hb : budgetOf s lid = some b) (hcl : spentL s lid + ch ≤ b) (hcg : spentT s + ch ≤ G) : Inv G { s with ledger
+~~~
+
+### 579. step_inv
+
+Source: ControlStack/Scenarios/SC28Budget.lean:225 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_inv (admins : List ℕ) (G : ℕ) (s : St) (o : Op) (ho : legal o) (h : Inv G s) : Inv G (step admins G full s o)
+~~~
+
+### 580. run_inv
+
+Source: ControlStack/Scenarios/SC28Budget.lean:283 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem run_inv (admins : List ℕ) (G : ℕ) (s : St) (ops : List Op) (hops : ∀ o ∈ ops, legal o) (h : Inv G s) : Inv G (run admins G full s ops)
+~~~
+
+### 581. sc28_safe
+
+Source: ControlStack/Scenarios/SC28Budget.lean:294 | Family: F5 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem sc28_safe (admins : List ℕ) (G : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal o) : Good G (run admins G full init ops)
+~~~
+
+### 582. step_revoked
+
+Source: ControlStack/Scenarios/SC28Budget.lean:300 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_revoked (admins : List ℕ) (G : ℕ) (C : Checks) (s : St) (o : Op) (lid : ℕ) (hr : lid ∈ s.revoked) : lid ∈ (step admins G C s o).revoked ∧ usedL (step admins G C s o) lid = usedL s lid
+~~~
+
+### 583. revoked_lease_stops
+
+Source: ControlStack/Scenarios/SC28Budget.lean:326 | Family: F5 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+
+~~~lean
+theorem revoked_lease_stops (admins : List ℕ) (G : ℕ) (C : Checks) (s : St) (ops : List Op) (lid : ℕ) (hr : lid ∈ s.revoked) : usedL (run admins G C s ops) lid = usedL s lid
+~~~
+
+### 584. fork_shares_lease
+
+Source: ControlStack/Scenarios/SC28Budget.lean:337 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fork_shares_lease (admins : List ℕ) (G : ℕ) (s : St) (c p ch nl lid : ℕ) (hh : s.halted = false) (hp : leaseOf s p = some lid) (hfresh : ch ∉ s.assign.map Prod.fst) : leaseOf (step admins G full s (.fork c p ch nl)) ch = some lid
+~~~
+
+### 585. step_halted
+
+Source: ControlStack/Scenarios/SC28Budget.lean:346 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem step_halted (admins : List ℕ) (G : ℕ) (s : St) (o : Op) (hh : s.halted = true) : (step admins G full s o).usage = s.usage ∧ (step admins G full s o).halted = true
+~~~
+
+### 586. halt_freezes
+
+Source: ControlStack/Scenarios/SC28Budget.lean:356 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem halt_freezes (admins : List ℕ) (G : ℕ) (s : St) (ops : List Op) (hh : s.halted = true) : (run admins G full s ops).usage = s.usage
+~~~
+
+### 587. usage_prefix
+
+Source: ControlStack/Scenarios/SC28Budget.lean:367 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem usage_prefix (admins : List ℕ) (G : ℕ) (C : Checks) (s : St) (o : Op) : s.usage <+: (step admins G C s o).usage
+~~~
+
+### 588. Good.entry
+
+Source: ControlStack/Scenarios/SC28Budget.lean:381 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem Good.entry {G : ℕ} {s : St} (h : Good G s) (e : ℕ × ℕ × ℕ) (he : e ∈ s.usage) : EntryOk s e
+~~~
+
+### 589. honest_trace_works
+
+Source: ControlStack/Scenarios/SC28Budget.lean:402 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem honest_trace_works : (run [9] 10 full init [.issue 9 0 10, .assignTo 9 1 0, .work 1 3 3, .restart, .work 1 4 4]).usage = [(1, 0, 3), (1, 0, 4)]
+~~~
+
+### 590. no_global_counter_breaks
+
+Source: ControlStack/Scenarios/SC28Budget.lean:408 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_global_counter_breaks : usedT (run [9] 10 { full with global
+~~~
+
+### 591. fresh_fork_exceeds_parent
+
+Source: ControlStack/Scenarios/SC28Budget.lean:416 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fresh_fork_exceeds_parent : (run [9] 100 { full with share
+~~~
+
+### 592. fresh_fork_escapes_revocation
+
+Source: ControlStack/Scenarios/SC28Budget.lean:425 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem fresh_fork_escapes_revocation : (run [9] 100 { full with share
+~~~
+
+### 593. reported_cost_breaks
+
+Source: ControlStack/Scenarios/SC28Budget.lean:433 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem reported_cost_breaks : let s
+~~~
+
+### 594. rollback_double_spends
+
+Source: ControlStack/Scenarios/SC28Budget.lean:440 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem rollback_double_spends : usedT (run [9] 10 full init [.issue 9 0 10, .assignTo 9 1 0, .work 1 10 0, .rollback 0, .work 1 10 0]) = 20
+~~~
+
+### 595. no_halt_check_breaks
+
+Source: ControlStack/Scenarios/SC28Budget.lean:445 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem no_halt_check_breaks : (run [9] 10 { full with haltCheck
+~~~
+
 ## ControlStack/SideChannel.lean
 
-### 312. per_seed_side
+### 596. per_seed_side
 
 Source: ControlStack/SideChannel.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2572,7 +4868,7 @@ Source: ControlStack/SideChannel.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem per_seed_side {M V S O : Type} [Fintype M] [Fintype V] [Fintype S] [Fintype O] (W : S → O → ℝ) (c : O → ℝ) (hc : ∀ s o, W s o ≤ c o) (hc0 : ∀ o, 0 ≤ c o) (enc : M → V × S → ℝ) (dec : V × O → M → ℝ) (henc : ∀ m, IsDist (enc m)) (hdec : ∀ y, IsDist (dec y)) : ∑ m, ∑ x : V × S, enc m x * ∑ o, W x.2 o * dec (x.1, o) m ≤ (Fintype.card V : ℝ) * ∑ o, c o
 ~~~
 
-### 313. side_bound
+### 597. side_bound
 
 Source: ControlStack/SideChannel.lean:78 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2580,7 +4876,7 @@ Source: ControlStack/SideChannel.lean:78 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem side_bound {Ω M V S O : Type} [Fintype Ω] [Fintype M] [Fintype V] [Fintype S] [Fintype O] [Nonempty M] (ρ : Ω → ℝ) (W : S → O → ℝ) (c : O → ℝ) (hc : ∀ s o, W s o ≤ c o) (hc0 : ∀ o, 0 ≤ c o) (enc : Ω → M → V × S → ℝ) (dec : Ω → V × O → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω y, IsDist (dec ω y)) : sideSuccess ρ W enc dec ≤ (Fintype.card V : ℝ) * (∑ o, c o) / (Fintype.card M : ℝ)
 ~~~
 
-### 314. side_bound_uninfluenced
+### 598. side_bound_uninfluenced
 
 Source: ControlStack/SideChannel.lean:95 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2588,7 +4884,7 @@ Source: ControlStack/SideChannel.lean:95 | Family: UNMAPPED | Adversary: UNKNOWN
 theorem side_bound_uninfluenced {Ω M V S O : Type} [Fintype Ω] [Fintype M] [Fintype V] [Fintype S] [Fintype O] [Nonempty M] (ρ : Ω → ℝ) (w : O → ℝ) (hw : IsDist w) (enc : Ω → M → V × S → ℝ) (dec : Ω → V × O → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω y, IsDist (dec ω y)) : sideSuccess ρ (fun _ => w) enc dec ≤ (Fintype.card V : ℝ) / (Fintype.card M : ℝ)
 ~~~
 
-### 315. side_bound_trivial
+### 599. side_bound_trivial
 
 Source: ControlStack/SideChannel.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2596,7 +4892,7 @@ Source: ControlStack/SideChannel.lean:104 | Family: UNMAPPED | Adversary: UNKNOW
 theorem side_bound_trivial {Ω M V S O : Type} [Fintype Ω] [Fintype M] [Fintype V] [Fintype S] [Fintype O] [Nonempty M] (ρ : Ω → ℝ) (W : S → O → ℝ) (hW : ∀ s, IsDist (W s)) (enc : Ω → M → V × S → ℝ) (dec : Ω → V × O → M → ℝ) (hρ : IsDist ρ) (henc : ∀ ω m, IsDist (enc ω m)) (hdec : ∀ ω y, IsDist (dec ω y)) : sideSuccess ρ W enc dec ≤ (Fintype.card V : ℝ) * (Fintype.card O : ℝ) / (Fintype.card M : ℝ)
 ~~~
 
-### 316. dom_pi
+### 600. dom_pi
 
 Source: ControlStack/SideChannel.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2604,7 +4900,7 @@ Source: ControlStack/SideChannel.lean:118 | Family: UNMAPPED | Adversary: UNKNOW
 theorem dom_pi {E : ℕ} {S O : Fin E → Type} [∀ e, Fintype (O e)] (W : (e : Fin E) → S e → O e → ℝ) (c : (e : Fin E) → O e → ℝ) (hW0 : ∀ e s o, 0 ≤ W e s o) (hc : ∀ e s o, W e s o ≤ c e o) : (∀ (s : (e : Fin E) → S e) (o : (e : Fin E) → O e), ∏ e, W e (s e) (o e) ≤ ∏ e, c e (o e)) ∧ ∑ o : ((e : Fin E) → O e), ∏ e, c e (o e) = ∏ e, ∑ o, c e o
 ~~~
 
-### 317. side_as_covert
+### 601. side_as_covert
 
 Source: ControlStack/SideChannel.lean:128 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2612,7 +4908,7 @@ Source: ControlStack/SideChannel.lean:128 | Family: UNMAPPED | Adversary: UNKNOW
 theorem side_as_covert {Ω M V S O : Type} [Fintype Ω] [Fintype M] [Fintype V] [Fintype S] [Fintype O] (ρ : Ω → ℝ) (W : S → O → ℝ) (enc : Ω → M → V × S → ℝ) (dec : Ω → V × O → M → ℝ) : sideSuccess ρ W enc dec = successProb ρ (fun ω m y => ∑ s, enc ω m (y.1, s) * W s y.2) dec
 ~~~
 
-### 318. bsc_dom
+### 602. bsc_dom
 
 Source: ControlStack/SideChannel.lean:147 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2620,7 +4916,7 @@ Source: ControlStack/SideChannel.lean:147 | Family: UNMAPPED | Adversary: UNKNOW
 theorem bsc_dom (q : ℝ) (hq : q ≤ 1 / 2) : ∀ s o, bsc q s o ≤ 1 - q
 ~~~
 
-### 319. bsc_dist
+### 603. bsc_dist
 
 Source: ControlStack/SideChannel.lean:150 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2630,7 +4926,7 @@ theorem bsc_dist (q : ℝ) (h0 : 0 ≤ q) (h1 : q ≤ 1) (s : Bool) : IsDist (bs
 
 ## ControlStack/SoftHockey.lean
 
-### 320. viewLaw_nonneg
+### 604. viewLaw_nonneg
 
 Source: ControlStack/SoftHockey.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2638,7 +4934,7 @@ Source: ControlStack/SoftHockey.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem viewLaw_nonneg {Z : Type} [Fintype Z] (c : ProbComp Z) (z : Z) : 0 ≤ viewLaw c z
 ~~~
 
-### 321. viewLaw_sum
+### 605. viewLaw_sum
 
 Source: ControlStack/SoftHockey.lean:22 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2646,7 +4942,7 @@ Source: ControlStack/SoftHockey.lean:22 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem viewLaw_sum {Z : Type} [Fintype Z] (c : ProbComp Z) : ∑ z, viewLaw c z = 1
 ~~~
 
-### 322. passRule_isRule
+### 606. passRule_isRule
 
 Source: ControlStack/SoftHockey.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2654,7 +4950,7 @@ Source: ControlStack/SoftHockey.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem passRule_isRule {Z : Type} (D : Z → ProbComp Bool) : isRule (fun z => (Pr[= true | D z]).toReal)
 ~~~
 
-### 323. viewLaw_pass
+### 607. viewLaw_pass
 
 Source: ControlStack/SoftHockey.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2662,7 +4958,7 @@ Source: ControlStack/SoftHockey.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem viewLaw_pass {Z : Type} [Fintype Z] (c : ProbComp Z) (D : Z → ProbComp Bool) : ∑ z, viewLaw c z * (Pr[= true | D z]).toReal = (Pr[= true | c >>= D]).toReal
 ~~~
 
-### 324. hockey_pass_bound
+### 608. hockey_pass_bound
 
 Source: ControlStack/SoftHockey.lean:38 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2670,7 +4966,7 @@ Source: ControlStack/SoftHockey.lean:38 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem hockey_pass_bound {Z : Type} [Fintype Z] (η : ℝ) (P Q : Z → ℝ) (D : Z → ProbComp Bool) : (∑ z, P z * (Pr[= true | D z]).toReal) ≤ Real.exp η * (∑ z, Q z * (Pr[= true | D z]).toReal) + hs η P Q
 ~~~
 
-### 325. operational_hockey_bound
+### 609. operational_hockey_bound
 
 Source: ControlStack/SoftHockey.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2678,7 +4974,7 @@ Source: ControlStack/SoftHockey.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem operational_hockey_bound {Z : Type} [Fintype Z] (η δ : ℝ) (H : ProbComp Z) (X : ProbComp Z) (D : Z → ProbComp Bool) (hδ : hs η (viewLaw X) (viewLaw H) ≤ δ) : (Pr[= true | X >>= D]).toReal ≤ Real.exp η * (Pr[= true | H >>= D]).toReal + δ
 ~~~
 
-### 326. softEndToEndHockey
+### 610. softEndToEndHockey
 
 Source: ControlStack/SoftHockey.lean:71 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2688,7 +4984,7 @@ theorem softEndToEndHockey {X Z Ω : Type} [Fintype X] [Fintype Z] [Fintype Ω] 
 
 ## ControlStack/SoftSlack.lean
 
-### 327. rejection_rate
+### 611. rejection_rate
 
 Source: ControlStack/SoftSlack.lean:32 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2696,7 +4992,7 @@ Source: ControlStack/SoftSlack.lean:32 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem rejection_rate (d : ℕ) : (Pr[= true | rejectionCoin d]).toReal = 1 / ((d + 1 : ℕ) : ℝ)
 ~~~
 
-### 328. survives_step
+### 612. survives_step
 
 Source: ControlStack/SoftSlack.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2704,7 +5000,7 @@ Source: ControlStack/SoftSlack.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem survives_step {X Z : Type} (H : ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (d n : ℕ) : Pr[= true | survives H M D d (n + 1)] = Pr[= true | H >>= M >>= D] * Pr[= false | rejectionCoin d] * Pr[= true | survives H M D d n] + Pr[= false | H >>= M >>= D] * Pr[= true | survives H M D d n]
 ~~~
 
-### 329. survives_step_real
+### 613. survives_step_real
 
 Source: ControlStack/SoftSlack.lean:58 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2712,7 +5008,7 @@ Source: ControlStack/SoftSlack.lean:58 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem survives_step_real {X Z : Type} (H : ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (d n : ℕ) : (Pr[= true | survives H M D d (n + 1)]).toReal = (1 - (Pr[= true | H >>= M >>= D]).toReal / ((d + 1 : ℕ) : ℝ)) * (Pr[= true | survives H M D d n]).toReal
 ~~~
 
-### 330. bridge
+### 614. bridge
 
 Source: ControlStack/SoftSlack.lean:75 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2720,7 +5016,7 @@ Source: ControlStack/SoftSlack.lean:75 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem bridge : BridgeClaim
 ~~~
 
-### 331. geom_poly_bound
+### 615. geom_poly_bound
 
 Source: ControlStack/SoftSlack.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2728,7 +5024,7 @@ Source: ControlStack/SoftSlack.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN |
 theorem geom_poly_bound (n : ℕ) (x : ℝ) (hx0 : 0 ≤ x) (hx1 : x ≤ 1) : (1 + (n : ℝ) * x) * (1 - x) ^ n ≤ 1
 ~~~
 
-### 332. soft_survival_first_moment
+### 616. soft_survival_first_moment
 
 Source: ControlStack/SoftSlack.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2736,7 +5032,7 @@ Source: ControlStack/SoftSlack.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem soft_survival_first_moment (nh ns : ℕ) (h : ℝ) (hns : 1 ≤ ns) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) : h * (1 - h / (ns : ℝ)) ^ nh ≤ (ns : ℝ) / ((nh : ℝ) + 1)
 ~~~
 
-### 333. protocol_factorization
+### 617. protocol_factorization
 
 Source: ControlStack/SoftSlack.lean:147 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2744,7 +5040,7 @@ Source: ControlStack/SoftSlack.lean:147 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem protocol_factorization {X Z Ω : Type} [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (ρ : ProbComp Ω) (H : ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool) (π : Ω → Hist X Z → ProbComp X) (A : Hist X Z → X → Z → ProbComp Bool) (nh ns b N : ℕ) : (Pr[= true | softProtocolGame Bad ρ H M D π A nh ns b N]).toReal = ∑ ω, (Pr[= ω | ρ]).toReal * (Pr[= true | survives H M (D ω) (ns - 1) nh]).toReal * (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal
 ~~~
 
-### 334. protocol_survival_formula
+### 618. protocol_survival_formula
 
 Source: ControlStack/SoftSlack.lean:172 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2752,7 +5048,7 @@ Source: ControlStack/SoftSlack.lean:172 | Family: UNMAPPED | Adversary: UNKNOWN 
 theorem protocol_survival_formula {X Z Ω : Type} [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (ρ : ProbComp Ω) (H : ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool) (π : Ω → Hist X Z → ProbComp X) (A : Hist X Z → X → Z → ProbComp Bool) (nh ns b N : ℕ) (hns : 1 ≤ ns) : (Pr[= true | softProtocolGame Bad ρ H M D π A nh ns b N]).toReal = ∑ ω, (Pr[= ω | ρ]).toReal * (1 - (Pr[= true | H >>= M >>= D ω]).toReal / (ns : ℝ)) ^ nh * (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal
 ~~~
 
-### 335. softEndToEnd
+### 619. softEndToEnd
 
 Source: ControlStack/SoftSlack.lean:188 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2762,7 +5058,7 @@ theorem softEndToEnd {X Z Ω : Type} [Fintype X] [Fintype Z] [Fintype Ω] (Bad :
 
 ## ControlStack/Spike.lean
 
-### 336. distinguish_le_tv
+### 620. distinguish_le_tv
 
 Source: ControlStack/Spike.lean:17 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2770,7 +5066,7 @@ Source: ControlStack/Spike.lean:17 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem distinguish_le_tv {X Z : Type} (M : X → ProbComp Z) (PA PH : ProbComp X) (D : Z → ProbComp Bool) : |Pr[= true | PA >>= M >>= D].toReal - Pr[= true | PH >>= M >>= D].toReal| ≤ tvDist (PA >>= M) (PH >>= M)
 ~~~
 
-### 337. mediated_tv_le
+### 621. mediated_tv_le
 
 Source: ControlStack/Spike.lean:24 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2780,7 +5076,7 @@ theorem mediated_tv_le {X Z : Type} (M : X → ProbComp Z) (PA PH : ProbComp X) 
 
 ## ControlStack/StratifiedGame.lean
 
-### 338. classPasses_bridge
+### 622. classPasses_bridge
 
 Source: ControlStack/StratifiedGame.lean:28 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2788,7 +5084,7 @@ Source: ControlStack/StratifiedGame.lean:28 | Family: UNMAPPED | Adversary: UNKN
 theorem classPasses_bridge {X Z : Type} (H : ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (m sc : ℕ) : (Pr[= true | classPasses H M D m sc]).toReal = binCDF m sc (Pr[= true | H >>= M >>= D]).toReal
 ~~~
 
-### 339. stratifiedSurvives_prob
+### 623. stratifiedSurvives_prob
 
 Source: ControlStack/StratifiedGame.lean:37 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2796,7 +5092,7 @@ Source: ControlStack/StratifiedGame.lean:37 | Family: UNMAPPED | Adversary: UNKN
 theorem stratifiedSurvives_prob {X Z C : Type} (H : C → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (m sc : ℕ) (classes : List C) : (Pr[= true | stratifiedSurvives H M D m sc classes]).toReal = (classes.map fun e => (Pr[= true | classPasses (H e) M D m sc]).toReal).prod
 ~~~
 
-### 340. stratifiedSurvives_binomial
+### 624. stratifiedSurvives_binomial
 
 Source: ControlStack/StratifiedGame.lean:54 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2804,7 +5100,7 @@ Source: ControlStack/StratifiedGame.lean:54 | Family: UNMAPPED | Adversary: UNKN
 theorem stratifiedSurvives_binomial {X Z C : Type} (H : C → ProbComp X) (M : X → ProbComp Z) (D : Z → ProbComp Bool) (m sc : ℕ) (classes : List C) : (Pr[= true | stratifiedSurvives H M D m sc classes]).toReal = (classes.map fun e => binCDF m sc (Pr[= true | H e >>= M >>= D]).toReal).prod
 ~~~
 
-### 341. stratifiedProtocol_factorization
+### 625. stratifiedProtocol_factorization
 
 Source: ControlStack/StratifiedGame.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2812,7 +5108,7 @@ Source: ControlStack/StratifiedGame.lean:77 | Family: UNMAPPED | Adversary: UNKN
 theorem stratifiedProtocol_factorization {X Z C Ω : Type} [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (ρ : ProbComp Ω) (H : Ω → C → ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool) (π : Ω → Hist X Z → ProbComp X) (A : Hist X Z → X → Z → ProbComp Bool) (classes : List C) (m sc b N : ℕ) : (Pr[= true | stratifiedProtocolGame Bad ρ H M D π A classes m sc b N]).toReal = ∑ ω, (Pr[= ω | ρ]).toReal * (Pr[= true | stratifiedSurvives (H ω) M (D ω) m sc classes]).toReal * (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal
 ~~~
 
-### 342. stratifiedProtocol_binomial
+### 626. stratifiedProtocol_binomial
 
 Source: ControlStack/StratifiedGame.lean:103 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2820,7 +5116,7 @@ Source: ControlStack/StratifiedGame.lean:103 | Family: UNMAPPED | Adversary: UNK
 theorem stratifiedProtocol_binomial {X Z C Ω : Type} [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (ρ : ProbComp Ω) (H : Ω → C → ProbComp X) (M : X → ProbComp Z) (D : Ω → Z → ProbComp Bool) (π : Ω → Hist X Z → ProbComp X) (A : Hist X Z → X → Z → ProbComp Bool) (classes : List C) (m sc b N : ℕ) : (Pr[= true | stratifiedProtocolGame Bad ρ H M D π A classes m sc b N]).toReal = ∑ ω, (Pr[= ω | ρ]).toReal * (classes.map fun e => binCDF m sc (Pr[= true | H ω e >>= M >>= D ω]).toReal).prod * (Pr[= true | deploy Bad (π ω) M (D ω) A b N 0 []]).toReal
 ~~~
 
-### 343. listProduct_nonneg
+### 627. listProduct_nonneg
 
 Source: ControlStack/StratifiedGame.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2828,7 +5124,7 @@ Source: ControlStack/StratifiedGame.lean:118 | Family: UNMAPPED | Adversary: UNK
 theorem listProduct_nonneg {C : Type} (classes : List C) (f : C → ℝ) (hf0 : ∀ e ∈ classes, 0 ≤ f e) : 0 ≤ (classes.map f).prod
 ~~~
 
-### 344. listProduct_le_one
+### 628. listProduct_le_one
 
 Source: ControlStack/StratifiedGame.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2836,7 +5132,7 @@ Source: ControlStack/StratifiedGame.lean:127 | Family: UNMAPPED | Adversary: UNK
 theorem listProduct_le_one {C : Type} (classes : List C) (f : C → ℝ) (hf0 : ∀ e ∈ classes, 0 ≤ f e) (hf1 : ∀ e ∈ classes, f e ≤ 1) : (classes.map f).prod ≤ 1
 ~~~
 
-### 345. listProduct_le_factor
+### 629. listProduct_le_factor
 
 Source: ControlStack/StratifiedGame.lean:148 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2844,7 +5140,7 @@ Source: ControlStack/StratifiedGame.lean:148 | Family: UNMAPPED | Adversary: UNK
 theorem listProduct_le_factor {C : Type} (classes : List C) (f : C → ℝ) (hf0 : ∀ e ∈ classes, 0 ≤ f e) (hf1 : ∀ e ∈ classes, f e ≤ 1) (e : C) (he : e ∈ classes) : (classes.map f).prod ≤ f e
 ~~~
 
-### 346. stratifiedProtocolEndToEnd
+### 630. stratifiedProtocolEndToEnd
 
 Source: ControlStack/StratifiedGame.lean:179 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2854,7 +5150,7 @@ theorem stratifiedProtocolEndToEnd {X Z C Ω : Type} [Fintype X] [Fintype Z] [Fi
 
 ## ControlStack/UseQ.lean
 
-### 347. foldl_add_eq
+### 631. foldl_add_eq
 
 Source: ControlStack/UseQ.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2862,7 +5158,7 @@ Source: ControlStack/UseQ.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem foldl_add_eq {m : ℕ} (f : Fin m → ℚ) : ∀ (l : List (Fin m)) (acc : ℚ), l.foldl (fun acc i => acc + f i) acc = acc + (l.map f).sum
 ~~~
 
-### 348. sumQ_eq
+### 632. sumQ_eq
 
 Source: ControlStack/UseQ.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2870,7 +5166,7 @@ Source: ControlStack/UseQ.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem sumQ_eq (m : ℕ) (f : Fin m → ℚ) : sumQ m f = ∑ i, f i
 ~~~
 
-### 349. checkUseQ_spec
+### 633. checkUseQ_spec
 
 Source: ControlStack/UseQ.lean:33 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2878,7 +5174,7 @@ Source: ControlStack/UseQ.lean:33 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem checkUseQ_spec {N m t : ℕ} {rew : Fin t → Fin N → Fin m → ℚ} {K : Fin t → Fin N → Fin m → Fin m → ℚ} {adm : Fin t → Fin N → Fin m → Bool} {W : Fin (N + 1) → Fin m → ℚ} {s₀ : Fin m} {floor : ℚ} (hc : checkUseQ N m t rew K adm W s₀ floor = true) : 0 < t ∧ floor ≤ W (Fin.last N) s₀ ∧ (∀ s, W 0 s ≤ 0) ∧ (∀ i s, ∃ th, adm th i s = true) ∧ (∀ th i s, adm th i s = true → W i.succ s ≤ rew th i s + ∑ s', K th i s s' * W i.castSucc s')
 ~~~
 
-### 350. selector_exists
+### 634. selector_exists
 
 Source: ControlStack/UseQ.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2886,7 +5182,7 @@ Source: ControlStack/UseQ.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem selector_exists {N m t : ℕ} (rew : Fin t → Fin N → Fin m → ℚ) (K : Fin t → Fin N → Fin m → Fin m → ℚ) (adm : Fin t → Fin N → Fin m → Bool) (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ) (hc : checkUseQ N m t rew K adm W s₀ floor = true) : ∃ θ : ℕ → List (Fin m) → Fin m → Fin t, ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true
 ~~~
 
-### 351. checkUseQ_sound
+### 635. checkUseQ_sound
 
 Source: ControlStack/UseQ.lean:76 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2894,7 +5190,7 @@ Source: ControlStack/UseQ.lean:76 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem checkUseQ_sound {N m t : ℕ} (rew : Fin t → Fin N → Fin m → ℚ) (K : Fin t → Fin N → Fin m → Fin m → ℚ) (adm : Fin t → Fin N → Fin m → Bool) (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ) (θ : ℕ → List (Fin m) → Fin m → Fin t) (hc : checkUseQ N m t rew K adm W s₀ floor = true) (hK : ∀ th i s, adm th i s = true → ∀ s', 0 ≤ K th i s s') (hθ : ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true) : (floor : ℝ) ≤ honestValue rew K θ N s₀ []
 ~~~
 
-### 352. claim
+### 636. claim
 
 Source: ControlStack/UseQ.lean:156 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2902,7 +5198,7 @@ Source: ControlStack/UseQ.lean:156 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem claim : Claim
 ~~~
 
-### 353. witness
+### 637. witness
 
 Source: ControlStack/UseQ.lean:163 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2910,9 +5206,51 @@ Source: ControlStack/UseQ.lean:163 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem witness : Witness
 ~~~
 
+## ControlStack/Witnesses/DeputyBridge.lean
+
+### 638. payment_deputy_breaks_deploy_gate
+
+Source: ControlStack/Witnesses/DeputyBridge.lean:40 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem payment_deputy_breaks_deploy_gate : let p
+~~~
+
+### 639. approved_inv
+
+Source: ControlStack/Witnesses/DeputyBridge.lean:53 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem approved_inv : SC26.Inv SC26.R0 20 (SC26.run SC26.R0 20 SC26.full SC26.init [.request 1 SC26.tx1, .approve 2 0 SC26.tx1])
+~~~
+
+### 640. payment_deputy_not_admissible
+
+Source: ControlStack/Witnesses/DeputyBridge.lean:58 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem payment_deputy_not_admissible : ¬ BridgeAdmissible (SC26.spec SC26.R0 20) (SC16.spec R16 id) paymentDeputy
+~~~
+
+### 641. gated_deputy_admissible
+
+Source: ControlStack/Witnesses/DeputyBridge.lean:71 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem gated_deputy_admissible (h : ℕ → ℕ) (cap : ℕ) (R : SC26.Roles) : BridgeAdmissible (SC26.spec R cap) (SC16.spec R16 h) (gatedDeputy h)
+~~~
+
+### 642. gated_deputy_deploys_nothing
+
+Source: ControlStack/Witnesses/DeputyBridge.lean:79 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+
+~~~lean
+theorem gated_deputy_deploys_nothing : ((withBridge (SC26.sys SC26.R0 20) (SC16.sys R16 id) (gatedDeputy id)).run start trace).s₂.deployed = []
+~~~
+
 ## ControlStack/Witnesses/LeakWitness.lean
 
-### 354. K_nonneg
+### 643. K_nonneg
 
 Source: ControlStack/Witnesses/LeakWitness.lean:45 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2920,7 +5258,7 @@ Source: ControlStack/Witnesses/LeakWitness.lean:45 | Family: UNMAPPED | Adversar
 theorem K_nonneg (S : Finset (Fin 2)) (h : List (Unit × AOut Bool)) (z : Unit × AOut Bool) : 0 ≤ K ε S h z
 ~~~
 
-### 355. K_sum
+### 644. K_sum
 
 Source: ControlStack/Witnesses/LeakWitness.lean:49 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2928,7 +5266,7 @@ Source: ControlStack/Witnesses/LeakWitness.lean:49 | Family: UNMAPPED | Adversar
 theorem K_sum (S : Finset (Fin 2)) (h : List (Unit × AOut Bool)) : ∑ z, K ε S h z ≤ 1
 ~~~
 
-### 356. K_cons
+### 645. K_cons
 
 Source: ControlStack/Witnesses/LeakWitness.lean:59 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2936,7 +5274,7 @@ Source: ControlStack/Witnesses/LeakWitness.lean:59 | Family: UNMAPPED | Adversar
 theorem K_cons (S : Finset (Fin 2)) (h : List (Unit × AOut Bool)) (y : Unit) (o : AOut Bool) (hK : K ε S h (y, o) ≠ 0) : o.2.2 = (o.1 && decide (memN S (h.map Prod.snd).length))
 ~~~
 
-### 357. K_dom
+### 646. K_dom
 
 Source: ControlStack/Witnesses/LeakWitness.lean:67 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2944,7 +5282,7 @@ Source: ControlStack/Witnesses/LeakWitness.lean:67 | Family: UNMAPPED | Adversar
 theorem K_dom (S : Finset (Fin 2)) (h : List (Unit × AOut Bool)) (o : AOut Bool) (hf : o.2.2 = false) : ∑ y, K ε S h (y, o) ≤ cl ε (h.map Prod.snd) o
 ~~~
 
-### 358. cl_nonneg
+### 647. cl_nonneg
 
 Source: ControlStack/Witnesses/LeakWitness.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2952,7 +5290,7 @@ Source: ControlStack/Witnesses/LeakWitness.lean:83 | Family: UNMAPPED | Adversar
 theorem cl_nonneg (g : List (AOut Bool)) (o : AOut Bool) : 0 ≤ cl ε g o
 ~~~
 
-### 359. leak_mass
+### 648. leak_mass
 
 Source: ControlStack/Witnesses/LeakWitness.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2960,7 +5298,7 @@ Source: ControlStack/Witnesses/LeakWitness.lean:86 | Family: UNMAPPED | Adversar
 theorem leak_mass : mass (dropStop caughtFlag (cl ε)) 2 [] = 2 * (1 - ε)
 ~~~
 
-### 360. leak_bound
+### 649. leak_bound
 
 Source: ControlStack/Witnesses/LeakWitness.lean:93 | Family: F6 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -2970,7 +5308,7 @@ theorem leak_bound : ∑ S : Finset (Fin 2), (if S ∈ AuditBudget.randomSchedul
 
 ## ControlStack/Witnesses/Necessity.lean
 
-### 361. jointSuccess_indep
+### 650. jointSuccess_indep
 
 Source: ControlStack/Witnesses/Necessity.lean:35 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2978,7 +5316,7 @@ Source: ControlStack/Witnesses/Necessity.lean:35 | Family: UNMAPPED | Adversary:
 theorem jointSuccess_indep {Ω M V : Type} [Fintype Ω] [Fintype M] [Fintype V] (ρ : Ω → ℝ) (enc : Ω → M → V → ℝ) (dec : Ω → V → M → ℝ) : jointSuccess (fun ω _ => ρ ω * (Fintype.card M : ℝ)⁻¹) enc dec = successProb ρ enc dec
 ~~~
 
-### 362. seed_secret_breaks_covert
+### 651. seed_secret_breaks_covert
 
 Source: ControlStack/Witnesses/Necessity.lean:48 | Family: F2 | Adversary: SHARED_SEED | Status: SOURCE_ONLY
 
@@ -2986,7 +5324,7 @@ Source: ControlStack/Witnesses/Necessity.lean:48 | Family: F2 | Adversary: SHARE
 theorem seed_secret_breaks_covert {M : Type} [Fintype M] [DecidableEq M] (hM : 2 ≤ Fintype.card M) : jointSuccess (fun (ω m : M) => if ω = m then (Fintype.card M : ℝ)⁻¹ else 0) (fun (_ _ : M) (_ : Unit) => (1 : ℝ)) (fun (ω : M) (_ : Unit) (m : M) => if m = ω then (1 : ℝ) else 0) = 1 ∧ (Fintype.card Unit : ℝ) / (Fintype.card M : ℝ) < 1
 ~~~
 
-### 363. comono_dist
+### 652. comono_dist
 
 Source: ControlStack/Witnesses/Necessity.lean:79 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -2994,7 +5332,7 @@ Source: ControlStack/Witnesses/Necessity.lean:79 | Family: UNMAPPED | Adversary:
 theorem comono_dist (p : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) : IsDist (comono p)
 ~~~
 
-### 364. comono_marginal
+### 653. comono_marginal
 
 Source: ControlStack/Witnesses/Necessity.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3002,7 +5340,7 @@ Source: ControlStack/Witnesses/Necessity.lean:86 | Family: UNMAPPED | Adversary:
 theorem comono_marginal (p : ℝ) (i : Fin 64) : ∑ x, comono p x * (if x i = true then 1 else 0) = p
 ~~~
 
-### 365. correlated_lifetimes_break_gate
+### 654. correlated_lifetimes_break_gate
 
 Source: ControlStack/Witnesses/Necessity.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3010,7 +5348,7 @@ Source: ControlStack/Witnesses/Necessity.lean:96 | Family: UNMAPPED | Adversary:
 theorem correlated_lifetimes_break_gate : (∀ i : Fin 64, ∑ x, comono (9 / 10) x * (if x i = true then 1 else 0) = 9 / 10) ∧ ∑ x, comono (9 / 10) x * (if 63 ≤ count x then 1 else 0) = 9 / 10 ∧ ScenarioAUsefulness.passProb (9 / 10) ≤ 1 / 80 ∧ (1 : ℝ) / 80 < 9 / 10
 ~~~
 
-### 366. marginal_certs_dont_compose
+### 655. marginal_certs_dont_compose
 
 Source: ControlStack/Witnesses/Necessity.lean:117 | Family: F8 | Adversary: SIDE_OBSERVING | Status: SOURCE_ONLY
 
@@ -3018,7 +5356,7 @@ Source: ControlStack/Witnesses/Necessity.lean:117 | Family: F8 | Adversary: SIDE
 theorem marginal_certs_dont_compose : (∀ m b, ∑ o : Bool × Bool, xorLaw m o * (if o.1 = b then 1 else 0) = 1 / 2) ∧ (∀ m b, ∑ o : Bool × Bool, xorLaw m o * (if o.2 = b then 1 else 0) = 1 / 2) ∧ (1 / 2 : ℝ) * ∑ m : Bool, ∑ o : Bool × Bool, xorLaw m o * (if xor o.1 o.2 = m then 1 else 0) = 1
 ~~~
 
-### 367. shared_score_product_unsound
+### 656. shared_score_product_unsound
 
 Source: ControlStack/Witnesses/Necessity.lean:130 | Family: F8 | Adversary: SHARED_SEED | Status: SOURCE_ONLY
 
@@ -3026,7 +5364,7 @@ Source: ControlStack/Witnesses/Necessity.lean:130 | Family: F8 | Adversary: SHAR
 theorem shared_score_product_unsound : (∑ s : Bool, scoreLaw s * (if s = false then 1 else 0)) = 1 / 10 ∧ (∑ s : Bool, scoreLaw s * (if s = false ∧ s = false then 1 else 0)) = 1 / 10 ∧ (1 / 10 : ℝ) * (1 / 10) < 1 / 10
 ~~~
 
-### 368. exhausted_no_audit
+### 657. exhausted_no_audit
 
 Source: ControlStack/Witnesses/Necessity.lean:155 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3034,7 +5372,7 @@ Source: ControlStack/Witnesses/Necessity.lean:155 | Family: UNMAPPED | Adversary
 theorem exhausted_no_audit {N : ℕ} (B : ℕ) (flags : Fin N → Bool) (A : Finset (Fin N)) (h : ∀ i ∈ A, B ≤ (Finset.univ.filter (fun j : Fin N => j < i ∧ flags j = true)).card) : ∀ i ∈ A, audited B flags i = false
 ~~~
 
-### 369. audited_last
+### 658. audited_last
 
 Source: ControlStack/Witnesses/Necessity.lean:164 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3042,7 +5380,7 @@ Source: ControlStack/Witnesses/Necessity.lean:164 | Family: UNMAPPED | Adversary
 theorem audited_last (b : Bool × Bool × Bool) : audited 1 (flagsOf b) 3 = (!b.1 && !b.2.1 && !b.2.2)
 ~~~
 
-### 370. fp_exhaustion_breaks_audit
+### 659. fp_exhaustion_breaks_audit
 
 Source: ControlStack/Witnesses/Necessity.lean:176 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3052,7 +5390,7 @@ theorem fp_exhaustion_breaks_audit : (∑ b : Bool × Bool × Bool, (1 / 8 : ℚ
 
 ## proofs/CANONF1.lean
 
-### 371. k_aren_comp
+### 660. k_aren_comp
 
 Source: proofs/CANONF1.lean:4 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3060,7 +5398,7 @@ Source: proofs/CANONF1.lean:4 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem k_aren_comp (f g : ℕ → ℕ) (a : AExp) : (a.rename f).rename g = a.rename (g ∘ f)
 ~~~
 
-### 372. k_bren_comp
+### 661. k_bren_comp
 
 Source: proofs/CANONF1.lean:7 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3068,7 +5406,7 @@ Source: proofs/CANONF1.lean:7 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem k_bren_comp (f g : ℕ → ℕ) (b : BExp) : (b.rename f).rename g = b.rename (g ∘ f)
 ~~~
 
-### 373. k_sren_comp
+### 662. k_sren_comp
 
 Source: proofs/CANONF1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3076,7 +5414,7 @@ Source: proofs/CANONF1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_sren_comp (f g : ℕ → ℕ) (s : Stmt) : (s.rename f).rename g = s.rename (g ∘ f)
 ~~~
 
-### 374. k_pren_comp
+### 663. k_pren_comp
 
 Source: proofs/CANONF1.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3084,7 +5422,7 @@ Source: proofs/CANONF1.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_pren_comp (f g : ℕ → ℕ) (p : Prog) : (p.rename f).rename g = p.rename (g ∘ f)
 ~~~
 
-### 375. k_aocc_ren
+### 664. k_aocc_ren
 
 Source: proofs/CANONF1.lean:16 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3092,7 +5430,7 @@ Source: proofs/CANONF1.lean:16 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_aocc_ren (f : ℕ → ℕ) (a : AExp) : (a.rename f).occ = a.occ.map f
 ~~~
 
-### 376. k_bocc_ren
+### 665. k_bocc_ren
 
 Source: proofs/CANONF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3100,7 +5438,7 @@ Source: proofs/CANONF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_bocc_ren (f : ℕ → ℕ) (b : BExp) : (b.rename f).occ = b.occ.map f
 ~~~
 
-### 377. k_socc_ren
+### 666. k_socc_ren
 
 Source: proofs/CANONF1.lean:22 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3108,7 +5446,7 @@ Source: proofs/CANONF1.lean:22 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_socc_ren (f : ℕ → ℕ) (s : Stmt) : (s.rename f).occ = s.occ.map f
 ~~~
 
-### 378. k_pocc_ren
+### 667. k_pocc_ren
 
 Source: proofs/CANONF1.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3116,7 +5454,7 @@ Source: proofs/CANONF1.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_pocc_ren (f : ℕ → ℕ) (p : Prog) : (p.rename f).occ = p.occ.map f
 ~~~
 
-### 379. k_aren_congr
+### 668. k_aren_congr
 
 Source: proofs/CANONF1.lean:28 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3124,7 +5462,7 @@ Source: proofs/CANONF1.lean:28 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_aren_congr {f g : ℕ → ℕ} (a : AExp) (h : ∀ v ∈ a.occ, f v = g v) : a.rename f = a.rename g
 ~~~
 
-### 380. k_bren_congr
+### 669. k_bren_congr
 
 Source: proofs/CANONF1.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3132,7 +5470,7 @@ Source: proofs/CANONF1.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_bren_congr {f g : ℕ → ℕ} (b : BExp) (h : ∀ v ∈ b.occ, f v = g v) : b.rename f = b.rename g
 ~~~
 
-### 381. k_sren_congr
+### 670. k_sren_congr
 
 Source: proofs/CANONF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3140,7 +5478,7 @@ Source: proofs/CANONF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_sren_congr {f g : ℕ → ℕ} (s : Stmt) (h : ∀ v ∈ s.occ, f v = g v) : s.rename f = s.rename g
 ~~~
 
-### 382. k_pren_congr
+### 671. k_pren_congr
 
 Source: proofs/CANONF1.lean:85 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3148,7 +5486,7 @@ Source: proofs/CANONF1.lean:85 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_pren_congr {f g : ℕ → ℕ} (p : Prog) (h : ∀ v ∈ p.occ, f v = g v) : p.rename f = p.rename g
 ~~~
 
-### 383. k_pren_id
+### 672. k_pren_id
 
 Source: proofs/CANONF1.lean:91 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3156,7 +5494,7 @@ Source: proofs/CANONF1.lean:91 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem k_pren_id (p : Prog) : p.rename id = p
 ~~~
 
-### 384. k_aeval_ren
+### 673. k_aeval_ren
 
 Source: proofs/CANONF1.lean:101 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3164,7 +5502,7 @@ Source: proofs/CANONF1.lean:101 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_aeval_ren {f : ℕ → ℕ} {σ τ : State} (a : AExp) (h : ∀ v ∈ a.occ, τ (f v) = σ v) : (a.rename f).eval τ = a.eval σ
 ~~~
 
-### 385. k_beval_ren
+### 674. k_beval_ren
 
 Source: proofs/CANONF1.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3172,7 +5510,7 @@ Source: proofs/CANONF1.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_beval_ren {f : ℕ → ℕ} {σ τ : State} (b : BExp) (h : ∀ v ∈ b.occ, τ (f v) = σ v) : (b.rename f).eval τ = b.eval σ
 ~~~
 
-### 386. k_exec_seq_iff
+### 675. k_exec_seq_iff
 
 Source: proofs/CANONF1.lean:142 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3180,7 +5518,7 @@ Source: proofs/CANONF1.lean:142 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_exec_seq_iff {s t : Stmt} {σ σ'' : State} : Exec (.seq s t) σ σ'' ↔ ∃ σ', Exec s σ σ' ∧ Exec t σ' σ''
 ~~~
 
-### 387. k_exec_ite_iff
+### 676. k_exec_ite_iff
 
 Source: proofs/CANONF1.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3188,7 +5526,7 @@ Source: proofs/CANONF1.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_exec_ite_iff {b : BExp} {s t : Stmt} {σ σ' : State} : Exec (.ite b s t) σ σ' ↔ (b.eval σ = true ∧ Exec s σ σ') ∨ (b.eval σ = false ∧ Exec t σ σ')
 ~~~
 
-### 388. k_exec_cfor_iff
+### 677. k_exec_cfor_iff
 
 Source: proofs/CANONF1.lean:162 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3196,7 +5534,7 @@ Source: proofs/CANONF1.lean:162 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_exec_cfor_iff {i : Stmt} {c : BExp} {st body : Stmt} {σ σ' : State} : Exec (.cfor i c st body) σ σ' ↔ Exec (.seq i (.while c (.seq body st))) σ σ'
 ~~~
 
-### 389. k_while_mono
+### 678. k_while_mono
 
 Source: proofs/CANONF1.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3204,7 +5542,7 @@ Source: proofs/CANONF1.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_while_mono {b : BExp} {s s' : Stmt} (h : ∀ σ σ', Exec s σ σ' → Exec s' σ σ') : ∀ σ σ', Exec (.while b s) σ σ' → Exec (.while b s') σ σ'
 ~~~
 
-### 390. k_seq_congr
+### 679. k_seq_congr
 
 Source: proofs/CANONF1.lean:189 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3212,7 +5550,7 @@ Source: proofs/CANONF1.lean:189 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_seq_congr {s s' t t' : Stmt} (h1 : KSEq s s') (h2 : KSEq t t') : KSEq (.seq s t) (.seq s' t')
 ~~~
 
-### 391. k_ite_congr
+### 680. k_ite_congr
 
 Source: proofs/CANONF1.lean:195 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3220,7 +5558,7 @@ Source: proofs/CANONF1.lean:195 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_ite_congr {b : BExp} {s s' t t' : Stmt} (h1 : KSEq s s') (h2 : KSEq t t') : KSEq (.ite b s t) (.ite b s' t')
 ~~~
 
-### 392. k_while_congr
+### 681. k_while_congr
 
 Source: proofs/CANONF1.lean:201 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3228,7 +5566,7 @@ Source: proofs/CANONF1.lean:201 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_while_congr {b : BExp} {s s' : Stmt} (h : KSEq s s') : KSEq (.while b s) (.while b s')
 ~~~
 
-### 393. k_cfor_congr
+### 682. k_cfor_congr
 
 Source: proofs/CANONF1.lean:206 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3236,7 +5574,7 @@ Source: proofs/CANONF1.lean:206 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_cfor_congr {i i' : Stmt} {c : BExp} {st st' b b' : Stmt} (hi : KSEq i i') (hst : KSEq st st') (hb : KSEq b b') : KSEq (.cfor i c st b) (.cfor i' c st' b')
 ~~~
 
-### 394. k_sEq_refl
+### 683. k_sEq_refl
 
 Source: proofs/CANONF1.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3244,7 +5582,7 @@ Source: proofs/CANONF1.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_sEq_refl (s : Stmt) : KSEq s s
 ~~~
 
-### 395. k_forstep_sEq
+### 684. k_forstep_sEq
 
 Source: proofs/CANONF1.lean:214 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3252,7 +5590,7 @@ Source: proofs/CANONF1.lean:214 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_forstep_sEq {s t : Stmt} (h : ForStep s t) : KSEq s t
 ~~~
 
-### 396. k_eqv_sEq
+### 685. k_eqv_sEq
 
 Source: proofs/CANONF1.lean:234 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3260,7 +5598,7 @@ Source: proofs/CANONF1.lean:234 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_sEq {s t : Stmt} (h : Relation.EqvGen ForStep s t) : KSEq s t
 ~~~
 
-### 397. k_exec_rename
+### 686. k_exec_rename
 
 Source: proofs/CANONF1.lean:243 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3268,7 +5606,7 @@ Source: proofs/CANONF1.lean:243 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_exec_rename {f : ℕ → ℕ} {V : Set ℕ} (hf : Set.InjOn f V) {s : Stmt} {σ σ' : State} (h : Exec s σ σ') : (∀ v ∈ s.occ, v ∈ V) → ∀ τ : State, (∀ v ∈ V, τ (f v) = σ v) → ∃ τ', Exec (s.rename f) τ τ' ∧ ∀ v ∈ V, τ' (f v) = σ' v
 ~~~
 
-### 398. k_runs_rename
+### 687. k_runs_rename
 
 Source: proofs/CANONF1.lean:294 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3276,7 +5614,7 @@ Source: proofs/CANONF1.lean:294 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_runs_rename {f : ℕ → ℕ} {p : Prog} (hA : Admissible f p) {ins : List ℤ} {out : ℤ} (h : Runs p ins out) : Runs (p.rename f) ins out
 ~~~
 
-### 399. k_ren_inverse
+### 688. k_ren_inverse
 
 Source: proofs/CANONF1.lean:311 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3284,7 +5622,7 @@ Source: proofs/CANONF1.lean:311 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_ren_inverse {f : ℕ → ℕ} {p : Prog} (hA : Admissible f p) : ∃ g, Admissible g (p.rename f) ∧ (p.rename f).rename g = p
 ~~~
 
-### 400. k_runs_rename_iff
+### 689. k_runs_rename_iff
 
 Source: proofs/CANONF1.lean:349 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3292,7 +5630,7 @@ Source: proofs/CANONF1.lean:349 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_runs_rename_iff {f : ℕ → ℕ} {p : Prog} (hA : Admissible f p) (ins : List ℤ) (out : ℤ) : Runs p ins out ↔ Runs (p.rename f) ins out
 ~~~
 
-### 401. k_append_assoc
+### 690. k_append_assoc
 
 Source: proofs/CANONF1.lean:362 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3300,7 +5638,7 @@ Source: proofs/CANONF1.lean:362 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_append_assoc (a b c : Stmt) : (a.append b).append c = a.append (b.append c)
 ~~~
 
-### 402. k_FF_step
+### 691. k_FF_step
 
 Source: proofs/CANONF1.lean:369 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3308,7 +5646,7 @@ Source: proofs/CANONF1.lean:369 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_FF_step {s t : Stmt} (h : ForStep s t) : KFF s = KFF t
 ~~~
 
-### 403. k_FF_eqv
+### 692. k_FF_eqv
 
 Source: proofs/CANONF1.lean:398 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3316,7 +5654,7 @@ Source: proofs/CANONF1.lean:398 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_FF_eqv {s t : Stmt} (h : Relation.EqvGen ForStep s t) : KFF s = KFF t
 ~~~
 
-### 404. k_desugar_ren
+### 693. k_desugar_ren
 
 Source: proofs/CANONF1.lean:405 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3324,7 +5662,7 @@ Source: proofs/CANONF1.lean:405 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_desugar_ren (f : ℕ → ℕ) (s : Stmt) : desugar (s.rename f) = (desugar s).rename f
 ~~~
 
-### 405. k_append_ren
+### 694. k_append_ren
 
 Source: proofs/CANONF1.lean:408 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3332,7 +5670,7 @@ Source: proofs/CANONF1.lean:408 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_append_ren (f : ℕ → ℕ) (a b : Stmt) : (a.append b).rename f = (a.rename f).append (b.rename f)
 ~~~
 
-### 406. k_flatten_ren
+### 695. k_flatten_ren
 
 Source: proofs/CANONF1.lean:417 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3340,7 +5678,7 @@ Source: proofs/CANONF1.lean:417 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_flatten_ren (f : ℕ → ℕ) (s : Stmt) : flatten (s.rename f) = (flatten s).rename f
 ~~~
 
-### 407. k_FF_ren
+### 696. k_FF_ren
 
 Source: proofs/CANONF1.lean:420 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3348,7 +5686,7 @@ Source: proofs/CANONF1.lean:420 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_FF_ren (f : ℕ → ℕ) (s : Stmt) : KFF (s.rename f) = (KFF s).rename f
 ~~~
 
-### 408. k_occ_append
+### 697. k_occ_append
 
 Source: proofs/CANONF1.lean:423 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3356,7 +5694,7 @@ Source: proofs/CANONF1.lean:423 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_occ_append (a b : Stmt) : (a.append b).occ = a.occ ++ b.occ
 ~~~
 
-### 409. k_occ_flatten
+### 698. k_occ_flatten
 
 Source: proofs/CANONF1.lean:430 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3364,7 +5702,7 @@ Source: proofs/CANONF1.lean:430 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_occ_flatten (s : Stmt) : (flatten s).occ = s.occ
 ~~~
 
-### 410. k_mem_occ_desugar
+### 699. k_mem_occ_desugar
 
 Source: proofs/CANONF1.lean:433 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3372,7 +5710,7 @@ Source: proofs/CANONF1.lean:433 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_mem_occ_desugar (s : Stmt) (v : ℕ) : v ∈ (desugar s).occ ↔ v ∈ s.occ
 ~~~
 
-### 411. k_mem_occ_FF
+### 700. k_mem_occ_FF
 
 Source: proofs/CANONF1.lean:444 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3380,7 +5718,7 @@ Source: proofs/CANONF1.lean:444 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_mem_occ_FF (s : Stmt) (v : ℕ) : v ∈ (KFF s).occ ↔ v ∈ s.occ
 ~~~
 
-### 412. k_firstOcc_eq
+### 701. k_firstOcc_eq
 
 Source: proofs/CANONF1.lean:451 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3388,7 +5726,7 @@ Source: proofs/CANONF1.lean:451 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_firstOcc_eq (l : List ℕ) : firstOcc l = l.foldl kstep []
 ~~~
 
-### 413. k_mem_foldl
+### 702. k_mem_foldl
 
 Source: proofs/CANONF1.lean:453 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3396,7 +5734,7 @@ Source: proofs/CANONF1.lean:453 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_mem_foldl (l acc : List ℕ) (v : ℕ) : v ∈ l.foldl kstep acc ↔ v ∈ acc ∨ v ∈ l
 ~~~
 
-### 414. k_mem_firstOcc
+### 703. k_mem_firstOcc
 
 Source: proofs/CANONF1.lean:472 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3404,7 +5742,7 @@ Source: proofs/CANONF1.lean:472 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_mem_firstOcc (l : List ℕ) (v : ℕ) : v ∈ firstOcc l ↔ v ∈ l
 ~~~
 
-### 415. k_foldl_map
+### 704. k_foldl_map
 
 Source: proofs/CANONF1.lean:476 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3412,7 +5750,7 @@ Source: proofs/CANONF1.lean:476 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_foldl_map {f : ℕ → ℕ} {S : Set ℕ} (hf : Set.InjOn f S) (l acc : List ℕ) (hl : ∀ v ∈ l, v ∈ S) (hacc : ∀ v ∈ acc, v ∈ S) : (l.map f).foldl kstep (acc.map f) = (l.foldl kstep acc).map f
 ~~~
 
-### 416. k_firstOcc_map
+### 705. k_firstOcc_map
 
 Source: proofs/CANONF1.lean:509 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3420,7 +5758,7 @@ Source: proofs/CANONF1.lean:509 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_firstOcc_map {f : ℕ → ℕ} {S : Set ℕ} (hf : Set.InjOn f S) (l : List ℕ) (hl : ∀ v ∈ l, v ∈ S) : firstOcc (l.map f) = (firstOcc l).map f
 ~~~
 
-### 417. k_idxOf_map
+### 706. k_idxOf_map
 
 Source: proofs/CANONF1.lean:515 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3428,7 +5766,7 @@ Source: proofs/CANONF1.lean:515 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_idxOf_map {f : ℕ → ℕ} {S : Set ℕ} (hf : Set.InjOn f S) (v : ℕ) (hv : v ∈ S) : ∀ (L : List ℕ), (∀ w ∈ L, w ∈ S) → (L.map f).idxOf (f v) = L.idxOf v | [], _ => rfl | a :: L, hL => by rw [List.map_cons, List.idxOf_cons, List.idxOf_cons, k_idxOf_map hf v hv L (fun w hw => hL w (by simp [hw]))] have ha : a ∈ S
 ~~~
 
-### 418. k_canon_eq
+### 707. k_canon_eq
 
 Source: proofs/CANONF1.lean:532 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3436,7 +5774,7 @@ Source: proofs/CANONF1.lean:532 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_canon_eq (p : Prog) : canon p = kcanon' (desugarProg p)
 ~~~
 
-### 419. k_mem_locals
+### 708. k_mem_locals
 
 Source: proofs/CANONF1.lean:534 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3444,7 +5782,7 @@ Source: proofs/CANONF1.lean:534 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_mem_locals {d : Prog} {v : ℕ} : v ∈ d.locals ↔ v ∈ d.occ ∧ d.nparams ≤ v
 ~~~
 
-### 420. k_canonMap_ren
+### 709. k_canonMap_ren
 
 Source: proofs/CANONF1.lean:537 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3452,7 +5790,7 @@ Source: proofs/CANONF1.lean:537 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_canonMap_ren {f : ℕ → ℕ} {d : Prog} (hA : Admissible f d) (v : ℕ) (hv : v ∈ d.occ) : (d.rename f).canonMap (f v) = d.canonMap v
 ~~~
 
-### 421. k_canon'_ren
+### 710. k_canon'_ren
 
 Source: proofs/CANONF1.lean:567 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3460,7 +5798,7 @@ Source: proofs/CANONF1.lean:567 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_canon'_ren {f : ℕ → ℕ} {d : Prog} (hA : Admissible f d) : kcanon' (d.rename f) = kcanon' d
 ~~~
 
-### 422. k_desugarProg_ren
+### 711. k_desugarProg_ren
 
 Source: proofs/CANONF1.lean:575 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3468,7 +5806,7 @@ Source: proofs/CANONF1.lean:575 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_desugarProg_ren (f : ℕ → ℕ) (p : Prog) : desugarProg (p.rename f) = (desugarProg p).rename f
 ~~~
 
-### 423. k_adm_desugar
+### 712. k_adm_desugar
 
 Source: proofs/CANONF1.lean:581 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3476,7 +5814,7 @@ Source: proofs/CANONF1.lean:581 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_adm_desugar {f : ℕ → ℕ} {p : Prog} (hA : Admissible f p) : Admissible f (desugarProg p)
 ~~~
 
-### 424. k_canon_step
+### 713. k_canon_step
 
 Source: proofs/CANONF1.lean:590 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3484,7 +5822,7 @@ Source: proofs/CANONF1.lean:590 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_canon_step {p q : Prog} (h : Step p q) : canon p = canon q
 ~~~
 
-### 425. k_canon_syn
+### 714. k_canon_syn
 
 Source: proofs/CANONF1.lean:599 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3492,7 +5830,7 @@ Source: proofs/CANONF1.lean:599 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_canon_syn {p q : Prog} (h : SynEquiv p q) : canon p = canon q
 ~~~
 
-### 426. k_eqv_map
+### 715. k_eqv_map
 
 Source: proofs/CANONF1.lean:608 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3500,7 +5838,7 @@ Source: proofs/CANONF1.lean:608 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_map {φ : Stmt → Stmt} (hφ : ∀ a b, ForStep a b → ForStep (φ a) (φ b)) {a b : Stmt} (h : Relation.EqvGen ForStep a b) : Relation.EqvGen ForStep (φ a) (φ b)
 ~~~
 
-### 427. k_eqv_seq
+### 716. k_eqv_seq
 
 Source: proofs/CANONF1.lean:616 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3508,7 +5846,7 @@ Source: proofs/CANONF1.lean:616 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_seq {s s' t t' : Stmt} (h1 : Relation.EqvGen ForStep s s') (h2 : Relation.EqvGen ForStep t t') : Relation.EqvGen ForStep (.seq s t) (.seq s' t')
 ~~~
 
-### 428. k_eqv_ite
+### 717. k_eqv_ite
 
 Source: proofs/CANONF1.lean:621 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3516,7 +5854,7 @@ Source: proofs/CANONF1.lean:621 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_ite {b : BExp} {s s' t t' : Stmt} (h1 : Relation.EqvGen ForStep s s') (h2 : Relation.EqvGen ForStep t t') : Relation.EqvGen ForStep (.ite b s t) (.ite b s' t')
 ~~~
 
-### 429. k_eqv_while
+### 718. k_eqv_while
 
 Source: proofs/CANONF1.lean:626 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3524,7 +5862,7 @@ Source: proofs/CANONF1.lean:626 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_while {b : BExp} {s s' : Stmt} (h : Relation.EqvGen ForStep s s') : Relation.EqvGen ForStep (.while b s) (.while b s')
 ~~~
 
-### 430. k_eqv_cfor
+### 719. k_eqv_cfor
 
 Source: proofs/CANONF1.lean:630 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3532,7 +5870,7 @@ Source: proofs/CANONF1.lean:630 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_cfor {i i' : Stmt} {c : BExp} {st st' body body' : Stmt} (hi : Relation.EqvGen ForStep i i') (hst : Relation.EqvGen ForStep st st') (hb : Relation.EqvGen ForStep body body') : Relation.EqvGen ForStep (.cfor i c st body) (.cfor i' c st' body')
 ~~~
 
-### 431. k_eqv_append
+### 720. k_eqv_append
 
 Source: proofs/CANONF1.lean:640 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3540,7 +5878,7 @@ Source: proofs/CANONF1.lean:640 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_append (a b : Stmt) : Relation.EqvGen ForStep (.seq a b) (a.append b)
 ~~~
 
-### 432. k_eqv_flatten
+### 721. k_eqv_flatten
 
 Source: proofs/CANONF1.lean:646 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3548,7 +5886,7 @@ Source: proofs/CANONF1.lean:646 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_flatten (s : Stmt) : Relation.EqvGen ForStep s (flatten s)
 ~~~
 
-### 433. k_eqv_desugar
+### 722. k_eqv_desugar
 
 Source: proofs/CANONF1.lean:655 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3556,7 +5894,7 @@ Source: proofs/CANONF1.lean:655 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_desugar (s : Stmt) : Relation.EqvGen ForStep s (desugar s)
 ~~~
 
-### 434. k_eqv_FF
+### 723. k_eqv_FF
 
 Source: proofs/CANONF1.lean:666 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3564,7 +5902,7 @@ Source: proofs/CANONF1.lean:666 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_eqv_FF (s : Stmt) : Relation.EqvGen ForStep s (KFF s)
 ~~~
 
-### 435. k_lift
+### 724. k_lift
 
 Source: proofs/CANONF1.lean:669 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3572,7 +5910,7 @@ Source: proofs/CANONF1.lean:669 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_lift {k : ℕ} {ret : AExp} {body body' : Stmt} (h : Relation.EqvGen ForStep body body') : SynEquiv ⟨k, body, ret⟩ ⟨k, body', ret⟩
 ~~~
 
-### 436. k_adm_canonMap
+### 725. k_adm_canonMap
 
 Source: proofs/CANONF1.lean:677 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3580,7 +5918,7 @@ Source: proofs/CANONF1.lean:677 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_adm_canonMap (d : Prog) : Admissible d.canonMap d
 ~~~
 
-### 437. k_syn_canon
+### 726. k_syn_canon
 
 Source: proofs/CANONF1.lean:693 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3588,7 +5926,7 @@ Source: proofs/CANONF1.lean:693 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_syn_canon (p : Prog) : SynEquiv p (canon p)
 ~~~
 
-### 438. k_part2
+### 727. k_part2
 
 Source: proofs/CANONF1.lean:697 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3596,7 +5934,7 @@ Source: proofs/CANONF1.lean:697 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_part2 (p q : Prog) : canon p = canon q ↔ SynEquiv p q
 ~~~
 
-### 439. k_runs_step
+### 728. k_runs_step
 
 Source: proofs/CANONF1.lean:705 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3604,7 +5942,7 @@ Source: proofs/CANONF1.lean:705 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_runs_step {p q : Prog} (h : Step p q) (ins : List ℤ) (out : ℤ) : Runs p ins out ↔ Runs q ins out
 ~~~
 
-### 440. k_runs_syn
+### 729. k_runs_syn
 
 Source: proofs/CANONF1.lean:714 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3612,7 +5950,7 @@ Source: proofs/CANONF1.lean:714 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_runs_syn {p q : Prog} (h : SynEquiv p q) (ins : List ℤ) (out : ℤ) : Runs p ins out ↔ Runs q ins out
 ~~~
 
-### 441. k_part1
+### 730. k_part1
 
 Source: proofs/CANONF1.lean:722 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3620,7 +5958,7 @@ Source: proofs/CANONF1.lean:722 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem k_part1 (p : Prog) (ins : List ℤ) (out : ℤ) : Runs (canon p) ins out ↔ Runs p ins out
 ~~~
 
-### 442. claim
+### 731. claim
 
 Source: proofs/CANONF1.lean:725 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3628,7 +5966,7 @@ Source: proofs/CANONF1.lean:725 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claim : Claim
 ~~~
 
-### 443. witness
+### 732. witness
 
 Source: proofs/CANONF1.lean:741 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3638,7 +5976,7 @@ theorem witness : Witness
 
 ## proofs/SANDBOX2F1.lean
 
-### 444. fp2_split1
+### 733. fp2_split1
 
 Source: proofs/SANDBOX2F1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3646,7 +5984,7 @@ Source: proofs/SANDBOX2F1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem fp2_split1 (W : Path) (sd : List Path) : PL_SANDBOX2F1.fixedPolicy2 W sd = [.bind [] [] .ro] ++ ([.tmpfs ["var", "tmp"], .bind W ["var", "tmp", "work"] .rw] ++ sd.map (fun d => .bind d d .rw) ++ hiddenDirs.map .tmpfs ++ [.bind mathlibProj mathlibProj .ro])
 ~~~
 
-### 445. fp2_split2
+### 734. fp2_split2
 
 Source: proofs/SANDBOX2F1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3654,7 +5992,7 @@ Source: proofs/SANDBOX2F1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fp2_split2 (W : Path) (sd : List Path) : PL_SANDBOX2F1.fixedPolicy2 W sd = ([.bind [] [] .ro, .tmpfs ["var", "tmp"], .bind W ["var", "tmp", "work"] .rw] ++ sd.map (fun d => .bind d d .rw)) ++ (hiddenDirs.map .tmpfs ++ [.bind mathlibProj mathlibProj .ro])
 ~~~
 
-### 446. part_a
+### 735. part_a
 
 Source: proofs/SANDBOX2F1.lean:16 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3662,7 +6000,7 @@ Source: proofs/SANDBOX2F1.lean:16 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_a : ∀ W : Path, ["var", "tmp"] <+: W → ReadsHost (fixedPolicy W [home ++ [".agent-b"]]) (home ++ [".agent-b", "sessions", "s.jsonl"]) (home ++ [".agent-b", "sessions", "s.jsonl"])
 ~~~
 
-### 447. part_b
+### 736. part_b
 
 Source: proofs/SANDBOX2F1.lean:24 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3670,7 +6008,7 @@ Source: proofs/SANDBOX2F1.lean:24 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_b : ∀ (W : Path) (stateDirs : List Path) (canWrite : Path → Prop) (p hp : Path), WritesHost (PL_SANDBOX2F1.fixedPolicy2 W stateDirs) canWrite p hp → W <+: hp ∨ ∃ d ∈ stateDirs, d <+: hp
 ~~~
 
-### 448. part_c
+### 737. part_c
 
 Source: proofs/SANDBOX2F1.lean:34 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3678,7 +6016,7 @@ Source: proofs/SANDBOX2F1.lean:34 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_c : ∀ (W : Path) (stateDirs : List Path) (p hp H : Path), ["var", "tmp"] <+: W → H ∈ hiddenDirs → H <+: hp → ReadsHost (PL_SANDBOX2F1.fixedPolicy2 W stateDirs) p hp → mathlibProj <+: hp
 ~~~
 
-### 449. claim
+### 738. claim
 
 Source: proofs/SANDBOX2F1.lean:64 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3686,7 +6024,7 @@ Source: proofs/SANDBOX2F1.lean:64 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim : PL_SANDBOX2F1.Claim
 ~~~
 
-### 450. witness
+### 739. witness
 
 Source: proofs/SANDBOX2F1.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3696,7 +6034,7 @@ theorem witness : PL_SANDBOX2F1.Witness
 
 ## proofs/SANDBOXF1.lean
 
-### 451. eff_mem
+### 740. eff_mem
 
 Source: proofs/SANDBOXF1.lean:1 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3704,7 +6042,7 @@ Source: proofs/SANDBOXF1.lean:1 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem eff_mem {pol : Policy} {p : Path} {m : Mount} (h : effective pol p = some m) : m ∈ pol ∧ m.tgt <+: p
 ~~~
 
-### 452. eff_tail
+### 741. eff_tail
 
 Source: proofs/SANDBOXF1.lean:6 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3712,7 +6050,7 @@ Source: proofs/SANDBOXF1.lean:6 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem eff_tail {l1 l2 : Policy} {p : Path} {m x : Mount} (h : effective (l1 ++ l2) p = some m) (hx : x ∈ l2) (hP : x.tgt <+: p) : m ∈ l2
 ~~~
 
-### 453. head_eq
+### 742. head_eq
 
 Source: proofs/SANDBOXF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3720,7 +6058,7 @@ Source: proofs/SANDBOXF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem head_eq {a b : String} {as bs l : Path} (h1 : a :: as <+: l) (h2 : b :: bs <+: l) : a = b
 ~~~
 
-### 454. hidden_head
+### 743. hidden_head
 
 Source: proofs/SANDBOXF1.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3728,7 +6066,7 @@ Source: proofs/SANDBOXF1.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem hidden_head : ∀ H ∈ hiddenDirs, ∃ as, H = "home" :: as ∨ H = "tmp" :: as
 ~~~
 
-### 455. cur_split
+### 744. cur_split
 
 Source: proofs/SANDBOXF1.lean:33 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3736,7 +6074,7 @@ Source: proofs/SANDBOXF1.lean:33 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem cur_split (W : Path) : currentPolicy W = [.bind [] [] .rw] ++ ([.tmpfs ["var", "tmp"], .bind W ["var", "tmp", "work"] .rw] ++ hiddenDirs.map .tmpfs ++ [.bind mathlibProj mathlibProj .ro])
 ~~~
 
-### 456. claim_a
+### 745. claim_a
 
 Source: proofs/SANDBOXF1.lean:38 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3744,7 +6082,7 @@ Source: proofs/SANDBOXF1.lean:38 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_a : ∀ W : Path, ["var", "tmp"] <+: W → WritesHost (currentPolicy W) (fun hp => home <+: hp ∨ ["var", "tmp"] <+: hp) (home ++ [".toolchain", "bin", "lake"]) (home ++ [".toolchain", "bin", "lake"])
 ~~~
 
-### 457. claim_b
+### 746. claim_b
 
 Source: proofs/SANDBOXF1.lean:47 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3752,7 +6090,7 @@ Source: proofs/SANDBOXF1.lean:47 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_b : ∀ (W : Path) (stateDirs : List Path) (canWrite : Path → Prop) (p hp : Path), WritesHost (fixedPolicy W stateDirs) canWrite p hp → W <+: hp ∨ ∃ d ∈ stateDirs, d <+: hp
 ~~~
 
-### 458. claim_c
+### 747. claim_c
 
 Source: proofs/SANDBOXF1.lean:57 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3760,7 +6098,7 @@ Source: proofs/SANDBOXF1.lean:57 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_c : ∀ (W p hp H : Path), ["var", "tmp"] <+: W → H ∈ hiddenDirs → H <+: hp → ReadsHost (currentPolicy W) p hp → mathlibProj <+: hp
 ~~~
 
-### 459. claim
+### 748. claim
 
 Source: proofs/SANDBOXF1.lean:81 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3768,7 +6106,7 @@ Source: proofs/SANDBOXF1.lean:81 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim : Claim
 ~~~
 
-### 460. witness
+### 749. witness
 
 Source: proofs/SANDBOXF1.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3778,7 +6116,7 @@ theorem witness : Witness
 
 ## proofs/TMCERTF1.lean
 
-### 461. claimS
+### 750. claimS
 
 Source: proofs/TMCERTF1.lean:2 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3786,7 +6124,7 @@ Source: proofs/TMCERTF1.lean:2 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem claimS : ∀ (S A Θ : Type) [Fintype S] [Fintype A] (N : ℕ) (G : Θ → Game S A) (adm : ℕ → S → A → Θ → Prop) (V : ℕ → S → ℝ) (σ : RHist S A → S → A → ℝ) (θ : ℕ → RHist S A → S → A → Θ), AdmKNonneg N G adm → RiskCertUpTo N G adm V → IsPolicy σ → SelectorUpTo N adm θ → ∀ n, n ≤ N → ∀ s h, risk G θ σ n s h ≤ V n s
 ~~~
 
-### 462. claimP
+### 751. claimP
 
 Source: proofs/TMCERTF1.lean:29 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3794,7 +6132,7 @@ Source: proofs/TMCERTF1.lean:29 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claimP : ∀ (S A Θ : Type) [Fintype S] [Fintype A] (N : ℕ) (G : Θ → Game S A) (adm : ℕ → S → A → Θ → Prop) (σ : RHist S A → S → A → ℝ) (θ : ℕ → RHist S A → S → A → Θ), (∀ n, n < N → ∀ s a th, adm n s a th → 0 ≤ (G th).cat n s a ∧ (∀ s', 0 ≤ (G th).K n s a s') ∧ (G th).cat n s a + ∑ s', (G th).K n s a s' ≤ 1) → IsPolicy σ → SelectorUpTo N adm θ → ∀ n, n ≤ N → ∀ s h, 0 ≤ risk G θ σ n s h ∧ risk G θ σ n s h ≤ 1
 ~~~
 
-### 463. claimS
+### 752. claimS
 
 Source: proofs/TMCERTF1.lean:63 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3802,7 +6140,7 @@ Source: proofs/TMCERTF1.lean:63 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claimS' : ∀ (S A Θ Ω : Type) [Fintype S] [Fintype A] [Fintype Ω] (N : ℕ) (G : Θ → Game S A) (adm : ℕ → S → A → Θ → Prop) (V : ℕ → S → ℝ) (ρ : Ω → ℝ) (σ : Ω → RHist S A → S → A → ℝ) (θ : Ω → ℕ → RHist S A → S → A → Θ) (s₀ : S), AdmKNonneg N G adm → RiskCertUpTo N G adm V → (∀ ω, 0 ≤ ρ ω) → ∑ ω, ρ ω = 1 → (∀ ω, IsPolicy (σ ω)) → (∀ ω, SelectorUpTo N adm (θ ω)) → ∑ ω, ρ ω * risk G (θ ω) (σ ω) N s₀ [] ≤ V N s₀
 ~~~
 
-### 464. claimFx
+### 753. claimFx
 
 Source: proofs/TMCERTF1.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3810,7 +6148,7 @@ Source: proofs/TMCERTF1.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claimFx : ∀ (S A : Type) [Fintype S] [Fintype A] (N : ℕ) (G : Game S A) (V : ℕ → S → ℝ) (σ : RHist S A → S → A → ℝ) (s₀ : S), (∀ n, n < N → ∀ s a s', 0 ≤ G.K n s a s') → RiskCertUpTo N (fun _ : Unit => G) (fun _ _ _ _ => True) V → IsPolicy σ → risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ N s₀ [] ≤ V N s₀
 ~~~
 
-### 465. claimFxGap
+### 754. claimFxGap
 
 Source: proofs/TMCERTF1.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3818,7 +6156,7 @@ Source: proofs/TMCERTF1.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claimFxGap : risk (fun _ : Unit => gapG true) (fun _ _ _ _ => ()) (fun _ _ _ => 1) 2 () [] = 1/2 ∧ risk (fun _ : Unit => gapG false) (fun _ _ _ _ => ()) (fun _ _ _ => 1) 2 () [] = 1/2 ∧ risk gapG (fun n _ _ _ => decide (n = 1)) (fun _ _ _ => 1) 2 () [] = 3/4
 ~~~
 
-### 466. claimObs
+### 755. claimObs
 
 Source: proofs/TMCERTF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3826,7 +6164,7 @@ Source: proofs/TMCERTF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claimObs : ∀ (S A O : Type) [Fintype A] (obs : RHist S A → S → O) (π : O → A → ℝ), (∀ o, (∀ a, 0 ≤ π o a) ∧ ∑ a, π o a = 1) → IsPolicy (liftObs obs π)
 ~~~
 
-### 467. claimT
+### 756. claimT
 
 Source: proofs/TMCERTF1.lean:97 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3834,7 +6172,7 @@ Source: proofs/TMCERTF1.lean:97 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claimT : ∀ (S A : Type) [Fintype S] [Fintype A] [Nonempty A] (G : Game S A), Lawful G → (∀ N, RiskCertUpTo N (fun _ : Unit => G) (fun _ _ _ _ => True) (Vstar G)) ∧ (∀ N V, RiskCertUpTo N (fun _ : Unit => G) (fun _ _ _ _ => True) V → ∀ n, n ≤ N → ∀ s, Vstar G n s ≤ V n s) ∧ (∀ n s, 0 ≤ Vstar G n s ∧ Vstar G n s ≤ 1) ∧ ∀ (N : ℕ) (s₀ : S), ∃ σ, IsPolicy σ ∧ (∀ h s a, σ h s a = 0 ∨ σ h s a = 1) ∧ (∀ h h' s, h.length = h'.length → σ h s = σ h' s) ∧ risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ N s₀ [] = Vstar G N s₀
 ~~~
 
-### 468. claimTR
+### 757. claimTR
 
 Source: proofs/TMCERTF1.lean:192 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3842,7 +6180,7 @@ Source: proofs/TMCERTF1.lean:192 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claimTR : ∀ (S A Θ : Type) [Fintype S] [Fintype A] [Fintype Θ] [Nonempty A] [Nonempty Θ] (G : Θ → Game S A), (∀ th, Lawful (G th)) → (∀ N, RiskCertUpTo N G (fun _ _ _ _ => True) (Vrob G)) ∧ (∀ N V, RiskCertUpTo N G (fun _ _ _ _ => True) V → ∀ n, n ≤ N → ∀ s, Vrob G n s ≤ V n s) ∧ ∀ (N : ℕ) (s₀ : S), ∃ σ θ, IsPolicy σ ∧ (∀ h s a, σ h s a = 0 ∨ σ h s a = 1) ∧ (∀ h h' s, h.length = h'.length → σ h s = σ h' s) ∧ (∀ n h h' s a, h.length = h'.length → θ n h s a = θ n h' s a) ∧ risk G θ σ N s₀ [] = Vrob G N s₀
 ~~~
 
-### 469. claimU
+### 758. claimU
 
 Source: proofs/TMCERTF1.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3850,7 +6188,7 @@ Source: proofs/TMCERTF1.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claimU : ∀ (S A Θ : Type) [Fintype S] (N : ℕ) (G : Θ → Game S A) (adm : ℕ → S → A → Θ → Prop) (a₀ : A) (rew : Θ → ℕ → S → ℝ) (W : ℕ → S → ℝ) (θ : ℕ → RHist S A → S → Θ), (∀ n, n < N → ∀ s th, adm n s a₀ th → ∀ s', 0 ≤ (G th).K n s a₀ s') → UseCertUpTo N G adm a₀ rew W → (∀ n, n < N → ∀ h s, adm n s a₀ (θ n h s)) → ∀ n, n ≤ N → ∀ s h, W n s ≤ honestER G a₀ rew θ n s h
 ~~~
 
-### 470. foldl_add_eq
+### 759. foldl_add_eq
 
 Source: proofs/TMCERTF1.lean:288 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3858,7 +6196,7 @@ Source: proofs/TMCERTF1.lean:288 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem foldl_add_eq {m : ℕ} (f : Fin m → ℚ) : ∀ (l : List (Fin m)) (acc : ℚ), l.foldl (fun acc i => acc + f i) acc = acc + (l.map f).sum
 ~~~
 
-### 471. sumQ_eq
+### 760. sumQ_eq
 
 Source: proofs/TMCERTF1.lean:298 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3866,7 +6204,7 @@ Source: proofs/TMCERTF1.lean:298 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem sumQ_eq (m : ℕ) (f : Fin m → ℚ) : sumQ m f = ∑ i, f i
 ~~~
 
-### 472. checkRiskQ_spec
+### 761. checkRiskQ_spec
 
 Source: proofs/TMCERTF1.lean:301 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3874,7 +6212,7 @@ Source: proofs/TMCERTF1.lean:301 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem checkRiskQ_spec {N m k t : ℕ} {cat : Fin t → Fin N → Fin m → Fin k → ℚ} {K : Fin t → Fin N → Fin m → Fin k → Fin m → ℚ} {V : Fin (N + 1) → Fin m → ℚ} (hc : checkRiskQ N m k t cat K V = true) : 0 < t ∧ 0 < k ∧ (∀ j s, 0 ≤ V j s) ∧ (∀ th i s a, cat th i s a + ∑ s', K th i s a s' * V i.castSucc s' ≤ V i.succ s)
 ~~~
 
-### 473. checkLawfulQ_spec
+### 762. checkLawfulQ_spec
 
 Source: proofs/TMCERTF1.lean:310 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3882,7 +6220,7 @@ Source: proofs/TMCERTF1.lean:310 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem checkLawfulQ_spec {N m k t : ℕ} {cat : Fin t → Fin N → Fin m → Fin k → ℚ} {K : Fin t → Fin N → Fin m → Fin k → Fin m → ℚ} (hc : checkLawfulQ N m k t cat K = true) : ∀ th i s a, 0 ≤ cat th i s a ∧ (∀ s', 0 ≤ K th i s a s') ∧ cat th i s a + ∑ s', K th i s a s' ≤ 1
 ~~~
 
-### 474. claimQ
+### 763. claimQ
 
 Source: proofs/TMCERTF1.lean:319 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3890,7 +6228,7 @@ Source: proofs/TMCERTF1.lean:319 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claimQ : ∀ (N m k t : ℕ) (cat : Fin t → Fin N → Fin m → Fin k → ℚ) (K : Fin t → Fin N → Fin m → Fin k → Fin m → ℚ) (V : Fin (N + 1) → Fin m → ℚ), (checkRiskQ N m k t cat K V = true → RiskCertUpTo N (gameOfQ N m k t cat K) (fun _ _ _ _ => True) (valOfQ N m V) ∧ (∀ n s, 0 ≤ valOfQ N m V n s) ∧ 0 < t ∧ 0 < k) ∧ (checkLawfulQ N m k t cat K = true → ∀ th, Lawful (gameOfQ N m k t cat K th))
 ~~~
 
-### 475. claimVx
+### 764. claimVx
 
 Source: proofs/TMCERTF1.lean:350 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3898,7 +6236,7 @@ Source: proofs/TMCERTF1.lean:350 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claimVx : ∀ (S A ι : Type) [Fintype S] [Fintype ι] (N : ℕ) (Gv : ι → Game S A) (V : ℕ → S → ℝ), RiskCertUpTo N Gv (fun _ _ _ _ => True) V → RiskCertUpTo N (hullGame Gv) (fun _ _ _ lam => Simplex lam) V ∧ ((∀ i n s a s', 0 ≤ (Gv i).K n s a s') → ∀ n s a lam, Simplex lam → ∀ s', 0 ≤ (hullGame Gv lam).K n s a s')
 ~~~
 
-### 476. claimAbsV
+### 765. claimAbsV
 
 Source: proofs/TMCERTF1.lean:374 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3906,7 +6244,7 @@ Source: proofs/TMCERTF1.lean:374 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claimAbsV : ∀ (Sc Ac S A Θ : Type) [Fintype Sc] [Fintype Ac] [Fintype S] (N : ℕ) (Gc : Game Sc Ac) (α : Sc → S) (G : Θ → Game S A) (adm : ℕ → S → A → Θ → Prop) (V : ℕ → S → ℝ) (σc : RHist Sc Ac → Sc → Ac → ℝ), (∀ n, n < N → ∀ x ac x', 0 ≤ Gc.K n x ac x') → CoveredV N Gc α G adm V → RiskCertUpTo N G adm V → IsPolicy σc → ∀ n, n ≤ N → ∀ x h, risk (fun _ : Unit => Gc) (fun _ _ _ _ => ()) σc n x h ≤ V n (α x)
 ~~~
 
-### 477. claimAbsEq
+### 766. claimAbsEq
 
 Source: proofs/TMCERTF1.lean:400 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3914,7 +6252,7 @@ Source: proofs/TMCERTF1.lean:400 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claimAbsEq : ∀ (Sc Ac S A Θ : Type) [Fintype Sc] [Fintype S] [DecidableEq S] (N : ℕ) (Gc : Game Sc Ac) (α : Sc → S) (G : Θ → Game S A) (adm : ℕ → S → A → Θ → Prop) (V : ℕ → S → ℝ), Covered N Gc α G adm → CoveredV N Gc α G adm V
 ~~~
 
-### 478. claim
+### 767. claim
 
 Source: proofs/TMCERTF1.lean:417 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3922,7 +6260,7 @@ Source: proofs/TMCERTF1.lean:417 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim : PL_TMCERTF1.Claim
 ~~~
 
-### 479. witness
+### 768. witness
 
 Source: proofs/TMCERTF1.lean:421 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3932,7 +6270,7 @@ theorem witness : PL_TMCERTF1.Witness
 
 ## proofs/TMCERTUSF1.lean
 
-### 480. foldl_add_eq
+### 769. foldl_add_eq
 
 Source: proofs/TMCERTUSF1.lean:1 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3940,7 +6278,7 @@ Source: proofs/TMCERTUSF1.lean:1 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem foldl_add_eq {m : ℕ} (f : Fin m → ℚ) : ∀ (l : List (Fin m)) (acc : ℚ), l.foldl (fun acc i => acc + f i) acc = acc + (l.map f).sum
 ~~~
 
-### 481. sumQ_eq
+### 770. sumQ_eq
 
 Source: proofs/TMCERTUSF1.lean:8 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3948,7 +6286,7 @@ Source: proofs/TMCERTUSF1.lean:8 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem sumQ_eq (m : ℕ) (f : Fin m → ℚ) : sumQ m f = ∑ i, f i
 ~~~
 
-### 482. checkUseQ_spec
+### 771. checkUseQ_spec
 
 Source: proofs/TMCERTUSF1.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3956,7 +6294,7 @@ Source: proofs/TMCERTUSF1.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem checkUseQ_spec {N m t : ℕ} {rew : Fin t → Fin N → Fin m → ℚ} {K : Fin t → Fin N → Fin m → Fin m → ℚ} {adm : Fin t → Fin N → Fin m → Bool} {W : Fin (N + 1) → Fin m → ℚ} {s₀ : Fin m} {floor : ℚ} (hc : checkUseQ N m t rew K adm W s₀ floor = true) : 0 < t ∧ floor ≤ W (Fin.last N) s₀ ∧ (∀ s, W 0 s ≤ 0) ∧ (∀ i s, ∃ th, adm th i s = true) ∧ (∀ th i s, adm th i s = true → W i.succ s ≤ rew th i s + ∑ s', K th i s s' * W i.castSucc s')
 ~~~
 
-### 483. selector_exists
+### 772. selector_exists
 
 Source: proofs/TMCERTUSF1.lean:29 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3964,7 +6302,7 @@ Source: proofs/TMCERTUSF1.lean:29 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem selector_exists {N m t : ℕ} (rew : Fin t → Fin N → Fin m → ℚ) (K : Fin t → Fin N → Fin m → Fin m → ℚ) (adm : Fin t → Fin N → Fin m → Bool) (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ) (hc : checkUseQ N m t rew K adm W s₀ floor = true) : ∃ θ : ℕ → List (Fin m) → Fin m → Fin t, ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true
 ~~~
 
-### 484. checkUseQ_sound
+### 773. checkUseQ_sound
 
 Source: proofs/TMCERTUSF1.lean:45 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3972,7 +6310,7 @@ Source: proofs/TMCERTUSF1.lean:45 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem checkUseQ_sound {N m t : ℕ} (rew : Fin t → Fin N → Fin m → ℚ) (K : Fin t → Fin N → Fin m → Fin m → ℚ) (adm : Fin t → Fin N → Fin m → Bool) (W : Fin (N + 1) → Fin m → ℚ) (s₀ : Fin m) (floor : ℚ) (θ : ℕ → List (Fin m) → Fin m → Fin t) (hc : checkUseQ N m t rew K adm W s₀ floor = true) (hK : ∀ th i s, adm th i s = true → ∀ s', 0 ≤ K th i s s') (hθ : ∀ n (hn : n < N) h s, adm (θ n h s) ⟨n, hn⟩ s = true) : (floor : ℝ) ≤ PL_TMCERTUSF1.honestValue rew K θ N s₀ []
 ~~~
 
-### 485. claim
+### 774. claim
 
 Source: proofs/TMCERTUSF1.lean:98 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3980,7 +6318,7 @@ Source: proofs/TMCERTUSF1.lean:98 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim : PL_TMCERTUSF1.Claim
 ~~~
 
-### 486. witness
+### 775. witness
 
 Source: proofs/TMCERTUSF1.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3990,7 +6328,7 @@ theorem witness : PL_TMCERTUSF1.Witness
 
 ## proofs/TMGACF1.lean
 
-### 487. risk_zero
+### 776. risk_zero
 
 Source: proofs/TMGACF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -3998,7 +6336,7 @@ Source: proofs/TMGACF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem risk_zero' {S A Θ : Type} [Fintype S] [Fintype A] (G : Θ → Game S A) (θ : ℕ → RHist S A → S → A → Θ) (σ : RHist S A → S → A → ℝ) (s : S) (h : RHist S A) : risk G θ σ 0 s h = 0
 ~~~
 
-### 488. risk_succ_bool
+### 777. risk_succ_bool
 
 Source: proofs/TMGACF1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4006,7 +6344,7 @@ Source: proofs/TMGACF1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem risk_succ_bool {S : Type} [Fintype S] (G : Game S Bool) (σ : RHist S Bool → S → Bool → ℝ) (n : ℕ) (s : S) (h : RHist S Bool) : risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ (n + 1) s h = σ h s true * (G.cat n s true + ∑ s', G.K n s true s' * risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s' (h ++ [(s, true)])) + σ h s false * (G.cat n s false + ∑ s', G.K n s false s' * risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s' (h ++ [(s, false)]))
 ~~~
 
-### 489. risk_hist
+### 778. risk_hist
 
 Source: proofs/TMGACF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4014,7 +6352,7 @@ Source: proofs/TMGACF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem risk_hist {S A : Type} [Fintype S] [Fintype A] (G : Game S A) (σ : RHist S A → S → A → ℝ) (hσ : ∀ h s a, σ h s a = σ [] s a) : ∀ n s h, risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s h = risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s []
 ~~~
 
-### 490. risk_succ_hf
+### 779. risk_succ_hf
 
 Source: proofs/TMGACF1.lean:35 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4022,7 +6360,7 @@ Source: proofs/TMGACF1.lean:35 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem risk_succ_hf {S : Type} [Fintype S] (G : Game S Bool) (σ : RHist S Bool → S → Bool → ℝ) (hσ : ∀ h s a, σ h s a = σ [] s a) (n : ℕ) (s : S) (h : RHist S Bool) : risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ (n + 1) s h = σ [] s true * (G.cat n s true + ∑ s', G.K n s true s' * risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s' []) + σ [] s false * (G.cat n s false + ∑ s', G.K n s false s' * risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s' [])
 ~~~
 
-### 491. honestER_hist
+### 780. honestER_hist
 
 Source: proofs/TMGACF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4030,7 +6368,7 @@ Source: proofs/TMGACF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem honestER_hist {S A : Type} [Fintype S] (G : Game S A) (a₀ : A) (rew : Unit → ℕ → S → ℝ) : ∀ n s h, honestER (fun _ : Unit => G) a₀ rew (fun _ _ _ => ()) n s h = honestER (fun _ : Unit => G) a₀ rew (fun _ _ _ => ()) n s []
 ~~~
 
-### 492. honestER_succ_hf
+### 781. honestER_succ_hf
 
 Source: proofs/TMGACF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4038,7 +6376,7 @@ Source: proofs/TMGACF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem honestER_succ_hf {S A : Type} [Fintype S] (G : Game S A) (a₀ : A) (rew : Unit → ℕ → S → ℝ) (n : ℕ) (s : S) (h : RHist S A) : honestER (fun _ : Unit => G) a₀ rew (fun _ _ _ => ()) (n + 1) s h = rew () n s + ∑ s', G.K n s a₀ s' * honestER (fun _ : Unit => G) a₀ rew (fun _ _ _ => ()) n s' []
 ~~~
 
-### 493. sup'_bool
+### 782. sup'_bool
 
 Source: proofs/TMGACF1.lean:69 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4046,7 +6384,7 @@ Source: proofs/TMGACF1.lean:69 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem sup'_bool (g : Bool → ℝ) : (Finset.univ : Finset Bool).sup' Finset.univ_nonempty g = max (g true) (g false)
 ~~~
 
-### 494. Vstar_succ_bool
+### 783. Vstar_succ_bool
 
 Source: proofs/TMGACF1.lean:79 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4054,7 +6392,7 @@ Source: proofs/TMGACF1.lean:79 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem Vstar_succ_bool {S : Type} [Fintype S] (G : Game S Bool) (n : ℕ) (s : S) : Vstar G (n + 1) s = max (G.cat n s true + ∑ s', G.K n s true s' * Vstar G n s') (G.cat n s false + ∑ s', G.K n s false s' * Vstar G n s')
 ~~~
 
-### 495. constRed_t
+### 784. constRed_t
 
 Source: proofs/TMGACF1.lean:84 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4062,7 +6400,7 @@ Source: proofs/TMGACF1.lean:84 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem constRed_t {S : Type} (β : ℝ) (h : RHist S Bool) (s : S) : constRed β h s true = β
 ~~~
 
-### 496. constRed_f
+### 785. constRed_f
 
 Source: proofs/TMGACF1.lean:85 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4070,7 +6408,7 @@ Source: proofs/TMGACF1.lean:85 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem constRed_f {S : Type} (β : ℝ) (h : RHist S Bool) (s : S) : constRed β h s false = 1 - β
 ~~~
 
-### 497. gac_cat_true
+### 786. gac_cat_true
 
 Source: proofs/TMGACF1.lean:89 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4078,7 +6416,7 @@ Source: proofs/TMGACF1.lean:89 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem gac_cat_true (C : ℕ) (TA TD FA : ℕ → ℕ → ℝ) (n : ℕ) (c : Fin (C + 1)) : (gac C TA TD FA).cat n c true = (if 0 < c.val then 1 - TD n c.val else 1 - TD n c.val + TA n c.val)
 ~~~
 
-### 498. gac_cat_false
+### 787. gac_cat_false
 
 Source: proofs/TMGACF1.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4086,7 +6424,7 @@ Source: proofs/TMGACF1.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem gac_cat_false (C : ℕ) (TA TD FA : ℕ → ℕ → ℝ) (n : ℕ) (c : Fin (C + 1)) : (gac C TA TD FA).cat n c false = 0
 ~~~
 
-### 499. gac_sum_true
+### 788. gac_sum_true
 
 Source: proofs/TMGACF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4094,7 +6432,7 @@ Source: proofs/TMGACF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem gac_sum_true (C : ℕ) (TA TD FA : ℕ → ℕ → ℝ) (n : ℕ) (c : Fin (C + 1)) (F : Fin (C + 1) → ℝ) : ∑ c', (gac C TA TD FA).K n c true c' * F c' = (TD n c.val - TA n c.val) * F c
 ~~~
 
-### 500. gac_sum_false_zero
+### 789. gac_sum_false_zero
 
 Source: proofs/TMGACF1.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4102,7 +6440,7 @@ Source: proofs/TMGACF1.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem gac_sum_false_zero (C : ℕ) (TA TD FA : ℕ → ℕ → ℝ) (n : ℕ) (c : Fin (C + 1)) (hc : c.val = 0) (F : Fin (C + 1) → ℝ) : ∑ c', (gac C TA TD FA).K n c false c' * F c' = F c
 ~~~
 
-### 501. gac_sum_false_succ
+### 790. gac_sum_false_succ
 
 Source: proofs/TMGACF1.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4110,7 +6448,7 @@ Source: proofs/TMGACF1.lean:110 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem gac_sum_false_succ (C : ℕ) (TA TD FA : ℕ → ℕ → ℝ) (n k : ℕ) (hk : k + 1 < C + 1) (F : Fin (C + 1) → ℝ) : ∑ c', (gac C TA TD FA).K n ⟨k + 1, hk⟩ false c' * F c' = FA n (k + 1) * F ⟨k, by omega⟩ + (1 - FA n (k + 1)) * F ⟨k + 1, hk⟩
 ~~~
 
-### 502. conjL
+### 791. conjL
 
 Source: proofs/TMGACF1.lean:130 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4118,7 +6456,7 @@ Source: proofs/TMGACF1.lean:130 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjL : ∀ (C : ℕ) (TA TD FA : ℕ → ℕ → ℝ), (∀ n c, 0 ≤ TA n c ∧ TA n c ≤ TD n c ∧ TD n c ≤ 1 ∧ 0 ≤ FA n c ∧ FA n c ≤ 1) → Lawful (gac C TA TD FA)
 ~~~
 
-### 503. conjLQ
+### 792. conjLQ
 
 Source: proofs/TMGACF1.lean:159 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4126,7 +6464,7 @@ Source: proofs/TMGACF1.lean:159 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjLQ : ∀ (C : ℕ) (f : ℝ → ℝ) (qa qd : ℕ → ℕ → ℝ), (∀ m c, 0 ≤ qa m c ∧ qa m c ≤ qd m c ∧ qd m c ≤ 1 ∧ 0 ≤ f (qa m c) ∧ f (qa m c) ≤ f (qd m c) ∧ f (qd m c) ≤ 1) → Lawful (gacQ C f qa qd)
 ~~~
 
-### 504. conjZ
+### 793. conjZ
 
 Source: proofs/TMGACF1.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4134,7 +6472,7 @@ Source: proofs/TMGACF1.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjZ : ∀ (C : ℕ) (f : ℝ → ℝ) (qa qd : ℕ → ℕ → ℝ) (β : ℝ), f 0 = 0 → (∀ m, qa m 0 = 0) → ∀ (m : ℕ) (c : Fin (C + 1)), 1 - risk (fun _ : Unit => gacQ C f qa qd) (fun _ _ _ _ => ()) (constRed β) m c [] = zGAC f qa qd β m c.val
 ~~~
 
-### 505. conjUZ
+### 794. conjUZ
 
 Source: proofs/TMGACF1.lean:201 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4142,7 +6480,7 @@ Source: proofs/TMGACF1.lean:201 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjUZ : ∀ (C : ℕ) (f : ℝ → ℝ) (qa qd : ℕ → ℕ → ℝ) (m : ℕ) (c : Fin (C + 1)), honestER (fun _ : Unit => gacQ C f qa qd) false (fun _ n c => usedReward qa qd n c.val) (fun _ _ _ => ()) m c [] = uGAC qa qd m c.val
 ~~~
 
-### 506. conjM
+### 795. conjM
 
 Source: proofs/TMGACF1.lean:226 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4150,7 +6488,7 @@ Source: proofs/TMGACF1.lean:226 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjM : ∀ (S Ω : Type) [Fintype S] [Fintype Ω] (G : Game S Bool) (ρ : Ω → ℝ) (β : Ω → ℝ) (N : ℕ) (s₀ : S) (U : ℝ), (∀ ω, 0 ≤ ρ ω) → ∑ ω, ρ ω = 1 → (∀ ω, 0 ≤ β ω ∧ β ω ≤ 1) → (∀ b : ℝ, 0 ≤ b → b ≤ 1 → risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed b) N s₀ [] ≤ U) → ∑ ω, ρ ω * risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed (β ω)) N s₀ [] ≤ U
 ~~~
 
-### 507. rowval_bounds
+### 796. rowval_bounds
 
 Source: proofs/TMGACF1.lean:239 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4158,7 +6496,7 @@ Source: proofs/TMGACF1.lean:239 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem rowval_bounds {S : Type} [Fintype S] (G : Game S Bool) (hG : Lawful G) (n : ℕ) (s : S) (a : Bool) (F : S → ℝ) (hF : ∀ s, 0 ≤ F s ∧ F s ≤ 1) : 0 ≤ G.cat n s a + ∑ s', G.K n s a s' * F s' ∧ G.cat n s a + ∑ s', G.K n s a s' * F s' ≤ 1
 ~~~
 
-### 508. risk_const_bounds
+### 797. risk_const_bounds
 
 Source: proofs/TMGACF1.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4166,7 +6504,7 @@ Source: proofs/TMGACF1.lean:251 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem risk_const_bounds {S : Type} [Fintype S] (G : Game S Bool) (hG : Lawful G) (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) : ∀ n s, 0 ≤ risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed b) n s [] ∧ risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed b) n s [] ≤ 1
 ~~~
 
-### 509. rowval_diff
+### 798. rowval_diff
 
 Source: proofs/TMGACF1.lean:267 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4174,7 +6512,7 @@ Source: proofs/TMGACF1.lean:267 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem rowval_diff {S : Type} [Fintype S] (G : Game S Bool) (hG : Lawful G) (n : ℕ) (s : S) (a : Bool) (F1 F2 : S → ℝ) (e : ℝ) (he : 0 ≤ e) (hF : ∀ s, |F1 s - F2 s| ≤ e) : |(G.cat n s a + ∑ s', G.K n s a s' * F1 s') - (G.cat n s a + ∑ s', G.K n s a s' * F2 s')| ≤ e
 ~~~
 
-### 510. lip_comb
+### 799. lip_comb
 
 Source: proofs/TMGACF1.lean:286 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4182,7 +6520,7 @@ Source: proofs/TMGACF1.lean:286 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem lip_comb (b b' X Y X' Y' e : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (hX0 : 0 ≤ X') (hX1 : X' ≤ 1) (hY0 : 0 ≤ Y') (hY1 : Y' ≤ 1) (hXX : |X - X'| ≤ e) (hYY : |Y - Y'| ≤ e) : |b * X + (1 - b) * Y - (b' * X' + (1 - b') * Y')| ≤ e + |b - b'|
 ~~~
 
-### 511. conjLip
+### 800. conjLip
 
 Source: proofs/TMGACF1.lean:303 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4190,7 +6528,7 @@ Source: proofs/TMGACF1.lean:303 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjLip : ∀ (S : Type) [Fintype S] (G : Game S Bool) (N : ℕ) (s₀ : S) (b b' : ℝ), Lawful G → 0 ≤ b → b ≤ 1 → 0 ≤ b' → b' ≤ 1 → |risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed b) N s₀ [] - risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed b') N s₀ []| ≤ N * |b - b'|
 ~~~
 
-### 512. conjGrid
+### 801. conjGrid
 
 Source: proofs/TMGACF1.lean:329 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4198,7 +6536,7 @@ Source: proofs/TMGACF1.lean:329 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjGrid : ∀ (S : Type) [Fintype S] (G : Game S Bool) (N J : ℕ) (s₀ : S) (U : ℝ), Lawful G → 0 < J → (∀ j : ℕ, j ≤ J → risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed ((j : ℝ) / J)) N s₀ [] ≤ U) → ∀ b : ℝ, 0 ≤ b → b ≤ 1 → risk (fun _ : Unit => G) (fun _ _ _ _ => ()) (constRed b) N s₀ [] ≤ U + N / (2 * J)
 ~~~
 
-### 513. Vstar_zero
+### 802. Vstar_zero
 
 Source: proofs/TMGACF1.lean:364 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4206,7 +6544,7 @@ Source: proofs/TMGACF1.lean:364 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem Vstar_zero' {S A : Type} [Fintype S] [Fintype A] [Nonempty A] (G : Game S A) (s : S) : Vstar G 0 s = 0
 ~~~
 
-### 514. conjW
+### 803. conjW
 
 Source: proofs/TMGACF1.lean:368 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4214,7 +6552,7 @@ Source: proofs/TMGACF1.lean:368 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjW : ∀ (TA TD FA : ℕ → ℕ → ℝ), (∀ n c, 0 ≤ TA n c ∧ TA n c ≤ TD n c ∧ TD n c ≤ 1 ∧ 0 ≤ FA n c ∧ FA n c ≤ 1) → ∀ (N : ℕ) (c : Fin 1), risk (fun _ : Unit => gac 0 TA TD FA) (fun _ _ _ _ => ()) (constRed 1) N c [] = Vstar (gac 0 TA TD FA) N c
 ~~~
 
-### 515. ex_row0t
+### 804. ex_row0t
 
 Source: proofs/TMGACF1.lean:399 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4222,7 +6560,7 @@ Source: proofs/TMGACF1.lean:399 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_row0t (n : ℕ) (F : Fin 2 → ℝ) : exG3.cat n 0 true + ∑ s', exG3.K n 0 true s' * F s' = 1/4 + 3/4 * F 0
 ~~~
 
-### 516. ex_row0f
+### 805. ex_row0f
 
 Source: proofs/TMGACF1.lean:404 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4230,7 +6568,7 @@ Source: proofs/TMGACF1.lean:404 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_row0f (n : ℕ) (F : Fin 2 → ℝ) : exG3.cat n 0 false + ∑ s', exG3.K n 0 false s' * F s' = F 0
 ~~~
 
-### 517. ex_row1t
+### 806. ex_row1t
 
 Source: proofs/TMGACF1.lean:408 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4238,7 +6576,7 @@ Source: proofs/TMGACF1.lean:408 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_row1t (n : ℕ) (F : Fin 2 → ℝ) : exG3.cat n 1 true + ∑ s', exG3.K n 1 true s' * F s' = 1/4
 ~~~
 
-### 518. ex_row1f
+### 807. ex_row1f
 
 Source: proofs/TMGACF1.lean:413 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4246,7 +6584,7 @@ Source: proofs/TMGACF1.lean:413 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_row1f (n : ℕ) (F : Fin 2 → ℝ) : exG3.cat n 1 false + ∑ s', exG3.K n 1 false s' * F s' = 1/2 * F 0 + 1/2 * F 1
 ~~~
 
-### 519. ex_step0
+### 808. ex_step0
 
 Source: proofs/TMGACF1.lean:418 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4254,7 +6592,7 @@ Source: proofs/TMGACF1.lean:418 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_step0 (σ : RHist (Fin 2) Bool → Fin 2 → Bool → ℝ) (n : ℕ) (h : RHist (Fin 2) Bool) : risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) σ (n + 1) 0 h = σ h 0 true * (1/4 + 3/4 * risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) σ n 0 (h ++ [(0, true)])) + σ h 0 false * risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) σ n 0 (h ++ [(0, false)])
 ~~~
 
-### 520. ex_step1
+### 809. ex_step1
 
 Source: proofs/TMGACF1.lean:424 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4262,7 +6600,7 @@ Source: proofs/TMGACF1.lean:424 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_step1 (σ : RHist (Fin 2) Bool → Fin 2 → Bool → ℝ) (n : ℕ) (h : RHist (Fin 2) Bool) : risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) σ (n + 1) 1 h = σ h 1 true * (1/4) + σ h 1 false * (1/2 * risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) σ n 0 (h ++ [(1, false)]) + 1/2 * risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) σ n 1 (h ++ [(1, false)]))
 ~~~
 
-### 521. ex_V0
+### 810. ex_V0
 
 Source: proofs/TMGACF1.lean:431 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4270,7 +6608,7 @@ Source: proofs/TMGACF1.lean:431 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_V0 (n : ℕ) : Vstar exG3 (n + 1) 0 = max (1/4 + 3/4 * Vstar exG3 n 0) (Vstar exG3 n 0)
 ~~~
 
-### 522. ex_V1
+### 811. ex_V1
 
 Source: proofs/TMGACF1.lean:434 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4278,7 +6616,7 @@ Source: proofs/TMGACF1.lean:434 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_V1 (n : ℕ) : Vstar exG3 (n + 1) 1 = max (1/4) (1/2 * Vstar exG3 n 0 + 1/2 * Vstar exG3 n 1)
 ~~~
 
-### 523. ex_poly
+### 812. ex_poly
 
 Source: proofs/TMGACF1.lean:438 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4286,7 +6624,7 @@ Source: proofs/TMGACF1.lean:438 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_poly (b : ℝ) : risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) (constRed b) 3 1 [] = 3/4 * b - 21/32 * b ^ 2 + 5/32 * b ^ 3
 ~~~
 
-### 524. ex_clocked
+### 813. ex_clocked
 
 Source: proofs/TMGACF1.lean:444 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4294,7 +6632,7 @@ Source: proofs/TMGACF1.lean:444 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_clocked : risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) clocked3 3 1 [] = 11/32
 ~~~
 
-### 525. ex_coin
+### 814. ex_coin
 
 Source: proofs/TMGACF1.lean:448 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4302,7 +6640,7 @@ Source: proofs/TMGACF1.lean:448 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_coin : risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) coinRed 3 1 [] = 9/32
 ~~~
 
-### 526. ex_Vstar
+### 815. ex_Vstar
 
 Source: proofs/TMGACF1.lean:452 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4310,7 +6648,7 @@ Source: proofs/TMGACF1.lean:452 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem ex_Vstar : Vstar exG3 3 1 = 11/32
 ~~~
 
-### 527. conjT5
+### 816. conjT5
 
 Source: proofs/TMGACF1.lean:463 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4318,7 +6656,7 @@ Source: proofs/TMGACF1.lean:463 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem conjT5 : (∀ b : ℝ, 0 ≤ b → b ≤ 1 → risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) (constRed b) 3 1 [] = 3/4 * b - 21/32 * b ^ 2 + 5/32 * b ^ 3 ∧ 3/4 * b - 21/32 * b ^ 2 + 5/32 * b ^ 3 ≤ 13/50) ∧ risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) (constRed (4/5)) 3 1 [] = 13/50 ∧ IsPolicy clocked3 ∧ IsPolicy coinRed ∧ risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) coinRed 3 1 [] = 9/32 ∧ (13/50 : ℝ) < 9/32 ∧ risk (fun _ : Unit => exG3) (fun _ _ _ _ => ()) clocked3 3 1 [] = 11/32 ∧ Vstar exG3 3 1 = 11/32 ∧ (13/50 : ℝ) < 11/32
 ~~~
 
-### 528. sound_unit
+### 817. sound_unit
 
 Source: proofs/TMGACF1.lean:497 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4326,7 +6664,7 @@ Source: proofs/TMGACF1.lean:497 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem sound_unit {S A : Type} [Fintype S] [Fintype A] (G : Game S A) (N : ℕ) (V : ℕ → S → ℝ) (σ : RHist S A → S → A → ℝ) (hK : ∀ n, n < N → ∀ s a s', 0 ≤ G.K n s a s') (hV : RiskCertUpTo N (fun _ : Unit => G) (fun _ _ _ _ => True) V) (hσ : IsPolicy σ) : ∀ n, n ≤ N → ∀ s h, risk (fun _ : Unit => G) (fun _ _ _ _ => ()) σ n s h ≤ V n s
 ~~~
 
-### 529. claim
+### 818. claim
 
 Source: proofs/TMGACF1.lean:516 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4334,7 +6672,7 @@ Source: proofs/TMGACF1.lean:516 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claim : PL_TMGACF1.Claim
 ~~~
 
-### 530. witness
+### 819. witness
 
 Source: proofs/TMGACF1.lean:519 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4344,7 +6682,7 @@ theorem witness : PL_TMGACF1.Witness
 
 ## proofs/TMLIPF1.lean
 
-### 531. oneStep
+### 820. oneStep
 
 Source: proofs/TMLIPF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4352,7 +6690,7 @@ Source: proofs/TMLIPF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem oneStep : OneStep
 ~~~
 
-### 532. transfer
+### 821. transfer
 
 Source: proofs/TMLIPF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4360,7 +6698,7 @@ Source: proofs/TMLIPF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem transfer : Transfer
 ~~~
 
-### 533. gridTransfer
+### 822. gridTransfer
 
 Source: proofs/TMLIPF1.lean:111 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4368,7 +6706,7 @@ Source: proofs/TMLIPF1.lean:111 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem gridTransfer : GridTransfer
 ~~~
 
-### 534. gridRisk
+### 823. gridRisk
 
 Source: proofs/TMLIPF1.lean:125 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4376,7 +6714,7 @@ Source: proofs/TMLIPF1.lean:125 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem gridRisk : GridRisk
 ~~~
 
-### 535. claim
+### 824. claim
 
 Source: proofs/TMLIPF1.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4384,7 +6722,7 @@ Source: proofs/TMLIPF1.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claim : PL_TMLIPF1.Claim
 ~~~
 
-### 536. w_lawfulParam
+### 825. w_lawfulParam
 
 Source: proofs/TMLIPF1.lean:134 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4392,7 +6730,7 @@ Source: proofs/TMLIPF1.lean:134 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_lawfulParam : ∀ p ∈ Set.Icc (0 : ℝ) (1 / 2), LawfulUpTo 1 (paramGame p)
 ~~~
 
-### 537. w_cover
+### 826. w_cover
 
 Source: proofs/TMLIPF1.lean:141 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4400,7 +6738,7 @@ Source: proofs/TMLIPF1.lean:141 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_cover : ∀ p ∈ Set.Icc (0 : ℝ) (1 / 2), ∃ q ∈ pGrid, |p - q| ≤ 1 / 8
 ~~~
 
-### 538. w_lip
+### 827. w_lip
 
 Source: proofs/TMLIPF1.lean:150 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4408,7 +6746,7 @@ Source: proofs/TMLIPF1.lean:150 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_lip : ∀ p ∈ Set.Icc (0 : ℝ) (1 / 2), ∀ q ∈ pGrid, RowClose 1 (paramGame q) (paramGame p) (2 * |p - q|)
 ~~~
 
-### 539. w_gridCert
+### 828. w_gridCert
 
 Source: proofs/TMLIPF1.lean:157 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4416,7 +6754,7 @@ Source: proofs/TMLIPF1.lean:157 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_gridCert : ∀ q ∈ pGrid, RiskCertUpTo 1 (fun _ : Unit => paramGame q) (fun _ _ _ _ => True) (gridCert q) ∧ InRange 1 (gridCert q) ∧ ∀ s, gridCert q 1 s ≤ 3 / 8
 ~~~
 
-### 540. witness
+### 829. witness
 
 Source: proofs/TMLIPF1.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4426,7 +6764,7 @@ theorem witness : PL_TMLIPF1.Witness
 
 ## proofs/UMADAPTF1.lean
 
-### 541. adSurv_zero
+### 830. adSurv_zero
 
 Source: proofs/UMADAPTF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4434,7 +6772,7 @@ Source: proofs/UMADAPTF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem adSurv_zero' {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : Hist X Z → ℝ) (h : Hist X Z) : adSurv T M φ keep 0 h = keep h
 ~~~
 
-### 542. adSurv_succ
+### 831. adSurv_succ
 
 Source: proofs/UMADAPTF1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4442,7 +6780,7 @@ Source: proofs/UMADAPTF1.lean:10 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem adSurv_succ' {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : Hist X Z → ℝ) (n : ℕ) (h : Hist X Z) : adSurv T M φ keep (n + 1) h = ∑ x, T h x * ∑ z, M x z * (φ z * adSurv T M φ keep n (h ++ [(x, z, true)]) + (1 - φ z) * adSurv T M φ keep n (h ++ [(x, z, false)]))
 ~~~
 
-### 543. s_aux
+### 832. s_aux
 
 Source: proofs/UMADAPTF1.lean:18 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4450,7 +6788,7 @@ Source: proofs/UMADAPTF1.lean:18 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem s_aux {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (keep : Hist X Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hk : ∀ h : Hist X Z, (∀ e ∈ h, e.2.2 = false) → keep h = 1) : ∀ (n : ℕ) (h : Hist X Z), (∀ e ∈ h, e.2.2 = false) → adSurv T M (fun _ => 0) keep n h = 1
 ~~~
 
-### 544. part_s
+### 833. part_s
 
 Source: proofs/UMADAPTF1.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4458,7 +6796,7 @@ Source: proofs/UMADAPTF1.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem part_s : ∀ (X Z : Type) [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (keep : Hist X Z → ℝ) (n : ℕ), IsKernel M → (∀ h, IsDist (T h)) → (∀ h : Hist X Z, (∀ e ∈ h, e.2.2 = false) → keep h = 1) → AcceptsAllFlag T M keep n
 ~~~
 
-### 545. surv_bounds
+### 834. surv_bounds
 
 Source: proofs/UMADAPTF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4466,7 +6804,7 @@ Source: proofs/UMADAPTF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem surv_bounds {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : Hist X Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hφ : IsRule φ) (hk : ∀ h, 0 ≤ keep h ∧ keep h ≤ 1) : ∀ (n : ℕ) (h : Hist X Z), 0 ≤ adSurv T M φ keep n h ∧ adSurv T M φ keep n h ≤ 1
 ~~~
 
-### 546. Qf_zero
+### 835. Qf_zero
 
 Source: proofs/UMADAPTF1.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4474,7 +6812,7 @@ Source: proofs/UMADAPTF1.lean:83 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem Qf_zero {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (w : Z → ℝ) (h : Hist X Z) : Qf T M w 0 h = 0
 ~~~
 
-### 547. Qf_succ
+### 836. Qf_succ
 
 Source: proofs/UMADAPTF1.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4482,7 +6820,7 @@ Source: proofs/UMADAPTF1.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem Qf_succ {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (w : Z → ℝ) (n : ℕ) (h : Hist X Z) : Qf T M w (n + 1) h = ∑ x, T h x * ∑ z, M x z * (w z + Qf T M w n (h ++ [(x, z, false)]))
 ~~~
 
-### 548. Qf_nonneg
+### 837. Qf_nonneg
 
 Source: proofs/UMADAPTF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4490,7 +6828,7 @@ Source: proofs/UMADAPTF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem Qf_nonneg {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (w : Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hw : ∀ z, 0 ≤ w z) : ∀ (n : ℕ) (h : Hist X Z), 0 ≤ Qf T M w n h
 ~~~
 
-### 549. sum2_add
+### 838. sum2_add
 
 Source: proofs/UMADAPTF1.lean:105 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4498,7 +6836,7 @@ Source: proofs/UMADAPTF1.lean:105 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem sum2_add {X Z : Type} [Fintype X] [Fintype Z] (a : X → ℝ) (m : X → Z → ℝ) (f g : X → Z → ℝ) (t : ℝ) : ∑ x, a x * ∑ z, m x z * f x z + t * ∑ x, a x * ∑ z, m x z * g x z = ∑ x, a x * ∑ z, m x z * (f x z + t * g x z)
 ~~~
 
-### 550. ref_lb
+### 839. ref_lb
 
 Source: proofs/UMADAPTF1.lean:116 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4506,7 +6844,7 @@ Source: proofs/UMADAPTF1.lean:116 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem ref_lb {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ w : Z → ℝ) (t : ℝ) (keep : Hist X Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hk : ∀ h, 0 ≤ keep h ∧ keep h ≤ 1) (hφ : IsRule φ) (hw : ∀ z, 0 ≤ w z) (ht : 0 ≤ t) (hφw : ∀ z, φ z ≤ t * w z) : ∀ (n : ℕ) (h : Hist X Z), adSurv T M (fun _ => 0) keep n h - t * Qf T M w n h ≤ adSurv T M φ keep n h
 ~~~
 
-### 551. Q_sum_le
+### 840. Q_sum_le
 
 Source: proofs/UMADAPTF1.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4514,7 +6852,7 @@ Source: proofs/UMADAPTF1.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem Q_sum_le {X Z Ω : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (S : Finset Ω) (w : Ω → Z → ℝ) (hw1 : ∀ z, ∑ ω ∈ S, w ω z ≤ 1) : ∀ (n : ℕ) (h : Hist X Z), ∑ ω ∈ S, Qf T M (w ω) n h ≤ n
 ~~~
 
-### 552. ind_sum_le
+### 841. ind_sum_le
 
 Source: proofs/UMADAPTF1.lean:172 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4522,7 +6860,7 @@ Source: proofs/UMADAPTF1.lean:172 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem ind_sum_le {X Z C : Type} [DecidableEq C] (c : X → C) (g : Z → C) (S : Finset X) (hinj : Set.InjOn c (S : Set X)) (z : Z) : ∑ ω ∈ S, (if g z = c ω then (1 : ℝ) else 0) ≤ 1
 ~~~
 
-### 553. classRule_rule
+### 842. classRule_rule
 
 Source: proofs/UMADAPTF1.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4530,7 +6868,7 @@ Source: proofs/UMADAPTF1.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem classRule_rule {X Z C : Type} [DecidableEq C] (c : X → C) (g : Z → C) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (ω : X) : IsRule (classRule c g t ω)
 ~~~
 
-### 554. conv_a
+### 843. conv_a
 
 Source: proofs/UMADAPTF1.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4538,7 +6876,7 @@ Source: proofs/UMADAPTF1.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem conv_a {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq X] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (c : X → C) (S : Finset X) (hM : IsKernel M) (hbad : ∀ x ∈ S, Bad x) (hinj : Set.InjOn c (S : Set X)) (hS : 0 < S.card) (g : Z → C) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (n : ℕ) (T : Hist X Z → X → ℝ) (keep : Hist X Z → ℝ) (hTk : AdTester T keep) (hacc : AcceptsAllFlag T M keep n) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (r : ℝ) (b N : ℕ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hN : 1 ≤ N) : t * max 0 (1 - t * (n : ℝ) / (S.card : ℝ)) ≤ adProtocolCat Bad M T keep n r b N (seedLaw S) (classRule c g t) (seedPolicy (Z
 ~~~
 
-### 555. opt_arith
+### 844. opt_arith
 
 Source: proofs/UMADAPTF1.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4546,7 +6884,7 @@ Source: proofs/UMADAPTF1.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem opt_arith (k n : ℝ) (hk : 0 < k) (hn : 1 ≤ n) : min (1 / 2) (k / (4 * n)) ≤ min 1 (k / (2 * n)) * max 0 (1 - min 1 (k / (2 * n)) * n / k)
 ~~~
 
-### 556. part_a
+### 845. part_a
 
 Source: proofs/UMADAPTF1.lean:288 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4554,7 +6892,7 @@ Source: proofs/UMADAPTF1.lean:288 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_a : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [DecidableEq X] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (c : X → C) (S : Finset X), Setup Bad M c S → ∃ g : Z → C, (∀ x z, M x z ≠ 0 → g z = c x) ∧ (∀ (n : ℕ) (T : Hist X Z → X → ℝ) (keep : Hist X Z → ℝ), AdTester T keep → AcceptsAllFlag T M keep n → ∀ t : ℝ, 0 ≤ t → t ≤ 1 → ∀ (r : ℝ) (b N : ℕ), 0 ≤ r → r ≤ 1 → 1 ≤ N → t * max 0 (1 - t * (n : ℝ) / (S.card : ℝ)) ≤ adProtocolCat Bad M T keep n r b N (seedLaw S) (classRule c g t) (seedPolicy (Z
 ~~~
 
-### 557. adSurv_det
+### 846. adSurv_det
 
 Source: proofs/UMADAPTF1.lean:321 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4562,7 +6900,7 @@ Source: proofs/UMADAPTF1.lean:321 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem adSurv_det {X : Type} [Fintype X] [DecidableEq X] (T : Hist X X → X → ℝ) (M : X → X → ℝ) (q : Hist X X → X) (hT : ∀ h x, T h x = if x = q h then 1 else 0) (hM : ∀ x z, M x z = if z = x then 1 else 0) (φ : X → ℝ) (keep : Hist X X → ℝ) (n : ℕ) (h : Hist X X) : adSurv T M φ keep (n + 1) h = φ (q h) * adSurv T M φ keep n (h ++ [(q h, q h, true)]) + (1 - φ (q h)) * adSurv T M φ keep n (h ++ [(q h, q h, false)])
 ~~~
 
-### 558. cat_id1
+### 847. cat_id1
 
 Source: proofs/UMADAPTF1.lean:331 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4570,7 +6908,7 @@ Source: proofs/UMADAPTF1.lean:331 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem cat_id1 {X : Type} [Fintype X] [DecidableEq X] (M : X → X → ℝ) (hM : ∀ x z, M x z = if z = x then 1 else 0) (φ : X → ℝ) (ω : X) : cat (fun _ : X => True) M φ (seedPolicy (Z
 ~~~
 
-### 559. det_dist
+### 848. det_dist
 
 Source: proofs/UMADAPTF1.lean:336 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4578,7 +6916,7 @@ Source: proofs/UMADAPTF1.lean:336 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem det_dist {X : Type} [Fintype X] [DecidableEq X] (y : X) : IsDist (fun x : X => if x = y then (1 : ℝ) else 0)
 ~~~
 
-### 560. keep01
+### 849. keep01
 
 Source: proofs/UMADAPTF1.lean:342 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4586,7 +6924,7 @@ Source: proofs/UMADAPTF1.lean:342 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem keep01 (P : Prop) [Decidable P] : 0 ≤ (if P then (1 : ℝ) else 0) ∧ (if P then (1 : ℝ) else 0) ≤ 1
 ~~~
 
-### 561. setup_id
+### 850. setup_id
 
 Source: proofs/UMADAPTF1.lean:346 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4594,7 +6932,7 @@ Source: proofs/UMADAPTF1.lean:346 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem setup_id {X : Type} [Fintype X] [DecidableEq X] [Nonempty X] (M : X → X → ℝ) (hM : ∀ x z, M x z = if z = x then 1 else 0) : Setup (fun _ : X => True) M id (univ : Finset X)
 ~~~
 
-### 562. misses_allflag
+### 851. misses_allflag
 
 Source: proofs/UMADAPTF1.lean:359 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4602,7 +6940,7 @@ Source: proofs/UMADAPTF1.lean:359 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem misses_allflag {X Z : Type} (h : Hist X Z) (hh : ∀ e ∈ h, e.2.2 = false) : misses h = 0
 ~~~
 
-### 563. c1_surv
+### 852. c1_surv
 
 Source: proofs/UMADAPTF1.lean:366 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4610,7 +6948,7 @@ Source: proofs/UMADAPTF1.lean:366 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c1_surv (t : ℝ) (ω : Bool) : adSurv ctrT idM (classRule id id t ω) ctrKeep 3 [] = if ω then 1 - t ^ 2 else (1 - t) + t * (1 - t) ^ 2
 ~~~
 
-### 564. c1_risk
+### 853. c1_risk
 
 Source: proofs/UMADAPTF1.lean:372 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4618,7 +6956,7 @@ Source: proofs/UMADAPTF1.lean:372 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c1_risk (t : ℝ) : adProtocolCat (fun _ : Bool => True) idM ctrT ctrKeep 3 1 1 1 (seedLaw (univ : Finset Bool)) (classRule id id t) (seedPolicy (Z
 ~~~
 
-### 565. c2_surv
+### 854. c2_surv
 
 Source: proofs/UMADAPTF1.lean:383 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4626,7 +6964,7 @@ Source: proofs/UMADAPTF1.lean:383 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c2_surv (t : ℝ) (ω : Fin 3) : adSurv stT idM3 (classRule id id t ω) stKeep 3 [] = if ω = 0 then (1 - t) + t * (1 - t) ^ 2 else if ω = 1 then 1 - t ^ 2 else 1
 ~~~
 
-### 566. c2_risk
+### 855. c2_risk
 
 Source: proofs/UMADAPTF1.lean:389 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4634,7 +6972,7 @@ Source: proofs/UMADAPTF1.lean:389 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c2_risk (t : ℝ) : adProtocolCat (fun _ : Fin 3 => True) idM3 stT stKeep 3 1 1 1 (seedLaw (univ : Finset (Fin 3))) (classRule id id t) (seedPolicy (Z
 ~~~
 
-### 567. c2_bound
+### 856. c2_bound
 
 Source: proofs/UMADAPTF1.lean:400 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4642,7 +6980,7 @@ Source: proofs/UMADAPTF1.lean:400 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c2_bound (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) : t - t ^ 3 + t ^ 4 / 3 < 1 / 2
 ~~~
 
-### 568. w_surv
+### 857. w_surv
 
 Source: proofs/UMADAPTF1.lean:404 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4650,7 +6988,7 @@ Source: proofs/UMADAPTF1.lean:404 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem w_surv (t : ℝ) (ω : Bool) : adSurv wT idM (classRule id id t ω) wKeep 1 [] = if ω then 1 else 1 - t
 ~~~
 
-### 569. wbad_surv
+### 858. wbad_surv
 
 Source: proofs/UMADAPTF1.lean:409 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4658,7 +6996,7 @@ Source: proofs/UMADAPTF1.lean:409 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem wbad_surv (t : ℝ) (ω : Bool) : adSurv wT idM (classRule id id t ω) wKeepBad 1 [] = if ω then 0 else t
 ~~~
 
-### 570. part_c1
+### 859. part_c1
 
 Source: proofs/UMADAPTF1.lean:414 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4666,7 +7004,7 @@ Source: proofs/UMADAPTF1.lean:414 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_c1 : (Setup (fun _ : Bool => True) idM id (univ : Finset Bool) ∧ AdTester ctrT ctrKeep ∧ AcceptsAllFlag ctrT idM ctrKeep 3 ∧ (∀ h : Hist Bool Bool, misses h ≤ 1 → ctrKeep h = 1) ∧ adProtocolCat (fun _ : Bool => True) idM ctrT ctrKeep 3 1 1 1 (seedLaw (univ : Finset Bool)) (classRule id id (3/4)) (seedPolicy (Z
 ~~~
 
-### 571. part_c2
+### 860. part_c2
 
 Source: proofs/UMADAPTF1.lean:439 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4674,7 +7012,7 @@ Source: proofs/UMADAPTF1.lean:439 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_c2 : (Setup (fun _ : Fin 3 => True) idM3 id (univ : Finset (Fin 3)) ∧ AdTester stT stKeep ∧ AcceptsAllFlag stT idM3 stKeep 3 ∧ (∀ h : Hist (Fin 3) (Fin 3), misses h ≤ 1 → stKeep h = 1) ∧ (∀ t : ℝ, 0 ≤ t → t ≤ 1 → adProtocolCat (fun _ : Fin 3 => True) idM3 stT stKeep 3 1 1 1 (seedLaw (univ : Finset (Fin 3))) (classRule id id t) (seedPolicy (Z
 ~~~
 
-### 572. claim
+### 861. claim
 
 Source: proofs/UMADAPTF1.lean:460 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4682,7 +7020,7 @@ Source: proofs/UMADAPTF1.lean:460 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim : PL_UMADAPTF1.Claim
 ~~~
 
-### 573. witness
+### 862. witness
 
 Source: proofs/UMADAPTF1.lean:463 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4692,7 +7030,7 @@ theorem witness : PL_UMADAPTF1.Witness
 
 ## proofs/UMADAPTF2.lean
 
-### 574. adSurv_zero
+### 863. adSurv_zero
 
 Source: proofs/UMADAPTF2.lean:6 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4700,7 +7038,7 @@ Source: proofs/UMADAPTF2.lean:6 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem adSurv_zero' {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : Hist X Z → ℝ) (h : Hist X Z) : adSurv T M φ keep 0 h = keep h
 ~~~
 
-### 575. adSurv_succ
+### 864. adSurv_succ
 
 Source: proofs/UMADAPTF2.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4708,7 +7046,7 @@ Source: proofs/UMADAPTF2.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem adSurv_succ' {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : Hist X Z → ℝ) (n : ℕ) (h : Hist X Z) : adSurv T M φ keep (n + 1) h = ∑ x, T h x * ∑ z, M x z * (φ z * adSurv T M φ keep n (h ++ [(x, z, true)]) + (1 - φ z) * adSurv T M φ keep n (h ++ [(x, z, false)]))
 ~~~
 
-### 576. s_aux
+### 865. s_aux
 
 Source: proofs/UMADAPTF2.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4716,7 +7054,7 @@ Source: proofs/UMADAPTF2.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem s_aux {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (keep : Hist X Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hk : ∀ h : Hist X Z, (∀ e ∈ h, e.2.2 = false) → keep h = 1) : ∀ (n : ℕ) (h : Hist X Z), (∀ e ∈ h, e.2.2 = false) → adSurv T M (fun _ => 0) keep n h = 1
 ~~~
 
-### 577. part_s
+### 866. part_s
 
 Source: proofs/UMADAPTF2.lean:40 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4724,7 +7062,7 @@ Source: proofs/UMADAPTF2.lean:40 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem part_s : ∀ (X Z : Type) [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (keep : Hist X Z → ℝ) (n : ℕ), IsKernel M → (∀ h, IsDist (T h)) → (∀ h : Hist X Z, (∀ e ∈ h, e.2.2 = false) → keep h = 1) → AcceptsAllFlag T M keep n
 ~~~
 
-### 578. surv_bounds
+### 867. surv_bounds
 
 Source: proofs/UMADAPTF2.lean:49 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4732,7 +7070,7 @@ Source: proofs/UMADAPTF2.lean:49 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem surv_bounds {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : Hist X Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hφ : IsRule φ) (hk : ∀ h, 0 ≤ keep h ∧ keep h ≤ 1) : ∀ (n : ℕ) (h : Hist X Z), 0 ≤ adSurv T M φ keep n h ∧ adSurv T M φ keep n h ≤ 1
 ~~~
 
-### 579. Qf_zero
+### 868. Qf_zero
 
 Source: proofs/UMADAPTF2.lean:84 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4740,7 +7078,7 @@ Source: proofs/UMADAPTF2.lean:84 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem Qf_zero {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (w : Z → ℝ) (h : Hist X Z) : Qf T M w 0 h = 0
 ~~~
 
-### 580. Qf_succ
+### 869. Qf_succ
 
 Source: proofs/UMADAPTF2.lean:88 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4748,7 +7086,7 @@ Source: proofs/UMADAPTF2.lean:88 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem Qf_succ {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (w : Z → ℝ) (n : ℕ) (h : Hist X Z) : Qf T M w (n + 1) h = ∑ x, T h x * ∑ z, M x z * (w z + Qf T M w n (h ++ [(x, z, false)]))
 ~~~
 
-### 581. Qf_nonneg
+### 870. Qf_nonneg
 
 Source: proofs/UMADAPTF2.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4756,7 +7094,7 @@ Source: proofs/UMADAPTF2.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem Qf_nonneg {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (w : Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hw : ∀ z, 0 ≤ w z) : ∀ (n : ℕ) (h : Hist X Z), 0 ≤ Qf T M w n h
 ~~~
 
-### 582. sum2_add
+### 871. sum2_add
 
 Source: proofs/UMADAPTF2.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4764,7 +7102,7 @@ Source: proofs/UMADAPTF2.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem sum2_add {X Z : Type} [Fintype X] [Fintype Z] (a : X → ℝ) (m : X → Z → ℝ) (f g : X → Z → ℝ) (t : ℝ) : ∑ x, a x * ∑ z, m x z * f x z + t * ∑ x, a x * ∑ z, m x z * g x z = ∑ x, a x * ∑ z, m x z * (f x z + t * g x z)
 ~~~
 
-### 583. ref_lb
+### 872. ref_lb
 
 Source: proofs/UMADAPTF2.lean:117 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4772,7 +7110,7 @@ Source: proofs/UMADAPTF2.lean:117 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem ref_lb {X Z : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ w : Z → ℝ) (t : ℝ) (keep : Hist X Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (hk : ∀ h, 0 ≤ keep h ∧ keep h ≤ 1) (hφ : IsRule φ) (hw : ∀ z, 0 ≤ w z) (ht : 0 ≤ t) (hφw : ∀ z, φ z ≤ t * w z) : ∀ (n : ℕ) (h : Hist X Z), adSurv T M (fun _ => 0) keep n h - t * Qf T M w n h ≤ adSurv T M φ keep n h
 ~~~
 
-### 584. Q_sum_le
+### 873. Q_sum_le
 
 Source: proofs/UMADAPTF2.lean:147 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4780,7 +7118,7 @@ Source: proofs/UMADAPTF2.lean:147 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem Q_sum_le {X Z Ω : Type} [Fintype X] [Fintype Z] (T : Hist X Z → X → ℝ) (M : X → Z → ℝ) (hM : IsKernel M) (hT : ∀ h, IsDist (T h)) (S : Finset Ω) (w : Ω → Z → ℝ) (hw1 : ∀ z, ∑ ω ∈ S, w ω z ≤ 1) : ∀ (n : ℕ) (h : Hist X Z), ∑ ω ∈ S, Qf T M (w ω) n h ≤ n
 ~~~
 
-### 585. ind_sum_le
+### 874. ind_sum_le
 
 Source: proofs/UMADAPTF2.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4788,7 +7126,7 @@ Source: proofs/UMADAPTF2.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem ind_sum_le {X Z C : Type} [DecidableEq C] (c : X → C) (g : Z → C) (S : Finset X) (hinj : Set.InjOn c (S : Set X)) (z : Z) : ∑ ω ∈ S, (if g z = c ω then (1 : ℝ) else 0) ≤ 1
 ~~~
 
-### 586. classRule_rule
+### 875. classRule_rule
 
 Source: proofs/UMADAPTF2.lean:184 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4796,7 +7134,7 @@ Source: proofs/UMADAPTF2.lean:184 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem classRule_rule {X Z C : Type} [DecidableEq C] (c : X → C) (g : Z → C) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (ω : X) : IsRule (classRule c g t ω)
 ~~~
 
-### 587. conv_a
+### 876. conv_a
 
 Source: proofs/UMADAPTF2.lean:188 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4804,7 +7142,7 @@ Source: proofs/UMADAPTF2.lean:188 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem conv_a {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq X] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (c : X → C) (S : Finset X) (hM : IsKernel M) (hbad : ∀ x ∈ S, Bad x) (hinj : Set.InjOn c (S : Set X)) (hS : 0 < S.card) (g : Z → C) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (n : ℕ) (T : Hist X Z → X → ℝ) (keep : Hist X Z → ℝ) (hTk : AdTester T keep) (hacc : AcceptsAllFlag T M keep n) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (r : ℝ) (b N : ℕ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hN : 1 ≤ N) : t * max 0 (1 - t * (n : ℝ) / (S.card : ℝ)) ≤ adProtocolCat Bad M T keep n r b N (seedLaw S) (classRule c g t) (seedPolicy (Z
 ~~~
 
-### 588. opt_arith
+### 877. opt_arith
 
 Source: proofs/UMADAPTF2.lean:270 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4812,7 +7150,7 @@ Source: proofs/UMADAPTF2.lean:270 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem opt_arith (k n : ℝ) (hk : 0 < k) (hn : 1 ≤ n) : min (1 / 2) (k / (4 * n)) ≤ min 1 (k / (2 * n)) * max 0 (1 - min 1 (k / (2 * n)) * n / k)
 ~~~
 
-### 589. part_a
+### 878. part_a
 
 Source: proofs/UMADAPTF2.lean:289 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4820,7 +7158,7 @@ Source: proofs/UMADAPTF2.lean:289 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_a : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [DecidableEq X] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (c : X → C) (S : Finset X), Setup Bad M c S → ∃ g : Z → C, (∀ x z, M x z ≠ 0 → g z = c x) ∧ (∀ (n : ℕ) (T : Hist X Z → X → ℝ) (keep : Hist X Z → ℝ), AdTester T keep → AcceptsAllFlag T M keep n → ∀ t : ℝ, 0 ≤ t → t ≤ 1 → ∀ (r : ℝ) (b N : ℕ), 0 ≤ r → r ≤ 1 → 1 ≤ N → t * max 0 (1 - t * (n : ℝ) / (S.card : ℝ)) ≤ adProtocolCat Bad M T keep n r b N (seedLaw S) (classRule c g t) (seedPolicy (Z
 ~~~
 
-### 590. adSurv_det
+### 879. adSurv_det
 
 Source: proofs/UMADAPTF2.lean:322 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4828,7 +7166,7 @@ Source: proofs/UMADAPTF2.lean:322 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem adSurv_det {X : Type} [Fintype X] [DecidableEq X] (T : Hist X X → X → ℝ) (M : X → X → ℝ) (q : Hist X X → X) (hT : ∀ h x, T h x = if x = q h then 1 else 0) (hM : ∀ x z, M x z = if z = x then 1 else 0) (φ : X → ℝ) (keep : Hist X X → ℝ) (n : ℕ) (h : Hist X X) : adSurv T M φ keep (n + 1) h = φ (q h) * adSurv T M φ keep n (h ++ [(q h, q h, true)]) + (1 - φ (q h)) * adSurv T M φ keep n (h ++ [(q h, q h, false)])
 ~~~
 
-### 591. cat_id1
+### 880. cat_id1
 
 Source: proofs/UMADAPTF2.lean:332 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4836,7 +7174,7 @@ Source: proofs/UMADAPTF2.lean:332 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem cat_id1 {X : Type} [Fintype X] [DecidableEq X] (M : X → X → ℝ) (hM : ∀ x z, M x z = if z = x then 1 else 0) (φ : X → ℝ) (ω : X) : cat (fun _ : X => True) M φ (seedPolicy (Z
 ~~~
 
-### 592. det_dist
+### 881. det_dist
 
 Source: proofs/UMADAPTF2.lean:337 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4844,7 +7182,7 @@ Source: proofs/UMADAPTF2.lean:337 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem det_dist {X : Type} [Fintype X] [DecidableEq X] (y : X) : IsDist (fun x : X => if x = y then (1 : ℝ) else 0)
 ~~~
 
-### 593. keep01
+### 882. keep01
 
 Source: proofs/UMADAPTF2.lean:343 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4852,7 +7190,7 @@ Source: proofs/UMADAPTF2.lean:343 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem keep01 (P : Prop) [Decidable P] : 0 ≤ (if P then (1 : ℝ) else 0) ∧ (if P then (1 : ℝ) else 0) ≤ 1
 ~~~
 
-### 594. setup_id
+### 883. setup_id
 
 Source: proofs/UMADAPTF2.lean:347 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4860,7 +7198,7 @@ Source: proofs/UMADAPTF2.lean:347 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem setup_id {X : Type} [Fintype X] [DecidableEq X] [Nonempty X] (M : X → X → ℝ) (hM : ∀ x z, M x z = if z = x then 1 else 0) : Setup (fun _ : X => True) M id (univ : Finset X)
 ~~~
 
-### 595. misses_allflag
+### 884. misses_allflag
 
 Source: proofs/UMADAPTF2.lean:360 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4868,7 +7206,7 @@ Source: proofs/UMADAPTF2.lean:360 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem misses_allflag {X Z : Type} (h : Hist X Z) (hh : ∀ e ∈ h, e.2.2 = false) : misses h = 0
 ~~~
 
-### 596. c1_surv
+### 885. c1_surv
 
 Source: proofs/UMADAPTF2.lean:367 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4876,7 +7214,7 @@ Source: proofs/UMADAPTF2.lean:367 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c1_surv (t : ℝ) (ω : Bool) : adSurv ctrT idM (PL_UMLOWERF1.classRule id id t ω) ctrKeep 3 [] = if ω then 1 - t ^ 2 else (1 - t) + t * (1 - t) ^ 2
 ~~~
 
-### 597. c1_risk
+### 886. c1_risk
 
 Source: proofs/UMADAPTF2.lean:373 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4884,7 +7222,7 @@ Source: proofs/UMADAPTF2.lean:373 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c1_risk (t : ℝ) : adProtocolCat (fun _ : Bool => True) idM ctrT ctrKeep 3 1 1 1 (seedLaw (univ : Finset Bool)) (classRule id id t) (seedPolicy (Z
 ~~~
 
-### 598. c2_surv
+### 887. c2_surv
 
 Source: proofs/UMADAPTF2.lean:384 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4892,7 +7230,7 @@ Source: proofs/UMADAPTF2.lean:384 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c2_surv (t : ℝ) (ω : Fin 3) : adSurv stT idM3 (PL_UMLOWERF1.classRule id id t ω) stKeep 3 [] = if ω = 0 then (1 - t) + t * (1 - t) ^ 2 else if ω = 1 then 1 - t ^ 2 else 1
 ~~~
 
-### 599. c2_risk
+### 888. c2_risk
 
 Source: proofs/UMADAPTF2.lean:390 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4900,7 +7238,7 @@ Source: proofs/UMADAPTF2.lean:390 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c2_risk (t : ℝ) : adProtocolCat (fun _ : Fin 3 => True) idM3 stT stKeep 3 1 1 1 (seedLaw (univ : Finset (Fin 3))) (classRule id id t) (seedPolicy (Z
 ~~~
 
-### 600. c2_bound
+### 889. c2_bound
 
 Source: proofs/UMADAPTF2.lean:401 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4908,7 +7246,7 @@ Source: proofs/UMADAPTF2.lean:401 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem c2_bound (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) : t - t ^ 3 + t ^ 4 / 3 < 1 / 2
 ~~~
 
-### 601. w_surv
+### 890. w_surv
 
 Source: proofs/UMADAPTF2.lean:405 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4916,7 +7254,7 @@ Source: proofs/UMADAPTF2.lean:405 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem w_surv (t : ℝ) (ω : Bool) : adSurv wT idM (PL_UMLOWERF1.classRule id id t ω) wKeep 1 [] = if ω then 1 else 1 - t
 ~~~
 
-### 602. wbad_surv
+### 891. wbad_surv
 
 Source: proofs/UMADAPTF2.lean:410 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4924,7 +7262,7 @@ Source: proofs/UMADAPTF2.lean:410 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem wbad_surv (t : ℝ) (ω : Bool) : adSurv wT idM (PL_UMLOWERF1.classRule id id t ω) wKeepBad 1 [] = if ω then 0 else t
 ~~~
 
-### 603. part_c1
+### 892. part_c1
 
 Source: proofs/UMADAPTF2.lean:415 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4932,7 +7270,7 @@ Source: proofs/UMADAPTF2.lean:415 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_c1 : (Setup (fun _ : Bool => True) idM id (univ : Finset Bool) ∧ AdTester ctrT ctrKeep ∧ AcceptsAllFlag ctrT idM ctrKeep 3 ∧ (∀ h : Hist Bool Bool, misses h ≤ 1 → ctrKeep h = 1) ∧ adProtocolCat (fun _ : Bool => True) idM ctrT ctrKeep 3 1 1 1 (seedLaw (univ : Finset Bool)) (classRule id id (3/4)) (seedPolicy (Z
 ~~~
 
-### 604. part_c2
+### 893. part_c2
 
 Source: proofs/UMADAPTF2.lean:440 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4940,7 +7278,7 @@ Source: proofs/UMADAPTF2.lean:440 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem part_c2 : (Setup (fun _ : Fin 3 => True) idM3 id (univ : Finset (Fin 3)) ∧ AdTester stT stKeep ∧ AcceptsAllFlag stT idM3 stKeep 3 ∧ (∀ h : Hist (Fin 3) (Fin 3), misses h ≤ 1 → stKeep h = 1) ∧ (∀ t : ℝ, 0 ≤ t → t ≤ 1 → adProtocolCat (fun _ : Fin 3 => True) idM3 stT stKeep 3 1 1 1 (seedLaw (univ : Finset (Fin 3))) (classRule id id t) (seedPolicy (Z
 ~~~
 
-### 605. claim1
+### 894. claim1
 
 Source: proofs/UMADAPTF2.lean:461 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4948,7 +7286,7 @@ Source: proofs/UMADAPTF2.lean:461 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim1 : PL_UMADAPTF1.Claim
 ~~~
 
-### 606. witness1
+### 895. witness1
 
 Source: proofs/UMADAPTF2.lean:464 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4956,7 +7294,7 @@ Source: proofs/UMADAPTF2.lean:464 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem witness1 : PL_UMADAPTF1.Witness
 ~~~
 
-### 607. slope_mono
+### 896. slope_mono
 
 Source: proofs/UMADAPTF2.lean:494 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4964,7 +7302,7 @@ Source: proofs/UMADAPTF2.lean:494 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 private lemma slope_mono (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) : ∀ {n k : ℕ}, n ≤ k → slope b n ≤ slope b k
 ~~~
 
-### 608. tangent_step
+### 897. tangent_step
 
 Source: proofs/UMADAPTF2.lean:506 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4972,7 +7310,7 @@ Source: proofs/UMADAPTF2.lean:506 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 private lemma tangent_step (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (m q : ℕ) (hmq : m ≤ q) : b ^ (q + 1) + ((m : ℝ) - ((q + 1 : ℕ) : ℝ)) * slope b (q + 1) ≤ b ^ q + ((m : ℝ) - (q : ℝ)) * slope b q
 ~~~
 
-### 609. balanced_bound
+### 898. balanced_bound
 
 Source: proofs/UMADAPTF2.lean:522 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4980,7 +7318,7 @@ Source: proofs/UMADAPTF2.lean:522 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem balanced_bound (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (m q : ℕ) : b ^ m ≥ b ^ q + ((m : ℝ) - (q : ℝ)) * (b ^ (q + 1) - b ^ q)
 ~~~
 
-### 610. aggregate_balanced_budget
+### 899. aggregate_balanced_budget
 
 Source: proofs/UMADAPTF2.lean:550 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4988,7 +7326,7 @@ Source: proofs/UMADAPTF2.lean:550 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem aggregate_balanced_budget (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (k q a : ℕ) (_hk : 0 < k) (ha : a < k) (counts : Fin k → ℕ) (hcounts : ∑ i : Fin k, counts i ≤ k * q + a) : ∑ i : Fin k, b ^ (counts i) ≥ ((k - a : ℕ) : ℝ) * b ^ q + (a : ℝ) * b ^ (q + 1)
 ~~~
 
-### 611. aggregate_balanced_exact
+### 900. aggregate_balanced_exact
 
 Source: proofs/UMADAPTF2.lean:591 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -4996,7 +7334,7 @@ Source: proofs/UMADAPTF2.lean:591 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem aggregate_balanced_exact (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (k n : ℕ) (hk : 0 < k) (counts : Fin k → ℕ) (hcounts : ∑ i : Fin k, counts i = n) : ∑ i : Fin k, b ^ (counts i) ≥ ((k - n % k : ℕ) : ℝ) * b ^ (n / k) + ((n % k : ℕ) : ℝ) * b ^ (n / k + 1)
 ~~~
 
-### 612. classCount_append_flag
+### 901. classCount_append_flag
 
 Source: proofs/UMADAPTF2.lean:626 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5004,7 +7342,7 @@ Source: proofs/UMADAPTF2.lean:626 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem classCount_append_flag {X : Type} {k : ℕ} {Z : Type} (g : Z → Option (Fin k)) (h : SharpHist X Z) (x : X) (z : Z) (ω : Fin k) : classCount g (h ++ [(x, z, false)]) ω = classCount g h ω + (if g z = some ω then 1 else 0)
 ~~~
 
-### 613. flagFactor
+### 902. flagFactor
 
 Source: proofs/UMADAPTF2.lean:632 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5012,7 +7350,7 @@ Source: proofs/UMADAPTF2.lean:632 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem flagFactor {k : ℕ} {Z : Type} (g : Z → Option (Fin k)) (b : ℝ) (ω : Fin k) (z : Z) : 1 - passProb g (1-b) ω z = if g z = some ω then b else 1
 ~~~
 
-### 614. passProb_bounds
+### 903. passProb_bounds
 
 Source: proofs/UMADAPTF2.lean:646 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5020,7 +7358,7 @@ Source: proofs/UMADAPTF2.lean:646 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem passProb_bounds {k : ℕ} {Z : Type} (g : Z → Option (Fin k)) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (ω : Fin k) (z : Z) : 0 ≤ passProb g t ω z ∧ passProb g t ω z ≤ 1
 ~~~
 
-### 615. fullSurv_nonneg
+### 904. fullSurv_nonneg
 
 Source: proofs/UMADAPTF2.lean:653 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5028,7 +7366,7 @@ Source: proofs/UMADAPTF2.lean:653 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fullSurv_nonneg {X : Type} {k : ℕ} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (g : Z → Option (Fin k)) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) : ∀ n h ω, 0 ≤ fullSurv T M g t keep ω n h
 ~~~
 
-### 616. fullSurv_ge_flagOnly
+### 905. fullSurv_ge_flagOnly
 
 Source: proofs/UMADAPTF2.lean:684 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5036,7 +7374,7 @@ Source: proofs/UMADAPTF2.lean:684 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fullSurv_ge_flagOnly {X : Type} {k : ℕ} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (g : Z → Option (Fin k)) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) : ∀ n h ω, flagOnly T M g t keep ω n h ≤ fullSurv T M g t keep ω n h
 ~~~
 
-### 617. refSurv_eq_fullSurv_zero
+### 906. refSurv_eq_fullSurv_zero
 
 Source: proofs/UMADAPTF2.lean:730 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5044,7 +7382,7 @@ Source: proofs/UMADAPTF2.lean:730 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem refSurv_eq_fullSurv_zero {X : Type} {k : ℕ} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (g : Z → Option (Fin k)) (keep : SharpHist X Z → ℝ) : ∀ n h ω, refSurv T M keep n h = fullSurv T M g 0 keep ω n h
 ~~~
 
-### 618. classPower_append_flag
+### 907. classPower_append_flag
 
 Source: proofs/UMADAPTF2.lean:756 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5052,7 +7390,7 @@ Source: proofs/UMADAPTF2.lean:756 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem classPower_append_flag {X : Type} {k : ℕ} {Z : Type} (g : Z → Option (Fin k)) (b : ℝ) (h : SharpHist X Z) (x : X) (z : Z) (ω : Fin k) : b ^ classCount g h ω * (if g z = some ω then b else 1) = b ^ classCount g (h ++ [(x,z,false)]) ω
 ~~~
 
-### 619. weightedFactor_append
+### 908. weightedFactor_append
 
 Source: proofs/UMADAPTF2.lean:763 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5060,7 +7398,7 @@ Source: proofs/UMADAPTF2.lean:763 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 private theorem weightedFactor_append {X : Type} {k : ℕ} {Z : Type} (g : Z → Option (Fin k)) (b : ℝ) (h : SharpHist X Z) (x : X) (z : Z) (ω : Fin k) (f : ℝ) : b ^ classCount g (h ++ [(x,z,false)]) ω * f = b ^ classCount g h ω * ((1 - passProb g (1-b) ω z) * f)
 ~~~
 
-### 620. weighted_double_sum
+### 909. weighted_double_sum
 
 Source: proofs/UMADAPTF2.lean:779 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5068,7 +7406,7 @@ Source: proofs/UMADAPTF2.lean:779 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem weighted_double_sum {α β : Type} [Fintype α] [Fintype β] (a : α → ℝ) (c : β → ℝ) (f : α → β → ℝ) : (∑ i, a i * ∑ j, c j * f i j) = ∑ j, c j * ∑ i, a i * f i j
 ~~~
 
-### 621. weightedFlag_succ
+### 910. weightedFlag_succ
 
 Source: proofs/UMADAPTF2.lean:799 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5076,7 +7414,7 @@ Source: proofs/UMADAPTF2.lean:799 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem weightedFlag_succ {X : Type} {k : ℕ} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (g : Z → Option (Fin k)) (b : ℝ) (keep : SharpHist X Z → ℝ) (n : ℕ) (h : SharpHist X Z) : weightedFlag T M g b keep (n+1) h = ∑ x, T h x * ∑ z, M x z * weightedFlag T M g b keep n (h ++ [(x,z,false)])
 ~~~
 
-### 622. count_sum_le
+### 911. count_sum_le
 
 Source: proofs/UMADAPTF2.lean:886 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5084,7 +7422,7 @@ Source: proofs/UMADAPTF2.lean:886 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem count_sum_le {X : Type} {k : ℕ} {Z : Type} (g : Z → Option (Fin k)) (h : SharpHist X Z) : (∑ ω : Fin k, classCount g h ω) ≤ h.length
 ~~~
 
-### 623. weightedFlag_lower
+### 912. weightedFlag_lower
 
 Source: proofs/UMADAPTF2.lean:928 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5092,7 +7430,7 @@ Source: proofs/UMADAPTF2.lean:928 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem weightedFlag_lower {X : Type} {k : ℕ} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (g : Z → Option (Fin k)) (b : ℝ) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) (hkpos : 0 < k) (N : ℕ) : ∀ n h, h.length + n = N → balancedTarget k N b * refSurv T M keep n h ≤ weightedFlag T M g b keep n h
 ~~~
 
-### 624. sharp_survival
+### 913. sharp_survival
 
 Source: proofs/UMADAPTF2.lean:992 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5100,7 +7438,7 @@ Source: proofs/UMADAPTF2.lean:992 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem sharp_survival {X : Type} {k : ℕ} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (g : Z → Option (Fin k)) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) (hkpos : 0 < k) (n : ℕ) (hacc : refSurv T M keep n [] = 1) : balancedTarget k n (1-t) ≤ ∑ ω : Fin k, fullSurv T M g t keep ω n []
 ~~~
 
-### 625. sharp_uniform_cat
+### 914. sharp_uniform_cat
 
 Source: proofs/UMADAPTF2.lean:1022 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5108,7 +7446,7 @@ Source: proofs/UMADAPTF2.lean:1022 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharp_uniform_cat {k : ℕ} (hkpos : 0 < k) (t : ℝ) (ht0 : 0 ≤ t) (n : ℕ) (surv cat : Fin k → ℝ) (hsurv : ∀ i, 0 ≤ surv i) (hcat : ∀ i, t ≤ cat i) (hsum : balancedTarget k n (1-t) ≤ ∑ i : Fin k, surv i) : (t / (k : ℝ)) * balancedTarget k n (1-t) ≤ (1 / (k : ℝ)) * ∑ i : Fin k, surv i * cat i
 ~~~
 
-### 626. seedDecoder_eq_some_iff
+### 915. seedDecoder_eq_some_iff
 
 Source: proofs/UMADAPTF2.lean:1058 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5116,7 +7454,7 @@ Source: proofs/UMADAPTF2.lean:1058 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem seedDecoder_eq_some_iff {X C Z : Type} [DecidableEq C] {k : ℕ} (seed : Fin k → X) (c : X → C) (g : Z → C) (hinj : ∀ i j, c (seed i) = c (seed j) → i = j) (z : Z) (i : Fin k) : seedDecoder seed c g z = some i ↔ g z = c (seed i)
 ~~~
 
-### 627. seedDecoder_pass_eq
+### 916. seedDecoder_pass_eq
 
 Source: proofs/UMADAPTF2.lean:1088 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5124,7 +7462,7 @@ Source: proofs/UMADAPTF2.lean:1088 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem seedDecoder_pass_eq {X C Z : Type} [DecidableEq C] {k : ℕ} (seed : Fin k → X) (c : X → C) (g : Z → C) (t : ℝ) (hinj : ∀ i j, c (seed i) = c (seed j) → i = j) (i : Fin k) (z : Z) : passProb (seedDecoder seed c g) t i z = classPass c g t (seed i) z
 ~~~
 
-### 628. refSurv_eq_passSurv_zero
+### 917. refSurv_eq_passSurv_zero
 
 Source: proofs/UMADAPTF2.lean:1109 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5132,7 +7470,7 @@ Source: proofs/UMADAPTF2.lean:1109 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem refSurv_eq_passSurv_zero {X : Type} {Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (keep : SharpHist X Z → ℝ) : ∀ n h, refSurv T M keep n h = passSurv T M (fun _ => 0) keep n h
 ~~~
 
-### 629. fullSurv_eq_passSurv_seed
+### 918. fullSurv_eq_passSurv_seed
 
 Source: proofs/UMADAPTF2.lean:1126 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5140,7 +7478,7 @@ Source: proofs/UMADAPTF2.lean:1126 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem fullSurv_eq_passSurv_seed {X C Z : Type} [DecidableEq C] [Fintype X] [Fintype Z] {k : ℕ} (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (seed : Fin k → X) (c : X → C) (g : Z → C) (t : ℝ) (hinj : ∀ i j, c (seed i) = c (seed j) → i = j) (keep : SharpHist X Z → ℝ) (i : Fin k) : ∀ n h, fullSurv T M (seedDecoder seed c g) t keep i n h = passSurv T M (classPass c g t (seed i)) keep n h
 ~~~
 
-### 630. sharp_seedset_survival
+### 919. sharp_seedset_survival
 
 Source: proofs/UMADAPTF2.lean:1148 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5148,7 +7486,7 @@ Source: proofs/UMADAPTF2.lean:1148 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharp_seedset_survival {X C Z : Type} [DecidableEq C] [Fintype X] [Fintype Z] {k : ℕ} (S : Finset X) (e : Fin k ≃ {x // x ∈ S}) (c : X → C) (g : Z → C) (hinjS : Set.InjOn c (S : Set X)) (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) (hkpos : 0 < k) (n : ℕ) (hacc : refSurv T M keep n [] = 1) : balancedTarget k n (1-t) ≤ ∑ i : Fin k, passSurv T M (classPass c g t ((e i).val)) keep n []
 ~~~
 
-### 631. sharp_seedset_catRisk
+### 920. sharp_seedset_catRisk
 
 Source: proofs/UMADAPTF2.lean:1177 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5156,7 +7494,7 @@ Source: proofs/UMADAPTF2.lean:1177 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharp_seedset_catRisk {X C Z : Type} [DecidableEq C] [Fintype X] [Fintype Z] {k : ℕ} (S : Finset X) (e : Fin k ≃ {x // x ∈ S}) (c : X → C) (g : Z → C) (hinjS : Set.InjOn c (S : Set X)) (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) (hkpos : 0 < k) (n : ℕ) (hacc : refSurv T M keep n [] = 1) (cat : Fin k → ℝ) (hcat : ∀ i, t ≤ cat i) : (t / (k : ℝ)) * balancedTarget k n (1-t) ≤ (1 / (k : ℝ)) * ∑ i : Fin k, passSurv T M (classPass c g t ((e i).val)) keep n [] * cat i
 ~~~
 
-### 632. adSurv_reference_eq
+### 921. adSurv_reference_eq
 
 Source: proofs/UMADAPTF2.lean:1234 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5164,7 +7502,7 @@ Source: proofs/UMADAPTF2.lean:1234 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem adSurv_reference_eq {X Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (keep : SharpHist X Z → ℝ) : ∀ n h, refSurv T M keep n h = adSurv T M (fun _ => 0) keep n h
 ~~~
 
-### 633. accepts_all_flag_reference
+### 922. accepts_all_flag_reference
 
 Source: proofs/UMADAPTF2.lean:1240 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5172,7 +7510,7 @@ Source: proofs/UMADAPTF2.lean:1240 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem accepts_all_flag_reference {X Z : Type} [Fintype X] [Fintype Z] (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (keep : SharpHist X Z → ℝ) (n : ℕ) (hacc : adSurv T M (fun _ => 0) keep n [] = 1) : refSurv T M keep n [] = 1
 ~~~
 
-### 634. sharp_uniform_seed_risk
+### 923. sharp_uniform_seed_risk
 
 Source: proofs/UMADAPTF2.lean:1250 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5180,7 +7518,7 @@ Source: proofs/UMADAPTF2.lean:1250 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharp_uniform_seed_risk {X C Z : Type} [DecidableEq C] [Fintype X] [Fintype Z] {k : ℕ} (S : Finset X) (e : Fin k ≃ {x // x ∈ S}) (c : X → C) (g : Z → C) (hinjS : Set.InjOn c (S : Set X)) (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) (hkpos : 0 < k) (n : ℕ) (hacc : adSurv T M (fun _ => 0) keep n [] = 1) (cat : Fin k → ℝ) (hcat : ∀ i, t ≤ cat i) : (t / (k : ℝ)) * balancedTarget k n (1-t) ≤ (1 / (k : ℝ)) * ∑ i : Fin k, adSurv T M (classRule c g t ((e i).val)) keep n [] * cat i
 ~~~
 
-### 635. protocolCatModel_eq
+### 924. protocolCatModel_eq
 
 Source: proofs/UMADAPTF2.lean:1281 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5188,7 +7526,7 @@ Source: proofs/UMADAPTF2.lean:1281 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem protocolCatModel_eq {X : Type} [Fintype X] [DecidableEq X] (S : Finset X) (surv cat : X → ℝ) : protocolCatModel S surv cat = (1 / (S.card : ℝ)) * ∑ x : {x // x ∈ S}, surv x.val * cat x.val
 ~~~
 
-### 636. sum_finEquiv_eq_sum_seed
+### 925. sum_finEquiv_eq_sum_seed
 
 Source: proofs/UMADAPTF2.lean:1301 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5196,7 +7534,7 @@ Source: proofs/UMADAPTF2.lean:1301 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sum_finEquiv_eq_sum_seed {X : Type} {k : ℕ} (S : Finset X) (e : Fin k ≃ {x // x ∈ S}) (f : {x // x ∈ S} → ℝ) : (∑ i : Fin k, f (e i)) = ∑ x : {x // x ∈ S}, f x
 ~~~
 
-### 637. sharp_uniform_adProtocolCatModel
+### 926. sharp_uniform_adProtocolCatModel
 
 Source: proofs/UMADAPTF2.lean:1305 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5204,7 +7542,7 @@ Source: proofs/UMADAPTF2.lean:1305 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharp_uniform_adProtocolCatModel {X C Z : Type} [DecidableEq C] [Fintype X] [Fintype Z] [DecidableEq X] {k : ℕ} (S : Finset X) (e : Fin k ≃ {x // x ∈ S}) (c : X → C) (g : Z → C) (hinjS : Set.InjOn c (S : Set X)) (T : SharpHist X Z → X → ℝ) (M : X → Z → ℝ) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (keep : SharpHist X Z → ℝ) (hk : ∀ h, 0 ≤ keep h) (hT : ∀ h x, 0 ≤ T h x) (hM : ∀ x z, 0 ≤ M x z) (hkpos : 0 < k) (n : ℕ) (hacc : adSurv T M (fun _ => 0) keep n [] = 1) (cat : X → ℝ) (hcat : ∀ x ∈ S, t ≤ cat x) : (t / (k : ℝ)) * balancedTarget k n (1-t) ≤ protocolCatModel S (fun x => adSurv T M (classRule c g t x) keep n []) cat
 ~~~
 
-### 638. sharp_surv_eq_campaign
+### 927. sharp_surv_eq_campaign
 
 Source: proofs/UMADAPTF2.lean:1357 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5212,7 +7550,7 @@ Source: proofs/UMADAPTF2.lean:1357 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharp_surv_eq_campaign {X Z : Type} [Fintype X] [Fintype Z] (T : _root_.PL_UMPROTF1.Hist X Z → X → ℝ) (M : X → Z → ℝ) (φ : Z → ℝ) (keep : _root_.PL_UMPROTF1.Hist X Z → ℝ) : ∀ n h, SharpUM.adSurv T M φ keep n h = _root_.PL_UMADAPTF1.adSurv T M φ keep n h
 ~~~
 
-### 639. conv_a_sharp
+### 928. conv_a_sharp
 
 Source: proofs/UMADAPTF2.lean:1379 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5220,7 +7558,7 @@ Source: proofs/UMADAPTF2.lean:1379 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem conv_a_sharp {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq X] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (c : X → C) (S : Finset X) (hM : IsKernel M) (hbad : ∀ x ∈ S, Bad x) (hinj : Set.InjOn c (S : Set X)) (hS : 0 < S.card) (g : Z → C) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (n : ℕ) (T : Hist X Z → X → ℝ) (keep : Hist X Z → ℝ) (hTk : AdTester T keep) (hacc : AcceptsAllFlag T M keep n) (t : ℝ) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (r : ℝ) (b N : ℕ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hN : 1 ≤ N) : (t / (S.card : ℝ)) * balancedTarget S.card n (1-t) ≤ adProtocolCat Bad M T keep n r b N (seedLaw S) (_root_.PL_UMLOWERF1.classRule c g t) (seedPolicy (Z
 ~~~
 
-### 640. sharpTarget_eq
+### 929. sharpTarget_eq
 
 Source: proofs/UMADAPTF2.lean:1439 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5228,7 +7566,7 @@ Source: proofs/UMADAPTF2.lean:1439 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem sharpTarget_eq (k n : ℕ) (b : ℝ) : PL_UMADAPTF2.sharpTarget k n b = balancedTarget k n b
 ~~~
 
-### 641. claim
+### 930. claim
 
 Source: proofs/UMADAPTF2.lean:1442 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5236,7 +7574,7 @@ Source: proofs/UMADAPTF2.lean:1442 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem claim : PL_UMADAPTF2.Claim
 ~~~
 
-### 642. rr_surv
+### 931. rr_surv
 
 Source: proofs/UMADAPTF2.lean:1451 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5244,7 +7582,7 @@ Source: proofs/UMADAPTF2.lean:1451 | Family: UNMAPPED | Adversary: UNKNOWN | Sta
 theorem rr_surv (t : ℝ) (ω : Bool) : PL_UMADAPTF1.adSurv rrT idM (PL_UMLOWERF1.classRule id id t ω) rrKeep 3 [] = if ω then 1 - t else (1 - t) ^ 2
 ~~~
 
-### 643. witness
+### 932. witness
 
 Source: proofs/UMADAPTF2.lean:1456 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5254,7 +7592,7 @@ theorem witness : PL_UMADAPTF2.Witness
 
 ## proofs/UMCERTF1.lean
 
-### 644. capB_mono
+### 933. capB_mono
 
 Source: proofs/UMCERTF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5262,7 +7600,7 @@ Source: proofs/UMCERTF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem capB_mono (r : ℝ) (b : ℕ) (hr : 0 ≤ r) {a a' : ℝ} (h : a ≤ a') : capB r b a ≤ capB r b a'
 ~~~
 
-### 645. capB_nonneg
+### 934. capB_nonneg
 
 Source: proofs/UMCERTF1.lean:12 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5270,7 +7608,7 @@ Source: proofs/UMCERTF1.lean:12 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem capB_nonneg (r : ℝ) (b : ℕ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) {a : ℝ} (ha : 0 ≤ a) : 0 ≤ capB r b a
 ~~~
 
-### 646. capB_le
+### 935. capB_le
 
 Source: proofs/UMCERTF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5278,7 +7616,7 @@ Source: proofs/UMCERTF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem capB_le (r : ℝ) (b : ℕ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) {a : ℝ} (ha : a ≤ 1) : capB r b a ≤ 1 - r + r * a
 ~~~
 
-### 647. capB_one
+### 936. capB_one
 
 Source: proofs/UMCERTF1.lean:26 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5286,7 +7624,7 @@ Source: proofs/UMCERTF1.lean:26 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem capB_one (r : ℝ) (b : ℕ) : capB r b 1 = 1
 ~~~
 
-### 648. E_const
+### 937. E_const
 
 Source: proofs/UMCERTF1.lean:32 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5294,7 +7632,7 @@ Source: proofs/UMCERTF1.lean:32 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem E_const {Z : Type} [Fintype Z] (P : Z → ℝ) (hP : ∑ z, P z = 1) (t : ℝ) : E P (fun _ => t) = t
 ~~~
 
-### 649. E_push
+### 938. E_push
 
 Source: proofs/UMCERTF1.lean:37 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5302,7 +7640,7 @@ Source: proofs/UMCERTF1.lean:37 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem E_push {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (P : X → ℝ) (ψ : Z → ℝ) : E (push M P) ψ = ∑ x, P x * E (M x) ψ
 ~~~
 
-### 650. unit_dist
+### 939. unit_dist
 
 Source: proofs/UMCERTF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5310,7 +7648,7 @@ Source: proofs/UMCERTF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem unit_dist : IsDist (fun _ : Unit => (1 : ℝ))
 ~~~
 
-### 651. point_dist
+### 940. point_dist
 
 Source: proofs/UMCERTF1.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5318,7 +7656,7 @@ Source: proofs/UMCERTF1.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem point_dist {X : Type} [Fintype X] [DecidableEq X] (x : X) : IsDist (fun x' : X => if x' = x then (1 : ℝ) else 0)
 ~~~
 
-### 652. cat_empty
+### 941. cat_empty
 
 Source: proofs/UMCERTF1.lean:60 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5326,7 +7664,7 @@ Source: proofs/UMCERTF1.lean:60 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem cat_empty {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r : ℝ) (b : ℕ) (hB : ∀ x, ¬ Bad x) : ∀ n u h, cat Bad M φ π r b n u h = 0
 ~~~
 
-### 653. cat_oneshot
+### 942. cat_oneshot
 
 Source: proofs/UMCERTF1.lean:71 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5334,7 +7672,7 @@ Source: proofs/UMCERTF1.lean:71 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem cat_oneshot {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] [DecidableEq X] (M : X → Z → ℝ) (ψ : Z → ℝ) (r : ℝ) (b N : ℕ) (x : X) (hM : IsKernel M) (hx : Bad x) (hN : 1 ≤ N) : cat Bad M ψ (fun _ x' => if x' = x then 1 else 0) r b N 0 [] = capB r b (E (M x) ψ)
 ~~~
 
-### 654. exists_worst
+### 943. exists_worst
 
 Source: proofs/UMCERTF1.lean:88 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5342,7 +7680,7 @@ Source: proofs/UMCERTF1.lean:88 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem exists_worst {X : Type} [Fintype X] (Bad : X → Prop) [DecidablePred Bad] (f : X → ℝ) (hex : ∃ x, Bad x) : ∃ x0, Bad x0 ∧ ∀ x, Bad x → f x ≤ f x0
 ~~~
 
-### 655. oneshot_value
+### 944. oneshot_value
 
 Source: proofs/UMCERTF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5350,7 +7688,7 @@ Source: proofs/UMCERTF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem oneshot_value {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] [DecidableEq X] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (ψ : Z → ℝ) (x : X) (hM : IsKernel M) (hP : IsDist PH) (hx : Bad x) (hN : 1 ≤ N) : protocolCat Bad M PH κ nh r b N (fun _ : Unit => 1) (fun _ => ψ) (fun _ _ x' => if x' = x then 1 else 0) = survH (E (push M PH) ψ) κ nh 0 * capB r b (E (M x) ψ)
 ~~~
 
-### 656. strat_oneshot_value
+### 945. strat_oneshot_value
 
 Source: proofs/UMCERTF1.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5358,7 +7696,7 @@ Source: proofs/UMCERTF1.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem strat_oneshot_value {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq C] [DecidableEq X] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (g : Z → C) (Es : Finset C) (m sc b N : ℕ) (r t : ℝ) (x : X) (hK : IsKernel K) (hdec : ∀ e z, K e z ≠ 0 → g z = e) (hx : Bad x) (hcx : c x ∈ Es) (hN : 1 ≤ N) : stratProtocolCat Bad K c Es m sc r b N (fun _ : Unit => 1) (fun _ z => if g z = c x then t else 0) (fun _ _ x' => if x' = x then 1 else 0) = binCDF m sc t * capB r b t
 ~~~
 
-### 657. seed_le
+### 946. seed_le
 
 Source: proofs/UMCERTF1.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5366,7 +7704,7 @@ Source: proofs/UMCERTF1.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem seed_le {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (U : ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (hM : IsKernel M) (hP : IsDist PH) (hφ : IsRule φ) (hπ : ∀ h, IsDist (π h)) (hκ : ∀ j, 0 ≤ κ j ∧ κ j ≤ 1) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hU : 0 ≤ U) (hyp : ∀ x, Bad x → ∀ ψ : Z → ℝ, IsRule ψ → survH (E (push M PH) ψ) κ nh 0 * capB r b (E (M x) ψ) ≤ U) : surv (push M PH) φ κ nh 0 * cat Bad M φ π r b N 0 [] ≤ U
 ~~~
 
-### 658. reduce_le
+### 947. reduce_le
 
 Source: proofs/UMCERTF1.lean:150 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5374,7 +7712,7 @@ Source: proofs/UMCERTF1.lean:150 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem reduce_le {X Z Ω : Type} [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (U : ℝ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ) (hM : IsKernel M) (hP : IsDist PH) (hρ : IsDist ρ) (hφ : ∀ ω, IsRule (φ ω)) (hπ : ∀ ω h, IsDist (π ω h)) (hκ : ∀ j, 0 ≤ κ j ∧ κ j ≤ 1) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hU : 0 ≤ U) (hyp : ∀ x, Bad x → ∀ ψ : Z → ℝ, IsRule ψ → survH (E (push M PH) ψ) κ nh 0 * capB r b (E (M x) ψ) ≤ U) : protocolCat Bad M PH κ nh r b N ρ φ π ≤ U
 ~~~
 
-### 659. survH_aux
+### 948. survH_aux
 
 Source: proofs/UMCERTF1.lean:167 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5382,7 +7720,7 @@ Source: proofs/UMCERTF1.lean:167 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem survH_aux (κ : ℕ → ℝ) (hκ : ∀ i, 0 ≤ κ i ∧ κ i ≤ 1) (h : ℝ) (h0 : 0 ≤ h) (h1 : h ≤ 1) : ∀ n j, (1 - κ j) * survH h κ n (j + 1) ≤ survH h κ n j
 ~~~
 
-### 660. survH_anti
+### 949. survH_anti
 
 Source: proofs/UMCERTF1.lean:190 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5390,7 +7728,7 @@ Source: proofs/UMCERTF1.lean:190 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem survH_anti (κ : ℕ → ℝ) (hκ : ∀ i, 0 ≤ κ i ∧ κ i ≤ 1) : ∀ n j (s t : ℝ), 0 ≤ s → s ≤ t → t ≤ 1 → survH t κ n j ≤ survH s κ n j
 ~~~
 
-### 661. GridOK_cons2
+### 950. GridOK_cons2
 
 Source: proofs/UMCERTF1.lean:218 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5398,7 +7736,7 @@ Source: proofs/UMCERTF1.lean:218 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem GridOK_cons2 (S F : ℝ → ℝ) (U s t : ℝ) (rest : List ℝ) : GridOK S F U (s :: t :: rest) ↔ s ≤ t ∧ S s * F t ≤ U ∧ GridOK S F U (t :: rest)
 ~~~
 
-### 662. GridOK_single
+### 951. GridOK_single
 
 Source: proofs/UMCERTF1.lean:221 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5406,7 +7744,7 @@ Source: proofs/UMCERTF1.lean:221 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem GridOK_single (S F : ℝ → ℝ) (U a : ℝ) : GridOK S F U [a] ↔ True
 ~~~
 
-### 663. grid_aux
+### 952. grid_aux
 
 Source: proofs/UMCERTF1.lean:223 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5414,7 +7752,7 @@ Source: proofs/UMCERTF1.lean:223 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem grid_aux (S F : ℝ → ℝ) (U : ℝ) (hS : ∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → S t ≤ S s) (hF : ∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → F s ≤ F t) (h0 : ∀ t, 0 ≤ t → t ≤ 1 → 0 ≤ S t ∧ 0 ≤ F t) : ∀ (rest : List ℝ) (a b : ℝ), GridOK S F U (a :: b :: rest) → (a :: b :: rest).getLast? = some 1 → 0 ≤ a → a ≤ 1 ∧ ∀ t, a ≤ t → t ≤ 1 → S t * F t ≤ U
 ~~~
 
-### 664. grid_cert
+### 953. grid_cert
 
 Source: proofs/UMCERTF1.lean:263 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5422,7 +7760,7 @@ Source: proofs/UMCERTF1.lean:263 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem grid_cert (S F : ℝ → ℝ) (U : ℝ) (ts : List ℝ) (hS : ∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → S t ≤ S s) (hF : ∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → F s ≤ F t) (h0 : ∀ t, 0 ≤ t → t ≤ 1 → 0 ≤ S t ∧ 0 ≤ F t) (hG : GridCert S F U ts) : ∀ t, 0 ≤ t → t ≤ 1 → S t * F t ≤ U
 ~~~
 
-### 665. bin_anti
+### 954. bin_anti
 
 Source: proofs/UMCERTF1.lean:282 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5430,7 +7768,7 @@ Source: proofs/UMCERTF1.lean:282 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem bin_anti (m sc : ℕ) : ∀ s t : ℝ, 0 ≤ s → s ≤ t → t ≤ 1 → binCDF m sc t ≤ binCDF m sc s
 ~~~
 
-### 666. bin_nonneg
+### 955. bin_nonneg
 
 Source: proofs/UMCERTF1.lean:287 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5438,7 +7776,7 @@ Source: proofs/UMCERTF1.lean:287 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem bin_nonneg (m sc : ℕ) (t : ℝ) (h0 : 0 ≤ t) (h1 : t ≤ 1) : 0 ≤ binCDF m sc t
 ~~~
 
-### 667. dom_content
+### 956. dom_content
 
 Source: proofs/UMCERTF1.lean:293 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5446,7 +7784,7 @@ Source: proofs/UMCERTF1.lean:293 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem dom_content {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq C] (K : C → Z → ℝ) (c : X → C) (PH : X → ℝ) (p : ℝ) (hK : IsKernel K) (hP : IsDist PH) (hp : 0 < p) (x : X) (hcov : p ≤ contentLaw c PH (c x)) (z : Z) : (fun x => K (c x)) x z ≤ (1 / p) * push (fun x => K (c x)) PH z
 ~~~
 
-### 668. claim_R
+### 957. claim_R
 
 Source: proofs/UMCERTF1.lean:315 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5454,7 +7792,7 @@ Source: proofs/UMCERTF1.lean:315 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_R : ∀ (X Z : Type) [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (U : ℝ), IsKernel M → IsDist PH → (∀ j, 0 ≤ κ j ∧ κ j ≤ 1) → 0 ≤ r → r ≤ 1 → 1 ≤ N → 0 ≤ U → ((∀ (Ω : Type) [Fintype Ω] (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → protocolCat Bad M PH κ nh r b N ρ φ π ≤ U) ↔ (∀ x, Bad x → ∀ ψ : Z → ℝ, IsRule ψ → survH (E (push M PH) ψ) κ nh 0 * capB r b (E (M x) ψ) ≤ U))
 ~~~
 
-### 669. claim_C
+### 958. claim_C
 
 Source: proofs/UMCERTF1.lean:333 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5462,7 +7800,7 @@ Source: proofs/UMCERTF1.lean:333 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_C : ∀ (X Z Ω : Type) [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (env : ℝ → ℝ) (U : ℝ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsKernel M → IsDist PH → IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → (∀ j, 0 ≤ κ j ∧ κ j ≤ 1) → 0 ≤ r → r ≤ 1 → 0 ≤ U → (∀ x, Bad x → ∀ ψ : Z → ℝ, IsRule ψ → E (M x) ψ ≤ env (E (push M PH) ψ)) → (∀ t : ℝ, 0 ≤ t → t ≤ 1 → survH t κ nh 0 * capB r b (min 1 (env t)) ≤ U) → protocolCat Bad M PH κ nh r b N ρ φ π ≤ U
 ~~~
 
-### 670. claim_E1
+### 959. claim_E1
 
 Source: proofs/UMCERTF1.lean:355 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5470,7 +7808,7 @@ Source: proofs/UMCERTF1.lean:355 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_E1 : ∀ (X Z : Type) [Fintype X] [Fintype Z] (M : X → Z → ℝ) (PH : X → ℝ) (L : ℝ) (x : X), (∀ z, M x z ≤ L * push M PH z) → ∀ ψ : Z → ℝ, IsRule ψ → E (M x) ψ ≤ L * E (push M PH) ψ
 ~~~
 
-### 671. claim_E2
+### 960. claim_E2
 
 Source: proofs/UMCERTF1.lean:361 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5478,7 +7816,7 @@ Source: proofs/UMCERTF1.lean:361 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_E2 : ∀ (X Z : Type) [Fintype X] [Fintype Z] (M : X → Z → ℝ) (PH : X → ℝ) (η δ : ℝ) (x : X), hs η (M x) (push M PH) ≤ δ → ∀ ψ : Z → ℝ, IsRule ψ → E (M x) ψ ≤ Real.exp η * E (push M PH) ψ + δ
 ~~~
 
-### 672. claim_G0
+### 961. claim_G0
 
 Source: proofs/UMCERTF1.lean:368 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5486,7 +7824,7 @@ Source: proofs/UMCERTF1.lean:368 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_G0 : ∀ (κ : ℕ → ℝ) (n j : ℕ) (s t : ℝ), (∀ i, 0 ≤ κ i ∧ κ i ≤ 1) → 0 ≤ s → s ≤ t → t ≤ 1 → survH t κ n j ≤ survH s κ n j
 ~~~
 
-### 673. claim_G
+### 962. claim_G
 
 Source: proofs/UMCERTF1.lean:372 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5494,7 +7832,7 @@ Source: proofs/UMCERTF1.lean:372 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_G : ∀ (S F : ℝ → ℝ) (U : ℝ) (ts : List ℝ), (∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → S t ≤ S s) → (∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → F s ≤ F t) → (∀ t, 0 ≤ t → t ≤ 1 → 0 ≤ S t ∧ 0 ≤ F t) → GridCert S F U ts → ∀ t, 0 ≤ t → t ≤ 1 → S t * F t ≤ U
 ~~~
 
-### 674. claim_CG
+### 963. claim_CG
 
 Source: proofs/UMCERTF1.lean:379 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5502,7 +7840,7 @@ Source: proofs/UMCERTF1.lean:379 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_CG : ∀ (X Z Ω : Type) [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (env : ℝ → ℝ) (U : ℝ) (ts : List ℝ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsKernel M → IsDist PH → IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → (∀ j, 0 ≤ κ j ∧ κ j ≤ 1) → 0 ≤ r → r ≤ 1 → (∀ x, Bad x → ∀ ψ : Z → ℝ, IsRule ψ → E (M x) ψ ≤ env (E (push M PH) ψ)) → (∀ s t, 0 ≤ s → s ≤ t → t ≤ 1 → env s ≤ env t) → (∀ t, 0 ≤ t → t ≤ 1 → 0 ≤ env t) → GridCert (fun t => survH t κ nh 0) (fun t => capB r b (min 1 (env t))) U ts → protocolCat Bad M PH κ nh r b N ρ φ π ≤ U
 ~~~
 
-### 675. claim_S1
+### 964. claim_S1
 
 Source: proofs/UMCERTF1.lean:404 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5510,7 +7848,7 @@ Source: proofs/UMCERTF1.lean:404 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_S1 : ∀ (X Z C Ω : Type) [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (Es : Finset C) (m sc b N : ℕ) (r U : ℝ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsKernel K → IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → 0 ≤ r → r ≤ 1 → (∀ x, Bad x → c x ∈ Es) → (∀ t : ℝ, 0 ≤ t → t ≤ 1 → binCDF m sc t * capB r b t ≤ U) → stratProtocolCat Bad K c Es m sc r b N ρ φ π ≤ U
 ~~~
 
-### 676. claim_SG
+### 965. claim_SG
 
 Source: proofs/UMCERTF1.lean:440 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5518,7 +7856,7 @@ Source: proofs/UMCERTF1.lean:440 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_SG : ∀ (X Z C Ω : Type) [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (Es : Finset C) (m sc b N : ℕ) (r U : ℝ) (ts : List ℝ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsKernel K → IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → 0 ≤ r → r ≤ 1 → (∀ x, Bad x → c x ∈ Es) → GridCert (fun t => binCDF m sc t) (fun t => capB r b t) U ts → stratProtocolCat Bad K c Es m sc r b N ρ φ π ≤ U
 ~~~
 
-### 677. claim_D1
+### 966. claim_D1
 
 Source: proofs/UMCERTF1.lean:455 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5526,7 +7864,7 @@ Source: proofs/UMCERTF1.lean:455 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_D1 : ∀ (n s b : ℕ) (r L t : ℝ), 0 ≤ r → r ≤ 1 → 0 ≤ L → 0 ≤ t → t ≤ 1 → survH t (hardKill s) n 0 * capB r b (min 1 (L * t)) ≤ (1 - r) + r * (L * (((s : ℝ) + 1) / ((n : ℝ) + 1)))
 ~~~
 
-### 678. claim_D2
+### 967. claim_D2
 
 Source: proofs/UMCERTF1.lean:468 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5534,7 +7872,7 @@ Source: proofs/UMCERTF1.lean:468 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_D2 : ∀ (n ns b : ℕ) (r L t : ℝ), 0 ≤ r → r ≤ 1 → 0 ≤ L → 1 ≤ ns → 0 ≤ t → t ≤ 1 → survH t (softKill ns) n 0 * capB r b (min 1 (L * t)) ≤ (1 - r) + r * (L * ((ns : ℝ) / ((n : ℝ) + 1)))
 ~~~
 
-### 679. claim_F
+### 968. claim_F
 
 Source: proofs/UMCERTF1.lean:487 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5542,7 +7880,7 @@ Source: proofs/UMCERTF1.lean:487 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_F : ∀ (X Z : Type) [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (U : ℝ), IsKernel M → IsDist PH → 1 ≤ N → (∃ x, Bad x) → (∀ (Ω : Type) [Fintype Ω] (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → protocolCat Bad M PH κ nh r b N ρ φ π ≤ U) → ∀ t : ℝ, 0 ≤ t → t ≤ 1 → survH t κ nh 0 * capB r b t ≤ U
 ~~~
 
-### 680. claim_X
+### 969. claim_X
 
 Source: proofs/UMCERTF1.lean:504 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5550,7 +7888,7 @@ Source: proofs/UMCERTF1.lean:504 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_X : ∀ (X Z : Type) [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (U : ℝ), IsKernel M → IsDist PH → (∀ j, 0 ≤ κ j ∧ κ j ≤ 1) → 0 ≤ r → r ≤ 1 → 1 ≤ N → (∃ x, Bad x) → (∀ x, Bad x → ∀ z, M x z ≤ push M PH z) → ((∀ (Ω : Type) [Fintype Ω] (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → protocolCat Bad M PH κ nh r b N ρ φ π ≤ U) ↔ (∀ t : ℝ, 0 ≤ t → t ≤ 1 → survH t κ nh 0 * capB r b t ≤ U))
 ~~~
 
-### 681. claim_Xp
+### 970. claim_Xp
 
 Source: proofs/UMCERTF1.lean:532 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5558,7 +7896,7 @@ Source: proofs/UMCERTF1.lean:532 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_Xp : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (g : Z → C) (PH : X → ℝ) (p : ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (U : ℝ), IsKernel K → (∀ e z, K e z ≠ 0 → g z = e) → IsDist PH → 0 < p → (∀ x, Bad x → p ≤ contentLaw c PH (c x)) → (∃ x, Bad x ∧ contentLaw c PH (c x) = p) → (∀ j, 0 ≤ κ j ∧ κ j ≤ 1) → 0 ≤ r → r ≤ 1 → 1 ≤ N → ((∀ (Ω : Type) [Fintype Ω] (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → protocolCat Bad (fun x => K (c x)) PH κ nh r b N ρ φ π ≤ U) ↔ (∀ t : ℝ, 0 ≤ t → t ≤ 1 → survH t κ nh 0 * capB r b (min 1 ((1 / p) * t)) ≤ U))
 ~~~
 
-### 682. claim_S2
+### 971. claim_S2
 
 Source: proofs/UMCERTF1.lean:620 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5566,7 +7904,7 @@ Source: proofs/UMCERTF1.lean:620 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim_S2 : ∀ (X Z C : Type) [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (g : Z → C) (Es : Finset C) (m sc b N : ℕ) (r U : ℝ), IsKernel K → (∀ e z, K e z ≠ 0 → g z = e) → 0 ≤ r → r ≤ 1 → 1 ≤ N → (∃ x, Bad x) → (∀ x, Bad x → c x ∈ Es) → ((∀ (Ω : Type) [Fintype Ω] (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → stratProtocolCat Bad K c Es m sc r b N ρ φ π ≤ U) ↔ (∀ t : ℝ, 0 ≤ t → t ≤ 1 → binCDF m sc t * capB r b t ≤ U))
 ~~~
 
-### 683. claim
+### 972. claim
 
 Source: proofs/UMCERTF1.lean:646 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5574,7 +7912,7 @@ Source: proofs/UMCERTF1.lean:646 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim : PL_UMCERTF1.Claim
 ~~~
 
-### 684. bin12
+### 973. bin12
 
 Source: proofs/UMCERTF1.lean:652 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5582,7 +7920,7 @@ Source: proofs/UMCERTF1.lean:652 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem bin12 (s : ℝ) : binCDF 12 1 s = (1 - s) ^ 12 + 12 * s * (1 - s) ^ 11
 ~~~
 
-### 685. bin30
+### 974. bin30
 
 Source: proofs/UMCERTF1.lean:655 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5590,7 +7928,7 @@ Source: proofs/UMCERTF1.lean:655 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem bin30 (s : ℝ) : binCDF 30 1 s = (1 - s) ^ 30 + 30 * s * (1 - s) ^ 29
 ~~~
 
-### 686. soft5
+### 975. soft5
 
 Source: proofs/UMCERTF1.lean:658 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5598,7 +7936,7 @@ Source: proofs/UMCERTF1.lean:658 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem soft5 (t : ℝ) : survH t (softKill 5) 100 0 = (1 - 1 / 5 * t) ^ 100
 ~~~
 
-### 687. hard1
+### 976. hard1
 
 Source: proofs/UMCERTF1.lean:665 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5606,7 +7944,7 @@ Source: proofs/UMCERTF1.lean:665 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem hard1 (t : ℝ) : survH t (hardKill 1) 30 0 = binCDF 30 1 t
 ~~~
 
-### 688. capB11
+### 977. capB11
 
 Source: proofs/UMCERTF1.lean:668 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5614,7 +7952,7 @@ Source: proofs/UMCERTF1.lean:668 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem capB11 (a : ℝ) : capB 1 1 a = a
 ~~~
 
-### 689. capBk
+### 978. capBk
 
 Source: proofs/UMCERTF1.lean:672 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5622,7 +7960,7 @@ Source: proofs/UMCERTF1.lean:672 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem capBk (a : ℝ) : capB (9 / 10) 1 a = 1 / 10 + 9 / 10 * a
 ~~~
 
-### 690. idK_kernel
+### 979. idK_kernel
 
 Source: proofs/UMCERTF1.lean:676 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5630,7 +7968,7 @@ Source: proofs/UMCERTF1.lean:676 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem idK_kernel : IsKernel idK
 ~~~
 
-### 691. idK_dec
+### 980. idK_dec
 
 Source: proofs/UMCERTF1.lean:684 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5638,7 +7976,7 @@ Source: proofs/UMCERTF1.lean:684 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem idK_dec : ∀ e z : Bool, idK e z ≠ 0 → id z = e
 ~~~
 
-### 692. ptTrue_dist
+### 981. ptTrue_dist
 
 Source: proofs/UMCERTF1.lean:691 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5646,7 +7984,7 @@ Source: proofs/UMCERTF1.lean:691 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem ptTrue_dist : IsDist ptTrue
 ~~~
 
-### 693. w_main
+### 982. w_main
 
 Source: proofs/UMCERTF1.lean:698 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5654,7 +7992,7 @@ Source: proofs/UMCERTF1.lean:698 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem w_main : GridCert (fun t => binCDF 12 1 t) (fun t => capB 1 1 t) (7/100) gridMain
 ~~~
 
-### 694. w_soft
+### 983. w_soft
 
 Source: proofs/UMCERTF1.lean:704 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5662,7 +8000,7 @@ Source: proofs/UMCERTF1.lean:704 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem w_soft : GridCert (fun t => survH t (softKill 5) 100 0) (fun t => capB 1 1 (min 1 (1 * t))) (19/1000) gridSoft
 ~~~
 
-### 695. w_kink
+### 984. w_kink
 
 Source: proofs/UMCERTF1.lean:711 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5670,7 +8008,7 @@ Source: proofs/UMCERTF1.lean:711 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem w_kink : GridCert (fun t => survH t (hardKill 1) 30 0) (fun t => capB (9/10) 1 (min 1 (4 * t))) (17/100) gridKink
 ~~~
 
-### 696. w_strat
+### 985. w_strat
 
 Source: proofs/UMCERTF1.lean:718 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5678,7 +8016,7 @@ Source: proofs/UMCERTF1.lean:718 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem w_strat : (6833/100000 : ℝ) ≤ stratProtocolCat (fun x : Bool => x = true) idK id Finset.univ 12 1 1 1 1 (fun _ : Unit => 1) (fun _ z => if z = true then 1/8 else 0) (fun _ _ x => if x = true then 1 else 0)
 ~~~
 
-### 697. w_prot
+### 986. w_prot
 
 Source: proofs/UMCERTF1.lean:727 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5686,7 +8024,7 @@ Source: proofs/UMCERTF1.lean:727 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem w_prot : (6833/100000 : ℝ) ≤ protocolCat (fun x : Bool => x = true) idK ptTrue (hardKill 1) 12 1 1 1 (fun _ : Unit => 1) (fun _ _ => 1/8) (fun _ _ x => if x = true then 1 else 0)
 ~~~
 
-### 698. witness
+### 987. witness
 
 Source: proofs/UMCERTF1.lean:738 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5696,7 +8034,7 @@ theorem witness : PL_UMCERTF1.Witness
 
 ## proofs/UMDEFERF1.lean
 
-### 699. mul_le_mul_of_pos_imp
+### 988. mul_le_mul_of_pos_imp
 
 Source: proofs/UMDEFERF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5704,7 +8042,7 @@ Source: proofs/UMDEFERF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem mul_le_mul_of_pos_imp {p x y : ℝ} (hp : 0 ≤ p) (h : 0 < p → x ≤ y) : p * x ≤ p * y
 ~~~
 
-### 700. conv01
+### 989. conv01
 
 Source: proofs/UMDEFERF1.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5712,7 +8050,7 @@ Source: proofs/UMDEFERF1.lean:11 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem conv01 {p v w : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (hv0 : 0 ≤ v) (hv1 : v ≤ 1) (hw0 : 0 ≤ w) (hw1 : w ≤ 1) : 0 ≤ p * v + (1 - p) * w ∧ p * v + (1 - p) * w ≤ 1
 ~~~
 
-### 701. wsum01
+### 990. wsum01
 
 Source: proofs/UMDEFERF1.lean:18 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5720,7 +8058,7 @@ Source: proofs/UMDEFERF1.lean:18 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem wsum01 {Y : Type} [Fintype Y] (w f : Y → ℝ) (hw : IsDist w) (hf : ∀ y, 0 ≤ f y ∧ f y ≤ 1) : 0 ≤ ∑ y, w y * f y ∧ ∑ y, w y * f y ≤ 1
 ~~~
 
-### 702. prod3_nonneg
+### 991. prod3_nonneg
 
 Source: proofs/UMDEFERF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5728,7 +8066,7 @@ Source: proofs/UMDEFERF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem prod3_nonneg {p q c : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q) (hc : 0 ≤ c) : 0 ≤ p * q * c
 ~~~
 
-### 703. prod3_le_one
+### 992. prod3_le_one
 
 Source: proofs/UMDEFERF1.lean:26 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5736,7 +8074,7 @@ Source: proofs/UMDEFERF1.lean:26 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem prod3_le_one {p q c : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (hc0 : 0 ≤ c) (hc1 : c ≤ 1) : p * q * c ≤ 1
 ~~~
 
-### 704. theta_bounds
+### 993. theta_bounds
 
 Source: proofs/UMDEFERF1.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5744,7 +8082,7 @@ Source: proofs/UMDEFERF1.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem theta_bounds {η α : ℝ} (hη0 : 0 ≤ η) (hη1 : η ≤ 1) (hα0 : 0 ≤ α) (hα1 : α ≤ 1) : 0 ≤ theta η α ∧ theta η α ≤ 1
 ~~~
 
-### 705. one_sub_theta
+### 994. one_sub_theta
 
 Source: proofs/UMDEFERF1.lean:38 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5752,7 +8090,7 @@ Source: proofs/UMDEFERF1.lean:38 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem one_sub_theta (η α : ℝ) : 1 - theta η α = (1 - η) * (1 - α)
 ~~~
 
-### 706. retry_zero
+### 995. retry_zero
 
 Source: proofs/UMDEFERF1.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5760,7 +8098,7 @@ Source: proofs/UMDEFERF1.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_zero (A θ : ℝ) : retry A θ 0 = 0
 ~~~
 
-### 707. retry_succ
+### 996. retry_succ
 
 Source: proofs/UMDEFERF1.lean:45 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5768,7 +8106,7 @@ Source: proofs/UMDEFERF1.lean:45 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_succ (A θ : ℝ) (n : ℕ) : retry A θ (n + 1) = A + (1 - A) * (1 - θ) * retry A θ n
 ~~~
 
-### 708. retry_bounds
+### 997. retry_bounds
 
 Source: proofs/UMDEFERF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5776,7 +8114,7 @@ Source: proofs/UMDEFERF1.lean:48 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_bounds {A θ : ℝ} (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) : ∀ n, 0 ≤ retry A θ n ∧ retry A θ n ≤ 1
 ~~~
 
-### 709. retry_le_succ
+### 998. retry_le_succ
 
 Source: proofs/UMDEFERF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5784,7 +8122,7 @@ Source: proofs/UMDEFERF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_le_succ {A θ : ℝ} (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ1 : θ ≤ 1) : ∀ n, retry A θ n ≤ retry A θ (n + 1)
 ~~~
 
-### 710. retry_mono
+### 999. retry_mono
 
 Source: proofs/UMDEFERF1.lean:73 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5792,7 +8130,7 @@ Source: proofs/UMDEFERF1.lean:73 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_mono {A θ : ℝ} (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ1 : θ ≤ 1) {m n : ℕ} (hmn : m ≤ n) : retry A θ m ≤ retry A θ n
 ~~~
 
-### 711. retry_closed
+### 1000. retry_closed
 
 Source: proofs/UMDEFERF1.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5800,7 +8138,7 @@ Source: proofs/UMDEFERF1.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_closed (A θ : ℝ) : ∀ n, (θ + A * (1 - θ)) * retry A θ n = A * (1 - ((1 - A) * (1 - θ)) ^ n)
 ~~~
 
-### 712. retry_le_ratio
+### 1001. retry_le_ratio
 
 Source: proofs/UMDEFERF1.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5808,7 +8146,7 @@ Source: proofs/UMDEFERF1.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_le_ratio (A θ : ℝ) (n : ℕ) (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (hD : 0 < θ + A * (1 - θ)) : retry A θ n ≤ A / (θ + A * (1 - θ))
 ~~~
 
-### 713. retry_limit
+### 1002. retry_limit
 
 Source: proofs/UMDEFERF1.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5816,7 +8154,7 @@ Source: proofs/UMDEFERF1.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem retry_limit (A θ : ℝ) (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (hD : 0 < θ + A * (1 - θ)) : Tendsto (fun n : ℕ => retry A θ n) atTop (𝓝 (A / (θ + A * (1 - θ))))
 ~~~
 
-### 714. theta_retry_le
+### 1003. theta_retry_le
 
 Source: proofs/UMDEFERF1.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5824,7 +8162,7 @@ Source: proofs/UMDEFERF1.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem theta_retry_le {A θ : ℝ} (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (n : ℕ) : θ * retry A θ n ≤ A
 ~~~
 
-### 715. fc_zero
+### 1004. fc_zero
 
 Source: proofs/UMDEFERF1.lean:121 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5832,7 +8170,7 @@ Source: proofs/UMDEFERF1.lean:121 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fc_zero (r A θ : ℝ) (b u : ℕ) : finiteCap r A θ b 0 u = 0
 ~~~
 
-### 716. fc_ge
+### 1005. fc_ge
 
 Source: proofs/UMDEFERF1.lean:124 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5840,7 +8178,7 @@ Source: proofs/UMDEFERF1.lean:124 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fc_ge (r A θ : ℝ) {b u : ℕ} (n : ℕ) (hbu : b ≤ u) : finiteCap r A θ b n u = retry A θ n
 ~~~
 
-### 717. fc_lt
+### 1006. fc_lt
 
 Source: proofs/UMDEFERF1.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5848,7 +8186,7 @@ Source: proofs/UMDEFERF1.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fc_lt (r A θ : ℝ) {b u : ℕ} (n : ℕ) (hu : u < b) : finiteCap r A θ b (n + 1) u = max (1 - r + r * A) (retry A θ (n + 1 - (b - u)))
 ~~~
 
-### 718. fc_le_succ
+### 1007. fc_le_succ
 
 Source: proofs/UMDEFERF1.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5856,7 +8194,7 @@ Source: proofs/UMDEFERF1.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fc_le_succ {r A θ : ℝ} (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (b n u : ℕ) : finiteCap r A θ b n u ≤ finiteCap r A θ b (n + 1) u
 ~~~
 
-### 719. fc_step
+### 1008. fc_step
 
 Source: proofs/UMDEFERF1.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5864,7 +8202,7 @@ Source: proofs/UMDEFERF1.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem fc_step {r A θ : ℝ} (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) {b u : ℕ} (n : ℕ) (hu : u < b) : finiteCap r A θ b n (u + 1) ≤ finiteCap r A θ b (n + 1) u
 ~~~
 
-### 720. catV_eta_one
+### 1009. catV_eta_one
 
 Source: proofs/UMDEFERF1.lean:174 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5872,7 +8210,7 @@ Source: proofs/UMDEFERF1.lean:174 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem catV_eta_one (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r : ℝ) (a : Service X Z) (b : ℕ) : ∀ n u h, catV Bad M φ π r 1 a b n u h = cat Bad M φ π r b n u h
 ~~~
 
-### 721. catV_bounds
+### 1010. catV_bounds
 
 Source: proofs/UMDEFERF1.lean:185 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5880,7 +8218,7 @@ Source: proofs/UMDEFERF1.lean:185 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem catV_bounds (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r η : ℝ) (a : Service X Z) (b : ℕ) (hc : Core M φ π r η) (ha : IsService a) : ∀ n u h, 0 ≤ catV Bad M φ π r η a b n u h ∧ catV Bad M φ π r η a b n u h ≤ 1
 ~~~
 
-### 722. catD_cap
+### 1011. catD_cap
 
 Source: proofs/UMDEFERF1.lean:221 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5888,7 +8226,7 @@ Source: proofs/UMDEFERF1.lean:221 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem catD_cap (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r η α A : ℝ) (b : ℕ) (hc : Core M φ π r η) (hα0 : 0 ≤ α) (hα1 : α ≤ 1) (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hbad : ∀ x, Bad x → E (M x) φ ≤ A) : ∀ n u h, catD Bad M φ π r η α b n u h ≤ finiteCap r A (theta η α) b n u
 ~~~
 
-### 723. bridge
+### 1012. bridge
 
 Source: proofs/UMDEFERF1.lean:306 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5896,7 +8234,7 @@ Source: proofs/UMDEFERF1.lean:306 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem bridge (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r η α : ℝ) (a : Service X Z) (b n0 u0 : ℕ) (h0 : Hist X Z) (hc : Core M φ π r η) (ha : IsService a) (hα0 : 0 ≤ α) (hα1 : α ≤ 1) (hfl : UniformFloor Bad M φ π η a b n0 u0 h0 α) : ∀ n u h, Reach Bad M φ π η a b n0 u0 h0 n u h → catV Bad M φ π r η a b n u h ≤ catD Bad M φ π r η α b n u h
 ~~~
 
-### 724. attain
+### 1013. attain
 
 Source: proofs/UMDEFERF1.lean:382 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5904,7 +8242,7 @@ Source: proofs/UMDEFERF1.lean:382 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem attain [DecidableEq X] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (r η α A : ℝ) (b u : ℕ) (x : X) (hM : IsKernel M) (hx : Bad x) (hbu : b ≤ u) : ∀ n (h : Hist X Z), catD Bad M (fun _ => A) (fun _ x' => if x' = x then 1 else 0) r η α b n u h = retry A (theta η α) n
 ~~~
 
-### 725. seed_bound
+### 1014. seed_bound
 
 Source: proofs/UMDEFERF1.lean:403 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5912,7 +8250,7 @@ Source: proofs/UMDEFERF1.lean:403 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem seed_bound {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (nh ns b N : ℕ) (r η α L : ℝ) (a : Service X Z) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (hPH : IsDist PH) (hc : Core M φ π r η) (hα0 : 0 ≤ α) (hα1 : α ≤ 1) (hL : 0 ≤ L) (ha : IsService a) (hfl : UniformFloor Bad M φ π η a b N 0 [] α) (hdom : ∀ x, Bad x → ∀ z, M x z ≤ L * push M PH z) : ∃ t : ℝ, 0 ≤ t ∧ t ≤ 1 ∧ surv (push M PH) φ (hardKill ns) nh 0 * catV Bad M φ π r η a b N 0 [] ≤ survH t (hardKill ns) nh 0 * finiteCap r (min 1 (L * t)) (theta η α) b N 0
 ~~~
 
-### 726. cert
+### 1015. cert
 
 Source: proofs/UMDEFERF1.lean:427 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5920,7 +8258,7 @@ Source: proofs/UMDEFERF1.lean:427 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem cert {X Z Ω : Type} [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (nh ns b N : ℕ) (r η α L U : ℝ) (a : Ω → Service X Z) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ) (hpc : PairCore M PH ρ φ π r η) (hα0 : 0 ≤ α) (hα1 : α ≤ 1) (hL : 0 ≤ L) (hfl : ProtocolFloor Bad M φ π η a b N α) (hdom : ∀ x, Bad x → ∀ z, M x z ≤ L * push M PH z) (hU : ∀ t : ℝ, 0 ≤ t → t ≤ 1 → survH t (hardKill ns) nh 0 * finiteCap r (min 1 (L * t)) (theta η α) b N 0 ≤ U) : protocolCatV Bad M PH (hardKill ns) nh r η a b N ρ φ π ≤ U
 ~~~
 
-### 727. coarse_bound
+### 1016. coarse_bound
 
 Source: proofs/UMDEFERF1.lean:445 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5928,7 +8266,7 @@ Source: proofs/UMDEFERF1.lean:445 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem coarse_bound (r θ L t : ℝ) (b N nh ns : ℕ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hL : 0 ≤ L) (hθ0 : 0 < θ) (hθ1 : θ ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) : survH t (hardKill ns) nh 0 * finiteCap r (min 1 (L * t)) θ b N 0 ≤ max (if 0 < b then (1 - r) + r * (L * (((ns : ℝ) + 1) / ((nh : ℝ) + 1))) else 0) (L * (((ns : ℝ) + 1) / ((nh : ℝ) + 1)) / θ)
 ~~~
 
-### 728. cnt_append
+### 1017. cnt_append
 
 Source: proofs/UMDEFERF1.lean:486 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5936,7 +8274,7 @@ Source: proofs/UMDEFERF1.lean:486 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem cnt_append (h : Hist Bool Bool) (x z c : Bool) : ((h ++ [(x, z, c)]).filter (fun e => e.2.2 = false)).length = (h.filter (fun e => e.2.2 = false)).length + (if c = false then 1 else 0)
 ~~~
 
-### 729. attack_phase
+### 1018. attack_phase
 
 Source: proofs/UMDEFERF1.lean:491 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5944,7 +8282,7 @@ Source: proofs/UMDEFERF1.lean:491 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem attack_phase (r t : ℝ) (b : ℕ) : ∀ n (u : ℕ) (h : Hist Bool Bool), b ≤ u → b ≤ (h.filter (fun e => e.2.2 = false)).length → catV (X
 ~~~
 
-### 730. burn_phase
+### 1019. burn_phase
 
 Source: proofs/UMDEFERF1.lean:511 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5952,7 +8290,7 @@ Source: proofs/UMDEFERF1.lean:511 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem burn_phase (r t : ℝ) (b : ℕ) : ∀ n k (u : ℕ) (h : Hist Bool Bool), u = (h.filter (fun e => e.2.2 = false)).length → u + k = b → catV (X
 ~~~
 
-### 731. nogo_eq
+### 1020. nogo_eq
 
 Source: proofs/UMDEFERF1.lean:533 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5960,7 +8298,7 @@ Source: proofs/UMDEFERF1.lean:533 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem nogo_eq (PH : Bool → ℝ) (nh ns b N : ℕ) (r t : ℝ) (hPH : IsDist PH) : protocolCatD (X
 ~~~
 
-### 732. nogo_lb
+### 1021. nogo_lb
 
 Source: proofs/UMDEFERF1.lean:549 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5968,7 +8306,7 @@ Source: proofs/UMDEFERF1.lean:549 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem nogo_lb (PH : Bool → ℝ) (nh ns b N : ℕ) (t : ℝ) (hPH : IsDist PH) (ht0 : 0 ≤ t) (ht1 : t ≤ 1) : (1 - t) ^ nh * (1 - (1 - t) ^ (N - b)) ≤ binCDF nh ns (PH true * t) * (1 - (1 - t) ^ (N - b))
 ~~~
 
-### 733. limit_e
+### 1022. limit_e
 
 Source: proofs/UMDEFERF1.lean:576 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5976,7 +8314,7 @@ Source: proofs/UMDEFERF1.lean:576 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem limit_e' (nh : ℕ) : Tendsto (fun K : ℕ => (1 - 1 / Real.sqrt ((K : ℝ) + 1)) ^ nh * (1 - (1 - 1 / Real.sqrt ((K : ℝ) + 1)) ^ K)) atTop (𝓝 1)
 ~~~
 
-### 734. claim
+### 1023. claim
 
 Source: proofs/UMDEFERF1.lean:625 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5984,7 +8322,7 @@ Source: proofs/UMDEFERF1.lean:625 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim : PL_UMDEFERF1.Claim
 ~~~
 
-### 735. witness
+### 1024. witness
 
 Source: proofs/UMDEFERF1.lean:665 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -5994,7 +8332,7 @@ theorem witness : PL_UMDEFERF1.Witness
 
 ## proofs/UMHSF1.lean
 
-### 736. mul_le_max0
+### 1025. mul_le_max0
 
 Source: proofs/UMHSF1.lean:1 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6002,7 +8340,7 @@ Source: proofs/UMHSF1.lean:1 | Family: UNMAPPED | Adversary: UNKNOWN | Status: S
 theorem mul_le_max0 (a φ : ℝ) (h0 : 0 ≤ φ) (h1 : φ ≤ 1) : a * φ ≤ max 0 a
 ~~~
 
-### 737. t2
+### 1026. t2
 
 Source: proofs/UMHSF1.lean:8 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6010,7 +8348,7 @@ Source: proofs/UMHSF1.lean:8 | Family: UNMAPPED | Adversary: UNKNOWN | Status: S
 theorem t2 : ∀ (Z : Type) [Fintype Z] (η : ℝ) (P Q φ : Z → ℝ), IsRule φ → E P φ ≤ Real.exp η * E Q φ + hs η P Q
 ~~~
 
-### 738. t2att
+### 1027. t2att
 
 Source: proofs/UMHSF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6018,7 +8356,7 @@ Source: proofs/UMHSF1.lean:19 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem t2att : ∀ (Z : Type) [Fintype Z] (η : ℝ) (P Q : Z → ℝ), ∃ φ, IsRule φ ∧ E P φ = Real.exp η * E Q φ + hs η P Q
 ~~~
 
-### 739. hs0_symm
+### 1028. hs0_symm
 
 Source: proofs/UMHSF1.lean:35 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6026,7 +8364,7 @@ Source: proofs/UMHSF1.lean:35 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem hs0_symm {Z : Type} [Fintype Z] (P Q : Z → ℝ) (hP : ∑ z, P z = 1) (hQ : ∑ z, Q z = 1) : hs 0 Q P = hs 0 P Q
 ~~~
 
-### 740. t1
+### 1029. t1
 
 Source: proofs/UMHSF1.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6034,7 +8372,7 @@ Source: proofs/UMHSF1.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem t1 : ∀ (Z : Type) [Fintype Z] (P Q φ : Z → ℝ), IsDist P → IsDist Q → IsRule φ → |E P φ - E Q φ| ≤ hs 0 P Q
 ~~~
 
-### 741. max0_sum_le
+### 1030. max0_sum_le
 
 Source: proofs/UMHSF1.lean:60 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6042,7 +8380,7 @@ Source: proofs/UMHSF1.lean:60 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem max0_sum_le {X : Type} [Fintype X] (w f : X → ℝ) (hw : ∀ x, 0 ≤ w x) : max 0 (∑ x, w x * f x) ≤ ∑ x, w x * max 0 (f x)
 ~~~
 
-### 742. t4a
+### 1031. t4a
 
 Source: proofs/UMHSF1.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6050,7 +8388,7 @@ Source: proofs/UMHSF1.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem t4a : ∀ (X Z : Type) [Fintype X] [Fintype Z] (η : ℝ) (K : X → Z → ℝ) (P Q : X → ℝ), IsKernel K → hs η (push K P) (push K Q) ≤ hs η P Q
 ~~~
 
-### 743. push_contentLaw
+### 1032. push_contentLaw
 
 Source: proofs/UMHSF1.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6058,7 +8396,7 @@ Source: proofs/UMHSF1.lean:87 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem push_contentLaw {X Z C : Type} [Fintype X] [Fintype C] [DecidableEq C] (K : C → Z → ℝ) (c : X → C) (P : X → ℝ) : push K (contentLaw c P) = push (fun x => K (c x)) P
 ~~~
 
-### 744. t4b
+### 1033. t4b
 
 Source: proofs/UMHSF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6066,7 +8404,7 @@ Source: proofs/UMHSF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem t4b : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [Fintype C] [DecidableEq C] (η : ℝ) (M : X → Z → ℝ) (c : X → C) (PA PH : X → ℝ), ContentOnly M c → hs η (push M PA) (push M PH) ≤ hs η (contentLaw c PA) (contentLaw c PH)
 ~~~
 
-### 745. delta_dist
+### 1034. delta_dist
 
 Source: proofs/UMHSF1.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6074,7 +8412,7 @@ Source: proofs/UMHSF1.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem delta_dist {C : Type} [Fintype C] [DecidableEq C] (e : C) : IsDist (delta e)
 ~~~
 
-### 746. push_decode
+### 1035. push_decode
 
 Source: proofs/UMHSF1.lean:111 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6082,7 +8420,7 @@ Source: proofs/UMHSF1.lean:111 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem push_decode {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq C] (M : X → Z → ℝ) (c : X → C) (g : Z → C) (hM : IsKernel M) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (P : X → ℝ) : push (fun z => delta (g z)) (push M P) = contentLaw c P
 ~~~
 
-### 747. t4c
+### 1036. t4c
 
 Source: proofs/UMHSF1.lean:126 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6090,7 +8428,7 @@ Source: proofs/UMHSF1.lean:126 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem t4c : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [Fintype C] [DecidableEq C] (η : ℝ) (M : X → Z → ℝ) (c : X → C) (PA PH : X → ℝ), IsKernel M → ContentPreserving M c → hs η (contentLaw c PA) (contentLaw c PH) ≤ hs η (push M PA) (push M PH)
 ~~~
 
-### 748. t5d
+### 1037. t5d
 
 Source: proofs/UMHSF1.lean:135 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6098,7 +8436,7 @@ Source: proofs/UMHSF1.lean:135 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem t5d : ∀ (Z : Type) [Fintype Z] (η : ℝ) (P Q P' Q' : Z → ℝ), hs η P Q ≤ hs η P' Q' + ∑ z, max 0 (P z - P' z) + Real.exp η * ∑ z, max 0 (Q' z - Q z)
 ~~~
 
-### 749. sum_max0_mix
+### 1038. sum_max0_mix
 
 Source: proofs/UMHSF1.lean:153 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6106,7 +8444,7 @@ Source: proofs/UMHSF1.lean:153 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem sum_max0_mix {Z C : Type} [Fintype Z] [Fintype C] (w : Z → ℝ) (hw : ∀ z, 0 ≤ w z) (f : Z → C → ℝ) : ∑ e, max 0 (∑ z, w z * f z e) ≤ ∑ z, w z * ∑ e, max 0 (f z e)
 ~~~
 
-### 750. sum_max0_delta_sub_le
+### 1039. sum_max0_delta_sub_le
 
 Source: proofs/UMHSF1.lean:161 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6114,7 +8452,7 @@ Source: proofs/UMHSF1.lean:161 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem sum_max0_delta_sub_le {C : Type} [Fintype C] [DecidableEq C] (a b : C) : ∑ e, max 0 (delta a e - delta b e) ≤ 1
 ~~~
 
-### 751. inner_A
+### 1040. inner_A
 
 Source: proofs/UMHSF1.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6122,7 +8460,7 @@ Source: proofs/UMHSF1.lean:171 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem inner_A {Z C : Type} [Fintype Z] [Fintype C] [DecidableEq C] (m : Z → ℝ) (hm : IsDist m) (a : C) (g : Z → C) : ∑ e, max 0 (delta a e - ∑ z, m z * delta (g z) e) ≤ ∑ z, m z * (if g z = a then 0 else 1)
 ~~~
 
-### 752. inner_H
+### 1041. inner_H
 
 Source: proofs/UMHSF1.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6130,7 +8468,7 @@ Source: proofs/UMHSF1.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem inner_H {Z C : Type} [Fintype Z] [Fintype C] [DecidableEq C] (m : Z → ℝ) (hm : IsDist m) (a : C) (g : Z → C) : ∑ e, max 0 (∑ z, m z * delta (g z) e - delta a e) ≤ ∑ z, m z * (if g z = a then 0 else 1)
 ~~~
 
-### 753. push_push
+### 1042. push_push
 
 Source: proofs/UMHSF1.lean:203 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6138,7 +8476,7 @@ Source: proofs/UMHSF1.lean:203 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem push_push {X Z C : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (D : Z → C → ℝ) (P : X → ℝ) (e : C) : push D (push M P) e = ∑ x, P x * ∑ z, M x z * D z e
 ~~~
 
-### 754. approx_A
+### 1043. approx_A
 
 Source: proofs/UMHSF1.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6146,7 +8484,7 @@ Source: proofs/UMHSF1.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem approx_A {X Z C : Type} [Fintype X] [Fintype Z] [Fintype C] [DecidableEq C] (γ : ℝ) (M : X → Z → ℝ) (c : X → C) (g : Z → C) (PA : X → ℝ) (hM : IsKernel M) (hPA : IsDist PA) (hγ : ∀ x, ∑ z, M x z * (if g z = c x then 0 else 1) ≤ γ) : ∑ e, max 0 (contentLaw c PA e - push (fun z => delta (g z)) (push M PA) e) ≤ γ
 ~~~
 
-### 755. approx_H
+### 1044. approx_H
 
 Source: proofs/UMHSF1.lean:231 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6154,7 +8492,7 @@ Source: proofs/UMHSF1.lean:231 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem approx_H {X Z C : Type} [Fintype X] [Fintype Z] [Fintype C] [DecidableEq C] (γ : ℝ) (M : X → Z → ℝ) (c : X → C) (g : Z → C) (PH : X → ℝ) (hM : IsKernel M) (hPH : IsDist PH) (hγ : ∀ x, ∑ z, M x z * (if g z = c x then 0 else 1) ≤ γ) : ∑ e, max 0 (push (fun z => delta (g z)) (push M PH) e - contentLaw c PH e) ≤ γ
 ~~~
 
-### 756. t4c_approx
+### 1045. t4c_approx
 
 Source: proofs/UMHSF1.lean:250 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6162,7 +8500,7 @@ Source: proofs/UMHSF1.lean:250 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem t4c_approx : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [Fintype C] [DecidableEq C] (η γ : ℝ) (M : X → Z → ℝ) (c : X → C) (g : Z → C) (PA PH : X → ℝ), IsKernel M → IsDist PA → IsDist PH → (∀ x, ∑ z, M x z * (if g z = c x then 0 else 1) ≤ γ) → hs η (contentLaw c PA) (contentLaw c PH) ≤ hs η (push M PA) (push M PH) + (1 + Real.exp η) * γ
 ~~~
 
-### 757. t4c'1
+### 1046. t4c'1
 
 Source: proofs/UMHSF1.lean:266 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6170,7 +8508,7 @@ Source: proofs/UMHSF1.lean:266 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem t4c'1 : ∀ (X Z : Type) [Fintype X] [Fintype Z] (M : X → Z → ℝ) (B : Finset X) (hB : B.Nonempty) (Q : Z → ℝ) (L : ℝ), IsKernel M → IsDist Q → (∀ x ∈ B, ∀ z, M x z ≤ L * Q z) → ∑ z, B.sup' hB (fun x => M x z) ≤ L
 ~~~
 
-### 758. t4c'2
+### 1047. t4c'2
 
 Source: proofs/UMHSF1.lean:275 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6178,7 +8516,7 @@ Source: proofs/UMHSF1.lean:275 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem t4c'2 : ∀ (X Z : Type) [Fintype X] [Fintype Z] (M : X → Z → ℝ) (B : Finset X) (hB : B.Nonempty), IsKernel M → ∃ Q, IsDist Q ∧ ∀ x ∈ B, ∀ z, M x z ≤ (∑ z', B.sup' hB (fun x' => M x' z')) * Q z
 ~~~
 
-### 759. dom
+### 1048. dom
 
 Source: proofs/UMHSF1.lean:299 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6186,7 +8524,7 @@ Source: proofs/UMHSF1.lean:299 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem dom : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [Fintype C] [DecidableEq C] (M : X → Z → ℝ) (c : X → C) (PH : X → ℝ) (Bad : X → Prop) (p : ℝ), ContentOnly M c → IsDist PH → 0 < p → (∀ x, Bad x → p ≤ contentLaw c PH (c x)) → ∀ x, Bad x → ∀ z, M x z ≤ (1 / p) * push M PH z
 ~~~
 
-### 760. claim
+### 1049. claim
 
 Source: proofs/UMHSF1.lean:320 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6194,7 +8532,7 @@ Source: proofs/UMHSF1.lean:320 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem claim : Claim
 ~~~
 
-### 761. idKernel
+### 1050. idKernel
 
 Source: proofs/UMHSF1.lean:323 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6202,7 +8540,7 @@ Source: proofs/UMHSF1.lean:323 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem idKernel : IsKernel (fun (x : Bool) (z : Bool) => if z = x then (1 : ℝ) else 0)
 ~~~
 
-### 762. witness
+### 1051. witness
 
 Source: proofs/UMHSF1.lean:329 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6212,7 +8550,7 @@ theorem witness : Witness
 
 ## proofs/UMLOWERF1.lean
 
-### 763. pat_sum_prod
+### 1052. pat_sum_prod
 
 Source: proofs/UMLOWERF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6220,7 +8558,7 @@ Source: proofs/UMLOWERF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem pat_sum_prod {n : ℕ} (f : Fin n → Bool → ℝ) : ∑ pat : Fin n → Bool, ∏ i, f i (pat i) = ∏ i, ∑ b, f i b
 ~~~
 
-### 764. bern_nonneg
+### 1053. bern_nonneg
 
 Source: proofs/UMLOWERF1.lean:7 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6228,7 +8566,7 @@ Source: proofs/UMLOWERF1.lean:7 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem bern_nonneg {n : ℕ} (a : Fin n → ℝ) (ha : ∀ i, 0 ≤ a i ∧ a i ≤ 1) (pat : Fin n → Bool) : 0 ≤ ∏ i, (if pat i then a i else 1 - a i)
 ~~~
 
-### 765. bern_sum
+### 1054. bern_sum
 
 Source: proofs/UMLOWERF1.lean:15 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6236,7 +8574,7 @@ Source: proofs/UMLOWERF1.lean:15 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem bern_sum {n : ℕ} (a : Fin n → ℝ) : ∑ pat : Fin n → Bool, ∏ i, (if pat i then a i else 1 - a i) = 1
 ~~~
 
-### 766. bern_mean
+### 1055. bern_mean
 
 Source: proofs/UMLOWERF1.lean:20 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6244,7 +8582,7 @@ Source: proofs/UMLOWERF1.lean:20 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem bern_mean {n : ℕ} (a : Fin n → ℝ) : ∑ pat : Fin n → Bool, (∏ i, (if pat i then a i else 1 - a i)) * ((univ.filter (fun i => pat i = true)).card : ℝ) = ∑ i, a i
 ~~~
 
-### 767. keep_lb
+### 1056. keep_lb
 
 Source: proofs/UMLOWERF1.lean:49 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6252,7 +8590,7 @@ Source: proofs/UMLOWERF1.lean:49 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem keep_lb (ns : ℕ) (k : ℝ) (m : ℕ) (hk0 : 0 ≤ k) (hk : m ≤ ns → k = 1) : 1 - (m : ℝ) / ((ns : ℝ) + 1) ≤ k
 ~~~
 
-### 768. inner_lb
+### 1057. inner_lb
 
 Source: proofs/UMLOWERF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6260,7 +8598,7 @@ Source: proofs/UMLOWERF1.lean:61 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem inner_lb {n : ℕ} (ns : ℕ) (a : Fin n → ℝ) (ha : ∀ i, 0 ≤ a i ∧ a i ≤ 1) (kp : (Fin n → Bool) → ℝ) (hk0 : ∀ pat, 0 ≤ kp pat) (hk1 : ∀ pat, (univ.filter (fun i => pat i = true)).card ≤ ns → kp pat = 1) : 1 - (∑ i, a i) / ((ns : ℝ) + 1) ≤ ∑ pat : Fin n → Bool, (∏ i, (if pat i then a i else 1 - a i)) * kp pat
 ~~~
 
-### 769. inner_nonneg
+### 1058. inner_nonneg
 
 Source: proofs/UMLOWERF1.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6268,7 +8606,7 @@ Source: proofs/UMLOWERF1.lean:77 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem inner_nonneg {n : ℕ} (a : Fin n → ℝ) (ha : ∀ i, 0 ≤ a i ∧ a i ≤ 1) (kp : (Fin n → Bool) → ℝ) (hk0 : ∀ pat, 0 ≤ kp pat) : 0 ≤ ∑ pat : Fin n → Bool, (∏ i, (if pat i then a i else 1 - a i)) * kp pat
 ~~~
 
-### 770. pass_eq
+### 1059. pass_eq
 
 Source: proofs/UMLOWERF1.lean:82 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6276,7 +8614,7 @@ Source: proofs/UMLOWERF1.lean:82 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem pass_eq {X Z C : Type} [Fintype Z] [DecidableEq C] (M : X → Z → ℝ) (c : X → C) (g : Z → C) (hM : IsKernel M) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (t : ℝ) (x ω : X) : ∑ z, M x z * (if g z = c ω then t else 0) = if c x = c ω then t else 0
 ~~~
 
-### 771. class_sum_le
+### 1060. class_sum_le
 
 Source: proofs/UMLOWERF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6284,7 +8622,7 @@ Source: proofs/UMLOWERF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem class_sum_le {X C : Type} [DecidableEq C] (c : X → C) (S : Finset X) (hinj : Set.InjOn c (S : Set X)) (t : ℝ) (ht : 0 ≤ t) (x : X) : ∑ ω ∈ S, (if c x = c ω then t else 0) ≤ t
 ~~~
 
-### 772. cat_ge
+### 1061. cat_ge
 
 Source: proofs/UMLOWERF1.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6292,7 +8630,7 @@ Source: proofs/UMLOWERF1.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem cat_ge {X Z : Type} [Fintype X] [Fintype Z] [DecidableEq X] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (r : ℝ) (b N : ℕ) (ω : X) (hM : IsKernel M) (hφ : IsRule φ) (hr1 : r ≤ 1) (hN : 1 ≤ N) (hω : Bad ω) : ∑ z, M ω z * φ z ≤ cat Bad M φ (fun _ x => if x = ω then 1 else 0) r b N 0 []
 ~~~
 
-### 773. surv_sum_lb
+### 1062. surv_sum_lb
 
 Source: proofs/UMLOWERF1.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6300,7 +8638,7 @@ Source: proofs/UMLOWERF1.lean:119 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem surv_sum_lb {X Ω : Type} [Fintype X] (n ns : ℕ) (D : (Fin n → X) → ℝ) (hD : IsDist D) (keep : (Fin n → X) → (Fin n → Bool) → ℝ) (hkeep : ∀ xs pat, 0 ≤ keep xs pat) (hkeep1 : ∀ xs pat, (univ.filter (fun i => pat i = true)).card ≤ ns → keep xs pat = 1) (S : Finset Ω) (a : Ω → X → ℝ) (ha : ∀ ω x, 0 ≤ a ω x ∧ a ω x ≤ 1) (t : ℝ) (hsumA : ∀ x, ∑ ω ∈ S, a ω x ≤ t) : (S.card : ℝ) - n * t / ((ns : ℝ) + 1) ≤ ∑ ω ∈ S, ∑ xs, D xs * ∑ pat : Fin n → Bool, (∏ i, (if pat i then a ω (xs i) else 1 - a ω (xs i))) * keep xs pat
 ~~~
 
-### 774. combine
+### 1063. combine
 
 Source: proofs/UMLOWERF1.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6308,7 +8646,7 @@ Source: proofs/UMLOWERF1.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem combine {X : Type} [Fintype X] [DecidableEq X] (S : Finset X) (n ns : ℕ) (sv ct : X → ℝ) (t : ℝ) (hS : 0 < S.card) (ht : 0 ≤ t) (hsv0 : ∀ ω, 0 ≤ sv ω) (hct : ∀ ω ∈ S, t ≤ ct ω) (hsum : (S.card : ℝ) - n * t / ((ns : ℝ) + 1) ≤ ∑ ω ∈ S, sv ω) : t * (1 - t * (n : ℝ) / ((S.card : ℝ) * ((ns : ℝ) + 1))) ≤ ∑ ω, (if ω ∈ S then 1 / (S.card : ℝ) else 0) * sv ω * ct ω
 ~~~
 
-### 775. claim
+### 1064. claim
 
 Source: proofs/UMLOWERF1.lean:176 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6316,7 +8654,7 @@ Source: proofs/UMLOWERF1.lean:176 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim : PL_UMLOWERF1.Claim
 ~~~
 
-### 776. none_pass
+### 1065. none_pass
 
 Source: proofs/UMLOWERF1.lean:227 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6324,7 +8662,7 @@ Source: proofs/UMLOWERF1.lean:227 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem none_pass {n : ℕ} (a : Fin n → ℝ) : ∑ pat : Fin n → Bool, (∏ i, (if pat i then a i else 1 - a i)) * (if (univ.filter (fun i => pat i = true)).card ≤ 0 then (1 : ℝ) else 0) = ∏ i, (1 - a i)
 ~~~
 
-### 777. witness
+### 1066. witness
 
 Source: proofs/UMLOWERF1.lean:252 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6334,7 +8672,7 @@ theorem witness : PL_UMLOWERF1.Witness
 
 ## proofs/UMNOGOF1.lean
 
-### 778. submit_sum
+### 1067. submit_sum
 
 Source: proofs/UMNOGOF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6342,7 +8680,7 @@ Source: proofs/UMNOGOF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 lemma submit_sum {X Z : Type} [Fintype X] (xs : X) (ω : Unit) (h : Hist X Z) (f : X → ℝ) : ∑ x, submit (Z
 ~~~
 
-### 779. submit_dist
+### 1068. submit_dist
 
 Source: proofs/UMNOGOF1.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6350,7 +8688,7 @@ Source: proofs/UMNOGOF1.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma submit_dist {X Z : Type} [Fintype X] (xs : X) (ω : Unit) (h : Hist X Z) : IsDist (submit (Z
 ~~~
 
-### 780. classMonitor_rule
+### 1069. classMonitor_rule
 
 Source: proofs/UMNOGOF1.lean:22 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6358,7 +8696,7 @@ Source: proofs/UMNOGOF1.lean:22 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma classMonitor_rule {Z C : Type} [DecidableEq C] (g : Z → C) (e : C) (t : ℝ) (h0 : 0 ≤ t) (h1 : t ≤ 1) : ∀ ω, IsRule (classMonitor g e t ω)
 ~~~
 
-### 781. protocolCat_unit
+### 1070. protocolCat_unit
 
 Source: proofs/UMNOGOF1.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6366,7 +8704,7 @@ Source: proofs/UMNOGOF1.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma protocolCat_unit {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (φ : Unit → Z → ℝ) (π : Unit → Hist X Z → X → ℝ) : protocolCat Bad M PH κ nh r b N (fun _ : Unit => 1) φ π = surv (push M PH) (φ ()) κ nh 0 * cat Bad M (φ ()) (π ()) r b N 0 []
 ~~~
 
-### 782. cat_submit
+### 1071. cat_submit
 
 Source: proofs/UMNOGOF1.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6374,7 +8712,7 @@ Source: proofs/UMNOGOF1.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma cat_submit {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (xs : X) (hx : Bad xs) (r : ℝ) (b N : ℕ) (hN : 1 ≤ N) : cat Bad M φ (submit (Z
 ~~~
 
-### 783. rate_eq
+### 1072. rate_eq
 
 Source: proofs/UMNOGOF1.lean:47 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6382,7 +8720,7 @@ Source: proofs/UMNOGOF1.lean:47 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma rate_eq {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq C] (M : X → Z → ℝ) (c : X → C) (g : Z → C) (hM : IsKernel M) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (PH : X → ℝ) (e : C) (t : ℝ) : ∑ z, push M PH z * classMonitor g e t () z = t * contentLaw c PH e
 ~~~
 
-### 784. pass_sum
+### 1073. pass_sum
 
 Source: proofs/UMNOGOF1.lean:70 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6390,7 +8728,7 @@ Source: proofs/UMNOGOF1.lean:70 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma pass_sum {X Z C : Type} [Fintype Z] [DecidableEq C] (M : X → Z → ℝ) (c : X → C) (g : Z → C) (hM : IsKernel M) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (xs : X) (t K : ℝ) : ∑ z, M xs z * (classMonitor g (c xs) t () z * 1 + (1 - classMonitor g (c xs) t () z) * K) = t + (1 - t) * K
 ~~~
 
-### 785. prot_formula
+### 1074. prot_formula
 
 Source: proofs/UMNOGOF1.lean:82 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6398,7 +8736,7 @@ Source: proofs/UMNOGOF1.lean:82 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma prot_formula {X Z C : Type} [Fintype X] [Fintype Z] [DecidableEq C] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (c : X → C) (g : Z → C) (PH : X → ℝ) (xs : X) (hM : IsKernel M) (hg : ∀ x z, M x z ≠ 0 → g z = c x) (hPH : IsDist PH) (hx : Bad xs) (t : ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (hN : 1 ≤ N) : protocolCat Bad M PH κ nh r b N (fun _ : Unit => 1) (classMonitor g (c xs) t) (submit (Z
 ~~~
 
-### 786. survH_ge
+### 1075. survH_ge
 
 Source: proofs/UMNOGOF1.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6406,7 +8744,7 @@ Source: proofs/UMNOGOF1.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma survH_ge (h : ℝ) (κ : ℕ → ℝ) (h0 : 0 ≤ h) (h1 : h ≤ 1) (hκ : ∀ j, 0 ≤ κ j ∧ κ j ≤ 1) : ∀ n j, (1 - h) ^ n ≤ survH h κ n j
 ~~~
 
-### 787. contentLaw_nonneg
+### 1076. contentLaw_nonneg
 
 Source: proofs/UMNOGOF1.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6414,7 +8752,7 @@ Source: proofs/UMNOGOF1.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma contentLaw_nonneg {X C : Type} [Fintype X] [DecidableEq C] (c : X → C) (PH : X → ℝ) (hPH : IsDist PH) (e : C) : 0 ≤ contentLaw c PH e
 ~~~
 
-### 788. classes_sum_le
+### 1077. classes_sum_le
 
 Source: proofs/UMNOGOF1.lean:122 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6422,7 +8760,7 @@ Source: proofs/UMNOGOF1.lean:122 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma classes_sum_le {X C : Type} [Fintype X] [DecidableEq C] (c : X → C) (PH : X → ℝ) (hPH : IsDist PH) (S : Finset X) (hinj : Set.InjOn c (S : Set X)) : ∑ x ∈ S, contentLaw c PH (c x) ≤ 1
 ~~~
 
-### 789. claim
+### 1078. claim
 
 Source: proofs/UMNOGOF1.lean:145 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6430,7 +8768,7 @@ Source: proofs/UMNOGOF1.lean:145 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim : PL_UMNOGOF1.Claim
 ~~~
 
-### 790. witnessM_kernel
+### 1079. witnessM_kernel
 
 Source: proofs/UMNOGOF1.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6438,7 +8776,7 @@ Source: proofs/UMNOGOF1.lean:187 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma witnessM_kernel : IsKernel witnessM
 ~~~
 
-### 791. witnessM_dec
+### 1080. witnessM_dec
 
 Source: proofs/UMNOGOF1.lean:195 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6446,7 +8784,7 @@ Source: proofs/UMNOGOF1.lean:195 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma witnessM_dec : ∀ x z, witnessM x z ≠ 0 → (id : Fin 4 → Fin 4) z = id x
 ~~~
 
-### 792. witnessPH_dist
+### 1081. witnessPH_dist
 
 Source: proofs/UMNOGOF1.lean:202 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6454,7 +8792,7 @@ Source: proofs/UMNOGOF1.lean:202 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma witnessPH_dist : IsDist witnessPH
 ~~~
 
-### 793. witness_content
+### 1082. witness_content
 
 Source: proofs/UMNOGOF1.lean:209 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6462,7 +8800,7 @@ Source: proofs/UMNOGOF1.lean:209 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma witness_content : contentLaw (id : Fin 4 → Fin 4) witnessPH 2 = 1 / 4
 ~~~
 
-### 794. witnessS_card
+### 1083. witnessS_card
 
 Source: proofs/UMNOGOF1.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6470,7 +8808,7 @@ Source: proofs/UMNOGOF1.lean:212 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma witnessS_card : witnessS.card = 4
 ~~~
 
-### 795. witness
+### 1084. witness
 
 Source: proofs/UMNOGOF1.lean:215 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6480,7 +8818,7 @@ theorem witness : PL_UMNOGOF1.Witness
 
 ## proofs/UMPROTF1.lean
 
-### 796. wsum_le
+### 1085. wsum_le
 
 Source: proofs/UMPROTF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6488,7 +8826,7 @@ Source: proofs/UMPROTF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem wsum_le {Y : Type} [Fintype Y] (w f : Y → ℝ) (c : ℝ) (hw : IsDist w) (hf : ∀ y, f y ≤ c) : ∑ y, w y * f y ≤ c
 ~~~
 
-### 797. wsum_nonneg
+### 1086. wsum_nonneg
 
 Source: proofs/UMPROTF1.lean:9 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6496,7 +8834,7 @@ Source: proofs/UMPROTF1.lean:9 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem wsum_nonneg {Y : Type} [Fintype Y] (w f : Y → ℝ) (hw : ∀ y, 0 ≤ w y) (hf : ∀ y, 0 ≤ f y) : 0 ≤ ∑ y, w y * f y
 ~~~
 
-### 798. t3a
+### 1087. t3a
 
 Source: proofs/UMPROTF1.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6504,7 +8842,7 @@ Source: proofs/UMPROTF1.lean:13 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem t3a {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r A : ℝ) (b : ℕ) (hM : IsKernel M) (hφ : IsRule φ) (hπ : ∀ h, IsDist (π h)) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hbad : ∀ x, Bad x → E (M x) φ ≤ A) : ∀ n u h, 0 ≤ cat Bad M φ π r b n u h ∧ cat Bad M φ π r b n u h ≤ (if u < b then 1 - r + r * A else A)
 ~~~
 
-### 799. cat_le
+### 1088. cat_le
 
 Source: proofs/UMPROTF1.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6512,7 +8850,7 @@ Source: proofs/UMPROTF1.lean:86 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem cat_le {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r A : ℝ) (b : ℕ) (hM : IsKernel M) (hφ : IsRule φ) (hπ : ∀ h, IsDist (π h)) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hA0 : 0 ≤ A) (hA1 : A ≤ 1) (hbad : ∀ x, Bad x → E (M x) φ ≤ A) (n u : ℕ) (h : Hist X Z) : 0 ≤ cat Bad M φ π r b n u h ∧ cat Bad M φ π r b n u h ≤ 1 - r + r * A
 ~~~
 
-### 800. push_dist
+### 1089. push_dist
 
 Source: proofs/UMPROTF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6520,7 +8858,7 @@ Source: proofs/UMPROTF1.lean:96 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem push_dist {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (PH : X → ℝ) (hM : IsKernel M) (hP : IsDist PH) : IsDist (push M PH)
 ~~~
 
-### 801. prot_bound
+### 1090. prot_bound
 
 Source: proofs/UMPROTF1.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6528,7 +8866,7 @@ Source: proofs/UMPROTF1.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem prot_bound {X Z Ω : Type} [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r : ℝ) (b N : ℕ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ) (C : ℝ) (hM : IsKernel M) (hρ : IsDist ρ) (hφ : ∀ ω, IsRule (φ ω)) (hπ : ∀ ω h, IsDist (π ω h)) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hω : ∀ ω, ∃ A, 0 ≤ A ∧ A ≤ 1 ∧ (∀ x, Bad x → E (M x) (φ ω) ≤ A) ∧ 0 ≤ surv (push M PH) (φ ω) κ nh 0 ∧ surv (push M PH) (φ ω) κ nh 0 * (1 - r + r * A) ≤ C) : protocolCat Bad M PH κ nh r b N ρ φ π ≤ C
 ~~~
 
-### 802. rate_facts
+### 1091. rate_facts
 
 Source: proofs/UMPROTF1.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6536,7 +8874,7 @@ Source: proofs/UMPROTF1.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem rate_facts {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (PH : X → ℝ) (φ : Z → ℝ) (hM : IsKernel M) (hP : IsDist PH) (hφ : IsRule φ) : 0 ≤ ∑ z, push M PH z * φ z ∧ ∑ z, push M PH z * φ z ≤ 1
 ~~~
 
-### 803. E_le_one
+### 1092. E_le_one
 
 Source: proofs/UMPROTF1.lean:133 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6544,7 +8882,7 @@ Source: proofs/UMPROTF1.lean:133 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem E_le_one {X Z : Type} [Fintype Z] (M : X → Z → ℝ) (φ : Z → ℝ) (hM : IsKernel M) (hφ : IsRule φ) (x : X) : E (M x) φ ≤ 1
 ~~~
 
-### 804. surv_eq
+### 1093. surv_eq
 
 Source: proofs/UMPROTF1.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6552,7 +8890,7 @@ Source: proofs/UMPROTF1.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem surv_eq {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (PH : X → ℝ) (φ : Z → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (hM : IsKernel M) (hP : IsDist PH) : surv (push M PH) φ κ nh 0 = survH (∑ z, push M PH z * φ z) κ nh 0
 ~~~
 
-### 805. final_dom
+### 1094. final_dom
 
 Source: proofs/UMPROTF1.lean:142 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6560,7 +8898,7 @@ Source: proofs/UMPROTF1.lean:142 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem final_dom (S h L r A B : ℝ) (hS0 : 0 ≤ S) (hS1 : S ≤ 1) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hL : 0 ≤ L) (hA : A ≤ L * h) (hB : h * S ≤ B) : S * (1 - r + r * A) ≤ (1 - r) + r * (L * B)
 ~~~
 
-### 806. final_hs
+### 1095. final_hs
 
 Source: proofs/UMPROTF1.lean:155 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6568,7 +8906,7 @@ Source: proofs/UMPROTF1.lean:155 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem final_hs (S h r A δ c B : ℝ) (hS0 : 0 ≤ S) (hS1 : S ≤ 1) (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hδ : 0 ≤ δ) (hc : 0 ≤ c) (hA : A ≤ c * h + δ) (hB : h * S ≤ B) : S * (1 - r + r * A) ≤ (1 - r) + r * (δ + c * B)
 ~~~
 
-### 807. hardKill_prob
+### 1096. hardKill_prob
 
 Source: proofs/UMPROTF1.lean:170 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6576,7 +8914,7 @@ Source: proofs/UMPROTF1.lean:170 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem hardKill_prob (ns : ℕ) : ∀ i, 0 ≤ hardKill ns i ∧ hardKill ns i ≤ 1
 ~~~
 
-### 808. E_dom
+### 1097. E_dom
 
 Source: proofs/UMPROTF1.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6584,7 +8922,7 @@ Source: proofs/UMPROTF1.lean:173 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem E_dom {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (PH : X → ℝ) (φ : Z → ℝ) (hφ : IsRule φ) (L : ℝ) (x : X) (hd : ∀ z, M x z ≤ L * push M PH z) : E (M x) φ ≤ L * ∑ z, push M PH z * φ z
 ~~~
 
-### 809. claim
+### 1098. claim
 
 Source: proofs/UMPROTF1.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6592,7 +8930,7 @@ Source: proofs/UMPROTF1.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim : PL_UMPROTF1.Claim
 ~~~
 
-### 810. witness
+### 1099. witness
 
 Source: proofs/UMPROTF1.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6602,7 +8940,7 @@ theorem witness : PL_UMPROTF1.Witness
 
 ## proofs/UMSTRATF1.lean
 
-### 811. surv_eq_bin
+### 1100. surv_eq_bin
 
 Source: proofs/UMSTRATF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6610,7 +8948,7 @@ Source: proofs/UMSTRATF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem surv_eq_bin {Z : Type} [Fintype Z] (q φ : Z → ℝ) (hq : ∑ z, q z = 1) (m sc : ℕ) : surv q φ (hardKill sc) m 0 = binCDF m sc (E q φ)
 ~~~
 
-### 812. rate01
+### 1101. rate01
 
 Source: proofs/UMSTRATF1.lean:9 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6618,7 +8956,7 @@ Source: proofs/UMSTRATF1.lean:9 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem rate01 {Z : Type} [Fintype Z] (q φ : Z → ℝ) (hq : IsDist q) (hφ : IsRule φ) : 0 ≤ E q φ ∧ E q φ ≤ 1
 ~~~
 
-### 813. factor01
+### 1102. factor01
 
 Source: proofs/UMSTRATF1.lean:14 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6626,7 +8964,7 @@ Source: proofs/UMSTRATF1.lean:14 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem factor01 {Z : Type} [Fintype Z] (q φ : Z → ℝ) (hq : IsDist q) (hφ : IsRule φ) (m sc : ℕ) : 0 ≤ surv q φ (hardKill sc) m 0 ∧ surv q φ (hardKill sc) m 0 ≤ 1
 ~~~
 
-### 814. strat01
+### 1103. strat01
 
 Source: proofs/UMSTRATF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6634,7 +8972,7 @@ Source: proofs/UMSTRATF1.lean:23 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem strat01 {Z C : Type} [Fintype Z] (K : C → Z → ℝ) (Es : Finset C) (φ : Z → ℝ) (m sc : ℕ) (hK : IsKernel K) (hφ : IsRule φ) : 0 ≤ stratSurv K Es φ m sc ∧ stratSurv K Es φ m sc ≤ 1
 ~~~
 
-### 815. strat_le_factor
+### 1104. strat_le_factor
 
 Source: proofs/UMSTRATF1.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6642,7 +8980,7 @@ Source: proofs/UMSTRATF1.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem strat_le_factor {Z C : Type} [Fintype Z] (K : C → Z → ℝ) (Es : Finset C) (φ : Z → ℝ) (m sc : ℕ) (hK : IsKernel K) (hφ : IsRule φ) (e : C) (he : e ∈ Es) : stratSurv K Es φ m sc ≤ surv (K e) φ (hardKill sc) m 0
 ~~~
 
-### 816. exists_A
+### 1105. exists_A
 
 Source: proofs/UMSTRATF1.lean:44 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6650,7 +8988,7 @@ Source: proofs/UMSTRATF1.lean:44 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem exists_A {X Z C : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (Es : Finset C) (φ : Z → ℝ) (m sc : ℕ) (hK : IsKernel K) (hφ : IsRule φ) (hEs : ∀ x, Bad x → c x ∈ Es) : ∃ A, 0 ≤ A ∧ A ≤ 1 ∧ (∀ x, Bad x → E (K (c x)) φ ≤ A) ∧ A * stratSurv K Es φ m sc ≤ ((sc : ℝ) + 1) / ((m : ℝ) + 1)
 ~~~
 
-### 817. claim1
+### 1106. claim1
 
 Source: proofs/UMSTRATF1.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6658,7 +8996,7 @@ Source: proofs/UMSTRATF1.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim1 : ∀ (X Z C Ω : Type) [Fintype X] [Fintype Z] [Fintype Ω] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (Es : Finset C) (m sc b N : ℕ) (r : ℝ) (ρ : Ω → ℝ) (φ : Ω → Z → ℝ) (π : Ω → Hist X Z → X → ℝ), IsKernel K → IsDist ρ → (∀ ω, IsRule (φ ω)) → (∀ ω h, IsDist (π ω h)) → 0 ≤ r → r ≤ 1 → (∀ x, Bad x → c x ∈ Es) → stratProtocolCat Bad K c Es m sc r b N ρ φ π ≤ (1 - r) + r * (((sc : ℝ) + 1) / ((m : ℝ) + 1))
 ~~~
 
-### 818. binCDF_at_zero
+### 1107. binCDF_at_zero
 
 Source: proofs/UMSTRATF1.lean:98 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6666,7 +9004,7 @@ Source: proofs/UMSTRATF1.lean:98 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem binCDF_at_zero (m sc : ℕ) : binCDF m sc 0 = 1
 ~~~
 
-### 819. E_dec
+### 1108. E_dec
 
 Source: proofs/UMSTRATF1.lean:103 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6674,7 +9012,7 @@ Source: proofs/UMSTRATF1.lean:103 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem E_dec {Z C : Type} [Fintype Z] [DecidableEq C] (K : C → Z → ℝ) (g : Z → C) (t : ℝ) (e0 e : C) (hK : IsKernel K) (hdec : ∀ e z, K e z ≠ 0 → g z = e) : E (K e) (fun z => if g z = e0 then t else 0) = if e = e0 then t else 0
 ~~~
 
-### 820. strat_att
+### 1109. strat_att
 
 Source: proofs/UMSTRATF1.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6682,7 +9020,7 @@ Source: proofs/UMSTRATF1.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem strat_att {Z C : Type} [Fintype Z] [DecidableEq C] (K : C → Z → ℝ) (g : Z → C) (Es : Finset C) (t : ℝ) (e0 : C) (m sc : ℕ) (hK : IsKernel K) (hdec : ∀ e z, K e z ≠ 0 → g z = e) (he0 : e0 ∈ Es) : stratSurv K Es (fun z => if g z = e0 then t else 0) m sc = binCDF m sc t
 ~~~
 
-### 821. cat_point
+### 1110. cat_point
 
 Source: proofs/UMSTRATF1.lean:138 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6690,7 +9028,7 @@ Source: proofs/UMSTRATF1.lean:138 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem cat_point {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] [DecidableEq X] (M : X → Z → ℝ) (φ : Z → ℝ) (r : ℝ) (b N : ℕ) (x : X) (hM : IsKernel M) (hx : Bad x) (hN : 1 ≤ N) (hb : 1 ≤ b) : cat Bad M φ (fun _ x' => if x' = x then 1 else 0) r b N 0 [] = 1 - r + r * E (M x) φ
 ~~~
 
-### 822. claim2
+### 1111. claim2
 
 Source: proofs/UMSTRATF1.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6698,7 +9036,7 @@ Source: proofs/UMSTRATF1.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim2 : ∀ (X Z C : Type) [Fintype X] [Fintype Z] [DecidableEq C] [DecidableEq X] (Bad : X → Prop) [DecidablePred Bad] (K : C → Z → ℝ) (c : X → C) (g : Z → C) (Es : Finset C) (m sc b N : ℕ) (r t : ℝ) (x : X), IsKernel K → (∀ e z, K e z ≠ 0 → g z = e) → Bad x → c x ∈ Es → 1 ≤ N → 1 ≤ b → 0 ≤ t → t ≤ 1 → stratProtocolCat Bad K c Es m sc r b N (fun _ : Unit => 1) (fun _ z => if g z = c x then t else 0) (fun _ _ x' => if x' = x then 1 else 0) = binCDF m sc t * (1 - r + r * t)
 ~~~
 
-### 823. claim
+### 1112. claim
 
 Source: proofs/UMSTRATF1.lean:166 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6706,7 +9044,7 @@ Source: proofs/UMSTRATF1.lean:166 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem claim : PL_UMSTRATF1.Claim
 ~~~
 
-### 824. wK
+### 1113. wK
 
 Source: proofs/UMSTRATF1.lean:168 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6714,7 +9052,7 @@ Source: proofs/UMSTRATF1.lean:168 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem wK : IsKernel witnessK
 ~~~
 
-### 825. wdec
+### 1114. wdec
 
 Source: proofs/UMSTRATF1.lean:176 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6722,7 +9060,7 @@ Source: proofs/UMSTRATF1.lean:176 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem wdec : ∀ e z : Bool, witnessK e z ≠ 0 → id z = e
 ~~~
 
-### 826. wval
+### 1115. wval
 
 Source: proofs/UMSTRATF1.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6730,7 +9068,7 @@ Source: proofs/UMSTRATF1.lean:183 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem wval : stratProtocolCat (fun x : Bool => x = true) witnessK id (Finset.univ : Finset Bool) 12 1 1 1 1 (fun _ : Unit => 1) witnessPhi witnessPi = binCDF 12 1 (1 / 6) * (1 - 1 + 1 * (1 / 6 : ℝ))
 ~~~
 
-### 827. wbin
+### 1116. wbin
 
 Source: proofs/UMSTRATF1.lean:190 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6738,7 +9076,7 @@ Source: proofs/UMSTRATF1.lean:190 | Family: UNMAPPED | Adversary: UNKNOWN | Stat
 theorem wbin : binCDF 12 1 (1 / 6 : ℝ) = (5 / 6) ^ 12 + 12 * (1 / 6) * (5 / 6) ^ 11
 ~~~
 
-### 828. witness
+### 1117. witness
 
 Source: proofs/UMSTRATF1.lean:194 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6748,7 +9086,7 @@ theorem witness : PL_UMSTRATF1.Witness
 
 ## proofs/UMSURVF1.lean
 
-### 829. binTerm_pascal
+### 1118. binTerm_pascal
 
 Source: proofs/UMSURVF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6756,7 +9094,7 @@ Source: proofs/UMSURVF1.lean:3 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 lemma binTerm_pascal (n k : ℕ) (h : ℝ) : ((n + 1).choose (k + 1) : ℝ) * h ^ (k + 1) * (1 - h) ^ (n + 1 - (k + 1)) = h * ((n.choose k : ℝ) * h ^ k * (1 - h) ^ (n - k)) + (1 - h) * ((n.choose (k + 1) : ℝ) * h ^ (k + 1) * (1 - h) ^ (n - (k + 1)))
 ~~~
 
-### 830. binCDF_zero_n
+### 1119. binCDF_zero_n
 
 Source: proofs/UMSURVF1.lean:21 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6764,7 +9102,7 @@ Source: proofs/UMSURVF1.lean:21 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma binCDF_zero_n (s : ℕ) (h : ℝ) : binCDF 0 s h = 1
 ~~~
 
-### 831. binCDF_n_zero
+### 1120. binCDF_n_zero
 
 Source: proofs/UMSURVF1.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6772,7 +9110,7 @@ Source: proofs/UMSURVF1.lean:30 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma binCDF_n_zero (n : ℕ) (h : ℝ) : binCDF n 0 h = (1 - h) ^ n
 ~~~
 
-### 832. binCDF_pascal
+### 1121. binCDF_pascal
 
 Source: proofs/UMSURVF1.lean:34 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6780,7 +9118,7 @@ Source: proofs/UMSURVF1.lean:34 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma binCDF_pascal (n s : ℕ) (h : ℝ) : binCDF (n + 1) (s + 1) h = (1 - h) * binCDF n (s + 1) h + h * binCDF n s h
 ~~~
 
-### 833. survH_hard
+### 1122. survH_hard
 
 Source: proofs/UMSURVF1.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6788,7 +9126,7 @@ Source: proofs/UMSURVF1.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma survH_hard (h : ℝ) (ns : ℕ) : ∀ n j, j ≤ ns → survH h (hardKill ns) n j = binCDF n (ns - j) h
 ~~~
 
-### 834. survH_const
+### 1123. survH_const
 
 Source: proofs/UMSURVF1.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6796,7 +9134,7 @@ Source: proofs/UMSURVF1.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma survH_const (h k : ℝ) : ∀ (n j : ℕ), survH h (fun _ => k) n j = (1 - k * h) ^ n
 ~~~
 
-### 835. survH_prob
+### 1124. survH_prob
 
 Source: proofs/UMSURVF1.lean:75 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6804,7 +9142,7 @@ Source: proofs/UMSURVF1.lean:75 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma survH_prob (h : ℝ) (κ : ℕ → ℝ) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) (hκ : ∀ i, 0 ≤ κ i ∧ κ i ≤ 1) : ∀ n j, 0 ≤ survH h κ n j ∧ survH h κ n j ≤ 1
 ~~~
 
-### 836. binCDF_le_one
+### 1125. binCDF_le_one
 
 Source: proofs/UMSURVF1.lean:99 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6812,7 +9150,7 @@ Source: proofs/UMSURVF1.lean:99 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 lemma binCDF_le_one (n s : ℕ) (h : ℝ) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) : binCDF n s h ≤ 1
 ~~~
 
-### 837. first_moment
+### 1126. first_moment
 
 Source: proofs/UMSURVF1.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6820,7 +9158,7 @@ Source: proofs/UMSURVF1.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma first_moment (n s : ℕ) (h : ℝ) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) : ((n : ℝ) + 1) * (h * binCDF n s h) ≤ (s : ℝ) + 1
 ~~~
 
-### 838. first_moment
+### 1127. first_moment
 
 Source: proofs/UMSURVF1.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6828,7 +9166,7 @@ Source: proofs/UMSURVF1.lean:146 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 lemma first_moment' (n s : ℕ) (h : ℝ) (hh0 : 0 ≤ h) (hh1 : h ≤ 1) : h * binCDF n s h ≤ ((s : ℝ) + 1) / ((n : ℝ) + 1)
 ~~~
 
-### 839. claim
+### 1128. claim
 
 Source: proofs/UMSURVF1.lean:152 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6836,7 +9174,7 @@ Source: proofs/UMSURVF1.lean:152 | Family: UNMAPPED | Adversary: UNKNOWN | Statu
 theorem claim : Claim
 ~~~
 
-### 840. witness
+### 1129. witness
 
 Source: proofs/UMSURVF1.lean:191 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6846,7 +9184,7 @@ theorem witness : Witness
 
 ## proofs/UMUSEF1.lean
 
-### 841. usef_split
+### 1130. usef_split
 
 Source: proofs/UMUSEF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6854,7 +9192,7 @@ Source: proofs/UMUSEF1.lean:5 | Family: UNMAPPED | Adversary: UNKNOWN | Status: 
 theorem usef_split {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (μ : X → ℝ) (φ : Z → ℝ) (hM : IsKernel M) (hμ : IsDist μ) (A B : ℝ) : ∑ x, μ x * ∑ z, M x z * (φ z * A + (1 - φ z) * B) = (1 - flagRate M μ φ) * A + flagRate M μ φ * B
 ~~~
 
-### 842. usef_flag01
+### 1131. usef_flag01
 
 Source: proofs/UMUSEF1.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6862,7 +9200,7 @@ Source: proofs/UMUSEF1.lean:25 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem usef_flag01 {X Z : Type} [Fintype X] [Fintype Z] (M : X → Z → ℝ) (μ : X → ℝ) (φ : Z → ℝ) (hM : IsKernel M) (hφ : IsRule φ) (hμ : IsDist μ) : 0 ≤ flagRate M μ φ ∧ flagRate M μ φ ≤ 1
 ~~~
 
-### 843. usef_halt
+### 1132. usef_halt
 
 Source: proofs/UMUSEF1.lean:37 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6870,7 +9208,7 @@ Source: proofs/UMUSEF1.lean:37 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem usef_halt {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (μ : X → ℝ) (b : ℕ) (hM : IsKernel M) (hμ : IsDist μ) (hsupp : ∀ x, μ x ≠ 0 → ¬ Bad x) : ∀ n u h, 1 - haltP Bad M φ (fun _ => μ) b n u h = survH (flagRate M μ φ) (hardKill b) n u
 ~~~
 
-### 844. usef_bin01
+### 1133. usef_bin01
 
 Source: proofs/UMUSEF1.lean:74 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6878,7 +9216,7 @@ Source: proofs/UMUSEF1.lean:74 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem usef_bin01 (n s : ℕ) (a : ℝ) (h0 : 0 ≤ a) (h1 : a ≤ 1) : 0 ≤ binCDF n s a ∧ binCDF n s a ≤ 1
 ~~~
 
-### 845. usef_hc
+### 1134. usef_hc
 
 Source: proofs/UMUSEF1.lean:80 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6886,7 +9224,7 @@ Source: proofs/UMUSEF1.lean:80 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem usef_hc {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh b N : ℕ) (φ₀ : Z → ℝ) (μ : X → ℝ) (hM : IsKernel M) (hP : IsDist PH) (hμ : IsDist μ) (hsupp : ∀ x, μ x ≠ 0 → ¬ Bad x) : honestCompletion Bad M PH κ nh b N φ₀ μ = survH (missRate M PH φ₀) κ nh 0 * binCDF N b (flagRate M μ φ₀)
 ~~~
 
-### 846. usef_vb
+### 1135. usef_vb
 
 Source: proofs/UMUSEF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6894,7 +9232,7 @@ Source: proofs/UMUSEF1.lean:92 | Family: UNMAPPED | Adversary: UNKNOWN | Status:
 theorem usef_vb {X Z : Type} [Fintype X] [Fintype Z] [DecidableEq X] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (PH : X → ℝ) (κ : ℕ → ℝ) (nh : ℕ) (r h : ℝ) (b N : ℕ) (x : X) (hM : IsKernel M) (hP : IsDist PH) (hx : Bad x) (hN : 1 ≤ N) : viewBlindRisk Bad M PH κ nh r b N h x = survH h κ nh 0 * (h + (if 0 < b then (1 - r) * (1 - h) else 0))
 ~~~
 
-### 847. usefB_nonneg
+### 1136. usefB_nonneg
 
 Source: proofs/UMUSEF1.lean:120 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6902,7 +9240,7 @@ Source: proofs/UMUSEF1.lean:120 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_nonneg (n : ℕ) (a : ℝ) (j : ℕ) (h0 : 0 ≤ a) (h1 : a ≤ 1) : 0 ≤ usefB n a j
 ~~~
 
-### 848. usefB_step
+### 1137. usefB_step
 
 Source: proofs/UMUSEF1.lean:123 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6910,7 +9248,7 @@ Source: proofs/UMUSEF1.lean:123 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_step (n : ℕ) (a : ℝ) (g : ℕ → ℝ) : ∑ j ∈ range (n + 1 + 1), usefB (n + 1) a j * g j = (1 - a) * ∑ j ∈ range (n + 1), usefB n a j * g j + a * ∑ j ∈ range (n + 1), usefB n a j * g (j + 1)
 ~~~
 
-### 849. usefB_m0
+### 1138. usefB_m0
 
 Source: proofs/UMUSEF1.lean:154 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6918,7 +9256,7 @@ Source: proofs/UMUSEF1.lean:154 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_m0 (a : ℝ) : ∀ n : ℕ, ∑ j ∈ range (n + 1), usefB n a j = 1
 ~~~
 
-### 850. usefB_m1
+### 1139. usefB_m1
 
 Source: proofs/UMUSEF1.lean:164 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6926,7 +9264,7 @@ Source: proofs/UMUSEF1.lean:164 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_m1 (a : ℝ) : ∀ n : ℕ, ∑ j ∈ range (n + 1), usefB n a j * (j : ℝ) = n * a
 ~~~
 
-### 851. usefB_m2
+### 1140. usefB_m2
 
 Source: proofs/UMUSEF1.lean:181 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6934,7 +9272,7 @@ Source: proofs/UMUSEF1.lean:181 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_m2 (a : ℝ) : ∀ n : ℕ, ∑ j ∈ range (n + 1), usefB n a j * (j : ℝ) ^ 2 = n * a * (1 - a) + (n * a) ^ 2
 ~~~
 
-### 852. usefB_var
+### 1141. usefB_var
 
 Source: proofs/UMUSEF1.lean:200 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6942,7 +9280,7 @@ Source: proofs/UMUSEF1.lean:200 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_var (a c : ℝ) (n : ℕ) : ∑ j ∈ range (n + 1), usefB n a j * ((j : ℝ) - c) ^ 2 = n * a * (1 - a) + (n * a - c) ^ 2
 ~~~
 
-### 853. usefB_ext
+### 1142. usefB_ext
 
 Source: proofs/UMUSEF1.lean:210 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6950,7 +9288,7 @@ Source: proofs/UMUSEF1.lean:210 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usefB_ext (n K : ℕ) (a : ℝ) (g : ℕ → ℝ) (hK : n + 1 ≤ K) : ∑ j ∈ range K, usefB n a j * g j = ∑ j ∈ range (n + 1), usefB n a j * g j
 ~~~
 
-### 854. usef_cant_alg
+### 1143. usef_cant_alg
 
 Source: proofs/UMUSEF1.lean:220 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6958,7 +9296,7 @@ Source: proofs/UMUSEF1.lean:220 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usef_cant_alg (d σ W : ℝ) (hd : 0 < d) (hσ : 0 ≤ σ) (hW : 0 ≤ W) (h : ∀ t, 0 ≤ t → (d + t) ^ 2 * W ≤ σ + t ^ 2) : d ^ 2 * W ≤ σ * (1 - W)
 ~~~
 
-### 855. usef_lower
+### 1144. usef_lower
 
 Source: proofs/UMUSEF1.lean:246 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6966,7 +9304,7 @@ Source: proofs/UMUSEF1.lean:246 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usef_lower (n s : ℕ) (a : ℝ) (h0 : 0 ≤ a) (h1 : a ≤ 1) : (max 0 ((n : ℝ) * a - s)) ^ 2 * binCDF n s a ≤ n * a * (1 - a) * (1 - binCDF n s a)
 ~~~
 
-### 856. usef_upper
+### 1145. usef_upper
 
 Source: proofs/UMUSEF1.lean:284 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6974,7 +9312,7 @@ Source: proofs/UMUSEF1.lean:284 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usef_upper (n s : ℕ) (a : ℝ) (h0 : 0 ≤ a) (h1 : a ≤ 1) : (max 0 ((s : ℝ) + 1 - n * a)) ^ 2 * (1 - binCDF n s a) ≤ n * a * (1 - a) * binCDF n s a
 ~~~
 
-### 857. usef_cat_r
+### 1146. usef_cat_r
 
 Source: proofs/UMUSEF1.lean:337 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6982,7 +9320,7 @@ Source: proofs/UMUSEF1.lean:337 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem usef_cat_r {X Z : Type} [Fintype X] [Fintype Z] (Bad : X → Prop) [DecidablePred Bad] (M : X → Z → ℝ) (φ : Z → ℝ) (π : Hist X Z → X → ℝ) (r r' : ℝ) : ∀ n u h, cat Bad M φ π r 0 n u h = cat Bad M φ π r' 0 n u h
 ~~~
 
-### 858. claim
+### 1147. claim
 
 Source: proofs/UMUSEF1.lean:349 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6990,7 +9328,7 @@ Source: proofs/UMUSEF1.lean:349 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem claim : PL_UMUSEF1.Claim
 ~~~
 
-### 859. wM_k
+### 1148. wM_k
 
 Source: proofs/UMUSEF1.lean:486 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -6998,7 +9336,7 @@ Source: proofs/UMUSEF1.lean:486 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem wM_k : IsKernel wM
 ~~~
 
-### 860. wPH_d
+### 1149. wPH_d
 
 Source: proofs/UMUSEF1.lean:494 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -7006,7 +9344,7 @@ Source: proofs/UMUSEF1.lean:494 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem wPH_d : IsDist wPH
 ~~~
 
-### 861. w_supp
+### 1150. w_supp
 
 Source: proofs/UMUSEF1.lean:518 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -7014,7 +9352,7 @@ Source: proofs/UMUSEF1.lean:518 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_supp : ∀ x, wμ x ≠ 0 → ¬ x = true
 ~~~
 
-### 862. w_miss
+### 1151. w_miss
 
 Source: proofs/UMUSEF1.lean:524 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -7022,7 +9360,7 @@ Source: proofs/UMUSEF1.lean:524 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_miss : missRate wM wPH wφ = 9 / 40
 ~~~
 
-### 863. w_flag
+### 1152. w_flag
 
 Source: proofs/UMUSEF1.lean:528 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -7030,7 +9368,7 @@ Source: proofs/UMUSEF1.lean:528 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_flag : flagRate wM wμ wφ = 13 / 40
 ~~~
 
-### 864. w_hs
+### 1153. w_hs
 
 Source: proofs/UMUSEF1.lean:532 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
@@ -7038,7 +9376,7 @@ Source: proofs/UMUSEF1.lean:532 | Family: UNMAPPED | Adversary: UNKNOWN | Status
 theorem w_hs : hs 0 (push wM wμ) (push wM wPH) = 1 / 2
 ~~~
 
-### 865. witness
+### 1154. witness
 
 Source: proofs/UMUSEF1.lean:536 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 

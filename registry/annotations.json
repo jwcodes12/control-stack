@@ -750,5 +750,50 @@
   "status": "PROVED_RECORDED",
   "necessity_witness": "fail_open_timeout_breaks; digest_unchecked_breaks; nonatomic_check_race_breaks; agent_declared_class_breaks",
   "record": "scenarios/SC-25/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC12Persistence.lean::sc12_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-12"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "every creation path registered",
+   "revocation kills listed entities",
+   "admin credential separation"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "registry_bypass_survives; parent_only_revocation_survives; foreign_registration_survives",
+  "record": "scenarios/SC-12/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC18Logging.lean::sc18_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-18"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "ack means durable commit",
+   "release only path",
+   "sink identity authenticated"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "release_before_log_breaks; agent_writable_config_breaks; fail_open_outage_breaks; watchdog_off_silent_release",
+  "record": "scenarios/SC-18/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC23Injection.lean::sc23_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-23"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "truthful provenance",
+   "exact confirmation UI",
+   "executor only path"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "summarizer_drops_taint; paraphrase_confirmation_breaks; no_taint_check_breaks; confirmation_reuse_breaks",
+  "record": "scenarios/SC-23/manifest.json; kernel-checked locally 2026-10-09; model only"
  }
 }

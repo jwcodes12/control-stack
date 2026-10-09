@@ -83,3 +83,16 @@ certificate within the stated mass budget.
 ## Additional x86 virtualization feasibility (no SC-01 execution)
 
 After an unprivileged x86 KVM ioctl was denied, the same host class returned privileged KVM API v12 ([#37881180806](https://github.com/jwcodes12/control-stack/actions/runs/37881180806)), and a paused image-free native x86 QEMU instance reported `query-kvm.enabled=true` ([#37881258339](https://github.com/jwcodes12/control-stack/actions/runs/37881258339)). Thus a new x86 guest build could use accelerated virtualization if provisioned. No extant ARM64 guest workload was run and no side-channel observation obligation was discharged. See [host-port readiness](host-port-readiness.md).
+
+## Completed verification of audit tooling (2026-10-08)
+
+[Run #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) completed **SUCCESS** for all three jobs. It included:
+- Full pinned Lean 4.34.0 `lake build ControlStack`: **3,744 jobs**, and independent replay of SC-01 and SC-13 `claim.lean` files and `HaltLiveness.lean`.
+- Printed theorem axioms for `sc01_case` and `core_bound`: `propext`, `Classical.choice`, `Quot.sound` only; conditional `liveness_if_delivered`: `propext` and `Quot.sound` only.
+- Gateway differential suite: **5 tests PASS** (19,608 + 1,111 enumerated traces); fail-closed VM receiver payload guard: **3 tests PASS**, including injected-field/dynamic-key rejection; original gateway, lifetime-ledger, certifier and scenario metadata controls also passed.
+- ARM host capability: no `/dev/kvm`; unprivileged x64 KVM probe was denied. [Privileged KVM ioctl #37881180806](https://github.com/jwcodes12/control-stack/actions/runs/37881180806) returned API v12, and [paused guest-less x64 QMP smoke #37881258339](https://github.com/jwcodes12/control-stack/actions/runs/37881258339) confirmed `query-kvm.enabled=true`. These are not usefulness or isolation experiments.
+
+No SC-01 task, side-channel trial, VM guest image or frozen receipt was created/changed by these runs.
+
+**Outstanding and not independently settled:** theorem statement/application fidelity requires an external reviewer; Python↔Lean correspondence remains bounded test evidence rather than universal OS-level refinement; SC-01 0.25-second usefulness gate remains failed under original QEMU TCG until an authorized accelerated host with a *new pinned guest config* actually passes it. Receiver-observation completeness/side-channel mass remains unproved even if usefulness later passes.
+

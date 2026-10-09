@@ -102,3 +102,7 @@ Exact original A, B and C source SHAs independently passed `lake build ControlSt
 ## 2026-10-08 — SC-01 source-level runtime gate audits, no protocol change [skip ci]
 
 On a separate work branch, added bounded independent reference-gateway differential checks, two mutation-negative AST sender-to-receiver field guards, read-only ARM64/x86 GitHub hosted KVM feasibility probes and a theorem-statement premise matrix. CI #37880911299 passed the Python and KVM-read-only jobs. Frozen 0.25 s, 64-lifetime VM usefulness gate remains FAILED 0/64 in both conditions and the complete-observation premise is UNRESOLVED. No preregistration/evidence receipt or gateway/guest source was changed. No external reviewer or hardware VM test took place.
+
+## 2026-10-08 — Full read-only proof/transition audit validation PASS [skip ci]
+
+[CI #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) passed 3,744 Lean jobs and kernel axiom replays for SC-01/13 and conditional HALT, 5 gateway finite model tests, 3 static receiver-field mutation controls and original gateway/ledger/certifier tests. GitHub ARM64 host has no KVM; GitHub x64 KVM API v12 and paused native x64 QMP acceleration check passed in privileged read-only infrastructure tests. A new pinned x64 guest port, an approved operational setup, actual 64-lifetime usefulness success, all-observation correspondence and independent statement review have **not** been completed.

@@ -2,7 +2,7 @@
 
 ## SC-01 statement review and runtime-candidate audit (2026-10-08)
 
-Read-only verification [Actions #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) adds 20,719 independently specified bounded Python gateway traces, three fail-closed AST receiver-field checks, ordinary gateway/ledger test replay and VM host-capability inspection. The finite-state checks **do not** establish universal Lean-to-OS refinement or full receiver-observation coverage. They detect modeled transition mismatches and obvious source-level receiver-field regressions.
+Read-only verification [Actions #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) successfully validated 20,719 independently specified bounded Python gateway traces, three fail-closed AST receiver-field checks, ordinary gateway/ledger test replay and VM host-capability inspection. The finite-state checks **do not** establish universal Lean-to-OS refinement or full receiver-observation coverage. They detect modeled transition mismatches and obvious source-level receiver-field regressions.
 
 **Prospective native acceleration:** a privileged x86 runner reported KVM API version 12 in [read-only host check #37881180806](https://github.com/jwcodes12/control-stack/actions/runs/37881180806). A paused image-free x86 QEMU [reported KVM enabled in #37881258339](https://github.com/jwcodes12/control-stack/actions/runs/37881258339). This is a potential **x86 guest port**, not acceleration of the current aarch64 images and not a new usefulness trial. [Port/acceptance plan](reviews/assurance-priorities/host-port-readiness.md).
 

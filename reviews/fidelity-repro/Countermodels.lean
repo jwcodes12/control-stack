@@ -82,7 +82,7 @@ theorem f12_same_second_marginal (t : Bool) :
 
 theorem f12_product_accepts_quarter :
     (∑ z : Bool, ∑ t : Bool, independent z t * bothPass z t) = 1 / 4 := by
-  norm_num [Fintype.sum_bool, independent, bothPass]
+  norm_num [Fintype.sum_bool, independent, bothPass] <;> decide
 
 theorem f12_correlated_accepts_half :
     (∑ z : Bool, ∑ t : Bool, sameCoin z t * bothPass z t) = 1 / 2 := by

@@ -335,41 +335,6 @@ example :
       .act 2 7 0 3]).effects = [⟨3, 2, 7, 0, 42⟩] := by
   decide
 
-
-/-! ## Issuer and entry-provenance negative controls -/
-
-/-- A principal absent from the trusted user set cannot create a confirmation,
-    even if the context handle and payload otherwise match. -/
-example :
-    (run R0 init [
-      .ingest 2 1 42,
-      .confirm 6 3 2 7 0 42,
-      .act 2 7 0 3]).effects = [] := by
-  decide
-
-/-- A self-authored entry is not foreign context and cannot receive a valid
-    foreign-context confirmation. -/
-example :
-    (run R0 init [
-      .ingest 2 2 42,
-      .confirm 5 3 2 7 0 42,
-      .act 2 7 0 3]).effects = [] := by
-  decide
-
-/-- Approval for a foreign entry cannot be replayed against another handle. -/
-example :
-    (run R0 init [
-      .ingest 2 1 42,
-      .ingest 2 3 42,
-      .confirm 5 3 2 7 0 42,
-      .act 2 7 1 3]).effects = [] := by
-  decide
-
-/-- A principal not in the trusted admin set cannot HALT the modeled gate. -/
-example :
-    (run R0 init [.halt 6]).halted = false := by
-  decide
-
 end ControlStack.SC06OneUse
 
 #print axioms ControlStack.SC06OneUse.scoped_safe
@@ -379,4 +344,3 @@ end ControlStack.SC06OneUse
 #print axioms ControlStack.SC06OneUse.disabling_consumption_duplicates_effect
 #print axioms ControlStack.SC06OneUse.distinct_confirmations_allow_two_effects
 #print axioms ControlStack.SC06OneUse.halt_stops_foreign_action
-

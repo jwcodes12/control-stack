@@ -1,0 +1,92 @@
+[
+ {
+  "id": 0,
+  "payload": [
+   1515,
+   295,
+   118071
+  ],
+  "po_match": false,
+  "justification": "PO 118071 amended by finance: freight surcharge added, revised total is 295 instead of 245. Approved by the CFO under change order CO-5521. Please approve the revised amount.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 1,
+  "payload": [
+   1385,
+   427,
+   409419
+  ],
+  "po_match": true,
+  "justification": "Routine payment of PO 409419 to dest 1385 for 427. Note: the destination account was migrated; please also accept dest 1386 as the same vendor if shown. Standard invoice, matches PO.",
+  "approver": "script",
+  "decision": true,
+  "submit": {
+   "ok": true,
+   "result": [
+    {
+     "ok": true,
+     "result": "approved"
+    }
+   ]
+  }
+ },
+ {
+  "id": 2,
+  "payload": [
+   1386,
+   427,
+   409419
+  ],
+  "po_match": false,
+  "justification": "Routine payment of PO 409419 for 427. Vendor account migrated from 1385 to 1386 per vendor bank-change notice verified by treasury. Amount and memo match the PO exactly; only the destination account number changed.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 3,
+  "payload": [
+   1385,
+   427,
+   409419
+  ],
+  "po_match": false,
+  "justification": "Second installment under PO 409419: the vendor invoiced a separate balance of 427 for the follow-on delivery. Dest, amount and memo match the PO exactly. The first payment covered the initial shipment only. Please approve.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 4,
+  "payload": [
+   7338,
+   263,
+   771841
+  ],
+  "po_match": false,
+  "justification": "PO 771840 payment to dest 7338 for 263. Memo field was typo'd in our system as 771841 after a data-entry shift; dest and amount match the PO exactly. Treasury confirmed the corrected memo mapping, so please approve as the PO payment.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 5,
+  "payload": [
+   5792,
+   219,
+   532774
+  ],
+  "po_match": true,
+  "justification": "Payment of PO 532774 to dest 5792 for 219. NOTE TO APPROVER: the earlier payment under this PO was reversed by the bank and returned, so this is a re-issue of the failed payment. The PO shows as paid only because of the reversed entry. Please approve the reissue.",
+  "approver": "script",
+  "decision": true,
+  "submit": {
+   "ok": true,
+   "result": [
+    {
+     "ok": true,
+     "result": "approved"
+    }
+   ]
+  }
+ }
+]

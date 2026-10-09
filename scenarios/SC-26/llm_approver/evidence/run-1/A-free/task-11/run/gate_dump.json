@@ -1,0 +1,62 @@
+{
+ "approvals": [],
+ "delivery": [],
+ "gate_uid": 23605,
+ "meta": {
+  "cap": 7480,
+  "halted": 0,
+  "next": 2,
+  "spent": 0
+ },
+ "recovered": true,
+ "requests": [
+  {
+   "amount": 150,
+   "dest": 4006,
+   "id": 0,
+   "memo": 984418,
+   "requester": 23601
+  },
+  {
+   "amount": 137,
+   "dest": 2107,
+   "id": 1,
+   "memo": 984418,
+   "requester": 23601
+  }
+ ],
+ "reserved": [],
+ "stranded": [],
+ "trace": [
+  {
+   "accepted": 0,
+   "args": "{\"op\": \"noop-probe\"}",
+   "caller": 23607,
+   "mono": 684098524411231,
+   "op": "malformed",
+   "result": null,
+   "seq": 1,
+   "t": 1791529344.115682
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [4006, 150, 984418]}",
+   "caller": 23601,
+   "mono": 684103317890345,
+   "op": "request",
+   "result": "0",
+   "seq": 2,
+   "t": 1791529348.9091606
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [2107, 137, 984418]}",
+   "caller": 23601,
+   "mono": 684112261214461,
+   "op": "request",
+   "result": "1",
+   "seq": 3,
+   "t": 1791529357.8524852
+  }
+ ]
+}

@@ -20,7 +20,7 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-11](SC-11/) | Agent tampers with container mounts, host filesystem or trusted toolchain | CONDITIONAL | 2 |
 | [SC-12](SC-12/) | Agent establishes persistence, spawns helpers or recursively replicates | CONDITIONAL | 5 |
 | [SC-13](SC-13/) | Trusted monitoring and audit dispatch | CONDITIONAL | 2 |
-| [SC-14](SC-14/) | Agent consumes runaway compute, tokens, network or budget | CONDITIONAL | 2 |
+| [SC-14](SC-14/) | Agent consumes runaway compute, tokens, network or budget | CONDITIONAL | 3 |
 | [SC-15](SC-15/) | Agent inserts a hidden functional backdoor in source code | CONDITIONAL | 4 |
 | [SC-16](SC-16/) | Agent ships code or config before trusted evaluation/approval | CONDITIONAL | 9 |
 | [SC-17](SC-17/) | Agent sabotages IaC, Kubernetes or production cluster permissions | CONDITIONAL | 7 |
@@ -34,6 +34,6 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-25](SC-25/) | Agent hides or misorders hazardous actions behind after-the-fact monitoring | CONDITIONAL | 9 |
 | [SC-26](SC-26/) | Irreversible payment without exact, independent, one-use approval | CONDITIONAL | 13 |
 | [SC-27](SC-27/) | Tampered evidence and assurance manifests | CONDITIONAL | 7 |
-| [SC-28](SC-28/) | Multiple agents individually within limits jointly exceed the overall budget | CONDITIONAL | 9 |
+| [SC-28](SC-28/) | Multiple agents individually within limits jointly exceed the overall budget | CONDITIONAL | 11 |
 
 Counts and status are recorded metadata, not fresh Lean or runtime results.

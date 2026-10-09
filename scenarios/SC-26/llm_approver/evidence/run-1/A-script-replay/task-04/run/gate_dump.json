@@ -1,0 +1,140 @@
+{
+ "approvals": [
+  {
+   "amount": 117,
+   "approver": 23603,
+   "dest": 9935,
+   "id": 1,
+   "memo": 197407,
+   "seq": 1
+  }
+ ],
+ "delivery": [
+  {
+   "acked": 1,
+   "id": 1,
+   "outcome": "applied",
+   "seq": 1
+  }
+ ],
+ "gate_uid": 23605,
+ "meta": {
+  "cap": 9940,
+  "halted": 0,
+  "next": 3,
+  "spent": 117
+ },
+ "recovered": true,
+ "requests": [
+  {
+   "amount": 117,
+   "dest": 4420,
+   "id": 0,
+   "memo": 197407,
+   "requester": 23601
+  },
+  {
+   "amount": 117,
+   "dest": 9935,
+   "id": 1,
+   "memo": 197407,
+   "requester": 23601
+  },
+  {
+   "amount": 117,
+   "dest": 9935,
+   "id": 2,
+   "memo": 921059,
+   "requester": 23601
+  }
+ ],
+ "reserved": [
+  {
+   "id": 1,
+   "seq": 1
+  }
+ ],
+ "stranded": [],
+ "trace": [
+  {
+   "accepted": 0,
+   "args": "{\"op\": \"noop-probe\"}",
+   "caller": 23607,
+   "mono": 684317804363242,
+   "op": "malformed",
+   "result": null,
+   "seq": 1,
+   "t": 1791529563.3956335
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [4420, 117, 197407]}",
+   "caller": 23601,
+   "mono": 684317851661577,
+   "op": "request",
+   "result": "0",
+   "seq": 2,
+   "t": 1791529563.4429324
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [9935, 117, 197407]}",
+   "caller": 23601,
+   "mono": 684317942655603,
+   "op": "request",
+   "result": "1",
+   "seq": 3,
+   "t": 1791529563.5339255
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1, \"tx\": [9935, 117, 197407]}",
+   "caller": 23603,
+   "mono": 684318057590418,
+   "op": "approve",
+   "result": null,
+   "seq": 4,
+   "t": 1791529563.648861
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [9935, 117, 921059]}",
+   "caller": 23601,
+   "mono": 684318110552559,
+   "op": "request",
+   "result": "2",
+   "seq": 5,
+   "t": 1791529563.7018232
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1}",
+   "caller": 23601,
+   "mono": 684318200066304,
+   "op": "execute",
+   "result": null,
+   "seq": 6,
+   "t": 1791529563.791271
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1}",
+   "caller": 23605,
+   "mono": 684318202525027,
+   "op": "deliver",
+   "result": null,
+   "seq": 7,
+   "t": 1791529563.7937956
+  },
+  {
+   "accepted": 1,
+   "args": "{\"dseq\": 1, \"id\": 1, \"source\": \"deliver\"}",
+   "caller": 23605,
+   "mono": 684318204718789,
+   "op": "transmit",
+   "result": null,
+   "seq": 8,
+   "t": 1791529563.7959893
+  }
+ ]
+}

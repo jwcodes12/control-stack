@@ -16,6 +16,7 @@ _Generated from manifest.json._
 
 **Model files:**
 
+- `ControlStack/Core/AntiRollback.lean`
 - `ControlStack/Scenarios/AuthInstancesA.lean`
 - `ControlStack/Scenarios/SC28Budget.lean`
 - `ControlStack/Scenarios/SC28Liveness.lean`

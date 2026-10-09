@@ -5,7 +5,7 @@
 **CONDITIONAL.** Agent consumes runaway compute, tokens, network or budget
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
-- Lean results: 2 theorem reference(s), 0 of them necessity witnesses.
+- Lean results: 3 theorem reference(s), 0 of them necessity witnesses.
 - Runtime evidence: preregistered reference run(s) `PREREG-SC14-MULTIRES-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
@@ -22,6 +22,7 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 |---|---|---|
 | `sc14_safe` | `ControlStack/Scenarios/SC14Runaway.lean` | SC-14 safety. After any legal trace from `init`, cumulative actual usage of every resource is within its cap, every window's actual usage of every resource is within its rate limit, and every step ran before the expiry in force. |
 | `halt_freezes` | `ControlStack/Scenarios/SC14Runaway.lean` | Halt freezes work: once halted, no trace adds usage. |
+| `rollback_transfer` | `ControlStack/Core/AntiRollback.lean` | Transfer under rollback. For any gate with a spec, after ANY interleaving of writes, commits, crashes and restarts, and rollbacks of the store to any backup: the anchored state is the plain run of the committed ops, the released effects... |
 
 ### Necessity witnesses
 
@@ -61,7 +62,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 **Evidence NOT_RUN:**
 
 - `credential_separation`: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `anti_rollback`: Ledger is never rolled back. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `anti_rollback`: Ledger is never rolled back. Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 ## What does NOT hold
 
@@ -69,7 +70,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 - Scope (manifest): Lean model only (see SC-28 for lineage and the cgroup CPU/pids evidence). Not: GPU/token metering in deployment. Runtime: single-host preregistered reference run (scenarios/SC-14/evidence/run-1), benign workloads, cgroup v2.
 - Not established as applying to a real deployment: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1) (`credential_separation`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids on one host) (`trusted_meter`; applicability UNRESOLVED).
-- Not established as applying to a real deployment: Ledger is never rolled back (`anti_rollback`; applicability UNRESOLVED).
+- Not established as applying to a real deployment: Ledger is never rolled back. Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust (`anti_rollback`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Honest jobs fit their budgets (`honest_usefulness`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).
 - Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-14/evidence/run-1).

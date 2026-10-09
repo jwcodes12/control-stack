@@ -16,4 +16,5 @@ _Generated from manifest.json._
 
 **Model files:**
 
+- `ControlStack/Core/AntiRollback.lean`
 - `ControlStack/Scenarios/SC14Runaway.lean`

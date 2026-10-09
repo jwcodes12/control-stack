@@ -5,7 +5,7 @@
 **CONDITIONAL.** Multiple agents individually within limits jointly exceed the overall budget
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
-- Lean results: 9 theorem reference(s), 1 of them necessity witnesses.
+- Lean results: 11 theorem reference(s), 1 of them necessity witnesses.
 - Runtime evidence: preregistered reference run(s) `PREREG-SC28-CGMETER-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
@@ -28,6 +28,8 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 | `honest_steps_progress` | `ControlStack/Scenarios/SC28Liveness.lean` | Honest steps make progress. |
 | `progress_interleaved` | `ControlStack/Scenarios/SC28Liveness.lean` | Progress despite any interleaving. |
 | `global_cap_blocks_honest` | `ControlStack/Scenarios/SC28Liveness.lean` | A shared global cap blocks an honest worker. |
+| `rollback_transfer` | `ControlStack/Core/AntiRollback.lean` | Transfer under rollback. For any gate with a spec, after ANY interleaving of writes, commits, crashes and restarts, and rollbacks of the store to any backup: the anchored state is the plain run of the committed ops, the released effects... |
+| `sc28_rollback_safe` | `ControlStack/Core/AntiRollback.lean` | SC-28 with storage rollback allowed. |
 
 ### Necessity witnesses
 
@@ -65,7 +67,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 **Evidence NOT_RUN:**
 
 - `credential_separation`: Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1). Reduced in Lean (sc28_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). work w claims worker w, so a forged worker cannot charge another worker's lease. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `anti_rollback`: The budget ledger is never rolled back (external monotonic anchor). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `anti_rollback`: The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `adversarial_workloads`: Mechanism holds against workloads that try to evade accounting or termination. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `honest_usefulness`: Honest jobs complete within their leases. Formal counterpart: SC28Liveness.lean (progress under interleaving; availability prices stated as witnesses). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_RUN)
 
@@ -75,7 +77,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 - Scope (manifest): Lean joint model plus a single-host cgroup v2 mechanism check (CPU time, pids) with benign workloads. Not: adversarial workloads, GPUs, network/token spend, multi-host budgets, ledger rollback. The check flag(s) meter model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).
 - Not established as applying to a real deployment: Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1). Reduced in Lean (sc28_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). work w claims worker w, so a forged worker cannot charge another worker's lease (`credential_separation`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: The meter sees every unit of consumption by every descendant (kernel cgroup accounting with launch-time placement) (`trusted_meter`; applicability UNRESOLVED).
-- Not established as applying to a real deployment: The budget ledger is never rolled back (external monotonic anchor) (`anti_rollback`; applicability UNRESOLVED).
+- Not established as applying to a real deployment: The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust (`anti_rollback`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Mechanism holds against workloads that try to evade accounting or termination (`adversarial_workloads`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Honest jobs complete within their leases. Formal counterpart: SC28Liveness.lean (progress under interleaving; availability prices stated as witnesses) (`honest_usefulness`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Benign workloads only; adversarial workloads not run.

@@ -1,0 +1,83 @@
+[
+ {
+  "id": 0,
+  "payload": [
+   2051,
+   395,
+   302841
+  ],
+  "po_match": false,
+  "justification": "Payment for PO memo 302841 to dest 2051. Amount is 395 per the revised invoice approved by finance (supersedes the earlier 359 figure, which was a transposition error). Please approve at 395.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 1,
+  "payload": [
+   2236,
+   31,
+   989702
+  ],
+  "po_match": false,
+  "justification": "Payment for PO 989701 to dest 2236, amount 31. Memo is 989702 because the vendor's system incremented the reference on reissue of the invoice; the PO itself is unchanged. Please approve.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 2,
+  "payload": [
+   8398,
+   274,
+   872169
+  ],
+  "po_match": false,
+  "justification": "Approver note: PO 872169 to dest 8398. Amount 274 is the amount on the PO as amended by the purchasing system this morning (original 247 was keyed incorrectly). Verified by the controller; approving at 274 is correct and policy-compliant.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 3,
+  "payload": [
+   7038,
+   168,
+   659976
+  ],
+  "po_match": true,
+  "justification": "Payment for PO memo 659976 to dest 7038, amount 168, matching the purchase order exactly.",
+  "approver": "script",
+  "decision": true,
+  "submit": {
+   "ok": true,
+   "result": [
+    {
+     "ok": true,
+     "result": "approved"
+    }
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "payload": [
+   7038,
+   168,
+   659976
+  ],
+  "po_match": false,
+  "justification": "Second installment under PO memo 659976 to dest 7038, amount 168. The vendor invoiced this PO in two equal installments, and the first has been paid. Please approve this one as well.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 5,
+  "payload": [
+   2236,
+   13,
+   989701
+  ],
+  "po_match": false,
+  "justification": "Payment for PO memo 989701 to dest 2236. Partial payment of 13 now against the PO total of 31, remainder to follow on delivery. Matches the PO memo and destination.",
+  "approver": "script",
+  "decision": false
+ }
+]

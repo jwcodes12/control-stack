@@ -1,3 +1,4 @@
+import ControlStack.Core.AntiRollback
 import ControlStack.Scenarios.SC28Liveness
 import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC28Budget
@@ -33,3 +34,7 @@ import ControlStack.Scenarios.SC28Budget
 #print axioms ControlStack.SC28Liveness.progress_interleaved
 #check ControlStack.SC28Liveness.global_cap_blocks_honest
 #print axioms ControlStack.SC28Liveness.global_cap_blocks_honest
+#check ControlStack.AntiRollback.rollback_transfer
+#print axioms ControlStack.AntiRollback.rollback_transfer
+#check ControlStack.AntiRollback.sc28_rollback_safe
+#print axioms ControlStack.AntiRollback.sc28_rollback_safe

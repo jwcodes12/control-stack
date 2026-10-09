@@ -23,6 +23,12 @@
       "path": "ControlStack/Scenarios/SC14Runaway.lean",
       "sha256": "5b3828bb3dca7035a2c0d19276b80fc53b4c551d4318f57c20dbd1d1a6609d50",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AntiRollback.rollback_transfer",
+      "path": "ControlStack/Core/AntiRollback.lean",
+      "sha256": "3efc33a69338d07b822a9a943c6becb15b3f9f2190e6b755091a10121dc51c8d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -58,8 +64,8 @@
     },
     {
       "id": "anti_rollback",
-      "text": "Ledger is never rolled back.",
-      "proof": "NOT_PROVED",
+      "text": "Ledger is never rolled back. Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust.",
+      "proof": "THEOREM_VERIFIED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"

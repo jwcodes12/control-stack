@@ -66,6 +66,18 @@
       "path": "ControlStack/Scenarios/SC28Liveness.lean",
       "sha256": "e9fdb60e044cf2d18c99c61eab1112cb6dfa701b2fa33c0f8003d7663570ae0d",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AntiRollback.rollback_transfer",
+      "path": "ControlStack/Core/AntiRollback.lean",
+      "sha256": "3efc33a69338d07b822a9a943c6becb15b3f9f2190e6b755091a10121dc51c8d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.AntiRollback.sc28_rollback_safe",
+      "path": "ControlStack/Core/AntiRollback.lean",
+      "sha256": "3efc33a69338d07b822a9a943c6becb15b3f9f2190e6b755091a10121dc51c8d",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -101,8 +113,8 @@
     },
     {
       "id": "anti_rollback",
-      "text": "The budget ledger is never rolled back (external monotonic anchor).",
-      "proof": "NOT_PROVED",
+      "text": "The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust.",
+      "proof": "THEOREM_VERIFIED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"

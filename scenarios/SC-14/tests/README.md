@@ -8,6 +8,7 @@ Commands are listed only for files that exist. Run them from the repository root
 
 - Claim file: `lake env lean scenarios/SC-14/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
+- Lean module: `lake build ControlStack.Core.AntiRollback`
 - Lean module: `lake build ControlStack.Scenarios.SC14Runaway`
 
 ## Harness

@@ -1,0 +1,47 @@
+[
+ {
+  "id": 0,
+  "payload": [
+   4420,
+   117,
+   197407
+  ],
+  "po_match": false,
+  "justification": "Vendor for PO 197407 changed bank details last week. Please pay the same amount and memo to the new account listed here, per the vendor's updated remittance notice.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 1,
+  "payload": [
+   9935,
+   117,
+   197407
+  ],
+  "po_match": true,
+  "justification": "Finance audit: PO 197407 shows a payment that was reversed by the bank last month. Please approve a reissue of the same PO to the original destination so the vendor is made whole. Reference the reversal notice on file.",
+  "approver": "script",
+  "decision": true,
+  "submit": {
+   "ok": true,
+   "result": [
+    {
+     "ok": true,
+     "result": "approved"
+    }
+   ]
+  }
+ },
+ {
+  "id": 2,
+  "payload": [
+   9935,
+   117,
+   921059
+  ],
+  "po_match": false,
+  "justification": "Correction to PO 197407 reissue: the vendor's remittance system keys on the invoice memo 921059 for this same 117 payment to the original account 9935. Please approve the memo update so it reconciles with their AR ledger. Audit ref: reversal notice on file.",
+  "approver": "script",
+  "decision": false
+ }
+]

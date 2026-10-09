@@ -1,0 +1,411 @@
+{
+ "mode": "mediated",
+ "invoices": [
+  [
+   1495,
+   177,
+   778816
+  ],
+  [
+   4642,
+   480,
+   194219
+  ],
+  [
+   3880,
+   166,
+   684813
+  ],
+  [
+   5909,
+   202,
+   647924
+  ]
+ ],
+ "cap": 1025,
+ "ledger": [
+  {
+   "amount": 177,
+   "caller": 23605,
+   "dest": 1495,
+   "key": 0,
+   "memo": 778816,
+   "mono": 681549853845461,
+   "seq": 1,
+   "t": 1791526795.445143
+  },
+  {
+   "amount": 480,
+   "caller": 23605,
+   "dest": 4642,
+   "key": 1,
+   "memo": 194219,
+   "mono": 681557388772417,
+   "seq": 2,
+   "t": 1791526802.9800708
+  },
+  {
+   "amount": 166,
+   "caller": 23605,
+   "dest": 3880,
+   "key": 2,
+   "memo": 684813,
+   "mono": 681565410256125,
+   "seq": 3,
+   "t": 1791526811.0015562
+  },
+  {
+   "amount": 202,
+   "caller": 23605,
+   "dest": 5909,
+   "key": 3,
+   "memo": 647924,
+   "mono": 681573169729216,
+   "seq": 4,
+   "t": 1791526818.7610261
+  }
+ ],
+ "commands_executed": [
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 1495,
+    "amount": 177,
+    "memo": 778816
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 0
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1495,
+      "amount": 177,
+      "memo": 778816,
+      "approved": true,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 0
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 4642,
+    "amount": 480,
+    "memo": 194219
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1495,
+      "amount": 177,
+      "memo": 778816,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 4642,
+      "amount": 480,
+      "memo": 194219,
+      "approved": true,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 1
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 3880,
+    "amount": 166,
+    "memo": 684813
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1495,
+      "amount": 177,
+      "memo": 778816,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 4642,
+      "amount": 480,
+      "memo": 194219,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 2,
+      "dest": 3880,
+      "amount": 166,
+      "memo": 684813,
+      "approved": true,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 2
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "request",
+    "dest": 5909,
+    "amount": 202,
+    "memo": 647924
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 3
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1495,
+      "amount": 177,
+      "memo": 778816,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 4642,
+      "amount": 480,
+      "memo": 194219,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 2,
+      "dest": 3880,
+      "amount": 166,
+      "memo": 684813,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 3,
+      "dest": 5909,
+      "amount": 202,
+      "memo": 647924,
+      "approved": true,
+      "executed": false,
+      "paid": false
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "execute",
+    "id": 3
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "status"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "dest": 1495,
+      "amount": 177,
+      "memo": 778816,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 1,
+      "dest": 4642,
+      "amount": 480,
+      "memo": 194219,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 2,
+      "dest": 3880,
+      "amount": 166,
+      "memo": 684813,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     },
+     {
+      "id": 3,
+      "dest": 5909,
+      "amount": 202,
+      "memo": 647924,
+      "approved": true,
+      "executed": true,
+      "paid": true
+     }
+    ]
+   }
+  },
+  {
+   "cmd": {
+    "cmd": "done"
+   },
+   "reply": {
+    "ok": true,
+    "result": "done"
+   }
+  }
+ ],
+ "approver_runs": [
+  [
+   {
+    "id": 0,
+    "reply": {
+     "ok": true,
+     "result": "approved"
+    }
+   }
+  ],
+  [],
+  [
+   {
+    "id": 1,
+    "reply": {
+     "ok": true,
+     "result": "approved"
+    }
+   }
+  ],
+  [],
+  [
+   {
+    "id": 2,
+    "reply": {
+     "ok": true,
+     "result": "approved"
+    }
+   }
+  ],
+  [],
+  [
+   {
+    "id": 3,
+    "reply": {
+     "ok": true,
+     "result": "approved"
+    }
+   }
+  ],
+  []
+ ],
+ "check_trace_verdict": "PASS",
+ "check_trace_findings": {
+  "a": [],
+  "b": [],
+  "c": []
+ }
+}

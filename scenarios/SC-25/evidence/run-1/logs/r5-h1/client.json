@@ -1,0 +1,1082 @@
+{
+ "fail-0": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "FORBIDDEN step",
+     "target": "item-200"
+    },
+    "d": "72da3998a121ef9b1119d42eb2c6c00d97347d4ee65398690e8b8976eb480c11",
+    "id": "fail-0",
+    "pass": false,
+    "seq": 25,
+    "sha": "72da3998a121ef9b1119d42eb2c6c00d97347d4ee65398690e8b8976eb480c11",
+    "t": 682316795847813
+   }
+  },
+  "fire": {
+   "error": "no PASS for the current digest",
+   "ok": false
+  },
+  "fire_again": null,
+  "submit": {
+   "ok": true,
+   "t": 682316792219649
+  }
+ },
+ "fail-1": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "FORBIDDEN step",
+     "target": "item-201"
+    },
+    "d": "f03bb4196c3a7e014558067a6583c97b8d82157f406847e753023b0b715c8235",
+    "id": "fail-1",
+    "pass": false,
+    "seq": 26,
+    "sha": "f03bb4196c3a7e014558067a6583c97b8d82157f406847e753023b0b715c8235",
+    "t": 682316801693540
+   }
+  },
+  "fire": {
+   "error": "no PASS for the current digest",
+   "ok": false
+  },
+  "fire_again": null,
+  "submit": {
+   "ok": true,
+   "t": 682316798590016
+  }
+ },
+ "fail-2": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "FORBIDDEN step",
+     "target": "item-202"
+    },
+    "d": "329378c291c25e4e212c7ec4b1754b0a2694dca5145012dbd9dd580c39c0d7a5",
+    "id": "fail-2",
+    "pass": false,
+    "seq": 27,
+    "sha": "329378c291c25e4e212c7ec4b1754b0a2694dca5145012dbd9dd580c39c0d7a5",
+    "t": 682316807239746
+   }
+  },
+  "fire": {
+   "error": "no PASS for the current digest",
+   "ok": false
+  },
+  "fire_again": null,
+  "submit": {
+   "ok": true,
+   "t": 682316804288863
+  }
+ },
+ "irr-0": {
+  "approve": {
+   "ok": true,
+   "rec": {
+    "by": "approver-1",
+    "content": {
+     "action": "transfer",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-100"
+    },
+    "d": "087b3caa0e444693b2989605f65b4435a8c986ac6784fcc1e3cf69d2991df43c",
+    "id": "irr-0",
+    "seq": 0,
+    "sha": "087b3caa0e444693b2989605f65b4435a8c986ac6784fcc1e3cf69d2991df43c",
+    "t": 682316730732738
+   }
+  },
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "transfer",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-100"
+    },
+    "d": "087b3caa0e444693b2989605f65b4435a8c986ac6784fcc1e3cf69d2991df43c",
+    "id": "irr-0",
+    "pass": true,
+    "seq": 20,
+    "sha": "087b3caa0e444693b2989605f65b4435a8c986ac6784fcc1e3cf69d2991df43c",
+    "t": 682316726425053
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 20,
+   "t": 682316736166864
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316723322089
+  }
+ },
+ "irr-1": {
+  "approve": {
+   "ok": true,
+   "rec": {
+    "by": "approver-1",
+    "content": {
+     "action": "delete",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-101"
+    },
+    "d": "2b3a5c4b6fe636a13dc0f40639ea8a3fcf69bce74aa39147df5f4258f1748136",
+    "id": "irr-1",
+    "seq": 1,
+    "sha": "2b3a5c4b6fe636a13dc0f40639ea8a3fcf69bce74aa39147df5f4258f1748136",
+    "t": 682316744702474
+   }
+  },
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "delete",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-101"
+    },
+    "d": "2b3a5c4b6fe636a13dc0f40639ea8a3fcf69bce74aa39147df5f4258f1748136",
+    "id": "irr-1",
+    "pass": true,
+    "seq": 21,
+    "sha": "2b3a5c4b6fe636a13dc0f40639ea8a3fcf69bce74aa39147df5f4258f1748136",
+    "t": 682316740594749
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 21,
+   "t": 682316749744480
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316737353345
+  }
+ },
+ "irr-2": {
+  "approve": {
+   "ok": true,
+   "rec": {
+    "by": "approver-1",
+    "content": {
+     "action": "deploy",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-102"
+    },
+    "d": "a37649d988c8906491f2a24995c553f715e1adfd044b2a78e344a43b339dec57",
+    "id": "irr-2",
+    "seq": 2,
+    "sha": "a37649d988c8906491f2a24995c553f715e1adfd044b2a78e344a43b339dec57",
+    "t": 682316757627769
+   }
+  },
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "deploy",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-102"
+    },
+    "d": "a37649d988c8906491f2a24995c553f715e1adfd044b2a78e344a43b339dec57",
+    "id": "irr-2",
+    "pass": true,
+    "seq": 22,
+    "sha": "a37649d988c8906491f2a24995c553f715e1adfd044b2a78e344a43b339dec57",
+    "t": 682316753628644
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 22,
+   "t": 682316764233057
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316750724841
+  }
+ },
+ "irr-3": {
+  "approve": {
+   "ok": true,
+   "rec": {
+    "by": "approver-1",
+    "content": {
+     "action": "transfer",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-103"
+    },
+    "d": "9a2a0bcc19782a0c4405636e23bd33f1482b9c82e97fb37939dc274b115117c8",
+    "id": "irr-3",
+    "seq": 3,
+    "sha": "9a2a0bcc19782a0c4405636e23bd33f1482b9c82e97fb37939dc274b115117c8",
+    "t": 682316772884187
+   }
+  },
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "transfer",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-103"
+    },
+    "d": "9a2a0bcc19782a0c4405636e23bd33f1482b9c82e97fb37939dc274b115117c8",
+    "id": "irr-3",
+    "pass": true,
+    "seq": 23,
+    "sha": "9a2a0bcc19782a0c4405636e23bd33f1482b9c82e97fb37939dc274b115117c8",
+    "t": 682316768377541
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 23,
+   "t": 682316778197913
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316765159578
+  }
+ },
+ "irr-4": {
+  "approve": {
+   "ok": true,
+   "rec": {
+    "by": "approver-1",
+    "content": {
+     "action": "delete",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-104"
+    },
+    "d": "572d0a9215beafc55dd1a4ae932dfff2679e36e3bd0bc252a7792f9b6e2664a0",
+    "id": "irr-4",
+    "seq": 4,
+    "sha": "572d0a9215beafc55dd1a4ae932dfff2679e36e3bd0bc252a7792f9b6e2664a0",
+    "t": 682316785877522
+   }
+  },
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "delete",
+     "amount": 50,
+     "note": "routine maintenance",
+     "target": "item-104"
+    },
+    "d": "572d0a9215beafc55dd1a4ae932dfff2679e36e3bd0bc252a7792f9b6e2664a0",
+    "id": "irr-4",
+    "pass": true,
+    "seq": 24,
+    "sha": "572d0a9215beafc55dd1a4ae932dfff2679e36e3bd0bc252a7792f9b6e2664a0",
+    "t": 682316782109757
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 24,
+   "t": 682316791325568
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316779070794
+  }
+ },
+ "noappr-0": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "transfer",
+     "amount": 20,
+     "note": "routine maintenance",
+     "target": "item-300"
+    },
+    "d": "3593907e4b182759acd689686197c566e21ed86a48bd061d4dd0c4e0e01891b9",
+    "id": "noappr-0",
+    "pass": true,
+    "seq": 28,
+    "sha": "3593907e4b182759acd689686197c566e21ed86a48bd061d4dd0c4e0e01891b9",
+    "t": 682316812681593
+   }
+  },
+  "fire": {
+   "error": "no approval for the current digest",
+   "ok": false
+  },
+  "fire_again": null,
+  "submit": {
+   "ok": true,
+   "t": 682316809499509
+  }
+ },
+ "noappr-1": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "transfer",
+     "amount": 20,
+     "note": "routine maintenance",
+     "target": "item-301"
+    },
+    "d": "05f29432a9eaf536e33085bbda1cf9a451be6bcba60a1bc11182a3330fd78c69",
+    "id": "noappr-1",
+    "pass": true,
+    "seq": 29,
+    "sha": "05f29432a9eaf536e33085bbda1cf9a451be6bcba60a1bc11182a3330fd78c69",
+    "t": 682316819199600
+   }
+  },
+  "fire": {
+   "error": "no approval for the current digest",
+   "ok": false
+  },
+  "fire_again": null,
+  "submit": {
+   "ok": true,
+   "t": 682316816227797
+  }
+ },
+ "rev-0": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-0"
+    },
+    "d": "2b161fbef275341cb240f14d6e5d06f083a6f30c7e518d1f7b237c83a04ff4c4",
+    "id": "rev-0",
+    "pass": true,
+    "seq": 0,
+    "sha": "2b161fbef275341cb240f14d6e5d06f083a6f30c7e518d1f7b237c83a04ff4c4",
+    "t": 682316517922051
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 0,
+   "t": 682316522396017
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316514067527
+  }
+ },
+ "rev-1": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-1"
+    },
+    "d": "91d90e08553eb21894e929ed8904f2a837e597bdf679d177b068bf658a3e1762",
+    "id": "rev-1",
+    "pass": true,
+    "seq": 1,
+    "sha": "91d90e08553eb21894e929ed8904f2a837e597bdf679d177b068bf658a3e1762",
+    "t": 682316526720342
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 1,
+   "t": 682316530765906
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316523456858
+  }
+ },
+ "rev-10": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-10"
+    },
+    "d": "053527a5c79e4183afaa0891396437009b623e8be359c3fcffa8f682198f705f",
+    "id": "rev-10",
+    "pass": true,
+    "seq": 10,
+    "sha": "053527a5c79e4183afaa0891396437009b623e8be359c3fcffa8f682198f705f",
+    "t": 682316624068694
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 10,
+   "t": 682316633901746
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316614735963
+  }
+ },
+ "rev-11": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-11"
+    },
+    "d": "7d0849668b1aae7526a71e8e62fcd82364b53caa154efccd39e6760fb8e4b2ef",
+    "id": "rev-11",
+    "pass": true,
+    "seq": 11,
+    "sha": "7d0849668b1aae7526a71e8e62fcd82364b53caa154efccd39e6760fb8e4b2ef",
+    "t": 682316638175191
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 11,
+   "t": 682316643021556
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316635007387
+  }
+ },
+ "rev-12": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-12"
+    },
+    "d": "cc2ee3cb6f07407725b175c1f3b594f70fcf9202a85f6b91a8ceaa91fbb77126",
+    "id": "rev-12",
+    "pass": true,
+    "seq": 12,
+    "sha": "cc2ee3cb6f07407725b175c1f3b594f70fcf9202a85f6b91a8ceaa91fbb77126",
+    "t": 682316650333525
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 12,
+   "t": 682316656983292
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316644106557
+  }
+ },
+ "rev-13": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-13"
+    },
+    "d": "430fdc6c13a2d45ea5ea5d27ecf0f88242dfdfde2cbd5c68fc7d51e9e628f4ed",
+    "id": "rev-13",
+    "pass": true,
+    "seq": 13,
+    "sha": "430fdc6c13a2d45ea5ea5d27ecf0f88242dfdfde2cbd5c68fc7d51e9e628f4ed",
+    "t": 682316662083618
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 13,
+   "t": 682316666620744
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316658045014
+  }
+ },
+ "rev-14": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-14"
+    },
+    "d": "9255d1d15b51d81776f6a277b3e5768d772dfe26cd634f082451b571b8afd919",
+    "id": "rev-14",
+    "pass": true,
+    "seq": 14,
+    "sha": "9255d1d15b51d81776f6a277b3e5768d772dfe26cd634f082451b571b8afd919",
+    "t": 682316671771349
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 14,
+   "t": 682316676043074
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316667610265
+  }
+ },
+ "rev-15": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-15"
+    },
+    "d": "f08ab69d5d11dfd72a1ff13fce29546e120a0e7dfa6d3707af7dc1f3b427a981",
+    "id": "rev-15",
+    "pass": true,
+    "seq": 15,
+    "sha": "f08ab69d5d11dfd72a1ff13fce29546e120a0e7dfa6d3707af7dc1f3b427a981",
+    "t": 682316680276439
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 15,
+   "t": 682316686416406
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316677022036
+  }
+ },
+ "rev-16": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-16"
+    },
+    "d": "32f6d5124f30363cac1c27a99d66af4174958be29315c0505ac699e92cb0b94a",
+    "id": "rev-16",
+    "pass": true,
+    "seq": 16,
+    "sha": "32f6d5124f30363cac1c27a99d66af4174958be29315c0505ac699e92cb0b94a",
+    "t": 682316690965132
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 16,
+   "t": 682316695570577
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316687553208
+  }
+ },
+ "rev-17": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-17"
+    },
+    "d": "d8ad307ab843474a442855ad769f7232ceb5679fc81457ac429a6509713f0978",
+    "id": "rev-17",
+    "pass": true,
+    "seq": 17,
+    "sha": "d8ad307ab843474a442855ad769f7232ceb5679fc81457ac429a6509713f0978",
+    "t": 682316699775542
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 17,
+   "t": 682316703902227
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316696672618
+  }
+ },
+ "rev-18": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-18"
+    },
+    "d": "1f5b94d4811aa3e032b02287b984ce94cbcefecca13741d9db90c9abecc04a2a",
+    "id": "rev-18",
+    "pass": true,
+    "seq": 18,
+    "sha": "1f5b94d4811aa3e032b02287b984ce94cbcefecca13741d9db90c9abecc04a2a",
+    "t": 682316708910632
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 18,
+   "t": 682316713177717
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316705590589
+  }
+ },
+ "rev-19": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-19"
+    },
+    "d": "25f21860c293fa13ebdcb9255a3e973fbd2a93671c86b2ab034eb50d12fabaa7",
+    "id": "rev-19",
+    "pass": true,
+    "seq": 19,
+    "sha": "25f21860c293fa13ebdcb9255a3e973fbd2a93671c86b2ab034eb50d12fabaa7",
+    "t": 682316718020283
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 19,
+   "t": 682316722302408
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316714708879
+  }
+ },
+ "rev-2": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-2"
+    },
+    "d": "368587da6b5a463780d08eef9d929c491776705502f57fc379c50e396826b342",
+    "id": "rev-2",
+    "pass": true,
+    "seq": 2,
+    "sha": "368587da6b5a463780d08eef9d929c491776705502f57fc379c50e396826b342",
+    "t": 682316534615791
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 2,
+   "t": 682316538479875
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316531620707
+  }
+ },
+ "rev-3": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-3"
+    },
+    "d": "9b75ff039fcfd602f168327eb64e6a31d212d20b0c0ef01a6e5dbfe4f7091aba",
+    "id": "rev-3",
+    "pass": true,
+    "seq": 3,
+    "sha": "9b75ff039fcfd602f168327eb64e6a31d212d20b0c0ef01a6e5dbfe4f7091aba",
+    "t": 682316542028199
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 3,
+   "t": 682316546470884
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316539273676
+  }
+ },
+ "rev-4": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-4"
+    },
+    "d": "17e1b134d756bca37525414106fca6a3dded311578d6f0d41c9faa483e2118ec",
+    "id": "rev-4",
+    "pass": true,
+    "seq": 4,
+    "sha": "17e1b134d756bca37525414106fca6a3dded311578d6f0d41c9faa483e2118ec",
+    "t": 682316550586809
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 4,
+   "t": 682316554725254
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316547232325
+  }
+ },
+ "rev-5": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-5"
+    },
+    "d": "f07f84ad0d10e2f872b7b024ea1f7b9a3f11686a3d753c14869f9e23fe4ff930",
+    "id": "rev-5",
+    "pass": true,
+    "seq": 5,
+    "sha": "f07f84ad0d10e2f872b7b024ea1f7b9a3f11686a3d753c14869f9e23fe4ff930",
+    "t": 682316558472378
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 5,
+   "t": 682316562745223
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316555515735
+  }
+ },
+ "rev-6": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-6"
+    },
+    "d": "2fbd0687ee4cfa938ad747ee313393cc67d094a5ec1fdbc16fc49ec106a0e4b6",
+    "id": "rev-6",
+    "pass": true,
+    "seq": 6,
+    "sha": "2fbd0687ee4cfa938ad747ee313393cc67d094a5ec1fdbc16fc49ec106a0e4b6",
+    "t": 682316566374107
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 6,
+   "t": 682316571003753
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316563561824
+  }
+ },
+ "rev-7": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-7"
+    },
+    "d": "4bee367e72aedfe480a8d9249cb4bd15921da2375538cbb612defb5e64a49722",
+    "id": "rev-7",
+    "pass": true,
+    "seq": 7,
+    "sha": "4bee367e72aedfe480a8d9249cb4bd15921da2375538cbb612defb5e64a49722",
+    "t": 682316575599798
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 7,
+   "t": 682316579909563
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316571999434
+  }
+ },
+ "rev-8": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-8"
+    },
+    "d": "2fb96f66339dc411d5fc2ff5a691078a6c4b0d8b51d8b53feb648465f5ff8ec6",
+    "id": "rev-8",
+    "pass": true,
+    "seq": 8,
+    "sha": "2fb96f66339dc411d5fc2ff5a691078a6c4b0d8b51d8b53feb648465f5ff8ec6",
+    "t": 682316584873729
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 8,
+   "t": 682316590350215
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316580934324
+  }
+ },
+ "rev-9": {
+  "audit": {
+   "ok": true,
+   "rec": {
+    "by": "auditor-1",
+    "content": {
+     "action": "update",
+     "amount": 10,
+     "note": "routine maintenance",
+     "target": "item-9"
+    },
+    "d": "730fbf023b5c1de21ecf3477d4ae30c2851a3b0692a29e1dc3f039cee164c967",
+    "id": "rev-9",
+    "pass": true,
+    "seq": 9,
+    "sha": "730fbf023b5c1de21ecf3477d4ae30c2851a3b0692a29e1dc3f039cee164c967",
+    "t": 682316595727501
+   }
+  },
+  "fire": {
+   "executed": true,
+   "ok": true,
+   "seq": 9,
+   "t": 682316608591196
+  },
+  "fire_again": {
+   "error": "already executed",
+   "ok": false
+  },
+  "submit": {
+   "ok": true,
+   "t": 682316591246296
+  }
+ }
+}

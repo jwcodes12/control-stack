@@ -1,0 +1,136 @@
+[
+ {
+  "call": "reviewer_stage",
+  "req": {
+   "op": "stage"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "1fcc51d01af151f1b8a43f7bce41f0fb0f9eca45bf0ebccd0cc5eafa52e3c0b7",
+   "stager": "reviewer-1"
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "1fcc51d01af151f1b8a43f7bce41f0fb0f9eca45bf0ebccd0cc5eafa52e3c0b7",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "159b436eba8af702c7abba3356e4af85d6f4b70c2bfc1b3b8eb550f11933a04cc5f7cfb9f64d554764d9a6cc65b014081f9235224a7829c3c0f62717865fec07",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "1fcc51d01af151f1b8a43f7bce41f0fb0f9eca45bf0ebccd0cc5eafa52e3c0b7",
+   "target": "prod",
+   "review_sig": "159b436eba8af702c7abba3356e4af85d6f4b70c2bfc1b3b8eb550f11933a04cc5f7cfb9f64d554764d9a6cc65b014081f9235224a7829c3c0f62717865fec07",
+   "tag": null
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "c9a70ed2c3b98f2a181d3189c1de6821",
+    "digest": "1fcc51d01af151f1b8a43f7bce41f0fb0f9eca45bf0ebccd0cc5eafa52e3c0b7",
+    "target": "prod",
+    "tag": null,
+    "approver": "approver-1",
+    "sig": "f1fec81beb7577cda6d68c82dfd5e80e2b5c0799dd1928ae95a7932524a8f11b6fd6773c8a2af04a650229c514485d6a7629e3ce98fbe817fa9dec4df9952407"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "c9a70ed2c3b98f2a181d3189c1de6821",
+    "digest": "1fcc51d01af151f1b8a43f7bce41f0fb0f9eca45bf0ebccd0cc5eafa52e3c0b7",
+    "target": "prod",
+    "tag": null,
+    "approver": "approver-1",
+    "sig": "f1fec81beb7577cda6d68c82dfd5e80e2b5c0799dd1928ae95a7932524a8f11b6fd6773c8a2af04a650229c514485d6a7629e3ce98fbe817fa9dec4df9952407"
+   },
+   "review_sig": "159b436eba8af702c7abba3356e4af85d6f4b70c2bfc1b3b8eb550f11933a04cc5f7cfb9f64d554764d9a6cc65b014081f9235224a7829c3c0f62717865fec07",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0000-c9a70ed2.bin",
+   "sha": "1fcc51d01af151f1b8a43f7bce41f0fb0f9eca45bf0ebccd0cc5eafa52e3c0b7",
+   "t": 683357714548581
+  }
+ },
+ {
+  "call": "reviewer_stage",
+  "req": {
+   "op": "stage"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "5ae60a9b0e5a59abfd6e635207fb15cc497d0778584e19ad4ad037cf2abcd71d",
+   "stager": "reviewer-1"
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "5ae60a9b0e5a59abfd6e635207fb15cc497d0778584e19ad4ad037cf2abcd71d",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "3f00f44de9132d6f465364bb49aee718d9e7e1ad9e61f49fdf78f4db45f264b7e1a550a96517e6be915b42e43faf4ffa449c4e6b61e408ee3b02779d5908b705",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "5ae60a9b0e5a59abfd6e635207fb15cc497d0778584e19ad4ad037cf2abcd71d",
+   "target": "prod",
+   "review_sig": "3f00f44de9132d6f465364bb49aee718d9e7e1ad9e61f49fdf78f4db45f264b7e1a550a96517e6be915b42e43faf4ffa449c4e6b61e408ee3b02779d5908b705",
+   "tag": null
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "95a458c0d199be26694d8a050acf75de",
+    "digest": "5ae60a9b0e5a59abfd6e635207fb15cc497d0778584e19ad4ad037cf2abcd71d",
+    "target": "prod",
+    "tag": null,
+    "approver": "approver-1",
+    "sig": "224e21fdde74f0692a67076ef8e7156774e3955365b7470e13ae1d8c1d92a843bcff06940f1671c9d9a72193b29410ba8f2d6bc2878eebdc36dbb0e1e31d0407"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "95a458c0d199be26694d8a050acf75de",
+    "digest": "5ae60a9b0e5a59abfd6e635207fb15cc497d0778584e19ad4ad037cf2abcd71d",
+    "target": "prod",
+    "tag": null,
+    "approver": "approver-1",
+    "sig": "224e21fdde74f0692a67076ef8e7156774e3955365b7470e13ae1d8c1d92a843bcff06940f1671c9d9a72193b29410ba8f2d6bc2878eebdc36dbb0e1e31d0407"
+   },
+   "review_sig": "3f00f44de9132d6f465364bb49aee718d9e7e1ad9e61f49fdf78f4db45f264b7e1a550a96517e6be915b42e43faf4ffa449c4e6b61e408ee3b02779d5908b705",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0001-95a458c0.bin",
+   "sha": "5ae60a9b0e5a59abfd6e635207fb15cc497d0778584e19ad4ad037cf2abcd71d",
+   "t": 683357789146018
+  }
+ }
+]

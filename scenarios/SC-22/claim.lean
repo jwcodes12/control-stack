@@ -1,2 +1,5 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Scenarios.EvalIntegrity
+#check ControlStack.EvalIntegrity.sc22_unreplicated_misreport
+#check ControlStack.EvalIntegrity.observable_sample_nogo
+#print axioms ControlStack.EvalIntegrity.sc22_unreplicated_misreport
+#print axioms ControlStack.EvalIntegrity.observable_sample_nogo

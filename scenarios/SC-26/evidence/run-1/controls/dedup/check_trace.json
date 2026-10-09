@@ -1,0 +1,55 @@
+{
+  "a_replay": [
+    "Inv.bank_nodup fails after #3: [0, 0]",
+    "Inv.bank_nodup fails after #4: [0, 0, 3]",
+    "Inv.bank_nodup fails after #5: [0, 0, 3, 7]",
+    "Inv.bank_nodup fails after #6: [0, 0, 3, 7, 8]",
+    "Inv.bank_nodup fails after #7: [0, 0, 3, 7, 8, 8]",
+    "Inv.bank_nodup fails after #8: [0, 0, 3, 7, 8, 8, 9]",
+    "Inv.bank_nodup fails after #9: [0, 0, 3, 7, 8, 8, 9, 9]",
+    "Inv.bank_nodup fails after #10: [0, 0, 3, 7, 8, 8, 9, 9, 10]",
+    "Inv.bank_nodup fails after #11: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10]",
+    "Inv.bank_nodup fails after #12: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10]",
+    "Inv.bank_nodup fails after #13: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15]",
+    "Inv.bank_nodup fails after #14: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16]",
+    "Inv.bank_nodup fails after #15: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17]",
+    "Inv.bank_nodup fails after #16: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17, 18]",
+    "Inv.bank_nodup fails after #17: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17, 18, 19]",
+    "Inv.bank_nodup fails after #18: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17, 18, 19, 20]",
+    "Inv.bank_nodup fails after #19: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17, 18, 19, 20, 21]",
+    "Inv.bank_nodup fails after #20: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17, 18, 19, 20, 21, 22]",
+    "Inv.bank_nodup fails after #21: [0, 0, 3, 7, 8, 8, 9, 9, 10, 10, 10, 15, 16, 17, 18, 19, 20, 21, 22, 14]"
+  ],
+  "b_world": [],
+  "c_reconcile": [
+    "c5 key 0: 2 ledger entries",
+    "c5 key 8: 2 ledger entries",
+    "c5 key 9: 2 ledger entries",
+    "c5 key 10: 3 ledger entries",
+    "c8 memo 900: paid 2 times",
+    "c8 memo 905: paid 2 times",
+    "c8 memo 906: paid 2 times",
+    "c8 memo 911: paid 3 times"
+  ],
+  "model_good": false,
+  "info": {
+    "inflight_after_halt": [
+      {
+        "key": 14,
+        "send_seq": 128,
+        "halt_seq": 130
+      }
+    ],
+    "stranded": [
+      {
+        "acked": 0,
+        "id": 13,
+        "outcome": null,
+        "seq": 11
+      }
+    ]
+  },
+  "ledger_entries": 20,
+  "ledger_total": 994,
+  "verdict": "FAIL"
+}

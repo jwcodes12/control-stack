@@ -2,68 +2,72 @@
   "schema_version": 1,
   "id": "SC-02",
   "title": "Sender communicates across multiple episodes to a persistent receiver",
-  "bad_event": "Sender communicates across multiple episodes to a persistent receiver",
-  "adversary": "Untrusted agent with scenario-specific authority; full feasible action set requires specification.",
-  "refutation": "A concrete executable trace produces the catalog bad event despite enforcing the candidate property: One global information budget per secret/receiver lifetime; account for every episode, reject replays",
-  "scope": "Catalog-only draft. Origin: Required stress test for SC-01. Feasibility estimate: H/M. Not a selected deployment.",
+  "bad_event": "A persistent receiver recovers a k-bit secret across E episodes. Claim: probability ≤ Π L_e / 2^k (sc02_accumulated), applicable only if each episode's receiver view is dominated by its certificate (one-shot types fix the observation model). (REVIEW-PACKET finding 10: the bound is the claim; the bad event is the adversary's success.)",
+  "adversary": "Adaptive sender with shared seed and hidden per-round state; receiver sees all rounds.",
+  "refutation": "A measured recovery rate above the certificate, or an episode whose view is not dominated by its claimed certificate.",
+  "scope": "Lean bound only; per-episode certificates L_e must be measured or enforced (cf. SC-01 refutation of complete observation on one host).",
   "families": [
     "F2",
-    "F3",
     "F8"
   ],
-  "status": "DRAFT",
-  "theorems": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.ChannelInstances.sc02_accumulated",
+      "path": "ControlStack/Families/F2/ChannelInstances.lean",
+      "sha256": "fcbbcbf4ab00ca2c716f5df9d28d2b7735e00d82509677f0d26989b22a101b7a",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.ChannelInstances.rekey_epoch",
+      "path": "ControlStack/Families/F2/ChannelInstances.lean",
+      "sha256": "fcbbcbf4ab00ca2c716f5df9d28d2b7735e00d82509677f0d26989b22a101b7a",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
   "evidence": [],
   "assumptions": [
     {
-      "id": "threat_model_completeness",
-      "text": "Complete reachable attacker actions and affected assets must be enumerated.",
+      "id": "episode_certificates",
+      "text": "Each episode's receiver view is dominated by a certificate of mass L_e (complete observation).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "correspondence",
-      "text": "A trusted effect gate must enforce the relevant policy against every alternate path.",
+      "id": "rekey_independence",
+      "text": "Rounds outside an epoch do not depend on that epoch's secret (no persistent cache carrying it).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
-    },
-    {
-      "id": "honest_usefulness",
-      "text": "A frozen representative honest-task distribution and acceptance floor must be measured.",
-      "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including any excluded attack class."
+      "note": "Not independently established; Lean model only."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "The modeled machine and concrete runtime have not been fully matched by independent refinement evidence."
+      "note": "Not independently established; Lean model only."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Complete observation and enforcement boundary are not independently attested."
+      "note": "Not independently established; Lean model only."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Persistent state, shared randomness, concurrency, and cumulative lifetime accounting remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "No independently validated honest-task usefulness threshold for this scope."
+      "note": "Not independently established; Lean model only."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent statement-fidelity and evidence-provenance approval."
+      "note": "Not independently established; Lean model only."
     }
   }
 }

@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
-  "mode": "DRAFT_NOT_IMPLEMENTED",
-  "candidate": "Typed transaction + exact signed approval from distinct principal, replay protection and spend/authority budgets",
-  "execution": "NO ENFORCER INSTALLED"
+  "mode": "REFERENCE_IMPLEMENTATION_SINGLE_HOST",
+  "entrypoint": "scenarios/SC-26/harness/txgate.py",
+  "external_effect": "scenarios/SC-26/harness/bank.py (disposable ledger, separate UID, idempotent per key, accepts only the gate UID)",
+  "checks": ["distinct", "payload", "nonce", "cap", "haltCheck", "bankDedup", "bankAuth"],
+  "lean_model": "ControlStack/Scenarios/SC26Transaction.lean (Checks.full)",
+  "deny_by_default": "Every operation is refused unless its role, approval, nonce, cap and halt checks pass"
 }

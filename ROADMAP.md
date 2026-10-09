@@ -1,4 +1,82 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-09: all 28 scenarios CONDITIONAL with Lean models; preregistered single-host runtime evidence for 15 scenarios)
+
+## Scenario completion and first end-to-end evidence: 2026-10-09 (branch `claude/sc26-joint`)
+
+**Headline.** All 28 scenarios now have kernel-checked Lean models, and all 28 are **CONDITIONAL** (they were 3 conditional and 25 draft). Six preregistered single-host runtime runs PASS. **No scenario is deployment-assured.** Independent human review (done-criterion 5) is open for every scenario. The mathematics is classical, and no novelty is claimed.
+
+**Best-supported case: SC-26** (no irreversible payment without an exact, independent, one-use approval). Recheck it with `python3 tools/check_sc26_case.py`; both runs recheck as CONDITIONAL.
+- **Model.** `sc26_safe`, `safe_of_sound` and `halt_freezes` (in-flight semantics), plus 14 witnesses.
+- **Refinement.** A concrete event machine forward-simulates the model (`SC26Refinement`).
+- **Authentication.** `Core/Authenticated` and `AuthenticatedAdv` reduce credential separation to one premise: the issuer is authentic.
+- **Two preregistered runs:**
+  - run-1 (v2) and run-2 (v3, extended): attacks A1–A17 and controls 7/7, each firing its specific finding;
+  - usefulness 64/64 with 16 crash injections;
+  - a 200-case Lean difftest.
+- **LLM evals:** `scenarios/SC-26/llm_eval/` and `scenarios/SC-26/llm_approver/`.
+- **Also:** liveness (`SC26Liveness`) and anti-rollback (`RollbackInstances`).
+- **Status against the done-criteria:** (1)–(4) and (6) are met within single-host scope. (5) is open.
+
+**Runtime evidence** (all PASS, preregistered, single host; benign workloads unless noted). In addition to the runs listed below, these scenarios each have a run-1:
+- SC-12, SC-14, SC-15, SC-16, SC-17, SC-19, SC-20, SC-21 (a 20,000-trial simulation that matches the proved bounds), SC-23, SC-25 and SC-27;
+- anti-rollback (monotonic anchor);
+- SC-26 LLM-in-the-loop control eval: honest 16/16, red team 0/16;
+- SC-26 consent-quality eval: the LLM approver was not deceived (0 of 100 non-PO requests approved) in an easy purchase-order-matching task. Each row names the scenario, the preregistration and the hypotheses.
+
+| Scenario | Prereg | Hypotheses |
+|---|---|---|
+| SC-26 | `PREREG-SC26-TXGATE-v2` | H1–H5 |
+| SC-26 | `PREREG-SC26-TXGATE-v3` | H1–H5, extended |
+| SC-28 | `PREREG-SC28-CGMETER-v1` | cgroup v2 meter and process-tree HALT; benign workloads |
+| SC-07 | `PREREG-SC07-EGRESSQ-v1` | namespace + nftables quota, allowlist and HALT; benign workloads |
+| SC-18 | `PREREG-SC18-LOGPROXY-v1` | log-before-release, fail-closed watchdog |
+| DC-1 single-host rehearsal | `PREREG-DC1R-SINGLEHOST-v1` | fencing sink; partition and token-leak controls fired |
+
+**New theory.**
+- **F6:**
+  - reserved hidden audit under arbitrary false positives;
+  - adaptive imperfect recall, giving a hypergeometric closed form;
+  - damage bounds: expected harm before halt-on-catch, ≤ D·(N−B)/(B+1) at r=1;
+  - monitor collusion: honeypot recall transfers up to TV, and canonicalisation bounds stego.
+- **F3:** distributed HALT with fencing tokens. The post-HALT window is ≤ n·ρ·(L+ε) whatever the delivery, and 0 after t0+ε.
+- **F2:** channel instances: SC-02 accumulation and re-keying, the SC-04 log channel, a GPU time-slicing model.
+- **F8:**
+  - `Core/Compose` (product gates, shared halt, admissible bridges);
+  - `Core/Cert` (typed assumption ledger with premise kinds; SC-26 damage cap discharged by `sc26_safe`);
+  - `CertBest`.
+- **SC-07 exfiltration:** ≥ ⌈S/q⌉ windows are needed, so P(complete before catch) ≤ (1−pr)^⌈S/q⌉.
+
+**Tooling.**
+- `tools/check_sc26_case.py`: independent rechecker. It verifies each run against its pinned-commit harness.
+- `tools/cert_ledger.py`: the Lean ledger, checked against manifests.
+- `tools/portfolio_ledger.py`: generates `ASSURANCE-LEDGER.md`, 29 normalised premises ranked by leverage.
+- `tools/stackmap.py`: generates `STACK-MAP.md` and `stack/components.json`, a lab tech-stack map (researcher → GPU datacenter).
+- `tools/new_scenario.py`: scaffold generator.
+- Docs: `docs/RESEARCHER-WORKFLOW.md`, `docs/LAB-DEPLOYMENT-MAPPING.md`.
+- Prereg drafts that need hardware or accounts: GPU-1, DC-1 (multi-host), CLOUD-1.
+
+**Reviews.** All are AI reviews; none is the independent human review.
+- Gemini 3.1 Pro (foreign family): SC-26 model, SC-26 evidence package, new core files.
+- Opus 5.5 (same family): SC-26 model and prereg, and `REVIEW-PACKET-2026-10-09.md`, a statement-fidelity packet for a human reviewer.
+- Every finding has a written disposition under `reviews/`.
+
+**Highest-leverage open premises**, from `ASSURANCE-LEDGER.md`:
+- **Credential separation:** 19 scenarios; reduced to issuer authenticity in Lean; tested on one host for SC-26.
+- **Honest usefulness:** 18 scenarios; scripted clients plus one small-LLM evaluation.
+- **Complete observation:** SC-01/02/04/05/07/24; untested, and refuted on the SC-01 host.
+- **Exclusive effect path:** 11 scenarios.
+
+These, plus independent human review, are what stand between CONDITIONAL and any stronger status.
+
+
+**Added later the same day.**
+- **Refinements:** SC-16 and SC-25 (concrete event machine → model), joining SC-26.
+- **Liveness counterparts:** SC-07, SC-18 and SC-28.
+- **Anchoring:** SC-27 extension-only anchoring, a model fix found by its runtime test.
+- **Joint model:** `LabStack` (payments, deploys and compute: shared HALT and one global budget).
+- **Rollback:** `Core/AntiRollback` and its instances.
+- **Observation by design:** `F2/TimedRelease`, which addresses observation completeness for gate-routed observations.
+- **Datacenter layer:** `F2/GPUResidue` and `F1/FabricIsolation`.
+- **Tooling:** generated scenario pages (`tools/build_results.py`).
 
 ## Primitive completion sprint — 2026-10-09 (F1–F8)
 

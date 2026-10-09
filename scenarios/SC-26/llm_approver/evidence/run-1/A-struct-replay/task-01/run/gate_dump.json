@@ -1,0 +1,123 @@
+{
+ "approvals": [
+  {
+   "amount": 201,
+   "approver": 23603,
+   "dest": 1521,
+   "id": 1,
+   "memo": 904101,
+   "seq": 1
+  }
+ ],
+ "delivery": [
+  {
+   "acked": 1,
+   "id": 1,
+   "outcome": "applied",
+   "seq": 1
+  }
+ ],
+ "gate_uid": 23605,
+ "meta": {
+  "cap": 6940,
+  "halted": 0,
+  "next": 2,
+  "spent": 201
+ },
+ "recovered": true,
+ "requests": [
+  {
+   "amount": 350,
+   "dest": 5738,
+   "id": 0,
+   "memo": 179483,
+   "requester": 23601
+  },
+  {
+   "amount": 201,
+   "dest": 1521,
+   "id": 1,
+   "memo": 904101,
+   "requester": 23601
+  }
+ ],
+ "reserved": [
+  {
+   "id": 1,
+   "seq": 1
+  }
+ ],
+ "stranded": [],
+ "trace": [
+  {
+   "accepted": 0,
+   "args": "{\"op\": \"noop-probe\"}",
+   "caller": 23607,
+   "mono": 684233228659066,
+   "op": "malformed",
+   "result": null,
+   "seq": 1,
+   "t": 1791529478.8199296
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [5738, 350, 179483]}",
+   "caller": 23601,
+   "mono": 684233270574634,
+   "op": "request",
+   "result": "0",
+   "seq": 2,
+   "t": 1791529478.8618453
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [1521, 201, 904101]}",
+   "caller": 23601,
+   "mono": 684235364774638,
+   "op": "request",
+   "result": "1",
+   "seq": 3,
+   "t": 1791529480.9560454
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1, \"tx\": [1521, 201, 904101]}",
+   "caller": 23603,
+   "mono": 684237516098789,
+   "op": "approve",
+   "result": null,
+   "seq": 4,
+   "t": 1791529483.1073694
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1}",
+   "caller": 23601,
+   "mono": 684237571434173,
+   "op": "execute",
+   "result": null,
+   "seq": 5,
+   "t": 1791529483.162705
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1}",
+   "caller": 23605,
+   "mono": 684237574840857,
+   "op": "deliver",
+   "result": null,
+   "seq": 6,
+   "t": 1791529483.1661105
+  },
+  {
+   "accepted": 1,
+   "args": "{\"dseq\": 1, \"id\": 1, \"source\": \"deliver\"}",
+   "caller": 23605,
+   "mono": 684237577509460,
+   "op": "transmit",
+   "result": null,
+   "seq": 7,
+   "t": 1791529483.1687796
+  }
+ ]
+}

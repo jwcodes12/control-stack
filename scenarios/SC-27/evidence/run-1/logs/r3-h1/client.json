@@ -1,0 +1,100 @@
+{
+ "original": {
+  "ok": true,
+  "accepted": true,
+  "head": "ce0d7ccd2f61207936b2aa512233973520f125770581f1b5bfe2f9f73d7429c7",
+  "why": "head anchored"
+ },
+ "modify an old entry": {
+  "verify": {
+   "ok": true,
+   "accepted": false,
+   "head": "87af81521d47dc59ef2c90d51bdaa06b32177f6a034894987798c672fe78c6fb",
+   "why": "head not anchored by the witness"
+  },
+  "witness_on_tampered_storage": {
+   "kind": "fork",
+   "log": "main",
+   "head": "87af81521d47dc59ef2c90d51bdaa06b32177f6a034894987798c672fe78c6fb",
+   "n": 20,
+   "anchored_head": "ce0d7ccd2f61207936b2aa512233973520f125770581f1b5bfe2f9f73d7429c7",
+   "anchored_n": 20,
+   "seq": 1,
+   "t": 684382946074740
+  },
+  "witness_after_restore": "unchanged"
+ },
+ "reorder two entries": {
+  "verify": {
+   "ok": true,
+   "accepted": false,
+   "head": "3130eca9dadf394d28a8aac132d9d778e30d0f39cf02b9214ecaa57819769640",
+   "why": "head not anchored by the witness"
+  },
+  "witness_on_tampered_storage": {
+   "kind": "fork",
+   "log": "main",
+   "head": "3130eca9dadf394d28a8aac132d9d778e30d0f39cf02b9214ecaa57819769640",
+   "n": 20,
+   "anchored_head": "ce0d7ccd2f61207936b2aa512233973520f125770581f1b5bfe2f9f73d7429c7",
+   "anchored_n": 20,
+   "seq": 2,
+   "t": 684382961474878
+  },
+  "witness_after_restore": "unchanged"
+ },
+ "truncate the last 3": {
+  "verify": {
+   "ok": true,
+   "accepted": false,
+   "head": "37b020b5b7c07297c7a56561e4575b146970e723fdd8f499f4ed3945520b3fb9",
+   "why": "head not anchored by the witness"
+  },
+  "witness_on_tampered_storage": {
+   "kind": "fork",
+   "log": "main",
+   "head": "37b020b5b7c07297c7a56561e4575b146970e723fdd8f499f4ed3945520b3fb9",
+   "n": 17,
+   "anchored_head": "ce0d7ccd2f61207936b2aa512233973520f125770581f1b5bfe2f9f73d7429c7",
+   "anchored_n": 20,
+   "seq": 3,
+   "t": 684382978391418
+  },
+  "witness_after_restore": "unchanged"
+ },
+ "append an unanchored suffix": {
+  "verify": {
+   "ok": true,
+   "accepted": false,
+   "head": "cd55c74e2549c0ae5548a109eb3aa8bcdce4009466bb5cb46064c9858b9e7137",
+   "why": "head not anchored by the witness"
+  },
+  "witness_on_tampered_storage": null,
+  "witness_after_restore": "unchanged"
+ },
+ "full rewrite with recomputed hashes": {
+  "verify": {
+   "ok": true,
+   "accepted": false,
+   "head": "1ede73d820719045706c923dac4ae49b757e9f8a21bf002f0de2940f4c49765f",
+   "why": "head not anchored by the witness"
+  },
+  "witness_on_tampered_storage": {
+   "kind": "fork",
+   "log": "main",
+   "head": "1ede73d820719045706c923dac4ae49b757e9f8a21bf002f0de2940f4c49765f",
+   "n": 20,
+   "anchored_head": "ce0d7ccd2f61207936b2aa512233973520f125770581f1b5bfe2f9f73d7429c7",
+   "anchored_n": 20,
+   "seq": 4,
+   "t": 684383004307928
+  },
+  "witness_after_restore": "unchanged"
+ },
+ "original again": {
+  "ok": true,
+  "accepted": true,
+  "head": "ce0d7ccd2f61207936b2aa512233973520f125770581f1b5bfe2f9f73d7429c7",
+  "why": "head anchored"
+ }
+}

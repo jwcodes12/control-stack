@@ -1,0 +1,48 @@
+{
+ "agents": [
+  23601,
+  23602
+ ],
+ "approvers": [
+  23603
+ ],
+ "admins": [
+  23604
+ ],
+ "gate_uid": 23605,
+ "auditor": 23607,
+ "bank_uid": 23606,
+ "bank_accepts_uid": 23605,
+ "cap": 18914,
+ "disabled_checks": [],
+ "negative_control": false,
+ "crash_hook_enabled": true,
+ "gate_starts": 17,
+ "phase": "usefulness",
+ "seed": 2026,
+ "deadline_s": 10.0,
+ "crash_mapping": "idx % 4 == 3: CRASH_POINTS[(idx // 4) % 3]",
+ "crash_points": [
+  "after_reserve",
+  "after_intent_before_send",
+  "after_bank_ack"
+ ],
+ "crash_plan": {
+  "3": "after_reserve",
+  "7": "after_intent_before_send",
+  "11": "after_bank_ack",
+  "15": "after_reserve",
+  "19": "after_intent_before_send",
+  "23": "after_bank_ack",
+  "27": "after_reserve",
+  "31": "after_intent_before_send",
+  "35": "after_bank_ack",
+  "39": "after_reserve",
+  "43": "after_intent_before_send",
+  "47": "after_bank_ack",
+  "51": "after_reserve",
+  "55": "after_intent_before_send",
+  "59": "after_bank_ack",
+  "63": "after_reserve"
+ }
+}

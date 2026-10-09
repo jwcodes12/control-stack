@@ -1,0 +1,91 @@
+{
+ "argv": [
+  "scenarios/SC-16/harness/run_sc16.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-16/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_values": {
+   "L_DEP": 0.4
+  },
+  "prereg_values": {
+   "L_DEP": 0.4
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC); one host",
+ "constants": {
+  "H1_HONEST": 8,
+  "H4_DEPLOYS": 30,
+  "H6_CONFIGS": {
+   "a_deploy_by_tag": {
+    "admission": [
+     "--by-tag"
+    ]
+   },
+   "b_no_target_binding": {
+    "admission": [
+     "--no-target-binding"
+    ]
+   },
+   "c_self_review": {
+    "reviewer": [
+     "--no-distinct-check"
+    ]
+   },
+   "d_no_nonce": {
+    "admission": [
+     "--no-nonce"
+    ]
+   }
+  },
+  "LIFETIME": 30.0,
+  "L_DEP": 0.4,
+  "OPENSSL": "/usr/bin/openssl",
+  "WALL_LIMIT": 115
+ },
+ "finished": "2026-10-09T06:50:27.330587Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "6ee5e21b3922605cac8a14c02b51424713df8567",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  2.51,
+  2.3,
+  2.15
+ ],
+ "loadavg_start": [
+  2.72,
+  2.28,
+  2.13
+ ],
+ "model_sha256": {
+  "ControlStack/Scenarios/AuthInstancesA.lean": "74399488cfef70c81cd91e86f85be5f0ea5a6ac84f56b20638ba522bd90e96a4",
+  "ControlStack/Scenarios/SC16Deploy.lean": "0bdc0f00ba22bbc211b6ccab597a2313ce744d749b9d079cd8145e1283e61df0",
+  "ControlStack/Scenarios/SC16Disjoint.lean": "5e80fafe36c95ba745b6af0c6f712f528db5ee33b2d7b5223f92e48c0e07be1d"
+ },
+ "nproc": 2,
+ "openssl": "OpenSSL 3.5.8 25 Aug 2026 (Library: OpenSSL 3.5.8 25 Aug 2026)",
+ "prereg_id": "PREREG-SC16-ADMIT-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "prereg/SC16-DEPLOY-ADMISSION.md": "89347255d8987a2bb5474051253260f24be4ccf9bd8c751ca29da0dbb9e96ce0",
+  "scenarios/SC-16/harness/README.md": "1df5992b033326ee30d140373549b6e91ef030a03c673da76992034f806b7e00",
+  "scenarios/SC-16/harness/admission.py": "f864709f0f5e261e2d6acbb8124bdee46831be5ddddcff077ae2108c084e7f06",
+  "scenarios/SC-16/harness/reconcile.py": "620f4bb342bfd37ee6174c85a0d0a035f6948da1b4bee189d9846cf1e3ea4044",
+  "scenarios/SC-16/harness/registry.py": "8a9b280b032d6a3ca71cee5114ebeb8dc05c87f6cfbb74dfec3dd597fcf8bda6",
+  "scenarios/SC-16/harness/run_sc16.py": "4ec2dbecbebafcb1aeffedfb738a5ee6309e0066f7040c12070597983df233f8",
+  "scenarios/SC-16/harness/signer.py": "ea9adb5e4685cd7ed9a1f3564e98bd99c4db58e0fd33915179ac73f30f178524"
+ },
+ "started": "2026-10-09T06:49:49.351263Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 37.98
+}

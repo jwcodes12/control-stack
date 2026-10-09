@@ -1,0 +1,948 @@
+### PRINT ControlStack.SC16.DepOk
+def ControlStack.SC16.DepOk : ControlStack.SC16.Roles → (ℕ → ℕ) → ControlStack.SC16.St → ControlStack.SC16.Dep → Prop :=
+fun R h s e =>
+  ∃ ap ∈ s.approvals,
+    ap.n = e.n ∧
+      ap.target = e.target ∧
+        ap.approver ∈ R.approvers ∧
+          h e.content = ap.d ∧ ∃ rv ∈ s.reviews, rv.d = ap.d ∧ ControlStack.SC16.ReviewOk R h rv
+### PRINT ControlStack.SC16.step
+def ControlStack.SC16.step : ControlStack.SC16.Roles →
+  (ℕ → ℕ) → ControlStack.SC16.Checks → ControlStack.SC16.St → ControlStack.SC16.Op → ControlStack.SC16.St :=
+fun R h C s x =>
+  match x with
+  | ControlStack.SC16.Op.stage c x =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ R.agents then
+        { cas := s.cas ++ [(x, c)], slots := s.slots, reviews := s.reviews, approvals := s.approvals, used := s.used,
+          deployed := s.deployed, halted := s.halted }
+      else s
+  | ControlStack.SC16.Op.writeSlot c slot x =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ R.agents then
+        { cas := s.cas, slots := (slot, x) :: s.slots, reviews := s.reviews, approvals := s.approvals, used := s.used,
+          deployed := s.deployed, halted := s.halted }
+      else s
+  | ControlStack.SC16.Op.review c d =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC16.casLookup h s d with
+      | none => s
+      | some e =>
+        if c ∈ R.reviewers ∧ (C.distinct = true → c ≠ e.2) then
+          { cas := s.cas, slots := s.slots,
+            reviews := s.reviews ++ [{ d := d, reviewer := c, content := e.1, stager := e.2 }],
+            approvals := s.approvals, used := s.used, deployed := s.deployed, halted := s.halted }
+        else s
+  | ControlStack.SC16.Op.approve c n d t slot =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ R.approvers ∧ (C.verify = true ∨ Option.map h (ControlStack.SC16.slotContent s slot) = some d) then
+        { cas := s.cas, slots := s.slots, reviews := s.reviews,
+          approvals := s.approvals ++ [{ n := n, d := d, target := t, slot := slot, approver := c }], used := s.used,
+          deployed := s.deployed, halted := s.halted }
+      else s
+  | ControlStack.SC16.Op.deploy caller n t x =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC16.apprOf s n with
+      | none => s
+      | some ap =>
+        if (∃ rv ∈ s.reviews, rv.d = ap.d) ∧ (C.nonce = true → n ∉ s.used) ∧ (C.target = true → t = ap.target) then
+          if C.verify = true then if h x = ap.d then ControlStack.SC16.doDeploy s n t x else s
+          else
+            match ControlStack.SC16.slotContent s ap.slot with
+            | none => s
+            | some y => ControlStack.SC16.doDeploy s n t y
+        else s
+  | ControlStack.SC16.Op.halt c =>
+    if c ∈ R.admins then
+      { cas := s.cas, slots := s.slots, reviews := s.reviews, approvals := s.approvals, used := s.used,
+        deployed := s.deployed, halted := true }
+    else s
+### PRINT ControlStack.SC16.Review
+structure ControlStack.SC16.Review : Type
+number of parameters: 0
+fields:
+  ControlStack.SC16.Review.d : ℕ
+  ControlStack.SC16.Review.reviewer : ℕ
+  ControlStack.SC16.Review.content : ℕ
+  ControlStack.SC16.Review.stager : ℕ
+constructor:
+  ControlStack.SC16.Review.mk (d reviewer content stager : ℕ) : ControlStack.SC16.Review
+### PRINT ControlStack.SC16.Appr
+structure ControlStack.SC16.Appr : Type
+number of parameters: 0
+fields:
+  ControlStack.SC16.Appr.n : ℕ
+  ControlStack.SC16.Appr.d : ℕ
+  ControlStack.SC16.Appr.target : ℕ
+  ControlStack.SC16.Appr.slot : ℕ
+  ControlStack.SC16.Appr.approver : ℕ
+constructor:
+  ControlStack.SC16.Appr.mk (n d target slot approver : ℕ) : ControlStack.SC16.Appr
+### PRINT ControlStack.SC10.DecOk
+def ControlStack.SC10.DecOk : ControlStack.SC10.Env → ControlStack.SC10.St → ControlStack.SC10.Dec → Prop :=
+fun E s d => ∃ i w, d.ver = some i ∧ s.versions[i]? = some (d.val, w) ∧ w ∈ E.admins ∧ i + 1 = d.curLen
+### PRINT ControlStack.SC09.UseOk
+def ControlStack.SC09.UseOk : ControlStack.SC09.Policy → ControlStack.SC09.St → ControlStack.SC09.Use → Prop :=
+fun P s u => (u.lin, u.cap) ∈ s.granted ∨ ∃ r ∈ P.elev, u.via = some (r.bin, r.args) ∧ r.cap = u.cap
+### PRINT ControlStack.SC09.step
+def ControlStack.SC09.step : ControlStack.SC09.Policy →
+  ControlStack.SC09.Checks → ControlStack.SC09.St → ControlStack.SC09.Op → ControlStack.SC09.St :=
+fun P C s x =>
+  match x with
+  | ControlStack.SC09.Op.start c pid lin =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ P.admins ∧ ControlStack.SC09.procOf s pid = none then
+        { procs := s.procs ++ [{ pid := pid, lin := lin, caps := [] }], granted := s.granted, used := s.used,
+          halted := s.halted }
+      else s
+  | ControlStack.SC09.Op.grant c pid lin cap =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ P.admins then
+        { procs := ControlStack.SC09.addCaps s pid lin [cap], granted := s.granted ++ [(lin, cap)], used := s.used,
+          halted := s.halted }
+      else s
+  | ControlStack.SC09.Op.spawn p ch keep =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC09.procOf s p with
+      | none => s
+      | some q =>
+        if ControlStack.SC09.procOf s ch = none then
+          { procs := s.procs ++ [{ pid := ch, lin := q.lin, caps := List.filter (fun c => decide (c ∈ keep)) q.caps }],
+            granted := s.granted, used := s.used, halted := s.halted }
+        else s
+  | ControlStack.SC09.Op.execBin pid bin =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.attenuate = true then s
+      else
+        match ControlStack.SC09.procOf s pid with
+        | none => s
+        | some q =>
+          { procs := ControlStack.SC09.addCaps s pid q.lin (P.fileCaps bin), granted := s.granted, used := s.used,
+            halted := s.halted }
+  | ControlStack.SC09.Op.use pid cap =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC09.procOf s pid with
+      | none => s
+      | some q =>
+        if cap ∈ q.caps then
+          { procs := s.procs, granted := s.granted, used := s.used ++ [{ lin := q.lin, cap := cap, via := none }],
+            halted := s.halted }
+        else s
+  | ControlStack.SC09.Op.elevate pid bin args =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC09.procOf s pid with
+      | none => s
+      | some q =>
+        if C.exactArgs = true then
+          match List.find? (fun r => decide (r.bin = bin ∧ r.args = args)) P.elev with
+          | none => s
+          | some r =>
+            { procs := s.procs, granted := s.granted,
+              used := s.used ++ [{ lin := q.lin, cap := r.cap, via := some (bin, args) }], halted := s.halted }
+        else
+          if ∃ r ∈ P.elev, r.bin = bin then
+            { procs := s.procs, granted := s.granted,
+              used := s.used ++ [{ lin := q.lin, cap := args, via := some (bin, args) }], halted := s.halted }
+          else s
+  | ControlStack.SC09.Op.deputy pid cap =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC09.procOf s pid with
+      | none => s
+      | some q =>
+        if C.deputyCheck = true → cap ∈ q.caps then
+          { procs := s.procs, granted := s.granted, used := s.used ++ [{ lin := q.lin, cap := cap, via := none }],
+            halted := s.halted }
+        else s
+  | ControlStack.SC09.Op.halt c =>
+    if c ∈ P.admins then { procs := s.procs, granted := s.granted, used := s.used, halted := true } else s
+### PRINT ControlStack.SC28.usedT
+def ControlStack.SC28.usedT : ControlStack.SC28.St → ℕ :=
+fun s => (List.map (fun e => e.2.2) s.usage).sum
+### PRINT ControlStack.SC28.usedL
+def ControlStack.SC28.usedL : ControlStack.SC28.St → ℕ → ℕ :=
+fun s lid => (List.map (fun e => e.2.2) (List.filter (fun e => decide (e.2.1 = lid)) s.usage)).sum
+### PRINT ControlStack.SC28.budgetOf
+def ControlStack.SC28.budgetOf : ControlStack.SC28.St → ℕ → Option ℕ :=
+fun s lid => Option.map Prod.snd (List.find? (fun e => decide (e.1 = lid)) s.leases)
+### PRINT ControlStack.SC28.step
+def ControlStack.SC28.step : List ℕ →
+  ℕ → ControlStack.SC28.Checks → ControlStack.SC28.St → ControlStack.SC28.Op → ControlStack.SC28.St :=
+fun admins G C s x =>
+  match x with
+  | ControlStack.SC28.Op.issue c lid b =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ admins ∧ ControlStack.SC28.budgetOf s lid = none then
+        { leases := s.leases ++ [(lid, b)], assign := s.assign, revoked := s.revoked, ledger := s.ledger,
+          usage := s.usage, halted := s.halted }
+      else s
+  | ControlStack.SC28.Op.assignTo c w lid =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ admins ∧ ControlStack.SC28.budgetOf s lid ≠ none then
+        { leases := s.leases, assign := (w, lid) :: s.assign, revoked := s.revoked, ledger := s.ledger,
+          usage := s.usage, halted := s.halted }
+      else s
+  | ControlStack.SC28.Op.fork caller p ch nl =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { leases := (ControlStack.SC28.forkUpd C s p ch nl).1, assign := (ControlStack.SC28.forkUpd C s p ch nl).2,
+        revoked := s.revoked, ledger := s.ledger, usage := s.usage, halted := s.halted }
+  | ControlStack.SC28.Op.revoke c lid =>
+    if c ∈ admins then
+      { leases := s.leases, assign := s.assign, revoked := s.revoked ++ [lid], ledger := s.ledger, usage := s.usage,
+        halted := s.halted }
+    else s
+  | ControlStack.SC28.Op.work w a r =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC28.leaseOf s w with
+      | none => s
+      | some lid =>
+        match ControlStack.SC28.budgetOf s lid with
+        | none => s
+        | some b =>
+          if
+              lid ∉ s.revoked ∧
+                ControlStack.SC28.spentL s lid + ControlStack.SC28.charge C a r ≤ b ∧
+                  (C.global = true → ControlStack.SC28.spentT s + ControlStack.SC28.charge C a r ≤ G) then
+            { leases := s.leases, assign := s.assign, revoked := s.revoked,
+              ledger := s.ledger ++ [(lid, ControlStack.SC28.charge C a r)], usage := s.usage ++ [(w, lid, a)],
+              halted := s.halted }
+          else s
+  | ControlStack.SC28.Op.restart => s
+  | ControlStack.SC28.Op.rollback n =>
+    { leases := s.leases, assign := s.assign, revoked := s.revoked, ledger := List.take n s.ledger, usage := s.usage,
+      halted := s.halted }
+  | ControlStack.SC28.Op.halt c =>
+    if c ∈ admins then
+      { leases := s.leases, assign := s.assign, revoked := s.revoked, ledger := s.ledger, usage := s.usage,
+        halted := true }
+    else s
+### PRINT ControlStack.SC12.step
+def ControlStack.SC12.step : List ℕ →
+  ControlStack.SC12.Checks → ControlStack.SC12.St → ControlStack.SC12.Op → ControlStack.SC12.St :=
+fun admins C s x =>
+  match x with
+  | ControlStack.SC12.Op.start c sess =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ admins ∧ sess ∉ s.active ∧ sess ∉ s.ended ∧ ControlStack.SC12.entOf s sess = none then
+        { active := s.active ++ [sess], ended := s.ended,
+          live := s.live ++ [{ id := sess, sess := sess, origin := sess, job := false, reg := true }], fired := s.fired,
+          halted := s.halted }
+      else s
+  | ControlStack.SC12.Op.spawn p ch job claim =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC12.entOf s p with
+      | none => s
+      | some e =>
+        if ControlStack.SC12.entOf s ch = none then
+          { active := s.active, ended := s.ended,
+            live :=
+              s.live ++
+                [{ id := ch, sess := if C.lineage = true then e.sess else claim, origin := e.origin, job := job,
+                    reg := true }],
+            fired := s.fired, halted := s.halted }
+        else s
+  | ControlStack.SC12.Op.bypass p ch job =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.registryOnly = true then s
+      else
+        match ControlStack.SC12.entOf s p with
+        | none => s
+        | some e =>
+          if ControlStack.SC12.entOf s ch = none then
+            { active := s.active, ended := s.ended,
+              live := s.live ++ [{ id := ch, sess := e.sess, origin := e.origin, job := job, reg := false }],
+              fired := s.fired, halted := s.halted }
+          else s
+  | ControlStack.SC12.Op.endSession c sess =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ admins then
+        { active := List.filter (fun x => decide (x ≠ sess)) s.active, ended := s.ended ++ [sess],
+          live :=
+            if C.revokeLineage = true then List.filter (fun e => decide ¬(e.reg = true ∧ e.sess = sess)) s.live
+            else List.filter (fun e => decide ¬(e.reg = true ∧ e.id = sess)) s.live,
+          fired := s.fired, halted := s.halted }
+      else s
+  | ControlStack.SC12.Op.fire j =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC12.entOf s j with
+      | none => s
+      | some e =>
+        if e.job = true then
+          { active := s.active, ended := s.ended, live := s.live, fired := s.fired ++ [(j, e.origin, s.ended.length)],
+            halted := s.halted }
+        else s
+  | ControlStack.SC12.Op.halt c =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ admins then
+        { active := [], ended := s.ended ++ s.active, live := List.filter (fun e => decide (e.reg = false)) s.live,
+          fired := s.fired, halted := true }
+      else s
+### PRINT ControlStack.SC23.step
+def ControlStack.SC23.step : ControlStack.SC23.Policy →
+  ControlStack.SC23.Checks → ControlStack.SC23.St → ControlStack.SC23.Op → ControlStack.SC23.St :=
+fun P C s x =>
+  match x with
+  | ControlStack.SC23.Op.userInput id v =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if ControlStack.SC23.valOf s id = none then
+        { store := s.store ++ [{ id := id, v := v, label := false, prov := false }], confs := s.confs, used := s.used,
+          executed := s.executed, halted := s.halted }
+      else s
+  | ControlStack.SC23.Op.toolResult id v =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if ControlStack.SC23.valOf s id = none then
+        { store := s.store ++ [{ id := id, v := v, label := true, prov := true }], confs := s.confs, used := s.used,
+          executed := s.executed, halted := s.halted }
+      else s
+  | ControlStack.SC23.Op.derive id srcs v =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if ControlStack.SC23.valOf s id = none ∧ (ControlStack.SC23.argsOf s srcs).length = srcs.length then
+        {
+          store :=
+            s.store ++
+              [{ id := id, v := v,
+                  label :=
+                    if C.propagate = true then ControlStack.SC23.anyLabel (ControlStack.SC23.argsOf s srcs) else false,
+                  prov := ControlStack.SC23.anyProv (ControlStack.SC23.argsOf s srcs) }],
+          confs := s.confs, used := s.used, executed := s.executed, halted := s.halted }
+      else s
+  | ControlStack.SC23.Op.confirm c n tool vals =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ P.users ∧ ControlStack.SC23.confOf s n = none then
+        { store := s.store, confs := s.confs ++ [{ n := n, tool := tool, vals := vals, by_ := c }], used := s.used,
+          executed := s.executed, halted := s.halted }
+      else s
+  | ControlStack.SC23.Op.act tool args n =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if (ControlStack.SC23.argsOf s args).length ≠ args.length then s
+      else
+        if
+            tool ∉ P.sensitive ∨
+              (C.taintCheck = true → ControlStack.SC23.anyLabel (ControlStack.SC23.argsOf s args) = false) then
+          ControlStack.SC23.doExec s
+            { tool := tool, vals := List.map ControlStack.SC23.Val.v (ControlStack.SC23.argsOf s args),
+              prov := ControlStack.SC23.anyProv (ControlStack.SC23.argsOf s args), conf := none }
+            []
+        else
+          match ControlStack.SC23.confOf s n with
+          | none => s
+          | some cf =>
+            if
+                cf.tool = tool ∧
+                  (C.exact = true → cf.vals = List.map ControlStack.SC23.Val.v (ControlStack.SC23.argsOf s args)) ∧
+                    (C.oneUse = true → n ∉ s.used) then
+              ControlStack.SC23.doExec s
+                { tool := tool, vals := List.map ControlStack.SC23.Val.v (ControlStack.SC23.argsOf s args),
+                  prov := ControlStack.SC23.anyProv (ControlStack.SC23.argsOf s args), conf := some n }
+                [n]
+            else s
+  | ControlStack.SC23.Op.halt c =>
+    if c ∈ P.admins then { store := s.store, confs := s.confs, used := s.used, executed := s.executed, halted := true }
+    else s
+### PRINT ControlStack.SC23.Val
+structure ControlStack.SC23.Val : Type
+number of parameters: 0
+fields:
+  ControlStack.SC23.Val.id : ℕ
+  ControlStack.SC23.Val.v : ℕ
+  ControlStack.SC23.Val.label : Bool
+  ControlStack.SC23.Val.prov : Bool
+constructor:
+  ControlStack.SC23.Val.mk (id v : ℕ) (label prov : Bool) : ControlStack.SC23.Val
+### PRINT ControlStack.SC25.step
+def ControlStack.SC25.step : ControlStack.SC25.Roles →
+  (ℕ → ℕ) →
+    (ℕ → Bool) → ControlStack.SC25.Checks → ControlStack.SC25.St → ControlStack.SC25.Op → ControlStack.SC25.St :=
+fun R h cls C s x =>
+  match x with
+  | ControlStack.SC25.Op.submit c id x decl =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ R.agents ∧ ControlStack.SC25.itemOf s id = none then
+        { queue := { id := id, content := x, declared := decl, submitter := c } :: s.queue, verdicts := s.verdicts,
+          approvals := s.approvals, expired := s.expired, checked := s.checked, executed := s.executed,
+          halted := s.halted }
+      else s
+  | ControlStack.SC25.Op.amend c id x =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC25.itemOf s id with
+      | none => s
+      | some it =>
+        if c ∈ R.agents ∧ id ∉ List.map ControlStack.SC25.Exec.id s.executed then
+          { queue := { id := it.id, content := x, declared := it.declared, submitter := it.submitter } :: s.queue,
+            verdicts := s.verdicts, approvals := s.approvals, expired := s.expired, checked := s.checked,
+            executed := s.executed, halted := s.halted }
+        else s
+  | ControlStack.SC25.Op.audit c id pass =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC25.itemOf s id with
+      | none => s
+      | some it =>
+        if c ∈ R.auditors then
+          { queue := s.queue, verdicts := s.verdicts ++ [{ id := id, d := h it.content, pass := pass, by_ := some c }],
+            approvals := s.approvals, expired := s.expired, checked := s.checked, executed := s.executed,
+            halted := s.halted }
+        else s
+  | ControlStack.SC25.Op.approve c id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC25.itemOf s id with
+      | none => s
+      | some it =>
+        if c ∈ R.approvers then
+          { queue := s.queue, verdicts := s.verdicts,
+            approvals := s.approvals ++ [{ id := id, d := h it.content, approver := c }], expired := s.expired,
+            checked := s.checked, executed := s.executed, halted := s.halted }
+        else s
+  | ControlStack.SC25.Op.timeout id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC25.itemOf s id with
+      | none => s
+      | some it =>
+        if ∃ v ∈ s.verdicts, v.id = id then s
+        else
+          if C.failOpen = true then
+            { queue := s.queue, verdicts := s.verdicts ++ [{ id := id, d := h it.content, pass := true, by_ := none }],
+              approvals := s.approvals, expired := s.expired, checked := s.checked, executed := s.executed,
+              halted := s.halted }
+          else
+            { queue := s.queue, verdicts := s.verdicts, approvals := s.approvals, expired := s.expired ++ [id],
+              checked := s.checked, executed := s.executed, halted := s.halted }
+  | ControlStack.SC25.Op.check id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC25.itemOf s id with
+      | none => s
+      | some it =>
+        if ControlStack.SC25.Valid h cls C s it then
+          { queue := s.queue, verdicts := s.verdicts, approvals := s.approvals, expired := s.expired,
+            checked := id :: s.checked, executed := s.executed, halted := s.halted }
+        else s
+  | ControlStack.SC25.Op.fire id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC25.itemOf s id with
+      | none => s
+      | some it =>
+        if
+            id ∈ s.checked ∧
+              id ∉ List.map ControlStack.SC25.Exec.id s.executed ∧
+                (C.atomic = true → ControlStack.SC25.Valid h cls C s it) then
+          { queue := s.queue, verdicts := s.verdicts, approvals := s.approvals, expired := s.expired,
+            checked := s.checked,
+            executed :=
+              s.executed ++
+                [{ id := id, content := it.content, submitter := it.submitter, vlen := s.verdicts.length,
+                    alen := s.approvals.length }],
+            halted := s.halted }
+        else s
+  | ControlStack.SC25.Op.crash =>
+    { queue := s.queue, verdicts := s.verdicts, approvals := s.approvals, expired := s.expired, checked := [],
+      executed := s.executed, halted := s.halted }
+  | ControlStack.SC25.Op.halt c =>
+    if c ∈ R.admins then
+      { queue := s.queue, verdicts := s.verdicts, approvals := s.approvals, expired := s.expired, checked := s.checked,
+        executed := s.executed, halted := true }
+    else s
+### PRINT ControlStack.SC18.step
+def ControlStack.SC18.step : List ℕ →
+  ℕ → ℕ → ControlStack.SC18.Checks → ControlStack.SC18.St → ControlStack.SC18.Op → ControlStack.SC18.St :=
+fun admins trusted T C s x =>
+  match x with
+  | ControlStack.SC18.Op.request id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if id ∉ s.reqs then
+        { reqs := s.reqs ++ [id], acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := s.sinkUp,
+          clock := s.clock, lastAck := s.lastAck, released := s.released, halted := s.halted }
+      else s
+  | ControlStack.SC18.Op.logWrite id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if id ∈ s.reqs ∧ s.sinkUp = true then
+        { reqs := s.reqs, acked := s.acked ++ [id], logged := if s.cfg = trusted then s.logged ++ [id] else s.logged,
+          cfg := s.cfg, sinkUp := s.sinkUp, clock := s.clock, lastAck := s.clock, released := s.released,
+          halted := s.halted }
+      else s
+  | ControlStack.SC18.Op.release id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if
+          id ∈ s.reqs ∧
+            id ∉ List.map ControlStack.SC18.Rel.id s.released ∧
+              (C.logFirst = true → id ∈ s.acked ∨ C.failOpen = true ∧ s.sinkUp = false) then
+        { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := s.sinkUp, clock := s.clock,
+          lastAck := s.lastAck,
+          released := s.released ++ [{ id := id, llen := s.logged.length, clock := s.clock, lastAck := s.lastAck }],
+          halted := s.halted }
+      else s
+  | ControlStack.SC18.Op.setSink c v =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.cfgProtect = true → c ∈ admins then
+        { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := v, sinkUp := s.sinkUp, clock := s.clock,
+          lastAck := s.lastAck, released := s.released, halted := s.halted }
+      else s
+  | ControlStack.SC18.Op.sinkDown =>
+    { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := false, clock := s.clock,
+      lastAck := s.lastAck, released := s.released, halted := s.halted }
+  | ControlStack.SC18.Op.sinkRestore =>
+    { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := true, clock := s.clock,
+      lastAck := s.lastAck, released := s.released, halted := s.halted }
+  | ControlStack.SC18.Op.tick =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.watchdog = true ∧ s.lastAck + T < s.clock + 1 then
+        { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := s.sinkUp, clock := s.clock + 1,
+          lastAck := s.lastAck, released := s.released, halted := true }
+      else
+        { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := s.sinkUp, clock := s.clock + 1,
+          lastAck := s.lastAck, released := s.released, halted := s.halted }
+  | ControlStack.SC18.Op.halt c =>
+    if c ∈ admins then
+      { reqs := s.reqs, acked := s.acked, logged := s.logged, cfg := s.cfg, sinkUp := s.sinkUp, clock := s.clock,
+        lastAck := s.lastAck, released := s.released, halted := true }
+    else s
+### PRINT ControlStack.SC17.step
+def ControlStack.SC17.step : ControlStack.SC17.Env →
+  ControlStack.SC17.Checks → ControlStack.SC17.St → ControlStack.SC17.Op → ControlStack.SC17.St :=
+fun E C s x =>
+  match x with
+  | ControlStack.SC17.Op.propose c id d =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if ControlStack.SC17.propOf s id = none then
+        { desired := s.desired, live := s.live, props := { id := id, author := c, diff := d } :: s.props,
+          approvals := s.approvals, applied := s.applied, done := s.done, flags := s.flags, halted := s.halted }
+      else s
+  | ControlStack.SC17.Op.amend c id d =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC17.propOf s id with
+      | none => s
+      | some p =>
+        if p.author = c then
+          { desired := s.desired, live := s.live, props := { id := id, author := c, diff := d } :: s.props,
+            approvals := s.approvals, applied := s.applied, done := s.done, flags := s.flags, halted := s.halted }
+        else s
+  | ControlStack.SC17.Op.approve c id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC17.propOf s id with
+      | none => s
+      | some p =>
+        if c ∈ E.reviewers ∧ c ≠ p.author then
+          { desired := s.desired, live := s.live, props := s.props,
+            approvals := s.approvals ++ [{ id := id, reviewer := c, author := p.author, diff := p.diff }],
+            applied := s.applied, done := s.done, flags := s.flags, halted := s.halted }
+        else s
+  | ControlStack.SC17.Op.oob g =>
+    { desired := s.desired, live := g :: s.live, props := s.props, approvals := s.approvals, applied := s.applied,
+      done := s.done, flags := s.flags, halted := s.halted }
+  | ControlStack.SC17.Op.reconcile =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.drift = true ∧ s.live ≠ s.desired then
+        { desired := s.desired, live := s.desired, props := s.props, approvals := s.approvals, applied := s.applied,
+          done := s.done, flags := s.flags ++ [0], halted := s.halted }
+      else s
+  | ControlStack.SC17.Op.apply id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC17.propOf s id with
+      | none => s
+      | some p =>
+        if
+            id ∉ s.done ∧
+              (∃ a ∈ s.approvals, a.id = id ∧ a.author = p.author ∧ (C.exact = true → a.diff = p.diff)) ∧
+                ControlStack.SC17.ceilingOk E C s p.diff = true then
+          { desired := ControlStack.SC17.applyDiff s.desired p.diff, live := ControlStack.SC17.newLive C s p.diff,
+            props := s.props, approvals := s.approvals,
+            applied :=
+              s.applied ++
+                [{ id := id, author := p.author, diff := p.diff, live := ControlStack.SC17.newLive C s p.diff,
+                    desired := ControlStack.SC17.applyDiff s.desired p.diff }],
+            done := s.done ++ [id], flags := ControlStack.SC17.flagUpd C s id, halted := s.halted }
+        else s
+  | ControlStack.SC17.Op.halt c =>
+    if c ∈ E.admins then
+      { desired := s.desired, live := s.live, props := s.props, approvals := s.approvals, applied := s.applied,
+        done := s.done, flags := s.flags, halted := true }
+    else s
+### PRINT ControlStack.SC19.step
+def ControlStack.SC19.step : ControlStack.SC19.Env →
+  ControlStack.SC19.Checks → ControlStack.SC19.St → ControlStack.SC19.Op → ControlStack.SC19.St :=
+fun E C s x =>
+  match x with
+  | ControlStack.SC19.Op.write t n =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      {
+        objs :=
+          { t := t, ver := (ControlStack.SC19.objOf s t).ver + 1, size := (ControlStack.SC19.objOf s t).size + n } ::
+            s.objs,
+        snaps := s.snaps, verified := s.verified, pending := s.pending, approvals := s.approvals,
+        destroyed := s.destroyed, done := s.done, halted := s.halted }
+  | ControlStack.SC19.Op.snapshot t =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { objs := s.objs, snaps := s.snaps ++ [ControlStack.SC19.objOf s t], verified := s.verified, pending := s.pending,
+        approvals := s.approvals, destroyed := s.destroyed, done := s.done, halted := s.halted }
+  | ControlStack.SC19.Op.verify c i =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ E.verifiers ∧ i < s.snaps.length then
+        { objs := s.objs, snaps := s.snaps, verified := s.verified ++ [i], pending := s.pending,
+          approvals := s.approvals, destroyed := s.destroyed, done := s.done, halted := s.halted }
+      else s
+  | ControlStack.SC19.Op.prepare c id t =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if ControlStack.SC19.pendOf s id = none then
+        { objs := s.objs, snaps := s.snaps, verified := s.verified,
+          pending := s.pending ++ [{ id := id, author := c, t := t, count := (ControlStack.SC19.objOf s t).size }],
+          approvals := s.approvals, destroyed := s.destroyed, done := s.done, halted := s.halted }
+      else s
+  | ControlStack.SC19.Op.approve c id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC19.pendOf s id with
+      | none => s
+      | some p =>
+        if c ∈ E.approvers ∧ c ≠ p.author then
+          { objs := s.objs, snaps := s.snaps, verified := s.verified, pending := s.pending,
+            approvals := s.approvals ++ [(id, c, p.author)], destroyed := s.destroyed, done := s.done,
+            halted := s.halted }
+        else s
+  | ControlStack.SC19.Op.commit id i =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC19.pendOf s id with
+      | none => s
+      | some p =>
+        match s.snaps[i]? with
+        | none => s
+        | some sn =>
+          if
+              id ∉ s.done ∧
+                (∃ a ∈ s.approvals, a.1 = id ∧ a.2.2 = p.author) ∧
+                  sn.t = p.t ∧
+                    (C.verified = true → i ∈ s.verified) ∧
+                      (C.fresh = true → sn.ver = (ControlStack.SC19.objOf s p.t).ver) ∧
+                        ControlStack.SC19.countOf C s p ≤ E.R then
+            { objs := { t := p.t, ver := (ControlStack.SC19.objOf s p.t).ver + 1, size := 0 } :: s.objs,
+              snaps := s.snaps, verified := s.verified, pending := s.pending, approvals := s.approvals,
+              destroyed :=
+                s.destroyed ++
+                  [{ id := id, author := p.author, t := p.t, ver := (ControlStack.SC19.objOf s p.t).ver,
+                      actual := (ControlStack.SC19.objOf s p.t).size, snap := i }],
+              done := s.done ++ [id], halted := s.halted }
+          else s
+  | ControlStack.SC19.Op.halt c =>
+    if c ∈ E.admins then
+      { objs := s.objs, snaps := s.snaps, verified := s.verified, pending := s.pending, approvals := s.approvals,
+        destroyed := s.destroyed, done := s.done, halted := true }
+    else s
+### PRINT ControlStack.SC27Chain.step
+def ControlStack.SC27Chain.step : ControlStack.SC27Chain.Env →
+  ControlStack.SC27Chain.Checks → ControlStack.SC27Chain.St → ControlStack.SC27Chain.Op → ControlStack.SC27Chain.St :=
+fun E C s x =>
+  match x with
+  | ControlStack.SC27Chain.Op.append e =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { log := s.log ++ [e], truth := s.truth ++ [e], anchors := s.anchors, accepted := s.accepted, halted := s.halted }
+  | ControlStack.SC27Chain.Op.rewrite l =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else { log := l, truth := s.truth, anchors := s.anchors, accepted := s.accepted, halted := s.halted }
+  | ControlStack.SC27Chain.Op.anchor =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { log := s.log, truth := s.truth,
+        anchors := s.anchors ++ [(ControlStack.SC27Chain.chainHead E.H E.h0 s.log, some s.log)], accepted := s.accepted,
+        halted := s.halted }
+  | ControlStack.SC27Chain.Op.writerAnchor hd =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { log := s.log, truth := s.truth, anchors := s.anchors ++ [(hd, none)], accepted := s.accepted,
+        halted := s.halted }
+  | ControlStack.SC27Chain.Op.verify m =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if ControlStack.SC27Chain.Accepts E C s m then
+        { log := s.log, truth := s.truth, anchors := s.anchors, accepted := s.accepted ++ [m], halted := s.halted }
+      else s
+  | ControlStack.SC27Chain.Op.halt c =>
+    if c ∈ E.admins then
+      { log := s.log, truth := s.truth, anchors := s.anchors, accepted := s.accepted, halted := true }
+    else s
+### PRINT ControlStack.SC27Chain.chainHead
+def ControlStack.SC27Chain.chainHead : (ℕ → ℕ → ℕ) → ℕ → List ℕ → ℕ :=
+fun H h0 l => List.foldl H h0 l
+### PRINT ControlStack.SC27Chain.Op
+inductive ControlStack.SC27Chain.Op : Type
+number of parameters: 0
+constructors:
+ControlStack.SC27Chain.Op.append : ℕ → ControlStack.SC27Chain.Op
+ControlStack.SC27Chain.Op.rewrite : List ℕ → ControlStack.SC27Chain.Op
+ControlStack.SC27Chain.Op.anchor : ControlStack.SC27Chain.Op
+ControlStack.SC27Chain.Op.writerAnchor : ℕ → ControlStack.SC27Chain.Op
+ControlStack.SC27Chain.Op.verify : List ℕ → ControlStack.SC27Chain.Op
+ControlStack.SC27Chain.Op.halt : ℕ → ControlStack.SC27Chain.Op
+### PRINT ControlStack.SC26.step
+def ControlStack.SC26.step : ControlStack.SC26.Roles →
+  ℕ → ControlStack.SC26.Checks → ControlStack.SC26.St → ControlStack.SC26.Op → ControlStack.SC26.St :=
+fun R cap C s x =>
+  match x with
+  | ControlStack.SC26.Op.request c tx =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if c ∈ R.agents then
+        { next := s.next + 1, reqs := s.reqs ++ [{ id := s.next, requester := c, tx := tx }], approvals := s.approvals,
+          reserved := s.reserved, spent := s.spent, halted := s.halted, bank := s.bank, net := s.net }
+      else s
+  | ControlStack.SC26.Op.approve c id tx =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC26.reqOf s id with
+      | none => s
+      | some r =>
+        if c ∈ R.approvers ∧ (C.distinct = true → c ≠ r.requester) ∧ (C.payload = true → tx = r.tx) then
+          { next := s.next, reqs := s.reqs, approvals := s.approvals ++ [(id, c, tx)], reserved := s.reserved,
+            spent := s.spent, halted := s.halted, bank := s.bank, net := s.net }
+        else s
+  | ControlStack.SC26.Op.execute caller id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC26.reqOf s id with
+      | none => s
+      | some r =>
+        if
+            (∃ ap ∈ s.approvals, ap.1 = id) ∧
+              (C.nonce = true → id ∉ s.reserved) ∧ (C.cap = true → s.spent + r.tx.amount ≤ cap) then
+          { next := s.next, reqs := s.reqs, approvals := s.approvals, reserved := s.reserved ++ [id],
+            spent := s.spent + r.tx.amount, halted := s.halted, bank := s.bank, net := s.net }
+        else s
+  | ControlStack.SC26.Op.deliver id =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if id ∈ s.reserved then
+        match ControlStack.SC26.reqOf s id with
+        | none => s
+        | some r =>
+          { next := s.next, reqs := s.reqs, approvals := s.approvals, reserved := s.reserved, spent := s.spent,
+            halted := s.halted, bank := s.bank, net := s.net ++ [(id, r.tx)] }
+      else s
+  | ControlStack.SC26.Op.arrive key =>
+    match List.find? (fun m => decide (m.1 = key)) s.net with
+    | none => s
+    | some m => ControlStack.SC26.bankAppend C s m.1 m.2
+  | ControlStack.SC26.Op.bankCall c key tx =>
+    if C.bankAuth = true ∧ c ≠ R.gate then s else ControlStack.SC26.bankAppend C s key tx
+  | ControlStack.SC26.Op.halt c =>
+    if c ∈ R.admins then
+      { next := s.next, reqs := s.reqs, approvals := s.approvals, reserved := s.reserved, spent := s.spent,
+        halted := true, bank := s.bank, net := s.net }
+    else s
+### PRINT ControlStack.SC08.step
+def ControlStack.SC08.step : ControlStack.SC08.Env →
+  ControlStack.SC08.Checks → ControlStack.SC08.St → ControlStack.SC08.Op → ControlStack.SC08.St :=
+fun E C s x =>
+  match x with
+  | ControlStack.SC08.Op.write p x =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else if E.writable p = true then { files := (p, x) :: s.files, ran := s.ran, halted := s.halted } else s
+  | ControlStack.SC08.Op.exec p sc =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match ControlStack.SC08.execResult E C s p sc with
+      | none => s
+      | some r => { files := s.files, ran := s.ran ++ [r], halted := s.halted }
+  | ControlStack.SC08.Op.halt c => if c ∈ E.admins then { files := s.files, ran := s.ran, halted := true } else s
+### PRINT ControlStack.SC10.step
+def ControlStack.SC10.step : ControlStack.SC10.Env →
+  ControlStack.SC10.Checks → ControlStack.SC10.St → ControlStack.SC10.Op → ControlStack.SC10.St :=
+fun E C s x =>
+  match x with
+  | ControlStack.SC10.Op.writePolicy c v =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.adminOnly = true → c ∈ E.admins then
+        { versions := s.versions ++ [(v, c)], cache := s.cache, altFile := s.altFile, pathTool := s.pathTool,
+          decisions := s.decisions, builds := s.builds, halted := s.halted }
+      else s
+  | ControlStack.SC10.Op.refresh =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { versions := s.versions, cache := ControlStack.SC10.latest s, altFile := s.altFile, pathTool := s.pathTool,
+        decisions := s.decisions, builds := s.builds, halted := s.halted }
+  | ControlStack.SC10.Op.decide req =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      match if C.fresh = true then ControlStack.SC10.latest s else s.cache with
+      | none => s
+      | some i =>
+        match s.versions[i]? with
+        | none => s
+        | some vw =>
+          { versions := s.versions, cache := s.cache, altFile := s.altFile, pathTool := s.pathTool,
+            decisions := s.decisions ++ [{ req := req, ver := some i, val := vw.1, curLen := s.versions.length }],
+            builds := s.builds, halted := s.halted }
+  | ControlStack.SC10.Op.writeAlt v =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { versions := s.versions, cache := s.cache, altFile := v, pathTool := s.pathTool, decisions := s.decisions,
+        builds := s.builds, halted := s.halted }
+  | ControlStack.SC10.Op.altDecide req =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      if C.singleEval = true then s
+      else
+        { versions := s.versions, cache := s.cache, altFile := s.altFile, pathTool := s.pathTool,
+          decisions := s.decisions ++ [{ req := req, ver := none, val := s.altFile, curLen := s.versions.length }],
+          builds := s.builds, halted := s.halted }
+  | ControlStack.SC10.Op.writePath x =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { versions := s.versions, cache := s.cache, altFile := s.altFile, pathTool := x, decisions := s.decisions,
+        builds := s.builds, halted := s.halted }
+  | ControlStack.SC10.Op.build =>
+    if s.halted = true ∧ C.haltCheck = true then s
+    else
+      { versions := s.versions, cache := s.cache, altFile := s.altFile, pathTool := s.pathTool,
+        decisions := s.decisions, builds := s.builds ++ [if C.pinnedPath = true then E.pinned else s.pathTool],
+        halted := s.halted }
+  | ControlStack.SC10.Op.halt c =>
+    if c ∈ E.admins then
+      { versions := s.versions, cache := s.cache, altFile := s.altFile, pathTool := s.pathTool,
+        decisions := s.decisions, builds := s.builds, halted := true }
+    else s
+### PRINT ControlStack.DistributedHalt.accepts
+def ControlStack.DistributedHalt.accepts : Bool → ℕ → ℕ → ℕ → ℕ × ℕ → Bool :=
+fun fence t0 ε e0 ev => !fence || decide (ev.1 < t0 + ε) || decide (e0 + 1 ≤ ev.2)
+### PRINT ControlStack.DistributedHalt.sinkStep
+def ControlStack.DistributedHalt.sinkStep : Bool → ℕ → ℕ → ℕ → ℕ → List (ℕ × ℕ) → ℕ × ℕ → List (ℕ × ℕ) :=
+fun fence t0 ε e0 G s ev =>
+  if (ControlStack.DistributedHalt.accepts fence t0 ε e0 ev && decide (s.length < G)) = true then s ++ [ev] else s
+### PRINT ControlStack.DistributedHalt.sinkRun
+def ControlStack.DistributedHalt.sinkRun : Bool → ℕ → ℕ → ℕ → ℕ → List (ℕ × ℕ) → List (ℕ × ℕ) :=
+fun fence t0 ε e0 G evs => List.foldl (ControlStack.DistributedHalt.sinkStep fence t0 ε e0 G) [] evs
+### PRINT ControlStack.DistributedHalt.Rate
+def ControlStack.DistributedHalt.Rate : ℕ → (ℕ → ℕ → ℕ) → Prop :=
+fun ρ e => ∀ (i t : ℕ), e i t ≤ ρ
+### PRINT ControlStack.DistributedHalt.HaltAbsorbs
+def ControlStack.DistributedHalt.HaltAbsorbs : ℕ → (ℕ → ℕ) → (ℕ → ℕ → ℕ) → Prop :=
+fun t0 δ e => ∀ (i t : ℕ), t0 + δ i ≤ t → e i t = 0
+### PRINT ControlStack.DistributedHalt.Delivered
+def ControlStack.DistributedHalt.Delivered : ℕ → ℕ → (ℕ → ℕ) → Prop :=
+fun n Δ δ => ∀ i < n, δ i ≤ Δ
+### PRINT ControlStack.DistributedHalt.Latency
+def ControlStack.DistributedHalt.Latency : ℕ → (ℕ → ℕ → ℕ) → Prop :=
+fun L lat => ∀ (i t : ℕ), lat i t ≤ L
+### PRINT ControlStack.DistributedHalt.HoldsOld
+def ControlStack.DistributedHalt.HoldsOld : ℕ → (ℕ → ℕ → ℕ) → Prop :=
+fun e0 ep => ∀ (i t : ℕ), ep i t ≤ e0
+### PRINT ControlStack.DistributedHalt.landedAfter
+def ControlStack.DistributedHalt.landedAfter : ℕ → ℕ → ℕ → (ℕ → ℕ → ℕ) → (ℕ → ℕ → ℕ) → ℕ :=
+fun n T t0 e lat => ∑ i ∈ Finset.range n, ∑ t ∈ Finset.range T, if t0 ≤ t + lat i t then e i t else 0
+### PRINT ControlStack.DistributedHalt.initiatedAfter
+def ControlStack.DistributedHalt.initiatedAfter : ℕ → ℕ → ℕ → (ℕ → ℕ → ℕ) → ℕ :=
+fun n T t0 e => ∑ i ∈ Finset.range n, ∑ t ∈ Finset.range T, if t0 ≤ t then e i t else 0
+### PRINT ControlStack.Compose.BridgeAdmissible
+def ControlStack.Compose.BridgeAdmissible : {St₁ St₂ Op₁ Op₂ Eff₁ Eff₂ : Type} →
+  {G₁ : ControlStack.Gate.System St₁ Op₁ Eff₁} →
+    {G₂ : ControlStack.Gate.System St₂ Op₂ Eff₂} →
+      ControlStack.Gate.Spec G₁ → ControlStack.Gate.Spec G₂ → (St₁ → St₂ → St₂) → Prop :=
+fun {St₁ St₂ Op₁ Op₂ Eff₁ Eff₂} {G₁} {G₂} S₁ S₂ b =>
+  ∀ (s₁ : St₁) (s₂ : St₂), S₁.Inv s₁ → S₂.Inv s₂ → S₂.Inv (b s₁ s₂) ∧ G₂.effects s₂ <+: G₂.effects (b s₁ s₂)
+### PRINT ControlStack.MonitorCollusion.passRate
+def ControlStack.MonitorCollusion.passRate : {V : Type} → [Fintype V] → (V → ℝ) → (V → ℝ) → ℝ :=
+fun {V} [Fintype V] P β => ∑ v, P v * β v
+### PRINT ControlStack.MonitorCollusion.tv
+def ControlStack.MonitorCollusion.tv : {V : Type} → [Fintype V] → (V → ℝ) → (V → ℝ) → ℝ :=
+fun {V} [Fintype V] P Q => 1 / 2 * ∑ v, |P v - Q v|
+### PRINT ControlStack.ChannelInstances.gpuK
+def ControlStack.ChannelInstances.gpuK : {J : ℕ} →
+  {Ω M : Type} →
+    (Ω → M → List (Bool × Fin J) → Bool → ℝ) → (Bool → Fin J → ℝ) → Ω → M → List (Bool × Fin J) → Bool × Fin J → ℝ :=
+fun {J} {Ω M} enc W ω m h z => enc ω m h z.1 * W z.1 z.2
+### PRINT ControlStack.ChannelInstances.wmax
+def ControlStack.ChannelInstances.wmax : {J : ℕ} → (Bool → Fin J → ℝ) → Fin J → ℝ :=
+fun {J} W o => max (W true o) (W false o)
+### PRINT ControlStack.ReservedAudit.successInd
+def ControlStack.ReservedAudit.successInd : {N : ℕ} →
+  {Z : Type} → ℕ → Finset (Fin N) → List (ControlStack.Leakage.AOut Z) → ℝ :=
+fun {N} {Z} k S t => ControlStack.Leakage.survInd k S t * ControlStack.Leakage.liveInd ControlStack.Leakage.caughtFlag t
+### PRINT ControlStack.ReservedAudit.reservedK
+def ControlStack.ReservedAudit.reservedK : {N : ℕ} →
+  ℕ →
+    (List (ControlStack.Leakage.AOut Unit) → Bool → ℝ) →
+      (Finset (Fin N) → List (Bool × ControlStack.Leakage.AOut Unit) → Bool → Bool → ℝ) →
+        Finset (Fin N) → List (Bool × ControlStack.Leakage.AOut Unit) → Bool × ControlStack.Leakage.AOut Unit → ℝ :=
+fun {N} Bf σ φ S h yo =>
+  σ (List.map Prod.snd h) yo.2.1 * φ S h yo.2.1 yo.1 *
+    if
+        yo.2.2.2 =
+          (yo.2.1 &&
+            (decide (ControlStack.Leakage.memN S (List.map Prod.snd h).length) ||
+              yo.1 && decide ((ControlStack.ReservedAudit.flagRun Bf (List.map Prod.fst h)).1 < Bf))) then
+      1
+    else 0
+### PRINT ControlStack.ReservedAudit.pU
+def ControlStack.ReservedAudit.pU : (N : ℕ) → ℕ → Finset (Fin N) → ℝ :=
+fun N B S => if S ∈ ControlStack.AuditBudget.randomSchedules N B then (↑(N.choose B))⁻¹ else 0
+### PRINT ControlStack.ReservedRecall.recallSucc
+def ControlStack.ReservedRecall.recallSucc : {N : ℕ} → ℕ → List (ControlStack.Leakage.AOut Unit) → ℝ :=
+fun {N} k t =>
+  (if k ≤ (ControlStack.Leakage.attackSet t).card then 1 else 0) *
+    ControlStack.Leakage.liveInd ControlStack.Leakage.caughtFlag t
+### PRINT ControlStack.ReservedRecall.hypMiss
+def ControlStack.ReservedRecall.hypMiss : ℕ → ℕ → ℕ → ℝ → ℝ :=
+fun N B k r => ∑ j ∈ Finset.range (min k B + 1), ↑(k.choose j) * ↑((N - k).choose (B - j)) / ↑(N.choose B) * (1 - r) ^ j
+### PRINT ControlStack.DamageBound.ucX
+def ControlStack.DamageBound.ucX : ℕ → List (ControlStack.Leakage.AOut Unit) → ℕ :=
+fun N t => (ControlStack.Leakage.attackSet (ControlStack.DamageBound.pre t)).card
+### PRINT ControlStack.DamageBound.pre
+def ControlStack.DamageBound.pre : List (ControlStack.Leakage.AOut Unit) → List (ControlStack.Leakage.AOut Unit) :=
+fun t => List.takeWhile (fun o => !ControlStack.Leakage.caughtFlag o) t
+### PRINT ControlStack.Leakage.AOut
+@[reducible] def ControlStack.Leakage.AOut : Type → Type :=
+fun Z => Bool × Z × Bool
+### PRINT ControlStack.Leakage.val
+def ControlStack.Leakage.val : {Y O : Type} →
+  [Fintype Y] → [Fintype O] → (List (Y × O) → Y × O → ℝ) → (List O → ℝ) → ℕ → List (Y × O) → ℝ :=
+fun {Y O} [Fintype Y] [Fintype O] K pay x x_1 =>
+  Nat.brecOn (motive := fun x => List (Y × O) → ℝ) x (ControlStack.Leakage.val._f K pay) x_1
+### PRINT ControlStack.Leakage.Dominated
+def ControlStack.Leakage.Dominated : {Y O : Type} →
+  [Fintype Y] → (List (Y × O) → Y × O → ℝ) → (List O → O → ℝ) → Prop :=
+fun {Y O} [Fintype Y] K c => ∀ (h : List (Y × O)) (o : O), ∑ y, K h (y, o) ≤ c (List.map Prod.snd h) o

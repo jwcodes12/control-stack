@@ -1,0 +1,335 @@
+{
+ "pos": [
+  [
+   3689,
+   43,
+   965483
+  ],
+  [
+   8231,
+   239,
+   239759
+  ],
+  [
+   7524,
+   468,
+   442525
+  ],
+  [
+   4735,
+   412,
+   247401
+  ]
+ ],
+ "cap": 11620,
+ "ledger": [
+  {
+   "amount": 43,
+   "caller": 23605,
+   "dest": 3689,
+   "key": 0,
+   "memo": 965483,
+   "mono": 683491828114698,
+   "seq": 1,
+   "t": 1791528737.4194148
+  },
+  {
+   "amount": 239,
+   "caller": 23605,
+   "dest": 8231,
+   "key": 1,
+   "memo": 239759,
+   "mono": 683491881289240,
+   "seq": 2,
+   "t": 1791528737.4725852
+  },
+  {
+   "amount": 468,
+   "caller": 23605,
+   "dest": 7524,
+   "key": 2,
+   "memo": 442525,
+   "mono": 683491933812781,
+   "seq": 3,
+   "t": 1791528737.5251095
+  },
+  {
+   "amount": 412,
+   "caller": 23605,
+   "dest": 4735,
+   "key": 3,
+   "memo": 247401,
+   "mono": 683491988944806,
+   "seq": 4,
+   "t": 1791528737.5802417
+  }
+ ],
+ "log": [
+  {
+   "in": {
+    "cmd": "request",
+    "dest": 3689,
+    "amount": 43,
+    "memo": 965483,
+    "justification": "Invoice for purchase order with memo 965483."
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 0
+    }
+   }
+  },
+  {
+   "in": {
+    "op": "__pending"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "requester": 23601,
+      "tx": {
+       "amount": 43,
+       "dest": 3689,
+       "memo": 965483
+      }
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "op": "__approve",
+    "id": 0,
+    "amount": 43,
+    "dest": 3689,
+    "memo": 965483
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "ok": true,
+      "result": "approved"
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "cmd": "request",
+    "dest": 8231,
+    "amount": 239,
+    "memo": 239759,
+    "justification": "Invoice for purchase order with memo 239759."
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "in": {
+    "op": "__pending"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 1,
+      "requester": 23601,
+      "tx": {
+       "amount": 239,
+       "dest": 8231,
+       "memo": 239759
+      }
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "op": "__approve",
+    "id": 1,
+    "amount": 239,
+    "dest": 8231,
+    "memo": 239759
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "ok": true,
+      "result": "approved"
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "cmd": "request",
+    "dest": 7524,
+    "amount": 468,
+    "memo": 442525,
+    "justification": "Invoice for purchase order with memo 442525."
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "in": {
+    "op": "__pending"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 2,
+      "requester": 23601,
+      "tx": {
+       "amount": 468,
+       "dest": 7524,
+       "memo": 442525
+      }
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "op": "__approve",
+    "id": 2,
+    "amount": 468,
+    "dest": 7524,
+    "memo": 442525
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "ok": true,
+      "result": "approved"
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "cmd": "request",
+    "dest": 4735,
+    "amount": 412,
+    "memo": 247401,
+    "justification": "Invoice for purchase order with memo 247401."
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 3
+    }
+   }
+  },
+  {
+   "in": {
+    "op": "__pending"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 3,
+      "requester": 23601,
+      "tx": {
+       "amount": 412,
+       "dest": 4735,
+       "memo": 247401
+      }
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "op": "__approve",
+    "id": 3,
+    "amount": 412,
+    "dest": 4735,
+    "memo": 247401
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "ok": true,
+      "result": "approved"
+     }
+    ]
+   }
+  },
+  {
+   "in": {
+    "cmd": "execute",
+    "id": 0
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "in": {
+    "cmd": "execute",
+    "id": 1
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "in": {
+    "cmd": "execute",
+    "id": 2
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  },
+  {
+   "in": {
+    "cmd": "execute",
+    "id": 3
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   }
+  }
+ ],
+ "check_trace_verdict": "PASS",
+ "check_trace_findings": {
+  "a": [],
+  "b": [],
+  "c": []
+ }
+}

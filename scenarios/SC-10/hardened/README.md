@@ -65,7 +65,7 @@ another effect. Reusing that ID for different content is rejected.
 Local negative tests check policy tightening before effect,
 replay after restart, duplicate suppression, malformed inputs and a forged
 effect that rehashes its predecessor but names a disallowed host.
-The reference suite passed **13/13 local tests** against the exact checked-in
+The reference suite passed **14/14 local tests** against the exact checked-in
 source blobs; GitHub CI remains a separate gate.
 
 **This does NOT prove** Linux/netfilter/firewall syscall mediation, arbitrary
@@ -74,6 +74,12 @@ A downstream consumer must not treat `decide` or `emit` replies as an
 unrestricted authorization capability. In particular, `emit` is a journaled
 effect only; making a real network effect would require the actuator itself
 to be inside a trusted, pre-effect enforcement boundary.
+
+The isolated `test_effect_socket.py` also sends 48 concurrent real Unix-socket
+requests (including policy updates and repeated effect identifiers), then
+replays the journal and checks every recorded effect against the policy that
+was current at its serialized position. This does not model arbitrary
+inter-process side effects or hostile OS scheduling.
 
 Additional **expected negative** witnesses in
 `test_trust_root_limits.py` demonstrate two limitations when an attacker

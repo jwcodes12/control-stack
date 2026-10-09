@@ -2,6 +2,8 @@
 
 ## Primitive completion sprint — 2026-10-09 (F1–F8)
 
+**Execution handoff:** detailed authorized-host/VM steps and exact evidence go/no-go gates are in [VM-HANDOFF.md](VM-HANDOFF.md). The source and CI completion record is [completed.md](completed.md).
+
 **Status:** All eight families have at least partial model-level results, NOT eight deployable primitives. The new `trusted_stack/` repository-only reference service implements a **single narrow action**: atomic authorization and append of a SQLite release record. It has no external harmful-effect adapter, no kernel-enforced universal interception and no side-channel secrecy guarantee. Its tests and CI are linked in the root `COMPLETED.md`. `LEAN-STATEMENTS-NORMAL-FORM.md` contains all **865** indexed source signatures (not kernel-elaborated normal forms).
 
 ### Open steps, prioritized with precise acceptance gates

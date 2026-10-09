@@ -18,7 +18,7 @@ build". Those were superseded by `tools/check_scenarios.py`,
 `ControlStack/Lease.lean`, and the 28 scenario bundles. The canonical
 current backlog and acceptance gates are in [ROADMAP.md](ROADMAP.md). The
 complete normalized Lean source statement catalog is
-[LEAN-STATEMENTS-NORMAL-FORM.md](LEAN-STATEMENTS-NORMAL-FORM.md).
+[LEAN-STATEMENTS-NORMAL-FORM.md](LEAN-STATEMENTS-NORMAL-FORM.md); the integration result is [completed.md](completed.md), and the operator handoff is [VM-HANDOFF.md](VM-HANDOFF.md).
 
 
 ## Consolidated source paths

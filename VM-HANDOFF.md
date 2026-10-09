@@ -2,7 +2,7 @@
 
 **Updated 2026-10-09. Intended audience:** an operator/agent working on an owner-authorized host with VM, system and trusted OS access. **This is a handoff plan, not evidence of executed work.** Run only on disposable systems; never use production credentials or deployment targets as test fixtures.
 
-**Related:** [ROADMAP.md](ROADMAP.md) is the canonical F1–F8 backlog; [COMPLETED.md](COMPLETED.md) distinguishes completed checks. [gateway/vm/README.md](gateway/vm/README.md), [BOUND.md](gateway/vm/BOUND.md), [original VM failure](gateway/vm/receipts/usefulness-20261008-linkfix.json), and [host-port readiness](reviews/assurance-priorities/host-port-readiness.md) are the technical source of truth.
+**Related:** [ROADMAP.md](ROADMAP.md) is the canonical F1–F8 backlog; [completed.md](completed.md) distinguishes completed checks. [gateway/vm/README.md](gateway/vm/README.md), [BOUND.md](gateway/vm/BOUND.md), [original VM failure](gateway/vm/receipts/usefulness-20261008-linkfix.json), and [host-port readiness](reviews/assurance-priorities/host-port-readiness.md) are the technical source of truth.
 
 ## 0. Starting facts — do not repeat the invalid inference
 

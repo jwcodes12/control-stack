@@ -21,3 +21,5 @@ Commands are listed only for files that exist. Run them from the repository root
 
 - Recorded: `scenarios/SC-24/llm_collusion/evidence/run-1/verdicts.json` (PASS)
 - Recorded: `prereg/SC24-COLLUSION.md` (PASS)
+- Recorded: `scenarios/SC-24/llm_collusion_v2/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC24-COLLUSION-V2.md` (PASS)

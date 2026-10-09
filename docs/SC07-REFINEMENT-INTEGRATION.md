@@ -27,3 +27,5 @@ python3 tools/cstack.py evidence SC-07
 ```
 
 Do not merge unless the CI checks are green; inspect generated-data drift and theorem statement fidelity separately.
+
+The generated theorem registry was also refreshed to pin the changed `TrustRoot.lean` blob, without elevating source-only declarations to verified status.

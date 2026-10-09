@@ -548,5 +548,61 @@
     "status": "SOURCE_ONLY",
     "necessity_witness": "NOT_RECORDED",
     "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+  },
+  "ControlStack/HaltLiveness.lean::delivered_halt_absorbs": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-25"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "Trusted HALT instruction is included in reference-gate transition and every subsequent effect is mediated"
+    ],
+    "status": "SOURCE_ONLY",
+    "necessity_witness": "NOT_RECORDED",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+  },
+  "ControlStack/HaltLiveness.lean::liveness_if_delivered": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-25"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "Trusted scheduler delivers HALT before finite step bound; no theorem guarantees real-world scheduler delivery"
+    ],
+    "status": "SOURCE_ONLY",
+    "necessity_witness": "ControlStack.HaltLiveness.ordinary_operations_never_halt",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+  },
+  "ControlStack/HaltLiveness.lean::effects_frozen_after_delivered_halt": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-25"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "HALT is explicitly delivered after modeled before-trace; post-HALT effects are mediated by same gate"
+    ],
+    "status": "SOURCE_ONLY",
+    "necessity_witness": "NOT_RECORDED",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+  },
+  "ControlStack/HaltLiveness.lean::ordinary_operations_never_halt": {
+    "family": "F3",
+    "scenarios": [
+      "SC-13",
+      "SC-25"
+    ],
+    "adversary": "TRACE_ARBITRARY",
+    "premises": [
+      "Counterexample: trace has only untrusted ordinary operations and contains no trusted HALT"
+    ],
+    "status": "SOURCE_ONLY",
+    "necessity_witness": "NOT_RECORDED",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
   }
 }

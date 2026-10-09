@@ -12,6 +12,8 @@ This is the **single status entry point**. The source-derived scenario index is 
 
 ### Structure integration (work branch; build acceptance PASS, operational assurance pending)
 
+**Conditional shutdown theory extension:** `ControlStack/HaltLiveness.lean` passed pinned Lean 4.34.0 on [CI #37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361), with four standard-only axiom reports. The trusted HALT-delivery premise remains an unverified scheduler/runtime obligation, so this is **not liveness assurance for a deployed agent**.
+
 [CI #37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641) passed pinned Lean compilation, 28/28 scenario claim elaborations, 8 printed standard-only axiom reports, 18 mutation tests, 4 certifier tests and generated-index checks. Original SC-01 case steps 1–4 passed; phase 5 correctly identified a frozen receipt's host-bound OpenSSL mismatch. This is **not** an independent applicability or deployment validation.
 
 - SC-01, SC-03 and SC-13 have named proof references and remain **conditional**, not deployment assured; SC-27 remains **draft** because audit-dispatch integrity does not prove independently attested evidence.

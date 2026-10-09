@@ -2057,6 +2057,61 @@
     "blob_sha1_prefix": "c6b0845be3dc"
   },
   {
+    "key": "ControlStack/HaltLiveness.lean::run_append",
+    "family": "UNMAPPED",
+    "scenarios": "—",
+    "adversary": "UNKNOWN",
+    "premises": "UNMAPPED",
+    "status": "SOURCE_ONLY",
+    "witness": "NOT_RECORDED",
+    "record": "source only",
+    "blob_sha1_prefix": "d8ac775c6741"
+  },
+  {
+    "key": "ControlStack/HaltLiveness.lean::delivered_halt_absorbs",
+    "family": "F3",
+    "scenarios": "SC-13, SC-25",
+    "adversary": "TRACE_ARBITRARY",
+    "premises": "Trusted HALT instruction is included in reference-gate transition and every subsequent effect is mediated",
+    "status": "SOURCE_ONLY",
+    "witness": "NOT_RECORDED",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified",
+    "blob_sha1_prefix": "d8ac775c6741"
+  },
+  {
+    "key": "ControlStack/HaltLiveness.lean::liveness_if_delivered",
+    "family": "F3",
+    "scenarios": "SC-13, SC-25",
+    "adversary": "TRACE_ARBITRARY",
+    "premises": "Trusted scheduler delivers HALT before finite step bound; no theorem guarantees real-world scheduler delivery",
+    "status": "SOURCE_ONLY",
+    "witness": "ControlStack.HaltLiveness.ordinary_operations_never_halt",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified",
+    "blob_sha1_prefix": "d8ac775c6741"
+  },
+  {
+    "key": "ControlStack/HaltLiveness.lean::effects_frozen_after_delivered_halt",
+    "family": "F3",
+    "scenarios": "SC-13, SC-25",
+    "adversary": "TRACE_ARBITRARY",
+    "premises": "HALT is explicitly delivered after modeled before-trace; post-HALT effects are mediated by same gate",
+    "status": "SOURCE_ONLY",
+    "witness": "NOT_RECORDED",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified",
+    "blob_sha1_prefix": "d8ac775c6741"
+  },
+  {
+    "key": "ControlStack/HaltLiveness.lean::ordinary_operations_never_halt",
+    "family": "F3",
+    "scenarios": "SC-13, SC-25",
+    "adversary": "TRACE_ARBITRARY",
+    "premises": "Counterexample: trace has only untrusted ordinary operations and contains no trusted HALT",
+    "status": "SOURCE_ONLY",
+    "witness": "NOT_RECORDED",
+    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified",
+    "blob_sha1_prefix": "d8ac775c6741"
+  },
+  {
     "key": "ControlStack/HoneypotBridgeProof.lean::honeypotPasses_step",
     "family": "UNMAPPED",
     "scenarios": "—",

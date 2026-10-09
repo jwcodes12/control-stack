@@ -18,7 +18,7 @@ GitHub Actions [#37870787641](https://github.com/jwcodes12/control-stack/actions
 
 ## Still missing theory
 
-- Halt liveness under explicitly stated scheduling/fairness.
+- **Partially closed by CI #37877045361:** Lean now proves HALT is absorbing and freezes effects *if a trusted HALT is delivered within an explicit finite bound*, plus a no-delivery counterexample. Still missing: an independent scheduler fairness guarantee, real runtime halt delivery and refinement/correspondence.
 - General audit-bound prefix/truncation lemma and a positive false-positive-budget policy.
 - Tightness of the leaky audit instance `LeakWitness` (the original text explicitly says the equality is unproved).
 - Actual shared-state runtime correspondence and confused-deputy prevention; C's `GateComposition` counterexample shows a gap, not a full enforcement mechanism.

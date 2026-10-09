@@ -1,5 +1,6 @@
 import ControlStack.PolicyTamper
 import ControlStack.GateComposition
+import ControlStack.HaltLiveness
 import ControlStack.Core.Gate
 import ControlStack.Core.Leakage
 import ControlStack.Families.F1.Capability

@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any trace of ingest/write/quarantine/promote/freeze/edit/train/halt.
 
-**Scope:** Lean process model only, digest level (collision resistance assumed). Semantic: cleanliness of allowlisted/reviewed data, label correctness.
+**Scope:** Lean process model only, digest level (collision resistance assumed). Semantic: cleanliness of allowlisted/reviewed data, label correctness. Runtime: single-host preregistered reference run (scenarios/SC-20/evidence/run-1), benign workloads, one UID.
 
 **Refutation (what would show the claim wrong):** A training run consuming unregistered or post-freeze-edited data despite full checks (witnesses: no quarantine, edit after freeze, unlisted source).
 

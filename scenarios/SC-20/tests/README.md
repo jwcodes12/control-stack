@@ -10,3 +10,12 @@ Commands are listed only for files that exist. Run them from the repository root
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.AuthInstancesB`
 - Lean module: `lake build ControlStack.Scenarios.SC20Data`
+
+## Harness
+
+- Runner: `scenarios/SC-20/harness/run_sc20.py` (runs unprivileged and refuses to run as root; evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-20/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC20-DATA-PROVENANCE.md` (PASS)

@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 4 theorem reference(s), 1 of them necessity witnesses.
-- Runtime evidence: none (Lean model only).
+- Runtime evidence: preregistered reference run(s) `PREREG-SC15-MERGE-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -39,7 +39,20 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 ## Runtime evidence
 
-None. The scenario is supported by its Lean model only.
+- `scenarios/SC-15/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG-SC15-MERGE-v1 run-1: exact-tree review+CI(+security) by non-authors for every main commit, amend/declared-path/HALT checks, four controls fired; 5/5 reps; says nothing about backdoors
+
+  Preregistration: `PREREG-SC15-MERGE-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Every commit on main was reviewed and tested exactly | PASS | 5/5 repetitions passed |
+  | H2 | Amend after review (deployed halves of `stale_review_breaks` and `ci_other_content_breaks` | PASS | 5/5 repetitions passed |
+  | H3 | Declared paths understate the diff (deployed half of `declared_paths_breaks` | PASS | 5/5 repetitions passed |
+  | H4 |  | PASS | 5/5 repetitions passed |
+  | H5 | Admin HALT | PASS | 5/5 repetitions passed |
+  | H6 |  | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
+- `prereg/SC15-MERGE-GATE.md` — recorded outcome **PASS**. Frozen preregistration
 
 ## Premises (from the manifest)
 
@@ -51,7 +64,7 @@ None. The scenario is supported by its Lean model only.
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy.
+- Scope (manifest): Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy. Runtime: single-host preregistered reference run (scenarios/SC-15/evidence/run-1), benign workloads, one UID.
 - Not established as applying to a real deployment: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). Reduced in Lean (sc15_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). CI results carry no principal: CI trustworthiness stays a separate premise (`credential_separation`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Reviews and tests are adequate to detect backdoors (semantic; not formalisable here) (`review_adequacy`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Not independently established; Lean model only.
@@ -66,11 +79,11 @@ None. The scenario is supported by its Lean model only.
 | # | criterion | status | basis |
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
-| 2 | independently checked negative tests cover the bad actions and their bypasses | OPEN | no preregistered negative-control run |
+| 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | OPEN | no preregistered evidence run |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC15-MERGE-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any trace of push/amend/review/CI/merge/halt.
 
-**Scope:** Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy.
+**Scope:** Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy. Runtime: single-host preregistered reference run (scenarios/SC-15/evidence/run-1), benign workloads, one UID.
 
 **Refutation (what would show the claim wrong):** A merge violating the process despite full checks (witnesses: stale review, agent-declared paths, CI on other content, self-review).
 

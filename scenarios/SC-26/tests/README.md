@@ -19,9 +19,9 @@ Commands are listed only for files that exist. Run them from the repository root
 - Unit tests: `python3 -m unittest discover -s scenarios/SC-26/harness -p 'test_*.py'`
 - Unit tests: `python3 -m unittest discover -s scenarios/SC-26/llm_approver -p 'test_*.py'`
 - Unit tests: `python3 -m unittest discover -s scenarios/SC-26/llm_eval -p 'test_*.py'`
-- Runner: `scenarios/SC-26/harness/run_sc26.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
-- Runner: `scenarios/SC-26/llm_approver/run_llm_approver.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
-- Runner: `scenarios/SC-26/llm_eval/run_llm_eval.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
+- Runner: `scenarios/SC-26/harness/run_sc26.py` (needs root for its separate UIDs or cgroups; evidence runs need the frozen prereg)
+- Runner: `scenarios/SC-26/llm_approver/run_llm_approver.py` (needs root for its separate UIDs or cgroups; evidence runs need the frozen prereg)
+- Runner: `scenarios/SC-26/llm_eval/run_llm_eval.py` (needs root for its separate UIDs or cgroups; evidence runs need the frozen prereg)
 
 ## Evidence
 
@@ -33,3 +33,5 @@ Commands are listed only for files that exist. Run them from the repository root
 - Recorded: `prereg/SC26-TRANSACTION-GATE-v3.md` (PASS)
 - Recorded: `scenarios/SC-26/llm_eval/evidence/run-1/verdicts.json` (PASS)
 - Recorded: `prereg/SC26-LLM-EVAL.md` (PASS)
+- Recorded: `scenarios/SC-26/llm_approver/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC26-LLM-APPROVER.md` (PASS)

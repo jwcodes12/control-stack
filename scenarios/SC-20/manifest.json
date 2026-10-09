@@ -5,7 +5,7 @@
   "bad_event": "A trained example's content digest is neither registered by an allowlisted source nor promoted by a non-writer reviewer, or an example changes after freeze. NO formal claim that data is clean.",
   "adversary": "Model: any trace of ingest/write/quarantine/promote/freeze/edit/train/halt.",
   "refutation": "A training run consuming unregistered or post-freeze-edited data despite full checks (witnesses: no quarantine, edit after freeze, unlisted source).",
-  "scope": "Lean process model only, digest level (collision resistance assumed). Semantic: cleanliness of allowlisted/reviewed data, label correctness.",
+  "scope": "Lean process model only, digest level (collision resistance assumed). Semantic: cleanliness of allowlisted/reviewed data, label correctness. Runtime: single-host preregistered reference run (scenarios/SC-20/evidence/run-1), benign workloads, one UID.",
   "families": [
     "F4",
     "F7"
@@ -37,7 +37,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-20/evidence/run-1/verdicts.json",
+      "sha256": "ab2dbe82fc64afbbd3b36fcaad062517e64ff95d1064ac09fcc8917fd4f04168",
+      "purpose": "PREREG-SC20-PROV-v1 run-1: only registered/promoted examples consumed, edit-after-freeze refused, unlisted source excluded, usefulness, three controls fired; 5/5 reps; says nothing about data cleanliness",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC20-DATA-PROVENANCE.md",
+      "sha256": "97e2c2bbde3bf94539feb7970e661d2dac72c9023de02e9ca33d435352e9655a",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",

@@ -15,7 +15,7 @@ Commands are listed only for files that exist. Run them from the repository root
 
 ## Harness
 
-- Runner: `scenarios/SC-16/harness/run_sc16.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
+- Runner: `scenarios/SC-16/harness/run_sc16.py` (runs unprivileged and refuses to run as root; evidence runs need the frozen prereg)
 
 ## Evidence
 

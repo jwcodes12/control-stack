@@ -14,7 +14,7 @@ Commands are listed only for files that exist. Run them from the repository root
 ## Harness
 
 - Unit tests: `python3 -m unittest discover -s scenarios/SC-21/harness -p 'test_*.py'`
-- Runner: `scenarios/SC-21/harness/run_sampling.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
+- Runner: `scenarios/SC-21/harness/run_sampling.py` (see its docstring for privileges; evidence runs need the frozen prereg)
 
 ## Evidence
 

@@ -5,7 +5,7 @@
   "bad_event": "A change merges without an exact-content review by a non-author, trusted CI passing on exactly that content, or (for sensitive surfaces, by trusted diff) an exact-content non-author security review. NO formal claim about backdoors: whether reviewed, tested code contains a backdoor is a semantic judgement.",
   "adversary": "Model: any trace of push/amend/review/CI/merge/halt.",
   "refutation": "A merge violating the process despite full checks (witnesses: stale review, agent-declared paths, CI on other content, self-review).",
-  "scope": "Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy.",
+  "scope": "Lean process model only. Semantic, unformalised: backdoor presence, sensitive-surface list completeness, reviewer/test adequacy. Runtime: single-host preregistered reference run (scenarios/SC-15/evidence/run-1), benign workloads, one UID.",
   "families": [
     "F4",
     "F7"
@@ -37,7 +37,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-15/evidence/run-1/verdicts.json",
+      "sha256": "ccb3e8991860d66d234f92ac199eade093436f8e0c40c0d0cf65798c9f1dde30",
+      "purpose": "PREREG-SC15-MERGE-v1 run-1: exact-tree review+CI(+security) by non-authors for every main commit, amend/declared-path/HALT checks, four controls fired; 5/5 reps; says nothing about backdoors",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC15-MERGE-GATE.md",
+      "sha256": "f3a4432e33300c3635e88864ac61b7d5b786c42233814548268de5c9082b25d5",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",

@@ -304,8 +304,14 @@ def render_tests(m):
         for t in tdirs:
             L.append("- Unit tests: `python3 -m unittest discover -s {} -p 'test_*.py'`".format(t.relative_to(ROOT)))
         for r in runners:
-            L.append("- Runner: `{}` (see its docstring; live runs may need root, and evidence runs need the frozen "
-                     "prereg)".format(r.relative_to(ROOT)))
+            src = r.read_text(errors="replace")
+            if "sudo" in src or "geteuid() != 0" in src or "root required" in src:
+                priv = "needs root for its separate UIDs or cgroups"
+            elif "refuse" in src.lower() and "root" in src.lower():
+                priv = "runs unprivileged and refuses to run as root"
+            else:
+                priv = "see its docstring for privileges"
+            L.append("- Runner: `{}` ({}; evidence runs need the frozen prereg)".format(r.relative_to(ROOT), priv))
     checks = sorted((ROOT / "tools").glob("check_{}_case.py".format(sid.lower().replace("-", ""))))
     ev = [e for e in m["evidence"] if (ROOT / e["path"]).exists()]
     if checks or ev:

@@ -64,6 +64,11 @@ The selected merged branch has **one** `scenarios/` tree and checker, 28 manifes
 
 All original `PREREG-*.md`, scenario experiment receipts and VM receipts remain **byte-identical to main**. The SC-01 assurance manifest has only two source SHA-256 bindings updated, for relocated `ControlStack/Leakage.lean` and `ControlStack/Necessity.lean` compatibility facades; its claim, assumptions, evidence references and all historical receipts remain unchanged. These source-binding changes are necessary for the unchanged SC-01 checker steps 1–4 to pass. CI commits on disposable execution branches were needed to trigger Actions, but only `[skip ci]` commits were pushed to the work branch.
 
+
+## Final exact-source acceptance, 2026-10-08
+
+**[GitHub Actions run #37877960110](https://github.com/jwcodes12/control-stack/actions/runs/37877960110) — SUCCESS.** A read-only checkout of integrated **source commit `b4493224d6758449c2cea1bc65dc257fe6886393`** ran pinned Lean 4.34.0: `lake build ControlStack` **3,744 jobs PASS**; unchanged acceptance script rebuilt 3,743 jobs and elaborated **28/28 scenario claim files** with **eight standard-only printed axiom reports**, **18 scenario mutation tests** and **four certifier tests** all PASS. The 865-entry theorem registry and scenario index both passed drift checks. SC-01's original checker reached all first four checks; step five failed only on the expected historic-host OpenSSL cache receipt binding and the narrow acceptance exception matched. No receipt or preregistration was rewritten. The later work-branch commits modify only documentation and add a manual-only workflow; the checked Lean, checker and registry sources are unchanged.
+
 ## Branch file inventory (changed paths relative to baseline)
 
 ### scenario-architecture-20261008 (132 changed paths; ahead 5, behind 3)

@@ -94,3 +94,7 @@ GitHub Actions run [#37870787641](https://github.com/jwcodes12/control-stack/act
 ## 2026-10-08 — Pinned independent A/B/C branch replay and halt-liveness acceptance [skip ci]
 
 Exact original A, B and C source SHAs independently passed `lake build ControlStack` (3,715 jobs each), 8/7/7 checker mutation tests, and B's 28 original Lean claim replays. A generated indexes pass. Original C generator drift was confirmed as an unmerged-branch defect; the merged 865-entry registry is current. Successful expanded model CI [#37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361) compiled the new conditional HALT delivery/freezing/necessity theorems with only `propext`/`Quot.sound`, plus full merged suite. No scheduler fairness, runtime attestation or deployment safety is inferred. [Evidence and comparison](reviews/structure-merge/comparison.md).
+
+## 2026-10-08 — Final exact integrated code acceptance PASS [skip ci]
+
+[CI #37877960110](https://github.com/jwcodes12/control-stack/actions/runs/37877960110) passed a fresh full Lean 4.34.0 build of 3,744 jobs and the 28 scenario claim replays, 18 checker tests, 4 certifier tests, registry consistency and unchanged SC-01 checks 1–4. Historical source-bound OpenSSL cache receipt remains an expected non-portable check, never regenerated. Main unmerged pending owner approval.

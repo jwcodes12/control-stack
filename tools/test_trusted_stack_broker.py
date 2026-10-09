@@ -77,7 +77,7 @@ def main():
                             "destination": "staging/item", "agent_uid": AGENT,
                             "lease_id": "lease1", "expires": int(time.time()) + 400}, True)
             release = {"op": "release", "nonce": "n1", "digest": digest,
-                       "destination": "staging/item", "lease_id": "lease1", "cost": 1}
+                       "destination": "staging/item", "lease_id": "lease1"}
             call(OTHER, release, False)
             call(AGENT, {**release, "uid": 0}, False)
             call(AGENT, release, True)

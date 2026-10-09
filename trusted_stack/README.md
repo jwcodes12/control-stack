@@ -74,3 +74,5 @@ reviewer, a separate approver and the admin UID. It checks role spoofing,
 unauthorized review/approval, genuine positive release, nonce replay,
 and sticky halt using OS-provided SO_PEERCRED identities. It does not create
 a VM, provide production separation, or cause external effects.
+
+The live broker does **not accept caller-supplied release cost**: every authorized release is a fixed 1-unit charge. Real CPU, I/O, token and financial resource metering require a different trusted source of costs and are NOT enforced by this example.

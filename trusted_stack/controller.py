@@ -54,6 +54,9 @@ class Controller:
         path = Path(path)
         if not path.parent.is_dir() or path.is_symlink():
             raise Denied("admin must prepare a trusted directory")
+        parent = path.parent.stat()
+        if parent.st_uid != os.geteuid() or parent.st_mode & 0o022:
+            raise Denied("controller directory not owned/secured by broker")
         fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600)
         os.close(fd)
         with sqlite3.connect(path) as db:
@@ -87,6 +90,10 @@ class Controller:
     def _open(self):
         try:
             info = self.path.lstat()
+            parent = self.path.parent.stat()
+            if (parent.st_uid != os.geteuid() or parent.st_mode & 0o022 or
+                    info.st_uid != os.geteuid()):
+                raise Denied("controller state or parent not broker-owned")
             if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o077:
                 raise Denied("missing or insecure SQLite state")
             db = sqlite3.connect(self.path.resolve().as_uri() + "?mode=rw",

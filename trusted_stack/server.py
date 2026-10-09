@@ -28,7 +28,7 @@ def run_one(controller, uid, req):
         "issue_lease": {"lease_id", "agent_uid", "budget", "expires"},
         "approve": {"nonce", "digest", "destination", "agent_uid", "lease_id", "expires"},
         "revoke": {"lease_id"},
-        "release": {"nonce", "digest", "destination", "lease_id", "cost"},
+        "release": {"nonce", "digest", "destination", "lease_id"},
         "halt": set(),
         "state": set(),
     }
@@ -51,7 +51,7 @@ def run_one(controller, uid, req):
     if op == "revoke":
         return controller.revoke(uid, **params)
     if op == "release":
-        return controller.release(uid, **params)
+        return controller.release(uid, cost=1, **params)
     if op == "halt":
         return controller.halt(uid)
     return controller.state(uid)
@@ -75,12 +75,19 @@ def serve(controller, path):
                     uid = struct.unpack("3i", conn.getsockopt(socket.SOL_SOCKET,
                           socket.SO_PEERCRED, struct.calcsize("3i")))[1]
                     try:
-                        data = conn.recv(MAX_REQUEST + 1)
+                        conn.settimeout(5)
+                        frame = bytearray()
+                        while len(frame) <= MAX_REQUEST and not frame.endswith(b"\n"):
+                            part = conn.recv(min(65536, MAX_REQUEST + 1 - len(frame)))
+                            if not part:
+                                break
+                            frame.extend(part)
+                        data = bytes(frame)
                         if len(data) > MAX_REQUEST or not data.endswith(b"\n"):
                             raise Denied("invalid frame")
                         answer = run_one(controller, uid, json.loads(data))
                         response = {"ok": True, "result": answer}
-                    except (Denied, ValueError, TypeError, KeyError, json.JSONDecodeError):
+                    except (Denied, ValueError, TypeError, KeyError, json.JSONDecodeError, OSError):
                         response = {"ok": False, "error": "DENIED"}
                     conn.sendall((json.dumps(response, sort_keys=True) + "\n").encode())
         finally:
@@ -107,4 +114,6 @@ if __name__ == "__main__":
         c = Controller.bootstrap(a.db, principals, a.bootstrap_cap)
     else:
         c = Controller(a.db, principals)
+    if os.geteuid() in principals.agents:
+        raise SystemExit("broker must not run under an untrusted agent UID")
     serve(c, a.socket)

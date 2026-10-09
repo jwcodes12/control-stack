@@ -67,7 +67,7 @@ class SealedScriptTests(unittest.TestCase):
 
 
     def test_launcher_opt_in_sealed_mode_resists_source_path_swap(self):
-        launcher = Path(__file__).resolve().parents[1] / "scenarios" / "SC-08" / "harness" / "launcher.py"
+        launcher = Path(__file__).resolve().parents[1] / "scenarios" / "SC-08" / "hardened" / "launcher_sealed.py"
         with tempfile.TemporaryDirectory(prefix="sc08-sealed-") as directory:
             d = Path(directory)
             origin = d / "source.py"

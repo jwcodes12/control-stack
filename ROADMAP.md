@@ -1,5 +1,14 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
 
+## SC-01 statement review and runtime-candidate audit (2026-10-08)
+
+Read-only verification [Actions #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) adds 20,719 independently specified bounded Python gateway traces, three fail-closed AST receiver-field checks, ordinary gateway/ledger test replay and VM host-capability inspection. The finite-state checks **do not** establish universal Lean-to-OS refinement or full receiver-observation coverage. They detect modeled transition mismatches and obvious source-level receiver-field regressions.
+
+**Usefulness has not recovered:** archived QEMU TCG 0.25-second SC-01 receipts remain 0/64 completed lifetimes in both conditions, with 640 sender and 640 receiver invocations timed out across conditions. The GitHub-hosted ARM64 runner had no `/dev/kvm`; x86_64 was not usable for the pinned ARM64 guests and the unprivileged KVM probe returned `PermissionError`. No new guest pair was provisioned and no live side-channel/usefulness experiment was run. A permitted native ARM64 KVM host, or an independently preregistered amended protocol, is still required before rerunning usefulness. Even a passing usefulness result would leave full receiver-observation correspondence open.
+
+**Statement-review boundary:** a documented adversarial second pass enumerates quantifiers, load-bearing assumptions and unproved runtime refinements for SC-01, leakage, HALT, gating, leases and composition. It is **not independent external review** and grants no assurance promotion. See [detailed audit](reviews/assurance-priorities/theorem-statement-and-runtime-audit.md).
+
+
 ## Independently rebuilt original A/B/C integration (2026-10-08)
 
 The three original branches A, B, C passed separate pinned-root Lean builds and their source-branch scenario checkers (A 8/B 7/C 7 Python tests). B's 28 original claim files compiled independently. Original C `THEOREM-REGISTRY.md` was stale; the merged generator repaired this without altering C. The merged work branch now contains 865 source-indexed declarations, 34 new conservative source-scope annotations and 821 still unreviewed `UNKNOWN` adversary classifications. The expanded HALT delivery model compiled with standard-only axioms; scheduler fairness and concrete HALT implementation remain outside the proof. See [comparison](reviews/structure-merge/comparison.md) and [scope audit](reviews/structure-merge/theorem-scope-audit.md).

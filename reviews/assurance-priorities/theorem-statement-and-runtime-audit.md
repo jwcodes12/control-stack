@@ -73,3 +73,9 @@ certificate within the stated mass budget.
   amended protocol, followed by independent receiver-observation/channel review.
 
 **Disposition: SC-01 stays CONDITIONAL and cannot be marked deployment assured.**
+
+## Source and Actions verification record
+
+[Run #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) tested the read-only gateway model checker (5 tests, **19,608 single-channel + 1,111 multi-channel traces**), added three VM receiver-source regression controls (valid reviewed field sets plus rejected injected secret field and dynamic payload), original gateway/lifetime/ctrlcert tests and unmodified scenario metadata. Both Python jobs passed. The ARM64 job found **no `/dev/kvm`**. On x86_64, the unprivileged KVM device probe was denied and the architecture differs from the pinned aarch64 guest. A KVM device on a different architecture is not an equivalent replacement for the frozen VM. These results are *host readiness screening*, not SC-01 protocol data, and no new trial was conducted.
+
+`main` source still requires independent external statement review and an owner-authorized native guest/host deployment. This document itself is not third-party review and must not be marked `REVIEWED_RECORDED`.

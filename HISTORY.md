@@ -98,3 +98,7 @@ Exact original A, B and C source SHAs independently passed `lake build ControlSt
 ## 2026-10-08 — Final exact integrated code acceptance PASS [skip ci]
 
 [CI #37877960110](https://github.com/jwcodes12/control-stack/actions/runs/37877960110) passed a fresh full Lean 4.34.0 build of 3,744 jobs and the 28 scenario claim replays, 18 checker tests, 4 certifier tests, registry consistency and unchanged SC-01 checks 1–4. Historical source-bound OpenSSL cache receipt remains an expected non-portable check, never regenerated. Main unmerged pending owner approval.
+
+## 2026-10-08 — SC-01 source-level runtime gate audits, no protocol change [skip ci]
+
+On a separate work branch, added bounded independent reference-gateway differential checks, two mutation-negative AST sender-to-receiver field guards, read-only ARM64/x86 GitHub hosted KVM feasibility probes and a theorem-statement premise matrix. CI #37880911299 passed the Python and KVM-read-only jobs. Frozen 0.25 s, 64-lifetime VM usefulness gate remains FAILED 0/64 in both conditions and the complete-observation premise is UNRESOLVED. No preregistration/evidence receipt or gateway/guest source was changed. No external reviewer or hardware VM test took place.

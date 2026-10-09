@@ -1,0 +1,23 @@
+name: sc10-temporal-audit
+on:
+  pull_request:
+    paths:
+      - 'tools/sc10_temporal_audit.py'
+      - 'tools/test_sc10_temporal_audit.py'
+      - 'docs/SC10-READ-USE-LINEARIZATION-2026-10-09.md'
+      - '.github/workflows/sc10-temporal-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests including synthetic read-use race
+        run: python3 -m unittest discover -s tools -p 'test_sc10_temporal_audit.py' -v
+      - name: Read-only audit of frozen SC-10 evidence
+        run: python3 tools/sc10_temporal_audit.py scenarios/SC-10/evidence/run-1

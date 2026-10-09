@@ -48,6 +48,30 @@
       "path": "ControlStack/Scenarios/SC07Exfil.lean",
       "sha256": "5a552f1650c1e0546b4c66b3a974789317abd276c0abb8dc90b7a1249946d94d",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Liveness.sc07_safe",
+      "path": "ControlStack/Scenarios/SC07Liveness.lean",
+      "sha256": "a8fb0358a48695f59620df015c48960ed9107181b7ecbe4ed4f550513bb1dc90",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Liveness.upload_completes",
+      "path": "ControlStack/Scenarios/SC07Liveness.lean",
+      "sha256": "a8fb0358a48695f59620df015c48960ed9107181b7ecbe4ed4f550513bb1dc90",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Liveness.exfil_needs_windows",
+      "path": "ControlStack/Scenarios/SC07Liveness.lean",
+      "sha256": "a8fb0358a48695f59620df015c48960ed9107181b7ecbe4ed4f550513bb1dc90",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Liveness.shared_quota_blocks",
+      "path": "ControlStack/Scenarios/SC07Liveness.lean",
+      "sha256": "a8fb0358a48695f59620df015c48960ed9107181b7ecbe4ed4f550513bb1dc90",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -83,7 +107,7 @@
     },
     {
       "id": "honest_usefulness",
-      "text": "Under-quota uploads complete byte-exact.",
+      "text": "Under-quota uploads complete byte-exact. Formal counterpart: SC07Liveness.lean (progress under interleaving; availability prices stated as witnesses).",
       "proof": "NOT_PROVED",
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",

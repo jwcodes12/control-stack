@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC28Liveness
 import ControlStack.Scenarios.AuthInstancesA
 import ControlStack.Scenarios.SC28Budget
 #check ControlStack.SC28.sc28_safe
@@ -26,3 +27,9 @@ import ControlStack.Scenarios.SC28Budget
 #print axioms ControlStack.AuthInstances.sc28_safe_authenticated
 #check ControlStack.AuthInstances.forged28_consumes_without_auth
 #print axioms ControlStack.AuthInstances.forged28_consumes_without_auth
+#check ControlStack.SC28Liveness.honest_steps_progress
+#print axioms ControlStack.SC28Liveness.honest_steps_progress
+#check ControlStack.SC28Liveness.progress_interleaved
+#print axioms ControlStack.SC28Liveness.progress_interleaved
+#check ControlStack.SC28Liveness.global_cap_blocks_honest
+#print axioms ControlStack.SC28Liveness.global_cap_blocks_honest

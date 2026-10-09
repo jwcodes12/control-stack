@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC18Liveness
 import ControlStack.Scenarios.AuthInstancesB
 import ControlStack.Scenarios.SC18Logging
 #check ControlStack.SC18.sc18_safe
@@ -22,3 +23,13 @@ import ControlStack.Scenarios.SC18Logging
 #print axioms ControlStack.AuthInstances.sc18_safe_authenticated
 #check ControlStack.AuthInstances.forged18_redirects_without_auth
 #print axioms ControlStack.AuthInstances.forged18_redirects_without_auth
+#check ControlStack.SC18Liveness.honest_release
+#print axioms ControlStack.SC18Liveness.honest_release
+#check ControlStack.SC18Liveness.progress_interleaved
+#print axioms ControlStack.SC18Liveness.progress_interleaved
+#check ControlStack.SC18Liveness.silent_ticks_halt
+#print axioms ControlStack.SC18Liveness.silent_ticks_halt
+#check ControlStack.SC18Liveness.Resume.resume_safe
+#print axioms ControlStack.SC18Liveness.Resume.resume_safe
+#check ControlStack.SC18Liveness.Resume.resume_progress
+#print axioms ControlStack.SC18Liveness.Resume.resume_progress

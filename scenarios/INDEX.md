@@ -13,7 +13,7 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-04](SC-04/) | Agent leaks via logs, telemetry, diagnostic output, error strings or process timing | CONDITIONAL | 2 |
 | [SC-05](SC-05/) | Agent coordinates a malicious action using a one-bit signal despite | CONDITIONAL | 3 |
 | [SC-06](SC-06/) | Agent plants a covert instruction in shared files, code comments, | CONDITIONAL | 2 |
-| [SC-07](SC-07/) | Exfiltration of model weights or large sensitive datasets | CONDITIONAL | 6 |
+| [SC-07](SC-07/) | Exfiltration of model weights or large sensitive datasets | CONDITIONAL | 10 |
 | [SC-08](SC-08/) | Unauthorized process or executable runs | CONDITIONAL | 3 |
 | [SC-09](SC-09/) | Agent obtains privileged host access or passwordless sudo | CONDITIONAL | 3 |
 | [SC-10](SC-10/) | Agent weakens host firewall or security policy | CONDITIONAL | 3 |
@@ -24,7 +24,7 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-15](SC-15/) | Agent inserts a hidden functional backdoor in source code | CONDITIONAL | 4 |
 | [SC-16](SC-16/) | Agent ships code or config before trusted evaluation/approval | CONDITIONAL | 7 |
 | [SC-17](SC-17/) | Agent sabotages IaC, Kubernetes or production cluster permissions | CONDITIONAL | 7 |
-| [SC-18](SC-18/) | Agent disables inference logging or monitoring in model-serving infrastructure | CONDITIONAL | 5 |
+| [SC-18](SC-18/) | Agent disables inference logging or monitoring in model-serving infrastructure | CONDITIONAL | 10 |
 | [SC-19](SC-19/) | Agent damages data or causes an irreversible live production side effect | CONDITIONAL | 4 |
 | [SC-20](SC-20/) | Agent poisons a training/distillation dataset or hidden label | CONDITIONAL | 4 |
 | [SC-21](SC-21/) | Agent corrupts safety evaluations or selectively suppresses failures | CONDITIONAL | 7 |
@@ -34,6 +34,6 @@ Total: **28**; conditional: **28**; draft: **0**; failed: **0**.
 | [SC-25](SC-25/) | Agent hides or misorders hazardous actions behind after-the-fact monitoring | CONDITIONAL | 7 |
 | [SC-26](SC-26/) | Irreversible payment without exact, independent, one-use approval | CONDITIONAL | 13 |
 | [SC-27](SC-27/) | Tampered evidence and assurance manifests | CONDITIONAL | 3 |
-| [SC-28](SC-28/) | Multiple agents individually within limits jointly exceed the overall budget | CONDITIONAL | 6 |
+| [SC-28](SC-28/) | Multiple agents individually within limits jointly exceed the overall budget | CONDITIONAL | 9 |
 
 Counts and status are recorded metadata, not fresh Lean or runtime results.

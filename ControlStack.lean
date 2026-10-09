@@ -23,6 +23,7 @@ import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit
 import ControlStack.Scenarios.SC26LossyLiveness
+import ControlStack.Scenarios.SC26LossyHalt
 import ControlStack.Scenarios.SC18Refinement
 import ControlStack.Scenarios.RollbackInstances
 import ControlStack.Scenarios.SC16Refinement

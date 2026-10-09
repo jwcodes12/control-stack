@@ -92,6 +92,12 @@
       "sha256": "a488bc60fbb8298847a6d77a31d6cf279a7fc6468bafcb14fbab983874ea4006",
       "purpose": "Frozen preregistration",
       "outcome": "PASS"
+    },
+    {
+      "path": "experiments/anti-rollback/evidence/run-1/verdicts.json",
+      "sha256": "a97bf304641064b8b3ea40206ac5ebef61d95769157bd744af5ad04da96851ce",
+      "purpose": "PREREG-ANTI-ROLLBACK-v1 run-1: restores of older snapshots → gate refuses all ops (no replay/re-spend lands), crash-window recovery exactly once, no spurious refusals, anchor-off control re-spends/replays (detected); 5/5 reps; separate-UID anchor service",
+      "outcome": "PASS"
     }
   ],
   "assumptions": [
@@ -115,7 +121,7 @@
       "id": "anti_rollback",
       "text": "The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust.",
       "proof": "THEOREM_VERIFIED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },

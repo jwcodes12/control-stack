@@ -18,6 +18,8 @@ jobs:
           python-version: "3.12"
       - name: Differentially check Python gateway vs independent finite model
         run: python3 tools/test_gateway_correspondence.py -v
+      - name: Verify VM receiver payload shape and mutation negative controls
+        run: python3 tools/test_sc01_receiver_boundary.py -v
       - name: Recheck original gateway regression without any new guest or channel probe
         run: |
           python3 gateway/test_gateway.py

@@ -1,0 +1,43 @@
+name: broker-joint-model
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/TrustedBroker.lean'
+      - 'ControlStack.lean'
+      - '.github/workflows/broker-joint-model.yml'
+      - 'tools/build_registry.py'
+      - 'tools/build_statement_catalog.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pinned-kernel-and-axioms:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Kernel replay and explicit trust-root axiom audit
+        run: |
+          set -euo pipefail
+          lake exe cache get
+          lake build ControlStack.TrustedBroker
+          lake env lean ControlStack/TrustedBroker.lean 2>&1 | tee joint-broker-axioms.log
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          txt = Path("joint-broker-axioms.log").read_text()
+          groups = re.findall(r"depends on axioms: \\[([^\\]]*)\\]", txt)
+          assert len(groups) == 10, f"expected ten axiom reports, got {len(groups)}"
+          accepted = {"propext", "Quot.sound", "Classical.choice"}
+          assert all(set(map(str.strip, s.split(","))) <= accepted for s in groups)
+          assert "sorryAx" not in txt and "error:" not in txt
+          print("PASS: 10 kernel theorem axiom reports limited to standard Lean axioms")
+          PY
+      - name: Source inventory consistency
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py --check

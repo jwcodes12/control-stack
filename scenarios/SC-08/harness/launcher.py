@@ -55,8 +55,9 @@ def main():
     a = ap.parse_args()
     if a.by_path and a.sealed_script:
         ap.error("--by-path cannot be combined with --sealed-script")
-    config = {"by_path": a.by_path, "no_script_check": a.no_script_check,
-              "sealed_script": a.sealed_script, "check_exec_delay": a.check_exec_delay}
+    config = {"by_path": a.by_path, "no_script_check": a.no_script_check, "check_exec_delay": a.check_exec_delay}
+    if a.sealed_script:
+        config["sealed_script"] = True
     allow = json.load(open(a.allowlist))
     os.makedirs(a.pin_dir, mode=0o700, exist_ok=True)
     os.chmod(a.pin_dir, 0o700)

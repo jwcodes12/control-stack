@@ -34,7 +34,7 @@ Results (all by `decide`, i.e. kernel evaluation of the finite graph):
 - `portfolio_roots`: the whole portfolio rests on all 12 roots: 7 technical, 5 residual;
 - `root_sharing`: the most-shared root is the residual `measured_rates` (26 of 28 scenarios); the most-shared
   technical roots are kernel mediation (21) and issuer authenticity (20);
-- `correspondence_table`: model–runtime correspondence is discharged by the scenario's OWN refinement for SC-16,
+- `correspondence_table`: model–runtime correspondence is discharged by the scenario's OWN refinement for SC-07, SC-16,
   SC-18, SC-25, SC-26, SC-27, SC-28; SC-01, SC-13 rest on implementation_conformance alone.
 -- END GENERATED: summary
 Ledgers for tools/cert_ledger.py:
@@ -215,7 +215,7 @@ def scenarios : List (ℕ × List Prem) :=
    (4, [.observationComplete, .canonicaliserComplete]),
    (5, [.observationComplete, .exclusiveEffectPath]),
    (6, [.credentialSeparation, .canonicaliserComplete]),
-   (7, [.honestUsefulness, .observationComplete, .exclusiveEffectPath]),
+   (7, [.honestUsefulness, .observationComplete, .exclusiveEffectPath, .modelRuntimeCorrespondence]),
    (8, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .consumeByDigest]),
    (9, [.credentialSeparation, .honestUsefulness, .roleSeparation, .osKernelEnforcement]),
    (10, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .policyIntegrity]),
@@ -285,6 +285,7 @@ def refName (sc : ℕ) (decl : String) : String := "ControlStack.SC" ++ toString
 /-- each scenario's OWN refinement theorem (criterion 3): the formal part of `model_runtime_correspondence` for that
 scenario only; `none`: no refinement, so the premise rests on `implementation_conformance` alone -/
 def refinementOf : ℕ → Option String
+  | 7 => some (refName 7 "concrete_safe")
   | 16 => some (refName 16 "concrete_safe")
   | 18 => some (refName 18 "concrete_safe")
   | 25 => some (refName 25 "concrete_safe")
@@ -361,7 +362,7 @@ theorem scenario_roots_table : scenarios.map (fun s => (s.1, scenarioRoots s.1))
        (4, [.kernelMediation, .measuredRates, .implementationConformance]),
        (5, [.kernelMediation, .measuredRates]),
        (6, [.issuerAuthenticity, .kernelMediation, .implementationConformance]),
-       (7, [.kernelMediation, .measuredRates]),
+       (7, [.kernelMediation, .measuredRates, .implementationConformance]),
        (8, [.issuerAuthenticity, .kernelMediation, .collisionResistance, .measuredRates]),
        (9, [.issuerAuthenticity, .kernelMediation, .measuredRates, .orgConfiguration]),
        (10, [.issuerAuthenticity, .kernelMediation, .measuredRates]),
@@ -406,6 +407,7 @@ theorem correspondence_table :
     (scenarios.filter (fun s => decide (Prem.modelRuntimeCorrespondence ∈ s.2))).map
       (fun s => (s.1, refinementOf s.1)) =
       [(1, none),
+       (7, some (refName 7 "concrete_safe")),
        (13, none),
        (16, some (refName 16 "concrete_safe")),
        (18, some (refName 18 "concrete_safe")),

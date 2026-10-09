@@ -66,6 +66,50 @@ class SealedScriptTests(unittest.TestCase):
             sealed_script_fd("untrusted string")
 
 
+    def test_kernel_seal_flags_reject_truncation(self):
+        import fcntl
+        data = b"print('approved')\\n"
+        fd = sealed_script_fd(data)
+        try:
+            required = (fcntl.F_SEAL_WRITE | fcntl.F_SEAL_SHRINK |
+                        fcntl.F_SEAL_GROW | fcntl.F_SEAL_SEAL)
+            self.assertEqual(fcntl.fcntl(fd, fcntl.F_GET_SEALS) & required, required)
+            with self.assertRaises(OSError):
+                os.ftruncate(fd, 0)
+            with self.assertRaises(OSError):
+                os.ftruncate(fd, len(data) + 1)
+            os.lseek(fd, 0, os.SEEK_SET)
+            self.assertEqual(os.read(fd, len(data) + 1), data)
+        finally:
+            os.close(fd)
+
+    def test_injected_sealing_failure_closes_fd_without_fallback(self):
+        import fcntl
+        from unittest import mock
+        import sealed_script
+        actual_create = os.memfd_create
+        created = []
+
+        def record_create(name, flags):
+            fd = actual_create(name, flags)
+            created.append(fd)
+            return fd
+
+        actual_fcntl = fcntl.fcntl
+
+        def fail_add_seals(fd, command, *args):
+            if command == fcntl.F_ADD_SEALS:
+                raise OSError("injected F_ADD_SEALS failure")
+            return actual_fcntl(fd, command, *args)
+
+        with mock.patch.object(sealed_script.os, "memfd_create", side_effect=record_create), \\
+             mock.patch.object(sealed_script.fcntl, "fcntl", side_effect=fail_add_seals):
+            with self.assertRaisesRegex(OSError, "injected F_ADD_SEALS failure"):
+                sealed_script_fd(b"print('approved')\\n")
+        self.assertEqual(len(created), 1)
+        with self.assertRaises(OSError):
+            os.fstat(created[0])  # Failed sealing must not leave a usable descriptor.
+
     def test_launcher_opt_in_sealed_mode_resists_source_path_swap(self):
         launcher = Path(__file__).resolve().parents[1] / "scenarios" / "SC-08" / "hardened" / "launcher_sealed.py"
         with tempfile.TemporaryDirectory(prefix="sc08-sealed-") as directory:

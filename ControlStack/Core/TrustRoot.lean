@@ -217,7 +217,7 @@ def scenarios : List (ℕ × List Prem) :=
    (15, [.credentialSeparation, .semanticJudgement]),
    (16, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .modelRuntimeCorrespondence, .collisionResistance, .roleSeparation]),
    (17, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .semanticJudgement]),
-   (18, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .durableAck]),
+   (18, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .durableAck, .modelRuntimeCorrespondence]),
    (19, [.credentialSeparation, .honestUsefulness, .versionedWrites]),
    (20, [.credentialSeparation, .semanticJudgement]),
    (21, [.credentialSeparation, .hiddenSample, .deterministicReexecution]),

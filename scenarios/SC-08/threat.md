@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any writes to writable paths and any exec with any script argument.
 
-**Scope:** Lean model only. Not: memfd/JIT loaders, kernel exploits.
+**Scope:** Lean model only. Not: memfd/JIT loaders, kernel exploits. Runtime: single-host preregistered reference run (scenarios/SC-08/evidence/run-1), benign workloads.
 
 **Refutation (what would show the claim wrong):** An exec of non-allowlisted content despite full checks (witnesses: path allowlist TOCTOU, writable exec mount, interpreter loophole, interpreter REPL).
 

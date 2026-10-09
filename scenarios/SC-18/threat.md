@@ -19,3 +19,4 @@ _Generated from manifest.json._
 - `ControlStack/Scenarios/AuthInstancesB.lean`
 - `ControlStack/Scenarios/SC18Liveness.lean`
 - `ControlStack/Scenarios/SC18Logging.lean`
+- `ControlStack/Scenarios/SC18Refinement.lean`

@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC18Refinement
 import ControlStack.Scenarios.SC18Liveness
 import ControlStack.Scenarios.AuthInstancesB
 import ControlStack.Scenarios.SC18Logging
@@ -33,3 +34,15 @@ import ControlStack.Scenarios.SC18Logging
 #print axioms ControlStack.SC18Liveness.Resume.resume_safe
 #check ControlStack.SC18Liveness.Resume.resume_progress
 #print axioms ControlStack.SC18Liveness.Resume.resume_progress
+#check ControlStack.SC18Refinement.simulation
+#print axioms ControlStack.SC18Refinement.simulation
+#check ControlStack.SC18Refinement.concrete_safe
+#print axioms ControlStack.SC18Refinement.concrete_safe
+#check ControlStack.SC18Refinement.concrete_durable
+#print axioms ControlStack.SC18Refinement.concrete_durable
+#check ControlStack.SC18Refinement.honest_path
+#print axioms ControlStack.SC18Refinement.honest_path
+#check ControlStack.SC18Refinement.fail_open_breaks
+#print axioms ControlStack.SC18Refinement.fail_open_breaks
+#check ControlStack.SC18Refinement.late_reply_breaks_timing
+#print axioms ControlStack.SC18Refinement.late_reply_breaks_timing

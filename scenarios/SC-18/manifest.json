@@ -72,6 +72,18 @@
       "path": "ControlStack/Scenarios/SC18Liveness.lean",
       "sha256": "c8fc468b9c9478109c694e606454aef2af4ebb1762eea0b080185c14e42d161c",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC18Refinement.concrete_safe",
+      "path": "ControlStack/Scenarios/SC18Refinement.lean",
+      "sha256": "5e0b0bc359de15c71bfe358b98ed2ee50fe43d3b99136d0ca3788d7438250a57",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC18Refinement.concrete_durable",
+      "path": "ControlStack/Scenarios/SC18Refinement.lean",
+      "sha256": "5e0b0bc359de15c71bfe358b98ed2ee50fe43d3b99136d0ca3788d7438250a57",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -120,6 +132,14 @@
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "model_runtime_correspondence",
+      "text": "Two links: concrete proxy/sink event machine → SC18Liveness.Resume: PROVED (SC18Refinement.simulation/concrete_safe/concrete_durable); the 'within T of last ack' clause additionally needs the promptReply scheduling premise (tested by run-1 H1, not enforced); Python runtime → concrete machine: TESTED (reconcile.py).",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
@@ -128,8 +148,8 @@
       "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-18/evidence/run-1)."
     },
     "runtime_correspondence": {
-      "status": "UNRESOLVED",
-      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-18/evidence/run-1)."
+      "status": "ASSUMED",
+      "note": "Event-structure refinement proved in Lean (SC18Refinement); promptReply scheduling premise tested only; Python-to-event-machine link tested only."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",

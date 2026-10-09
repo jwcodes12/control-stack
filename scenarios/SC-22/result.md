@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 2 theorem reference(s), 1 of them necessity witnesses.
-- Runtime evidence: none (Lean model only).
+- Runtime evidence: preregistered reference run(s) `PREREG-SC22-REPL-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -32,11 +32,21 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 ## Runtime evidence
 
-None. The scenario is supported by its Lean model only.
+- `scenarios/SC-22/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG-SC22-REPL-v1 run-1: exact survival C(N−k,B)/C(N,B) inside exact CIs for k∈{1,3,5} (2000 trials/rep), verdict = sample∩misreported, samples drawn after commitment and uniform, honest reports never flagged, visible-sample control survival 1; 5/5 reps
+
+  Preregistration: `PREREG-SC22-REPL-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Hidden sample: the exact bound | PASS | 5/5 repetitions passed |
+  | H2 | No false flags | PASS | 5/5 repetitions passed |
+  | H3 | Control: visible sample | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
+- `prereg/SC22-REPLICATION.md` — recorded outcome **PASS**. Frozen preregistration
 
 ## Premises (from the manifest)
 
-**Evidence NOT_RUN:**
+**Evidence TESTED_NOT_PROVED:**
 
 - `sample_hidden`: The replication sample is hidden until after reporting. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `replication_detects`: Independent replication detects a misreported finding when sampled (perfect recall assumed; see ReservedRecall for imperfect recall). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
@@ -44,26 +54,26 @@ None. The scenario is supported by its Lean model only.
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted.
+- Scope (manifest): Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted. Runtime: single-host preregistered reference run (scenarios/SC-22/evidence/run-1), benign workloads.
 - Not established as applying to a real deployment: The replication sample is hidden until after reporting (`sample_hidden`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Independent replication detects a misreported finding when sampled (perfect recall assumed; see ReservedRecall for imperfect recall) (`replication_detects`; applicability UNRESOLVED).
-- Scope axis `threat_coverage` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `environment_boundary` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `usefulness` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `independent_review` is UNRESOLVED: Not independently established; Lean model only.
+- Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1).
+- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1).
+- Scope axis `environment_boundary` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1).
+- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1).
+- Scope axis `usefulness` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1).
+- Scope axis `independent_review` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1).
 
 ## Done-criteria (RUNTIME-VM-HANDOFF.md §10), computed from the manifest
 
 | # | criterion | status | basis |
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
-| 2 | independently checked negative tests cover the bad actions and their bypasses | OPEN | no preregistered negative-control run |
+| 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | OPEN | no preregistered evidence run |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC22-REPL-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

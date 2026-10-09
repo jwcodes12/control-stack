@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** NON_ADAPTIVE misreported set; replication sample hidden.
 
-**Scope:** Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted.
+**Scope:** Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted. Runtime: single-host preregistered reference run (scenarios/SC-22/evidence/run-1), benign workloads.
 
 **Refutation (what would show the claim wrong):** Misreports surviving above the bound, or a known sample (observable_sample_nogo).
 

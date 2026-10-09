@@ -5,7 +5,7 @@
   "bad_event": "k misreported findings escape a hidden independent-replication sample of size B with probability above C(N−k,B)/C(N,B).",
   "adversary": "NON_ADAPTIVE misreported set; replication sample hidden.",
   "refutation": "Misreports surviving above the bound, or a known sample (observable_sample_nogo).",
-  "scope": "Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted.",
+  "scope": "Lean bound only. Semantic, unformalised: whether a reproducible finding is correctly interpreted. Runtime: single-host preregistered reference run (scenarios/SC-22/evidence/run-1), benign workloads.",
   "families": [
     "F6"
   ],
@@ -24,13 +24,26 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-22/evidence/run-1/verdicts.json",
+      "sha256": "5990d9150dffe9dbb8f9cc2bf405a89e71c2841ef427ec26c45d1e33eef42f38",
+      "purpose": "PREREG-SC22-REPL-v1 run-1: exact survival C(N−k,B)/C(N,B) inside exact CIs for k∈{1,3,5} (2000 trials/rep), verdict = sample∩misreported, samples drawn after commitment and uniform, honest reports never flagged, visible-sample control survival 1; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC22-REPLICATION.md",
+      "sha256": "e1c0ddce34767818c6194658917961db6cf8185f1974b2e8409004fd6511e257",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "sample_hidden",
       "text": "The replication sample is hidden until after reporting.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -38,7 +51,7 @@
       "id": "replication_detects",
       "text": "Independent replication detects a misreported finding when sampled (perfect recall assumed; see ReservedRecall for imperfect recall).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     }
@@ -46,27 +59,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-22/evidence/run-1)."
     }
   }
 }

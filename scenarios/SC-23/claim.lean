@@ -1,2 +1,21 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Scenarios.SC23Injection
+#check ControlStack.SC23.sc23_safe
+#check ControlStack.SC23.halt_freezes
+#check ControlStack.SC23.honest_untainted
+#check ControlStack.SC23.honest_confirmed
+#check ControlStack.SC23.tainted_unconfirmed_blocked
+#check ControlStack.SC23.summarizer_drops_taint
+#check ControlStack.SC23.paraphrase_confirmation_breaks
+#check ControlStack.SC23.no_taint_check_breaks
+#check ControlStack.SC23.confirmation_reuse_breaks
+#check ControlStack.SC23.non_user_confirmation_refused
+#print axioms ControlStack.SC23.sc23_safe
+#print axioms ControlStack.SC23.halt_freezes
+#print axioms ControlStack.SC23.honest_untainted
+#print axioms ControlStack.SC23.honest_confirmed
+#print axioms ControlStack.SC23.tainted_unconfirmed_blocked
+#print axioms ControlStack.SC23.summarizer_drops_taint
+#print axioms ControlStack.SC23.paraphrase_confirmation_breaks
+#print axioms ControlStack.SC23.no_taint_check_breaks
+#print axioms ControlStack.SC23.confirmation_reuse_breaks
+#print axioms ControlStack.SC23.non_user_confirmation_refused

@@ -1,608 +1,754 @@
 {
-  "ControlStack/CovertChannel.lean::covert_bound": {
-    "family": "F2",
-    "scenarios": [
-      "SC-01",
-      "SC-02"
-    ],
-    "adversary": "SHARED_SEED",
-    "premises": [
-      "uniform independent M",
-      "complete finite view"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "attain_embedding",
-    "record": "assurance/sc01-safety-case.json"
-  },
-  "ControlStack/CovertNoGo.lean::controllable_leak": {
-    "family": "F2",
-    "scenarios": [
-      "SC-05"
-    ],
-    "adversary": "SHARED_SEED",
-    "premises": [
-      "N controllable distinct views",
-      "injective embed into messages"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "one_bit_coordinates",
-    "record": "ROADMAP.md"
-  },
-  "ControlStack/CovertNoGo.lean::one_bit_coordinates": {
-    "family": "F2",
-    "scenarios": [
-      "SC-05"
-    ],
-    "adversary": "SHARED_SEED",
-    "premises": [
-      "two distinguishable realizable traces"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "controllable_leak",
-    "record": "ROADMAP.md"
-  },
-  "ControlStack/GatewayModel.lean::gateway_bound": {
-    "family": "F2",
-    "scenarios": [
-      "SC-01"
-    ],
-    "adversary": "SHARED_SEED",
-    "premises": [
-      "finite reachable view space",
-      "complete receiver view"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "NONE_RECORDED",
-    "record": "assurance/sc01-safety-case.json"
-  },
-  "ControlStack/SafetyCaseSC01.lean::sc01_case": {
-    "family": "F2",
-    "scenarios": [
-      "SC-01"
-    ],
-    "adversary": "SIDE_OBSERVING",
-    "premises": [
-      "side-kernel domination",
-      "lifetime cardinality",
-      "independent secrets and lifetimes"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "bit_refutes",
-    "record": "assurance/sc01-safety-case.json"
-  },
-  "ControlStack/EgressGate.lean::trace_safe": {
-    "family": "F1",
-    "scenarios": [
-      "SC-03"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "safe initial topology",
-      "fixed trusted policy and no bypass"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "NONE_RECORDED",
-    "record": "assurance/egress-boundary-v1.json"
-  },
-  "ControlStack/AuditGate.lean::invariant_preserved": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-27"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "app schema cannot mutate audits or trusted trigger"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "NONE_RECORDED",
-    "record": "assurance/monitoring-integrity-auditgate-v1.json"
-  },
-  "ControlStack/AuditDispatch.lean::trace_safe": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-27"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "trusted dispatch authority",
-      "atomic audit+effect transition"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "NONE_RECORDED",
-    "record": "assurance/monitoring-integrity-auditgate-v1.json"
-  },
-  "ControlStack/AuditDispatch.lean::dispatch_audit_first": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "dispatch enabled and not effected before"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "NONE_RECORDED",
-    "record": "assurance/monitoring-integrity-auditgate-v1.json"
-  },
-  "ControlStack/ComposeBlindSpot.lean::blind_spot_risk": {
-    "family": "F6",
-    "scenarios": [
-      "SC-24"
-    ],
-    "adversary": "CONTENT_ADAPTIVE",
-    "premises": [
-      "population miss rate not worst-case"
-    ],
-    "status": "PROVED_RECORDED",
-    "necessity_witness": "explicit blind-spot witness",
-    "record": "ROADMAP.md"
-  },
-  "ControlStack/Core/Gate.lean::Spec.trace_safe": {
-    "family": "F3",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "premises": [
-      "Every transition preserves the specified invariant and append-only log; effect safety is relative to client-defined ok"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Gate.lean::NoAgentEffects.agent_trace_inert": {
-    "family": "F3",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "premises": [
-      "All listed actions satisfy the agent-op predicate and are individually effect-inert"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Gate.lean::halt_absorbing": {
-    "family": "F3",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "premises": [
-      "The abstract system's trusted HALT flag is already true; all operations pass through withHalt"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Gate.lean::halt_freezes": {
-    "family": "F3",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "premises": [
-      "A trusted HALT is delivered in the reference trace; no unmodeled external effects"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::transfer": {
-    "family": "F2",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Hidden state prior is nonnegative; observation likelihood bounded pointwise by certificate c; random decoder; blind payoff bound"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::covert_from_transfer": {
-    "family": "F2",
-    "adversary": "NON_ADAPTIVE",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Uniform independent secret, finite view alphabet, normalized encoder/decoder"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.CovertChannel.attain_embedding",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::seq_transfer": {
-    "family": "F8",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Sequential kernel has nonnegative weights and is dominated by a visible-history certificate for each secret; blind payoff bound"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::covert_seq": {
-    "family": "F2",
-    "adversary": "SHARED_SEED",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Uniform secret independent of seed; hidden-state sequential kernels dominated by same visible-history certificate; seed-aware decoder"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::covert_seq_seed": {
-    "family": "F2",
-    "adversary": "SHARED_SEED",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Uniform secret independent of seed; per-seed domination, nonnegative certificates and seed-aware normalized decoder"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.Necessity.seed_secret_breaks_covert",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::sc01_adaptive_target": {
-    "family": "F2",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Fixed five-episode nine-view output horizon; uniform 32-bit secret independent of seed; dominated side-observation kernel, mass product cap"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.Necessity.seed_secret_breaks_covert",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::covert_side_bound": {
-    "family": "F2",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Stateful visible and side observations obey per-history domination and nonnegative mass bounds; fixed horizon and uniform secret"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::audit_leak_bound": {
-    "family": "F6",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-13"
-    ],
-    "premises": [
-      "Uniform hidden size-B audit schedule; sound catch flags, support-restricted noncatch kernel domination; leakage certificate mass"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Core/Leakage.lean::audit_adaptive_hidden": {
-    "family": "F6",
-    "adversary": "ADAPTIVE_FEEDBACK",
-    "scenarios": [
-      "SC-13"
-    ],
-    "premises": [
-      "Uniform hidden size-B schedule; adaptive attacker observes specified prior feedback but not schedule/extra side channels"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.AuditBudget.observable_schedule_nogo",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/GateComposition.lean::shared_invariants": {
-    "family": "F8",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-28"
-    ],
-    "premises": [
-      "Both invariants must hold initially and be preserved by EVERY joint shared-state action"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/GateComposition.lean::confused_deputy_counterexample": {
-    "family": "F8",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-03",
-      "SC-28"
-    ],
-    "premises": [
-      "Unsafe deputy model allows gate A authority to invoke effect despite gate B denying access"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/PolicyTamper.lean::policy_preserved_if_protected": {
-    "family": "F1",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-03",
-      "SC-10"
-    ],
-    "premises": [
-      "Attacker policy-write authority is false; all operations use modeled policy step"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/PolicyTamper.lean::tamper_possible_if_writable": {
-    "family": "F1",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-03",
-      "SC-10"
-    ],
-    "premises": [
-      "Attacker has policy-write authority and submits replacement policy"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/AuditBudget.lean::random_survival_le_pow": {
-    "family": "F6",
-    "adversary": "NON_ADAPTIVE",
-    "scenarios": [
-      "SC-13"
-    ],
-    "premises": [
-      "Attack set fixed independently of a uniformly sampled hidden size-B schedule; fixed k distinct attack rounds"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.AuditBudget.observable_schedule_nogo",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/AuditBudget.lean::observable_schedule_nogo": {
-    "family": "F6",
-    "adversary": "NON_ADAPTIVE",
-    "scenarios": [
-      "SC-13"
-    ],
-    "premises": [
-      "Schedule fixed and observable; attack has at most N-B available non-audited rounds"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Witnesses/Necessity.lean::seed_secret_breaks_covert": {
-    "family": "F2",
-    "adversary": "SHARED_SEED",
-    "scenarios": [
-      "SC-01"
-    ],
-    "premises": [
-      "Countermodel: secret equals receiver's shared seed; independence hypothesis deliberately violated"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Witnesses/Necessity.lean::marginal_certs_dont_compose": {
-    "family": "F8",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-01",
-      "SC-28"
-    ],
-    "premises": [
-      "Countermodel: individually secret-independent marginals nevertheless correlated jointly"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Witnesses/Necessity.lean::shared_score_product_unsound": {
-    "family": "F8",
-    "adversary": "SHARED_SEED",
-    "scenarios": [
-      "SC-13"
-    ],
-    "premises": [
-      "Countermodel: two monitor misses depend on the same random score so product is unsound"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Witnesses/LeakWitness.lean::leak_bound": {
-    "family": "F6",
-    "adversary": "SIDE_OBSERVING",
-    "scenarios": [
-      "SC-13"
-    ],
-    "premises": [
-      "Two-round noisy schedule-leak kernel with epsilon between zero and one half; noncatch kernel domination and one-step audit budget"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.LeakWitness.leak_mass",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F4/GateClients.lean::deployed_is_reviewed": {
-    "family": "F4",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-16",
-      "SC-17",
-      "SC-18",
-      "SC-21",
-      "SC-27"
-    ],
-    "premises": [
-      "Content-addressed gate and injective hash on contents reachable in modeled run; agent cannot mark arbitrary content reviewed"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.GateClients.Artifact.collision_breaks",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F4/GateClients.lean::collision_breaks": {
-    "family": "F4",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-16",
-      "SC-17"
-    ],
-    "premises": [
-      "Collision witness permits different contents with same digest in the simplified model"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F4/GateClients.lean::approval_safe": {
-    "family": "F7",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-10",
-      "SC-16",
-      "SC-26"
-    ],
-    "premises": [
-      "Exact payload approval signed by independently trusted principal, unexpired and unused nonce; modeled validation enforced"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.GateClients.Approval.replay_without_nonce",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F4/GateClients.lean::replay_without_nonce": {
-    "family": "F7",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-10",
-      "SC-16",
-      "SC-26"
-    ],
-    "premises": [
-      "Countermodel omits unique nonces and permits reuse of approval"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F5/Lease.lean::lease_safe": {
-    "family": "F5",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-25",
-      "SC-28"
-    ],
-    "premises": [
-      "Per-lease and global spend accounted atomically across all worker forks; unforgeable lease identity and expiration"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.Lease.fork_without_lease_accounting",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F5/Lease.lean::revoke_absorbing": {
-    "family": "F5",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-25"
-    ],
-    "premises": [
-      "Revocation is modeled as a trusted irreversible transition; every subsequent worker action passes through gate"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/Families/F5/Lease.lean::fork_without_lease_accounting": {
-    "family": "F5",
-    "adversary": "TRACE_ARBITRARY",
-    "scenarios": [
-      "SC-25",
-      "SC-28"
-    ],
-    "premises": [
-      "Countermodel accounts independent per-worker spend against shared lease, permitting double consumption"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
-  },
-  "ControlStack/HaltLiveness.lean::delivered_halt_absorbs": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "Trusted HALT instruction is included in reference-gate transition and every subsequent effect is mediated"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
-  },
-  "ControlStack/HaltLiveness.lean::liveness_if_delivered": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "Trusted scheduler delivers HALT before finite step bound; no theorem guarantees real-world scheduler delivery"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "ControlStack.HaltLiveness.ordinary_operations_never_halt",
-    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
-  },
-  "ControlStack/HaltLiveness.lean::effects_frozen_after_delivered_halt": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "HALT is explicitly delivered after modeled before-trace; post-HALT effects are mediated by same gate"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
-  },
-  "ControlStack/HaltLiveness.lean::ordinary_operations_never_halt": {
-    "family": "F3",
-    "scenarios": [
-      "SC-13",
-      "SC-25"
-    ],
-    "adversary": "TRACE_ARBITRARY",
-    "premises": [
-      "Counterexample: trace has only untrusted ordinary operations and contains no trusted HALT"
-    ],
-    "status": "SOURCE_ONLY",
-    "necessity_witness": "NOT_RECORDED",
-    "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
-  }
+ "ControlStack/CovertChannel.lean::covert_bound": {
+  "family": "F2",
+  "scenarios": [
+   "SC-01",
+   "SC-02"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "uniform independent M",
+   "complete finite view"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "attain_embedding",
+  "record": "assurance/sc01-safety-case.json"
+ },
+ "ControlStack/CovertNoGo.lean::controllable_leak": {
+  "family": "F2",
+  "scenarios": [
+   "SC-05"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "N controllable distinct views",
+   "injective embed into messages"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "one_bit_coordinates",
+  "record": "ROADMAP.md"
+ },
+ "ControlStack/CovertNoGo.lean::one_bit_coordinates": {
+  "family": "F2",
+  "scenarios": [
+   "SC-05"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "two distinguishable realizable traces"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "controllable_leak",
+  "record": "ROADMAP.md"
+ },
+ "ControlStack/GatewayModel.lean::gateway_bound": {
+  "family": "F2",
+  "scenarios": [
+   "SC-01"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "finite reachable view space",
+   "complete receiver view"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "NONE_RECORDED",
+  "record": "assurance/sc01-safety-case.json"
+ },
+ "ControlStack/SafetyCaseSC01.lean::sc01_case": {
+  "family": "F2",
+  "scenarios": [
+   "SC-01"
+  ],
+  "adversary": "SIDE_OBSERVING",
+  "premises": [
+   "side-kernel domination",
+   "lifetime cardinality",
+   "independent secrets and lifetimes"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "bit_refutes",
+  "record": "assurance/sc01-safety-case.json"
+ },
+ "ControlStack/EgressGate.lean::trace_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-03"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "safe initial topology",
+   "fixed trusted policy and no bypass"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "NONE_RECORDED",
+  "record": "assurance/egress-boundary-v1.json"
+ },
+ "ControlStack/AuditGate.lean::invariant_preserved": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-27"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "app schema cannot mutate audits or trusted trigger"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "NONE_RECORDED",
+  "record": "assurance/monitoring-integrity-auditgate-v1.json"
+ },
+ "ControlStack/AuditDispatch.lean::trace_safe": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-27"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "trusted dispatch authority",
+   "atomic audit+effect transition"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "NONE_RECORDED",
+  "record": "assurance/monitoring-integrity-auditgate-v1.json"
+ },
+ "ControlStack/AuditDispatch.lean::dispatch_audit_first": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "dispatch enabled and not effected before"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "NONE_RECORDED",
+  "record": "assurance/monitoring-integrity-auditgate-v1.json"
+ },
+ "ControlStack/ComposeBlindSpot.lean::blind_spot_risk": {
+  "family": "F6",
+  "scenarios": [
+   "SC-24"
+  ],
+  "adversary": "CONTENT_ADAPTIVE",
+  "premises": [
+   "population miss rate not worst-case"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "explicit blind-spot witness",
+  "record": "ROADMAP.md"
+ },
+ "ControlStack/Core/Gate.lean::Spec.trace_safe": {
+  "family": "F3",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "premises": [
+   "Every transition preserves the specified invariant and append-only log; effect safety is relative to client-defined ok"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Gate.lean::NoAgentEffects.agent_trace_inert": {
+  "family": "F3",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "premises": [
+   "All listed actions satisfy the agent-op predicate and are individually effect-inert"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Gate.lean::halt_absorbing": {
+  "family": "F3",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "premises": [
+   "The abstract system's trusted HALT flag is already true; all operations pass through withHalt"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Gate.lean::halt_freezes": {
+  "family": "F3",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "premises": [
+   "A trusted HALT is delivered in the reference trace; no unmodeled external effects"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::transfer": {
+  "family": "F2",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Hidden state prior is nonnegative; observation likelihood bounded pointwise by certificate c; random decoder; blind payoff bound"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::covert_from_transfer": {
+  "family": "F2",
+  "adversary": "NON_ADAPTIVE",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Uniform independent secret, finite view alphabet, normalized encoder/decoder"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.CovertChannel.attain_embedding",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::seq_transfer": {
+  "family": "F8",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Sequential kernel has nonnegative weights and is dominated by a visible-history certificate for each secret; blind payoff bound"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::covert_seq": {
+  "family": "F2",
+  "adversary": "SHARED_SEED",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Uniform secret independent of seed; hidden-state sequential kernels dominated by same visible-history certificate; seed-aware decoder"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::covert_seq_seed": {
+  "family": "F2",
+  "adversary": "SHARED_SEED",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Uniform secret independent of seed; per-seed domination, nonnegative certificates and seed-aware normalized decoder"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.Necessity.seed_secret_breaks_covert",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::sc01_adaptive_target": {
+  "family": "F2",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Fixed five-episode nine-view output horizon; uniform 32-bit secret independent of seed; dominated side-observation kernel, mass product cap"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.Necessity.seed_secret_breaks_covert",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::covert_side_bound": {
+  "family": "F2",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Stateful visible and side observations obey per-history domination and nonnegative mass bounds; fixed horizon and uniform secret"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::audit_leak_bound": {
+  "family": "F6",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-13"
+  ],
+  "premises": [
+   "Uniform hidden size-B audit schedule; sound catch flags, support-restricted noncatch kernel domination; leakage certificate mass"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Core/Leakage.lean::audit_adaptive_hidden": {
+  "family": "F6",
+  "adversary": "ADAPTIVE_FEEDBACK",
+  "scenarios": [
+   "SC-13"
+  ],
+  "premises": [
+   "Uniform hidden size-B schedule; adaptive attacker observes specified prior feedback but not schedule/extra side channels"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.AuditBudget.observable_schedule_nogo",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/GateComposition.lean::shared_invariants": {
+  "family": "F8",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-28"
+  ],
+  "premises": [
+   "Both invariants must hold initially and be preserved by EVERY joint shared-state action"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/GateComposition.lean::confused_deputy_counterexample": {
+  "family": "F8",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-03",
+   "SC-28"
+  ],
+  "premises": [
+   "Unsafe deputy model allows gate A authority to invoke effect despite gate B denying access"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/PolicyTamper.lean::policy_preserved_if_protected": {
+  "family": "F1",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-03",
+   "SC-10"
+  ],
+  "premises": [
+   "Attacker policy-write authority is false; all operations use modeled policy step"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/PolicyTamper.lean::tamper_possible_if_writable": {
+  "family": "F1",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-03",
+   "SC-10"
+  ],
+  "premises": [
+   "Attacker has policy-write authority and submits replacement policy"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/AuditBudget.lean::random_survival_le_pow": {
+  "family": "F6",
+  "adversary": "NON_ADAPTIVE",
+  "scenarios": [
+   "SC-13"
+  ],
+  "premises": [
+   "Attack set fixed independently of a uniformly sampled hidden size-B schedule; fixed k distinct attack rounds"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.AuditBudget.observable_schedule_nogo",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/AuditBudget.lean::observable_schedule_nogo": {
+  "family": "F6",
+  "adversary": "NON_ADAPTIVE",
+  "scenarios": [
+   "SC-13"
+  ],
+  "premises": [
+   "Schedule fixed and observable; attack has at most N-B available non-audited rounds"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Witnesses/Necessity.lean::seed_secret_breaks_covert": {
+  "family": "F2",
+  "adversary": "SHARED_SEED",
+  "scenarios": [
+   "SC-01"
+  ],
+  "premises": [
+   "Countermodel: secret equals receiver's shared seed; independence hypothesis deliberately violated"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Witnesses/Necessity.lean::marginal_certs_dont_compose": {
+  "family": "F8",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-01",
+   "SC-28"
+  ],
+  "premises": [
+   "Countermodel: individually secret-independent marginals nevertheless correlated jointly"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Witnesses/Necessity.lean::shared_score_product_unsound": {
+  "family": "F8",
+  "adversary": "SHARED_SEED",
+  "scenarios": [
+   "SC-13"
+  ],
+  "premises": [
+   "Countermodel: two monitor misses depend on the same random score so product is unsound"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Witnesses/LeakWitness.lean::leak_bound": {
+  "family": "F6",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [
+   "SC-13"
+  ],
+  "premises": [
+   "Two-round noisy schedule-leak kernel with epsilon between zero and one half; noncatch kernel domination and one-step audit budget"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.LeakWitness.leak_mass",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F4/GateClients.lean::deployed_is_reviewed": {
+  "family": "F4",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-16",
+   "SC-17",
+   "SC-18",
+   "SC-21",
+   "SC-27"
+  ],
+  "premises": [
+   "Content-addressed gate and injective hash on contents reachable in modeled run; agent cannot mark arbitrary content reviewed"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.GateClients.Artifact.collision_breaks",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F4/GateClients.lean::collision_breaks": {
+  "family": "F4",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-16",
+   "SC-17"
+  ],
+  "premises": [
+   "Collision witness permits different contents with same digest in the simplified model"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F4/GateClients.lean::approval_safe": {
+  "family": "F7",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-10",
+   "SC-16",
+   "SC-26"
+  ],
+  "premises": [
+   "Exact payload approval signed by independently trusted principal, unexpired and unused nonce; modeled validation enforced"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.GateClients.Approval.replay_without_nonce",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F4/GateClients.lean::replay_without_nonce": {
+  "family": "F7",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-10",
+   "SC-16",
+   "SC-26"
+  ],
+  "premises": [
+   "Countermodel omits unique nonces and permits reuse of approval"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F5/Lease.lean::lease_safe": {
+  "family": "F5",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-25",
+   "SC-28"
+  ],
+  "premises": [
+   "Per-lease and global spend accounted atomically across all worker forks; unforgeable lease identity and expiration"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.Lease.fork_without_lease_accounting",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F5/Lease.lean::revoke_absorbing": {
+  "family": "F5",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-25"
+  ],
+  "premises": [
+   "Revocation is modeled as a trusted irreversible transition; every subsequent worker action passes through gate"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/Families/F5/Lease.lean::fork_without_lease_accounting": {
+  "family": "F5",
+  "adversary": "TRACE_ARBITRARY",
+  "scenarios": [
+   "SC-25",
+   "SC-28"
+  ],
+  "premises": [
+   "Countermodel accounts independent per-worker spend against shared lease, permitting double consumption"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Scoped source-level review 2026-10-08; CI compilation is not fidelity, applicability or independent-review evidence"
+ },
+ "ControlStack/HaltLiveness.lean::delivered_halt_absorbs": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Trusted HALT instruction is included in reference-gate transition and every subsequent effect is mediated"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+ },
+ "ControlStack/HaltLiveness.lean::liveness_if_delivered": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Trusted scheduler delivers HALT before finite step bound; no theorem guarantees real-world scheduler delivery"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.HaltLiveness.ordinary_operations_never_halt",
+  "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+ },
+ "ControlStack/HaltLiveness.lean::effects_frozen_after_delivered_halt": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "HALT is explicitly delivered after modeled before-trace; post-HALT effects are mediated by same gate"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+ },
+ "ControlStack/HaltLiveness.lean::ordinary_operations_never_halt": {
+  "family": "F3",
+  "scenarios": [
+   "SC-13",
+   "SC-25"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "Counterexample: trace has only untrusted ordinary operations and contains no trusted HALT"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "Source-level scope candidate; CI #37877045361 confirmed Lean elaboration/standard axioms only; scheduling and runtime refinement not certified"
+ },
+ "ControlStack/Scenarios/SC26Transaction.lean::sc26_safe": {
+  "family": "F7",
+  "scenarios": [
+   "SC-26"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "legal: no untrusted op carries the gate credential",
+   "credential separation for approvers/admins (runtime)",
+   "receiver idempotent per key, ids never reused"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "payload_unchecked_breaks; no_dedup_retry_duplicates; no_cap_breaks; gate_credential_leak_breaks; no_bank_auth_breaks",
+  "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09 (lake env lean, standard axioms); evidence scenarios/SC-26/evidence/run-1"
+ },
+ "ControlStack/Scenarios/SC26Transaction.lean::safe_of_sound": {
+  "family": "F8",
+  "scenarios": [
+   "SC-26"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "legal: no untrusted op carries the gate credential",
+   "credential separation for approvers/admins (runtime)",
+   "receiver idempotent per key, ids never reused",
+   "Sound C: payload, distinct, cap, bankDedup, bankAuth"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "no_dedup_breaks_cap; no_bank_auth_breaks",
+  "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09 (lake env lean, standard axioms); evidence scenarios/SC-26/evidence/run-1"
+ },
+ "ControlStack/Scenarios/SC26Transaction.lean::sc26_safe_disjoint": {
+  "family": "F7",
+  "scenarios": [
+   "SC-26"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "legal: no untrusted op carries the gate credential",
+   "credential separation for approvers/admins (runtime)",
+   "receiver idempotent per key, ids never reused",
+   "agents and approvers disjoint"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "self_approval_without_distinct_check",
+  "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09 (lake env lean, standard axioms); evidence scenarios/SC-26/evidence/run-1"
+ },
+ "ControlStack/Scenarios/SC26Transaction.lean::sc26_once": {
+  "family": "F7",
+  "scenarios": [
+   "SC-26"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "nonce check enabled"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "nonce_protects_budget_only",
+  "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09 (lake env lean, standard axioms); evidence scenarios/SC-26/evidence/run-1"
+ },
+ "ControlStack/Scenarios/SC26Transaction.lean::halt_freezes": {
+  "family": "F3",
+  "scenarios": [
+   "SC-26"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "legal",
+   "halt delivered to the gate"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "no_halt_check_breaks; inflight_after_halt (in-flight completes)",
+  "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09 (lake env lean, standard axioms); evidence scenarios/SC-26/evidence/run-1"
+ },
+ "ControlStack/Scenarios/SC28Budget.lean::sc28_safe": {
+  "family": "F5",
+  "scenarios": [
+   "SC-28",
+   "SC-14"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "trusted meter sees all descendant consumption",
+   "no ledger rollback (legal)",
+   "admin credential separation"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "no_global_counter_breaks; fresh_fork_exceeds_parent; reported_cost_breaks; rollback_double_spends",
+  "record": "scenarios/SC-28/manifest.json; kernel-checked locally 2026-10-09; mechanism evidence scenarios/SC-28/evidence/run-1 (benign workloads)"
+ },
+ "ControlStack/Scenarios/SC28Budget.lean::revoked_lease_stops": {
+  "family": "F5",
+  "scenarios": [
+   "SC-28"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "none (any trace, any configuration)"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "fresh_fork_escapes_revocation",
+  "record": "scenarios/SC-28/manifest.json; kernel-checked locally 2026-10-09; mechanism evidence scenarios/SC-28/evidence/run-1 (benign workloads)"
+ },
+ "ControlStack/Scenarios/SC16Deploy.lean::sc16_safe": {
+  "family": "F4",
+  "scenarios": [
+   "SC-16"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "role credentials separated",
+   "deploy is the only route to the target"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "toctou_slot_breaks; no_target_binding_breaks; self_review_without_distinct_check; no_nonce_redeploys",
+  "record": "scenarios/SC-16/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC16Deploy.lean::sc16_reviewed_content": {
+  "family": "F4",
+  "scenarios": [
+   "SC-16"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "hash injective on contents in the run (Set.InjOn)"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "collision_breaks",
+  "record": "scenarios/SC-16/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC25Audit.lean::sc25_safe": {
+  "family": "F6",
+  "scenarios": [
+   "SC-25",
+   "SC-13"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "executor is the only effect path",
+   "trusted classifier correct",
+   "digest collision-resistant"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "fail_open_timeout_breaks; digest_unchecked_breaks; nonatomic_check_race_breaks; agent_declared_class_breaks",
+  "record": "scenarios/SC-25/manifest.json; kernel-checked locally 2026-10-09; model only"
+ }
 }

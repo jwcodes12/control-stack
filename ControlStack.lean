@@ -21,6 +21,9 @@ import ControlStack.Scenarios.SC26Transaction
 import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit
+import ControlStack.Scenarios.SC18Logging
+import ControlStack.Scenarios.SC12Persistence
+import ControlStack.Scenarios.SC23Injection
 import ControlStack.Core.Compose
 import ControlStack.Witnesses.DeputyBridge
 import ControlStack.Families.F6.ReservedAudit

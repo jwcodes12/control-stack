@@ -2,37 +2,58 @@
   "schema_version": 1,
   "id": "SC-25",
   "title": "Agent hides or misorders hazardous actions behind after-the-fact monitoring",
-  "bad_event": "Agent hides or misorders hazardous actions behind after-the-fact monitoring",
-  "adversary": "Untrusted agent with scenario-specific authority; full feasible action set requires specification.",
-  "refutation": "A concrete executable trace produces the catalog bad event despite enforcing the candidate property: For irreversible acts, check-before-effect and absorbing halt; explicitly prove action/event ordering",
-  "scope": "Catalog-only draft. Origin: Google response-timing framing; LinuxArena live harms. Feasibility estimate: H for protocol ordering. Not a selected deployment.",
+  "bad_event": "An operation executes before a trusted audit PASS for exactly its content (and, if irreversible, an exact approval), or executes twice, or after timeout/HALT.",
+  "adversary": "Model: any trace of submit/amend/audit/approve/check/fire/crash/timeout/halt operations.",
+  "refutation": "A trace executing un-audited or amended content despite full checks (Lean witnesses: fail-open timeout, unchecked digest, non-atomic check, agent-declared class).",
+  "scope": "Lean model only; no runtime harness yet. Not: audit quality, classifier correctness, verdict revocation.",
   "families": [
+    "F1",
     "F3",
-    "F6"
+    "F6",
+    "F7"
   ],
-  "status": "DRAFT",
-  "theorems": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.SC25.sc25_safe",
+      "path": "ControlStack/Scenarios/SC25Audit.lean",
+      "sha256": "a039ae73a56771142f8782a7567cdca1b105f20c31cdb9f412706774aaab450f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC25.expired_never_executes",
+      "path": "ControlStack/Scenarios/SC25Audit.lean",
+      "sha256": "a039ae73a56771142f8782a7567cdca1b105f20c31cdb9f412706774aaab450f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC25.halt_freezes",
+      "path": "ControlStack/Scenarios/SC25Audit.lean",
+      "sha256": "a039ae73a56771142f8782a7567cdca1b105f20c31cdb9f412706774aaab450f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
   "evidence": [],
   "assumptions": [
     {
-      "id": "threat_model_completeness",
-      "text": "Complete reachable attacker actions and affected assets must be enumerated.",
+      "id": "exclusive_executor",
+      "text": "The executor is the only effect path.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "correspondence",
-      "text": "A trusted effect gate must enforce the relevant policy against every alternate path.",
+      "id": "trusted_classifier",
+      "text": "Irreversibility classification is trusted and correct.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
       "id": "honest_usefulness",
-      "text": "A frozen representative honest-task distribution and acceptance floor must be measured.",
+      "text": "Honest operations complete within audit latency.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
@@ -42,27 +63,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including excluded attack classes."
+      "note": "Not independently established."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "The model-to-runtime relation lacks independently checked refinement evidence."
+      "note": "Not independently established."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Exclusive enforcement and receiver observation boundary remain unverified."
+      "note": "Not independently established."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Lifetime state, concurrency, and composition premises remain unverified."
+      "note": "Not independently established."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "An honest-task success baseline and test population remain unverified."
+      "note": "Not independently established."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent fidelity, provenance or assurance approval."
+      "note": "Not independently established."
     }
   }
 }

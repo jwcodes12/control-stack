@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-10-09  
 **Repository:** jwcodes12/control-stack  
-**Source under review:** main at **083874048518b68d754f0c392ad0cb84f01174ba** (resolved via GitHub git/ref/heads/main before the audit).  
+**Source under review:** independently rechecked `main` at **`1ace0787b6c77a669c7a35b1e3e311d53b64b3dd`**; the initial review was pinned to **`083874048518b68d754f0c392ad0cb84f01174ba`**. The source trees are identical across all original theorem, implementation, scenario and English-claim files (see §11). Later commits change only review files, isolated reproductions and workflow setup.  
 **Review artifact:** reviews/english-lean-fidelity-audit.md  
 **Review type:** independent assistant source-semantic adversarial review, **not** a kernel replay, external human attestation, or deployment certification.
 

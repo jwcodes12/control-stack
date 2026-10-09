@@ -5,7 +5,7 @@
   "bad_event": "A build uses a toolchain whose digest differs from the pinned one, or mount/policy configuration is changed by a non-admin. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any write/decide/build trace (shared model with SC-10).",
   "refutation": "A build with an unpinned toolchain despite full checks (witness: toolchain via agent-writable PATH).",
-  "scope": "Lean model only (shared with SC-10). Not: compromised compiler binaries at the pinned digest. The check flag(s) pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
+  "scope": "Lean model only (shared with SC-10). Not: compromised compiler binaries at the pinned digest. The check flag(s) pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-10/evidence/run-1), benign workloads, process identities under one UID.",
   "families": [
     "F1",
     "F4"
@@ -25,7 +25,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-10/evidence/run-1/verdicts.json",
+      "sha256": "560dade7d4c05b726a6ff9b4bd07f86683377163a9bef887ae6de4bcd4cae2f9",
+      "purpose": "PREREG-SC10-POLICY-v1 run-1 (shared with SC-10): pinned toolchain digest enforced despite PATH-prepended same-named script (H4); wrong-digest pinned file refused; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC10-POLICY-STORE.md",
+      "sha256": "c5d675bcdca5dd438a02e9db1888a4f98b80b6989994106315f109fdeac83df9",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -39,7 +52,7 @@
       "id": "pinned_location_protected",
       "text": "The pinned toolchain location is not agent-writable.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -47,7 +60,7 @@
       "id": "honest_usefulness",
       "text": "Pinned toolchain suffices for honest builds.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }
@@ -55,27 +68,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     }
   }
 }

@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any trace of artifact writes (typed fields only after canonicalisation), reads, derivations and sensitive actions.
 
-**Scope:** Lean model only. Semantic: typed fields remain a bounded covert channel (SC-05); whether content 'is an instruction'.
+**Scope:** Lean model only. Semantic: typed fields remain a bounded covert channel (SC-05); whether content 'is an instruction'. Runtime: single-host preregistered reference run (scenarios/SC-06/evidence/run-1), benign workloads, process identities under one UID.
 
 **Refutation (what would show the claim wrong):** A free-text cross-agent read or unconfirmed cross-agent-derived action despite full checks (witnesses: raw path, no canonicalisation, no provenance check).
 

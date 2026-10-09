@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any write/decide/altDecide/build/halt trace.
 
-**Scope:** Lean model only. Not: storage rollback of the policy store. The check flag(s) singleEval, pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).
+**Scope:** Lean model only. Not: storage rollback of the policy store. The check flag(s) singleEval, pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-10/evidence/run-1), benign workloads, process identities under one UID.
 
 **Refutation (what would show the claim wrong):** A decision under an agent-written or stale policy despite full checks (witnesses: agent-writable policy, stale cache, alternate evaluator).
 

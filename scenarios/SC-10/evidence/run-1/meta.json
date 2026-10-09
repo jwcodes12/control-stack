@@ -1,0 +1,85 @@
+{
+ "argv": [
+  "scenarios/SC-10/harness/run_sc10.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-10/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_values": {
+   "L_DEC": 0.1
+  },
+  "prereg_values": {
+   "L_DEC": 0.1
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC); store, enforcement point and runner stamps on one host",
+ "constants": {
+  "CACHE_TTL": 0.5,
+  "H4_BUILDS": 3,
+  "H5_BUILDS": 5,
+  "H5_DECISIONS": 100,
+  "HOSTS": [
+   "a.example",
+   "b.example",
+   "c.example",
+   "d.example",
+   "data.example"
+  ],
+  "LIFETIME": 30.0,
+  "L_DEC": 0.1,
+  "STREAM_GAP": 0.01,
+  "STREAM_N": 40,
+  "V0": {
+   "allow": [
+    "a.example",
+    "b.example",
+    "c.example",
+    "data.example"
+   ]
+  },
+  "WALL_LIMIT": 115
+ },
+ "finished": "2026-10-09T15:28:18.098328Z",
+ "git_branch": "claude/next-20261009",
+ "git_commit": "fabf2ad36d29a7a3fddbec3d43b01867a0e7c3ae",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  8.66,
+  11.2,
+  10.87
+ ],
+ "loadavg_start": [
+  9.77,
+  11.72,
+  11.01
+ ],
+ "model_sha256": {
+  "ControlStack/Scenarios/SC10Policy.lean": "025b82c7fca3d59bfe0002ef6879966559710e2518877afedb06046b42e18a94"
+ },
+ "nproc": 2,
+ "prereg_id": "PREREG-SC10-POLICY-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "prereg/SC10-POLICY-STORE.md": "c5d675bcdca5dd438a02e9db1888a4f98b80b6989994106315f109fdeac83df9",
+  "scenarios/SC-10/harness/README.md": "547c30c1d45f5b0efe4c88487201e91b7be6f4e4ea33dd0ce84d95bad4954ad4",
+  "scenarios/SC-10/harness/builder.py": "c2d266d7bab8912303d319329f30fe61bec096bc1c1a933d81671ae138c2449a",
+  "scenarios/SC-10/harness/client.py": "2a497c26a87fb544099dea53135bb4b42f38e87d0cd1bbf8e1ef69923dfc3295",
+  "scenarios/SC-10/harness/pep.py": "a754e5646cb6a9e39a59a7a2bfd0ad7f3da86ad3ade3992bd24088b8064cebb2",
+  "scenarios/SC-10/harness/reconcile.py": "1a483274cef050e26d59caa9a536ad873def3963a076dd5dabeb03cb2955c7fb",
+  "scenarios/SC-10/harness/run_sc10.py": "0cd0261c3a6f2a36b7940815eb07893049477eed88daa63e1cdf4bed7d84b710",
+  "scenarios/SC-10/harness/store.py": "8de9974b34e49a5b8d7676987439231c423a579be00d8b1064d5c7fc451bd6ae"
+ },
+ "started": "2026-10-09T15:27:46.285100Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 31.81
+}

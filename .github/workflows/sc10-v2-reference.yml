@@ -1,0 +1,23 @@
+name: sc10-v2-reference
+
+on:
+  pull_request:
+    paths:
+      - 'scenarios/SC-10/hardened/**'
+      - '.github/workflows/sc10-v2-reference.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check SC-10 v2 serialized reference
+        run: python3 -m unittest discover -s scenarios/SC-10/hardened -p 'test_*.py' -v

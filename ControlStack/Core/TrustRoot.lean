@@ -229,7 +229,7 @@ def scenarios : List (ℕ × List Prem) :=
    (24, [.observationComplete, .hiddenSample, .honeypotIndistinguishable]),
    (25, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .semanticJudgement, .modelRuntimeCorrespondence]),
    (26, [.credentialSeparation, .honestUsefulness, .modelRuntimeCorrespondence, .roleSeparation, .independentReview, .receiverIdempotency]),
-   (27, [.collisionResistance, .independentAnchor]),
+   (27, [.modelRuntimeCorrespondence, .collisionResistance, .independentAnchor]),
    (28, [.credentialSeparation, .honestUsefulness, .modelRuntimeCorrespondence, .antiRollback, .trustedMeter])]
 -- END GENERATED: scenarios
 
@@ -337,7 +337,7 @@ theorem scenario_roots_table : scenarios.map (fun s => (s.1, scenarioRoots s.1))
        (24, [.kernelMediation, .keyCustody, .measuredRates]),
        (25, [.issuerAuthenticity, .kernelMediation, .measuredRates, .humanJudgement, .implementationConformance]),
        (26, [.issuerAuthenticity, .monotonicAnchor, .measuredRates, .humanJudgement, .orgConfiguration, .implementationConformance, .externalContract]),
-       (27, [.independentWitness, .collisionResistance]),
+       (27, [.independentWitness, .collisionResistance, .implementationConformance]),
        (28, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates, .implementationConformance])] := by
   decide
 

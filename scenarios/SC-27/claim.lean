@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC27Refinement
 import ControlStack.Scenarios.SC27ExtensionOnly
 import ControlStack.Scenarios.SC27Chain
 #check ControlStack.SC27Chain.sc27_safe
@@ -34,3 +35,15 @@ import ControlStack.Scenarios.SC27Chain
 #print axioms ControlStack.SC27ExtensionOnly.periodic_anchor_launders
 #check ControlStack.SC27ExtensionOnly.head_check_iff_prefix
 #print axioms ControlStack.SC27ExtensionOnly.head_check_iff_prefix
+#check ControlStack.SC27Refinement.simulation
+#print axioms ControlStack.SC27Refinement.simulation
+#check ControlStack.SC27Refinement.concrete_ext_safe
+#print axioms ControlStack.SC27Refinement.concrete_ext_safe
+#check ControlStack.SC27Refinement.concrete_tampered_never_anchored
+#print axioms ControlStack.SC27Refinement.concrete_tampered_never_anchored
+#check ControlStack.SC27Refinement.concrete_alarm_iff
+#print axioms ControlStack.SC27Refinement.concrete_alarm_iff
+#check ControlStack.SC27Refinement.writer_heads_breaks
+#print axioms ControlStack.SC27Refinement.writer_heads_breaks
+#check ControlStack.SC27Refinement.empty_truncation_silent
+#print axioms ControlStack.SC27Refinement.empty_truncation_silent

@@ -1,0 +1,23 @@
+name: broker-transition-oracle
+on:
+  pull_request:
+    paths:
+      - 'tools/test_trusted_stack_mutations.py'
+      - 'trusted_stack/test_transition.py'
+      - '.github/workflows/broker-transition-oracle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bounded-oracle-and-mutants:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Transition-table oracle and persistence regressions
+        run: python3 -m unittest trusted_stack.test_transition -v
+      - name: Mutant controls, including real Linux peer disconnect
+        run: sudo -n python3 tools/test_trusted_stack_mutations.py --live

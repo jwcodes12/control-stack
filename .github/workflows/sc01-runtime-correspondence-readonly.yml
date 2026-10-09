@@ -1,0 +1,40 @@
+name: sc01-runtime-correspondence-readonly
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-and-source-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pure finite reference model vs production gateway
+        run: python3 tools/test_gateway_correspondence.py -v
+      - name: Fail-closed receiver payload shape regression
+        run: python3 tools/test_sc01_receiver_boundary.py -v
+      - name: Original gateway and lifetime controls
+        run: |
+          python3 gateway/test_gateway.py
+          python3 gateway/test_lifetime.py
+          python3 tools/test_ctrlcert.py
+          python3 tools/check_scenarios.py
+      - name: Source and scenario index consistency
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_status.py --check
+      - name: x86 read-only KVM/architecture report
+        run: python3 tools/sc01_host_feasibility.py
+  arm-host-preflight-only:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: ARM64 KVM capability (no VM, no channel probe)
+        run: python3 tools/sc01_host_feasibility.py

@@ -1034,5 +1034,20 @@
   "status": "PROVED_RECORDED",
   "necessity_witness": "observable_sample_nogo",
   "record": "scenarios/SC-22/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC07Exfil.lean::sc07_mixed": {
+  "family": "F1",
+  "scenarios": [
+   "SC-07"
+  ],
+  "adversary": "NON_ADAPTIVE",
+  "premises": [
+   "per-window catch independent, ≥ p·r",
+   "quota q enforced (SC-07 run-1)",
+   "S = information bits"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "no_quota_one_window; observable_schedule_exfil",
+  "record": "scenarios/SC-07/manifest.json; kernel-checked locally 2026-10-09"
  }
 }

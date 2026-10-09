@@ -795,5 +795,90 @@
   "status": "PROVED_RECORDED",
   "necessity_witness": "summarizer_drops_taint; paraphrase_confirmation_breaks; no_taint_check_breaks; confirmation_reuse_breaks",
   "record": "scenarios/SC-23/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC08Exec.lean::sc08_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-08"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "every exec mediated",
+   "loaded bytes = hashed bytes",
+   "digest collision-resistant"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "path_allowlist_toctou_breaks; interpreter_loophole_breaks; writable_exec_mount_breaks",
+  "record": "scenarios/SC-08/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC09Priv.lean::sc09_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-09"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "kernel enforces capabilities",
+   "admin credential separation"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "unrestricted_elevation_breaks; exec_without_attenuation_breaks; confused_deputy_breaks",
+  "record": "scenarios/SC-09/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC10Policy.lean::sc10_safe": {
+  "family": "F1",
+  "scenarios": [
+   "SC-10",
+   "SC-11"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "store access control trusted",
+   "single evaluator source"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "agent_writable_policy_breaks; stale_cache_breaks; alternate_evaluator_breaks",
+  "record": "scenarios/SC-10/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Families/F2/ChannelInstances.lean::sc02_accumulated": {
+  "family": "F2",
+  "scenarios": [
+   "SC-02"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "per-episode domination",
+   "re-key independence for rekey_epoch"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "sc02_no_rekey",
+  "record": "scenarios/SC-02/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Families/F2/ChannelInstances.lean::log_channel": {
+  "family": "F2",
+  "scenarios": [
+   "SC-04"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "all receiver-visible output canonicalised"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "free_text_leaks",
+  "record": "scenarios/SC-04/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Families/F6/MonitorCollusion.lean::pass_transfer": {
+  "family": "F2",
+  "scenarios": [
+   "SC-24"
+  ],
+  "adversary": "SHARED_SEED",
+  "premises": [
+   "decision depends only on mediated view",
+   "TV / λ bounded"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "stego_fools_honeypots",
+  "record": "scenarios/SC-24/manifest.json; kernel-checked locally 2026-10-09; model only"
  }
 }

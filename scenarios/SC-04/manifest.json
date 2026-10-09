@@ -1,69 +1,72 @@
 {
   "schema_version": 1,
   "id": "SC-04",
-  "title": "Agent leaks via logs, telemetry, diagnostic output, error strings or",
-  "bad_event": "Agent leaks via logs, telemetry, diagnostic output, error strings or process timing",
-  "adversary": "Untrusted agent with scenario-specific authority; full feasible action set requires specification.",
-  "refutation": "A concrete executable trace produces the catalog bad event despite enforcing the candidate property: Restrict all *receiver-visible* diagnostics or include them in the certified observation space",
-  "scope": "Catalog-only draft. Origin: SC-01 correspondence gap. Feasibility estimate: M; absolute timing noninterference may be impractical. Not a selected deployment.",
+  "title": "Agent leaks via logs, telemetry, diagnostic output, error strings or process timing",
+  "bad_event": "A receiver of canonicalised logs recovers a secret with probability above K^m·Q^{fm}/|M|.",
+  "adversary": "Adaptive writer of m log records; trusted canonicaliser to K templates with f fields quantised to Q levels.",
+  "refutation": "A log path bypassing the canonicaliser, or recovery above the bound (witness: free-text field leaks in one record).",
+  "scope": "Lean bound only; timing and error channels must be inside the canonicalised view or separately certified.",
   "families": [
-    "F2",
-    "F3",
-    "F8"
+    "F2"
   ],
-  "status": "DRAFT",
-  "theorems": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.ChannelInstances.log_channel",
+      "path": "ControlStack/Families/F2/ChannelInstances.lean",
+      "sha256": "fcbbcbf4ab00ca2c716f5df9d28d2b7735e00d82509677f0d26989b22a101b7a",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.ChannelInstances.canonical_seq",
+      "path": "ControlStack/Families/F2/ChannelInstances.lean",
+      "sha256": "fcbbcbf4ab00ca2c716f5df9d28d2b7735e00d82509677f0d26989b22a101b7a",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
   "evidence": [],
   "assumptions": [
     {
-      "id": "threat_model_completeness",
-      "text": "Complete reachable attacker actions and affected assets must be enumerated.",
+      "id": "canonicaliser_complete",
+      "text": "Every receiver-visible diagnostic passes the trusted canonicaliser.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "correspondence",
-      "text": "A trusted effect gate must enforce the relevant policy against every alternate path.",
+      "id": "timing_in_view",
+      "text": "Timing/ordering observations are inside the certified view.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
-    },
-    {
-      "id": "honest_usefulness",
-      "text": "A frozen representative honest-task distribution and acceptance floor must be measured.",
-      "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including any excluded attack class."
+      "note": "Not independently established; Lean model only."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "The modeled machine and concrete runtime have not been fully matched by independent refinement evidence."
+      "note": "Not independently established; Lean model only."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Complete observation and enforcement boundary are not independently attested."
+      "note": "Not independently established; Lean model only."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Persistent state, shared randomness, concurrency, and cumulative lifetime accounting remain unverified."
+      "note": "Not independently established; Lean model only."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "No independently validated honest-task usefulness threshold for this scope."
+      "note": "Not independently established; Lean model only."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent statement-fidelity and evidence-provenance approval."
+      "note": "Not independently established; Lean model only."
     }
   }
 }

@@ -1,35 +1,37 @@
-# Follow-up validation record — 2026-10-08
+# Structural integration verification — 2026-10-08 (GitHub CI)
 
-**Branch:** `structure-merge-20261008-gpt6-finish` (forked from concurrent integration head `f526fee07fdd2111e78e088986167deec68cd82c`). This report is about a **candidate**, not merged main, and not deployment assurance.
+**Validation run:** [GitHub Actions #37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641), conclusion **SUCCESS**, on isolated branch `lean-validation-run-20261008`; initial source under test is a descendant of hardening head `beccb760`. The workflow changed only its own CI configuration and regenerated deterministic `THEOREM-REGISTRY.md` / `.json`. These generated files were copied byte-for-byte to `structure-merge-20261008-gpt6-finish` in commit `b8fa84c`. No experimental evidence was generated.
 
-## Results actually observed
+## Actual CI results
 
-| Check | Result | What it means |
+| Gate | Observed result | Scope |
 |---|---|---|
-| GitHub tree inventory | **PASS (repository API)** | 28 scenario manifests, 28 `claim.lean` files; after moving editable drafts, zero scenario-local prereg files |
-| Manifest structural audit | **PASS (repository API + JSON parsing)** | All 28 manifests contain the six complete conservative scope axes and per-premise usefulness status; SC-01 explicitly records shared-cache environment refutation and frozen VM usefulness failure |
-| Existing named proof links | **PASS (source-link audit)** | Seven cited named theorems across SC-01/03/13 present in source registry and associated `claim.lean` query lines on integration baseline; these theorem identities were not edited in this hardening follow-up |
-| Preregistrations | **PASS (byte hashes)** | Three B experiment drafts moved unchanged into `prereg/`; frozen root `PREREG-*.md` and historical evidence not modified |
-| Shell acceptance runner | **PASS (syntax only)** | `bash -n` passed for `tools/verify_structure_merge.sh` in a disposable local copy |
-| `lake build ControlStack`, 28 Lean claim replays | **NOT RUN** | Shell cannot resolve `github.com`, and Lean/Lake are unavailable; no valid clean-build or axiom result may be asserted |
-| `tools/check_sc01_case.py` phases 1–5 | **NOT RUN** | No cloned checkout; the receipt's original-host OpenSSL SHA remains untouched |
-| `tools/test_ctrlcert.py` and generic checker unittest suite | **NOT RUN** | No cloned checkout; additional regression test cases are checked in for a suitable host |
-| Independent runtime correspondence / experimental usefulness | **NOT RUN** | Historical SC-01 refutations stand; new tests require a separate approved protocol |
+| Lean pinned-toolchain compilation | **PASS** | `lake build ControlStack` completed twice (GitHub logged 3,743 jobs then 3,742 replay jobs) |
+| Standard-axiom inspection | **PASS for printed reports** | 8 reports from all scenario claim elaborations, each involving only `propext`, `Classical.choice`, `Quot.sound`; the first build log also included 446 such standard-only reports, no `sorryAx` |
+| Every `scenarios/SC-XX/claim.lean` | **PASS** | All 28 individually elaborated using `lake env lean`; this checks syntax/Lean queries, not whether a draft has a theorem |
+| Theorem registry and scenario status index | **PASS** | `python3 tools/build_registry.py --check`, `python3 tools/build_status.py --check`; 860 lexical declaration records; 850 remain `SOURCE_ONLY` |
+| Scenario metadata static lint | **PASS** | All 28 manifests and checked digests, scoped obligations and registered source references accepted; all unresolved cases remain blocked |
+| Adversarial checker unit tests | **PASS** | `python3 -m unittest tools.test_check_scenarios`: 18 cases, including tamper/missing-axis/false-promotion fixtures |
+| Certifier unit tests | **PASS** | `python3 tools/test_ctrlcert.py`: 4 cases |
+| SC-01 original checker, steps 1–4 | **PASS** | Lean case/support chain, hashes, Python/Lean gateway differential test and frozen 64/64 historical single-host usefulness receipt |
+| SC-01 original checker, step 5 | **EXPECTED HOST-BOUND FAILURE** | The historical cache receipt includes an OpenSSL host binding that cannot match a new ephemeral GitHub runner. No frozen receipt or source hash was regenerated. The acceptance script verified the host-bound error message and did not classify this as a new side-channel experiment |
+| New VM trial / honest-task recovery / attestation | **NOT RUN** | The saved frozen VM usefulness failure and single-host shared-cache refutation stand independently of this build |
 
-## Checker design notes
+The first validation attempt [#37866728862](https://github.com/jwcodes12/control-stack/actions/runs/37866728862) built Lean successfully but failed on stale generated registry files. Those files were deterministically regenerated and committed, and the full replay above passed.
 
-The static `tools/check_scenarios.py` enforces six distinct scope review axes; per-premise *proof, evidence, applicability, and usefulness* records; uniqueness of JSON keys; names and file paths linked to the source-derived registry; and required evidence hashes, with explicit exception for historically unbound evidence. It disallows self-assignment of `SUPPORTED` scope, `RUNTIME_VALIDATED` evidence, or `MET_RECORDED` usefulness without a future separate attestation process. It **does not** run Lean or certify that a source theorem faithfully models a host process.
+## Integrity and limits
 
-New negative-test fixtures cover missing usefulness and scope fields, attempted self-promotion, duplicate JSON keys, mismatched hash, missing registry reference, missing Lean claim query, path traversal and failed evidence. A positive result when running this checker will mean **metadata consistency only**, never an unconditional probability or deployment claim.
+The hardening merge retains exactly **28 manifests / 28 Lean claim files, three CONDITIONAL and 25 DRAFT**. All have separate per-assumption proof/evidence/applicability/usefulness fields and six named scope-review obligations. The static checker refuses self-declared `RUNTIME_VALIDATED`, `MET_RECORDED`, or `SUPPORTED` statuses, duplicate JSON keys, missing axes and source/digest mismatches.
 
-## Exact acceptance command on a networked checkout
+The comparison against source integration head `f526fee` verified **all 82 checked protected blobs unchanged**, including root `PREREG-*.md`, historical results/VM receipts, assurance files and the original scenario-A workflow. Three editable B drafts were relocated with **identical original Git blob hashes** into `prereg/`, without altering immutable historical preregs.
+
+This result is a **clean structural and machine-checking acceptance**, not a completed safety case. A lexically indexed declaration is not proof of intended statement fidelity. Nonstandard-axiom absence in *printed results* is not an independent review of every statement. SC-01's original single-host cache side certificate was refuted; the frozen VM QEMU TCG 0.25 s usefulness gate previously failed 0/64 baseline and 0/64 mediated. Hardware isolation, independent lineage/observation attestation, broad runtime correspondence and human protocol approval remain unresolved.
+
+## Reproduce
 
 ```sh
-git fetch --all
-git switch structure-merge-20261008-gpt6-finish
+git switch structure-merge-20261008
 bash tools/verify_structure_merge.sh
 ```
 
-The runner performs the Lean cache/build, registry/status consistency checks, static and unit validation, all 28 `claim.lean` elaborations and standard-axiom report inspection, `test_ctrlcert`, then unchanged SC-01 case replay. It accepts the precise known new-host step-5 `shared file changed` error **only after steps 1–4 were reached**; unexpected failures exit nonzero. It changes no receipts, fixed experiment thresholds or preregistrations.
-
-**Still open:** a real host replay, complete premise provenance and reviewer judgments, theorem classification beyond source-only UNKNOWN, and independent deployment correspondence. C's PolicyTamper/GateComposition remain narrow classical model statements. No novelty or operational safety claim.
+The script does not modify experimental receipts, fixed deadlines or preregistrations. On a new host, it accepts precisely the expected step-5 historic OpenSSL host-binding failure **only after steps 1–4 pass**, and fails for any unrelated error. See the CI logs for the executed proof/test replay; do not treat the presence of the script as a substitute for running it.

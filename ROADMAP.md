@@ -10,13 +10,15 @@ SC-01's original shared-cache and frozen VM usefulness refutations remain record
 
 This is the **single status entry point**. The source-derived scenario index is [scenarios/INDEX.md](scenarios/INDEX.md), and the source-derived theorem registry is [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md). Their status fields are not deployment assurance. The independent comparison is [reviews/structure-merge/comparison.md](reviews/structure-merge/comparison.md).
 
-### Structure integration (work branch; validation pending)
+### Structure integration (work branch; build acceptance PASS, operational assurance pending)
+
+[CI #37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641) passed pinned Lean compilation, 28/28 scenario claim elaborations, 8 printed standard-only axiom reports, 18 mutation tests, 4 certifier tests and generated-index checks. Original SC-01 case steps 1–4 passed; phase 5 correctly identified a frozen receipt's host-bound OpenSSL mismatch. This is **not** an independent applicability or deployment validation.
 
 - SC-01, SC-03 and SC-13 have named proof references and remain **conditional**, not deployment assured; SC-27 remains **draft** because audit-dispatch integrity does not prove independently attested evidence.
 - 28 scenario folders exist: **3 conditional, 25 draft**. A scenario folder is not a tested safety case.
 - Reviewed main proof definitions now live under `ControlStack/Core/`, `ControlStack/Families/` and `ControlStack/Witnesses/`, with old imports preserved. C contributes policy-tamper and shared-state gate candidate proofs.
-- The theorem registry is a lexical source inventory (852 declarations after lexical completeness repair), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
-- **Required before approval:** actual Lean 4.34.0 clean build, standard-axiom audit, Python tests, SC-01 unchanged receipt steps 1–4, mutation/fail-closed controls, and independent correspondence review. The historical OpenSSL receipt must not be regenerated. SC-01 assurance metadata explicitly rebinds the moved Leakage/Necessity facade sources; only the OpenSSL host-bound failure is expected in step 5.
+- The theorem registry is a lexical source inventory (860 declarations after CI regeneration), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
+- **Build/integration acceptance passed** in CI #37870787641. Remaining before operational approval: independent model-to-runtime correspondence review, complete threat observability/provenance, negative trials, and a separately approved viable SC-01 protocol. The historical OpenSSL receipt remains frozen and cannot be replayed as a new host's valid receipt.
 - C's four active-bundle observations were reconciled conservatively: SC-01's frozen VM usefulness gate and single-host side-channel gate failed; SC-03 proves only a narrow immediate-peer model; SC-13 assumes exclusive trusted dispatch; SC-27 still lacks independently rooted attestation.
 
 The older time-stamped results below are **historical**, not a new successful verification of this work branch.

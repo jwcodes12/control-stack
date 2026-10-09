@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 11 theorem reference(s), 1 of them necessity witnesses.
-- Runtime evidence: preregistered reference run(s) `PREREG-SC28-CGMETER-v1`.
+- Runtime evidence: preregistered reference run(s) `PREREG-ANTI-ROLLBACK-v1`, `PREREG-SC28-CGMETER-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -57,17 +57,28 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
   | H5 | Control: placement is required | PASS | 5/5 repetitions passed |
 
 - `prereg/SC28-CGROUP-METER.md` — recorded outcome **PASS**. Frozen preregistration
+- `experiments/anti-rollback/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG-ANTI-ROLLBACK-v1 run-1: restores of older snapshots → gate refuses all ops (no replay/re-spend lands), crash-window recovery exactly once, no spurious refusals, anchor-off control re-spends/replays (detected); 5/5 reps; separate-UID anchor service
+
+  Preregistration: `PREREG-ANTI-ROLLBACK-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Rollback is refused (fail closed | PASS | 35/5 repetitions passed |
+  | H2 | Crash recovery admits no rollback | PASS | 25/5 repetitions passed |
+  | H3 | Usefulness (no spurious refusals | PASS | 5/5 repetitions passed |
+  | H4 | Negative control (anchor disabled | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
 
 ## Premises (from the manifest)
 
 **Evidence TESTED_NOT_PROVED:**
 
 - `trusted_meter`: The meter sees every unit of consumption by every descendant (kernel cgroup accounting with launch-time placement). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `anti_rollback`: The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 **Evidence NOT_RUN:**
 
 - `credential_separation`: Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1). Reduced in Lean (sc28_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). work w claims worker w, so a forged worker cannot charge another worker's lease. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `anti_rollback`: The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `adversarial_workloads`: Mechanism holds against workloads that try to evade accounting or termination. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `honest_usefulness`: Honest jobs complete within their leases. Formal counterpart: SC28Liveness.lean (progress under interleaving; availability prices stated as witnesses). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_RUN)
 
@@ -96,7 +107,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | ASSUMED | scope axis environment_boundary = ASSUMED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC28-CGMETER-v1 |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-ANTI-ROLLBACK-v1, PREREG-SC28-CGMETER-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

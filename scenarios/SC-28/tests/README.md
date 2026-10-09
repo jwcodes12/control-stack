@@ -21,3 +21,4 @@ Commands are listed only for files that exist. Run them from the repository root
 
 - Recorded: `scenarios/SC-28/evidence/run-1/verdicts.json` (PASS)
 - Recorded: `prereg/SC28-CGROUP-METER.md` (PASS)
+- Recorded: `experiments/anti-rollback/evidence/run-1/verdicts.json` (PASS)

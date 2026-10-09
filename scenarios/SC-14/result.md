@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 3 theorem reference(s), 0 of them necessity witnesses.
-- Runtime evidence: preregistered reference run(s) `PREREG-SC14-MULTIRES-v1`.
+- Runtime evidence: preregistered reference run(s) `PREREG-ANTI-ROLLBACK-v1`, `PREREG-SC14-MULTIRES-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -51,18 +51,29 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
   | H5 | Usefulness | PASS | 5/5 repetitions passed |
 
 - `prereg/SC14-MULTI-RESOURCE.md` — recorded outcome **PASS**. Frozen preregistration
+- `experiments/anti-rollback/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG-ANTI-ROLLBACK-v1 run-1: restores of older snapshots → gate refuses all ops (no replay/re-spend lands), crash-window recovery exactly once, no spurious refusals, anchor-off control re-spends/replays (detected); 5/5 reps; separate-UID anchor service
+
+  Preregistration: `PREREG-ANTI-ROLLBACK-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Rollback is refused (fail closed | PASS | 35/5 repetitions passed |
+  | H2 | Crash recovery admits no rollback | PASS | 25/5 repetitions passed |
+  | H3 | Usefulness (no spurious refusals | PASS | 5/5 repetitions passed |
+  | H4 | Negative control (anchor disabled | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
 
 ## Premises (from the manifest)
 
 **Evidence TESTED_NOT_PROVED:**
 
 - `trusted_meter`: The meter sees all consumption of every resource (see SC-28 run-1 for CPU/pids on one host). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `anti_rollback`: Ledger is never rolled back. Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `honest_usefulness`: Honest jobs fit their budgets. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_RUN)
 
 **Evidence NOT_RUN:**
 
 - `credential_separation`: Operations carrying trusted identities (reviewer, approver, admin, user) are those principals' own acts (not modelled; REVIEW-PACKET finding 1). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `anti_rollback`: Ledger is never rolled back. Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 ## What does NOT hold
 
@@ -88,7 +99,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC14-MULTIRES-v1 |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-ANTI-ROLLBACK-v1, PREREG-SC14-MULTIRES-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

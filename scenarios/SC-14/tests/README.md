@@ -20,3 +20,4 @@ Commands are listed only for files that exist. Run them from the repository root
 
 - Recorded: `scenarios/SC-14/evidence/run-1/verdicts.json` (PASS)
 - Recorded: `prereg/SC14-MULTI-RESOURCE.md` (PASS)
+- Recorded: `experiments/anti-rollback/evidence/run-1/verdicts.json` (PASS)

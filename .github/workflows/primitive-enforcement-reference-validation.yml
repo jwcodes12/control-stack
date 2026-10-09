@@ -1,0 +1,56 @@
+name: primitive-enforcement-reference-validation
+on:
+  push:
+    branches:
+      - primitive-impl-ci-20261009
+    paths:
+      - .github/workflows/primitive-enforcement-reference-validation.yml
+      - tools/build_statement_catalog.py
+      - trusted_stack/**
+permissions:
+  contents: write
+jobs:
+  reference-tests-and-statement-catalog:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Independently execute reference enforcement negative checks
+        run: |
+          python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
+          python3 -m compileall -q trusted_stack tools/build_statement_catalog.py
+          python3 tools/test_gateway_correspondence.py
+          python3 tools/test_sc01_receiver_boundary.py
+      - name: Generate all Lean theorem source statements and audit completeness
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py
+          python3 tools/build_statement_catalog.py --check
+          test -s LEAN-STATEMENTS-NORMAL-FORM.md
+          grep -c '^### [0-9]' LEAN-STATEMENTS-NORMAL-FORM.md
+      - name: Save deterministic statement-review catalog into disposable validation branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add LEAN-STATEMENTS-NORMAL-FORM.md
+          git diff --cached --quiet || (git commit -m "Generate complete Lean statement source catalog [skip ci]" && git push origin HEAD:primitive-impl-ci-20261009)
+  lean-regression:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean from pinned project version
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Full pinned Lean compilation
+        run: |
+          lake exe cache get
+          lake build ControlStack
+          lake env lean scenarios/SC-01/claim.lean
+          lake env lean scenarios/SC-13/claim.lean

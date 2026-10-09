@@ -20,8 +20,8 @@ follow `ControlStack.Cert.PremiseKind`.
 | 7 | **anti_rollback**: Ledgers, counters and nonce history cannot be rolled back | environment | 4 | SC-14, SC-28 | NOT_RUN | 0/2 | NOT_PROVED | — | `secrets_kms.anti_rollback`: SoftHSM2 or a TPM on one box: sign from the agent UID, substitute payloads, replay after restoring an old database snapshot, use a revoked key. (also: `job_scheduler.anti_rollback`) |
 | 8 | **canonicaliser_complete**: Every cross-agent or receiver-visible artifact passes the trusted canonicaliser | correspondence | 4 | SC-04, SC-06 | NOT_RUN | 0/2 | NOT_PROVED | — | `logging_pipeline.log_records_canonicalised`: auditgate/run.sh already runs on PostgreSQL. Next: the documented bypass (agent-edited worker executes without the dispatcher) as a negative control; hash-chained export to a second host. |
 | 9 | **collision_resistance**: Content hashes are injective on the contents of a run | environment | 4 | SC-16, SC-27 | NOT_RUN | 0/2 | THEOREM_VERIFIED | — | — |
-| 10 | **hidden_sample**: Audit/replication samples and phases stay hidden from the agent until after it commits | correspondence | 3 | SC-21, SC-22, SC-24 | TESTED_NOT_PROVED | 1/3 | NOT_PROVED | SC-21 run-1 | `trusted_monitor_audit.schedule_not_observable`: All theory and ctrlcert numbers; replay existing eval logs through a reserved-schedule simulator; measure whether audited rounds differ in latency (schedule leak). |
-| 11 | **model_runtime_correspondence**: The runtime implements the Lean model's transitions (records match effects) | correspondence | 3 | SC-01, SC-13, SC-26 | TESTED_NOT_PROVED | 2/3 | THEOREM_VERIFIED | SC-01 (harness), SC-26 run-1, SC-26 run-2 | `logging_pipeline.audit_before_effect`: auditgate/run.sh already runs on PostgreSQL. Next: the documented bypass (agent-edited worker executes without the dispatcher) as a negative control; hash-chained export to a second host. |
+| 10 | **model_runtime_correspondence**: The runtime implements the Lean model's transitions (records match effects) | correspondence | 4 | SC-01, SC-13, SC-25, SC-26 | TESTED_NOT_PROVED | 3/4 | THEOREM_VERIFIED | SC-01 (harness), SC-25 run-1, SC-26 run-1, SC-26 run-2 | `logging_pipeline.audit_before_effect`: auditgate/run.sh already runs on PostgreSQL. Next: the documented bypass (agent-edited worker executes without the dispatcher) as a negative control; hash-chained export to a second host. |
+| 11 | **hidden_sample**: Audit/replication samples and phases stay hidden from the agent until after it commits | correspondence | 3 | SC-21, SC-22, SC-24 | TESTED_NOT_PROVED | 1/3 | NOT_PROVED | SC-21 run-1 | `trusted_monitor_audit.schedule_not_observable`: All theory and ctrlcert numbers; replay existing eval logs through a reserved-schedule simulator; measure whether audited rounds differ in latency (schedule leak). |
 | 12 | **role_separation**: Agent and approver/reviewer/admin identity sets are disjoint | organisational | 3 | SC-09, SC-16, SC-26 | TESTED_NOT_PROVED | 2/3 | NOT_PROVED | SC-16 run-1, SC-26 run-1, SC-26 run-2 | `code_review_cicd.distinct_reviewer`: kind or k3s with a local OCI registry, signing and an admission policy. Attacks: retag after review, push a colliding mutable tag, self-review, replay an approval, deploy to another target. Check independently that running image digests equal approved digests. |
 | 13 | **consume_by_digest**: The bytes checked are the bytes loaded or deployed | correspondence | 2 | SC-08 | NOT_RUN | 0/1 | NOT_PROVED | — | `code_review_cicd.consume_by_digest`: kind or k3s with a local OCI registry, signing and an admission policy. Attacks: retag after review, push a colliding mutable tag, self-review, replay an approval, deploy to another target. Check independently that running image digests equal approved digests. |
 | 14 | **honeypot_indistinguishable**: Honeypot and real view laws are close (TV bounded and estimated) | measurement | 2 | SC-24 | NOT_RUN | 0/1 | NOT_PROVED | — | `trusted_monitor_audit.honeypots_indistinguishable`: All theory and ctrlcert numbers; replay existing eval logs through a reserved-schedule simulator; measure whether audited rounds differ in latency (schedule leak). |
@@ -44,7 +44,7 @@ follow `ControlStack.Cert.PremiseKind`.
 ## By kind
 
 - **proof_obligation** (0): —
-- **correspondence** (11): `canonicaliser_complete`, `hidden_sample`, `model_runtime_correspondence`, `consume_by_digest`, `rekey_independence`, `source_attribution`, `exact_payload_display`, `finite_transcript`, `receiver_idempotency`, `taint_propagation`, `versioned_writes`
+- **correspondence** (11): `canonicaliser_complete`, `model_runtime_correspondence`, `hidden_sample`, `consume_by_digest`, `rekey_independence`, `source_attribution`, `exact_payload_display`, `finite_transcript`, `receiver_idempotency`, `taint_propagation`, `versioned_writes`
 - **measurement** (6): `honest_usefulness`, `observation_complete`, `semantic_judgement`, `honeypot_indistinguishable`, `statistical_independence`, `deterministic_reexecution`
 - **environment** (9): `credential_separation`, `exclusive_effect_path`, `policy_integrity`, `anti_rollback`, `collision_resistance`, `os_kernel_enforcement`, `trusted_meter`, `durable_ack`, `revocation_effective`
 - **organisational** (3): `role_separation`, `independent_review`, `independent_anchor`
@@ -60,8 +60,8 @@ follow `ControlStack.Cert.PremiseKind`.
 - `anti_rollback`: SC-14:anti_rollback, SC-28:anti_rollback
 - `canonicaliser_complete`: SC-04:canonicaliser_complete, SC-06:canonicaliser_complete
 - `collision_resistance`: SC-16:hash_injective, SC-27:hash_injective_on_run
+- `model_runtime_correspondence`: SC-01:ledger_correspondence, SC-13:effect_vs_record, SC-25:model_runtime_correspondence, SC-26:model_runtime_correspondence
 - `hidden_sample`: SC-21:sample_hidden, SC-22:sample_hidden, SC-24:phase_rerandomised
-- `model_runtime_correspondence`: SC-01:ledger_correspondence, SC-13:effect_vs_record, SC-26:model_runtime_correspondence
 - `role_separation`: SC-09:admin_separation, SC-16:role_disjointness, SC-26:role_disjointness
 - `consume_by_digest`: SC-08:fd_pinned_hash
 - `honeypot_indistinguishable`: SC-24:tv_estimated
@@ -88,7 +88,7 @@ follow `ControlStack.Cert.PremiseKind`.
 | Lean premise | kind | normalised premise | leverage |
 |---|---|---|---|
 | `SC26.legal` | environment | `credential_separation` | 19 |
-| `SC26.sound_config` | correspondence | `model_runtime_correspondence` | 3 |
+| `SC26.sound_config` | correspondence | `model_runtime_correspondence` | 4 |
 | `F6.strategy` | correspondence | `observation_complete` | 12 |
 | `F6.kernel_nonneg` | correspondence | (stack-level; no scenario manifest) | — |
 | `F6.kernel_subdist` | correspondence | (stack-level; no scenario manifest) | — |

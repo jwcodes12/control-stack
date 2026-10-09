@@ -43,6 +43,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 |---|---|---|
 | `quota_off_exceeds` | `ControlStack/Scenarios/SC07Liveness.lean` | without the quota check, 24 bits leave in one window (the H6 negative control's shape) |
 | `allowlist_off_leaks` | `ControlStack/Scenarios/SC07Liveness.lean` | without the allowlist check, bits reach a non-allowlisted destination |
+| `quota_rule_absent_breaks` | `ControlStack/Scenarios/SC07Refinement.lean` | The H6 control: no quota rule ⇒ the per-window bound fails. |
 
 ## Runtime evidence
 
@@ -80,7 +81,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 - Not established as applying to a real deployment: The job's only route off-host is the trusted gateway (`single_route`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Bounds hold against encoding through allowed destinations, timing or covert channels (`adversarial_channels`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Under-quota uploads complete byte-exact. Formal counterpart: SC07Liveness.lean (progress under interleaving; availability prices stated as witnesses) (`honest_usefulness`; applicability UNRESOLVED).
-- Not established as applying to a real deployment: Lean forward simulation of the modeled nftables forward-chain into SC07Liveness: SC07Refinement.simulation_run/concrete_safe; assumes exact installed rules, kernel quota/drop semantics, no other network route, and payload/header bookkeeping. Python/nftables to this concrete model was tested on one host in SC-07 run-1, not formally established. (`model_runtime_correspondence`; applicability UNRESOLVED).
+- Not established as applying to a real deployment: Lean forward simulation of the modeled nftables forward-chain into SC07Liveness: SC07Refinement.simulation_run/concrete_safe; assumes exact installed rules, kernel quota/drop semantics, no other network route, and payload/header bookkeeping. Python/nftables to this concrete model was tested on one host in SC-07 run-1, not formally established (`model_runtime_correspondence`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Benign workloads only.
 - Scope axis `runtime_correspondence` is ASSUMED: Formal concrete-event to SC07Liveness refinement (SC07Refinement); gateway Python, nftables semantics and real packet traces only single-host-tested. No independent runtime correspondence guarantee.
 - Scope axis `environment_boundary` is ASSUMED: Single host; namespaces and nftables trusted.

@@ -76,6 +76,9 @@ inductive PremiseKind where
   | environment
   /-- an organisational practice: role separation, approval practice, operations -/
   | organisational
+  /-- a measurement claim discharged WITH CONFIDENCE: it fails with probability ≤ δ over the measurement's own
+  randomness (`Measured.ProbCert.ofMeasured`); the procedure is named -/
+  | measuredWithConfidence (procedure : String) (delta : ℚ)
   deriving DecidableEq, Repr
 
 def PremiseKind.label : PremiseKind → String
@@ -84,6 +87,7 @@ def PremiseKind.label : PremiseKind → String
   | .measurement => "measurement"
   | .environment => "environment"
   | .organisational => "organisational"
+  | .measuredWithConfidence _ _ => "measured_with_confidence"
 
 /-- a named, typed premise with its meaning -/
 structure Premise where
@@ -115,6 +119,8 @@ def jsonEscape (s : String) : String :=
 def entryJson (e : String × PremiseKind) : String :=
   let thm := match e.2 with
     | .proofObligation t => ", \"theorem\": \"" ++ jsonEscape t ++ "\""
+    | .measuredWithConfidence proc d =>
+      ", \"procedure\": \"" ++ jsonEscape proc ++ "\", \"delta\": \"" ++ toString d ++ "\""
     | _ => ""
   "{\"name\": \"" ++ jsonEscape e.1 ++ "\", \"kind\": \"" ++ e.2.label ++ "\"" ++ thm ++ "}"
 
@@ -124,7 +130,8 @@ def ledgerJson (l : List (String × PremiseKind)) : String :=
 
 /-- the ledger grouped by kind (kinds in a fixed order, names deduplicated) -/
 def ledgerGrouped (l : List (String × PremiseKind)) : List (String × List String) :=
-  ["proof_obligation", "correspondence", "measurement", "environment", "organisational"].map fun k =>
+  ["proof_obligation", "measured_with_confidence", "correspondence", "measurement", "environment",
+   "organisational"].map fun k =>
     (k, ((l.filter fun e => e.2.label = k).map Prod.fst).dedup)
 
 /-! ## Event probabilities on a finite space -/

@@ -28,7 +28,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-KINDS = ("proof_obligation", "correspondence", "measurement", "environment", "organisational")
+KINDS = ("proof_obligation", "measured_with_confidence", "correspondence", "measurement", "environment",
+         "organisational")
 IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_.']*$")
 
 # premise id -> manifest assumption ids that must cover it, per scenario
@@ -59,6 +60,9 @@ def validate(entries):
             raise LedgerError(f"unknown premise kind {e.get('kind')!r} for {e['name']!r}")
         if e["kind"] == "proof_obligation" and not (isinstance(e.get("theorem"), str) and e["theorem"]):
             raise LedgerError(f"proof obligation without theorem: {e['name']!r}")
+        if e["kind"] == "measured_with_confidence" and not (isinstance(e.get("procedure"), str) and
+                                                             isinstance(e.get("delta"), str)):
+            raise LedgerError(f"measured premise without procedure/delta: {e['name']!r}")
     return entries
 
 
@@ -91,7 +95,9 @@ def grouped(entries):
     """kind -> deduplicated names, in ledger order"""
     out = {k: [] for k in KINDS}
     for e in entries:
-        label = e["name"] + (f"  [discharged by {e['theorem']}]" if e["kind"] == "proof_obligation" else "")
+        label = e["name"] + (f"  [discharged by {e['theorem']}]" if e["kind"] == "proof_obligation" else
+                             f"  [{e.get('procedure', '?')}, δ = {e.get('delta', '?')}]"
+                             if e["kind"] == "measured_with_confidence" else "")
         if label not in out[e["kind"]]:
             out[e["kind"]].append(label)
     return out

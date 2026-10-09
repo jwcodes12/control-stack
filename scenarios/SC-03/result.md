@@ -26,7 +26,7 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 
 | theorem | file | reading |
 |---|---|---|
-| `trace_safe` | `ControlStack/EgressGate.lean` | SC-03 pinned-peer safety (model): `Invariant` is preserved by any action sequence, so every recorded connection attempt came from the gateway to a policy-pinned peer and an active sandbox has a safe topology. |
+| `trace_safe` | `ControlStack/EgressGate.lean` | (no docstring) |
 | `step_safe` | `ControlStack/EgressGate.lean` | (no docstring) |
 
 ### Necessity witnesses

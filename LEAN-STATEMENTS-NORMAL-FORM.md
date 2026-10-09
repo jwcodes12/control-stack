@@ -2102,7 +2102,7 @@ theorem step_safe (p : Policy) (s : State) (a : Action) (h : Invariant p s) : In
 
 ### 256. trace_safe
 
-Source: ControlStack/EgressGate.lean:129 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
+Source: ControlStack/EgressGate.lean:126 | Family: F1 | Adversary: TRACE_ARBITRARY | Status: PROVED_RECORDED
 
 ~~~lean
 theorem trace_safe (p : Policy) (s : State) (actions : List Action) (h : Invariant p s) : Invariant p (run p s actions)
@@ -2110,7 +2110,7 @@ theorem trace_safe (p : Policy) (s : State) (actions : List Action) (h : Invaria
 
 ### 257. failed_launch
 
-Source: ControlStack/EgressGate.lean:135 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/EgressGate.lean:132 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem failed_launch (p : Policy) (s : State) (t : Topology) (h : safe t = false) : (step p s (.launch t)).active = false
@@ -2118,7 +2118,7 @@ theorem failed_launch (p : Policy) (s : State) (t : Topology) (h : safe t = fals
 
 ### 258. crash_closed
 
-Source: ControlStack/EgressGate.lean:138 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/EgressGate.lean:135 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem crash_closed (p : Policy) (s : State) (key : String) : (step p (step p s .crashGateway) (.request key)).attempts = s.attempts

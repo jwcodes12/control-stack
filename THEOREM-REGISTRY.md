@@ -260,12 +260,12 @@ An annotation's PROVED_RECORDED / VERIFIED_RECORDED is **historical** and requir
 | ControlStack/DeferGame.lean::defer_bridge | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 85bfc1e1cade |
 | ControlStack/DeferMono.lean::catVE_toReal_le_catV | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 52a8baf4e3d6 |
 | ControlStack/DeferMono.lean::defer_mono | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 52a8baf4e3d6 |
-| ControlStack/EgressGate.lean::lookup_pinned | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b060f30bb4b4 |
-| ControlStack/EgressGate.lean::direct_no_effect | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b060f30bb4b4 |
-| ControlStack/EgressGate.lean::step_safe | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b060f30bb4b4 |
-| ControlStack/EgressGate.lean::trace_safe | F1 | SC-03 | TRACE_ARBITRARY | safe initial topology; fixed trusted policy and no bypass | PROVED_RECORDED | NONE_RECORDED | assurance/egress-boundary-v1.json | b060f30bb4b4 |
-| ControlStack/EgressGate.lean::failed_launch | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b060f30bb4b4 |
-| ControlStack/EgressGate.lean::crash_closed | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b060f30bb4b4 |
+| ControlStack/EgressGate.lean::lookup_pinned | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6b0c33cd3106 |
+| ControlStack/EgressGate.lean::direct_no_effect | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6b0c33cd3106 |
+| ControlStack/EgressGate.lean::step_safe | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6b0c33cd3106 |
+| ControlStack/EgressGate.lean::trace_safe | F1 | SC-03 | TRACE_ARBITRARY | safe initial topology; fixed trusted policy and no bypass | PROVED_RECORDED | NONE_RECORDED | assurance/egress-boundary-v1.json | 6b0c33cd3106 |
+| ControlStack/EgressGate.lean::failed_launch | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6b0c33cd3106 |
+| ControlStack/EgressGate.lean::crash_closed | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6b0c33cd3106 |
 | ControlStack/Families/F1/FabricIsolation.lean::run_cons | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 7304b77d52ce |
 | ControlStack/Families/F1/FabricIsolation.lean::inv_init | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 7304b77d52ce |
 | ControlStack/Families/F1/FabricIsolation.lean::AccOk.mono | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 7304b77d52ce |

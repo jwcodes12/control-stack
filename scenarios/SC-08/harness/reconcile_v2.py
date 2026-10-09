@@ -32,6 +32,10 @@ def reconcile_v2(allow, launcher, sentinel, *, pin_dir=None):
     if not isinstance(progs, list) or not isinstance(scripts, list) or not all(map(_hex, progs + scripts)):
         findings.append("allowlist contains missing or invalid SHA-256 digests")
         progs, scripts = [], []
+    # This supplementary certificate is for a witnessed execution, not an idle run.
+    # Empty streams otherwise pass the multiset equality vacuously.
+    if not launcher or not sentinel:
+        findings.append("no witnessed execution: launcher and sentinel streams must be nonempty")
     all_seq = []
     successful = []
     for i, entry in enumerate(launcher):

@@ -45,7 +45,6 @@ theorem liveness_if_delivered {St Op Eff : Type} (G : System St Op Eff)
   subst ops
   rw [run_append]
   rw [delivered_halt_absorbs]
-  rfl
 
 /-- The effect log after a delivered trusted halt equals the log immediately
 before that halt, even if arbitrarily many operations follow. -/

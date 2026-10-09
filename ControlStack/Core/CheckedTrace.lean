@@ -62,8 +62,15 @@ theorem verified_sound [DecidableEq S] (step : S → O → S)
       intro s h
       have hb : decide (r.before = s ∧ r.after = step s r.op) = true ∧
           verified step r.after tail = true := by
-        exact Bool.and_eq_true.mp (by simpa only [verified] using h)
-      have hAfter : r.after = step s r.op := (of_decide_true hb.1).2
+        cases hd : decide (r.before = s ∧ r.after = step s r.op) <;>
+          cases hv : verified step r.after tail <;>
+          simp [verified, hd, hv] at h ⊢
+      have hAfter : r.after = step s r.op := by
+        by_contra hne
+        have hfalse :
+            decide (r.before = s ∧ r.after = step s r.op) = false := by
+          simp [hne]
+        simp [hfalse] at hb
       have ht := ih r.after hb.2
       simpa only [recordedEnd, events, List.map_cons, List.foldl_cons, hAfter] using ht
 

@@ -19,6 +19,7 @@ import ControlStack.Scenarios.SC13
 import ControlStack.Scenarios.SC27
 import ControlStack.Scenarios.SC26Transaction
 import ControlStack.Families.F6.ReservedAudit
+import ControlStack.Families.F6.ReservedRecall
 import ControlStack.Witnesses.CovertNoGo
 import ControlStack.Witnesses.Necessity
 import ControlStack.Witnesses.LeakWitness

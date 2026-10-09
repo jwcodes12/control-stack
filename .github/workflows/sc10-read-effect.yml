@@ -1,0 +1,26 @@
+name: sc10-read-effect-correspondence
+on:
+  pull_request:
+    paths:
+      - 'tools/sc10_linearization.py'
+      - 'tools/test_sc10_linearization.py'
+      - 'docs/SC10-READ-EFFECT-REVIEW-2026-10-09.md'
+      - '.github/workflows/sc10-read-effect.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-negative:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify synthetic race and fail-closed controls
+        run: python3 -m unittest tools.test_sc10_linearization -v
+      - name: Audit one frozen SC-10 positive transcript (do not rewrite)
+        run: |
+          python3 tools/sc10_linearization.py \
+            --store scenarios/SC-10/evidence/run-1/logs/r1-h1/store.jsonl \
+            --decisions scenarios/SC-10/evidence/run-1/logs/r1-h1/decisions.jsonl

@@ -110,7 +110,9 @@ class Probe(unittest.TestCase):
             shutil.copytree(ROOT / "scenarios", d / "scenarios",
                             ignore=shutil.ignore_patterns("evidence", "harness", "llm_*"))
             shutil.copytree(ROOT / "stack", d / "stack")
-            stale = TEXT.replace("(27, [.collisionResistance, .independentAnchor])", "(27, [.independentAnchor])")
+            row27 = re.search(r"\(27, \[[^\]]*\]\)", TEXT).group(0)
+            stale = TEXT.replace(row27, "(27, [.independentAnchor])")
+            self.assertNotEqual(stale, TEXT)
             (d / g.TR).write_text(stale, encoding="utf-8")
 
             def runner(argv, **kw):
@@ -120,7 +122,7 @@ class Probe(unittest.TestCase):
             self.assertIn("drift", err)
             self.assertEqual(quiet(g.main, ["--no-lean"], root=d, runner=runner)[0], 0)
             fixed = (d / g.TR).read_text(encoding="utf-8")
-            self.assertIn("(27, [.collisionResistance, .independentAnchor])", fixed)
+            self.assertIn(row27, fixed)
             self.assertEqual(quiet(g.main, ["--check", "--no-lean"], root=d, runner=runner)[0], 0)
             # with the (canned) Lean probe the root tables are rewritten from its output
             self.assertEqual(quiet(g.main, [], root=d, runner=runner)[0], 0)

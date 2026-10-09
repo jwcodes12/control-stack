@@ -1,0 +1,31 @@
+name: sc01-x64-kvm-accelerator-smoke
+on:
+  push:
+    branches:
+      - sc01-priorities-validation-20261008
+    paths:
+      - .github/workflows/sc01-x64-kvm-accelerator-smoke.yml
+permissions:
+  contents: read
+jobs:
+  qmp-kvm-readiness-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Install packaged x64 emulator (no guest image)
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq qemu-system-x86
+      - name: Query KVM hardware acceleration through ephemeral paused guest-less QEMU
+        run: |
+          printf '%s\n' '{"execute":"qmp_capabilities"}' '{"execute":"query-kvm"}' '{"execute":"quit"}' |
+            sudo -n timeout 20s qemu-system-x86_64 -machine q35,accel=kvm -m 128 -smp 1 -nodefaults -display none -S -qmp stdio > /tmp/qmp-kvm.jsonl
+          python3 - <<'PY'
+          import json
+          lines=[json.loads(s) for s in open('/tmp/qmp-kvm.jsonl') if s.strip().startswith('{')]
+          answers=[line['return'] for line in lines if isinstance(line.get('return'),dict) and 'enabled' in line['return']]
+          if len(answers)!=1 or answers[0].get('enabled') is not True:
+              raise SystemExit(f'KVM hardware acceleration unavailable: {answers!r}')
+          print('KVM acceleration is enabled for a paused image-free x86_64 QEMU process.')
+          print('This is NOT a pinned SC-01 guest boot, usefulness run or side-channel isolation test.')
+          PY

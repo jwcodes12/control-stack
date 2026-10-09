@@ -46,7 +46,33 @@ theorem missing_confirmation_blocks_both :
     ]).executed = [] := by
   decide
 
+/-!
+Additional statement-fidelity gap: the SC06 abstract action is keyed only by
+(agent, value), not by the particular context-entry ID. If two artifacts supply
+the same value with different provenance, ctxOf chooses the FIRST entry. The
+action cannot encode which occurrence is the actual source. Consequently
+sc06_safe must not be read as a theorem about all provenance-bearing
+real-world sources of a numeric value; it only verifies the chosen ctxOf entry.
+The Python reference harness uses ctx_id, so this is NOT a demonstrated
+runtime bypass. -/
+
+/-- Two context entries have the same numeric value but opposite provenance.
+The action using that numeric value is recorded as locally sourced, without
+confirmation, because ctxOf selects the first matching entry. -/
+theorem same_value_different_provenance_is_ambiguous :
+    let s := run P0 full init [
+      .writeTyped 2 0 42 0,
+      .read 2 0,
+      .writeTyped 1 1 42 0,
+      .read 2 1,
+      .act 2 7 42 999
+    ]
+    s.ctx = [⟨2, 42, false, false⟩, ⟨2, 42, true, false⟩] ∧
+      s.executed = [⟨2, 7, 42, false, none⟩] := by
+  decide
+
 end ControlStack.SC06ConfirmationReuse
 
 #print axioms ControlStack.SC06ConfirmationReuse.same_confirmation_can_authorize_two_effects
 #print axioms ControlStack.SC06ConfirmationReuse.missing_confirmation_blocks_both
+#print axioms ControlStack.SC06ConfirmationReuse.same_value_different_provenance_is_ambiguous

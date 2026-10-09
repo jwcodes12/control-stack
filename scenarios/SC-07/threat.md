@@ -18,3 +18,4 @@ _Generated from manifest.json._
 
 - `ControlStack/Scenarios/SC07Exfil.lean`
 - `ControlStack/Scenarios/SC07Liveness.lean`
+- `ControlStack/Scenarios/SC07Refinement.lean`

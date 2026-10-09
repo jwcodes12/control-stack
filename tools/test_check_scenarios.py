@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from tools.check_scenarios import Invalid, main, verify
+from tools.check_scenarios import Invalid, main, verify, SCOPE_AXES
 from tools.build_registry import DECL
 
 
@@ -31,7 +31,10 @@ class CheckerTests(unittest.TestCase):
                           "sha256": hashlib.sha256(proof.read_bytes()).hexdigest(),
                           "recorded_status": "KERNEL_CHECK_RECORDED"}],
             "evidence": [], "assumptions": [{"id": "boundary", "text": "exclusive gate",
-                "proof": "THEOREM_VERIFIED", "evidence": "NOT_RUN", "applicability": "UNRESOLVED"}]
+                "proof": "THEOREM_VERIFIED", "evidence": "NOT_RUN",
+                "applicability": "UNRESOLVED", "usefulness": "NOT_RUN"}],
+            "scope_axes": {name: {"status": "UNRESOLVED", "note": "Not independently verified"}
+                           for name in SCOPE_AXES}
         }
         (self.root / "THEOREM-REGISTRY.json").write_text(
             json.dumps([{"key": "sample.lean::foo", "status": "SOURCE_ONLY"}]))
@@ -52,6 +55,51 @@ class CheckerTests(unittest.TestCase):
 
     def test_missing_assumption_axis_fails(self):
         del self.m["assumptions"][0]["evidence"]
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_missing_usefulness_fails_closed(self):
+        del self.m["assumptions"][0]["usefulness"]
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_missing_scope_axis_fails_closed(self):
+        del self.m["scope_axes"]["independent_review"]
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_false_scope_promotion_fails_closed(self):
+        self.m["scope_axes"]["environment_boundary"]["status"] = "SUPPORTED"
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_usefulness_failure_is_reported(self):
+        self.m["assumptions"][0]["usefulness"] = "OBSERVED_FAILURE"
+        self.m["scope_axes"]["usefulness"]["status"] = "REFUTED"
+        self.save()
+        report = verify(self.root, "SC-01")
+        self.assertEqual(report["usefulness"], "FAILED_RECORDED")
+        self.assertEqual(report["applicability"], "BLOCKED")
+
+    def test_duplicate_json_key_rejected(self):
+        text = (self.bundle / "manifest.json").read_text()
+        (self.bundle / "manifest.json").write_text(text.replace(
+            '"schema_version": 1', '"schema_version": 1, "schema_version": 1'))
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_self_declared_runtime_validation_rejected(self):
+        self.m["assumptions"][0]["evidence"] = "RUNTIME_VALIDATED"
+        self.save()
+        with self.assertRaises(Invalid):
+            verify(self.root, "SC-01")
+
+    def test_self_declared_usefulness_promotion_rejected(self):
+        self.m["assumptions"][0]["usefulness"] = "MET_RECORDED"
         self.save()
         with self.assertRaises(Invalid):
             verify(self.root, "SC-01")

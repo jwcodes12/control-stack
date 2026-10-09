@@ -13,3 +13,8 @@ Historical assurance files, runtime evidence receipts and old Lean module names 
 ## Merge canonical paths
 
 [Theorem registry](../THEOREM-REGISTRY.md) (source inventory, not a proof run); [scenario index](INDEX.md); [ROADMAP](../ROADMAP.md) (one authoritative status entry point). SC-27 is draft until independently rooted provenance/attestation exists; its `claim.lean` imports a narrower audit-dispatch theorem only. No preregistrations or receipts were regenerated.
+
+
+## Hardening follow-up (candidate branch only)
+
+Each `manifest.json` additionally requires a **usefulness** status per named premise and a complete `scope_axes` object: threat coverage, runtime correspondence, environment boundary, lifetime/composition, usefulness and independent review. These record **obligations**, not positive assurance. Missing fields fail closed; `SUPPORTED` is deliberately not accepted as a self-reported scope state. A checker pass only establishes syntactic consistency, local source/digest matching, and index linkage. For future experiment drafts use [prereg/](../prereg/) rather than creating additional scenario-local prereg folders.

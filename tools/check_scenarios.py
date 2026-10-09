@@ -11,18 +11,34 @@ import re
 import sys
 from pathlib import Path, PurePosixPath
 
+# Share declaration tokenization with the generated registry.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from tools.build_registry import DECL
+
 ROOT = Path(__file__).resolve().parent.parent
 AXES = {
     "proof": {"THEOREM_VERIFIED", "NOT_PROVED", "NOT_APPLICABLE"},
     "evidence": {"RUNTIME_VALIDATED", "TESTED_NOT_PROVED", "OBSERVED_FAILURE", "NOT_RUN", "NOT_APPLICABLE"},
     "applicability": {"ESTABLISHED", "UNRESOLVED", "REFUTED"},
+    "usefulness": {"MET_RECORDED", "OBSERVED_FAILURE", "NOT_RUN", "NOT_APPLICABLE"},
 }
 DOCS = ("threat.md", "claim.lean", "policy.json", "correspondence.md", "result.md", "tests/README.md")
 SHA = re.compile(r"[a-f0-9]{64}$")
+SCOPE_AXES = ("threat_coverage", "runtime_correspondence", "environment_boundary",
+              "lifetime_and_composition", "usefulness", "independent_review")
+SCOPE_STATES = {"UNRESOLVED", "REFUTED", "ASSUMED", "NOT_APPLICABLE"}
 
 
 class Invalid(ValueError):
     pass
+
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        need(key not in result, f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
 
 
 def need(ok, reason):
@@ -60,7 +76,8 @@ def verify(root, sid):
     need(bool(re.fullmatch(r"SC-\d\d", sid)), f"bad scenario id: {sid}")
     for p in DOCS:
         file_at(root, f"scenarios/{sid}/{p}")
-    m = json.loads(file_at(root, f"scenarios/{sid}/manifest.json").read_text())
+    m = json.loads(file_at(root, f"scenarios/{sid}/manifest.json").read_text(),
+                   object_pairs_hook=unique_object)
     need(isinstance(m, dict) and m.get("schema_version") == 1 and m.get("id") == sid,
          f"{sid}: invalid schema/id")
     for field in ("title", "bad_event", "adversary", "refutation", "scope"):
@@ -76,6 +93,14 @@ def verify(root, sid):
     need(isinstance(proofs, list) and isinstance(evs, list) and
          isinstance(assumptions, list) and bool(assumptions),
          f"{sid}: proof/evidence arrays and nonempty assumption list required")
+    scope = m.get("scope_axes")
+    need(isinstance(scope, dict) and set(scope) == set(SCOPE_AXES),
+         f"{sid}: every distinct scope axis required")
+    for axis in SCOPE_AXES:
+        detail = scope[axis]
+        need(isinstance(detail, dict) and detail.get("status") in SCOPE_STATES and
+             isinstance(detail.get("note"), str) and bool(detail["note"].strip()),
+             f"{sid}: incomplete scope axis {axis}")
     names = set()
     for x in proofs:
         need(isinstance(x, dict) and isinstance(x.get("name"), str) and x["name"] and
@@ -99,8 +124,7 @@ def verify(root, sid):
             key = f"{x['path']}::{local}"
             need(key in registered, f"{sid}: theorem absent from registry: {key}")
             source = file_at(root, x["path"]).read_text()
-            need(re.search(r"(?m)^\s*(?:(?:private|protected)\s+)?"
-                           r"(?:theorem|lemma)\s+" + re.escape(local) + r"\b", source) is not None,
+            need(local in DECL.findall(source),
                  f"{sid}: theorem not declared in cited source: {key}")
             need(any(re.search(r"(?m)^\s*#" + cmd + r"\s+" +
                                re.escape(x["name"]) + r"\s*$", claim)
@@ -126,16 +150,30 @@ def verify(root, sid):
         ids.add(a["id"])
         for axis, choices in AXES.items():
             need(a.get(axis) in choices, f"{sid}/{a['id']}: invalid/missing {axis}")
+        # Recorded statuses are untrusted metadata; only a separate attested
+        # runner can promote a runtime or usefulness result to validated.
+        need(a["evidence"] != "RUNTIME_VALIDATED",
+             f"{sid}/{a['id']}: self-declared runtime validation refused")
+        need(a["usefulness"] != "MET_RECORDED",
+             f"{sid}/{a['id']}: self-declared usefulness promotion refused")
         if a["applicability"] != "ESTABLISHED":
             blockers.append(f"{a['id']}:{a['applicability']}")
+    failed_usefulness = scope["usefulness"]["status"] == "REFUTED" or any(
+        a["usefulness"] == "OBSERVED_FAILURE" for a in assumptions)
+    usefulness = ("FAILED_RECORDED" if failed_usefulness else
+                  "NOT_ESTABLISHED" if any(a["usefulness"] == "NOT_RUN" for a in assumptions)
+                  else "RECORDED_ONLY")
+    scope_blockers = [f"{axis}:{detail['status']}" for axis, detail in scope.items()
+                      if detail["status"] != "NOT_APPLICABLE"]
     proof = ("NO_THEOREM_LISTED" if not proofs else "RECORDED_NOT_RECHECKED")
     if proofs and any(x["recorded_status"] != "KERNEL_CHECK_RECORDED" for x in proofs):
         proof = "INCOMPLETE_RECORD"
     evidence = ("FAILURE_RECORDED" if failed else "UNBOUND_EVIDENCE" if unbound
                 else "RECORDS_NOT_RERUN" if evs else "NO_EVIDENCE")
-    applicability = ("BLOCKED" if blockers or failed or unbound
+    applicability = ("BLOCKED" if blockers or failed or unbound or failed_usefulness or scope_blockers
                      else "NOT_INDEPENDENTLY_REVIEWED")
     return dict(id=sid, status=m["status"], proof=proof, evidence=evidence,
+                usefulness=usefulness, scope_blockers=scope_blockers,
                 applicability=applicability, blocking_assumptions=blockers,
                 failed_receipts=failed, unbound_evidence=unbound,
                 deployment_assured=False)
@@ -163,7 +201,7 @@ def main(argv=None, root=ROOT):
     else:
         for r in reports:
             print(f"{r['id']}: proof={r['proof']} evidence={r['evidence']} "
-                  f"applicability={r['applicability']} deployment_assured=NO")
+                  f"applicability={r['applicability']} usefulness={r['usefulness']} deployment_assured=NO")
             if r["blocking_assumptions"]:
                 print("  blockers:", ", ".join(r["blocking_assumptions"]))
             if r["failed_receipts"]:

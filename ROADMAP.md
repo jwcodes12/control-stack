@@ -1,5 +1,11 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
 
+## Candidate hardening follow-up (structure-merge-20261008-gpt6-finish)
+
+The original work branch has continued evolving. This separate candidate preserves its existing validated-source inventory while expanding **all 28 scenario manifests** to cover named per-premise usefulness status and six explicit scope-assumption axes: threat coverage, runtime correspondence, environment, lifetime/composition, usefulness and independent review. Missing axes and an unsupported self-asserted `SUPPORTED` scope status are rejected by the static checker. This is schema-level diligence only and must not be presented as new Lean or runtime validation.
+
+SC-01's original shared-cache and frozen VM usefulness refutations remain recorded. Other case usefulness statuses are `NOT_RUN` unless separately grounded. All new preregistration drafts/templates are in [prereg/](prereg/); historical root `PREREG-*.md` files remain frozen. The independent [validation addendum](reviews/structure-merge/hardening-validation.md) records what was and was not executed in this environment.
+
 ## Canonical structure-merge status
 
 This is the **single status entry point**. The source-derived scenario index is [scenarios/INDEX.md](scenarios/INDEX.md), and the source-derived theorem registry is [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md). Their status fields are not deployment assurance. The independent comparison is [reviews/structure-merge/comparison.md](reviews/structure-merge/comparison.md).

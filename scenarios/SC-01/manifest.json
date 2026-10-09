@@ -58,42 +58,74 @@
       "text": "Transcript cardinality is 9^5 under fixed five padded views.",
       "proof": "THEOREM_VERIFIED",
       "evidence": "TESTED_NOT_PROVED",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "complete_receiver_observations",
       "text": "All VM receiver observations, including timing and side channels, are accounted for.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "side_kernel",
       "text": "A fixed side-kernel domination certificate holds within 65536/59049.",
       "proof": "THEOREM_VERIFIED",
       "evidence": "OBSERVED_FAILURE",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "ledger_correspondence",
       "text": "Durable serialized charges, lineage scope and no rollback refine the Lean ledger.",
       "proof": "THEOREM_VERIFIED",
       "evidence": "TESTED_NOT_PROVED",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "independent_lifetimes",
       "text": "The usefulness binomial model applies to this exact environment.",
       "proof": "THEOREM_VERIFIED",
       "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "vm_usefulness",
       "text": "Honest task meets the frozen confidence/probability floor on the VM host.",
       "proof": "THEOREM_VERIFIED",
       "evidence": "OBSERVED_FAILURE",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "OBSERVED_FAILURE"
     }
-  ]
+  ],
+  "scope_axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Threat coverage has not been independently established, including any excluded attack class."
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "The modeled machine and concrete runtime have not been fully matched by independent refinement evidence."
+    },
+    "environment_boundary": {
+      "status": "REFUTED",
+      "note": "Existing shared-cache single-host probe refutes sole-gateway receiver visibility in that tested harness."
+    },
+    "lifetime_and_composition": {
+      "status": "ASSUMED",
+      "note": "Five episodes and durable exclusive lineage charging are modeled; host-level correspondence is unproven."
+    },
+    "usefulness": {
+      "status": "REFUTED",
+      "note": "Frozen QEMU TCG VM completion gate failed 0/64 baseline and 0/64 mediated lifetimes at 0.25 s."
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "No independent statement-fidelity and evidence-provenance approval."
+    }
+  }
 }

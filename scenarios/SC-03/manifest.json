@@ -45,28 +45,58 @@
       "text": "EgressGate tamperPolicy is a stuttering action; OS integrity against tampering is an external obligation.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "exclusive_mediation",
       "text": "All immediate peer effects pass the gate; inherited FDs/host deputies excluded.",
       "proof": "THEOREM_VERIFIED",
       "evidence": "TESTED_NOT_PROVED",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "general_attribution",
       "text": "All destinations/processes have trustworthy source attribution, not just the fixture.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     },
     {
       "id": "usefulness_population",
       "text": "Pinned fixture usefulness transfers to the intended deployment workloads.",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
-      "applicability": "UNRESOLVED"
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_RUN"
     }
-  ]
+  ],
+  "scope_axes": {
+    "threat_coverage": {
+      "status": "UNRESOLVED",
+      "note": "Threat coverage has not been independently established, including any excluded attack class."
+    },
+    "runtime_correspondence": {
+      "status": "UNRESOLVED",
+      "note": "The modeled machine and concrete runtime have not been fully matched by independent refinement evidence."
+    },
+    "environment_boundary": {
+      "status": "UNRESOLVED",
+      "note": "Complete observation and enforcement boundary are not independently attested."
+    },
+    "lifetime_and_composition": {
+      "status": "UNRESOLVED",
+      "note": "Persistent state, shared randomness, concurrency, and cumulative lifetime accounting remain unverified."
+    },
+    "usefulness": {
+      "status": "UNRESOLVED",
+      "note": "No independently validated honest-task usefulness threshold for this scope."
+    },
+    "independent_review": {
+      "status": "UNRESOLVED",
+      "note": "No independent statement-fidelity and evidence-provenance approval."
+    }
+  }
 }

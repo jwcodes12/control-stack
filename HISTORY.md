@@ -82,3 +82,7 @@ No product code, auditgate source, theorem or assurance assumption status change
 - `ctrlcert` researcher CLI.
 - Adversarial review by Gemini 3.1 Pro and Opus 5.5: findings fixed or documented.
 - Pickup notes: `CIRCLE.md`. Plan for work that needs no testing: `STRUCTURE-PLAN.md`.
+
+## 2026-10-08 — independent scenario checker hardening [skip ci]
+
+On a separate `structure-merge-20261008-gpt6-finish` branch derived from the concurrently updated merge head: added a required fourth named-assumption usefulness status and six conservative scope review axes to 28 scenario manifests. SC-01 retains explicit shared-cache and VM usefulness failures; other unknown usefulness is NOT_RUN. Added fail-closed validation for missing/unsupported scope, duplicate JSON keys and lexical source declarations with regression test cases. Consolidated the three B draft preregistration documents into `prereg/` without changing frozen root `PREREG-*.md` or any experimental receipts. No Lean build, scenario experiments or full Python tests were executed in this environment because GitHub DNS resolution and Lean toolchain installation were unavailable. Nothing is deployment assured and no new mathematics is claimed.

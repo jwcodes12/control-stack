@@ -13,3 +13,8 @@ Commands are listed only for files that exist. Run them from the repository root
 ## Harness
 
 - Runner: `scenarios/SC-27/harness/run_sc27.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-27/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC27-ANCHOR-CHAIN.md` (PASS)

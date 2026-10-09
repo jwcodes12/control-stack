@@ -5,7 +5,7 @@
   "bad_event": "A verifier accepts a manifest whose evidence log is not exactly a log independently anchored (modification, reordering, truncation or extension after anchoring).",
   "adversary": "Model: a writer that can append, rewrite the whole log and publish its own heads.",
   "refutation": "An accepted manifest that differs from every anchored log despite full checks (witnesses: no anchor/rollback, self-signed, unanchored suffix, hash collision).",
-  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally.",
+  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — model strengthening pending.",
   "families": [
     "F4",
     "F8"
@@ -31,13 +31,26 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-27/evidence/run-1/verdicts.json",
+      "sha256": "3078ee57ba2a9ff2c344369590395164b9b6a31f351bb4d04ff3a9715a367914",
+      "purpose": "PREREG-SC27-ANCHOR-v1 run-1: H1 five post-anchor tamper kinds rejected, H2 honest manifests accepted, H3 pre-anchor window measured ≤ P+tol (honest limit), H4 no-anchor and self-anchor controls accepted tampering (detected); 5/5 reps. Runtime witness anchors only extensions of its previous anchor (fork alarm otherwise) — an extension beyond the Lean model.",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC27-ANCHOR-CHAIN.md",
+      "sha256": "b32756479820054b672b54054682cc211b5eaa4097fff878b1069592b66efaa0",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "independent_anchor",
       "text": "An independently administered witness records heads (not the writer).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -53,7 +66,7 @@
       "id": "anchor_frequency",
       "text": "Anchoring happens soon enough that the pre-anchor window is acceptable.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     }
@@ -61,27 +74,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     }
   }
 }

@@ -5,7 +5,7 @@
   "bad_event": "A destructive commit affects more than R objects, lacks a verified snapshot at exactly the destroyed version, lacks a non-author approval, or commits twice. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any write/snapshot/verify/prepare/approve/commit/halt trace including concurrent writes.",
   "refutation": "A destructive commit without a fresh verified restore point or above R despite full checks (witnesses: stale snapshot, unverified snapshot, blast-radius race).",
-  "scope": "Lean model only. Not: restore correctness beyond the trusted verifier, non-versioned side effects.",
+  "scope": "Lean model only. Not: restore correctness beyond the trusted verifier, non-versioned side effects. Runtime: single-host reference run (scenarios/SC-19/evidence/run-1), benign workloads, one UID (separate principals remain a premise).",
   "families": [
     "F3",
     "F5",
@@ -38,7 +38,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-19/evidence/run-1/verdicts.json",
+      "sha256": "c76212fd4b657a88c518878fa9942cc92876d6a324270e0dad746e953391bbcc",
+      "purpose": "PREREG-SC19-TWOPHASE-v1 run-1: H1 committed destructive ops had verified snapshot at destroyed version, ≤R, non-author approval (reconciliation from DB history + verifier/approver logs), H2 write-after-snapshot refused, H3 blast-radius growth refused, H4 restore drill byte-exact, H5 usefulness under concurrent writes, H6 stale/unverified/prepare-count controls fired; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC19-TWO-PHASE.md",
+      "sha256": "8e6d3955fa11dd4957d7ac421bbf78388e74ec90f479c02bb37791a69a662bb8",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -52,7 +65,7 @@
       "id": "trusted_verifier",
       "text": "Snapshot verification (restore test) is trusted and correct.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -60,7 +73,7 @@
       "id": "versioned_targets",
       "text": "Every write bumps the target's version (no unversioned writes).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -68,7 +81,7 @@
       "id": "honest_usefulness",
       "text": "Honest destructive maintenance completes.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }
@@ -76,27 +89,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-19/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-19/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-19/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-19/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-19/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-19/evidence/run-1)."
     }
   }
 }

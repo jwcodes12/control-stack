@@ -1,0 +1,85 @@
+{
+ "argv": [
+  "scenarios/SC-27/harness/run_sc27.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-27/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_values": {
+   "TAU_A": 0.05,
+   "TAU_W": 0.05
+  },
+  "prereg_values": {
+   "TAU_A": 0.05,
+   "TAU_W": 0.05
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC); witness and runner stamps on one host",
+ "constants": {
+  "H1_ENTRIES": 20,
+  "H2_BATCH": 3,
+  "H2_ROUNDS": 8,
+  "H3_DELAYS": [
+   0.0,
+   0.0417,
+   0.0833,
+   0.125,
+   0.1667,
+   0.2083,
+   0.25,
+   0.2917,
+   0.3333,
+   0.375
+  ],
+  "H3_TRIALS": 10,
+  "LIFETIME": 30.0,
+  "P": 0.25,
+  "POLL": 0.01,
+  "TAU_A": 0.05,
+  "TAU_W": 0.05,
+  "WALL_LIMIT": 115
+ },
+ "finished": "2026-10-09T07:07:29.341967Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "d5427dba83c85cb29b256cd7caa5f547458dafe5",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  2.97,
+  3.43,
+  2.93
+ ],
+ "loadavg_start": [
+  3.72,
+  3.6,
+  2.96
+ ],
+ "model_sha256": {
+  "ControlStack/Scenarios/SC27Chain.lean": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807"
+ },
+ "nproc": 2,
+ "prereg_id": "PREREG-SC27-ANCHOR-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "prereg/SC27-ANCHOR-CHAIN.md": "b32756479820054b672b54054682cc211b5eaa4097fff878b1069592b66efaa0",
+  "scenarios/SC-27/harness/README.md": "b07be1f6454bdaa6201e0f8cdcf24a28e5adbe6f55bf8b94072212e84cbee733",
+  "scenarios/SC-27/harness/chain.py": "277649aad47346d4a1c6c9d2257126bebefa561c4fec821493dcb29c97aae645",
+  "scenarios/SC-27/harness/reconcile.py": "09867b471392fee8514e1d72ea8e94c37a3502d5a6e64be496d4f90acc00e95a",
+  "scenarios/SC-27/harness/run_sc27.py": "c254ee0fb449cc4ab8c48f5c47d70b0b765b7be2689b0105829e3c476312c49a",
+  "scenarios/SC-27/harness/verifier.py": "23ade8722789626b52f81b77040ccfc7c093beed203f89e5bf7db04069898cfb",
+  "scenarios/SC-27/harness/witness.py": "89c38893e5606599dfcf17919b10e41e983f30ea2e0d46dd4de51b300e59d52d",
+  "scenarios/SC-27/harness/writer.py": "49e75912c5277d5a8887d845803348a9f6a5ccfbaf4958edbd1b3c2e6a030090"
+ },
+ "started": "2026-10-09T07:06:54.668163Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 34.67
+}

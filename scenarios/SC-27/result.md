@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 3 theorem reference(s), 0 of them necessity witnesses.
-- Runtime evidence: none (Lean model only).
+- Runtime evidence: preregistered reference run(s) `PREREG-SC27-ANCHOR-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -44,40 +44,54 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 ## Runtime evidence
 
-None. The scenario is supported by its Lean model only.
+- `scenarios/SC-27/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG-SC27-ANCHOR-v1 run-1: H1 five post-anchor tamper kinds rejected, H2 honest manifests accepted, H3 pre-anchor window measured ≤ P+tol (honest limit), H4 no-anchor and self-anchor controls accepted tampering (detected); 5/5 reps. Runtime witness anchors only extensions of its previous anchor (fork alarm otherwise) — an extension beyond the Lean model.
+
+  Preregistration: `PREREG-SC27-ANCHOR-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | and H4 | PASS | 5/5 repetitions passed |
+  | H2 |  | PASS | 5/5 repetitions passed |
+  | H3 |  | PASS | 5/5 repetitions passed |
+  | H4 | Controls (NEGATIVE_CONTROL | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
+- `prereg/SC27-ANCHOR-CHAIN.md` — recorded outcome **PASS**. Frozen preregistration
 
 ## Premises (from the manifest)
 
-**Evidence NOT_RUN:**
+**Evidence TESTED_NOT_PROVED:**
 
 - `independent_anchor`: An independently administered witness records heads (not the writer). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
-- `hash_injective_on_run`: Chain head is injective on accepted/anchored logs (collision resistance). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `anchor_frequency`: Anchoring happens soon enough that the pre-anchor window is acceptable. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+
+**Evidence NOT_RUN:**
+
+- `hash_injective_on_run`: Chain head is injective on accepted/anchored logs (collision resistance). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally.
+- Scope (manifest): Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — model strengthening pending.
 - Not established as applying to a real deployment: An independently administered witness records heads (not the writer) (`independent_anchor`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Chain head is injective on accepted/anchored logs (collision resistance) (`hash_injective_on_run`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Anchoring happens soon enough that the pre-anchor window is acceptable (`anchor_frequency`; applicability UNRESOLVED).
-- Scope axis `threat_coverage` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `environment_boundary` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `usefulness` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `independent_review` is UNRESOLVED: Not independently established; Lean model only.
+- Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
+- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
+- Scope axis `environment_boundary` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
+- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
+- Scope axis `usefulness` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
+- Scope axis `independent_review` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1).
 
 ## Done-criteria (RUNTIME-VM-HANDOFF.md §10), computed from the manifest
 
 | # | criterion | status | basis |
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
-| 2 | independently checked negative tests cover the bad actions and their bypasses | OPEN | no preregistered negative-control run |
+| 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | OPEN | no preregistered evidence run |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC27-ANCHOR-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

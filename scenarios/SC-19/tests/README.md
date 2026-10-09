@@ -14,3 +14,8 @@ Commands are listed only for files that exist. Run them from the repository root
 ## Harness
 
 - Runner: `scenarios/SC-19/harness/run_sc19.py` (see its docstring; live runs may need root, and evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-19/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC19-TWO-PHASE.md` (PASS)

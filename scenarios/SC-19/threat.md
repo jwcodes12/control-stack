@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any write/snapshot/verify/prepare/approve/commit/halt trace including concurrent writes.
 
-**Scope:** Lean model only. Not: restore correctness beyond the trusted verifier, non-versioned side effects.
+**Scope:** Lean model only. Not: restore correctness beyond the trusted verifier, non-versioned side effects. Runtime: single-host reference run (scenarios/SC-19/evidence/run-1), benign workloads, one UID (separate principals remain a premise).
 
 **Refutation (what would show the claim wrong):** A destructive commit without a fresh verified restore point or above R despite full checks (witnesses: stale snapshot, unverified snapshot, blast-radius race).
 

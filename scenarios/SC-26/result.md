@@ -25,8 +25,9 @@ phase, the raw H1/H4 counts, H3 and the checker self-test.
   (`inflight_after_halt`).
 - **Witnesses:** 12 necessity and non-vacuity witnesses, listed in the Lean header.
 
-**Runtime** (preregistration `PREREG-SC26-TXGATE-v2`, frozen with pinned hashes; evidence in
-`scenarios/SC-26/evidence/run-1`):
+**Runtime** (preregistrations `PREREG-SC26-TXGATE-v2` and `-v3`, each frozen with pinned hashes; evidence in
+`scenarios/SC-26/evidence/run-1` and `run-2`; both PASS. The table shows run-1; run-2 adds A16, the A17 concurrent swarm,
+the A18 HALT-under-flood probe, transmit-level c4 and interleaved replay):
 
 | Hypothesis | Result |
 |---|---|
@@ -44,7 +45,7 @@ phase, the raw H1/H4 counts, H3 and the checker self-test.
 |---|---|---|
 | 1 | Honest task works under mediation | Met for a scripted honest client: 64/64 with crashes. No LLM agent was measured. |
 | 2 | Independently checked negative tests | Attack battery, specific controls and mutation self-test pass. The checker is independent of the gate's own approvals table. Foreign-family review: `reviews/sc26-2026-10-09/`. |
-| 3 | Model–runtime link | Trace replay through a transliteration of the Lean step, plus a Lean difftest. This is tested correspondence, not a refinement proof. |
+| 3 | Model–runtime link | **Two links.** Concrete event machine → model: proved as a forward simulation (`SC26Refinement.simulation`, `concrete_safe`, `concrete_halt`; `recover_halt_witness` covers the v2→v3 blind spot). Python → event machine: tested (trace replay, interleaved and appended; Lean difftest), not proved. |
 | 4 | Side observations and failure channels | Crash, retry, in-flight-after-HALT and concurrency are modelled and tested. Confidentiality is not in scope. |
 | 5 | Independent human review | **OPEN.** Only AI reviews so far (Gemini 3.1 Pro, Opus 5.5). |
 | 6 | Fresh, reproducible, preregistered evidence | Met: prereg v2 frozen with pinned hashes before the run; one evidence run; v1 superseded unused. |

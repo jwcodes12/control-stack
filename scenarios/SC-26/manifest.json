@@ -44,6 +44,18 @@
       "path": "ControlStack/Scenarios/SC26Transaction.lean",
       "sha256": "bffec4fbb9d7ef5d0940369ab298880601466ba14b048975b030e711a13bfc78",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Refinement.concrete_safe",
+      "path": "ControlStack/Scenarios/SC26Refinement.lean",
+      "sha256": "fff6cd3e6fb98299c6d5a9e863597712564b848f9d43c3744cd68285de9b0129",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC26Refinement.concrete_halt",
+      "path": "ControlStack/Scenarios/SC26Refinement.lean",
+      "sha256": "fff6cd3e6fb98299c6d5a9e863597712564b848f9d43c3744cd68285de9b0129",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -105,8 +117,8 @@
     },
     {
       "id": "model_runtime_correspondence",
-      "text": "The runtime's accept/refuse decisions and state follow the Lean step (trace replay via model.py; model.py vs Lean #eval).",
-      "proof": "NOT_PROVED",
+      "text": "Two links: (1) concrete event machine (durable tables, intents, transmit, wire, bank dedup, crash, recover) → Lean model: PROVED as a forward simulation (SC26Refinement.simulation/concrete_safe/concrete_halt); (2) Python runtime → concrete machine: TESTED (trace replay via model.py, interleaved and appended; Lean difftest), not proved.",
+      "proof": "THEOREM_VERIFIED",
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
@@ -135,7 +147,7 @@
     },
     "runtime_correspondence": {
       "status": "ASSUMED",
-      "note": "Trace replay through a transliteration of the Lean step; 200-case Lean difftest. Not a refinement proof."
+      "note": "Event-structure refinement proved in Lean (SC26Refinement); Python-to-event-machine link tested only (check_trace, difftest)."
     },
     "environment_boundary": {
       "status": "ASSUMED",

@@ -18,6 +18,7 @@ import ControlStack.Scenarios.SC03
 import ControlStack.Scenarios.SC13
 import ControlStack.Scenarios.SC27
 import ControlStack.Scenarios.SC26Transaction
+import ControlStack.Scenarios.SC26Refinement
 import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit

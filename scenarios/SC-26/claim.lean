@@ -1,4 +1,5 @@
 import ControlStack.Scenarios.SC26Transaction
+import ControlStack.Scenarios.SC26Refinement
 #check ControlStack.SC26.sc26_safe
 #check ControlStack.SC26.safe_of_sound
 #check ControlStack.SC26.good_without_nonce
@@ -37,3 +38,11 @@ import ControlStack.Scenarios.SC26Transaction
 #print axioms ControlStack.SC26.self_approval_without_distinct_check
 #print axioms ControlStack.SC26.nonce_protects_budget_only
 #print axioms ControlStack.SC26.same_payload_twice_is_good
+#check ControlStack.SC26Refinement.simulation
+#check ControlStack.SC26Refinement.concrete_safe
+#check ControlStack.SC26Refinement.concrete_halt
+#check ControlStack.SC26Refinement.recover_halt_witness
+#print axioms ControlStack.SC26Refinement.simulation
+#print axioms ControlStack.SC26Refinement.concrete_safe
+#print axioms ControlStack.SC26Refinement.concrete_halt
+#print axioms ControlStack.SC26Refinement.recover_halt_witness

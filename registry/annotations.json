@@ -922,5 +922,19 @@
   "status": "PROVED_RECORDED",
   "necessity_witness": "no_anchor_rollback_breaks; self_signed_breaks; unanchored_suffix_breaks; collision_breaks",
   "record": "scenarios/SC-27/manifest.json; kernel-checked locally 2026-10-09; model only"
+ },
+ "ControlStack/Scenarios/SC26Refinement.lean::concrete_safe": {
+  "family": "F8",
+  "scenarios": [
+   "SC-26"
+  ],
+  "adversary": "TRACE_ARBITRARY",
+  "premises": [
+   "concrete legal (no gate credential on direct bank calls)",
+   "CInv at start (holds at init)"
+  ],
+  "status": "PROVED_RECORDED",
+  "necessity_witness": "recover_halt_witness",
+  "record": "scenarios/SC-26/manifest.json; kernel-checked locally 2026-10-09; forward simulation to SC26 model"
  }
 }

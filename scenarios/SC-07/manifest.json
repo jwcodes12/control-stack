@@ -72,6 +72,30 @@
       "path": "ControlStack/Scenarios/SC07Liveness.lean",
       "sha256": "a8fb0358a48695f59620df015c48960ed9107181b7ecbe4ed4f550513bb1dc90",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Refinement.concrete_safe",
+      "path": "ControlStack/Scenarios/SC07Refinement.lean",
+      "sha256": "7c3f3b0e0e70abaf4bdfd514014f86624495b6aa6b59b1ab1052dc010c85eca0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Refinement.concrete_wire_lt",
+      "path": "ControlStack/Scenarios/SC07Refinement.lean",
+      "sha256": "7c3f3b0e0e70abaf4bdfd514014f86624495b6aa6b59b1ab1052dc010c85eca0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Refinement.concrete_halt_freezes",
+      "path": "ControlStack/Scenarios/SC07Refinement.lean",
+      "sha256": "7c3f3b0e0e70abaf4bdfd514014f86624495b6aa6b59b1ab1052dc010c85eca0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC07Refinement.sink_within_quota",
+      "path": "ControlStack/Scenarios/SC07Refinement.lean",
+      "sha256": "7c3f3b0e0e70abaf4bdfd514014f86624495b6aa6b59b1ab1052dc010c85eca0",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -112,6 +136,14 @@
       "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "model_runtime_correspondence",
+      "text": "Lean forward simulation of the modeled nftables forward-chain into SC07Liveness: SC07Refinement.simulation_run/concrete_safe; assumes exact installed rules, kernel quota/drop semantics, no other network route, and payload/header bookkeeping. Python/nftables to this concrete model was tested on one host in SC-07 run-1, not formally established.",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
@@ -120,8 +152,8 @@
       "note": "Benign workloads only."
     },
     "runtime_correspondence": {
-      "status": "UNRESOLVED",
-      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-07/evidence/run-1)."
+      "status": "ASSUMED",
+      "note": "Formal concrete-event to SC07Liveness refinement (SC07Refinement); gateway Python, nftables semantics and real packet traces only single-host-tested. No independent runtime correspondence guarantee."
     },
     "environment_boundary": {
       "status": "ASSUMED",

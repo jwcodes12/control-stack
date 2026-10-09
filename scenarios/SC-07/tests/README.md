@@ -10,6 +10,7 @@ Commands are listed only for files that exist. Run them from the repository root
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.SC07Exfil`
 - Lean module: `lake build ControlStack.Scenarios.SC07Liveness`
+- Lean module: `lake build ControlStack.Scenarios.SC07Refinement`
 
 ## Harness
 

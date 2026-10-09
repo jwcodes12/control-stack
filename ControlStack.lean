@@ -22,6 +22,7 @@ import ControlStack.Scenarios.SC26Refinement
 import ControlStack.Scenarios.SC16Deploy
 import ControlStack.Scenarios.SC28Budget
 import ControlStack.Scenarios.SC25Audit
+import ControlStack.Scenarios.SC07Refinement
 import ControlStack.Scenarios.SC27Refinement
 import ControlStack.Scenarios.SC28Refinement
 import ControlStack.Scenarios.SC26LossyLiveness

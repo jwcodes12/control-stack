@@ -106,3 +106,7 @@ On a separate work branch, added bounded independent reference-gateway different
 ## 2026-10-08 — Full read-only proof/transition audit validation PASS [skip ci]
 
 [CI #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) passed 3,744 Lean jobs and kernel axiom replays for SC-01/13 and conditional HALT, 5 gateway finite model tests, 3 static receiver-field mutation controls and original gateway/ledger/certifier tests. GitHub ARM64 host has no KVM; GitHub x64 KVM API v12 and paused native x64 QMP acceleration check passed in privileged read-only infrastructure tests. A new pinned x64 guest port, an approved operational setup, actual 64-lifetime usefulness success, all-observation correspondence and independent statement review have **not** been completed.
+
+## 2026-10-09 — F1–F8 reference control sprint [skip ci]
+
+Added combined SQLite reference authorization records for F4 content provenance, F5 shared transactional budgets, F7 distinct peer-authenticated approval/nonces, and F1/F3 sticky halt/check-before-record, plus an ideal hidden F6 schedule and F8 joint accounting. Added Linux SO_PEERCRED integration fixture, synthetic invalid/effect tests, and source-normalized Lean review catalog for all 865 indexed declarations. None of this certifies arbitrary OS effects, harmful tool calls, complete leakage observation, no rollback, independent review or 25 draft scenario assurance. See ROADMAP.md for remaining exact acceptance gates and root COMPLETED.md for validated work and CI provenance.

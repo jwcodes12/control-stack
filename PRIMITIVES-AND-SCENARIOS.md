@@ -1,5 +1,26 @@
 # Primitives and scenarios: what exists and what is left (2026-10-08)
 
+## 2026-10-09 correction — model foundation versus deployable primitive
+
+All eight F1–F8 families contain model-level results. They are **not all complete**
+as trusted deployed controls. F4/F5/F7 already had Lean client models; the
+new `trusted_stack/` adds an explicitly reference-only combined SQLite
+authorization record, disjoint Unix-socket peer UIDs, and negative tests. An
+external action/execution adapter, real resource meter, independent attested
+provenance and trusted rollback clock remain missing. F6's hidden fixed
+audit schedule code covers the ideal finite schedule only, not imperfect
+recall/content-adaptive observation. F8 has joint-state lemmas, but not a
+universal composition theorem spanning deployed effects.
+
+**Document freshness:** this file retains historical planning bullets below,
+including old items such as "schema validator missing" and "F5 leases to
+build". Those were superseded by `tools/check_scenarios.py`,
+`ControlStack/Lease.lean`, and the 28 scenario bundles. The canonical
+current backlog and acceptance gates are in [ROADMAP.md](ROADMAP.md). The
+complete normalized Lean source statement catalog is
+[LEAN-STATEMENTS-NORMAL-FORM.md](LEAN-STATEMENTS-NORMAL-FORM.md).
+
+
 ## Consolidated source paths
 
 The scenario schema and scope records are at [scenarios/](scenarios/README.md); declarations and adversary scopes are in [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md) and [ADVERSARY-CLASSES.md](ADVERSARY-CLASSES.md). Relocated reviewed theorems live in `ControlStack/Core/Leakage.lean`, `ControlStack/Core/Gate.lean`, `ControlStack/Families/F4/GateClients.lean`, `ControlStack/Families/F5/Lease.lean` and `ControlStack/Witnesses/{Necessity,LeakWitness}.lean`. Old module paths are compatibility imports; the original names and namespaces remain stable. The [ROADMAP](ROADMAP.md) is canonical for status.

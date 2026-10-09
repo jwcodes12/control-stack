@@ -1,5 +1,36 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-08 evening: circle effort, primitives, adversarial review, VM link fix)
 
+## Primitive completion sprint — 2026-10-09 (F1–F8)
+
+**Status:** All eight families have at least partial model-level results, NOT eight deployable primitives. The new `trusted_stack/` repository-only reference service implements a **single narrow action**: atomic authorization and append of a SQLite release record. It has no external harmful-effect adapter, no kernel-enforced universal interception and no side-channel secrecy guarantee. Its tests and CI are linked in the root `COMPLETED.md`. `LEAN-STATEMENTS-NORMAL-FORM.md` contains all **865** indexed source signatures (not kernel-elaborated normal forms).
+
+### Open steps, prioritized with precise acceptance gates
+
+| Priority | Families | Current code/model | Remaining step | Acceptance evidence | Requires real host or external input? |
+|---|---|---|---|---|---|
+| P0 | F1/F3 universal action gate | `Gate` model, tested sandbox/egress slices, `trusted_stack` check-before-SQLite-record | Trusted pre-effect adapter for process, network, filesystem, privileged tools and irreversible effects; prove every actual effect passes it; handle async operations, cancellation and crash | Captured syscall/effect audit and adversarial bypass tests on an isolated target; concrete refinement argument + trusted HALT delivered or justified failure mode | **YES** isolated host/deployment, separate OS trust |
+| P0 | F2 observation and useful SC-01 | Lean finite-view/side-channel theorem, historical single-host refutation, VM tests | Native accelerated pinned guest port, verify 0.25-second 64-lifetime usefulness; measure ALL receiver-visible channels or certify a sound universal side-kernel mass | Fresh independent frozen-protocol receipt with useful baseline+mediated completion and independent side-channel/correspondence report | **YES** isolated/native host; channel probes need explicit preregistration |
+| P0 | F4 artifact provenance | Lean gate + SQLite SHA-256 record and distinct review | Bind reviewed content to actual deployment bytes; independent signer/attester, evidence log root, key trust, controlled fetch; content semantics | Mutated/digest-collision/bypass tests with external effect adapter; signed attested committed artifact provenance | **YES** trusted identity/key/effect platform |
+| P0 | F5 leases and budgets | Lean shared-lease model + transactional fixed one-unit release cap | Trusted resource meter for CPU, time, network, API tokens etc.; anti-rollback anchor; per-process/fork/global composition | Crash/restart/rollback/double-spend/race tests against actual meter and trusted clock | **YES** durable trusted backing, actual resource source |
+| P1 | F7 approval | Lean exact payload/nonce model + distinct OS trusted approver UID and consumed nonce | Cryptographic signer/key custody, nonce durability under rollback and real delegated approval, semantic review | Replay/forgery/expiry/compromised-signer negative controls, independent trust-root checks | **YES** trusted principal/keys/hosting |
+| P1 | F6 imperfect monitoring and audit budgets | UM/TM Lean results; `AuditBudget` combinatorial hidden fixed schedule; runnable exact rational reference policy | Positive worst-case theorem with false-positive cost, imperfect recall and content-adaptive attackers, hidden test schedule and side leakage all represented; operational auditor | Precise Lean result incl. quantifier ordering, sound non-vacuous held-out coverage certificate and honest usefulness | **PARTLY** theory can be done offline; external score data required to validate applicable bound |
+| P1 | F8 multi-gate/multi-agent composition | `GateComposition.shared_invariants`, confusion counterexample, one SQLite transaction covering review+approval+shared caps | Unified causal semantics for all gate clients and deputies; strengthen composition to actual external effects, global quotas, concurrency, crash and policy mutation | A single checked/refined joint transition interface with counterexamples, live adversarial multi-agent tests | **PARTLY**, later requires real host |
+| P1 | Independent theorem goal/spec review | Lean kernel compilation, source-level audit and complete normalized catalog | Independent researcher verifies elaborated statement/quantifier intent, Bad definition, trusted hypotheses and runtime scope; classify **821 UNKNOWN** source declarations only when meaningfully relevant | Source/commit-bound independent signed critique or reproducible review, no self-review promotion | **YES** genuinely independent expert |
+| P2 | Scenario portfolio | 28 folders (3 conditional, 25 draft) and structure validator | Convert draft scenarios to falsifiable negative tests/usefulness baselines; start SC-08/09/25, then SC-16/26/28; tie each to all six scope axes | Reproducible honest task, negative controls, proof target and real evidence per scenario | **PARTLY**, some scenario tests require isolated host |
+
+### Repository-only work that can continue without deployment
+
+1. Exhaustively source-check and red-team the important 821 unclassified theorem *entries* before any composition; most are helper lemmas rather than new safety properties. Run selected #print and #print axioms under pinned Lean.
+2. Build a **minimal trusted external-effect adapter** for SC-08/SC-25 inside a disposable machine; before execution, require concrete proof of exclusive mediation. A test-only SQLite release record is insufficient.
+3. Formalize the actual reference service's joint state transition (trusted review, approval, nonce, lease cap, revocation, halt) in Lean and prove an observational refinement for the state machine, including races/restart under explicit storage assumptions.
+4. Prove a genuinely useful **F6 false-positive-aware audit allocation theorem** with imperfections, and a joint content-adaptive/side-leak bound. Avoid claiming an ideal fixed schedule covers the general attack model.
+5. Regenerate the entire theorem catalog after any Lean-source changes; source-normalized signatures are for first-pass review, not normalized kernel expressions.
+6. Keep the set of real operational hypotheses, negative results, and owner/expert decisions visible; never promote missing evidence to DEPLOYMENT_ASSURED.
+
+**Non-negotiable:** no existing receipt/preregistration is rewritten; an x86 guest port or amended deadline is a new environment/contract, not evidence that the 0.25-second ARM64 TCG failure disappeared.
+
+
+
 ## SC-01 statement review and runtime-candidate audit (2026-10-08)
 
 Read-only verification [Actions #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) successfully validated 20,719 independently specified bounded Python gateway traces, three fail-closed AST receiver-field checks, ordinary gateway/ledger test replay and VM host-capability inspection. The finite-state checks **do not** establish universal Lean-to-OS refinement or full receiver-observation coverage. They detect modeled transition mismatches and obvious source-level receiver-field regressions.

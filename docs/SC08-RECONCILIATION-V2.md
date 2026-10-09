@@ -15,8 +15,8 @@ an unpinned executed script path, malformed/duplicate sequence IDs,
 nonzero exits, and a discrepancy between the **multiset** of successful
 launcher script digests and the independently recorded sentinel self-hashes.
 
-`python3 -m unittest tools.test_sc08_reconcile_v2` exercises nine synthetic
-receipt cases, including two tamper cases the v1 comparator would miss.
+`python3 -m unittest tools.test_sc08_reconcile_v2` exercises ten synthetic
+receipt cases, including missing digest fields, same-count mismatches and a same-name path outside the configured pin root the v1 comparator would miss.
 
 **Residual premises:** both logger and sentinel can lie, the process may not
 hash exactly the bytes that were executed, the launcher can be bypassed, a
@@ -26,3 +26,5 @@ A credible SC-08 refinement must still link fexecve's already-hashed fd and
 the digest-named pinned script to `SC08.execResult`/the actual loaded bytes.
 A new preregistration and run are needed before promoting this checker as
 evidence.
+
+The checker requires a trusted absolute `--pin-dir` argument and compares the resolved executed path with that digest-named file. This is an evidence-level path check, **not** a proof of pin-directory ownership, immutability or syscall integrity; those remain assumptions.

@@ -1,0 +1,125 @@
+{
+ "addresses": {
+  "gw_job": "10.207.1.1",
+  "gw_sink": "10.207.2.1",
+  "job": "10.207.1.2",
+  "port": 8080,
+  "sink_allowed": "10.207.2.10",
+  "sink_denied": "10.207.2.20"
+ },
+ "argv": [
+  "scenarios/SC-07/harness/run_sc07.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-07/evidence/run-1"
+ ],
+ "constants": {
+  "ACK_TIMEOUT": 3.0,
+  "CONNECT_TIMEOUT": 1.0,
+  "H2_BYTES": 25165824,
+  "H3_BYTES": 4194304,
+  "H4_BYTES": 6291456,
+  "H4_HALT_AT": 1048576,
+  "H4_RATE": 4194304,
+  "H6_BYTES": 25165824,
+  "JOB_DEADLINE": 8.0,
+  "PROBE_BYTES": 16,
+  "QUOTA": 8388608,
+  "SETTLE": 0.3,
+  "SMALL_BYTES": 65536,
+  "STALL_TIMEOUT": 1.0,
+  "TOL_AGREE": 65536,
+  "TOL_HALT": 131072,
+  "TOL_LOW": 131072,
+  "TOL_QUOTA": 1500,
+  "WALL_LIMIT": 115
+ },
+ "env_SC07_NEGATIVE_CONTROL_at_start": null,
+ "finished": "2026-10-09T05:33:12.965190Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "5b7d2d7e3e3e3f712dec97737a1fc8942a7b5a59",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "halt_script": "flush chain inet sc07 forward\nadd rule inet sc07 forward counter name \"halt_drop\" drop\n",
+ "host_after": {
+  "links": [
+   "docker0",
+   "enp0s6",
+   "lo",
+   "tailscale0"
+  ],
+  "netns": [],
+  "nft_ruleset_stateless_sha256": "b1bd6b3cbc8c6c05259c984bb483f87fe9678bfde24b120ef779897643bcef4f",
+  "routes4_sha256": "cac0b24d2eb52c085f6113abad0b4f4486f0ffe9891d4c34cc1256c43dec3a47",
+  "routes6_sha256": "c86221bd97bbbe913800518310dc8b144fb92542b90701fa9da4af87baf4b4c2",
+  "sysctls": {
+   "net.ipv4.ip_forward": "1",
+   "net.ipv6.conf.all.disable_ipv6": "0",
+   "net.ipv6.conf.all.forwarding": "0",
+   "net.ipv6.conf.default.disable_ipv6": "0"
+  }
+ },
+ "host_before": {
+  "links": [
+   "docker0",
+   "enp0s6",
+   "lo",
+   "tailscale0"
+  ],
+  "netns": [],
+  "nft_ruleset_stateless_sha256": "b1bd6b3cbc8c6c05259c984bb483f87fe9678bfde24b120ef779897643bcef4f",
+  "routes4_sha256": "cac0b24d2eb52c085f6113abad0b4f4486f0ffe9891d4c34cc1256c43dec3a47",
+  "routes6_sha256": "c86221bd97bbbe913800518310dc8b144fb92542b90701fa9da4af87baf4b4c2",
+  "sysctls": {
+   "net.ipv4.ip_forward": "1",
+   "net.ipv6.conf.all.disable_ipv6": "0",
+   "net.ipv6.conf.all.forwarding": "0",
+   "net.ipv6.conf.default.disable_ipv6": "0"
+  }
+ },
+ "ip_version": "ip utility, iproute2-6.17.0, libbpf 1.5.0",
+ "kind": "evidence",
+ "loadavg_end": [
+  2.28,
+  3.49,
+  3.09
+ ],
+ "loadavg_start": [
+  3.05,
+  3.77,
+  3.16
+ ],
+ "nft_version": "nftables v1.0.9 (Old Doc Yak #3)",
+ "nproc": 2,
+ "prereg_id": "PREREG-SC07-EGRESSQ-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "ruleset_with_quota": "table inet sc07 {\n  counter fwd_up { }\n  counter fwd_down { }\n  counter quota_drop { }\n  counter deny_drop { }\n  counter halt_drop { }\n  quota job_q { over 8388608 bytes }\n  chain forward {\n    type filter hook forward priority filter; policy drop;\n    iifname \"sc07gs\" oifname \"sc07gj\" ip saddr 10.207.2.10 tcp sport 8080 ip daddr 10.207.1.2 counter name \"fwd_down\" accept\n    iifname \"sc07gj\" oifname \"sc07gs\" ip saddr 10.207.1.2 ip daddr 10.207.2.10 tcp dport 8080 quota name \"job_q\" counter name \"quota_drop\" drop\n    iifname \"sc07gj\" oifname \"sc07gs\" ip saddr 10.207.1.2 ip daddr 10.207.2.10 tcp dport 8080 counter name \"fwd_up\" accept\n    counter name \"deny_drop\" drop\n  }\n  chain input {\n    type filter hook input priority filter; policy accept;\n    iifname \"sc07gj\" drop\n  }\n}\n",
+ "run_token": "89d1b6",
+ "sha256": {
+  "<workdir>/code/job.py": "1b34fe4c46401807b6975c2d6087283113cf5b56dfd5edcf8f921e9c5fe3c5dc",
+  "<workdir>/code/sink.py": "9919da101a787bd37cea6d153762dcf22d29e96fb0b48556d353d1d84c6fe74c",
+  "prereg/SC07-EGRESS-QUOTA.md": "61de82154497254e4cc77deba474db549901bb48a7af68db280cd4ef78e2ef55",
+  "scenarios/SC-07/harness/README.md": "184e6e0a6fb4c4298003eebe2e853cc3fda4923e05287858b33a6413416e828d",
+  "scenarios/SC-07/harness/gw.py": "fabdc40f209b27223a2cf6cdef051c3ccd60ddc89e2198168be79a091c0f42c7",
+  "scenarios/SC-07/harness/job.py": "1b34fe4c46401807b6975c2d6087283113cf5b56dfd5edcf8f921e9c5fe3c5dc",
+  "scenarios/SC-07/harness/run_sc07.py": "7abdb173edec509a8fa9c31db5e8317615665a9be9377f2c566487bd07eade48",
+  "scenarios/SC-07/harness/sink.py": "9919da101a787bd37cea6d153762dcf22d29e96fb0b48556d353d1d84c6fe74c"
+ },
+ "started": "2026-10-09T05:32:28.143888Z",
+ "uids": {
+  "job": 23802,
+  "probe": 23803,
+  "reserved_range": [
+   23800,
+   23809
+  ],
+  "sink": 23801
+ },
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 44.82
+}

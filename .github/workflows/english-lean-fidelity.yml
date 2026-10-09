@@ -14,11 +14,14 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Verify audit source pin
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD~2)" = "083874048518b68d754f0c392ad0cb84f01174ba"
+          git cat-file -e 083874048518b68d754f0c392ad0cb84f01174ba^{commit}
+          test -z "$(git diff --name-only 083874048518b68d754f0c392ad0cb84f01174ba HEAD -- ControlStack ControlStack.lean proofs ledger lakefile.lean lean-toolchain)"
           cat lean-toolchain
       - name: Install pinned Lean through elan
         shell: bash

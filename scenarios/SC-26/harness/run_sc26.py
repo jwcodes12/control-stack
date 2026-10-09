@@ -15,7 +15,7 @@ Phases (each on a FRESH stack in a fresh temporary root; receipts go to --out, w
 The attacks phase also runs check_trace --self-test on its run, A17 (randomized concurrent swarm with one HALT,
 gated) and A18 (HALT latency under 200 idle connections; reported, not gated) on their own stacks.
 `--label evidence` is refused unless --out is under scenarios/SC-26/evidence/ and env SC26_PREREG_SHA256 equals the
-sha256 of prereg/SC26-TRANSACTION-GATE-v2.md. Nothing here creates system users.
+sha256 of prereg/SC26-TRANSACTION-GATE-v3.md. Nothing here creates system users.
 """
 import argparse
 import hashlib
@@ -821,7 +821,7 @@ def main():
     a = ap.parse_args()
     if os.geteuid() != 0:
         raise SystemExit("root required (each principal runs under its own UID)")
-    prereg = REPO / "prereg/SC26-TRANSACTION-GATE-v2.md"
+    prereg = REPO / "prereg/SC26-TRANSACTION-GATE-v3.md"
     prereg_sha = sha(prereg) if prereg.exists() else None
     if a.label == "evidence":
         evdir = (REPO / "scenarios/SC-26/evidence").resolve()
@@ -829,7 +829,7 @@ def main():
             raise SystemExit(f"--label evidence requires --out under {evdir}")
         if prereg_sha is None or os.environ.get("SC26_PREREG_SHA256") != prereg_sha:
             raise SystemExit("--label evidence requires env SC26_PREREG_SHA256 = sha256 of "
-                             "prereg/SC26-TRANSACTION-GATE-v2.md (with sudo: sudo -n env SC26_PREREG_SHA256=... )")
+                             "prereg/SC26-TRANSACTION-GATE-v3.md (with sudo: sudo -n env SC26_PREREG_SHA256=... )")
     if a.out.exists():
         raise SystemExit(f"refusing to overwrite existing receipt directory {a.out}")
     phases = a.phase or ["attacks", "controls", "usefulness", "baseline", "h3"]

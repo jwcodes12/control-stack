@@ -1,0 +1,36 @@
+name: fidelity-audit-reproductions
+on:
+  push:
+    paths:
+      - '.github/workflows/english-lean-fidelity-reproduction.yml'
+      - 'reviews/english-lean-fidelity-witnesses.lean'
+      - 'reviews/english-lean-fidelity-elaboration.lean'
+      - 'reviews/trusted-stack-shared-state-countermodel.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shared-state-python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reproduce authorized broker information channels
+        run: PYTHONPATH=. python3 reviews/trusted-stack-shared-state-countermodel.py
+  lean-witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned elan toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Fetch Mathlib build artifacts
+        run: PATH=$HOME/.elan/bin:$PATH lake exe cache get
+      - name: Build repository modules
+        run: PATH=$HOME/.elan/bin:$PATH lake build ControlStack
+      - name: Print actual headline elaborated types and axioms
+        run: PATH=$HOME/.elan/bin:$PATH lake env lean reviews/english-lean-fidelity-elaboration.lean
+      - name: Elaborate isolated principal fidelity witnesses
+        run: PATH=$HOME/.elan/bin:$PATH lake env lean reviews/english-lean-fidelity-witnesses.lean

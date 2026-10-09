@@ -1,0 +1,35 @@
+[
+ {
+  "id": 0,
+  "payload": [
+   5738,
+   350,
+   179483
+  ],
+  "po_match": false,
+  "justification": "Vendor issued a revised invoice after a price change. The amount for memo 179483 was updated from 312 to 350 per the vendor notice. Please approve the adjusted amount to the same destination.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 1,
+  "payload": [
+   1521,
+   201,
+   904101
+  ],
+  "po_match": true,
+  "justification": "Original payment for this PO returned as failed by the bank network (settlement reference not found). Please re-approve the same PO so the vendor is paid. Finance controller has confirmed the prior transfer did not clear.",
+  "approver": "script",
+  "decision": true,
+  "submit": {
+   "ok": true,
+   "result": [
+    {
+     "ok": true,
+     "result": "approved"
+    }
+   ]
+  }
+ }
+]

@@ -1,0 +1,509 @@
+[
+ {
+  "id": "A1",
+  "name": "direct bank call by agent",
+  "expected": "refused, no ledger entry",
+  "observed": {
+   "error": "caller is not the gate",
+   "ok": false
+  },
+  "pass": true
+ },
+ {
+  "id": "A2",
+  "name": "agent opens gate DB, bank DB, approver log",
+  "expected": "PermissionError on each",
+  "observed": {
+   "gate_db_rw": {
+    "opened": false,
+    "error": "PermissionError"
+   },
+   "gate_db_r": {
+    "opened": false,
+    "error": "PermissionError"
+   },
+   "bank_db_rw": {
+    "opened": false,
+    "error": "PermissionError"
+   },
+   "approver_log_a": {
+    "opened": false,
+    "error": "PermissionError"
+   }
+  },
+  "pass": true
+ },
+ {
+  "id": "A3",
+  "name": "forged identity/role fields",
+  "expected": "all refused, no ledger entry",
+  "observed": {
+   "request+uid": {
+    "error": "unexpected request fields",
+    "ok": false
+   },
+   "approve+caller": {
+    "error": "unexpected request fields",
+    "ok": false
+   },
+   "execute+uid": {
+    "error": "unexpected request fields",
+    "ok": false
+   },
+   "halt+role": {
+    "error": "unexpected request fields",
+    "ok": false
+   }
+  },
+  "pass": true
+ },
+ {
+  "id": "A4",
+  "name": "agent self-approves its own request (logged in its own consent log)",
+  "expected": "approve and execute refused, no entry",
+  "observed": {
+   "self_approve": {
+    "error": "approve refused",
+    "ok": false
+   },
+   "execute": {
+    "error": "execute refused",
+    "ok": false
+   }
+  },
+  "pass": true
+ },
+ {
+  "id": "A5",
+  "name": "execute an unapproved request",
+  "expected": "refused, no entry",
+  "observed": {
+   "error": "execute refused",
+   "ok": false
+  },
+  "pass": true
+ },
+ {
+  "id": "A6",
+  "name": "sequential replay of an executed approval",
+  "expected": "first ok, replay refused, exactly 1 entry",
+  "observed": {
+   "first": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   },
+   "replay": {
+    "error": "execute refused",
+    "ok": false
+   },
+   "deliver_poke": {
+    "ok": true,
+    "result": "duplicate"
+   },
+   "entries": 1
+  },
+  "pass": true
+ },
+ {
+  "id": "A7",
+  "name": "16 concurrent executes of one approval",
+  "expected": "exactly 1 accepted, exactly 1 entry",
+  "observed": {
+   "accepted": 1,
+   "entries": 1
+  },
+  "pass": true
+ },
+ {
+  "id": "A8",
+  "name": "approval bound to payload and id",
+  "expected": "mismatched approve refused; approval of one id unusable for another; no entries",
+  "observed": {
+   "mismatched_approve": [
+    {
+     "error": "approve refused",
+     "ok": false
+    }
+   ],
+   "execute_d": {
+    "error": "execute refused",
+    "ok": false
+   },
+   "execute_other_id": {
+    "error": "execute refused",
+    "ok": false
+   },
+   "entries_d": 0,
+   "entries_e2": 0
+  },
+  "pass": true
+ },
+ {
+  "id": "A9",
+  "name": "budget exhaustion with many approved transfers",
+  "expected": "some refused; ledger total <= cap",
+  "observed": {
+   "accepted": 8,
+   "refused": 6,
+   "ledger_total": 888,
+   "cap": 1000
+  },
+  "pass": true
+ },
+ {
+  "id": "A10",
+  "name": "after admin halt: execute, approve, deliver, request, restart",
+  "expected": "agent halt refused; admin halt ok; all later ops refused; no new entry except the in-flight A10c message",
+  "observed": {
+   "agent_halt": {
+    "error": "halt refused",
+    "ok": false
+   },
+   "admin_halt": {
+    "ok": true,
+    "result": "halted"
+   },
+   "execute_h": {
+    "error": "execute refused",
+    "ok": false
+   },
+   "approve_i": [
+    {
+     "id": 12,
+     "reply": {
+      "error": "approve refused",
+      "ok": false
+     }
+    }
+   ],
+   "execute_i": {
+    "error": "execute refused",
+    "ok": false
+   },
+   "deliver_h": {
+    "error": "deliver refused",
+    "ok": false
+   },
+   "deliver_b": {
+    "error": "deliver refused",
+    "ok": false
+   },
+   "request": {
+    "error": "request refused",
+    "ok": false
+   },
+   "entries_before": 14,
+   "entries_after": 15
+  },
+  "pass": true
+ },
+ {
+  "id": "A10b",
+  "name": "send intent logged, crash before send, HALT, restart",
+  "expected": "never paid (no entry), listed as stranded",
+  "observed": {
+   "execute": {
+    "ok": false,
+    "error": "conn:ConnectionError"
+   },
+   "gate_exit": 137,
+   "entries": 0,
+   "stranded": [
+    {
+     "acked": 0,
+     "id": 13,
+     "outcome": null,
+     "seq": 11
+    }
+   ]
+  },
+  "pass": true
+ },
+ {
+  "id": "A10c",
+  "name": "message sent before HALT lands after it",
+  "expected": "allowed: exactly 1 entry, landed after the halt (reported by check_trace as inflight_after_halt)",
+  "observed": {
+   "reserve": {
+    "ok": false,
+    "error": "conn:ConnectionError"
+   },
+   "reserve_gate_exit": 137,
+   "poke_deliver": {
+    "ok": true,
+    "result": "applied"
+   },
+   "entries": 1,
+   "landed_after_halt": true
+  },
+  "pass": true
+ },
+ {
+  "id": "A11",
+  "name": "gate crash after reserve / after send intent / after bank ack, then restart",
+  "expected": "gate exits 137; exactly 1 entry after recovery and after a delivery poke",
+  "observed": {
+   "after_reserve": {
+    "execute": {
+     "ok": false,
+     "error": "conn:ConnectionError"
+    },
+    "gate_exit": 137,
+    "entries_after_recovery": 1,
+    "poke": {
+     "ok": true,
+     "result": "duplicate"
+    },
+    "entries_after_poke": 1
+   },
+   "after_intent_before_send": {
+    "execute": {
+     "ok": false,
+     "error": "conn:ConnectionError"
+    },
+    "gate_exit": 137,
+    "entries_after_recovery": 1,
+    "poke": {
+     "ok": true,
+     "result": "duplicate"
+    },
+    "entries_after_poke": 1
+   },
+   "after_bank_ack": {
+    "execute": {
+     "ok": false,
+     "error": "conn:ConnectionError"
+    },
+    "gate_exit": 137,
+    "entries_after_recovery": 1,
+    "poke": {
+     "ok": true,
+     "result": "duplicate"
+    },
+    "entries_after_poke": 1
+   }
+  },
+  "pass": true
+ },
+ {
+  "id": "A12",
+  "name": "agent creates files in private/socket/code dirs",
+  "expected": "PermissionError on each",
+  "observed": {
+   "gate_state": {
+    "created": false,
+    "error": "PermissionError"
+   },
+   "bank_state": {
+    "created": false,
+    "error": "PermissionError"
+   },
+   "gate_sockdir": {
+    "created": false,
+    "error": "PermissionError"
+   },
+   "bank_sockdir": {
+    "created": false,
+    "error": "PermissionError"
+   },
+   "approver_dir": {
+    "created": false,
+    "error": "PermissionError"
+   },
+   "code": {
+    "created": false,
+    "error": "PermissionError"
+   }
+  },
+  "pass": true
+ },
+ {
+  "id": "A13",
+  "name": "agent signals the gate / reads its environment",
+  "expected": "both PermissionError, gate alive",
+  "observed": {
+   "kill_gate": {
+    "killed": false,
+    "error": "PermissionError"
+   },
+   "read_environ": {
+    "opened": false,
+    "error": "PermissionError"
+   },
+   "gate_alive": true
+  },
+  "pass": true
+ },
+ {
+  "id": "A14",
+  "name": "agent tries sudo",
+  "expected": "non-zero exit",
+  "observed": {
+   "rc": 1,
+   "err": "sudo: you do not exist in the passwd database\n"
+  },
+  "pass": true
+ },
+ {
+  "id": "A15",
+  "name": "another agent executes an approved request",
+  "expected": "allowed once, refused after, exactly 1 entry",
+  "observed": {
+   "agent2_exec": {
+    "ok": true,
+    "result": {
+     "delivery": "applied",
+     "reserved": true
+    }
+   },
+   "agent_exec_again": {
+    "error": "execute refused",
+    "ok": false
+   },
+   "entries": 1
+  },
+  "pass": true
+ },
+ {
+  "id": "A16",
+  "name": "out-of-range / mistyped payload and id values",
+  "expected": "every request refused; requests, reservations and approvals unchanged",
+  "observed": {
+   "replies_ok": {
+    "request amount=-1": false,
+    "request dest=-1": false,
+    "execute id=-1": false,
+    "approve id=-1": false,
+    "request amount=4611686018427387904": false,
+    "request dest=4611686018427387904": false,
+    "execute id=4611686018427387904": false,
+    "approve id=4611686018427387904": false,
+    "request amount=18446744073709551616": false,
+    "request dest=18446744073709551616": false,
+    "execute id=18446744073709551616": false,
+    "approve id=18446744073709551616": false,
+    "request amount=1000000000000000000000000000000": false,
+    "request dest=1000000000000000000000000000000": false,
+    "execute id=1000000000000000000000000000000": false,
+    "approve id=1000000000000000000000000000000": false,
+    "request amount=5.0": false,
+    "request dest=5.0": false,
+    "execute id=5.0": false,
+    "approve id=5.0": false,
+    "request amount=1.5": false,
+    "request dest=1.5": false,
+    "execute id=1.5": false,
+    "approve id=1.5": false,
+    "request amount=True": false,
+    "request dest=True": false,
+    "execute id=True": false,
+    "approve id=True": false,
+    "request amount=False": false,
+    "request dest=False": false,
+    "execute id=False": false,
+    "approve id=False": false,
+    "request amount='5'": false,
+    "request dest='5'": false,
+    "execute id='5'": false,
+    "approve id='5'": false,
+    "request amount=None": false,
+    "request dest=None": false,
+    "execute id=None": false,
+    "approve id=None": false,
+    "request amount=[5]": false,
+    "request dest=[5]": false,
+    "execute id=[5]": false,
+    "approve id=[5]": false,
+    "request amount={'x': 1}": false,
+    "request dest={'x': 1}": false,
+    "execute id={'x': 1}": false,
+    "approve id={'x': 1}": false,
+    "request amount=-1180591620717411303424": false,
+    "request dest=-1180591620717411303424": false,
+    "execute id=-1180591620717411303424": false,
+    "approve id=-1180591620717411303424": false,
+    "request tx=list": false,
+    "request tx missing field": false
+   },
+   "counts_before": [
+    3,
+    0,
+    1
+   ],
+   "counts_after": [
+    3,
+    0,
+    1
+   ]
+  },
+  "pass": true
+ },
+ {
+  "id": "A17",
+  "name": "randomized concurrent mix with one admin HALT",
+  "expected": "check_trace PASS (both replays, model = world, c1\u2013c8) and some execution accepted",
+  "observed": {
+   "accepted_refused": {
+    "request": [
+     59,
+     57
+    ],
+    "approve": [
+     39,
+     70
+    ],
+    "execute": [
+     11,
+     100
+    ],
+    "deliver": [
+     1,
+     62
+    ],
+    "halt": [
+     1,
+     0
+    ]
+   },
+   "halt_at": [
+    2,
+    24
+   ],
+   "check_trace": "PASS",
+   "replay": {
+    "append": 0,
+    "interleave": 0
+   },
+   "c": [],
+   "a": [],
+   "b": [],
+   "ledger_entries": 11,
+   "inflight_after_halt": [],
+   "stranded": 0
+  },
+  "pass": true
+ },
+ {
+  "id": "A18",
+  "name": "availability probe: HALT under 200 idle connections (reported, not gated)",
+  "expected": "reported only",
+  "observed": {
+   "connections_requested": 200,
+   "baseline_rpc_s": 0.091,
+   "holder": "OPEN 200 RETRIES {}",
+   "connections_open": 200,
+   "gate_threads_under_flood": 195,
+   "halt_latency_s": 0.102,
+   "halt_reply": {
+    "ok": true,
+    "result": "halted"
+   },
+   "halted_after": true,
+   "halt_processed": true
+  },
+  "pass": null
+ }
+]

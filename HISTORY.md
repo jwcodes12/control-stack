@@ -110,3 +110,19 @@ On a separate work branch, added bounded independent reference-gateway different
 ## 2026-10-09 — F1–F8 reference control sprint [skip ci]
 
 Added combined SQLite reference authorization records for F4 content provenance, F5 shared transactional budgets, F7 distinct peer-authenticated approval/nonces, and F1/F3 sticky halt/check-before-record, plus an ideal hidden F6 schedule and F8 joint accounting. Added Linux SO_PEERCRED integration fixture, synthetic invalid/effect tests, and source-normalized Lean review catalog for all 865 indexed declarations. None of this certifies arbitrary OS effects, harmful tool calls, complete leakage observation, no rollback, independent review or 25 draft scenario assurance. See ROADMAP.md for remaining exact acceptance gates and root completed.md for validated work and CI provenance.
+
+## 2026-10-09: scenario completion, runtime evidence, theory and tooling (branch `claude/sc26-joint`)
+
+- **Scenarios:** all 28 now have kernel-checked Lean models and are CONDITIONAL. None is deployment-assured, and independent human review is open for all of them.
+- **SC-26** is the most complete case: model, refinement, liveness, authenticated issuers, anti-rollback, two preregistered runs, and two LLM evaluations (control and consent quality). Recheck with `tools/check_sc26_case.py`.
+- **Runtime evidence:** preregistered single-host reference runs pass for SC-07, 12, 14, 15, 16, 17, 18, 19, 20, 21, 23, 25, 26, 27 and 28, plus a single-host rehearsal of distributed HALT and the anti-rollback test.
+- **Theory:**
+  - F6: reserved audits, imperfect recall, damage bounds, monitor collusion.
+  - F3: distributed HALT with fencing.
+  - F2: channel instances, timed release, GPU residue.
+  - F1: fabric isolation.
+  - F8: composition, the typed assumption ledger, the joint LabStack model, anti-rollback.
+- **Tooling:**
+  - `check_sc26_case`, `cert_ledger`, `portfolio_ledger` (generates `ASSURANCE-LEDGER.md`), `stackmap`, `new_scenario`, `build_results`;
+  - `docs/RESEARCHER-WORKFLOW.md` and `docs/LAB-DEPLOYMENT-MAPPING.md`.
+- **Reviews:** Gemini 3.1 Pro (foreign family) and Opus 5.5 (same family), with written dispositions under `reviews/`. `REVIEW-PACKET-2026-10-09.md` is prepared for a human reviewer. No novelty is claimed.

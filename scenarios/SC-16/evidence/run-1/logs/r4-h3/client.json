@@ -1,0 +1,356 @@
+[
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-0",
+   "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "fe4a1a292af972b8ff321920912f52d8a19f0ac2a44ef273959cc4f62fa05b6cdd1d9521468747b6e2850c787be9950536bb3139e3780ad309ce8a3080c27c03",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+   "target": "prod",
+   "review_sig": "fe4a1a292af972b8ff321920912f52d8a19f0ac2a44ef273959cc4f62fa05b6cdd1d9521468747b6e2850c787be9950536bb3139e3780ad309ce8a3080c27c03",
+   "tag": "app-0"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "0b8796dfd2de257da22edc5fc67edd6b",
+    "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "2c67e855bab1a7bc1293d715c6a5f055103916413df7cc8e93c86eb5fe2fa3d576c386a6b05dbc14bf2b15d7ae07a72eea968da9e860c20b5dcd1d5e3d298508"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "0b8796dfd2de257da22edc5fc67edd6b",
+    "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "2c67e855bab1a7bc1293d715c6a5f055103916413df7cc8e93c86eb5fe2fa3d576c386a6b05dbc14bf2b15d7ae07a72eea968da9e860c20b5dcd1d5e3d298508"
+   },
+   "review_sig": "fe4a1a292af972b8ff321920912f52d8a19f0ac2a44ef273959cc4f62fa05b6cdd1d9521468747b6e2850c787be9950536bb3139e3780ad309ce8a3080c27c03",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0000-0b8796df.bin",
+   "sha": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+   "t": 683368288600694
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "0b8796dfd2de257da22edc5fc67edd6b",
+    "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "2c67e855bab1a7bc1293d715c6a5f055103916413df7cc8e93c86eb5fe2fa3d576c386a6b05dbc14bf2b15d7ae07a72eea968da9e860c20b5dcd1d5e3d298508"
+   },
+   "review_sig": "fe4a1a292af972b8ff321920912f52d8a19f0ac2a44ef273959cc4f62fa05b6cdd1d9521468747b6e2850c787be9950536bb3139e3780ad309ce8a3080c27c03",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": false,
+   "error": "approval already used"
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "0b8796dfd2de257da22edc5fc67edd6b",
+    "digest": "48902060cb0d84c7658d09a04ef22379e0c5cc99818ce044189f831c941532f8",
+    "target": "prod",
+    "tag": "app-0",
+    "approver": "approver-1",
+    "sig": "2c67e855bab1a7bc1293d715c6a5f055103916413df7cc8e93c86eb5fe2fa3d576c386a6b05dbc14bf2b15d7ae07a72eea968da9e860c20b5dcd1d5e3d298508"
+   },
+   "review_sig": "fe4a1a292af972b8ff321920912f52d8a19f0ac2a44ef273959cc4f62fa05b6cdd1d9521468747b6e2850c787be9950536bb3139e3780ad309ce8a3080c27c03",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": false,
+   "error": "approval already used"
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-1",
+   "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "03057adb0d85c5c393568f332badbf84743e984b0b5979ee1516aafb69d69c0bff9ce6151b1cf481d0d2f3f9980bda75a541d0cc809e58c58e75a094ae6fea0d",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+   "target": "prod",
+   "review_sig": "03057adb0d85c5c393568f332badbf84743e984b0b5979ee1516aafb69d69c0bff9ce6151b1cf481d0d2f3f9980bda75a541d0cc809e58c58e75a094ae6fea0d",
+   "tag": "app-1"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "18602d2cbed3b39569c259b9eee3a78c",
+    "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+    "target": "prod",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "92023607a5f6b44125e15d683fe2474c28ca8fe7f8f7a8f580f4fa1885c8a3d90fda152da75aae1ed85fff1ef48b253833212e13ee89531907d54feedbba6d04"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "18602d2cbed3b39569c259b9eee3a78c",
+    "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+    "target": "prod",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "92023607a5f6b44125e15d683fe2474c28ca8fe7f8f7a8f580f4fa1885c8a3d90fda152da75aae1ed85fff1ef48b253833212e13ee89531907d54feedbba6d04"
+   },
+   "review_sig": "03057adb0d85c5c393568f332badbf84743e984b0b5979ee1516aafb69d69c0bff9ce6151b1cf481d0d2f3f9980bda75a541d0cc809e58c58e75a094ae6fea0d",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0001-18602d2c.bin",
+   "sha": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+   "t": 683368383079792
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "18602d2cbed3b39569c259b9eee3a78c",
+    "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+    "target": "prod",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "92023607a5f6b44125e15d683fe2474c28ca8fe7f8f7a8f580f4fa1885c8a3d90fda152da75aae1ed85fff1ef48b253833212e13ee89531907d54feedbba6d04"
+   },
+   "review_sig": "03057adb0d85c5c393568f332badbf84743e984b0b5979ee1516aafb69d69c0bff9ce6151b1cf481d0d2f3f9980bda75a541d0cc809e58c58e75a094ae6fea0d",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": false,
+   "error": "approval already used"
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "18602d2cbed3b39569c259b9eee3a78c",
+    "digest": "0b3a0540a148aaf232dba080382893db6aff5470e3b1e1a5dbe552d2d093fd92",
+    "target": "prod",
+    "tag": "app-1",
+    "approver": "approver-1",
+    "sig": "92023607a5f6b44125e15d683fe2474c28ca8fe7f8f7a8f580f4fa1885c8a3d90fda152da75aae1ed85fff1ef48b253833212e13ee89531907d54feedbba6d04"
+   },
+   "review_sig": "03057adb0d85c5c393568f332badbf84743e984b0b5979ee1516aafb69d69c0bff9ce6151b1cf481d0d2f3f9980bda75a541d0cc809e58c58e75a094ae6fea0d",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": false,
+   "error": "approval already used"
+  }
+ },
+ {
+  "call": "stage",
+  "req": {
+   "op": "put"
+  },
+  "reply": {
+   "ok": true,
+   "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+   "stager": "agent-1"
+  }
+ },
+ {
+  "call": "tag_set",
+  "req": {
+   "op": "tag_set",
+   "tag": "app-2",
+   "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645"
+  },
+  "reply": {
+   "ok": true
+  }
+ },
+ {
+  "call": "review",
+  "req": {
+   "op": "review",
+   "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "sig": "8acbbe3f906af94a469f63d34589c9cf4e33bc6bdea93ee239361dda6319be7474d1074e885250476f27098c2c1e7e845c396d8d5b9868ac0608a764d1d5bb03",
+   "reviewer": "reviewer-1"
+  }
+ },
+ {
+  "call": "approve",
+  "req": {
+   "op": "approve",
+   "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+   "target": "prod",
+   "review_sig": "8acbbe3f906af94a469f63d34589c9cf4e33bc6bdea93ee239361dda6319be7474d1074e885250476f27098c2c1e7e845c396d8d5b9868ac0608a764d1d5bb03",
+   "tag": "app-2"
+  },
+  "reply": {
+   "ok": true,
+   "approval": {
+    "nonce": "d166067ae975d3e11ad4c7b45e2f2f7a",
+    "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+    "target": "prod",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "212b16ed0ed513ac7e984415ec15acaeb7fa16c2c328bff3fda2a827662678968630161c955a3c68e93c441e5d80f3d36e9a10eb035bb538ffb73a433d162502"
+   }
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "d166067ae975d3e11ad4c7b45e2f2f7a",
+    "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+    "target": "prod",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "212b16ed0ed513ac7e984415ec15acaeb7fa16c2c328bff3fda2a827662678968630161c955a3c68e93c441e5d80f3d36e9a10eb035bb538ffb73a433d162502"
+   },
+   "review_sig": "8acbbe3f906af94a469f63d34589c9cf4e33bc6bdea93ee239361dda6319be7474d1074e885250476f27098c2c1e7e845c396d8d5b9868ac0608a764d1d5bb03",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": true,
+   "file": "prod/0002-d166067a.bin",
+   "sha": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+   "t": 683368480695734
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "d166067ae975d3e11ad4c7b45e2f2f7a",
+    "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+    "target": "prod",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "212b16ed0ed513ac7e984415ec15acaeb7fa16c2c328bff3fda2a827662678968630161c955a3c68e93c441e5d80f3d36e9a10eb035bb538ffb73a433d162502"
+   },
+   "review_sig": "8acbbe3f906af94a469f63d34589c9cf4e33bc6bdea93ee239361dda6319be7474d1074e885250476f27098c2c1e7e845c396d8d5b9868ac0608a764d1d5bb03",
+   "target": "prod"
+  },
+  "reply": {
+   "ok": false,
+   "error": "approval already used"
+  }
+ },
+ {
+  "call": "deploy",
+  "req": {
+   "op": "deploy",
+   "approval": {
+    "nonce": "d166067ae975d3e11ad4c7b45e2f2f7a",
+    "digest": "a35aad6c02a508981b82670946b99003bc09bac4e3fe2d820019fb3332524645",
+    "target": "prod",
+    "tag": "app-2",
+    "approver": "approver-1",
+    "sig": "212b16ed0ed513ac7e984415ec15acaeb7fa16c2c328bff3fda2a827662678968630161c955a3c68e93c441e5d80f3d36e9a10eb035bb538ffb73a433d162502"
+   },
+   "review_sig": "8acbbe3f906af94a469f63d34589c9cf4e33bc6bdea93ee239361dda6319be7474d1074e885250476f27098c2c1e7e845c396d8d5b9868ac0608a764d1d5bb03",
+   "target": "staging"
+  },
+  "reply": {
+   "ok": false,
+   "error": "approval already used"
+  }
+ }
+]

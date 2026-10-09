@@ -2,67 +2,155 @@
   "schema_version": 1,
   "id": "SC-27",
   "title": "Tampered evidence and assurance manifests",
-  "bad_event": "An attacker alters or fabricates an assurance record so that an unsupported guarantee is accepted.",
-  "adversary": "Agent capable of changing workspace files, reports or CI evidence absent protected signing and immutable refs.",
-  "refutation": "Substitute a manifest, reuse a receipt from another source revision, forge a recorded proof status, or change the verifier while retaining a green label.",
-  "scope": "Research proposal for source-bound independent attestations; existing static SHA check is not trusted provenance.",
+  "bad_event": "A verifier accepts a manifest whose evidence log is not exactly a log independently anchored (modification, reordering, truncation or extension after anchoring).",
+  "adversary": "Model: a writer that can append, rewrite the whole log and publish its own heads.",
+  "refutation": "An accepted manifest that differs from every anchored log despite full checks (witnesses: no anchor/rollback, self-signed, unanchored suffix, hash collision).",
+  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later — closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite). FINDING from the SC27Refinement proof: the run-1 witness did not alarm on truncation-to-empty (safety unaffected); FIXED in harness_v2 and confirmed by run-2 under PREREG-SC27-ANCHOR-v2 (v1 witness silent as control).",
   "families": [
-    "F3",
-    "F4"
+    "F4",
+    "F8"
   ],
-  "status": "DRAFT",
-  "theorems": [],
-  "evidence": [],
+  "status": "CONDITIONAL",
+  "theorems": [
+    {
+      "name": "ControlStack.SC27Chain.sc27_safe",
+      "path": "ControlStack/Scenarios/SC27Chain.lean",
+      "sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27Chain.tamper_after_anchor_detected",
+      "path": "ControlStack/Scenarios/SC27Chain.lean",
+      "sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27Chain.halt_freezes",
+      "path": "ControlStack/Scenarios/SC27Chain.lean",
+      "sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27ExtensionOnly.sc27_ext_safe",
+      "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+      "sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27ExtensionOnly.tampered_never_anchored",
+      "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+      "sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27ExtensionOnly.anchors_chain",
+      "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+      "sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27ExtensionOnly.alarm_iff",
+      "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+      "sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27Refinement.concrete_ext_safe",
+      "path": "ControlStack/Scenarios/SC27Refinement.lean",
+      "sha256": "e00fc18400720b2d5062dabcf80e6eaba6158e1ee299e89907c11e9598471d54",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC27Refinement.concrete_tampered_never_anchored",
+      "path": "ControlStack/Scenarios/SC27Refinement.lean",
+      "sha256": "e00fc18400720b2d5062dabcf80e6eaba6158e1ee299e89907c11e9598471d54",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "scenarios/SC-27/evidence/run-1/verdicts.json",
+      "sha256": "3078ee57ba2a9ff2c344369590395164b9b6a31f351bb4d04ff3a9715a367914",
+      "purpose": "PREREG-SC27-ANCHOR-v1 run-1: H1 five post-anchor tamper kinds rejected, H2 honest manifests accepted, H3 pre-anchor window measured ≤ P+tol (honest limit), H4 no-anchor and self-anchor controls accepted tampering (detected); 5/5 reps. Runtime witness anchors only extensions of its previous anchor (fork alarm otherwise) — an extension beyond the Lean model.",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC27-ANCHOR-CHAIN.md",
+      "sha256": "b32756479820054b672b54054682cc211b5eaa4097fff878b1069592b66efaa0",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    },
+    {
+      "path": "scenarios/SC-27/evidence/run-2/verdicts.json",
+      "sha256": "540d70ea1686f63f157730b3bb3af421c038fd5bfd4019faaaa12dacf8fc46e6",
+      "purpose": "PREREG-SC27-ANCHOR-v2 run-2: v1 hypotheses re-pass with the fixed witness; H5 truncation-to-empty after anchoring now raises a fork alarm; H6 the frozen v1 witness stays silent on the same trace (runtime confirmation of the SC27Refinement finding); 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC27-ANCHOR-v2.md",
+      "sha256": "a840b5906fab42e90faab506b4c42fafedb2dda1338b2784df010ebe536a2b7a",
+      "purpose": "Frozen v2 preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
-      "id": "independent_verifier",
-      "text": "Verifier binary and policies are outside attacker write authority.",
+      "id": "independent_anchor",
+      "text": "An independently administered witness records heads (not the writer).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "immutable_attestation",
-      "text": "CI/proof receipts are independently signed and bound to revision, configuration, run and provenance.",
+      "id": "hash_injective_on_run",
+      "text": "Chain head is injective on accepted/anchored logs (collision resistance).",
       "proof": "NOT_PROVED",
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
     },
     {
-      "id": "source_bound_evidence",
-      "text": "Every claimed test/proof is checked against exact source and artifact hashes.",
+      "id": "anchor_frequency",
+      "text": "Anchoring happens soon enough that the pre-anchor window is acceptable.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
-      "usefulness": "NOT_RUN"
+      "usefulness": "NOT_APPLICABLE"
+    },
+    {
+      "id": "model_runtime_correspondence",
+      "text": "Two links: concrete writer/witness/verifier event machine → SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python → concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fixed in harness_v2; confirmed by run-2 (PREREG-SC27-ANCHOR-v2).",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Threat coverage has not been independently established, including excluded attack classes."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "runtime_correspondence": {
-      "status": "UNRESOLVED",
-      "note": "The model-to-runtime relation lacks independently checked refinement evidence."
+      "status": "ASSUMED",
+      "note": "Event-structure refinement proved (SC27Refinement); one alarm-completeness gap found in the runtime witness (truncation to empty)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Exclusive enforcement and receiver observation boundary remain unverified."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Lifetime state, concurrency, and composition premises remain unverified."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "An honest-task success baseline and test population remain unverified."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "No independent fidelity, provenance or assurance approval."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-27/evidence/run-1)."
     }
   }
 }

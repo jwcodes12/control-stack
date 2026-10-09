@@ -1,0 +1,82 @@
+{
+ "argv": [
+  "scenarios/SC-19/harness/run_sc19.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-19/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_values": {
+   "L_OP": 0.7
+  },
+  "prereg_values": {
+   "L_OP": 0.7
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC); one host",
+ "constants": {
+  "BG_INTERVAL": 0.02,
+  "H5_OPS": 20,
+  "H6_CONFIGS": {
+   "a_stale_snapshot": [
+    "--stale-ok"
+   ],
+   "b_unverified_snapshot": [
+    "--unverified-ok"
+   ],
+   "c_prepare_time_count": [
+    "--prepare-count"
+   ]
+  },
+  "LIFETIME": 30.0,
+  "L_OP": 0.7,
+  "R": 10,
+  "WALL_LIMIT": 115
+ },
+ "finished": "2026-10-09T07:06:54.418512Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "d5427dba83c85cb29b256cd7caa5f547458dafe5",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  3.72,
+  3.6,
+  2.96
+ ],
+ "loadavg_start": [
+  3.43,
+  3.51,
+  2.9
+ ],
+ "model_sha256": {
+  "ControlStack/Scenarios/AuthInstancesA.lean": "74399488cfef70c81cd91e86f85be5f0ea5a6ac84f56b20638ba522bd90e96a4",
+  "ControlStack/Scenarios/SC19Prod.lean": "3e38c9f587f8ea36703f26d3b15b9e8ba14c4358c478f5952a8e945d3368653d"
+ },
+ "nproc": 2,
+ "prereg_id": "PREREG-SC19-TWOPHASE-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "prereg/SC19-TWO-PHASE.md": "8e6d3955fa11dd4957d7ac421bbf78388e74ec90f479c02bb37791a69a662bb8",
+  "scenarios/SC-19/harness/README.md": "029cc00db61478eed2a5b44f7ce5395380eb5176f6552f01b10bc94bdc760ec3",
+  "scenarios/SC-19/harness/approver.py": "a6c28cda3cb3b456b7f5c6790ede289e87b55573d7674772c3f4b5ce7f69ca67",
+  "scenarios/SC-19/harness/dbutil.py": "78a43bab5f9b87ac9bf762ebcbfaace2ed7815e5c9586a132f212b8446aad808",
+  "scenarios/SC-19/harness/gate.py": "e2ded032ab9ab2dc5c1076c387a5c4ad8cada63a0d3ec5c9cd3e5adaab47a00b",
+  "scenarios/SC-19/harness/reconcile.py": "1d8dc0f9ff64df400f9c59790653e0ba39c80b3c355e9212f45d03ff59b9669f",
+  "scenarios/SC-19/harness/run_sc19.py": "b7d8703e802ea84e3bb351634701e19f6016c61c8f4fe9de2cdfbfb6fce73848",
+  "scenarios/SC-19/harness/snapshot.py": "2162eda11a4faa62cb90fd85257475b56e721a98c84ebe825abf364a3e3a0dfb",
+  "scenarios/SC-19/harness/verifier.py": "cc1840232916d2e3d5be56a70f48bce96d26378165f6b60bfd08f90562218766",
+  "scenarios/SC-19/harness/writer.py": "e37b5bbacad696d9f562fb8fd83b38553eee7f9d26e5869914d86654a98cef7b"
+ },
+ "sqlite": "3.34.1",
+ "started": "2026-10-09T07:06:17.152008Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 37.27
+}

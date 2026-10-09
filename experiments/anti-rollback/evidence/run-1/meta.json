@@ -1,0 +1,80 @@
+{
+ "argv": [
+  "experiments/anti-rollback/harness/run_ar.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "experiments/anti-rollback/evidence/run-1"
+ ],
+ "constants": {
+  "AMOUNT": 20,
+  "CALL_TIMEOUT": 10.0,
+  "CAP": 100,
+  "CRASH_RC": 17,
+  "H1_VARIANTS": [
+   "cold-genesis",
+   "cold-mid",
+   "cold-prev",
+   "cold-delete",
+   "hot-mid",
+   "hot-prev",
+   "anchor-api"
+  ],
+  "H2_VARIANTS": [
+   "after_commit",
+   "after_anchor",
+   "after_effect",
+   "after_commit+restore-pre",
+   "after_commit+restore-older"
+  ],
+  "H3_BACKUP_EVERY": 4,
+  "H3_CAP": 300,
+  "H3_RESTART_EVERY": 5,
+  "READY_TIMEOUT": 10.0,
+  "RECOVERY_BOUND": 1.0,
+  "STOP_TIMEOUT": 5.0,
+  "WALL_LIMIT": 120
+ },
+ "finished": "2026-10-09T14:20:48.053292Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "2ee51d0913f1a8711657ea1363a42dc38bf5d047",
+ "git_dirty_any": false,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  0.72,
+  0.41,
+  0.28
+ ],
+ "loadavg_start": [
+  0.3,
+  0.32,
+  0.25
+ ],
+ "nproc": 2,
+ "prereg_id": "PREREG-ANTI-ROLLBACK-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "<workdir>/code/anchor.py": "e8e65292ac64a2481d06a05a853345bece475e6cc07381e89eecef19b2a46a6e",
+  "<workdir>/code/gate.py": "5249c0da7ef381f71adc2f86904215fd6aa134ccd1778a03a159529e227791d8",
+  "experiments/anti-rollback/harness/README.md": "ded49c4c70c515a5aba4e621ce48dfb35644506196ede280f9aff8f520557491",
+  "experiments/anti-rollback/harness/anchor.py": "e8e65292ac64a2481d06a05a853345bece475e6cc07381e89eecef19b2a46a6e",
+  "experiments/anti-rollback/harness/gate.py": "5249c0da7ef381f71adc2f86904215fd6aa134ccd1778a03a159529e227791d8",
+  "experiments/anti-rollback/harness/run_ar.py": "9940c78c6af05d57aee3efd32e71023763f2fec29324fd51121b85b63fda14d9",
+  "experiments/anti-rollback/harness/test_ar.py": "706176644c7835eaf3a9b590456ec13a2b86c1daed28fbbb59e044d05d549b2d",
+  "prereg/ANTI-ROLLBACK.md": "765354f8f1d9742732e365e8ebb22f0c50576216d5adf13edf9f4baac058d4fb"
+ },
+ "sqlite": "3.34.1",
+ "started": "2026-10-09T14:20:27.150320Z",
+ "uids": {
+  "anchor": 23921,
+  "client": 23923,
+  "gate": 23922
+ },
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 20.9
+}

@@ -1,2 +1,16 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Scenarios.EvalIntegrityAdaptive
+import ControlStack.Scenarios.EvalIntegrity
+#check ControlStack.EvalIntegrity.sc21_safe
+#check ControlStack.EvalIntegrity.sc21_undetected_prob
+#check ControlStack.EvalIntegrity.sc21_undetected_le_pow
+#check ControlStack.EvalIntegrity.observable_sample_nogo
+#print axioms ControlStack.EvalIntegrity.sc21_safe
+#print axioms ControlStack.EvalIntegrity.sc21_undetected_prob
+#print axioms ControlStack.EvalIntegrity.sc21_undetected_le_pow
+#print axioms ControlStack.EvalIntegrity.observable_sample_nogo
+#check ControlStack.EvalIntegrityAdaptive.sc21_adaptive
+#print axioms ControlStack.EvalIntegrityAdaptive.sc21_adaptive
+#check ControlStack.EvalIntegrityAdaptive.sc21_adaptive_content
+#print axioms ControlStack.EvalIntegrityAdaptive.sc21_adaptive_content
+#check ControlStack.EvalIntegrityAdaptive.sc21_adaptive_recall
+#print axioms ControlStack.EvalIntegrityAdaptive.sc21_adaptive_recall

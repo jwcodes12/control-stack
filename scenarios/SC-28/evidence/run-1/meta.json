@@ -1,0 +1,79 @@
+{
+ "argv": [
+  "scenarios/SC-28/harness/run_sc28.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-28/evidence/run-1"
+ ],
+ "cgroup_root_subtree_control": "cpuset cpu io memory hugetlb pids rdma misc",
+ "constants": {
+  "CPU_SECONDS": 3.5,
+  "CPU_TOL": 0.05,
+  "CPU_WARMUP": 0.3,
+  "CPU_WINDOW": 2.0,
+  "FORKS_REQUESTED": 12,
+  "FREEZE_BOUND": 0.5,
+  "HOLDER_CHILDREN": 3,
+  "KILL_BOUND": 1.0,
+  "LIFETIME": 30.0,
+  "PARENT_CPU": 0.5,
+  "PIDS_SMALL": 8,
+  "REAP_BOUND": 5.0,
+  "REFUSAL_SETTLE": 0.3,
+  "TREE_N": 26,
+  "WALL_LIMIT": 115
+ },
+ "controller_cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/claude-remote-watchdog.service",
+ "finished": "2026-10-09T05:12:54.944269Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "1b69b0a470fcfa62aed62a0f092f93cceabf9620",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  3.6,
+  3.18,
+  2.66
+ ],
+ "loadavg_start": [
+  3.48,
+  3.13,
+  2.63
+ ],
+ "nproc": 2,
+ "prereg_id": "PREREG-SC28-CGMETER-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "<workdir>/code/workloads.py": "98967412c276e7dc1e5adfc0bf2d29a7ba65ddf098c6d5dd02a97d8fee578161",
+  "prereg/SC28-CGROUP-METER.md": "a488bc60fbb8298847a6d77a31d6cf279a7fc6468bafcb14fbab983874ea4006",
+  "scenarios/SC-28/harness/README.md": "9b2f3747b52073cb2eb8e29442a884d357ccf1ca1e4442c623f780aa4cd2e402",
+  "scenarios/SC-28/harness/meter.py": "bdfd9ce8aa3fe35c3fe5c4ed8b7d92d8794008193cb33bcfcad7107e9797a978",
+  "scenarios/SC-28/harness/run_sc28.py": "d6272f38a64bb88692c9683b74aea6d1da1c94ee1565c5b90b0dd46710737ee1",
+  "scenarios/SC-28/harness/workloads.py": "98967412c276e7dc1e5adfc0bf2d29a7ba65ddf098c6d5dd02a97d8fee578161"
+ },
+ "started": "2026-10-09T05:12:22.448246Z",
+ "top_settings": {
+  "cgroup.controllers": "cpuset cpu io memory hugetlb pids rdma misc",
+  "cgroup.subtree_control": "cpu memory pids",
+  "cgroup.type": "domain",
+  "cpu.max": "50000 100000",
+  "memory.max": "134217728",
+  "pids.max": "64"
+ },
+ "uids": {
+  "A": 23701,
+  "B": 23702,
+  "reserved_range": [
+   23700,
+   23709
+  ],
+  "unplaced": 23709
+ },
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 32.5
+}

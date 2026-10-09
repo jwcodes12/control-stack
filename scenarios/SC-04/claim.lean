@@ -1,2 +1,5 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Families.F2.ChannelInstances
+#check ControlStack.ChannelInstances.log_channel
+#check ControlStack.ChannelInstances.canonical_seq
+#print axioms ControlStack.ChannelInstances.log_channel
+#print axioms ControlStack.ChannelInstances.canonical_seq

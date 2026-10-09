@@ -1,0 +1,273 @@
+{
+  "base_verdict": "PASS",
+  "mutations": {
+    "unapproved_entry": {
+      "verdict": "FAIL",
+      "c": [
+        "c1 key 1000000: no gate deliver for this key",
+        "c2 key 1000000: no approval in any approver's own log",
+        "c3 key 1000000: no request recorded by the gate"
+      ],
+      "b": [
+        {
+          "model_only": [],
+          "world_only": [
+            [
+              1000000,
+              [
+                1000,
+                10,
+                900
+              ]
+            ]
+          ],
+          "model_n": 15,
+          "world_n": 16
+        }
+      ]
+    },
+    "duplicate_key": {
+      "verdict": "FAIL",
+      "c": [
+        "c5 key 0: 2 ledger entries",
+        "c8 memo 900: paid 2 times"
+      ],
+      "b": [
+        {
+          "model_only": [],
+          "world_only": [
+            [
+              0,
+              [
+                1000,
+                10,
+                900
+              ]
+            ]
+          ],
+          "model_n": 15,
+          "world_n": 16
+        }
+      ]
+    },
+    "payload_change": {
+      "verdict": "FAIL",
+      "c": [
+        "c2 key 0: payload mismatch: approved payload differs from the effect"
+      ],
+      "b": [
+        {
+          "model_only": [
+            [
+              0,
+              [
+                1000,
+                10,
+                900
+              ]
+            ]
+          ],
+          "world_only": [
+            [
+              0,
+              [
+                1000,
+                11,
+                900
+              ]
+            ]
+          ],
+          "model_n": 15,
+          "world_n": 15
+        }
+      ]
+    },
+    "after_halt": {
+      "verdict": "FAIL",
+      "c": [
+        "c4 key 0: transmit #69 logged after halt #-1",
+        "c4 key 3: transmit #77 logged after halt #-1",
+        "c4 key 7: transmit #104 logged after halt #-1"
+      ],
+      "b": [
+        {
+          "model_only": [],
+          "world_only": [
+            [
+              0,
+              [
+                1000,
+                10,
+                900
+              ]
+            ],
+            [
+              3,
+              [
+                1002,
+                12,
+                902
+              ]
+            ],
+            [
+              7,
+              [
+                1004,
+                14,
+                904
+              ]
+            ],
+            [
+              8,
+              [
+                1005,
+                15,
+                905
+              ]
+            ],
+            [
+              9,
+              [
+                1006,
+                16,
+                906
+              ]
+            ],
+            [
+              10,
+              [
+                1011,
+                21,
+                911
+              ]
+            ],
+            [
+              14,
+              [
+                1013,
+                23,
+                913
+              ]
+            ],
+            [
+              15,
+              [
+                5000,
+                100,
+                7000
+              ]
+            ],
+            [
+              16,
+              [
+                5001,
+                100,
+                7001
+              ]
+            ],
+            [
+              17,
+              [
+                5002,
+                100,
+                7002
+              ]
+            ],
+            [
+              18,
+              [
+                5003,
+                100,
+                7003
+              ]
+            ],
+            [
+              19,
+              [
+                5004,
+                100,
+                7004
+              ]
+            ],
+            [
+              20,
+              [
+                5005,
+                100,
+                7005
+              ]
+            ],
+            [
+              21,
+              [
+                5006,
+                100,
+                7006
+              ]
+            ],
+            [
+              22,
+              [
+                5007,
+                100,
+                7007
+              ]
+            ]
+          ],
+          "model_n": 0,
+          "world_n": 15
+        }
+      ]
+    },
+    "duplicate_memo": {
+      "verdict": "FAIL",
+      "c": [
+        "c1 key 1000001: no gate deliver for this key",
+        "c2 key 1000001: no approval in any approver's own log",
+        "c3 key 1000001: no request recorded by the gate"
+      ],
+      "b": [
+        {
+          "model_only": [],
+          "world_only": [
+            [
+              1000001,
+              [
+                1000,
+                10,
+                900
+              ]
+            ]
+          ],
+          "model_n": 15,
+          "world_n": 16
+        }
+      ]
+    },
+    "over_cap": {
+      "verdict": "FAIL",
+      "c": [
+        "c6 ledger total 911 > cap 910",
+        "c7 spent 933 > cap 910"
+      ],
+      "b": [
+        {
+          "model_only": [],
+          "world_only": [
+            [
+              22,
+              [
+                5007,
+                100,
+                7007
+              ]
+            ]
+          ],
+          "model_n": 14,
+          "world_n": 15
+        }
+      ]
+    }
+  },
+  "verdict": "PASS"
+}

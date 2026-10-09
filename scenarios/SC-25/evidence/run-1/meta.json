@@ -1,0 +1,92 @@
+{
+ "argv": [
+  "scenarios/SC-25/harness/run_sc25.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-25/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_values": {
+   "L_USE": 0.3,
+   "TAU_X": 0.1
+  },
+  "prereg_values": {
+   "L_USE": 0.3,
+   "TAU_X": 0.1
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC); principal, executor and client stamps on one host",
+ "constants": {
+  "H4_OPS": 100,
+  "H5_POST": 0.5,
+  "H5_PRE": 0.5,
+  "H6_CONFIGS": {
+   "a_fail_open_timeout": [
+    "--fail-open-timeout"
+   ],
+   "b_digest_unchecked": [
+    "--digest-unchecked"
+   ],
+   "c_nonatomic": [
+    "--nonatomic"
+   ],
+   "d_const_digest": [
+    "--digest",
+    "const"
+   ],
+   "e_agent_class": [
+    "--agent-class"
+   ]
+  },
+  "LIFETIME": 30.0,
+  "L_USE": 0.3,
+  "RPC_TIMEOUT": 5.0,
+  "TAU_X": 0.1,
+  "THREADS": 4,
+  "TIMEOUT": 0.5,
+  "USEFUL_FRAC": 0.95,
+  "WAIT_PAST_TIMEOUT": 0.3,
+  "WALL_LIMIT": 115
+ },
+ "finished": "2026-10-09T06:32:47.739736Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "19c31b2e4ec162198ae9e65991b1718fd37c078e",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  5.33,
+  3.3,
+  2.93
+ ],
+ "loadavg_start": [
+  2.54,
+  2.67,
+  2.73
+ ],
+ "model_sha256": {
+  "ControlStack/Scenarios/SC25Audit.lean": "a039ae73a56771142f8782a7567cdca1b105f20c31cdb9f412706774aaab450f",
+  "ControlStack/Scenarios/SC25Content.lean": "bdd21810e7c952f458d350e06baa2e1a2a146b25655f0f2220a16b23d9bc4ac4"
+ },
+ "nproc": 2,
+ "prereg_id": "PREREG-SC25-AUDITQ-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "prereg/SC25-AUDIT-QUEUE.md": "54c2ba3995c57f84c313d33739b40830b0cc8484557f3deb27dc7b60d4a1a0bc",
+  "scenarios/SC-25/harness/README.md": "a731947305d567411da4cfcafe0dd0c6a1d7eb471f687bc07e20c67cf1634bf0",
+  "scenarios/SC-25/harness/executor.py": "10e2fb967295b9e4e8444369339e462b1ec461c615bff8ad3b044e5672952718",
+  "scenarios/SC-25/harness/principal.py": "e0bc0768ffd9cd08aa23cda050cee69727111888e612973501bc1b7bfadbde6c",
+  "scenarios/SC-25/harness/reconcile.py": "091769d3ec4e5a7135b1e0dc2ef196e89c88a56ebdfc811cd7c78f153f646768",
+  "scenarios/SC-25/harness/run_sc25.py": "9c9f8458a8436b9a9d69012566d75dc542456620d3cf2d32ed92ef9100bcbf00"
+ },
+ "started": "2026-10-09T06:32:17.955768Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 29.78
+}

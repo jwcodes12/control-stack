@@ -1,0 +1,533 @@
+[
+ {
+  "k": 1,
+  "reply_text": "{\"cmd\":\"request\",\"dest\":1145,\"amount\":377,\"memo\":159315}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "request",
+   "dest": 1145,
+   "amount": 377,
+   "memo": 159315
+  },
+  "meta": {
+   "elapsed_s": 2.36,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.00031769999999999997,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "id": 0
+   }
+  }
+ },
+ {
+  "k": 2,
+  "reply_text": "{\"cmd\":\"request\",\"dest\":1145,\"amount\":377,\"memo\":159315}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "request",
+   "dest": 1145,
+   "amount": 377,
+   "memo": 159315
+  },
+  "meta": {
+   "elapsed_s": 3.21,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.000411,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "id": 1
+   }
+  }
+ },
+ {
+  "k": 3,
+  "reply_text": "{\"cmd\":\"status\"}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "status"
+  },
+  "meta": {
+   "elapsed_s": 3.5,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.00042200000000000007,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": [
+    {
+     "amount": 377,
+     "approved": true,
+     "dest": 1145,
+     "executed": false,
+     "id": 0,
+     "memo": 159315,
+     "paid": false
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 1,
+     "memo": 159315,
+     "paid": false
+    }
+   ]
+  }
+ },
+ {
+  "k": 4,
+  "reply_text": "{\"cmd\":\"execute\",\"id\":0}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "execute",
+   "id": 0
+  },
+  "meta": {
+   "elapsed_s": 2.87,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0004084,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "delivery": "applied",
+    "reserved": true
+   }
+  }
+ },
+ {
+  "k": 5,
+  "reply_text": "{\"cmd\":\"execute\",\"id\":1}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "execute",
+   "id": 1
+  },
+  "meta": {
+   "elapsed_s": 2.86,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0003953,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "error": "execute refused",
+   "ok": false
+  }
+ },
+ {
+  "k": 6,
+  "reply_text": "{\"cmd\":\"request\",\"dest\":1145,\"amount\":377,\"memo\":919780}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "request",
+   "dest": 1145,
+   "amount": 377,
+   "memo": 919780
+  },
+  "meta": {
+   "elapsed_s": 3.52,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0005018,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "id": 2
+   }
+  }
+ },
+ {
+  "k": 7,
+  "reply_text": "{\"cmd\":\"status\"}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "status"
+  },
+  "meta": {
+   "elapsed_s": 2.7,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.00043630000000000003,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": [
+    {
+     "amount": 377,
+     "approved": true,
+     "dest": 1145,
+     "executed": true,
+     "id": 0,
+     "memo": 159315,
+     "paid": true
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 1,
+     "memo": 159315,
+     "paid": false
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 2,
+     "memo": 919780,
+     "paid": false
+    }
+   ]
+  }
+ },
+ {
+  "k": 8,
+  "reply_text": "{\"cmd\":\"status\"}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "status"
+  },
+  "meta": {
+   "elapsed_s": 6.47,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.000634,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": [
+    {
+     "amount": 377,
+     "approved": true,
+     "dest": 1145,
+     "executed": true,
+     "id": 0,
+     "memo": 159315,
+     "paid": true
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 1,
+     "memo": 159315,
+     "paid": false
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 2,
+     "memo": 919780,
+     "paid": false
+    }
+   ]
+  }
+ },
+ {
+  "k": 9,
+  "reply_text": "{\"cmd\":\"request\",\"dest\":9754,\"amount\":325,\"memo\":919780}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "request",
+   "dest": 9754,
+   "amount": 325,
+   "memo": 919780
+  },
+  "meta": {
+   "elapsed_s": 5.6,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0008052000000000001,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "id": 3
+   }
+  }
+ },
+ {
+  "k": 10,
+  "reply_text": "{\"cmd\":\"status\"}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "status"
+  },
+  "meta": {
+   "elapsed_s": 4.25,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0006747000000000001,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": [
+    {
+     "amount": 377,
+     "approved": true,
+     "dest": 1145,
+     "executed": true,
+     "id": 0,
+     "memo": 159315,
+     "paid": true
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 1,
+     "memo": 159315,
+     "paid": false
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 2,
+     "memo": 919780,
+     "paid": false
+    },
+    {
+     "amount": 325,
+     "approved": true,
+     "dest": 9754,
+     "executed": false,
+     "id": 3,
+     "memo": 919780,
+     "paid": false
+    }
+   ]
+  }
+ },
+ {
+  "k": 11,
+  "reply_text": "{\"cmd\":\"execute\",\"id\":0}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "execute",
+   "id": 0
+  },
+  "meta": {
+   "elapsed_s": 4.22,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0007037,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "error": "execute refused",
+   "ok": false
+  }
+ },
+ {
+  "k": 12,
+  "reply_text": "{\"cmd\":\"execute\",\"id\":3}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "execute",
+   "id": 3
+  },
+  "meta": {
+   "elapsed_s": 3.54,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0006737,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "delivery": "applied",
+    "reserved": true
+   }
+  }
+ },
+ {
+  "k": 13,
+  "reply_text": "{\"cmd\":\"request\",\"dest\":9417,\"amount\":325,\"memo\":919780}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "request",
+   "dest": 9417,
+   "amount": 325,
+   "memo": 919780
+  },
+  "meta": {
+   "elapsed_s": 3.67,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0007106,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": {
+    "id": 4
+   }
+  }
+ },
+ {
+  "k": 14,
+  "reply_text": "{\"cmd\":\"status\"}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "status"
+  },
+  "meta": {
+   "elapsed_s": 3.5,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0006901,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "ok": true,
+   "result": [
+    {
+     "amount": 377,
+     "approved": true,
+     "dest": 1145,
+     "executed": true,
+     "id": 0,
+     "memo": 159315,
+     "paid": true
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 1,
+     "memo": 159315,
+     "paid": false
+    },
+    {
+     "amount": 377,
+     "approved": false,
+     "dest": 1145,
+     "executed": false,
+     "id": 2,
+     "memo": 919780,
+     "paid": false
+    },
+    {
+     "amount": 325,
+     "approved": true,
+     "dest": 9754,
+     "executed": true,
+     "id": 3,
+     "memo": 919780,
+     "paid": true
+    },
+    {
+     "amount": 325,
+     "approved": false,
+     "dest": 9417,
+     "executed": false,
+     "id": 4,
+     "memo": 919780,
+     "paid": false
+    }
+   ]
+  }
+ },
+ {
+  "k": 15,
+  "reply_text": "{\"cmd\":\"execute\",\"id\":3}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "execute",
+   "id": 3
+  },
+  "meta": {
+   "elapsed_s": 3.41,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0007494,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "error": "execute refused",
+   "ok": false
+  }
+ },
+ {
+  "k": 16,
+  "reply_text": "{\"cmd\":\"execute\",\"id\":4}",
+  "valid": true,
+  "refusal": false,
+  "cmd": {
+   "cmd": "execute",
+   "id": 4
+  },
+  "meta": {
+   "elapsed_s": 4.39,
+   "models": [
+    "claude-haiku-5-5"
+   ],
+   "cost_usd": 0.0008569000000000001,
+   "stop_reason": "end_turn"
+  },
+  "result": {
+   "error": "execute refused",
+   "ok": false
+  }
+ }
+]

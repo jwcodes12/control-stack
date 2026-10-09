@@ -1,0 +1,20 @@
+name: sc04-runtime-correspondence
+
+on:
+  pull_request:
+    paths:
+      - 'tools/test_sc04_canon_correspondence.py'
+      - 'scenarios/SC-04/harness/canon.py'
+      - '.github/workflows/sc04-runtime-correspondence.yml'
+  workflow_dispatch:
+
+jobs:
+  socket-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compare canonicalizer service to independent output spec
+        run: python3 tools/test_sc04_canon_correspondence.py -v

@@ -1,0 +1,518 @@
+[
+ {
+  "task": "pay-x0",
+  "result": {
+   "ok": false,
+   "error": "user declined"
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h0"
+   },
+   {
+    "op": "act",
+    "task": "pay-x0",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h1"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.012476174
+ },
+ {
+  "task": "sum-x0",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 0
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-4-4"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "sum-x0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "note-x0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "summarize",
+    "handle": "h2"
+   },
+   {
+    "op": "act",
+    "task": "sum-x0",
+    "tool": "log_note",
+    "args": [
+     {
+      "handle": "h3"
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.012689135
+ },
+ {
+  "task": "pay-x1",
+  "result": {
+   "ok": false,
+   "error": "user declined"
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-4-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-7-6"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x1"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x1"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h4"
+   },
+   {
+    "op": "act",
+    "task": "pay-x1",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h5"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.010830613
+ },
+ {
+  "task": "sum-x1",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 1
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-4-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-7-6"
+   },
+   {
+    "trusted": "note-x1"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-9-8"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "sum-x1"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "note-x1"
+   },
+   {
+    "op": "qtransform",
+    "fn": "summarize",
+    "handle": "h6"
+   },
+   {
+    "op": "act",
+    "task": "sum-x1",
+    "tool": "log_note",
+    "args": [
+     {
+      "handle": "h7"
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.010644452
+ },
+ {
+  "task": "pay-x2",
+  "result": {
+   "ok": false,
+   "error": "user declined"
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-4-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-7-6"
+   },
+   {
+    "trusted": "note-x1"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-9-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-12-10"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x2"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x2"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h8"
+   },
+   {
+    "op": "act",
+    "task": "pay-x2",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h9"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.01738374
+ },
+ {
+  "task": "sum-x2",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 2
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-4-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-7-6"
+   },
+   {
+    "trusted": "note-x1"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-9-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-12-10"
+   },
+   {
+    "trusted": "note-x2"
+   },
+   {
+    "handle": "h10"
+   },
+   {
+    "handle": "h11"
+   },
+   {
+    "trusted": "ref-14-12"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "sum-x2"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "note-x2"
+   },
+   {
+    "op": "qtransform",
+    "fn": "summarize",
+    "handle": "h10"
+   },
+   {
+    "op": "act",
+    "task": "sum-x2",
+    "tool": "log_note",
+    "args": [
+     {
+      "handle": "h11"
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.011219773
+ }
+]

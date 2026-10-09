@@ -1,0 +1,331 @@
+{
+ "approvals": [
+  {
+   "amount": 228,
+   "approver": 23603,
+   "dest": 8842,
+   "id": 0,
+   "memo": 986455,
+   "seq": 1
+  },
+  {
+   "amount": 27,
+   "approver": 23603,
+   "dest": 4917,
+   "id": 1,
+   "memo": 986599,
+   "seq": 2
+  },
+  {
+   "amount": 119,
+   "approver": 23603,
+   "dest": 5421,
+   "id": 2,
+   "memo": 658635,
+   "seq": 3
+  },
+  {
+   "amount": 447,
+   "approver": 23603,
+   "dest": 3581,
+   "id": 3,
+   "memo": 563774,
+   "seq": 4
+  }
+ ],
+ "delivery": [
+  {
+   "acked": 1,
+   "id": 0,
+   "outcome": "applied",
+   "seq": 1
+  },
+  {
+   "acked": 1,
+   "id": 1,
+   "outcome": "applied",
+   "seq": 2
+  },
+  {
+   "acked": 1,
+   "id": 2,
+   "outcome": "applied",
+   "seq": 3
+  },
+  {
+   "acked": 1,
+   "id": 3,
+   "outcome": "applied",
+   "seq": 4
+  }
+ ],
+ "gate_uid": 23605,
+ "meta": {
+  "cap": 821,
+  "halted": 0,
+  "next": 4,
+  "spent": 821
+ },
+ "recovered": true,
+ "requests": [
+  {
+   "amount": 228,
+   "dest": 8842,
+   "id": 0,
+   "memo": 986455,
+   "requester": 23601
+  },
+  {
+   "amount": 27,
+   "dest": 4917,
+   "id": 1,
+   "memo": 986599,
+   "requester": 23601
+  },
+  {
+   "amount": 119,
+   "dest": 5421,
+   "id": 2,
+   "memo": 658635,
+   "requester": 23601
+  },
+  {
+   "amount": 447,
+   "dest": 3581,
+   "id": 3,
+   "memo": 563774,
+   "requester": 23601
+  }
+ ],
+ "reserved": [
+  {
+   "id": 0,
+   "seq": 1
+  },
+  {
+   "id": 1,
+   "seq": 2
+  },
+  {
+   "id": 2,
+   "seq": 3
+  },
+  {
+   "id": 3,
+   "seq": 4
+  }
+ ],
+ "stranded": [],
+ "trace": [
+  {
+   "accepted": 0,
+   "args": "{\"op\": \"noop-probe\"}",
+   "caller": 23607,
+   "mono": 681402514485075,
+   "op": "malformed",
+   "result": null,
+   "seq": 1,
+   "t": 1791526648.1057558
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [8842, 228, 986455]}",
+   "caller": 23601,
+   "mono": 681405474987357,
+   "op": "request",
+   "result": "0",
+   "seq": 2,
+   "t": 1791526651.0662577
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 0, \"tx\": [8842, 228, 986455]}",
+   "caller": 23603,
+   "mono": 681405603914183,
+   "op": "approve",
+   "result": null,
+   "seq": 3,
+   "t": 1791526651.1951847
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 0}",
+   "caller": 23601,
+   "mono": 681409474733938,
+   "op": "execute",
+   "result": null,
+   "seq": 4,
+   "t": 1791526655.0660045
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 0}",
+   "caller": 23605,
+   "mono": 681409479024023,
+   "op": "deliver",
+   "result": null,
+   "seq": 5,
+   "t": 1791526655.0702946
+  },
+  {
+   "accepted": 1,
+   "args": "{\"dseq\": 1, \"id\": 0, \"source\": \"deliver\"}",
+   "caller": 23605,
+   "mono": 681409484233229,
+   "op": "transmit",
+   "result": null,
+   "seq": 6,
+   "t": 1791526655.0755033
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [4917, 27, 986599]}",
+   "caller": 23601,
+   "mono": 681412728701793,
+   "op": "request",
+   "result": "1",
+   "seq": 7,
+   "t": 1791526658.319972
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1, \"tx\": [4917, 27, 986599]}",
+   "caller": 23603,
+   "mono": 681412864638828,
+   "op": "approve",
+   "result": null,
+   "seq": 8,
+   "t": 1791526658.455909
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1}",
+   "caller": 23601,
+   "mono": 681415935764755,
+   "op": "execute",
+   "result": null,
+   "seq": 9,
+   "t": 1791526661.5270352
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 1}",
+   "caller": 23605,
+   "mono": 681415939087039,
+   "op": "deliver",
+   "result": null,
+   "seq": 10,
+   "t": 1791526661.5303566
+  },
+  {
+   "accepted": 1,
+   "args": "{\"dseq\": 2, \"id\": 1, \"source\": \"deliver\"}",
+   "caller": 23605,
+   "mono": 681415941296321,
+   "op": "transmit",
+   "result": null,
+   "seq": 11,
+   "t": 1791526661.5325665
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [5421, 119, 658635]}",
+   "caller": 23601,
+   "mono": 681418149087068,
+   "op": "request",
+   "result": "2",
+   "seq": 12,
+   "t": 1791526663.7403576
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 2, \"tx\": [5421, 119, 658635]}",
+   "caller": 23603,
+   "mono": 681418205069972,
+   "op": "approve",
+   "result": null,
+   "seq": 13,
+   "t": 1791526663.7963407
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 2}",
+   "caller": 23601,
+   "mono": 681420127331315,
+   "op": "execute",
+   "result": null,
+   "seq": 14,
+   "t": 1791526665.7186017
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 2}",
+   "caller": 23605,
+   "mono": 681420130351478,
+   "op": "deliver",
+   "result": null,
+   "seq": 15,
+   "t": 1791526665.7216222
+  },
+  {
+   "accepted": 1,
+   "args": "{\"dseq\": 3, \"id\": 2, \"source\": \"deliver\"}",
+   "caller": 23605,
+   "mono": 681420133829162,
+   "op": "transmit",
+   "result": null,
+   "seq": 16,
+   "t": 1791526665.7250993
+  },
+  {
+   "accepted": 1,
+   "args": "{\"tx\": [3581, 447, 563774]}",
+   "caller": 23601,
+   "mono": 681422348670757,
+   "op": "request",
+   "result": "3",
+   "seq": 17,
+   "t": 1791526667.9399416
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 3, \"tx\": [3581, 447, 563774]}",
+   "caller": 23603,
+   "mono": 681422405238781,
+   "op": "approve",
+   "result": null,
+   "seq": 18,
+   "t": 1791526667.9965088
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 3}",
+   "caller": 23601,
+   "mono": 681424314187269,
+   "op": "execute",
+   "result": null,
+   "seq": 19,
+   "t": 1791526669.9054575
+  },
+  {
+   "accepted": 1,
+   "args": "{\"id\": 3}",
+   "caller": 23605,
+   "mono": 681424317276032,
+   "op": "deliver",
+   "result": null,
+   "seq": 20,
+   "t": 1791526669.9085462
+  },
+  {
+   "accepted": 1,
+   "args": "{\"dseq\": 4, \"id\": 3, \"source\": \"deliver\"}",
+   "caller": 23605,
+   "mono": 681424319335035,
+   "op": "transmit",
+   "result": null,
+   "seq": 21,
+   "t": 1791526669.9106057
+  }
+ ]
+}

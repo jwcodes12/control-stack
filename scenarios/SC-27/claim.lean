@@ -1,4 +1,49 @@
-import ControlStack.AuditDispatch
-
-/-! Evidence bridge only: no new scenario-wide theorem or runtime refinement is asserted. -/
-#print axioms ControlStack.AuditDispatch.trace_safe
+import ControlStack.Scenarios.SC27Refinement
+import ControlStack.Scenarios.SC27ExtensionOnly
+import ControlStack.Scenarios.SC27Chain
+#check ControlStack.SC27Chain.sc27_safe
+#check ControlStack.SC27Chain.halt_freezes
+#check ControlStack.SC27Chain.honest_accept
+#check ControlStack.SC27Chain.tamper_after_anchor_detected
+#check ControlStack.SC27Chain.no_anchor_rollback_breaks
+#check ControlStack.SC27Chain.self_signed_breaks
+#check ControlStack.SC27Chain.unanchored_suffix_breaks
+#check ControlStack.SC27Chain.collision_breaks
+#check ControlStack.SC27Chain.rewrite_before_anchor_window
+#check ControlStack.SC27Chain.no_halt_check_breaks
+#print axioms ControlStack.SC27Chain.sc27_safe
+#print axioms ControlStack.SC27Chain.halt_freezes
+#print axioms ControlStack.SC27Chain.honest_accept
+#print axioms ControlStack.SC27Chain.tamper_after_anchor_detected
+#print axioms ControlStack.SC27Chain.no_anchor_rollback_breaks
+#print axioms ControlStack.SC27Chain.self_signed_breaks
+#print axioms ControlStack.SC27Chain.unanchored_suffix_breaks
+#print axioms ControlStack.SC27Chain.collision_breaks
+#print axioms ControlStack.SC27Chain.rewrite_before_anchor_window
+#print axioms ControlStack.SC27Chain.no_halt_check_breaks
+#check ControlStack.SC27ExtensionOnly.sc27_ext_safe
+#print axioms ControlStack.SC27ExtensionOnly.sc27_ext_safe
+#check ControlStack.SC27ExtensionOnly.tampered_never_anchored
+#print axioms ControlStack.SC27ExtensionOnly.tampered_never_anchored
+#check ControlStack.SC27ExtensionOnly.anchors_chain
+#print axioms ControlStack.SC27ExtensionOnly.anchors_chain
+#check ControlStack.SC27ExtensionOnly.alarm_iff
+#print axioms ControlStack.SC27ExtensionOnly.alarm_iff
+#check ControlStack.SC27ExtensionOnly.honest_liveness
+#print axioms ControlStack.SC27ExtensionOnly.honest_liveness
+#check ControlStack.SC27ExtensionOnly.periodic_anchor_launders
+#print axioms ControlStack.SC27ExtensionOnly.periodic_anchor_launders
+#check ControlStack.SC27ExtensionOnly.head_check_iff_prefix
+#print axioms ControlStack.SC27ExtensionOnly.head_check_iff_prefix
+#check ControlStack.SC27Refinement.simulation
+#print axioms ControlStack.SC27Refinement.simulation
+#check ControlStack.SC27Refinement.concrete_ext_safe
+#print axioms ControlStack.SC27Refinement.concrete_ext_safe
+#check ControlStack.SC27Refinement.concrete_tampered_never_anchored
+#print axioms ControlStack.SC27Refinement.concrete_tampered_never_anchored
+#check ControlStack.SC27Refinement.concrete_alarm_iff
+#print axioms ControlStack.SC27Refinement.concrete_alarm_iff
+#check ControlStack.SC27Refinement.writer_heads_breaks
+#print axioms ControlStack.SC27Refinement.writer_heads_breaks
+#check ControlStack.SC27Refinement.empty_truncation_silent
+#print axioms ControlStack.SC27Refinement.empty_truncation_silent

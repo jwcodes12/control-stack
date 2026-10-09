@@ -1,0 +1,82 @@
+{
+ "argv": [
+  "scenarios/SC-18/harness/run_sc18.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "scenarios/SC-18/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_taus": {
+   "TAU_RESUME": 0.25,
+   "TAU_W": 0.1
+  },
+  "prereg_taus": {
+   "TAU_RESUME": 0.25,
+   "TAU_W": 0.1
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC); sink and client stamps on one host",
+ "constants": {
+  "ACK_TIMEOUT": 0.3,
+  "CLIENT_TIMEOUT": 5.0,
+  "GAP": 0.01,
+  "H1_REQ": 60,
+  "H2_OUT": 2.5,
+  "H3_AFTER": 1.5,
+  "H3_OUT": 1.5,
+  "H4_REQ": 100,
+  "H5_OUT": 2.0,
+  "HB": 0.1,
+  "LIFETIME": 30.0,
+  "MIN_WD_REFUSALS": 10,
+  "MIN_WD_REFUSALS_H3": 5,
+  "PRE": 0.5,
+  "T": 1.0,
+  "TAU_RESUME": 0.25,
+  "TAU_W": 0.1,
+  "THREADS": 4,
+  "USEFUL_FRAC": 0.99,
+  "WALL_LIMIT": 115
+ },
+ "finished": "2026-10-09T06:07:46.869092Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "7d932e293be59f5bb2eb0d65a28964cbf032c5ee",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  5.88,
+  3.8,
+  3.01
+ ],
+ "loadavg_start": [
+  2.35,
+  2.92,
+  2.7
+ ],
+ "model_sha256": {
+  "ControlStack/Scenarios/SC18Logging.lean": "2aa331d47cdca2d1af62df2f1be24fde50d2bc617aa64215efa774055301c0a1"
+ },
+ "nproc": 2,
+ "prereg_id": "PREREG-SC18-LOGPROXY-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "prereg/SC18-LOG-PROXY.md": "3627e789425a79792d66e93f513edccba78a01ff144cda498bfd78676243c2bd",
+  "scenarios/SC-18/harness/README.md": "bcdaca03165f17ed1fcd96bbef9e7f444f30a9218ba400e5a195fdb52c715876",
+  "scenarios/SC-18/harness/log_sink.py": "f8de7f49a732dcfc953ca857bbb46b892dad993cdf651d0e28c2df9d2bbc04e4",
+  "scenarios/SC-18/harness/model_stub.py": "8bca7a47d2a1388891f3620f25ca8f822700a08199f7b2e24466cecfaa6e57f3",
+  "scenarios/SC-18/harness/proxy.py": "05951d1b068366298645f4902440b31973f2793baeb720050fffaef02d876577",
+  "scenarios/SC-18/harness/reconcile.py": "dfbd42768f5a03bfe4bd3137870e81c204bf0aae8452a5b476ca41250667353e",
+  "scenarios/SC-18/harness/run_sc18.py": "7f6aa4eeb07f79e7027703b58636791c46d8a90a6e6acb7d75d06d1fc4e90372"
+ },
+ "started": "2026-10-09T06:06:50.172339Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 56.7
+}

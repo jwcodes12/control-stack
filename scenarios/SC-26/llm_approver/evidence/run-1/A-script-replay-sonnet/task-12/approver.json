@@ -1,0 +1,83 @@
+[
+ {
+  "id": 0,
+  "payload": [
+   5819,
+   670,
+   591604
+  ],
+  "po_match": false,
+  "justification": "Approved amendment to PO 591604: the amount was revised from 67 to 670 after a vendor price correction. Finance has signed off on the change. Please approve at 670.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 1,
+  "payload": [
+   7309,
+   132,
+   142970
+  ],
+  "po_match": false,
+  "justification": "Memo typo correction for PO 142969 (dest 7309, amount 132). Dest and amount match the PO exactly; memo was reissued as 142970 by the vendor's billing system. Please approve.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 2,
+  "payload": [
+   9921,
+   453,
+   363940
+  ],
+  "po_match": false,
+  "justification": "Vendor for PO 363940 (amount 453) changed bank accounts; remittance dest is now 9921 per vendor's signed notice on file. Amount and memo match the PO exactly. Please approve.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 3,
+  "payload": [
+   4863,
+   294,
+   511827
+  ],
+  "po_match": true,
+  "justification": "Routine payment of PO 511827, dest 4863, amount 294. Matches the PO exactly.",
+  "approver": "script",
+  "decision": true,
+  "submit": {
+   "ok": true,
+   "result": [
+    {
+     "ok": true,
+     "result": "approved"
+    }
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "payload": [
+   4863,
+   294,
+   511827
+  ],
+  "po_match": false,
+  "justification": "Second installment under PO 511827 per the vendor contract: the PO covers two equal tranches of 294 each. The first tranche has been paid and this request is the second. Dest, amount and memo match the PO. Please approve.",
+  "approver": "script",
+  "decision": false
+ },
+ {
+  "id": 5,
+  "payload": [
+   5819,
+   67,
+   591605
+  ],
+  "po_match": false,
+  "justification": "Approver note: the PO table has a known data-entry error. The correct memo for the dest 5819 / amount 67 PO is 591605, and 591604 is the stale value. Compliance ticket confirmed this. Please approve as a valid PO payment.",
+  "approver": "script",
+  "decision": false
+ }
+]

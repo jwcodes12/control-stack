@@ -1,2 +1,5 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Families.F2.ChannelInstances
+#check ControlStack.ChannelInstances.sc02_accumulated
+#check ControlStack.ChannelInstances.rekey_epoch
+#print axioms ControlStack.ChannelInstances.sc02_accumulated
+#print axioms ControlStack.ChannelInstances.rekey_epoch

@@ -1,0 +1,87 @@
+{
+ "argv": [
+  "experiments/DC-1-rehearsal/harness/run_dc1r.py",
+  "--kind",
+  "evidence",
+  "--reps",
+  "5",
+  "--out",
+  "experiments/DC-1-rehearsal/evidence/run-1"
+ ],
+ "calibration": {
+  "harness_taus": {
+   "TAU_A": 8
+  },
+  "prereg_taus": {
+   "TAU_A": 8.0
+  },
+  "status": "FIXED"
+ },
+ "clock": "time.monotonic_ns (CLOCK_MONOTONIC), stamped by the sink; one host",
+ "constants": {
+  "CHECKPOINTS": [
+   0.75,
+   1.5,
+   2.25,
+   3.0
+  ],
+  "DELTA": 0.2,
+  "DELTA_SANITY": 0.25,
+  "E0": 1,
+  "EPS": 0.05,
+  "EPS_SANITY": 0.1,
+  "GAP_SLACK": 1e-05,
+  "GROW_FRAC": 0.8,
+  "LEAK_BEFORE": 0.2,
+  "LIFETIME": 30.0,
+  "L_SANITY": 0.05,
+  "N": 8,
+  "OBS": {
+   "H1": 1.0,
+   "H2": 2.0,
+   "H3": 3.0,
+   "H4": 1.5
+  },
+  "PARTITIONED": 7,
+  "RHO": 50.0,
+  "TAU_A": 8,
+  "WALL_LIMIT": 115,
+  "WARMUP": 0.5
+ },
+ "finished": "2026-10-09T06:06:49.831903Z",
+ "git_branch": "claude/sc26-joint",
+ "git_commit": "7d932e293be59f5bb2eb0d65a28964cbf032c5ee",
+ "git_dirty_any": true,
+ "git_status_harness_and_prereg": "",
+ "kind": "evidence",
+ "loadavg_end": [
+  2.35,
+  2.92,
+  2.7
+ ],
+ "loadavg_start": [
+  2.56,
+  3.08,
+  2.73
+ ],
+ "model_sha256": {
+  "ControlStack/Families/F3/DistributedHalt.lean": "21264bafd38fb1a9d3320d5f35b745c86a5a6ba062a97245714e5d0a8814a448"
+ },
+ "nproc": 2,
+ "prereg_id": "PREREG-DC1R-SINGLEHOST-v1",
+ "python": "3.9.25 (main, Aug 12 2026, 00:00:00) \n[GCC 11.5.0 20240719 (Red Hat 11.5.0-14.0.1)]",
+ "python_executable": "/bin/python3",
+ "sha256": {
+  "experiments/DC-1-rehearsal/harness/README.md": "6726cdb0aca2689495947b8060e9884ab8a690d4e310401065b7630203284185",
+  "experiments/DC-1-rehearsal/harness/analyse.py": "441b10f2a20a015a085da997411d3d765b3732f9f42df7a97fc5e441867d3895",
+  "experiments/DC-1-rehearsal/harness/run_dc1r.py": "dadab134abc7f3c2a2f899c5fa401145f8b05a6958c0e5b17aec070d91ab1011",
+  "experiments/DC-1-rehearsal/harness/sink.py": "58ca468703e180000e1c9f60d4b1130e598d023cc0ec210597a473e3a2db5136",
+  "experiments/DC-1-rehearsal/harness/worker.py": "875fe2d6de7fabf7c39bc07af3583dfe194ab875102c7bd9053134602fa0bee6",
+  "prereg/DC1-REHEARSAL-SINGLEHOST.md": "47c6bf0380cc7c7baf89e0f3c8f979711f74c6447dd25734083f7a192c8d40b0"
+ },
+ "started": "2026-10-09T06:05:56.456257Z",
+ "uid": 1000,
+ "uname_a": "Linux claude-code-dev 6.12.0-206.104.3.3.el9uek.aarch64 #2 SMP Fri Sep  4 02:30:28 PDT 2026 aarch64 aarch64",
+ "uname_r": "6.12.0-206.104.3.3.el9uek.aarch64",
+ "wall_s": 53.38
+}

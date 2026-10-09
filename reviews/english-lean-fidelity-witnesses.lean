@@ -1,19 +1,19 @@
+import ControlStack.GateClients
+import ControlStack.Lease
+
 /-!
 Isolated source-fidelity countermodels / nonvacuity witnesses.
 This file changes no theorem or implementation. The source commit under audit is
 bda1a50b8ef75bf0c79f3440a43f426f79cb4901.
 
-IMPORTANT: This file has NOT been independently kernel-checked by this audit
-environment. Run with the repository's pinned Lean 4.34.0:
+This isolated file must be checked with the pinned Lean toolchain; do not infer
+a successful check from the presence of this source alone. Run with the repository's pinned Lean 4.34.0:
   lake env lean reviews/english-lean-fidelity-witnesses.lean
 
 The two theorems only show executions are accepted for a caller-free operation
 alphabet; they DO NOT assert a counterexample to either Lean safety theorem.
 To represent a *different physical caller* requires a richer transition system.
 -/
-import ControlStack.GateClients
-import ControlStack.Lease
-
 namespace ControlStack.FidelityWitnesses
 
 private def tx : GateClients.Approval.Tx Unit :=

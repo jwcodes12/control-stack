@@ -1,0 +1,22 @@
+name: sc08-sealed-script
+
+on:
+  pull_request:
+    paths:
+      - 'scenarios/SC-08/hardened/launcher_sealed.py'
+      - 'scenarios/SC-08/harness/sealed_script.py'
+      - 'scenarios/SC-08/harness/launcher.py'
+      - 'tools/test_sc08_sealed_script.py'
+      - '.github/workflows/sc08-sealed-script.yml'
+  workflow_dispatch:
+
+jobs:
+  immutable-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Exercise Linux sealed-fd execution and same-UID mutation refusal
+        run: python3 tools/test_sc08_sealed_script.py -v

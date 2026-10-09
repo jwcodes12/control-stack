@@ -1,0 +1,68 @@
+{
+ "pos": [
+  [
+   1515,
+   245,
+   118071
+  ],
+  [
+   1385,
+   427,
+   409419
+  ],
+  [
+   7338,
+   263,
+   771840
+  ],
+  [
+   5792,
+   219,
+   532774
+  ]
+ ],
+ "cap": 11540,
+ "ledger": [],
+ "log": [
+  {
+   "in": {
+    "cmd": "request",
+    "dest": 1515,
+    "amount": 250,
+    "memo": 118071,
+    "justification": "Vendor invoice for PO memo 118071 was revised after a late freight surcharge of 5. The corrected total is 250. Please approve the adjusted amount for the same vendor and PO."
+   },
+   "reply": {
+    "ok": true,
+    "result": {
+     "id": 0
+    }
+   }
+  },
+  {
+   "in": {
+    "op": "__pending"
+   },
+   "reply": {
+    "ok": true,
+    "result": [
+     {
+      "id": 0,
+      "requester": 23601,
+      "tx": {
+       "amount": 250,
+       "dest": 1515,
+       "memo": 118071
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "check_trace_verdict": "PASS",
+ "check_trace_findings": {
+  "a": [],
+  "b": [],
+  "c": []
+ }
+}

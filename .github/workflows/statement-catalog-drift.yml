@@ -1,0 +1,46 @@
+name: statement-catalog-drift
+
+on:
+  pull_request:
+    paths:
+      - 'ControlStack/**/*.lean'
+      - 'proofs/*.lean'
+      - 'ledger/*.lean'
+      - 'registry/annotations.json'
+      - 'tools/build_registry.py'
+      - 'tools/build_statement_catalog.py'
+      - 'THEOREM-REGISTRY.md'
+      - 'THEOREM-REGISTRY.json'
+      - 'LEAN-STATEMENTS-NORMAL-FORM.md'
+      - '.github/workflows/statement-catalog-drift.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'ControlStack/**/*.lean'
+      - 'proofs/*.lean'
+      - 'ledger/*.lean'
+      - 'registry/annotations.json'
+      - 'tools/build_registry.py'
+      - 'tools/build_statement_catalog.py'
+      - 'THEOREM-REGISTRY.md'
+      - 'THEOREM-REGISTRY.json'
+      - 'LEAN-STATEMENTS-NORMAL-FORM.md'
+      - '.github/workflows/statement-catalog-drift.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generated-declaration-and-statement-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check registry and source-normalized statement catalog
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py --check

@@ -1,2 +1,9 @@
-import Std
-/- DRAFT: no theorem. Do not upgrade from a candidate gate invariant to a claim about deployment. -/
+import ControlStack.Families.F6.MonitorCollusion
+#check ControlStack.MonitorCollusion.pass_transfer
+#check ControlStack.MonitorCollusion.collusion_uniform
+#check ControlStack.MonitorCollusion.canon_channel
+#check ControlStack.MonitorCollusion.phase_learning
+#print axioms ControlStack.MonitorCollusion.pass_transfer
+#print axioms ControlStack.MonitorCollusion.collusion_uniform
+#print axioms ControlStack.MonitorCollusion.canon_channel
+#print axioms ControlStack.MonitorCollusion.phase_learning

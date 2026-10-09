@@ -7,7 +7,7 @@ on:
       - .github/workflows/lean-structure-integration.yml
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: lean-structure-integration-${{ github.ref }}
   cancel-in-progress: false
@@ -21,6 +21,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Regenerate and validate source-derived indexes
+        run: |
+          python3 tools/build_registry.py
+          python3 tools/build_status.py
+          python3 tools/check_scenarios.py
+          python3 -m unittest tools.test_check_scenarios
+          python3 tools/test_ctrlcert.py
+      - name: Persist regenerated index artifacts on isolated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add THEOREM-REGISTRY.md THEOREM-REGISTRY.json scenarios/INDEX.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Regenerate machine-derived theorem and scenario indexes [skip ci]"
+            git push origin HEAD:lean-validation-run-20261008
+          fi
       - name: Install pinned Lean via elan
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none

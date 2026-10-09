@@ -46,6 +46,8 @@ class AtomicPolicyJournal:
         self.admin_pid = admin_pid
         self.versions = []
         self.events = []
+        self.effects = []  # the broker-owned journal is the *only* scoped effect
+        self.effect_ids = {}  # idempotency survives restarts through replay
         self.poisoned = False
         flags = os.O_RDWR | os.O_CREAT | os.O_APPEND
         if hasattr(os, "O_NOFOLLOW"):
@@ -92,6 +94,23 @@ class AtomicPolicyJournal:
             if (entry["version"] != len(self.versions) - 1 or entry["digest"] != digest or
                     entry["decision"] != ("allow" if entry["host"] in pol["allow"] else "deny")):
                 raise ValueError("stale or inconsistent decision in journal")
+        elif kind == "effect":
+            # Effect is *only* the durable journal entry itself. There is no
+            # separate token whose later use could race with a policy change.
+            if not self.versions:
+                raise ValueError("effect without a policy")
+            pol, digest, _ = self.versions[-1]
+            host, payload, request_id = (entry.get("host"), entry.get("payload"),
+                                         entry.get("request_id"))
+            if (not isinstance(host, str) or not host or len(host) > 253 or
+                    not isinstance(payload, str) or len(payload) > 512 or
+                    not isinstance(request_id, str) or not (1 <= len(request_id) <= 128) or
+                    request_id in self.effect_ids or host not in pol["allow"] or
+                    entry.get("version") != len(self.versions) - 1 or
+                    entry.get("digest") != digest):
+                raise ValueError("invalid, duplicated, or stale checked effect")
+            self.effects.append(entry)
+            self.effect_ids[request_id] = entry
         else:
             raise ValueError("unknown journal entry type")
 
@@ -145,6 +164,31 @@ class AtomicPolicyJournal:
                                   "digest": digest, "decision": result})
             return {"ok": True, "decision": result, "version": entry["version"],
                     "digest": digest, "seq": entry["seq"]}
+        if op == "emit":
+            # Narrow claim: writing this *effect entry* is atomic with policy
+            # selection in this single-threaded broker. Not an external action.
+            host, payload, request_id = (request.get("host"), request.get("payload"),
+                                         request.get("request_id"))
+            if (not isinstance(host, str) or not host or len(host) > 253 or
+                    not isinstance(payload, str) or len(payload) > 512 or
+                    not isinstance(request_id, str) or not (1 <= len(request_id) <= 128)):
+                return {"ok": False, "error": "invalid checked-effect request"}
+            previous = self.effect_ids.get(request_id)
+            if previous is not None:
+                if previous["host"] != host or previous["payload"] != payload:
+                    return {"ok": False, "error": "idempotency key reused for different effect"}
+                return {"ok": True, "emitted": True, "replayed": True,
+                        "seq": previous["seq"], "version": previous["version"]}
+            if not self.versions:
+                return {"ok": False, "emitted": False, "error": "no policy"}
+            pol, digest, _ = self.versions[-1]
+            if host not in pol["allow"]:
+                return {"ok": False, "emitted": False, "decision": "deny"}
+            entry = self._commit({"kind": "effect", "host": host,
+                                  "payload": payload, "request_id": request_id,
+                                  "version": len(self.versions) - 1, "digest": digest})
+            return {"ok": True, "emitted": True, "replayed": False,
+                    "seq": entry["seq"], "version": entry["version"]}
         return {"ok": False, "error": "unknown operation"}
 
     def close(self):

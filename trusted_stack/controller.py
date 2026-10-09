@@ -15,6 +15,7 @@ import sqlite3
 import stat
 import time
 from dataclasses import dataclass
+from contextlib import closing
 from pathlib import Path
 
 
@@ -59,7 +60,7 @@ class Controller:
             raise Denied("controller directory not owned/secured by broker")
         fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600)
         os.close(fd)
-        with sqlite3.connect(path) as db:
+        with closing(sqlite3.connect(path)) as db, db:
             db.execute("PRAGMA synchronous=FULL")
             db.executescript("""
             CREATE TABLE meta (id INTEGER PRIMARY KEY CHECK(id=1),
@@ -88,6 +89,7 @@ class Controller:
         return cls(path, principals, clock)
 
     def _open(self):
+        db = None
         try:
             info = self.path.lstat()
             parent = self.path.parent.stat()
@@ -105,6 +107,8 @@ class Controller:
                 raise Denied("state is not initialized")
             return db
         except (OSError, sqlite3.Error) as e:
+            if db is not None:
+                db.close()
             raise Denied("controller state unavailable") from e
 
     def _role(self, uid, role):

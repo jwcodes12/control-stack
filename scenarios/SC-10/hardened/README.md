@@ -65,7 +65,7 @@ another effect. Reusing that ID for different content is rejected.
 Local negative tests check policy tightening before effect,
 replay after restart, duplicate suppression, malformed inputs and a forged
 effect that rehashes its predecessor but names a disallowed host.
-The reference suite passed **10/10 local tests** against the exact checked-in
+The reference suite passed **13/13 local tests** against the exact checked-in
 source blobs; GitHub CI remains a separate gate.
 
 **This does NOT prove** Linux/netfilter/firewall syscall mediation, arbitrary
@@ -74,6 +74,15 @@ A downstream consumer must not treat `decide` or `emit` replies as an
 unrestricted authorization capability. In particular, `emit` is a journaled
 effect only; making a real network effect would require the actuator itself
 to be inside a trusted, pre-effect enforcement boundary.
+
+Additional **expected negative** witnesses in
+`test_trust_root_limits.py` demonstrate two limitations when an attacker
+has write access to the journal: a complete, valid-prefix rollback passes
+replay, and an attacker can append a fabricated admin-writer record with a
+consistent hash link and cause an allowed decision. These tests succeed by
+exhibiting the attack, not by defeating it. They make separate journal custody,
+a trusted identity source and a monotonic external checkpoint necessary
+trust roots rather than silently satisfied assumptions.
 
 A peer's PID is not a reliable security principal across process/UID
 compromise; replay IDs are not cryptographic credentials; SHA-256 chaining

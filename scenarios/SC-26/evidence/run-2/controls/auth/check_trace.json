@@ -1,0 +1,57 @@
+{
+  "a_replay": [
+    "Inv.bank_ok fails after bank#1: (0, Tx(dest=1000, amount=10, memo=900))",
+    "Inv.bank_ok fails after gate#8: (0, Tx(dest=1000, amount=10, memo=900))",
+    "Inv.bank_ok fails after gate#9: (0, Tx(dest=1000, amount=10, memo=900))",
+    "Inv.bank_ok fails after gate#10: (0, Tx(dest=1000, amount=10, memo=900))",
+    "Inv.bank_ok fails after gate#11: (0, Tx(dest=1000, amount=10, memo=900))",
+    "Inv.bank_ok fails after gate#12: (0, Tx(dest=1000, amount=10, memo=900))"
+  ],
+  "b_world": [],
+  "c_reconcile": [
+    "c1 key 0: effect by non-gate uid 23601"
+  ],
+  "replay": {
+    "append": {
+      "problems": [],
+      "n_problems": 0,
+      "model_good": true
+    },
+    "interleave": {
+      "problems": [
+        "Inv.bank_ok fails after bank#1: (0, Tx(dest=1000, amount=10, memo=900))",
+        "Inv.bank_ok fails after gate#8: (0, Tx(dest=1000, amount=10, memo=900))",
+        "Inv.bank_ok fails after gate#9: (0, Tx(dest=1000, amount=10, memo=900))",
+        "Inv.bank_ok fails after gate#10: (0, Tx(dest=1000, amount=10, memo=900))",
+        "Inv.bank_ok fails after gate#11: (0, Tx(dest=1000, amount=10, memo=900))",
+        "Inv.bank_ok fails after gate#12: (0, Tx(dest=1000, amount=10, memo=900))"
+      ],
+      "n_problems": 6,
+      "model_good": true
+    }
+  },
+  "replay_mode": "both (interleave primary)",
+  "model_good": true,
+  "info": {
+    "inflight_after_halt": [
+      {
+        "key": 14,
+        "send_seq": 201,
+        "transmit_seq": 202,
+        "halt_seq": 204,
+        "clock": "mono"
+      }
+    ],
+    "stranded": [
+      {
+        "acked": 0,
+        "id": 13,
+        "outcome": null,
+        "seq": 11
+      }
+    ]
+  },
+  "ledger_entries": 15,
+  "ledger_total": 911,
+  "verdict": "FAIL"
+}

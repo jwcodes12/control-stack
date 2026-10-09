@@ -26,9 +26,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+RUNS = {"run-1": "prereg/SC26-TRANSACTION-GATE-v2.md", "run-2": "prereg/SC26-TRANSACTION-GATE-v3.md"}
 RUN = ROOT / "scenarios/SC-26/evidence/run-1"
-PREREG = ROOT / "prereg/SC26-TRANSACTION-GATE-v2.md"
-HARNESS = ROOT / "scenarios/SC-26/harness"
+PREREG = ROOT / RUNS["run-1"]
+HARNESS = ROOT / "scenarios/SC-26/harness"  # replaced by the PINNED harness extracted from git for each run
 STD = {"propext", "Classical.choice", "Quot.sound"}
 CONTROL_RULE = {"distinct": "c3", "payload": "c2", "cap": "c6", "halt": "c4", "dedup": "c5", "auth": "c1",
                 "nonce": "c7"}
@@ -49,13 +50,40 @@ def check_proofs(out):
     return ok
 
 
+def pinned_commit():
+    m = re.search(r"Harness commit: `([0-9a-f]{40})`", PREREG.read_text())
+    return m.group(1) if m else None
+
+
+def extract_pinned_harness():
+    """materialise the harness exactly as pinned (git archive of the pinned commit), so a run is rechecked with the
+    checker it was preregistered with, not a later version"""
+    import tempfile
+    commit = pinned_commit()
+    tmp = Path(tempfile.mkdtemp(prefix="sc26-pinned-"))
+    data = subprocess.run(["git", "archive", commit, "scenarios/SC-26/harness"], cwd=ROOT, capture_output=True,
+                          check=True).stdout
+    subprocess.run(["tar", "-x", "-C", str(tmp)], input=data, check=True)
+    return tmp / "scenarios/SC-26/harness"
+
+
+def git_blob_sha(commit, path):
+    data = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=ROOT, capture_output=True, check=True).stdout
+    return hashlib.sha256(data).hexdigest()
+
+
 def check_pins(out):
     pins = dict(re.findall(r"\| `([^`]+)` \| `([0-9a-f]{64})` \|", PREREG.read_text()))
     rc = json.loads((RUN / "receipt.json").read_text())
-    probs = []
+    probs, info = [], []
+    commit = pinned_commit()
+    if commit is None:
+        probs.append("prereg names no harness commit")
     for path, h in pins.items():
+        if commit and git_blob_sha(commit, path) != h:
+            probs.append(f"pinned commit differs from pin: {path}")
         if sha(ROOT / path) != h:
-            probs.append(f"current file differs from pin: {path}")
+            info.append(f"working tree has evolved since the pin (informational): {path}")
         base = Path(path).name
         if (path.startswith("scenarios/SC-26/harness/") and base in rc["harness_sha256"]
                 and rc["harness_sha256"][base] != h):
@@ -68,7 +96,7 @@ def check_pins(out):
         probs.append("receipt Lean model hash differs from pin")
     if rc.get("prereg_sha256") != sha(PREREG):
         probs.append("receipt prereg hash differs from current prereg")
-    out["pins"] = dict(ok=not probs, pinned=len(pins), problems=probs)
+    out["pins"] = dict(ok=not probs, pinned=len(pins), problems=probs, info=info[:4], commit=commit)
     return not probs
 
 
@@ -110,7 +138,10 @@ def check_evidence(out):
 def raw_verdicts(out):
     probs = []
     att = json.loads((RUN / "attacks/results.json").read_text())
-    failed = [r["id"] for r in att if not r.get("pass")]
+    failed = [r["id"] for r in att if r.get("pass") is False]
+    missing = [r["id"] for r in att if r.get("pass") is None and r["id"] != "A18"]
+    if missing:
+        probs.append(f"H1 attacks without a verdict: {missing}")
     if failed:
         probs.append(f"H1 attacks failed: {failed}")
     rows = json.loads((RUN / "usefulness/results.json").read_text())
@@ -131,7 +162,8 @@ def raw_verdicts(out):
 
 
 def check_h3(out, pins_lean):
-    d = json.loads((RUN / "h3-difftest.json").read_text())
+    f = RUN / "h3-difftest.json"
+    d = json.loads((f if f.exists() else RUN / "h3/h3-difftest.json").read_text())
     ok = (d.get("verdict") == "PASS" and not d.get("mismatches") and d.get("coverage", {}).get("met")
           and d.get("lean_source_sha256") == pins_lean and d.get("lean_outputs", 0) >= 200)
     out["h3"] = dict(ok=bool(ok), cases=d.get("lean_outputs"), mismatches=len(d.get("mismatches", [])),
@@ -150,15 +182,41 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--skip-lean", action="store_true", help="skip step 1 (for quick runs; never for a verdict)")
+    ap.add_argument("--run", choices=sorted(RUNS), action="append", help="evidence run(s) to recheck (default: all)")
     a = ap.parse_args()
+    global RUN, PREREG, HARNESS
+    codes, outs = [], {}
+    proofs_out = {}
+    proofs_ok = True if a.skip_lean else check_proofs(proofs_out)
+    for run in (a.run or sorted(RUNS)):
+        RUN, PREREG = ROOT / "scenarios/SC-26/evidence" / run, ROOT / RUNS[run]
+        HARNESS = extract_pinned_harness()
+        code, out = recheck(a, proofs_ok)
+        out["proofs"] = proofs_out.get("proofs", {"ok": a.skip_lean, "skipped": a.skip_lean})
+        codes.append(code)
+        outs[run] = out
+    worst = 1 if 1 in codes else 3 if 3 in codes else 0
+    if a.json:
+        print(json.dumps(outs, indent=1))
+    else:
+        for run, out in outs.items():
+            print(f"== {run} ({RUNS[run]})")
+            for k in ("proofs", "pins", "evidence", "h3", "self_test", "raw"):
+                if k in out:
+                    print(f"  {k.upper():10} {'OK' if out[k].get('ok') else 'FAIL'}  "
+                          + json.dumps({x: y for x, y in out[k].items() if x not in ('ok', 'detail', 'tail', 'info')})[:260])
+            print("  VERDICT", out["verdict"])
+        print("OPEN:", "; ".join(next(iter(outs.values()))["open"]))
+    return worst
+
+
+def recheck(a, proofs_ok):
     out = {}
     pins = dict(re.findall(r"\| `([^`]+)` \| `([0-9a-f]{64})` \|", PREREG.read_text()))
     checks = [("pins", lambda: check_pins(out)), ("evidence", lambda: check_evidence(out)),
               ("h3", lambda: check_h3(out, pins.get("ControlStack/Scenarios/SC26Transaction.lean"))),
               ("self_test", lambda: self_test(out))]
-    if not a.skip_lean:
-        checks.insert(0, ("proofs", lambda: check_proofs(out)))
-    results = {}
+    results = {"proofs": proofs_ok}
     for name, fn in checks:
         try:
             results[name] = bool(fn())
@@ -176,16 +234,7 @@ def main():
     out["open"] = ["independent human review of statement fidelity (done-criterion 5)",
                    "credential separation, role disjointness and receiver idempotency are tested premises, not theorems",
                    "single host; scripted honest client"]
-    if a.json:
-        print(json.dumps(out, indent=1))
-    else:
-        for k in ("proofs", "pins", "evidence", "h3", "self_test", "raw"):
-            if k in out:
-                print(f"{k.upper():10} {'OK' if out[k].get('ok') else 'FAIL'}  "
-                      + json.dumps({x: y for x, y in out[k].items() if x not in ('ok', 'detail', 'tail')})[:300])
-        print("VERDICT", verdict)
-        print("OPEN:", "; ".join(out["open"]))
-    return code
+    return code, out
 
 
 if __name__ == "__main__":

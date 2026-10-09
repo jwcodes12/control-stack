@@ -7,8 +7,6 @@ import ControlStack
 -/
 set_option pp.explicit true
 set_option pp.universes true
-set_option pp.maxDepth 75
-set_option pp.maxSteps 150000
 #print ControlStack.Gate.Spec
 #print ControlStack.Gate.Spec.trace_safe
 #print axioms ControlStack.Gate.Spec.trace_safe

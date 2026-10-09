@@ -26,11 +26,12 @@ theorem f01_satisfiable_spec_and_hidden_harm :
     (hiddenHarmSystem.run false [true]) = true ∧
     hiddenHarmSystem.effects (hiddenHarmSystem.run false [true]) = [] ∧
     hiddenHarmSpec.Inv (hiddenHarmSystem.run false [true]) := by
-  decide
+  refine ⟨rfl, rfl, ?_⟩
+  trivial
 
 theorem f01_existing_theorem_still_applies :
     hiddenHarmSpec.Inv (hiddenHarmSystem.run false [true]) ∧
-    hiddenHarmSystem.effects false <+
+    hiddenHarmSystem.effects false <+:
       hiddenHarmSystem.effects (hiddenHarmSystem.run false [true]) ∧
     ∀ e ∈ hiddenHarmSystem.effects (hiddenHarmSystem.run false [true]),
       hiddenHarmSpec.ok (hiddenHarmSystem.run false [true]) e := by
@@ -73,24 +74,30 @@ def bothPass (z t : Bool) : ℚ := if z && t then 1 else 0
 
 theorem f12_same_first_marginal (z : Bool) :
     (∑ t : Bool, independent z t) = (∑ t : Bool, sameCoin z t) := by
-  cases z <;> norm_num [Finset.sum_bool, independent, sameCoin]
+  cases z <;> norm_num [Fintype.sum_bool, independent, sameCoin]
 
 theorem f12_same_second_marginal (t : Bool) :
     (∑ z : Bool, independent z t) = (∑ z : Bool, sameCoin z t) := by
-  cases t <;> norm_num [Finset.sum_bool, independent, sameCoin]
+  cases t <;> norm_num [Fintype.sum_bool, independent, sameCoin]
 
 theorem f12_product_accepts_quarter :
     (∑ z : Bool, ∑ t : Bool, independent z t * bothPass z t) = 1 / 4 := by
-  norm_num [Finset.sum_bool, independent, bothPass]
+  norm_num [Fintype.sum_bool, independent, bothPass]
 
 theorem f12_correlated_accepts_half :
     (∑ z : Bool, ∑ t : Bool, sameCoin z t * bothPass z t) = 1 / 2 := by
-  norm_num [Finset.sum_bool, sameCoin, bothPass]
+  norm_num [Fintype.sum_bool, sameCoin, bothPass]
 
 theorem f12_same_marginals_different_joint_risk :
     (∑ z : Bool, ∑ t : Bool, independent z t * bothPass z t) <
     (∑ z : Bool, ∑ t : Bool, sameCoin z t * bothPass z t) := by
   rw [f12_product_accepts_quarter, f12_correlated_accepts_half]
   norm_num
+
+#print axioms f01_satisfiable_spec_and_hidden_harm
+#print axioms f01_existing_theorem_still_applies
+#print axioms f06_not_survival
+#print axioms f06_harm_even_when_survival_zero
+#print axioms f12_same_marginals_different_joint_risk
 
 end FidelityRepro

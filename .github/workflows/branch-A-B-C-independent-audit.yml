@@ -1,0 +1,89 @@
+name: branch-A-B-C-independent-audit
+on:
+  push:
+    branches:
+      - structure-branch-audit-20261008
+    paths:
+      - .github/workflows/branch-A-B-C-independent-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independently-replay-original-branches:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - candidate: A
+            ref: cbec4db5ea670e8a4585175b3b2f9d420d3ef3be
+          - candidate: B
+            ref: fe330a55c1dc667b9e1e5877b3ad4383cd047690
+          - candidate: C
+            ref: e78a580412b5cfb2b96382e13ffb6ccda5f978f1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Source commit and file counts
+        run: |
+          git rev-parse HEAD
+          echo "Files: $(git ls-files | wc -l)"
+          echo "Scenario dirs: $(find scenarios -mindepth 1 -maxdepth 1 -type d -name 'SC-*' | wc -l)"
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Run original checker and Python tests
+        shell: bash
+        env:
+          CANDIDATE: ${{ matrix.candidate }}
+        run: |
+          set -uo pipefail
+          bad=0
+          gate() {
+            title="$1"; shift
+            echo "::group::$title"
+            "$@" >/tmp/gate-result.log 2>&1
+            rc=$?
+            tail -n 75 /tmp/gate-result.log
+            echo "::endgroup::"
+            printf '%s: %s\n' "$title" "$rc" | tee -a "$GITHUB_STEP_SUMMARY"
+            if [ "$rc" -ne 0 ]; then bad=1; fi
+          }
+          case "$CANDIDATE" in
+            A)
+              gate "A checker all 28 lint" python3 tools/check_scenario.py --all --lint
+              gate "A mutation/test suite" python3 -m unittest discover -s tests -p test_scenarios.py
+              ;;
+            B)
+              gate "B checker all 28" python3 tools/check_scenarios.py
+              gate "B checker mutation/test suite" python3 -m unittest tools.test_check_scenarios
+              ;;
+            C)
+              gate "C checker active bundles" python3 tools/check_scenario.py --all
+              gate "C checker mutation/test suite" python3 -m unittest tools.test_check_scenario
+              gate "C lexical registry drift" python3 tools/build_registry.py --check
+              ;;
+          esac
+          if [ "$bad" -ne 0 ]; then exit 1; fi
+      - name: Download pinned Mathlib cache
+        run: lake exe cache get
+      - name: Build original branch ControlStack target
+        shell: bash
+        run: |
+          set +e
+          lake build ControlStack > /tmp/lean-branch-build.log 2>&1
+          rc=$?
+          echo "Branch ${{ matrix.candidate }} Lean build exit: $rc"
+          grep -E 'Build completed successfully|error: |build failed|sorryAx' /tmp/lean-branch-build.log | tail -n 80 || true
+          tail -n 30 /tmp/lean-branch-build.log
+          echo "Lean build exit $rc" >> "$GITHUB_STEP_SUMMARY"
+          exit "$rc"
+      - name: C original Lean scenario-claim verifier
+        if: matrix.candidate == 'C'
+        run: python3 tools/check_scenario.py --all --verify-proofs

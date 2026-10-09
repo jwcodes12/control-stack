@@ -1,0 +1,64 @@
+name: english-lean-fidelity-kernel
+on:
+  push:
+    branches: [fidelity-kernel-20261009]
+    paths:
+      - "reviews/fidelity-repro/**"
+      - ".github/workflows/english-lean-fidelity.yml"
+  pull_request:
+    paths:
+      - "reviews/fidelity-repro/**"
+      - ".github/workflows/english-lean-fidelity.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  elaboration-and-countermodels:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify audit source pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e 083874048518b68d754f0c392ad0cb84f01174ba^{commit}
+          # Restore exactly the historical proof sources, keeping these new probes.
+          # A future main branch is allowed to contain newer Lean modules.
+          git restore --source 083874048518b68d754f0c392ad0cb84f01174ba --worktree -- ControlStack ControlStack.lean proofs ledger lakefile.lean lean-toolchain
+          test -z "$(git diff --name-only 083874048518b68d754f0c392ad0cb84f01174ba -- ControlStack ControlStack.lean proofs ledger lakefile.lean lean-toolchain)"
+          cat lean-toolchain
+      - name: Install pinned Lean through elan
+        shell: bash
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch dependencies and build the unchanged source
+        shell: bash
+        run: |
+          set -euo pipefail
+          lean --version
+          lake --version
+          lake exe cache get
+          lake build
+      - name: Elaborated theorem types and axioms
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean reviews/fidelity-repro/Elaboration.lean 2>&1 | tee elaboration.log
+      - name: Compile minimal countermodels
+        shell: bash
+        run: |
+          set -euo pipefail
+          lake env lean reviews/fidelity-repro/Countermodels.lean 2>&1 | tee countermodels.log
+          echo "ALL COUNTERMODEL PROOFS CHECKED"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: english-lean-fidelity-logs
+          path: |
+            elaboration.log
+            countermodels.log
+          if-no-files-found: ignore

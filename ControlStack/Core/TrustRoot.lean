@@ -230,7 +230,7 @@ def scenarios : List (ℕ × List Prem) :=
    (25, [.credentialSeparation, .honestUsefulness, .exclusiveEffectPath, .semanticJudgement, .modelRuntimeCorrespondence]),
    (26, [.credentialSeparation, .honestUsefulness, .modelRuntimeCorrespondence, .roleSeparation, .independentReview, .receiverIdempotency]),
    (27, [.collisionResistance, .independentAnchor]),
-   (28, [.credentialSeparation, .honestUsefulness, .antiRollback, .trustedMeter])]
+   (28, [.credentialSeparation, .honestUsefulness, .modelRuntimeCorrespondence, .antiRollback, .trustedMeter])]
 -- END GENERATED: scenarios
 
 /-! ## The dependency graph (a modelling judgement) -/
@@ -338,7 +338,7 @@ theorem scenario_roots_table : scenarios.map (fun s => (s.1, scenarioRoots s.1))
        (25, [.issuerAuthenticity, .kernelMediation, .measuredRates, .humanJudgement, .implementationConformance]),
        (26, [.issuerAuthenticity, .monotonicAnchor, .measuredRates, .humanJudgement, .orgConfiguration, .implementationConformance, .externalContract]),
        (27, [.independentWitness, .collisionResistance]),
-       (28, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates])] := by
+       (28, [.issuerAuthenticity, .monotonicAnchor, .trustedMeter, .measuredRates, .implementationConformance])] := by
   decide
 
 /-- **The whole portfolio** rests on these roots. -/

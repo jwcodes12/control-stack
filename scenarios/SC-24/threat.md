@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Untrusted monitor with a view-only decision rule; generator sharing a codebook; adaptive phase learning over a stream.
 
-**Scope:** Lean bounds only; TV, per-item leakage λ and canonicalisation K must be estimated or enforced.
+**Scope:** Lean bounds only; TV, per-item leakage λ and canonicalisation K must be estimated or enforced. Runtime: LLM-in-the-loop sandboxed eval with a fixed scripted signal (scenarios/SC-24/llm_collusion/evidence/run-1); adaptive signal search not tested (blocked; recorded as an open limit).
 
 **Refutation (what would show the claim wrong):** Measured |FNR_real − FNR_honeypot| above estimated TV, or a stego channel surviving canonicalisation (witness: stego_fools_honeypots).
 

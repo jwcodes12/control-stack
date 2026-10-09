@@ -9,3 +9,12 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-06/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.SC06Artifacts`
+
+## Harness
+
+- Runner: `scenarios/SC-06/harness/run_sc06.py` (runs unprivileged and refuses to run as root; evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-06/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC06-SHARED-ARTIFACTS.md` (PASS)

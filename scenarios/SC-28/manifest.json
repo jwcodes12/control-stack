@@ -78,6 +78,24 @@
       "path": "ControlStack/Core/AntiRollback.lean",
       "sha256": "3efc33a69338d07b822a9a943c6becb15b3f9f2190e6b755091a10121dc51c8d",
       "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC28Refinement.concrete_safe",
+      "path": "ControlStack/Scenarios/SC28Refinement.lean",
+      "sha256": "070ca84dbe9eb0d04e04a33de865a26191e4c5b0fd82a793f4e084a144595b5b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC28Refinement.concrete_revoked_stops",
+      "path": "ControlStack/Scenarios/SC28Refinement.lean",
+      "sha256": "070ca84dbe9eb0d04e04a33de865a26191e4c5b0fd82a793f4e084a144595b5b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
+    },
+    {
+      "name": "ControlStack.SC28Refinement.exclusive_placement_safe",
+      "path": "ControlStack/Scenarios/SC28Refinement.lean",
+      "sha256": "070ca84dbe9eb0d04e04a33de865a26191e4c5b0fd82a793f4e084a144595b5b",
+      "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
   "evidence": [
@@ -140,6 +158,14 @@
       "evidence": "NOT_RUN",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
+    },
+    {
+      "id": "model_runtime_correspondence",
+      "text": "Two links: concrete cgroup controller event machine (placement before exec, kernel-enforced hierarchical limits, fork inheritance, revoke = cgroup.kill, HALT = freeze+kill) → SC28 model: PROVED (SC28Refinement.simulation/concrete_safe/concrete_revoked_stops; exclusive_placement_safe); Python meter → concrete machine: TESTED (run-1 H1–H5).",
+      "proof": "THEOREM_VERIFIED",
+      "evidence": "TESTED_NOT_PROVED",
+      "applicability": "UNRESOLVED",
+      "usefulness": "NOT_APPLICABLE"
     }
   ],
   "scope_axes": {
@@ -148,8 +174,8 @@
       "note": "Benign workloads only; adversarial workloads not run."
     },
     "runtime_correspondence": {
-      "status": "UNRESOLVED",
-      "note": "Not independently established."
+      "status": "ASSUMED",
+      "note": "Event-structure refinement proved in Lean (SC28Refinement) under kernel_enforcement, fork_inherits and exclusive-placement premises; Python-to-event-machine link tested only."
     },
     "environment_boundary": {
       "status": "ASSUMED",

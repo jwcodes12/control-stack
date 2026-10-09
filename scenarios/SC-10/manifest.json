@@ -5,7 +5,7 @@
   "bad_event": "An enforcement decision uses a policy version not written by an admin or not the latest at that moment. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any write/decide/altDecide/build/halt trace.",
   "refutation": "A decision under an agent-written or stale policy despite full checks (witnesses: agent-writable policy, stale cache, alternate evaluator).",
-  "scope": "Lean model only. Not: storage rollback of the policy store. The check flag(s) singleEval, pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
+  "scope": "Lean model only. Not: storage rollback of the policy store. The check flag(s) singleEval, pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-10/evidence/run-1), benign workloads, process identities under one UID.",
   "families": [
     "F1",
     "F4"
@@ -31,7 +31,20 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-10/evidence/run-1/verdicts.json",
+      "sha256": "560dade7d4c05b726a6ff9b4bd07f86683377163a9bef887ae6de4bcd4cae2f9",
+      "purpose": "PREREG-SC10-POLICY-v1 run-1: decisions used the latest admin version (store log + shared clock), agent writes refused, no stale use after tightening, pinned toolchain despite PATH shadowing, usefulness, four controls (agent-writable, cached, alternate evaluator, PATH toolchain) fired; 5/5 reps; process identities under one UID",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC10-POLICY-STORE.md",
+      "sha256": "c5d675bcdca5dd438a02e9db1888a4f98b80b6989994106315f109fdeac83df9",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -45,7 +58,7 @@
       "id": "store_trusted",
       "text": "The policy store's access control and storage are trusted (no rollback).",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -53,7 +66,7 @@
       "id": "single_evaluator",
       "text": "The store is the deployed evaluator's only policy source.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -61,7 +74,7 @@
       "id": "honest_usefulness",
       "text": "Policy changes by admins are timely.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }
@@ -69,27 +82,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-10/evidence/run-1)."
     }
   }
 }

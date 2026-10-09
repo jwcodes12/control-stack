@@ -9,3 +9,17 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-24/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Families.F6.MonitorCollusion`
+
+## Harness
+
+- Unit tests: `python3 -m unittest discover -s scenarios/SC-24/llm_collusion -p 'test_*.py'`
+- Unit tests: `python3 -m unittest discover -s scenarios/SC-24/llm_collusion_v2 -p 'test_*.py'`
+- Runner: `scenarios/SC-24/llm_collusion/run_collusion.py` (see its docstring for privileges; evidence runs need the frozen prereg)
+- Runner: `scenarios/SC-24/llm_collusion_v2/run_v2.py` (see its docstring for privileges; evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-24/llm_collusion/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC24-COLLUSION.md` (PASS)
+- Recorded: `scenarios/SC-24/llm_collusion_v2/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC24-COLLUSION-V2.md` (PASS)

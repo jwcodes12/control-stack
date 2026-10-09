@@ -5,7 +5,7 @@
   "bad_event": "A program runs whose loaded content digest is not allowlisted, or an interpreter runs a script whose digest is not allowlisted (or with no script). Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
   "adversary": "Model: any writes to writable paths and any exec with any script argument.",
   "refutation": "An exec of non-allowlisted content despite full checks (witnesses: path allowlist TOCTOU, writable exec mount, interpreter loophole, interpreter REPL).",
-  "scope": "Lean model only. Not: memfd/JIT loaders, kernel exploits.",
+  "scope": "Lean model only. Not: memfd/JIT loaders, kernel exploits. Runtime: single-host preregistered reference run (scenarios/SC-08/evidence/run-1), benign workloads.",
   "families": [
     "F1",
     "F3",
@@ -16,23 +16,36 @@
     {
       "name": "ControlStack.SC08.sc08_safe",
       "path": "ControlStack/Scenarios/SC08Exec.lean",
-      "sha256": "8b86fe53c922aa85adce70deae8c59f7d2db061fdd25f7e5f920fb6b118b89ba",
+      "sha256": "4de8f269562bd6123c13cbdbcd813630dea1ea6f4b40e3fdd059d82dff2ccf42",
       "recorded_status": "KERNEL_CHECK_RECORDED"
     },
     {
       "name": "ControlStack.SC08.safe_of_sound",
       "path": "ControlStack/Scenarios/SC08Exec.lean",
-      "sha256": "8b86fe53c922aa85adce70deae8c59f7d2db061fdd25f7e5f920fb6b118b89ba",
+      "sha256": "4de8f269562bd6123c13cbdbcd813630dea1ea6f4b40e3fdd059d82dff2ccf42",
       "recorded_status": "KERNEL_CHECK_RECORDED"
     },
     {
       "name": "ControlStack.SC08.halt_freezes",
       "path": "ControlStack/Scenarios/SC08Exec.lean",
-      "sha256": "8b86fe53c922aa85adce70deae8c59f7d2db061fdd25f7e5f920fb6b118b89ba",
+      "sha256": "4de8f269562bd6123c13cbdbcd813630dea1ea6f4b40e3fdd059d82dff2ccf42",
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-08/evidence/run-1/verdicts.json",
+      "sha256": "8cf874e876bcbfa21c506990b7fa19e70c6ba22448e97c58a618dd7312b66b26",
+      "purpose": "PREREG-SC08-EXEC-v1 run-1: only allowlisted digests ran (independent sentinel of loaded code), swap inside check-to-exec window never ran (fd/copy pinning), non-allowlisted script and REPL refused, usefulness, path-allowlist and interpreter-loophole controls fired; 5/5 reps; launcher is the only interface (complete mediation premise, not kernel enforcement)",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC08-EXEC-ALLOWLIST.md",
+      "sha256": "646ca6b700999ed56ae20cf6aa63d6c5cc0fd1ef9005ae9aad9bf28794e1185f",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "credential_separation",
@@ -54,7 +67,7 @@
       "id": "fd_pinned_hash",
       "text": "The bytes hashed are the bytes loaded.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -62,7 +75,7 @@
       "id": "honest_usefulness",
       "text": "Allowlist covers honest tasks.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_RUN"
     }
@@ -70,27 +83,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-08/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-08/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-08/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-08/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-08/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-08/evidence/run-1)."
     }
   }
 }

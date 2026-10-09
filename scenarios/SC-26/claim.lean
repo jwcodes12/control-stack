@@ -1,3 +1,5 @@
+import ControlStack.Scenarios.SC26LossyHalt
+import ControlStack.Scenarios.SC26LossyLiveness
 import ControlStack.Scenarios.SC26Liveness
 import ControlStack.Core.AuthenticatedAdv
 import ControlStack.Scenarios.SC26Authenticated
@@ -71,3 +73,21 @@ import ControlStack.Scenarios.SC26Refinement
 #print axioms ControlStack.SC26Liveness.Concrete.crashes_forever_no_progress
 #check ControlStack.SC26Liveness.Concrete.halted_concrete_no_progress
 #print axioms ControlStack.SC26Liveness.Concrete.halted_concrete_no_progress
+#check ControlStack.SC26LossyLiveness.lossy_safe
+#print axioms ControlStack.SC26LossyLiveness.lossy_safe
+#check ControlStack.SC26LossyLiveness.lossy_progress
+#print axioms ControlStack.SC26LossyLiveness.lossy_progress
+#check ControlStack.SC26LossyLiveness.lossy_rounds
+#print axioms ControlStack.SC26LossyLiveness.lossy_rounds
+#check ControlStack.SC26LossyLiveness.drop_all_no_progress
+#print axioms ControlStack.SC26LossyLiveness.drop_all_no_progress
+#check ControlStack.SC26LossyLiveness.no_dedup_lossy_pays_twice
+#print axioms ControlStack.SC26LossyLiveness.no_dedup_lossy_pays_twice
+#check ControlStack.SC26LossyHalt.lossy_halt_keys
+#print axioms ControlStack.SC26LossyHalt.lossy_halt_keys
+#check ControlStack.SC26LossyHalt.tagged_rounds
+#print axioms ControlStack.SC26LossyHalt.tagged_rounds
+#check ControlStack.SC26LossyHalt.recover_ignores_halt_lossy
+#print axioms ControlStack.SC26LossyHalt.recover_ignores_halt_lossy
+#check ControlStack.SC26LossyHalt.per_copy_weaker
+#print axioms ControlStack.SC26LossyHalt.per_copy_weaker

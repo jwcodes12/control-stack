@@ -9,3 +9,12 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-04/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Families.F2.ChannelInstances`
+
+## Harness
+
+- Runner: `scenarios/SC-04/harness/run_sc04.py` (see its docstring for privileges; evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-04/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC04-LOG-CANON.md` (PASS)

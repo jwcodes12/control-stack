@@ -9,3 +9,8 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-11/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.SC10Policy`
+
+## Evidence
+
+- Recorded: `scenarios/SC-10/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC10-POLICY-STORE.md` (PASS)

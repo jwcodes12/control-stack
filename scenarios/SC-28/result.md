@@ -5,7 +5,7 @@
 **CONDITIONAL.** Multiple agents individually within limits jointly exceed the overall budget
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
-- Lean results: 11 theorem reference(s), 1 of them necessity witnesses.
+- Lean results: 14 theorem reference(s), 1 of them necessity witnesses.
 - Runtime evidence: preregistered reference run(s) `PREREG-ANTI-ROLLBACK-v1`, `PREREG-SC28-CGMETER-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
@@ -30,6 +30,9 @@ Readings are the first sentence of each theorem's docstring. The statement itsel
 | `global_cap_blocks_honest` | `ControlStack/Scenarios/SC28Liveness.lean` | A shared global cap blocks an honest worker. |
 | `rollback_transfer` | `ControlStack/Core/AntiRollback.lean` | Transfer under rollback. For any gate with a spec, after ANY interleaving of writes, commits, crashes and restarts, and rollbacks of the store to any backup: the anchored state is the plain run of the committed ops, the released effects... |
 | `sc28_rollback_safe` | `ControlStack/Core/AntiRollback.lean` | SC-28 with storage rollback allowed. |
+| `concrete_safe` | `ControlStack/Scenarios/SC28Refinement.lean` | SC-28 safety for the concrete controller (`SC28.sc28_safe` transferred): for every concrete trace (any leases, launches, forks, consumption, reads, revocations, HALT, and unplaced launches), α of the reached state is `SC28.Good`. |
+| `concrete_revoked_stops` | `ControlStack/Scenarios/SC28Refinement.lean` | Revocation stops the lease (`SC28.revoked_lease_stops` transferred): once `lid` is revoked, its kernel counter never grows, whatever follows. |
+| `exclusive_placement_safe` | `ControlStack/Scenarios/SC28Refinement.lean` | Exclusive placement makes the meter complete. |
 
 ### Necessity witnesses
 
@@ -75,6 +78,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 
 - `trusted_meter`: The meter sees every unit of consumption by every descendant (kernel cgroup accounting with launch-time placement). (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 - `anti_rollback`: The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust. (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+- `model_runtime_correspondence`: Two links: concrete cgroup controller event machine (placement before exec, kernel-enforced hierarchical limits, fork inheritance, revoke = cgroup.kill, HALT = freeze+kill) → SC28 model: PROVED (SC28Refinement.simulation/concrete_safe/concrete_revoked_stops; exclusive_placement_safe); Python meter → concrete machine: TESTED (run-1 H1–H5). (proof: THEOREM_VERIFIED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 **Evidence NOT_RUN:**
 
@@ -91,8 +95,9 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 - Not established as applying to a real deployment: The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust (`anti_rollback`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Mechanism holds against workloads that try to evade accounting or termination (`adversarial_workloads`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Honest jobs complete within their leases. Formal counterpart: SC28Liveness.lean (progress under interleaving; availability prices stated as witnesses) (`honest_usefulness`; applicability UNRESOLVED).
+- Not established as applying to a real deployment: Two links: concrete cgroup controller event machine (placement before exec, kernel-enforced hierarchical limits, fork inheritance, revoke = cgroup.kill, HALT = freeze+kill) → SC28 model: PROVED (SC28Refinement.simulation/concrete_safe/concrete_revoked_stops; exclusive_placement_safe); Python meter → concrete machine: TESTED (run-1 H1–H5) (`model_runtime_correspondence`; applicability UNRESOLVED).
 - Scope axis `threat_coverage` is UNRESOLVED: Benign workloads only; adversarial workloads not run.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established.
+- Scope axis `runtime_correspondence` is ASSUMED: Event-structure refinement proved in Lean (SC28Refinement) under kernel_enforcement, fork_inherits and exclusive-placement premises; Python-to-event-machine link tested only.
 - Scope axis `environment_boundary` is ASSUMED: Single host, cgroup v2, root controller trusted.
 - Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established.
 - Scope axis `usefulness` is UNRESOLVED: Not independently established.
@@ -104,7 +109,7 @@ Each witness exhibits a concrete trace showing that a check or premise cannot be
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
 | 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
-| 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
+| 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | PARTIAL | Lean refinement of a concrete event machine; the runtime is linked by trace checking, not by proof |
 | 4 | consequential side observations and failure channels are accounted for or bounded | ASSUMED | scope axis environment_boundary = ASSUMED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
 | 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-ANTI-ROLLBACK-v1, PREREG-SC28-CGMETER-v1 |

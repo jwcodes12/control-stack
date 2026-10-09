@@ -6,7 +6,7 @@
 
 This page is generated from `manifest.json`. It is recorded metadata, **not deployment assurance**.
 - Lean results: 2 theorem reference(s), 0 of them necessity witnesses.
-- Runtime evidence: none (Lean model only).
+- Runtime evidence: preregistered reference run(s) `PREREG-SC04-LOGCANON-v1`.
 - Runtime evidence, where present, is from reference runs on a single host; nothing ran on production infrastructure.
 - Independent human review: **not recorded** (done-criterion 5 is OPEN).
 
@@ -29,38 +29,52 @@ None recorded.
 
 ## Runtime evidence
 
-None. The scenario is supported by its Lean model only.
+- `scenarios/SC-04/evidence/run-1/verdicts.json` — recorded outcome **PASS**. PREREG-SC04-LOGCANON-v1 run-1: receiver sees schema-only canonical records (no free text/marker leak), ML decoder accuracy within log_channel bound (m=1 exactly at 128/4000), canonical per-template counts equal raw counts, free-text control recovers the token in one record; 5/5 reps
+
+  Preregistration: `PREREG-SC04-LOGCANON-v1`; overall verdict in the file: **PASS**.
+
+  | item | prereg title | verdict | detail |
+  |---|---|---|---|
+  | H1 | Schema only (log_channel premise | PASS | 5/5 repetitions passed |
+  | H2 | Empirical capacity | PASS | 5/5 repetitions passed |
+  | H3 | Usefulness | PASS | 5/5 repetitions passed |
+  | H4 | Control: free-text passthrough | PASS | 5/5 repetitions passed (negative control: the weakened configuration was caught) |
+
+- `prereg/SC04-LOG-CANON.md` — recorded outcome **PASS**. Frozen preregistration
 
 ## Premises (from the manifest)
 
-**Evidence NOT_RUN:**
+**Evidence TESTED_NOT_PROVED:**
 
 - `canonicaliser_complete`: Every receiver-visible diagnostic passes the trusted canonicaliser. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
+
+**Evidence NOT_RUN:**
+
 - `timing_in_view`: Timing/ordering observations are inside the certified view. (proof: NOT_PROVED; applicability: UNRESOLVED; usefulness: NOT_APPLICABLE)
 
 ## What does NOT hold
 
 - This is not deployment assurance, and no claim extends beyond the scope below.
-- Scope (manifest): Lean bound only; timing and error channels must be inside the canonicalised view or separately certified.
+- Scope (manifest): Lean bound only; timing and error channels must be inside the canonicalised view or separately certified. Runtime: single-host preregistered reference run (scenarios/SC-04/evidence/run-1), benign, unprivileged.
 - Not established as applying to a real deployment: Every receiver-visible diagnostic passes the trusted canonicaliser (`canonicaliser_complete`; applicability UNRESOLVED).
 - Not established as applying to a real deployment: Timing/ordering observations are inside the certified view (`timing_in_view`; applicability UNRESOLVED).
-- Scope axis `threat_coverage` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `environment_boundary` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `usefulness` is UNRESOLVED: Not independently established; Lean model only.
-- Scope axis `independent_review` is UNRESOLVED: Not independently established; Lean model only.
+- Scope axis `threat_coverage` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1).
+- Scope axis `runtime_correspondence` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1).
+- Scope axis `environment_boundary` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1).
+- Scope axis `lifetime_and_composition` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1).
+- Scope axis `usefulness` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1).
+- Scope axis `independent_review` is UNRESOLVED: Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1).
 
 ## Done-criteria (RUNTIME-VM-HANDOFF.md §10), computed from the manifest
 
 | # | criterion | status | basis |
 |---|---|---|---|
 | 1 | a realistic honest task works under the declared mediation | OPEN | no recorded honest-task run |
-| 2 | independently checked negative tests cover the bad actions and their bypasses | OPEN | no preregistered negative-control run |
+| 2 | independently checked negative tests cover the bad actions and their bypasses | RECORDED | preregistered negative controls and attacks passed (single host) |
 | 3 | the trusted kernel/model and the runtime transition boundary are linked by a justified refinement | OPEN | scope axis runtime_correspondence = UNRESOLVED |
 | 4 | consequential side observations and failure channels are accounted for or bounded | OPEN | scope axis environment_boundary = UNRESOLVED |
 | 5 | independent reviewers sign off on statement fidelity and assumptions | OPEN | no independent human statement review recorded |
-| 6 | experimental evidence is fresh, reproducible and preregistered | OPEN | no preregistered evidence run |
+| 6 | experimental evidence is fresh, reproducible and preregistered | RECORDED | preregistered evidence: PREREG-SC04-LOGCANON-v1 |
 
 Statuses never read MET: the strongest is RECORDED (a preregistered single-host run recorded a pass).
 Criterion 5 is OPEN by construction until an independent human review is recorded.

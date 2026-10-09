@@ -9,3 +9,12 @@ Commands are listed only for files that exist. Run them from the repository root
 - Claim file: `lake env lean scenarios/SC-22/claim.lean`
 - Scenario bundle (manifest schema, hashes): `python3 tools/check_scenarios.py`
 - Lean module: `lake build ControlStack.Scenarios.EvalIntegrity`
+
+## Harness
+
+- Runner: `scenarios/SC-22/harness/run_sc22.py` (see its docstring for privileges; evidence runs need the frozen prereg)
+
+## Evidence
+
+- Recorded: `scenarios/SC-22/evidence/run-1/verdicts.json` (PASS)
+- Recorded: `prereg/SC22-REPLICATION.md` (PASS)

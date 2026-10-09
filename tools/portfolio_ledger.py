@@ -72,7 +72,7 @@ PREMISES = {
         stack=["agent_sandbox.policy_integrity", "agent_sandbox.mount_policy", "network_egress.policy_integrity"]),
     "model_runtime_correspondence": dict(
         kind="correspondence", title="The runtime implements the Lean model's transitions (records match effects)",
-        members=["SC-26:model_runtime_correspondence", "SC-25:model_runtime_correspondence", "SC-16:model_runtime_correspondence", "SC-01:ledger_correspondence", "SC-13:effect_vs_record"],
+        members=["SC-26:model_runtime_correspondence", "SC-25:model_runtime_correspondence", "SC-16:model_runtime_correspondence", "SC-18:model_runtime_correspondence", "SC-28:model_runtime_correspondence", "SC-27:model_runtime_correspondence", "SC-01:ledger_correspondence", "SC-13:effect_vs_record"],
         stack=["logging_pipeline.audit_before_effect"]),
     "role_separation": dict(
         kind="organisational", title="Agent and approver/reviewer/admin identity sets are disjoint",

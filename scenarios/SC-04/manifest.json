@@ -5,7 +5,7 @@
   "bad_event": "A receiver of logs/telemetry recovers a secret. Claim: probability ≤ K^m·Q^{fm}/|M| (log_channel), applicable only if the receiver sees nothing but template ids and quantised fields. (REVIEW-PACKET finding 10: the bound is the claim; the bad event is the adversary's success.)",
   "adversary": "Adaptive writer of m log records; trusted canonicaliser to K templates with f fields quantised to Q levels.",
   "refutation": "A log path bypassing the canonicaliser, or recovery above the bound (witness: free-text field leaks in one record).",
-  "scope": "Lean bound only; timing and error channels must be inside the canonicalised view or separately certified.",
+  "scope": "Lean bound only; timing and error channels must be inside the canonicalised view or separately certified. Runtime: single-host preregistered reference run (scenarios/SC-04/evidence/run-1), benign, unprivileged.",
   "families": [
     "F2"
   ],
@@ -24,13 +24,26 @@
       "recorded_status": "KERNEL_CHECK_RECORDED"
     }
   ],
-  "evidence": [],
+  "evidence": [
+    {
+      "path": "scenarios/SC-04/evidence/run-1/verdicts.json",
+      "sha256": "59c389847d25d1bb87c83d86ff41a2e885f47bca622b4f894cd3442954840467",
+      "purpose": "PREREG-SC04-LOGCANON-v1 run-1: receiver sees schema-only canonical records (no free text/marker leak), ML decoder accuracy within log_channel bound (m=1 exactly at 128/4000), canonical per-template counts equal raw counts, free-text control recovers the token in one record; 5/5 reps",
+      "outcome": "PASS"
+    },
+    {
+      "path": "prereg/SC04-LOG-CANON.md",
+      "sha256": "b30db7cf0625ae145500a433dc50cacfbe12815b7ac3a080846d053ec4a3d3d0",
+      "purpose": "Frozen preregistration",
+      "outcome": "PASS"
+    }
+  ],
   "assumptions": [
     {
       "id": "canonicaliser_complete",
       "text": "Every receiver-visible diagnostic passes the trusted canonicaliser.",
       "proof": "NOT_PROVED",
-      "evidence": "NOT_RUN",
+      "evidence": "TESTED_NOT_PROVED",
       "applicability": "UNRESOLVED",
       "usefulness": "NOT_APPLICABLE"
     },
@@ -46,27 +59,27 @@
   "scope_axes": {
     "threat_coverage": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1)."
     },
     "runtime_correspondence": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1)."
     },
     "environment_boundary": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1)."
     },
     "lifetime_and_composition": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1)."
     },
     "usefulness": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1)."
     },
     "independent_review": {
       "status": "UNRESOLVED",
-      "note": "Not independently established; Lean model only."
+      "note": "Not independently established. Lean model plus single-host preregistered runtime evidence (scenarios/SC-04/evidence/run-1)."
     }
   }
 }

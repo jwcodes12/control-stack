@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any spawn/exec/elevate/deputy-call/grant/halt trace.
 
-**Scope:** Lean model only. Not: kernel privilege escalation bugs. The check flag(s) attenuate model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).
+**Scope:** Lean model only. Not: kernel privilege escalation bugs. The check flag(s) attenuate model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-09/evidence/run-1), benign, unprivileged.
 
 **Refutation (what would show the claim wrong):** A privileged use outside grants and exact elevation rules despite full checks (witnesses: unrestricted elevation, exec without attenuation, confused deputy).
 

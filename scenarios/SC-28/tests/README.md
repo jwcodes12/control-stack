@@ -12,6 +12,7 @@ Commands are listed only for files that exist. Run them from the repository root
 - Lean module: `lake build ControlStack.Scenarios.AuthInstancesA`
 - Lean module: `lake build ControlStack.Scenarios.SC28Budget`
 - Lean module: `lake build ControlStack.Scenarios.SC28Liveness`
+- Lean module: `lake build ControlStack.Scenarios.SC28Refinement`
 
 ## Harness
 

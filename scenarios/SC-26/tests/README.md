@@ -11,6 +11,8 @@ Commands are listed only for files that exist. Run them from the repository root
 - Lean module: `lake build ControlStack.Core.AuthenticatedAdv`
 - Lean module: `lake build ControlStack.Scenarios.SC26Authenticated`
 - Lean module: `lake build ControlStack.Scenarios.SC26Liveness`
+- Lean module: `lake build ControlStack.Scenarios.SC26LossyHalt`
+- Lean module: `lake build ControlStack.Scenarios.SC26LossyLiveness`
 - Lean module: `lake build ControlStack.Scenarios.SC26Refinement`
 - Lean module: `lake build ControlStack.Scenarios.SC26Transaction`
 

@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Adaptive writer of m log records; trusted canonicaliser to K templates with f fields quantised to Q levels.
 
-**Scope:** Lean bound only; timing and error channels must be inside the canonicalised view or separately certified.
+**Scope:** Lean bound only; timing and error channels must be inside the canonicalised view or separately certified. Runtime: single-host preregistered reference run (scenarios/SC-04/evidence/run-1), benign, unprivileged.
 
 **Refutation (what would show the claim wrong):** A log path bypassing the canonicaliser, or recovery above the bound (witness: free-text field leaks in one record).
 

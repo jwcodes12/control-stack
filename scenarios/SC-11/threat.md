@@ -8,7 +8,7 @@ _Generated from manifest.json._
 
 **Adversary:** Model: any write/decide/build trace (shared model with SC-10).
 
-**Scope:** Lean model only (shared with SC-10). Not: compromised compiler binaries at the pinned digest. The check flag(s) pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).
+**Scope:** Lean model only (shared with SC-10). Not: compromised compiler binaries at the pinned digest. The check flag(s) pinnedPath model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6). Runtime: single-host preregistered reference run (scenarios/SC-10/evidence/run-1), benign workloads, process identities under one UID.
 
 **Refutation (what would show the claim wrong):** A build with an unpinned toolchain despite full checks (witness: toolchain via agent-writable PATH).
 

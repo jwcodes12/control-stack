@@ -1,3 +1,4 @@
+import ControlStack.Scenarios.SC28Refinement
 import ControlStack.Core.AntiRollback
 import ControlStack.Scenarios.SC28Liveness
 import ControlStack.Scenarios.AuthInstancesA
@@ -38,3 +39,15 @@ import ControlStack.Scenarios.SC28Budget
 #print axioms ControlStack.AntiRollback.rollback_transfer
 #check ControlStack.AntiRollback.sc28_rollback_safe
 #print axioms ControlStack.AntiRollback.sc28_rollback_safe
+#check ControlStack.SC28Refinement.simulation
+#print axioms ControlStack.SC28Refinement.simulation
+#check ControlStack.SC28Refinement.concrete_safe
+#print axioms ControlStack.SC28Refinement.concrete_safe
+#check ControlStack.SC28Refinement.concrete_counters_safe
+#print axioms ControlStack.SC28Refinement.concrete_counters_safe
+#check ControlStack.SC28Refinement.concrete_revoked_stops
+#print axioms ControlStack.SC28Refinement.concrete_revoked_stops
+#check ControlStack.SC28Refinement.exclusive_placement_safe
+#print axioms ControlStack.SC28Refinement.exclusive_placement_safe
+#check ControlStack.SC28Refinement.unplaced_invisible
+#print axioms ControlStack.SC28Refinement.unplaced_invisible

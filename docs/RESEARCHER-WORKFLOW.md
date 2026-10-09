@@ -148,3 +148,52 @@ python3 -m unittest tools/test_stackmap.py tools/test_new_scenario.py tools/test
 - Usefulness fails on any double effect, not only on missed ones.
 - Dev runs are labelled dry, and there is one evidence run.
 - Claim no novelty without an independent reviewer.
+
+## One front door: `tools/cstack.py`
+
+`python3 tools/cstack.py <subcommand>` dispatches to the tools above and adds no logic of its own. It reads recorded
+metadata and re-runs nothing, except under `check`. An unknown scenario id fails closed with exit 2.
+
+| Command | What it shows | Built on |
+|---|---|---|
+| `status [SC-XX]` | Portfolio table, or one scenario: manifest status, theorems with docstring one-liners, evidence runs and their verdicts, open premises with their normalised id, and the done-criteria rows | `build_results`, `portfolio_ledger` |
+| `check [--fast\|--full] [--list] [--only TEXT]` | Pass/fail table of the local suite; exits nonzero on any failure | the tools named in the table below |
+| `ledger [--portfolio\|--stack\|--lab]` | Normalised premise table (by default, no Lean), or the stack or lab ledger from Lean | `portfolio_ledger`, `cert_ledger` |
+| `new SC-XX spec.json [--dry-run]` | New scenario skeleton; refuses an id that already exists | `new_scenario` |
+| `evidence SC-XX` | Pin verification for each run, plus preregs with their declared freeze status, and the recheck commands (details below) | `git show`, as in `check_sc26_case` |
+| `map [--gaps\|--researcher C]` | Stack map views | `stackmap` |
+
+What each suite runs:
+
+- `--fast`:
+  - every generated file in `--check` mode;
+  - `stackmap --validate`;
+  - `check_scenarios`;
+  - every `tools/test_*.py`, except the root-only broker test, which CI runs;
+  - `check_sc26_case --skip-lean`.
+
+  `--fast` never compiles proofs. It does assume a built `.lake`, though: `test_cert_ledger`, `test_new_scenario`
+  and `test_portfolio_ledger` each make small `lake env lean` calls. In a fresh clone, run `lake exe cache get` and
+  `lake build ControlStack` first.
+- `--full`: everything in `--fast`, plus:
+  - the ledger check with Lean;
+  - `lake build ControlStack`;
+  - every `scenarios/SC-*/claim.lean`, with the same axiom scan as CI;
+  - `check_sc26_case` with Lean.
+
+What `evidence SC-XX` reports:
+
+- **Pin verification.** Each run's recorded SHA-256 values are checked against its pinned commit with `git show`. The sources are:
+  - the commit and hashes in `meta.json`, or
+  - those in a `receipt.json`, plus the prereg's own pin table.
+- **Failures.** Exit 1 if any pin fails: a hash that does not match, a path missing at the commit, a commit missing from the clone, or a run with no pins.
+- **Working tree.** Whether a file has since changed is shown, but it is informational only. The run is judged against its commit, not against today's tree.
+- **Preregs.** Each related prereg is listed with its declared freeze status, and whether it is unchanged since the run that recorded it.
+- **Recheck commands.** The exact commands to recheck the run.
+
+```sh
+python3 tools/cstack.py check --fast          # before pushing
+python3 tools/cstack.py status SC-26
+python3 tools/cstack.py evidence SC-26
+python3 tools/test_cstack.py                   # CSTACK_FULL=1 adds one Lean smoke test
+```

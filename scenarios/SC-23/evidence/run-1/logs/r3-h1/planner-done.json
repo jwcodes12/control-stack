@@ -1,0 +1,1001 @@
+[
+ {
+  "task": "pay-c0",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 0
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-c0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-c0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h0"
+   },
+   {
+    "op": "act",
+    "task": "pay-c0",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h1"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.022794547
+ },
+ {
+  "task": "pay-c1",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 1
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-c1"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-c1"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h2"
+   },
+   {
+    "op": "act",
+    "task": "pay-c1",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h3"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.015107297
+ },
+ {
+  "task": "pay-x0",
+  "result": {
+   "ok": false,
+   "error": "user declined"
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h4"
+   },
+   {
+    "op": "act",
+    "task": "pay-x0",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h5"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.010080452
+ },
+ {
+  "task": "sum-c0",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 2
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   },
+   {
+    "trusted": "note-c0"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-10-8"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "sum-c0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "note-c0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "summarize",
+    "handle": "h6"
+   },
+   {
+    "op": "act",
+    "task": "sum-c0",
+    "tool": "log_note",
+    "args": [
+     {
+      "handle": "h7"
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.014721177
+ },
+ {
+  "task": "pay-c2",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 3
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   },
+   {
+    "trusted": "note-c0"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-10-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-13-10"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-c2"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-c2"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h8"
+   },
+   {
+    "op": "act",
+    "task": "pay-c2",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h9"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.016289218
+ },
+ {
+  "task": "pay-x1",
+  "result": {
+   "ok": false,
+   "error": "user declined"
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   },
+   {
+    "trusted": "note-c0"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-10-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-13-10"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h10"
+   },
+   {
+    "handle": "h11"
+   },
+   {
+    "trusted": "ref-16-12"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x1"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x1"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h10"
+   },
+   {
+    "op": "act",
+    "task": "pay-x1",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h11"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.013514296
+ },
+ {
+  "task": "sum-x0",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 4
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   },
+   {
+    "trusted": "note-c0"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-10-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-13-10"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h10"
+   },
+   {
+    "handle": "h11"
+   },
+   {
+    "trusted": "ref-16-12"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h12"
+   },
+   {
+    "handle": "h13"
+   },
+   {
+    "trusted": "ref-18-14"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "sum-x0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "note-x0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "summarize",
+    "handle": "h12"
+   },
+   {
+    "op": "act",
+    "task": "sum-x0",
+    "tool": "log_note",
+    "args": [
+     {
+      "handle": "h13"
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.007418489
+ },
+ {
+  "task": "pay-c3",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 5
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   },
+   {
+    "trusted": "note-c0"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-10-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-13-10"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h10"
+   },
+   {
+    "handle": "h11"
+   },
+   {
+    "trusted": "ref-16-12"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h12"
+   },
+   {
+    "handle": "h13"
+   },
+   {
+    "trusted": "ref-18-14"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c3"
+   },
+   {
+    "handle": "h14"
+   },
+   {
+    "handle": "h15"
+   },
+   {
+    "trusted": "ref-21-16"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-c3"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-c3"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h14"
+   },
+   {
+    "op": "act",
+    "task": "pay-c3",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h15"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.015063898
+ },
+ {
+  "task": "pay-x2",
+  "result": {
+   "ok": false,
+   "error": "user declined"
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c1"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h4"
+   },
+   {
+    "handle": "h5"
+   },
+   {
+    "trusted": "ref-8-6"
+   },
+   {
+    "trusted": "note-c0"
+   },
+   {
+    "handle": "h6"
+   },
+   {
+    "handle": "h7"
+   },
+   {
+    "trusted": "ref-10-8"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c2"
+   },
+   {
+    "handle": "h8"
+   },
+   {
+    "handle": "h9"
+   },
+   {
+    "trusted": "ref-13-10"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x1"
+   },
+   {
+    "handle": "h10"
+   },
+   {
+    "handle": "h11"
+   },
+   {
+    "trusted": "ref-16-12"
+   },
+   {
+    "trusted": "note-x0"
+   },
+   {
+    "handle": "h12"
+   },
+   {
+    "handle": "h13"
+   },
+   {
+    "trusted": "ref-18-14"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c3"
+   },
+   {
+    "handle": "h14"
+   },
+   {
+    "handle": "h15"
+   },
+   {
+    "trusted": "ref-21-16"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x2"
+   },
+   {
+    "handle": "h16"
+   },
+   {
+    "handle": "h17"
+   },
+   {
+    "trusted": "ref-24-18"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x2"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x2"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h16"
+   },
+   {
+    "op": "act",
+    "task": "pay-x2",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h17"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.011697694
+ }
+]

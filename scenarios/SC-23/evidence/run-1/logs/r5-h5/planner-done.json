@@ -1,0 +1,127 @@
+[
+ {
+  "task": "pay-x0",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 0
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-x0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-x0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h0"
+   },
+   {
+    "op": "act",
+    "task": "pay-x0",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h1"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.010086452
+ },
+ {
+  "task": "pay-c0",
+  "result": {
+   "ok": true,
+   "executed": true,
+   "seq": 1
+  },
+  "state": [
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-x0"
+   },
+   {
+    "handle": "h0"
+   },
+   {
+    "handle": "h1"
+   },
+   {
+    "trusted": "ref-2-2"
+   },
+   {
+    "trusted": 3
+   },
+   {
+    "trusted": "inv-c0"
+   },
+   {
+    "handle": "h2"
+   },
+   {
+    "handle": "h3"
+   },
+   {
+    "trusted": "ref-5-4"
+   }
+  ],
+  "requests": [
+   {
+    "op": "user_input",
+    "task": "pay-c0"
+   },
+   {
+    "op": "tool",
+    "tool": "read_doc",
+    "doc": "inv-c0"
+   },
+   {
+    "op": "qtransform",
+    "fn": "extract_amount",
+    "handle": "h2"
+   },
+   {
+    "op": "act",
+    "task": "pay-c0",
+    "tool": "send_payment",
+    "args": [
+     {
+      "handle": "h3"
+     },
+     {
+      "trusted": 3
+     }
+    ]
+   }
+  ],
+  "lat_s": 0.009560211
+ }
+]

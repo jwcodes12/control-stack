@@ -195,11 +195,11 @@ An annotation's PROVED_RECORDED / VERIFIED_RECORDED is **historical** and requir
 | ControlStack/GatewayModel.lean::buf_le | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | c6b0845be3dc |
 | ControlStack/GatewayModel.lean::deliver_eq_embed | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | c6b0845be3dc |
 | ControlStack/GatewayModel.lean::gateway_bound_reachable | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | c6b0845be3dc |
-| ControlStack/HaltLiveness.lean::run_append | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 233402f873a9 |
-| ControlStack/HaltLiveness.lean::delivered_halt_absorbs | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 233402f873a9 |
-| ControlStack/HaltLiveness.lean::liveness_if_delivered | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 233402f873a9 |
-| ControlStack/HaltLiveness.lean::effects_frozen_after_delivered_halt | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 233402f873a9 |
-| ControlStack/HaltLiveness.lean::ordinary_operations_never_halt | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 233402f873a9 |
+| ControlStack/HaltLiveness.lean::run_append | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b6d0533f2af3 |
+| ControlStack/HaltLiveness.lean::delivered_halt_absorbs | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b6d0533f2af3 |
+| ControlStack/HaltLiveness.lean::liveness_if_delivered | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b6d0533f2af3 |
+| ControlStack/HaltLiveness.lean::effects_frozen_after_delivered_halt | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b6d0533f2af3 |
+| ControlStack/HaltLiveness.lean::ordinary_operations_never_halt | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | b6d0533f2af3 |
 | ControlStack/HoneypotBridgeProof.lean::honeypotPasses_step | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6201bfb391c8 |
 | ControlStack/HoneypotBridgeProof.lean::honeypotPasses_probOutput | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6201bfb391c8 |
 | ControlStack/HoneypotBridgeProof.lean::bridge | UNMAPPED | — | UNKNOWN | UNMAPPED | SOURCE_ONLY | NOT_RECORDED | source only | 6201bfb391c8 |

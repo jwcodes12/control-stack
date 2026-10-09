@@ -6,7 +6,7 @@ A peer of that UID can chmod and mutate the 0400 pinned script between
 verification and the interpreter's subsequent open. See the independent
 negative witness in PR #16.
 
-This change introduces an **opt-in**, Linux-only `--sealed-script` flag.
+This change introduces an **opt-in**, Linux-only `--sealed-script` flag in the separate **`scenarios/SC-08/hardened/launcher_sealed.py`** candidate. The preregistered `scenarios/SC-08/harness/launcher.py` remains byte-for-byte identical to `main` so frozen source provenance is preserved.
 After reading and digest-checking the source script, the broker constructs a
 memory-backed file containing *those bytes*, applies
 `F_SEAL_WRITE | F_SEAL_SHRINK | F_SEAL_GROW | F_SEAL_SEAL`, verifies the seals,
@@ -17,7 +17,7 @@ fails closed instead of falling back to a writable script copy.
 
 `tools/test_sc08_sealed_script.py` tests immutable bytes under a same-UID
 write attempt, execution from the descriptor, and a post-hash source-path
-replacement against the actual launcher. No preregistered evidence has been
+replacement against the versioned hardened candidate launcher, never the frozen v1 launcher. No preregistered evidence has been
 changed or rerun; the default path and default config values are unchanged.
 The new mode requires its own preregistered experiment before an assurance
 claim is updated.

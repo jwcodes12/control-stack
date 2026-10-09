@@ -60,3 +60,17 @@ The suite exhaustively checks that combinatorial identity for small N.
 This does not prove imperfect-recall, content-adaptive worst-case audits,
 observable audit schedules, catastrophic-effects interception, or that
 an external audit service executes the scheduled checks.
+
+## Live Linux peer-credential regression
+
+On a disposable trusted Linux host, run:
+
+```sh
+sudo -n python3 tools/test_trusted_stack_broker.py
+```
+
+This brings up the actual broker with one untrusted agent UID, a separate
+reviewer, a separate approver and the admin UID. It checks role spoofing,
+unauthorized review/approval, genuine positive release, nonce replay,
+and sticky halt using OS-provided SO_PEERCRED identities. It does not create
+a VM, provide production separation, or cause external effects.

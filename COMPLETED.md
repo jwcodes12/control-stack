@@ -1,3 +1,107 @@
+# PR #42 — Linux agent confinement, adaptive F6 and delegated F8 continuation
+
+**Review scope: [PR #42](https://github.com/jwcodes12/control-stack/pull/42).**
+This is an engineering continuation after merged PR #40; it is **not**
+a claim that all deployment-control obligations have been discharged.
+
+## Implemented and checkable additions
+
+- **Real OS syscall denial, narrowly scoped:** the Linux per-process
+  `trusted_stack.agent_confinement` launcher requires non-root agent
+  identity, externally separated trusted broker UID, Landlock ABI 3+,
+  libseccomp and no-new-privileges. It closes arbitrary inherited file
+  descriptors, nulls stdio, preopens/verifies exactly one broker socket,
+  denies new socket creation, exec/fork/clone, relevant namespace/mount,
+  filesystem mutation, signals, kernel IPC/device operations and unknown
+  privilege escalation routes *within the enumerated profile*.
+  Its deny-list is **not** a complete future syscall reference monitor.
+  Positive Linux kernel denial tests and the live end-to-end test must
+  pass in `agent-linux-confinement`. See
+  [exact scope](docs/AGENT-LINUX-CONFINEMENT.md).
+- **Real broker-to-effect end to end:** the root-only disposable-host
+  regression `tools/test_confined_effect_broker.py` runs a distinct,
+  kernel-confined delegate agent UID. The broker uses SO_PEERCRED to
+  validate its exact reviewed one-use delegated approval and shared
+  budget, then a trusted UID emits exactly the reviewed bytes through
+  the previously implemented receiver. Direct write/socket, owner
+  impersonation, nonce replay and HALT controls are exercised.
+- **F8 two-agent model and actual fleet adversarial tests:**
+  `reviews/family-strengthening/DelegatedFleet.lean` proves a shared
+  budget across independent and delegated fixed-unit releases, exact
+  grantor/delegate restrictions, revocation, HALT and no pre-admission
+  publication in one model. `trusted_stack/test_delegated_fleet.py`
+  tests concurrent budget races, persist/reopen, grant tampering,
+  in-flight revocation and publication-crash/HALT consequences.
+  Statements are **model-level** and do not prove Linux/Python/SQLite
+  semantics preservation. [Scope](docs/F8-DELEGATED-FLEET.md).
+- **F6 adaptive conditional-average estimator:** the new
+  `tools/anytime_monitor_calibration.py` reports simultaneous
+  time-uniform Hoeffding–martingale upper bounds over predictably sampled
+  history/class subsequences under an externally frozen manifest.
+  This can tolerate optional stopping and history-dependent prior
+  feedback **only under the explicitly stated sampling assumptions**.
+  It bounds *past observed conditional-average* risk, not a future
+  sup-history risk. [Exact assumption scope](docs/F6-ANYTIME-MONITOR.md).
+- **F6 real empirical correlated pair replay:** all 171 pairs of the
+  19 LaStraj 2.0 score variants remain in the simultaneous correction
+  family. The replay measures co-misses and benign union false alarms
+  on **aligned real trajectories** without multiplying detector
+  miss probabilities. Its results are unavoidably **exploratory**
+  because score thresholds/pairs were not prospectively frozen.
+  [Evidence scope](docs/F6-EMPIRICAL-PAIRS.md).
+
+## Verification commands
+
+```bash
+python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
+python3 -m unittest tools.test_anytime_monitor_calibration tools.test_monitor_pair_replay -v
+python3 tools/monitor_pair_replay.py --threshold 8 --output /tmp/new-pair-report.json
+python3 -m trusted_stack.agent_confinement --probe --script /dev/null
+python3 -m unittest trusted_stack.test_agent_confinement -v
+sudo -n python3 tools/test_confined_effect_broker.py
+lake env lean reviews/family-strengthening/DelegatedFleet.lean
+python3 tools/delegated_lean_difftest.py
+python3 tools/joint_runtime_lean_difftest.py
+```
+
+All relevant current-HEAD Actions job steps and source/invariant checks
+must be green before merge. Previous successful SHA results do not qualify.
+Frozen experimental evidence, preregistrations, VM receipts and
+`ControlStack/EgressGate.lean` are not changed by this PR.
+
+## Open obligations; keep all 28 deployments CONDITIONAL
+
+1. **Universal effect capture:** prove *all* possible host processes
+   and effectful operations are forced through the trusted boundary,
+   including outside-launch agents, arbitrary network/VM/device actions,
+   same-UID helpers, kernel escape and side channels. A process-local
+   Landlock/seccomp deny-list cannot establish this. Need independently
+   administered, capability-closed host/VM/cgroup/mount/egress controls,
+   measured bypass attempts and signed deployment policy.
+2. **Full Lean-to-runtime refinement:** provide a trusted, independently
+   reviewed operational semantics for the actual Python, SQLite,
+   kernel/network/filesystem and scheduler implementation, with a
+   simulation theorem that covers ALL transitions and crashes.
+   Model proofs plus finite differentials do not suffice.
+3. **F6 empirical assumptions:** collect new, genuinely held-out,
+   externally preregistered episodes and independent ground-truth
+   labels covering all declared adaptive attacker histories. Pin
+   monitor/threshold/sampling policy **before** data collection.
+   Neither old LaStraj data nor synthetic testing meets this gate.
+4. **Independent trust/review:** verify runtime host/OS UID, kernel
+   protection, receipt durability/rollback resistance, clock honesty,
+   code and image hashes, and commission an unaffiliated statement
+   fidelity and systems reviewer.
+5. **Original SC-01 native VM usefulness:** previous frozen TCG result
+   is not a valid positive baseline. A properly isolated, native
+   hypervisor experiment under its own approved preregistration is
+   still needed.
+
+**Stop line:** No new theorem, CI result or empirical receipt in this
+PR makes a deployed control stack universally assured.
+
+---
+
 # Latest engineering continuation — delegated execution and empirical F6 (PR #40)
 
 **Exact-status rule:** Claims below describe branch source changes, **not** a

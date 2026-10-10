@@ -9,6 +9,25 @@
 - `reviews/family-strengthening/Remaining.lean` states explicit finite weighted per-history missed detection caps and concrete arbitrary-agent interleaving admission/absorbing-HALT theorems. The positive admission witness blocks trivial reject-all proofs. These are **review-scoped abstract models**, not certified OS implementation equivalence.
 - `tools/monitor_calibration.py` computes held-out per-stratum one-sided miss/false-alarm Hoeffding upper bounds with a simultaneous union correction. Histories and thresholds must be frozen independently of evaluation data. A sparse class/stratum gets no upper bound and CLI exits nonzero; no unobserved adaptive history is covered.
 
+## Additional hardening on this continuation
+
+- **Effect provenance and delegated actors:** delayed local delivery now
+  rebinds every committed release to its exact approval digest, destination,
+  agent UID and lease, verifies the lease owner and distinct trusted review
+  role, and refuses mutated records before writing real bytes. Negative
+  controls mutate each authorization binding. Broker-shape tests reject
+  cross-agent lease borrowing and client-supplied `agent_uid` impersonation.
+  These simulated identities do not establish OS UID separation.
+- **F6 operational usefulness:** a frozen manifest may additionally declare
+  both `max_miss_upper` and `max_false_alarm_upper`. All simultaneous
+  upper confidence bounds must meet both predeclared limits in every stratum
+  for `conditional_limits_met`; a statistically computable but vacuous bound
+  now fails that acceptance gate. This remains conditional statistical
+  evidence, not adversarial per-history calibration or deployment assurance.
+- **Immutable F6 receipts:** output creation uses `O_EXCL|O_NOFOLLOW` and
+  fsync rather than a check-then-write path. Regression tests cover dangling
+  and existing symlink targets to prevent redirection into frozen evidence.
+
 ## Verification and acceptance
 
 ```bash

@@ -30,3 +30,5 @@ Lean: 44 certificates, 36 accepted projections and eight precise residual cases.
 The prospective inventory is explicitly DECLARED, never an actual runtime capture.
 The original live negatives are archived Tier 2 evidence. John’s defensive-only
 continuation permits only remediated live configurations; no original bypass rerun.
+
+Archived inputs may be relocated. Local sibling inputs are preferred; only known source labels with matching file hashes are normalized for replay comparison. Modifying the pinned observation bytes is rejected. The original raw failure and corrected six-test result are retained under deployment/runs/tier5.

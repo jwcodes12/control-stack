@@ -22,3 +22,5 @@ and UID separation are observed configuration facts; no new bypass-denial claim.
 Two raw remediated IR certificates are rechecked separately in the Lean kernel.
 The earlier live negative CI job is explicitly skipped under John's new scope;
 its archived evidence remains checked. This skip is not counted as a pass.
+
+CI found an absolute archived-input path assumption. The planner now prefers local sibling inputs and compares every IR field, normalizing source labels only for known files with identical SHA-256 values. A relocated archive passes, and changing observation bytes is rejected. Fresh checkout checks are required before the corrected-head push.

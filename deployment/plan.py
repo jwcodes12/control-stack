@@ -45,6 +45,17 @@ def apply_patch(document,operations):
         else:raise ValueError('unsupported patch operation')
     return document
 
+def portable_observation_ir(ir,inputs):
+    """Relocation changes only source labels for hash-identical known artifacts."""
+    inputs=Path(inputs);root=Path(__file__).resolve().parents[1]
+    files=[inputs/name for name in ('resolved.compose.json','resolved.runtime.json','host-observations.json')]+[root/'trusted_stack'/name for name in ('controller.py','outbox_receiver.py')]
+    identities={(file.name,hashlib.sha256(file.read_bytes()).hexdigest()):file.name for file in files}
+    value=copy.deepcopy(ir)
+    for provenance in value['sources']+[item['provenance'] for item in value['nodes']+value['edges']]:
+        identity=(Path(provenance['source']).name,provenance['sha256'])
+        if identity in identities:provenance['source']='pinned-artifact:'+identities[identity]
+    return value
+
 def build_plan(c,r,ir,base_sha256,host=None):
     original=copy.deepcopy(c);c=copy.deepcopy(c);claim=c.get('x-cstack',{});residual=[];actions=[]
     if not isinstance(c.get('services'),dict) or not c['services']:raise ValueError('services must be a nonempty object')

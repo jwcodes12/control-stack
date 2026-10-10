@@ -513,9 +513,11 @@ def main(argv=None, runner=subprocess.call):
                     source = next((p for p in ir["sources"] if Path(p["source"]).name == "host-observations.json"), None)
                     if source is None:
                         raise UsageError("schema-only migration has no fresh observation; provide a fresh scan")
-                    inputs = Path(a.inputs) if a.inputs else Path(source["source"]).parent
+                    candidates = [Path(a.ir).with_suffix(".inputs"), Path(a.ir).parent / "fresh-inputs", Path(source["source"]).parent]
+                    inputs = Path(a.inputs) if a.inputs else next((p for p in candidates if (p / "host-observations.json").is_file()), candidates[-1])
                     replayed = replay_snapshot(a.compose, a.runtime, inputs)
-                    if replayed != ir:
+                    from deployment.plan import portable_observation_ir
+                    if portable_observation_ir(replayed, inputs) != portable_observation_ir(ir, inputs):
                         raise UsageError("plan inputs differ from the scanned IR")
                     host = json.loads((inputs / "host-observations.json").read_text())
                 elif sha(a.compose) != ir["snapshot"]["compose_sha256"] or sha(a.runtime) != ir["snapshot"]["runtime_sha256"]:

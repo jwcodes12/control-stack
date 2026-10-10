@@ -79,6 +79,21 @@ class PlanTests(unittest.TestCase):
         self.assertFalse(any(action['path']==path for action in result['host_actions']))
         self.assertTrue(any(item['path']=='/x-cstack/sink_source' and 'missing trusted principal' in item['reason'] for item in result['residuals']))
 
+    def test_relocated_archive_cli_preserves_pins(self):
+        import shutil
+        source=ROOT/'deployment/runs/tier3/containers-final/writable-sink-mount'
+        with tempfile.TemporaryDirectory(prefix='cstack-r2-plan-relocate-',dir=ROOT/'.git') as tmp:
+            archive=Path(tmp)/'archive';shutil.copytree(source,archive);out=Path(tmp)/'plan.json'
+            # Make archived source labels unusable without changing any observation.
+            ir_path=archive/'ir.json';ir=json.loads(ir_path.read_text())
+            for p in ir['sources']+[item['provenance'] for item in ir['nodes']+ir['edges']]:p['source']='/unavailable-original/'+Path(p['source']).name
+            ir_path.write_text(json.dumps(ir))
+            argv=[sys.executable,str(ROOT/'tools/cstack.py'),'plan',str(archive/'compose.json'),'--runtime',str(archive/'runtime.json'),'--ir',str(ir_path),'--output',str(out)]
+            result=subprocess.run(argv,capture_output=True,text=True);self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(len(json.loads(out.read_text())['patch']),1)
+            out.unlink();facts=archive/'fresh-inputs/host-observations.json';facts.write_text(facts.read_text()+' ')
+            result=subprocess.run(argv,capture_output=True,text=True);self.assertEqual(result.returncode,2);self.assertFalse(out.exists())
+
     def test_fresh_archive_names_host_custody_and_runtime_changes(self):
         case=ROOT/'deployment/runs/tier3/containers-final/writable-sink-mount'
         paths=[case/'compose.json',case/'runtime.json',case/'ir.json'];before=[p.read_bytes() for p in paths]

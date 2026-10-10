@@ -21,7 +21,7 @@
 
 ## P2 — regression, VM package, documentation
 
-- **Adversarial regressions:** retained SC-08 sealed-source Linux tests, SC-06 chronology controls, SC-25 approval/audit/timeout/amend/crash negative traces, SC-26 seeded full-state model parity and the trusted reference SQLite effects tests. No historical experiment was rerun or rewritten.
+- **Adversarial regressions:** a new `reference-harness-dry-regression` CI runs SC-06/08/25 real-script reference harnesses with `--kind dry --reps 1` in disposable scratch, plus SC-26 model and bank controls (not experimental evidence; see [scope](docs/REFERENCE-DRY-REGRESSION.md)); retained SC-08 sealed-source Linux tests, SC-06 chronology controls, SC-25 approval/audit/timeout/amend/crash negative traces, SC-26 seeded full-state model parity and the trusted reference SQLite effects tests. No historical experiment was rerun or rewritten.
 - **Reproducible VM source package:** `tools/package_vm_replay.py` deterministically creates a tar.gz with fixed timestamps/ownership containing the original SC-01 workload contract, image lock, VM recipes, controlled historical configuration and source-asset SHA-256 manifest; it **excludes images, credentials, historical receipts, preregistrations and frozen evidence**. `--verify` requires exact deterministic source match. `tools/test_vm_package.py` tests reproducibility and tampering. [VM package limitations and host steps](docs/VM-SOURCE-BUNDLE.md).
 - **Generated indexes:** `THEOREM-REGISTRY.md`, `THEOREM-REGISTRY.json`, `LEAN-STATEMENTS-NORMAL-FORM.md`, `scenarios/INDEX.md` and assurance summaries are left governed by their source generators. New research proofs under `reviews/` intentionally do **not** change indexed mainline declarations; run the checks below and regenerate only when underlying indexed claims/manifests change. Existing 28-scenario CONDITIONAL status is not promoted. This file is the consolidated new work handoff, superseding only the outdated status narrative in the prior `COMPLETED.md`.
 
@@ -62,7 +62,7 @@ Inspect printed `#print axioms` of all modified/new claims, ensure no `sorryAx` 
 
 ## CI provenance
 
-[Consolidated PR checks](https://github.com/jwcodes12/control-stack/pull/39/checks) are the authoritative entry point. Dedicated required-or-expectable workflows include `bounded-model-differential`, `trusted-effect-reference`, `vm-source-bundle`, `sc06-oneuse-model`, `sc08-sealed-script`, `fast-checks`, `scenario-a-repair`, `egress-boundary`, `trusted-broker-disconnect`, and any enabled generated-index/Lean suites on current changes. Actions success on one source revision must not be generalized across later commits. `#print axioms` is **not** an independent statement-fidelity review.
+[Consolidated PR checks](https://github.com/jwcodes12/control-stack/pull/39/checks) are the authoritative entry point. Dedicated required-or-expectable workflows include `bounded-model-differential`, `trusted-effect-reference`, `vm-source-bundle`, `sc06-oneuse-model`, `sc08-sealed-script`, `fast-checks`, `scenario-a-repair`, `egress-boundary`, `trusted-broker-disconnect`, `reference-harness-dry-regression`, and any enabled generated-index/Lean suites on current changes. Actions success on one source revision must not be generalized across later commits. `#print axioms` is **not** an independent statement-fidelity review.
 
 ## External blockers and exact remaining obligations
 

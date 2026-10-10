@@ -1,0 +1,42 @@
+name: reference-harness-dry-regression
+on:
+  pull_request:
+    paths:
+      - 'scenarios/SC-06/harness/**'
+      - 'scenarios/SC-08/harness/**'
+      - 'scenarios/SC-25/harness/**'
+      - 'scenarios/SC-26/harness/**'
+      - 'tools/bounded_model_diff.py'
+      - 'reviews/statement-fidelity-2026-10-09/**'
+      - '.github/workflows/reference-harness-dry-regression.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reference-dry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: SC-06 live Unix-socket typed-context dry-run (fresh scratch, no evidence)
+        run: |
+          test "$(id -u)" != 0
+          python3 -B scenarios/SC-06/harness/run_sc06.py --kind dry --reps 1 --out "$RUNNER_TEMP/sc06-dry-control"
+      - name: SC-08 real loader/sealed-script dry-run (fresh scratch, no evidence)
+        run: |
+          test "$(id -u)" != 0
+          python3 -B scenarios/SC-08/harness/run_sc08.py --kind dry --reps 1 --out "$RUNNER_TEMP/sc08-dry-control"
+      - name: SC-25 separate-auditor queue dry-run (fresh scratch, no evidence)
+        run: |
+          test "$(id -u)" != 0
+          python3 -B scenarios/SC-25/harness/run_sc25.py --kind dry --reps 1 --out "$RUNNER_TEMP/sc25-dry-control"
+      - name: SC-26 deterministic reference model and negative fixtures
+        run: |
+          python3 scenarios/SC-26/harness/test_model.py
+          python3 scenarios/SC-26/harness/test_bank.py
+      - name: Assert frozen data paths were not modified
+        run: |
+          git diff --exit-code
+          git status --porcelain

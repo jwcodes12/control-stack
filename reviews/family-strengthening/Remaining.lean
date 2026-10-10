@@ -1,4 +1,5 @@
 import Mathlib.Tactic
+import Mathlib.Data.NNReal.Defs
 
 /-!
 Review-scoped, finite weighted adaptive-monitor boundary.
@@ -17,12 +18,12 @@ variable {H Ω : Type} [DecidableEq H] [DecidableEq Ω]
 /-- A history-indexed miss mass. False alarms are excluded from the missed
 ATTACK population; they must be counted separately in usefulness analysis. -/
 def missMass (traces : H → Finset Ω) (attacks alarms : H → Finset Ω)
-    (weight : H → Ω → ℝ≥0) (h : H) : ℝ≥0 :=
+    (weight : H → Ω → NNReal) (h : H) : NNReal :=
   ∑ x ∈ traces h, if x ∈ attacks h ∧ x ∉ alarms h then weight h x else 0
 
 /-- A history-indexed false alarm mass (ordinary outcomes flagged as attacks). -/
 def falseAlarmMass (traces : H → Finset Ω) (attacks alarms : H → Finset Ω)
-    (weight : H → Ω → ℝ≥0) (h : H) : ℝ≥0 :=
+    (weight : H → Ω → NNReal) (h : H) : NNReal :=
   ∑ x ∈ traces h, if x ∉ attacks h ∧ x ∈ alarms h then weight h x else 0
 
 /-- Sum of per-history measured/assumed miss caps. The crucial probabilistic
@@ -31,8 +32,8 @@ correlations of detectors are permitted; this says nothing about histories
 not in scope, normalization or the source of the caps. -/
 theorem adaptive_miss_mass_le_budgets
     (histories : Finset H) (traces : H → Finset Ω)
-    (attacks alarms : H → Finset Ω) (weight : H → Ω → ℝ≥0)
-    (cap : H → ℝ≥0)
+    (attacks alarms : H → Finset Ω) (weight : H → Ω → NNReal)
+    (cap : H → NNReal)
     (hCap : ∀ h ∈ histories, missMass traces attacks alarms weight h ≤ cap h) :
     (∑ h ∈ histories, missMass traces attacks alarms weight h) ≤
       ∑ h ∈ histories, cap h := by

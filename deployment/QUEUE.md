@@ -29,10 +29,10 @@ T3.3 | DONE | deployment/scan.py and actual symlink tests; unresolved source UNK
 T3.4 | DONE | nine stopped image exports; baked source/principal policy, USER, setid and entrypoint guards; final seven safe cases
 T3.5 | DONE | canonical IR/bundle key-order/whitespace test; nine actual image semantic observations identical
 T3.6 | DONE | security_ir/schema-v0.1.json, migrate.py and strict migration/unknown-field tests
-T4.1 | DOING | TrustedBroker cap/history lemmas and publication correspondence prepared; kernel passes
-T4.2 | TODO | Not yet started; tier order applies
-T4.3 | TODO | Not yet started; tier order applies
-T4.4 | TODO | Not yet started; tier order applies
+T4.1 | DONE | ControlStack/Deployment/R2Contracts.lean deployment_broker_safe; joint quota/history, lagging publication, explicit refinement; r2-contracts-build.txt PASS
+T4.2 | BLOCKED | Literal full-Accepted monotonicity is false: three kernel-checked writer-removal countermodels. Path-safety monotonicity proved with fixed bindings; retain usefulness rules.
+T4.3 | DONE | accepted_no_avoided_path via explicit closed-set certificate; path_edge_subset and accepted_path_safety_monotone; standard axioms
+T4.4 | DOING | IndexedBrokerTable + indexed_receipts_sound kernel checked; actual Tier 2 clean transcript instantiation in progress
 T4.5 | TODO | Not yet started; tier order applies
 T5.1 | TODO | Not yet started; tier order applies
 T5.2 | TODO | Not yet started; tier order applies

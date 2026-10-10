@@ -41,7 +41,7 @@ class AgentConfinementTests(unittest.TestCase):
             victim.write_bytes(b"unchanged")
             script = root / "agent.py"
             script.write_text(
-                "import errno, os, socket\n"
+                "import errno, os, socket, fcntl\n"
                 f"victim={str(victim)!r}\n"
                 f"created={str(created)!r}\n"
                 f"scratch={str(scratch)!r}\n"
@@ -58,6 +58,7 @@ class AgentConfinementTests(unittest.TestCase):
                 "denied(lambda: socket.socket(socket.AF_INET, socket.SOCK_STREAM))\n"
                 "denied(lambda: socket.socket(socket.AF_UNIX, socket.SOCK_STREAM))\n"
                 "denied(lambda: os.fork())\n"
+                "denied(lambda: fcntl.ioctl(3, 0))\n"
                 "assert open(victim,'rb').read() == b'unchanged'\n"
                 "assert not os.path.exists(created)\n"
                 "assert not os.path.exists(scratch)\n",

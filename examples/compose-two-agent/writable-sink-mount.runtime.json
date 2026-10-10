@@ -5,6 +5,12 @@
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "mounts": [
         {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        },
+        {
           "read_only": false,
           "source": "/slice/sink",
           "target": "/bypass",
@@ -19,7 +25,14 @@
     "agent-b": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "networks": [
         "isolated"
       ],
@@ -28,7 +41,14 @@
     "approver": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "networks": [
         "isolated"
       ],
@@ -42,6 +62,12 @@
           "read_only": false,
           "source": "/slice/db",
           "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/slice/channel",
+          "target": "/channel",
           "type": "bind"
         }
       ],
@@ -75,7 +101,14 @@
     "reviewer": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "networks": [
         "isolated"
       ],

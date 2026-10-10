@@ -1,4 +1,4 @@
-sudo -n python3 tools/build_deployment_runtime_vm.py --workdir /var/tmp/sol-deployment-vm-verified --rootfs /var/tmp/sc01-vm-assets/build-root
-qemu-system-aarch64 -no-user-config -nodefaults -machine virt -accel tcg,thread=single -cpu cortex-a57 -smp 1 -m 768M -display none -monitor none -serial stdio -no-reboot -kernel /var/tmp/sc01-vm-assets/build-root/boot/vmlinuz-virt -initrd /var/tmp/sol-deployment-vm-verified/initramfs.gz -append 'console=ttyAMA0 rdinit=/init panic=-1 quiet'
+sudo -n python3 tools/build_deployment_runtime_vm.py --workdir /var/tmp/sol-deployment-vm-scoped-final --rootfs /var/tmp/sc01-vm-assets/build-root
+qemu-system-aarch64 -no-user-config -nodefaults -machine virt -accel tcg,thread=single -cpu cortex-a57 -smp 1 -m 768M -display none -monitor none -serial stdio -no-reboot -kernel /var/tmp/sc01-vm-assets/build-root/boot/vmlinuz-virt -initrd /var/tmp/sol-deployment-vm-scoped-final/initramfs.gz -append 'console=ttyAMA0 rdinit=/init panic=-1 quiet'
 Guest init: python3 tools/run_deployment_boundary.py --output /tmp/slice-runtime
 Guest has no network device. Installed Alpine kernel, installed host glibc Python/libseccomp, copied current broker/receiver sources. Actual sink files exported from guest in base64 tar via serial console. QEMU cleanly powered down. UID changes were temporary processes; no accounts or host LSM changes.

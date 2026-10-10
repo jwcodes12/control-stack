@@ -3,7 +3,14 @@
     "agent-a": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "networks": [
         "isolated"
       ],
@@ -12,16 +19,28 @@
     "agent-b": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
-      "networks": [
-        "isolated"
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
       ],
+      "networks": [],
       "uid": 23702
     },
     "approver": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "networks": [
         "isolated"
       ],
@@ -35,6 +54,12 @@
           "read_only": false,
           "source": "/slice/db",
           "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/slice/channel",
+          "target": "/channel",
           "type": "bind"
         }
       ],
@@ -68,7 +93,14 @@
     "reviewer": {
       "env_names": [],
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "mounts": [],
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "networks": [
         "isolated"
       ],

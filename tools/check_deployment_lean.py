@@ -19,6 +19,7 @@ def projection(ir):
     if 'receiver' not in ids or 'broker' not in ids:
         raise ValueError('missing trusted model nodes')
     b=lambda x:'true' if x else 'false'
+    # Unknown UID uses sentinel 0, excluded by Accepted; never a claim it was observed.
     nodes=[]
     for n in ir['nodes']:
         if n['type']=='service':
@@ -37,8 +38,8 @@ def check(ir):
     # Projection accepted/refuted is decided IN LEAN, not Python.
     services = [n['facts'] for n in ir['nodes'] if n['type'] == 'service']
     receiver_uid = next(f['uid'] for f in services if f['role'] == 'receiver')
-    approvers = [f['uid'] for f in services if f['role'] == 'approver']
-    admins = [f['uid'] for f in services if f['role'] == 'broker']
+    approvers = [f['uid'] or 0 for f in services if f['role'] == 'approver']
+    admins = [f['uid'] or 0 for f in services if f['role'] == 'broker']
     principal = f'roles deployment {receiver_uid or 0} {approvers} {admins}'
     cap = ir['snapshot']['budget']
     source='''import ControlStack.Deployment.Contracts

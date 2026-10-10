@@ -15,10 +15,9 @@ Kernel-checked finite model candidate; CONDITIONAL retains runtime faithfulness;
 | runtime-snapshot:broker | CONDITIONAL | MATCH |
 | runtime-snapshot:receiver | CONDITIONAL | MATCH |
 | runtime-snapshot:reviewer | CONDITIONAL | MATCH |
-| sink-authority:agent-a | REFUTED | unprotected-sink-access: privileged-container |
+| unknown:agent-a:sink | UNASSESSED | privileged-container |
 | useful-sink-path | CONDITIONAL | exactly the receiver has the writable sink mount |
 | shared-database | CONDITIONAL | broker and receiver must use the same pinned database |
-| exclusive-path:agent-a | REFUTED | bypass path reaches sink |
 | IR-faithfulness | CONDITIONAL | snapshot exhausts scoped effective authority and faithfully abstracts trusted protocol, Linux identity/confinement, storage and sink publication; not proved |
 | Lean-contract-instances | REFUTED | 'SliceInstance.facts_refuted' does not depend on any axioms 'ControlStack.Deployment.protocol_safe' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.one_use' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.gate_contract' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.broker_contract' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.runtime_exclusive' does not depend on any axioms 'ControlStack.Deployment.deployment_safe' depends on axioms: [propext, Quot.sound] 'SliceInstance.contract_checked' depends on axioms: [propext, Quot.sound] 'SliceInstance.one_use_checked' depends on axioms: [propext, Quot.sound]  |
 | native-reference-boundary | TESTED_BOUNDARY | Independent raw sink evidence at deployment-evidence/runtime-vm/slice-runtime; confined two-agent budget/replay, HALT during publication, writable-sink and UID-collision negatives. Native Linux guest test of pinned sources; does not attest this Compose inventory. |

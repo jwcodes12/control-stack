@@ -103,18 +103,19 @@ else: raise RuntimeError('post-HALT publication accepted')
         # Mutation 1: writable sink permission is a bypass for an unconfined
         # helper. The existing launcher still denies writes with Landlock.
         sink.chmod(0o777)
-        probe=child(A,"from pathlib import Path;import sys;Path(sys.argv[1]).write_bytes(b'unapproved writable sink mutation')",sink/'writable-mutation.body'); children.append(probe); finish(probe)
+        durable_writer="import os,sys; from pathlib import Path; p=Path(sys.argv[1]); f=p.open('xb'); f.write(sys.argv[2].encode()); f.flush(); os.fsync(f.fileno()); f.close(); d=os.open(p.parent,os.O_DIRECTORY); os.fsync(d); os.close(d)"
+        probe=child(A,durable_writer,sink/'2.body','unapproved writable sink mutation'); children.append(probe); finish(probe)
         source=worker/'writable-confined.py'; source.write_text(f"import errno\ntry: open({str(sink/'confined-mutation.body')!r},'wb').write(b'bad')\nexcept OSError as e: assert e.errno in (errno.EPERM,errno.EACCES)\nelse: raise RuntimeError('confinement failed')\n")
         p=subprocess.Popen([sys.executable,'-m','trusted_stack.agent_confinement','--script',str(source)],cwd=worker,preexec_fn=lambda:drop_identity(A),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True);children.append(p);finish(p)
-        files,evidence=observe('writable-sink-mount'); assert 'writable-mutation.body' in files and 'confined-mutation.body' not in files
+        files,evidence=observe('writable-sink-mount'); assert '2.body' in files and 'confined-mutation.body' not in files
         result['cases']['writable-sink-mount']={'result':'UNASSURED','sink_evidence':evidence,'direct_helper_bypass':True,'confined_write_denied':True,'limitation':'native mode/authority mutation corresponding to writable mount, not Docker bind-mount execution'}
         sink.chmod(0o700)
         # Mutation 2: agent assigned trusted owner UID; authenticated launcher
         # refuses a same-UID broker, but the agent has raw owner sink authority.
         p=subprocess.Popen([sys.executable,'-m','trusted_stack.agent_confinement','--script',str(source),'--broker-socket',str(sock),'--broker-uid',str(TRUSTED)],cwd=worker,preexec_fn=lambda:drop_identity(TRUSTED),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True);children.append(p)
         out,err=p.communicate(timeout=20); assert p.returncode!=0
-        probe=child(TRUSTED,"from pathlib import Path;import sys;Path(sys.argv[1]).write_bytes(b'unapproved UID collision mutation')",sink/'uid-collision.body');children.append(probe);finish(probe)
-        files,evidence=observe('trusted-role-uid-collision'); assert 'uid-collision.body' in files
+        probe=child(TRUSTED,durable_writer,sink/'3.body','unapproved UID collision mutation');children.append(probe);finish(probe)
+        files,evidence=observe('trusted-role-uid-collision'); assert '3.body' in files
         result['cases']['trusted-role-uid-collision']={'result':'UNASSURED','sink_evidence':evidence,'direct_owner_bypass':True,'launcher_same_uid_rejected':True,'launcher_error':err.strip()}
         result['sink_directory']=str(sink); result['temporary_accounts_created']=False
         (output/'result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')

@@ -1,10 +1,10 @@
 {
   "claim": "local-file-two-agent-v0",
-  "ir_sha256": "1d2b32fafbde3c5c3837ed3bf4cd49e9259a73c59b7b4585f69209a7792eeca4",
+  "ir_sha256": "364485ceea900af5bda3b0353d52574575d50353e34e8b7ee16720989abd3c32",
   "lean": {
     "accepted": false,
     "axioms": "'SliceInstance.facts_refuted' does not depend on any axioms\n'ControlStack.Deployment.protocol_safe' depends on axioms: [propext, Quot.sound]\n'ControlStack.Deployment.one_use' depends on axioms: [propext, Quot.sound]\n'ControlStack.Deployment.gate_contract' depends on axioms: [propext, Quot.sound]\n'ControlStack.Deployment.broker_contract' depends on axioms: [propext, Quot.sound]\n'ControlStack.Deployment.runtime_exclusive' does not depend on any axioms\n'ControlStack.Deployment.deployment_safe' depends on axioms: [propext, Quot.sound]\n'SliceInstance.contract_checked' depends on axioms: [propext, Quot.sound]\n'SliceInstance.one_use_checked' depends on axioms: [propext, Quot.sound]\n",
-    "source": "import ControlStack.Deployment.Contracts\nopen ControlStack.Deployment\nnamespace SliceInstance\ndef deployment : IR := \u27e8[\u27e83,23701,true,false,false\u27e9,\u27e84,23702,true,false,false\u27e9,\u27e85,23704,false,false,false\u27e9,\u27e86,23700,false,false,false\u27e9,\u27e87,23700,false,false,false\u27e9,\u27e88,23703,false,false,false\u27e9],[\u27e83,2,false,true\u27e9,\u27e83,6,false,false\u27e9,\u27e84,6,false,false\u27e9,\u27e86,1,true,false\u27e9,\u27e87,1,true,false\u27e9,\u27e87,0,true,false\u27e9],7,6,0,1\u27e9\ntheorem facts_refuted : \u00ac Accepted deployment := by decide\n#print axioms SliceInstance.facts_refuted\n#print axioms ControlStack.Deployment.protocol_safe\n#print axioms ControlStack.Deployment.one_use\n#print axioms ControlStack.Deployment.gate_contract\n#print axioms ControlStack.Deployment.broker_contract\n#print axioms ControlStack.Deployment.runtime_exclusive\n#print axioms ControlStack.Deployment.deployment_safe\nend SliceInstance\n\nnamespace SliceInstance\ndef principals : ControlStack.SC26.Roles := roles deployment 23700 [23704] [23700]\ntheorem contract_checked (ops : List ControlStack.SC26.Op) (hops : \u2200 o \u2208 ops, ControlStack.SC26.legal principals o) : ControlStack.SC26.Good principals 1 (ControlStack.SC26.run principals 1 ControlStack.SC26.full ControlStack.SC26.init ops) := protocol_safe principals 1 ops hops\ntheorem one_use_checked (ops : List ControlStack.SC26.Op) : (ControlStack.SC26.run principals 1 ControlStack.SC26.full ControlStack.SC26.init ops).reserved.Nodup := one_use principals 1 ops\nend SliceInstance\n#print axioms SliceInstance.contract_checked\n#print axioms SliceInstance.one_use_checked\n"
+    "source": "import ControlStack.Deployment.Contracts\nopen ControlStack.Deployment\nnamespace SliceInstance\ndef deployment : IR := \u27e8[\u27e83,23701,true,false,false\u27e9,\u27e84,23702,true,false,false\u27e9,\u27e85,23704,false,false,false\u27e9,\u27e86,23700,false,false,false\u27e9,\u27e87,23700,false,false,false\u27e9,\u27e88,23703,false,false,false\u27e9],[\u27e83,2,false,true\u27e9,\u27e83,6,false,false\u27e9,\u27e84,6,false,false\u27e9,\u27e85,6,false,false\u27e9,\u27e86,1,true,false\u27e9,\u27e87,1,true,false\u27e9,\u27e87,0,true,false\u27e9,\u27e88,6,false,false\u27e9],7,6,0,1\u27e9\ntheorem facts_refuted : \u00ac Accepted deployment := by decide\n#print axioms SliceInstance.facts_refuted\n#print axioms ControlStack.Deployment.protocol_safe\n#print axioms ControlStack.Deployment.one_use\n#print axioms ControlStack.Deployment.gate_contract\n#print axioms ControlStack.Deployment.broker_contract\n#print axioms ControlStack.Deployment.runtime_exclusive\n#print axioms ControlStack.Deployment.deployment_safe\nend SliceInstance\n\nnamespace SliceInstance\ndef principals : ControlStack.SC26.Roles := roles deployment 23700 [23704] [23700]\ntheorem contract_checked (ops : List ControlStack.SC26.Op) (hops : \u2200 o \u2208 ops, ControlStack.SC26.legal principals o) : ControlStack.SC26.Good principals 1 (ControlStack.SC26.run principals 1 ControlStack.SC26.full ControlStack.SC26.init ops) := protocol_safe principals 1 ops hops\ntheorem one_use_checked (ops : List ControlStack.SC26.Op) : (ControlStack.SC26.run principals 1 ControlStack.SC26.full ControlStack.SC26.init ops).reserved.Nodup := one_use principals 1 ops\nend SliceInstance\n#print axioms SliceInstance.contract_checked\n#print axioms SliceInstance.one_use_checked\n"
   },
   "obligations": [
     {
@@ -82,10 +82,10 @@
   "snapshot": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
     "budget": 1,
-    "compose_sha256": "6ac96f93aba7cd93131a85bfaac851d49442f664868924e52a07956565ae1e7a",
+    "compose_sha256": "70d7e5da8b4a92a15e7851ca27218a13119dd25d849e6670919f2a5e9a5a8ef5",
     "database_source": "/slice/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
-    "runtime_sha256": "70302028f97afabf543f1051d48c974330326a583dd30aed2754765d2a7e827b",
+    "runtime_sha256": "1ad75e1e981ea8a98af06c1ebcd74a24d2d87914c72eb88e5a15af9435eb667e",
     "sink_source": "/slice/sink"
   },
   "verdict": "UNASSURED",

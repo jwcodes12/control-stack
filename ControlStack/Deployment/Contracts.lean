@@ -43,7 +43,8 @@ def Accepted (d : IR) : Prop :=
   (∀ e ∈ d.edges, e.authority = true → e.target = d.database → e.source = d.receiver ∨ e.source = d.broker) ∧
   (∀ n ∈ d.nodes, n.privileged = false ∧ n.hostNetwork = false) ∧
   (∀ r ∈ d.nodes, r.id = d.receiver → ∀ a ∈ d.nodes, a.agent = true → a.uid ≠ r.uid) ∧
-  (∃ e ∈ d.edges, e.source = d.receiver ∧ e.target = d.sink ∧ e.authority = true)
+  (∃ e ∈ d.edges, e.source = d.receiver ∧ e.target = d.sink ∧ e.authority = true) ∧
+  (∀ n ∈ d.nodes, 0 < n.uid)
 
 instance (d : IR) : Decidable (Accepted d) := by unfold Accepted; infer_instance
 
@@ -117,6 +118,7 @@ structure RuntimeFaithful (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
   gateUID : R.gate = r.uid
   callerBinding : ∀ c k tx, SC26.Op.bankCall c k tx ∈ ops →
     ∃ a ∈ d.nodes, a.agent = true ∧ c = a.uid
+  unitCosts : ∀ e ∈ sinkEffects, e.2.amount = 1
   publication : sinkEffects = (SC26.run R cap SC26.full SC26.init ops).bank
 
 /-- Conditional deployment assurance: graph exclusivity and protocol safety
@@ -129,7 +131,8 @@ theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
     (∀ e ∈ sinkEffects, ∃ req, SC26.reqOf (SC26.run R cap SC26.full SC26.init ops) e.1 = some req ∧
       req.tx = e.2 ∧ e.1 ∈ (SC26.run R cap SC26.full SC26.init ops).reserved ∧
       SC26.Approved R (SC26.run R cap SC26.full SC26.init ops) e.1 req) ∧
-    (sinkEffects.map Prod.fst).Nodup ∧ (sinkEffects.map (fun e => e.2.amount)).sum ≤ cap := by
+    (sinkEffects.map Prod.fst).Nodup ∧ (sinkEffects.map (fun e => e.2.amount)).sum ≤ cap ∧
+    sinkEffects.length ≤ cap := by
   have legal : ∀ o ∈ ops, SC26.legal R o := by
     intro o ho
     cases o with
@@ -146,8 +149,23 @@ theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
     | halt c => trivial
   have good := protocol_safe R cap ops legal
   refine ⟨fun e he ha hs => runtime_exclusive d actualEdges h faithful.authority e he ha hs, ?_⟩
-  rw [faithful.publication]
-  exact good
+  have unit_sum : ∀ xs : List (Nat × SC26.Tx),
+      (∀ e ∈ xs, e.2.amount = 1) → (xs.map (fun e => e.2.amount)).sum = xs.length := by
+    intro xs
+    induction xs with
+    | nil => intro _; rfl
+    | cons e es ih =>
+      intro hu
+      simp only [List.map_cons, List.sum_cons, List.length_cons]
+      rw [hu e List.mem_cons_self, ih (fun x hx => hu x (List.mem_cons_of_mem _ hx))]
+      omega
+  have bound : (sinkEffects.map (fun e => e.2.amount)).sum ≤ cap := by
+    rw [faithful.publication]
+    exact good.2.2
+  refine ⟨?_, ?_, bound, ?_⟩
+  · rw [faithful.publication]; exact good.1
+  · rw [faithful.publication]; exact good.2.1
+  · simpa [unit_sum sinkEffects faithful.unitCosts] using bound
 
 /-- Useful two-agent contract instance; both contend for one shared capacity. -/
 def clean : IR := ⟨[⟨0,23701,true,false,false⟩, ⟨1,23702,true,false,false⟩,

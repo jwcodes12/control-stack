@@ -7,7 +7,7 @@ Kernel-checked finite model candidate; CONDITIONAL retains runtime faithfulness;
 | Premise | Status | Evidence / limitation |
 |---|---|---|
 | supported-roles | CONDITIONAL | two agents, one named broker and one named receiver required |
-| identity-separation | CONDITIONAL | distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure |
+| identity-separation | REFUTED | distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure |
 | runtime-snapshot:agent-a | CONDITIONAL | MATCH |
 | runtime-snapshot:agent-b | CONDITIONAL | MATCH |
 | runtime-snapshot:approver | CONDITIONAL | MATCH |
@@ -15,9 +15,10 @@ Kernel-checked finite model candidate; CONDITIONAL retains runtime faithfulness;
 | runtime-snapshot:deputy | CONDITIONAL | MATCH |
 | runtime-snapshot:receiver | CONDITIONAL | MATCH |
 | runtime-snapshot:reviewer | CONDITIONAL | MATCH |
-| sink-authority:deputy | REFUTED | alternate-deputy-sink-credentials: sink-credential-env-name:SINK_CREDENTIAL |
+| unknown:deputy:sink | UNASSESSED | opaque-credential-env-name:SINK_CREDENTIAL |
+| sink-authority:deputy | REFUTED | alternate-deputy-sink-credentials: protected-sink-mount |
 | unknown:deputy:unknown | UNASSESSED | uninspected deputy authority |
-| useful-sink-path | CONDITIONAL | exactly the receiver has the writable sink mount |
+| useful-sink-path | REFUTED | exactly the receiver has the writable sink mount |
 | shared-database | CONDITIONAL | broker and receiver must use the same pinned database |
 | IR-faithfulness | CONDITIONAL | snapshot exhausts scoped effective authority and faithfully abstracts trusted protocol, Linux identity/confinement, storage and sink publication; not proved |
 | Lean-contract-instances | REFUTED | 'SliceInstance.facts_refuted' does not depend on any axioms 'ControlStack.Deployment.protocol_safe' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.one_use' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.gate_contract' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.broker_contract' depends on axioms: [propext, Quot.sound] 'ControlStack.Deployment.runtime_exclusive' does not depend on any axioms 'ControlStack.Deployment.deployment_safe' depends on axioms: [propext, Quot.sound] 'SliceInstance.contract_checked' depends on axioms: [propext, Quot.sound] 'SliceInstance.one_use_checked' depends on axioms: [propext, Quot.sound]  |

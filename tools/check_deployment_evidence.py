@@ -21,8 +21,8 @@ def check(base):
     assert list(snapshots['clean-inflight'])==['1.body']
     assert snapshots['clean-inflight']==snapshots['clean-after-halt']
     assert (base/'sink/1.body').read_bytes()==b'exact-reviewed-two-agent-slice'
-    assert (base/'sink/writable-mutation.body').read_bytes()==b'unapproved writable sink mutation'
-    assert (base/'sink/uid-collision.body').read_bytes()==b'unapproved UID collision mutation'
+    assert (base/'sink/2.body').read_bytes()==b'unapproved writable sink mutation'
+    assert (base/'sink/3.body').read_bytes()==b'unapproved UID collision mutation'
     assert 'confined-mutation.body' not in snapshots['writable-sink-mount']
     assert result['cases']['clean']['halt_client_ready_before_receiver_release']
     assert (base/'halt-ready.marker').read_text() == 'HALT client ready before request'
@@ -31,7 +31,7 @@ def check(base):
     assert result['cases']['trusted-role-uid-collision']['launcher_same_uid_rejected']
     # This state supplements sink evidence; no gate log substitutes for raw files.
     db=sqlite3.connect('file:'+str((base/'private/gate.db').resolve())+'?mode=ro',uri=True)
-    try: assert db.execute('SELECT spent,halted FROM meta WHERE id=1').fetchone()==(1,1)
+    try: assert db.execute('SELECT global_cap,spent,halted FROM meta WHERE id=1').fetchone()==(1,1,1)
     finally: db.close()
     return snapshots
 if __name__=='__main__':

@@ -7,7 +7,7 @@
       "from": "agent-a",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "reachability": "PRESENT",
@@ -15,29 +15,42 @@
       "to": "sink"
     },
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-a",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "kind": "STATIC_INFERRED",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-b",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "kind": "STATIC_INFERRED",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
+        "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
@@ -46,7 +59,7 @@
       "from": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "reachability": "PRESENT",
@@ -59,7 +72,7 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "reachability": "PRESENT",
@@ -72,12 +85,25 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "reachability": "PRESENT",
       "reason": "protected-sink-mount",
       "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
+        "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
     }
   ],
   "nodes": [
@@ -86,7 +112,7 @@
       "id": "sink",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "sink"
@@ -96,7 +122,7 @@
       "id": "database",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "database"
@@ -106,7 +132,7 @@
       "id": "unknown",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "unknown"
@@ -124,7 +150,7 @@
       "id": "agent-a",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "service"
@@ -142,7 +168,7 @@
       "id": "agent-b",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "service"
@@ -160,7 +186,7 @@
       "id": "approver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "service"
@@ -178,7 +204,7 @@
       "id": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "service"
@@ -196,7 +222,7 @@
       "id": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "service"
@@ -214,7 +240,7 @@
       "id": "reviewer",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
         "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
       },
       "type": "service"
@@ -223,21 +249,21 @@
   "snapshot": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
     "budget": 1,
-    "compose_sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+    "compose_sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
     "database_source": "/slice/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
-    "runtime_sha256": "88146f916056a36399db96762126e555e5129513c2f6c3f2afc24861dbe52a9b",
+    "runtime_sha256": "ca6e5ba604d6d804e6d96aa8fdf755fc834fa6dbf6ffbd8f7d25d8a838518476",
     "sink_source": "/slice/sink"
   },
   "sources": [
     {
       "kind": "DECLARED",
-      "sha256": "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+      "sha256": "c498476d89fde1f24d4443dacf9251f965428d4068cc418a6e6e86a8b1d41bf4",
       "source": "examples/compose-two-agent/writable-sink-mount.compose.json"
     },
     {
       "kind": "RUNTIME_OBSERVED",
-      "sha256": "88146f916056a36399db96762126e555e5129513c2f6c3f2afc24861dbe52a9b",
+      "sha256": "ca6e5ba604d6d804e6d96aa8fdf755fc834fa6dbf6ffbd8f7d25d8a838518476",
       "source": "examples/compose-two-agent/writable-sink-mount.runtime.json"
     },
     {

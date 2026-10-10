@@ -2,29 +2,42 @@
   "claim": "local-file-two-agent-v0",
   "edges": [
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-a",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "kind": "STATIC_INFERRED",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-b",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "kind": "STATIC_INFERRED",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
@@ -33,7 +46,7 @@
       "from": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -46,7 +59,7 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -59,12 +72,25 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
       "reason": "protected-sink-mount",
       "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
     }
   ],
   "nodes": [
@@ -73,7 +99,7 @@
       "id": "sink",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "sink"
@@ -83,7 +109,7 @@
       "id": "database",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "database"
@@ -93,7 +119,7 @@
       "id": "unknown",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "unknown"
@@ -111,7 +137,7 @@
       "id": "agent-a",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -129,7 +155,7 @@
       "id": "agent-b",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -147,7 +173,7 @@
       "id": "approver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -165,7 +191,7 @@
       "id": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -183,7 +209,7 @@
       "id": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -201,7 +227,7 @@
       "id": "reviewer",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -210,21 +236,21 @@
   "snapshot": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
     "budget": 1,
-    "compose_sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+    "compose_sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
     "database_source": "/slice/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
-    "runtime_sha256": "684a0527f6328094d698643b4c912ba82b51647b985e5e75403c01f5795d5d07",
+    "runtime_sha256": "180808628255f78510925874ae3fd1189c4e383a876a74dd3a5f119a287db0f4",
     "sink_source": "/slice/sink"
   },
   "sources": [
     {
       "kind": "DECLARED",
-      "sha256": "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+      "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
       "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
     },
     {
       "kind": "RUNTIME_OBSERVED",
-      "sha256": "684a0527f6328094d698643b4c912ba82b51647b985e5e75403c01f5795d5d07",
+      "sha256": "180808628255f78510925874ae3fd1189c4e383a876a74dd3a5f119a287db0f4",
       "source": "examples/compose-two-agent/trusted-role-uid-collision.runtime.json"
     },
     {

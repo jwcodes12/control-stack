@@ -12,18 +12,29 @@
         "isolated"
       ],
       "user": "23701",
-      "volumes": [],
+      "volumes": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "x-cstack-role": "agent"
     },
     "agent-b": {
       "environment": {},
       "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "network_mode": "host",
-      "networks": [
-        "isolated"
-      ],
       "user": "23702",
-      "volumes": [],
+      "volumes": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "x-cstack-role": "agent"
     },
     "approver": {
@@ -33,7 +44,14 @@
         "isolated"
       ],
       "user": "23704",
-      "volumes": [],
+      "volumes": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "x-cstack-role": "approver"
     },
     "broker": {
@@ -48,6 +66,12 @@
           "read_only": false,
           "source": "/slice/db",
           "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/slice/channel",
+          "target": "/channel",
           "type": "bind"
         }
       ],
@@ -83,7 +107,14 @@
         "isolated"
       ],
       "user": "23703",
-      "volumes": [],
+      "volumes": [
+        {
+          "read_only": true,
+          "source": "/slice/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
       "x-cstack-role": "reviewer"
     }
   },

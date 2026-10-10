@@ -13,7 +13,7 @@ def dumps(x): return json.dumps(x,sort_keys=True,indent=2)+'\n'
 def build():
     base=ROOT/'examples/compose-two-agent'
     image='example.invalid/local-slice@sha256:'+'a'*64
-    def mount(source,target): return {'type':'bind','source':source,'target':target,'read_only':False}
+    def mount(source,target,read_only=False): return {'type':'bind','source':source,'target':target,'read_only':read_only}
     c={'services':{},'networks':{'isolated':{'internal':True}},'x-cstack':{
        'sink_source':'/slice/sink','database_source':'/slice/db','budget':1,
        'broker_sha256':sha(ROOT/'trusted_stack/controller.py'),'receiver_sha256':sha(ROOT/'trusted_stack/outbox_receiver.py')}}
@@ -21,21 +21,23 @@ def build():
         c['services'][name]={'x-cstack-role':role,'user':str(uid),'image':image,'environment':{},'networks':['isolated'],'volumes':[]}
     c['services']['broker']['volumes']=[mount('/slice/db','/private')]
     c['services']['receiver']['volumes']=[mount('/slice/db','/private'),mount('/slice/sink','/output')]
+    for name in ('agent-a','agent-b','reviewer','approver','broker'):
+        c['services'][name]['volumes'].append(mount('/slice/channel','/channel',read_only=name!='broker'))
     cases={'clean':c}
     def mutation(name):
         m=copy.deepcopy(c); cases[name]=m; return m
-    mutation('writable-sink-mount')['services']['agent-a']['volumes']=[mount('/slice/sink','/bypass')]
-    mutation('agent-broker-db-access')['services']['agent-b']['volumes']=[mount('/slice/db','/bypass')]
+    mutation('writable-sink-mount')['services']['agent-a']['volumes'].append(mount('/slice/sink','/bypass'))
+    mutation('agent-broker-db-access')['services']['agent-b']['volumes'].append(mount('/slice/db','/bypass'))
     mutation('trusted-role-uid-collision')['services']['agent-a']['user']='23700'
     mutation('privileged-container')['services']['agent-a']['privileged']=True
-    mutation('host-network')['services']['agent-b']['network_mode']='host'
+    m=mutation('host-network');m['services']['agent-b']['network_mode']='host';del m['services']['agent-b']['networks']
     m=mutation('alternate-deputy-sink-credentials')
-    m['services']['deputy']={'x-cstack-role':'deputy','user':'23705','image':image,'environment':{'SINK_CREDENTIAL':'dummy-only'},'volumes':[],'networks':['isolated']}
+    m['services']['deputy']={'x-cstack-role':'deputy','user':'23700','image':image,'environment':{'SINK_CREDENTIAL':'dummy-only'},'volumes':[mount('/slice/sink','/output')],'networks':['isolated']}
     mutation('unknown-feature')['services']['agent-a']['devices']=['/dev/example']
     expected={}
     for name,c in cases.items():
         p=base/(name+'.compose.json'); p.write_text(dumps(c))
-        r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':v['volumes'],'networks':v['networks'],'env_names':sorted(v['environment'])} for k,v in c['services'].items()}}
+        r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':v['volumes'],'networks':v.get('networks',[]),'env_names':sorted(v['environment'])} for k,v in c['services'].items()}}
         rp=base/(name+'.runtime.json'); rp.write_text(dumps(r))
         # Relative source paths make fixture provenance portable across clones.
         import os

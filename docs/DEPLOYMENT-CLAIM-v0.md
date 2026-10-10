@@ -53,9 +53,9 @@ or storage/clock configuration. Recollect and reverify; no validity duration or
 continuous drift monitor is claimed.
 
 Supported input is a single pinned, normalized Compose **JSON** file (a YAML subset),
-absolute long-form bind mounts, numeric users, digest-pinned images and one internal
+absolute long-form bind mounts (including a common `/channel` bind for the broker and its callers), numeric non-root users for every role, digest-pinned images and one internal
 network, with a separate selected runtime-facts JSON inventory (UIDs, image digests,
-mounts, networks and environment variable names only). The inventory is caller
+mounts, networks and environment variable names only). The broker hosts `/channel/broker.sock` through its writable channel bind; agents, reviewer and approver see the same source through read-only channel binds. Connection submission is permitted, while the broker authorizes each operation separately. Missing shared channel inspection becomes UNKNOWN, not a guessed path from a role name. The inventory is caller
 supplied: RUNTIME_OBSERVED labels do not authenticate it. Synthetic fixtures use
 invented image digests and are not runnable container images. Live checks execute
 the existing native confined broker/receiver on this box and test the corresponding

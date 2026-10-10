@@ -11,7 +11,7 @@ clone `/var/tmp/sol-deployment-slice-20261010`. Claim: `docs/DEPLOYMENT-CLAIM-v0
 `runtime_exclusive` transfers authority only under faithful runtime inclusion.
 `deployment_safe` joins that inclusion, actual caller identity binding and faithful
 protocol/publication abstraction with existing exact approval, deduplication and
-budget safety. There is no bare CompleteMediation axiom. The runtime-faithfulness
+budget safety. Its unit-cost faithfulness premise derives a file-count bound as well as the weighted budget bound. Accepted facts also reject zero or unknown role UIDs. There is no bare CompleteMediation axiom. The runtime-faithfulness
 package is substantive and unproved; it includes implementation correspondence.
 
 `protocol_safe` reuses `SC26.sc26_safe`, `one_use` reuses `SC26.sc26_once`,
@@ -58,11 +58,11 @@ shared-budget/HALT state. It does not substitute the gate log for sink state.
   receipt commit; concurrent HALT waits on the SQLite writer lock, then commits.
   Published bytes remain; subsequent delivery is denied.
 - `writable-sink-mount-sink.json`: native permission/authority analogue of a writable
-  mount produces `writable-mutation.body` through a direct unconfined helper.
+  mount produces `2.body` through a direct unconfined helper.
   A separately confined agent write remains denied by Landlock. This test does not
   claim that a Docker mount was launched or that confinement alone was bypassed.
 - `trusted-role-uid-collision-sink.json`: a direct helper with the trusted owner UID
-  produces `uid-collision.body`. The authenticated launcher refuses same-UID
+  produces `3.body`. The authenticated launcher refuses same-UID
   broker attachment. This is a concrete authority failure and a launcher negative.
 
 These are native reference-boundary checks, not attestation that synthetic Compose
@@ -115,6 +115,8 @@ All scenario manifests, frozen evidence and EgressGate remain unchanged.
 
 ## Failures and dead ends
 
+The fidelity audit replaced the deputy fixture’s environment-name-only proxy with a writable sink mount under the trusted owner UID. Broker-channel reachability now derives from a common `/channel` bind rather than being guessed from the role, and direct runtime mutations fsync numeric `2.body` / `3.body` files to stay within the exact protected effect class. Opaque credential names now remain UNKNOWN; they do not prove a reachable authority path.
+
 The first fixture test failed because the UNKNOWN reason omitted its fixture label;
 fixed with an explicit unknown-feature diagnostic. Host confinement is unavailable
 as described above. First guest run completed all runtime assertions and exported
@@ -133,7 +135,8 @@ Lean to retain its Lean section; no hand editing of generated files was used.
 
 - `lake build ControlStack.Deployment.Contracts`: PASS.
 - `lake env lean ControlStack/Deployment/Contracts.lean`: PASS, 16 standard-only axiom reports.
-- `python3 tools/test_deployment_slice.py`: PASS, nine tests.
+- `python3 tools/test_deployment_slice.py`: PASS, eleven tests.
+- `docker compose -f <fixture>.compose.json config --quiet`: PASS for all eight files; syntax validation only, no images launched.
 - `python3 tools/test_deployment_runtime.py`: PASS, 17 tests, two host kernel skips.
 - `python3 tools/test_deployment_evidence.py`: PASS, archived raw sink checks.
 - `python3 tools/test_deployment_lean.py`: PASS, all eight raw fixture instances.
@@ -142,7 +145,7 @@ Lean to retain its Lean section; no hand editing of generated files was used.
 - `python3 tools/cstack.py check --fast`: 40/41 PASS. The sole failure is the existing `test_confined_effect_broker` requiring root; the native host additionally lacks active Landlock. All four deployment-specific steps PASS. Exact output: `deployment-evidence/fast-check.txt`.
 - Generated registry, statement catalog, overview, ledger, trust-root and results
   `--check`: PASS, including full Lean ledger generation/check and fast no-Lean checks.
-- Draft PR: https://github.com/jwcodes12/control-stack/pull/45 (draft, not merged). CI state at head: PENDING at final publication (the final commit omits `[skip ci]`). [Live checks at the current PR head](https://github.com/jwcodes12/control-stack/pull/45/checks) provide the authoritative changing state.
+- Draft PR: https://github.com/jwcodes12/control-stack/pull/45 (draft, not merged). The three deployment jobs (fixtures, kernel, linux-boundary) passed on predecessor `42d691b`; the final socket, credential and effect-class corrections are independently rechecked. CI state at head: PENDING at final publication (the final commit omits `[skip ci]`). [Live checks at the current PR head](https://github.com/jwcodes12/control-stack/pull/45/checks) provide the authoritative changing state.
 
 ![Current deployment-slice CI](https://github.com/jwcodes12/control-stack/actions/workflows/deployment-slice.yml/badge.svg?branch=sol%2Fdeployment-slice-20261010&event=pull_request)
 

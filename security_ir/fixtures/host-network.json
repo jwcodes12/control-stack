@@ -2,16 +2,16 @@
   "claim": "local-file-two-agent-v0",
   "edges": [
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-a",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "kind": "STATIC_INFERRED",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
@@ -19,25 +19,38 @@
       "capability": "escape",
       "from": "agent-b",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "kind": "UNKNOWN",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
-      "reachability": "PRESENT",
+      "reachability": "UNKNOWN",
       "reason": "host-network",
       "to": "sink"
     },
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-b",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "kind": "STATIC_INFERRED",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
+        "source": "examples/compose-two-agent/host-network.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
@@ -46,7 +59,7 @@
       "from": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "reachability": "PRESENT",
@@ -59,7 +72,7 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "reachability": "PRESENT",
@@ -72,12 +85,25 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "reachability": "PRESENT",
       "reason": "protected-sink-mount",
       "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
+        "source": "examples/compose-two-agent/host-network.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
     }
   ],
   "nodes": [
@@ -86,7 +112,7 @@
       "id": "sink",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "sink"
@@ -96,7 +122,7 @@
       "id": "database",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "database"
@@ -106,7 +132,7 @@
       "id": "unknown",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "unknown"
@@ -124,7 +150,7 @@
       "id": "agent-a",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "service"
@@ -142,7 +168,7 @@
       "id": "agent-b",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "service"
@@ -160,7 +186,7 @@
       "id": "approver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "service"
@@ -178,7 +204,7 @@
       "id": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "service"
@@ -196,7 +222,7 @@
       "id": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "service"
@@ -214,7 +240,7 @@
       "id": "reviewer",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
         "source": "examples/compose-two-agent/host-network.compose.json"
       },
       "type": "service"
@@ -223,21 +249,21 @@
   "snapshot": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
     "budget": 1,
-    "compose_sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+    "compose_sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
     "database_source": "/slice/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
-    "runtime_sha256": "70302028f97afabf543f1051d48c974330326a583dd30aed2754765d2a7e827b",
+    "runtime_sha256": "e7e580c20508cc677b619f0de9b720f07494936e80f3af7dd7ab0bf92ddac7b6",
     "sink_source": "/slice/sink"
   },
   "sources": [
     {
       "kind": "DECLARED",
-      "sha256": "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+      "sha256": "ba3778af3347a1bdb46aedf00fa4f85140017735b0372d556393004fe5d0240f",
       "source": "examples/compose-two-agent/host-network.compose.json"
     },
     {
       "kind": "RUNTIME_OBSERVED",
-      "sha256": "70302028f97afabf543f1051d48c974330326a583dd30aed2754765d2a7e827b",
+      "sha256": "e7e580c20508cc677b619f0de9b720f07494936e80f3af7dd7ab0bf92ddac7b6",
       "source": "examples/compose-two-agent/host-network.runtime.json"
     },
     {

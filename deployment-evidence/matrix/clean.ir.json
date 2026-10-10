@@ -2,29 +2,42 @@
   "claim": "local-file-two-agent-v0",
   "edges": [
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-a",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "kind": "STATIC_INFERRED",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
-      "authorization": "FORBIDDEN",
+      "authorization": "PERMITTED",
       "capability": "call",
       "from": "agent-b",
       "provenance": {
-        "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "kind": "STATIC_INFERRED",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "reachability": "PRESENT",
-      "reason": "preopened-broker-channel",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
+        "source": "examples/compose-two-agent/clean.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
       "to": "broker"
     },
     {
@@ -33,7 +46,7 @@
       "from": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "reachability": "PRESENT",
@@ -46,7 +59,7 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "reachability": "PRESENT",
@@ -59,12 +72,25 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "reachability": "PRESENT",
       "reason": "protected-sink-mount",
       "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
+        "source": "examples/compose-two-agent/clean.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
     }
   ],
   "nodes": [
@@ -73,7 +99,7 @@
       "id": "sink",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "sink"
@@ -83,7 +109,7 @@
       "id": "database",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "database"
@@ -93,7 +119,7 @@
       "id": "unknown",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "unknown"
@@ -111,7 +137,7 @@
       "id": "agent-a",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "service"
@@ -129,7 +155,7 @@
       "id": "agent-b",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "service"
@@ -147,7 +173,7 @@
       "id": "approver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "service"
@@ -165,7 +191,7 @@
       "id": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "service"
@@ -183,7 +209,7 @@
       "id": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "service"
@@ -201,7 +227,7 @@
       "id": "reviewer",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
         "source": "examples/compose-two-agent/clean.compose.json"
       },
       "type": "service"
@@ -210,21 +236,21 @@
   "snapshot": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
     "budget": 1,
-    "compose_sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+    "compose_sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
     "database_source": "/slice/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
-    "runtime_sha256": "70302028f97afabf543f1051d48c974330326a583dd30aed2754765d2a7e827b",
+    "runtime_sha256": "1ad75e1e981ea8a98af06c1ebcd74a24d2d87914c72eb88e5a15af9435eb667e",
     "sink_source": "/slice/sink"
   },
   "sources": [
     {
       "kind": "DECLARED",
-      "sha256": "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+      "sha256": "a39dfa2c8750f81e1fda2c9e0cddb05d8e12e9a87094af8fdeb18cb5f4a3343b",
       "source": "examples/compose-two-agent/clean.compose.json"
     },
     {
       "kind": "RUNTIME_OBSERVED",
-      "sha256": "70302028f97afabf543f1051d48c974330326a583dd30aed2754765d2a7e827b",
+      "sha256": "1ad75e1e981ea8a98af06c1ebcd74a24d2d87914c72eb88e5a15af9435eb667e",
       "source": "examples/compose-two-agent/clean.runtime.json"
     },
     {

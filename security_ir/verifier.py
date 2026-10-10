@@ -16,7 +16,7 @@ def verify(ir):
     uids = [services[k]['uid'] for k in agents+trusted]
     uid_ok = bool(trusted) and all(x is not None and x>0 for x in uids) and len({services[k]['uid'] for k in agents})==2 and all(services[a]['uid'] != services[t]['uid'] for a in agents for t in trusted) and services.get('broker',{}).get('uid')==services.get('receiver',{}).get('uid') and all(services[k]['uid']!=services.get('broker',{}).get('uid') for k in services if k not in {'broker','receiver'})
     uid_ok = uid_ok and len({services[k]['uid'] for k in trusted if k != 'receiver'}) == len([k for k in trusted if k != 'receiver'])
-    add('identity-separation','CONDITIONAL' if uid_ok else 'REFUTED','distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure')
+    add('identity-separation','UNASSESSED' if any(x is None for x in uids) else 'CONDITIONAL' if uid_ok else 'REFUTED','distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure')
     for name,f in services.items():
         add('runtime-snapshot:'+name, {'MATCH':'CONDITIONAL','MISSING':'UNASSESSED','DRIFT':'REFUTED'}[f['runtime_match']], f['runtime_match'])
         if f['privileged'] or f['host_network']:
@@ -26,7 +26,7 @@ def verify(ir):
             add('unknown:'+e['from']+':'+e['to'],'UNASSESSED',e['reason'])
         elif e['reachability']=='PRESENT':
             if e['to']=='sink' and not (e['from']=='receiver' and e['capability']=='write'):
-                add('sink-authority:'+e['from'],'REFUTED', ('writable-sink-mount' if e['capability']=='write' else 'alternate-deputy-sink-credentials' if e['capability']=='credential' else 'unprotected-sink-access')+': '+e['reason'])
+                add('sink-authority:'+e['from'],'REFUTED', ('alternate-deputy-sink-credentials' if services.get(e['from'],{}).get('role')=='deputy' else 'writable-sink-mount' if e['capability']=='write' else 'unprotected-sink-access')+': '+e['reason'])
             if e['to']=='database' and e['from'] not in {'broker','receiver'}:
                 add('database-custody:'+e['from'],'REFUTED','agent-broker-db-access: '+e['reason'])
     writers = [e['from'] for e in ir['edges'] if e['to']=='sink' and e['capability']=='write' and e['reachability']=='PRESENT']

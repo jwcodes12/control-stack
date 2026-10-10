@@ -35,6 +35,15 @@ class DeploymentTests(unittest.TestCase):
             if item['source'].startswith(str(ROOT)+'/'):
                 item['source']=str(Path(item['source']).relative_to(ROOT))
         self.assertEqual(a,self.clean)
+        self.assertTrue(all(e['authorization']=='PERMITTED' for e in a['edges'] if e['to']=='broker' and e['capability']=='call'))
+    def test_deputy_has_real_file_sink_authority_and_opaque_names_are_unknown(self):
+        d=json.loads((ROOT/'security_ir/fixtures/alternate-deputy-sink-credentials.json').read_text())
+        f=next(n['facts'] for n in d['nodes'] if n['id']=='deputy')
+        owner=next(n['facts']['uid'] for n in d['nodes'] if n['id']=='receiver')
+        self.assertEqual(f['uid'],owner)
+        self.assertTrue(any(e['from']=='deputy' and e['to']=='sink' and e['capability']=='write' and e['reachability']=='PRESENT' for e in d['edges']))
+        self.assertTrue(any(e['from']=='deputy' and e['capability']=='credential' and e['reachability']=='UNKNOWN' and e['provenance']['kind']=='UNKNOWN' for e in d['edges']))
+
     def test_missing_and_contradictory_data(self):
         for key in self.clean:
             bad=copy.deepcopy(self.clean); del bad[key]
@@ -53,6 +62,17 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(verify(bad)['verdict'],'UNASSURED')
         e['reachability']='UNKNOWN'; e['provenance']['kind']='UNKNOWN'
         self.assertEqual(verify(bad)['verdict'],'UNASSURED')
+    def test_missing_socket_mount_is_unknown_not_a_role_based_path(self):
+        p=ROOT/'examples/compose-two-agent/clean.compose.json'; r=p.with_name('clean.runtime.json')
+        c=json.loads(p.read_text()); c['services']['agent-a']['volumes']=[]
+        with tempfile.TemporaryDirectory() as tmp:
+            cp=Path(tmp)/'compose.json';cp.write_text(json.dumps(c))
+            ir=collect(cp,r,sha(cp))
+            channel=next(e for e in ir['edges'] if e['from']=='agent-a' and e['to']=='broker')
+            self.assertEqual(channel['reachability'],'UNKNOWN')
+            self.assertEqual(channel['provenance']['kind'],'UNKNOWN')
+            self.assertEqual(verify(ir)['verdict'],'UNASSURED')
+
     def test_source_conflict_and_missing_runtime(self):
         bad=copy.deepcopy(self.clean)
         bad['sources'].append(dict(bad['sources'][0],sha256='0'*64))

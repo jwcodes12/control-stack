@@ -36,7 +36,7 @@ def collect(compose, runtime, expected_sha256):
     def edge(src, dst, cap, reach, reason, p=cp):
         # Forbidden paths still contribute effective authority.
         edges.append({'from':src,'to':dst,'capability':cap,'reachability':reach,
-                      'authorization':'PERMITTED' if src in ('broker','receiver') else 'FORBIDDEN',
+                      'authorization':'PERMITTED' if src in ('broker','receiver') or (dst == 'broker' and cap == 'call') else 'FORBIDDEN',
                       'provenance':dict(p, kind='UNKNOWN' if reach == 'UNKNOWN' else p['kind']), 'reason':reason})
     services = c.get('services',{})
     if not isinstance(services,dict) or not services:
@@ -50,6 +50,16 @@ def collect(compose, runtime, expected_sha256):
         edge(src,'unknown','opaque','UNKNOWN',reason)
     if set(c)-{'services','networks','x-cstack'} or set(claim)-{'sink_source','database_source','budget','broker_sha256','receiver_sha256'}:
         unknown('unknown','unsupported top-level Compose/claim feature')
+    def channel_sources(service, writable=False):
+        mounts = service.get('volumes',[]) if isinstance(service,dict) else []
+        if not isinstance(mounts,list): return set()
+        return {v['source'] for v in mounts if isinstance(v,dict)
+                and set(v)=={'type','source','target','read_only'}
+                and v.get('type')=='bind' and v.get('target')=='/channel'
+                and type(v.get('read_only')) is bool and (not writable or v['read_only'] is False)
+                and isinstance(v.get('source'),str) and v['source'].startswith('/')
+                and '$' not in v['source'] and '..' not in v['source'].split('/')}
+    broker_channels = channel_sources(services.get('broker'),writable=True)
     for name, s in sorted(services.items()):
         if name in {'sink','database','unknown'} or not isinstance(s,dict):
             raise ValueError('invalid service')
@@ -79,10 +89,10 @@ def collect(compose, runtime, expected_sha256):
         if uid is None or not re.fullmatch(r'[^$]+@sha256:[0-9a-f]{64}', image) or any('$' in str(x) for x in (user,image)):
             unknown(name,'unresolved UID or unpinned/interpolated image')
         if facts['privileged'] or facts['host_network']:
-            edge(name,'sink','escape','PRESENT','privileged-container' if facts['privileged'] else 'host-network')
+            edge(name,'sink','escape','UNKNOWN','privileged-container' if facts['privileged'] else 'host-network')
         for key in env:
             if re.search(r'SINK|CREDENTIAL|TOKEN|SECRET|KEY',key,re.I):
-                edge(name,'sink','credential','PRESENT','sink-credential-env-name:'+key)
+                edge(name,'sink','credential','UNKNOWN','opaque-credential-env-name:'+key)
         mounts = s.get('volumes',[])
         if not isinstance(mounts,list):
             unknown(name,'unsupported mounts')
@@ -103,8 +113,11 @@ def collect(compose, runtime, expected_sha256):
                     edge(name,resource,'read' if v['read_only'] else 'write','PRESENT','protected-'+resource+'-mount')
         if role == 'deputy':
             unknown(name,'uninspected deputy authority')
-        if role == 'agent':
-            edge(name,'broker','call','PRESENT','preopened-broker-channel')
+        if role in {'agent','reviewer','approver'}:
+            shared = bool(channel_sources(s) & broker_channels)
+            edge(name,'broker','call','PRESENT' if shared else 'UNKNOWN',
+                 'shared-/channel-bind-to-broker' if shared else 'broker-channel-uninspected',
+                 dict(cp,kind='STATIC_INFERRED'))
         if name not in ('broker','receiver') and observed is None:
             unknown(name,'runtime facts missing')
     if set(r)-{'services'} or set(r.get('services',{}))-set(services):

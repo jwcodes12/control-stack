@@ -1,3 +1,30 @@
+# Follow-up engineering status — 2026-10-10
+
+**Branch/PR:** `work/runtime-f6-f8-completion-20261010`; [PR #41](https://github.com/jwcodes12/control-stack/pull/41).
+**Current claim:** additional security reference engineering and formal candidate
+claims, **not deployment assurance or independent validation**.
+
+This follow-up added `trusted_stack/publisher.py`, a broker-UID-only,
+content-bound, no-replace, durable file publication operation for preauthorized
+SQLite effect records. `trusted_stack/test_publish_effect.py` covers content
+integrity, idempotent retry, HALT/revocation, forged role, symlinks/conflicts,
+database corruption and injected sink failure. The remaining side effect is
+**one file in a trusted output root**; not arbitrary syscall or network
+mediation. See [full boundary and reproduction](docs/REAL-FILE-OUTBOX.md).
+
+The pinned Lean source [F6/F8 runtime candidates](reviews/family-strengthening/RuntimeGates.lean)
+makes per-history adaptive monitoring rates and shared-budget admission
+invariants explicit. CI must kernel-check their statements and report axioms.
+Real monitor recall calibration, live OS model correspondence, SC-01 native VM
+usefulness and outside expert review remain unresolved external gates.
+
+**Merge criteria:** all current-head Actions jobs green; inspect Lean theorem
+types/axioms and actual job steps; generated registries stable; no proof
+shortcuts or changes to frozen evidence/EgressGate.lean; keep this PR as
+the single change set. If criteria are not met, do not merge.
+
+---
+
 # COMPLETED.md — consolidated control-stack engineering handoff (2026-10-09)
 
 **Repository:** `jwcodes12/control-stack` · **single PR:** [#39](https://github.com/jwcodes12/control-stack/pull/39) · **working branch:** `work/consolidated-control-stack-20261009`

@@ -13,7 +13,7 @@ open Finset
 history. The weights can encode adversary-dependent feedback; detector
 independence is not assumed. False alarms are bounded SEPARATELY. -/
 theorem weighted_conditional_monitor_bound
-    {H : Type} (histories : Finset H) (weight miss falseAlarm : H → ℚ)
+    {H : Type} [DecidableEq H] (histories : Finset H) (weight miss falseAlarm : H → ℚ)
     (eps delta : ℚ)
     (hWeight : ∀ h ∈ histories, 0 ≤ weight h)
     (hNorm : (∑ h ∈ histories, weight h) = 1)
@@ -28,14 +28,14 @@ theorem weighted_conditional_monitor_bound
             apply Finset.sum_le_sum
             intro h hh
             exact mul_le_mul_of_nonneg_left (hMiss h hh) (hWeight h hh)
-      _ = eps := by rw [← Finset.sum_mul, hNorm, one_mul]
+      _ = eps := by rw [Finset.sum_mul, hNorm, one_mul]
   · calc
       (∑ h ∈ histories, weight h * falseAlarm h) ≤
           (∑ h ∈ histories, weight h * delta) := by
             apply Finset.sum_le_sum
             intro h hh
             exact mul_le_mul_of_nonneg_left (hFP h hh) (hWeight h hh)
-      _ = delta := by rw [← Finset.sum_mul, hNorm, one_mul]
+      _ = delta := by rw [Finset.sum_mul, hNorm, one_mul]
 
 #print axioms weighted_conditional_monitor_bound
 end ControlStack.ReviewF6

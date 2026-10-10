@@ -29,8 +29,14 @@ _DENY = (
     'lchown fchownat utime utimes futimesat utimensat setxattr lsetxattr '
     'fsetxattr removexattr lremovexattr fremovexattr ioctl perf_event_open '
     'open_tree move_mount fsopen fsconfig fsmount fspick mount_setattr '
-    'memfd_secret semctl shmdt'
+    'memfd_secret semctl shmdt openat2 creat'
 ).split()
+class _SCMPArgCmp(ctypes.Structure):
+    """libseccomp scmp_arg_cmp, passed by value to its varargs API."""
+    _fields_ = [("arg", ctypes.c_uint32), ("op", ctypes.c_uint32),
+                ("datum_a", ctypes.c_uint64), ("datum_b", ctypes.c_uint64)]
+
+
 _LIBC = ctypes.CDLL(None, use_errno=True)
 _LIBC.syscall.restype = ctypes.c_long
 _LIBC.prctl.restype = ctypes.c_int
@@ -111,6 +117,27 @@ def _install_seccomp(lib):
             code = lib.seccomp_rule_add(context, 0x00050000 | errno.EPERM, num, 0)
             if code:
                 raise ConfinementUnavailable(f'seccomp rule {name} failed ({code})')
+        # Landlock does not mediate every kind of writable IPC endpoint:
+        # in particular an external FIFO/device may not be a regular file.
+        # Deny write-mode and create/truncate opens at the syscall boundary,
+        # including writable named pipes whose peer is outside this runner.
+        # SCMP_CMP_MASKED_EQ=7. openat2 is denied unconditionally above.
+        for name, flags_index in (("open", 1), ("openat", 2)):
+            number = lib.seccomp_syscall_resolve_name(name.encode("ascii"))
+            if number < 0:
+                continue
+            for mask, expected in (
+                    (os.O_ACCMODE, os.O_WRONLY),
+                    (os.O_ACCMODE, os.O_RDWR),
+                    (os.O_CREAT, os.O_CREAT),
+                    (os.O_TRUNC, os.O_TRUNC),
+                    (os.O_APPEND, os.O_APPEND)):
+                cmp = _SCMPArgCmp(flags_index, 7, mask, expected)
+                rc = lib.seccomp_rule_add(
+                    context, 0x00050000 | errno.EPERM, number, 1, cmp)
+                if rc:
+                    raise ConfinementUnavailable(
+                        f"seccomp write-open rule {name} failed ({rc})")
         code = lib.seccomp_load(context)
         if code:
             raise ConfinementUnavailable(f'seccomp_load failed ({code})')

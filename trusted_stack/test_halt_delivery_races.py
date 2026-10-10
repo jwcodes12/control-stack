@@ -30,7 +30,7 @@ class HaltDeliveryRaceTests(unittest.TestCase):
         self.owner = owner
         self.dbpath = root / "gate.sqlite"
         self.gate = Controller.bootstrap(self.dbpath, roles, 1, lambda: 100)
-        self.body = b"concurrent-halt\\x00exact-reviewed-bytes"
+        self.body = b"concurrent-halt\x00exact-reviewed-bytes"
         digest = self.gate.stage(agent, self.body)
         self.gate.review(reviewer, digest)
         self.gate.issue_lease(owner, "race-lease", agent, 1, 300)

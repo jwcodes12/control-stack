@@ -28,14 +28,14 @@ theorem weighted_conditional_monitor_bound
             apply Finset.sum_le_sum
             intro h hh
             exact mul_le_mul_of_nonneg_left (hMiss h hh) (hWeight h hh)
-      _ = eps := by rw [Finset.sum_mul, hNorm, one_mul]
+      _ = eps := by rw [← Finset.sum_mul, hNorm, one_mul]
   · calc
       (∑ h ∈ histories, weight h * falseAlarm h) ≤
           (∑ h ∈ histories, weight h * delta) := by
             apply Finset.sum_le_sum
             intro h hh
             exact mul_le_mul_of_nonneg_left (hFP h hh) (hWeight h hh)
-      _ = delta := by rw [Finset.sum_mul, hNorm, one_mul]
+      _ = delta := by rw [← Finset.sum_mul, hNorm, one_mul]
 
 #print axioms weighted_conditional_monitor_bound
 end ControlStack.ReviewF6
@@ -66,11 +66,9 @@ theorem step_within_cap (cap : Nat) (s : BudgetState) (a : BudgetOp)
   cases a with
   | halt => simpa [step] using h
   | release cost =>
-    change (if s.halted = false ∧ 0 < cost ∧ s.spent + cost ≤ cap
-      then s.spent + cost else s.spent) ≤ cap
-    split_ifs with hc
-    · exact hc.2.2
-    · exact h
+    by_cases hc : s.halted = false ∧ 0 < cost ∧ s.spent + cost ≤ cap
+    · simpa [step, hc] using hc.2.2
+    · simpa [step, hc] using h
 
 theorem all_actor_interleavings_within_cap
     (cap : Nat) (s : BudgetState) (actions : List BudgetOp)

@@ -51,11 +51,28 @@ def capability_probe():
     abi = _syscall(_CREATE, ctypes.c_void_p(), ctypes.c_size_t(0), ctypes.c_uint(1))
     if abi < 3:
         raise ConfinementUnavailable('Landlock ABI 3+ required')
-    try:
-        lib = ctypes.CDLL('libseccomp.so.2', use_errno=True)
-    except OSError as exc:
-        raise ConfinementUnavailable('libseccomp missing') from exc
-    return abi, lib
+    # A bare library name is vulnerable to an attacker-chosen LD_LIBRARY_PATH.
+    # Load ONLY a root-owned and non-writable absolute OS library path.
+    candidates = [
+        '/usr/lib/x86_64-linux-gnu/libseccomp.so.2',
+        '/lib/x86_64-linux-gnu/libseccomp.so.2',
+        '/usr/lib/aarch64-linux-gnu/libseccomp.so.2',
+        '/lib/aarch64-linux-gnu/libseccomp.so.2',
+        '/usr/lib64/libseccomp.so.2',
+        '/lib64/libseccomp.so.2',
+    ]
+    for candidate in candidates:
+        try:
+            info = os.stat(candidate)
+        except OSError:
+            continue
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022:
+            continue
+        try:
+            return abi, ctypes.CDLL(candidate, use_errno=True)
+        except OSError:
+            continue
+    raise ConfinementUnavailable('trusted absolute libseccomp unavailable')
 
 
 def _install_landlock():
@@ -117,8 +134,10 @@ def _prepare_fds(keep):
 
 def run_source(source: bytes, *, broker_socket: Path | None = None,
                broker_uid: int | None = None):
-    if os.geteuid() == 0 or os.getuid() != os.geteuid():
-        raise ConfinementUnavailable('separate non-root agent UID mandatory')
+    if (os.geteuid() == 0 or os.getuid() != os.geteuid() or
+            os.getegid() == 0 or os.getgid() != os.getegid() or
+            0 in os.getgroups()):
+        raise ConfinementUnavailable('separate non-root agent UID/GID mandatory')
     if type(source) is not bytes or not source or len(source) > 1048576:
         raise ConfinementUnavailable('invalid source size')
     compiled = compile(source, '<confined-agent>', 'exec')

@@ -32,7 +32,7 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
             roles = Principals(frozenset({agent}), frozenset({reviewer}),
                                frozenset({approver}), frozenset({owner}))
             controller = Controller.bootstrap(db, roles, 1)
-            body = b"real-uid-denied\\x00trusted-publication"
+            body = b"real-uid-denied\x00trusted-publication"
             digest = controller.stage(agent, body)
             controller.review(reviewer, digest)
             expiry = int(time.time()) + 3600

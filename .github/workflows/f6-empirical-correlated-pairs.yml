@@ -1,0 +1,24 @@
+name: f6-empirical-correlated-pairs
+on:
+  pull_request:
+    paths:
+      - 'tools/monitor_pair_replay.py'
+      - 'tools/test_monitor_pair_replay.py'
+      - 'docs/F6-EMPIRICAL-PAIRS.md'
+      - '.github/workflows/f6-empirical-correlated-pairs.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Correlated outcome and sample-alignment negative controls
+        run: python3 -m unittest tools.test_monitor_pair_replay -v
+      - name: Replay all 171 benchmark pairs without altering evidence
+        run: |
+          python3 tools/monitor_pair_replay.py --threshold 8 --output "$RUNNER_TEMP/pair-report-new.json"
+          python3 -c 'import json,sys;d=json.load(open(sys.argv[1]));assert d["pair_family_count"]==171;assert d["status"]=="EXPLORATORY_POSTHOC_NO_ADAPTIVE_CERTIFICATE"' "$RUNNER_TEMP/pair-report-new.json"

@@ -1,3 +1,40 @@
+# Control-stack remaining-work execution — PR #40
+
+**Current continuation:** [single PR #40](https://github.com/jwcodes12/control-stack/pull/40) against main adds the next verified reference layers beyond merged PR #39. Source and CI claims here must be matched to PR #40's exact latest head; no deployment assurance is implied. The detailed previous handoff is retained below.
+
+## Additional code shipped for verification
+
+- `trusted_stack/outbox_receiver.py` publishes a committed reviewed artifact into a broker-owned **local filesystem** under a numeric release ID. Unlike the SQLite-only prototype, this emits real filesystem bytes; it is **not** a general network/OS action gate. The receiver does not expose an untrusted-agent RPC. Fail-closed checks include exact content/hash, dedicated trusted directory ownership/modes, symlink/hardlink prevention, no overwrite, fsync and persistent SQLite delivery acknowledgments. Crash between file publication and receipt commit is recovered only by comparing the durable existing bytes. Concurrent HALT linearizes via SQLite `BEGIN IMMEDIATE`; previously published effects cannot be reversed.
+- `trusted_stack/test_outbox_receiver.py` and `test_multi_actor_receiver.py` exercise fault injection, process restart, corruption, attack-shaped paths, concurrent independent agents, shared cap, duplicate replay and HALT. They are tests, not a universal semantic refinement.
+- `reviews/family-strengthening/Remaining.lean` states explicit finite weighted per-history missed detection caps and concrete arbitrary-agent interleaving admission/absorbing-HALT theorems. The positive admission witness blocks trivial reject-all proofs. These are **review-scoped abstract models**, not certified OS implementation equivalence.
+- `tools/monitor_calibration.py` computes held-out per-stratum one-sided miss/false-alarm Hoeffding upper bounds with a simultaneous union correction. Histories and thresholds must be frozen independently of evaluation data. A sparse class/stratum gets no upper bound and CLI exits nonzero; no unobserved adaptive history is covered.
+
+## Verification and acceptance
+
+```bash
+python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
+python3 -m unittest tools.test_monitor_calibration -v
+lake exe cache get
+lake env lean reviews/family-strengthening/Remaining.lean
+python3 tools/build_registry.py --check
+python3 tools/build_statement_catalog.py --check
+python3 tools/build_status.py --check
+python3 tools/check_scenarios.py
+```
+
+The newest-HEAD workflows `trusted-local-receiver`, `remaining-formal-families`, `monitor-calibration`, `trusted-effect-reference`, `consolidated-integrity`, `fast-checks`, `egress-boundary` and `scenario-a-repair` must be green before merge. Preserve exact kernel axiom output; exclude `sorryAx`. Changes to historical evidence, preregistrations or `ControlStack/EgressGate.lean` are forbidden.
+
+## Irreducible outstanding trust and evidence gates
+
+1. **Complete effect capture/OS refinement:** the local file receiver controls *one* broker-owned output directory. An untrusted process may still have other execution, networking, filesystem and delegated action routes. Only a separately controlled, experimentally validated capability-closed host/VM with verified effect coverage can discharge F1/F3/F8's global "every action" premise. Broker-owned file publication is not such a proof.
+2. **Real monitor calibration:** finite iid held-out strata are not worst-case adaptive histories. Acquire sufficiently sized data under a signed, predeclared policy with stable thresholds and representative observation/response capture. Prove the conditional per-history hypothesis used by the F6 bounds; handle monitor correlations explicitly. No new empirical F6 success claim is warranted without that data.
+3. **SC-01 original baseline:** the frozen TCG 0.25-second original useful-run receipt remains **0/64 baseline, 0/64 mediated**. A permitted suitable native hypervisor and separately versioned architecture/guest build or a native ARM64 KVM host are needed to run a valid newly preregistered usefulness test. Do not edit frozen receipts to make it pass.
+4. **Independent trust anchor and reviewer:** obtain verified OS UID/secret separation, independent hardware/VM/effect custody, independent proof-statement fidelity review and recorded attestation of exact code/host/runtime hashes. No self-authored CI or model proof substitutes for an independent evaluation.
+
+**Stop criterion:** all 28 scenario deployment-assurance claims stay CONDITIONAL until those real external premises are established.
+
+---
+
 # COMPLETED.md — consolidated control-stack engineering handoff (2026-10-09)
 
 **Repository:** `jwcodes12/control-stack` · **single PR:** [#39](https://github.com/jwcodes12/control-stack/pull/39) · **working branch:** `work/consolidated-control-stack-20261009`

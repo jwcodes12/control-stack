@@ -58,7 +58,7 @@ def _recover_interrupted_link_cleanup(dirfd: int, name: str, expected: bytes) ->
     published = os.stat(name, dir_fd=dirfd, follow_symlinks=False)
     matches = []
     for candidate in os.listdir(dirfd):
-        if re.fullmatch(r"\\.pending-[0-9a-f]{32}", candidate) is None:
+        if re.fullmatch(r"\.pending-[0-9a-f]{32}", candidate) is None:
             continue
         try:
             info = os.stat(candidate, dir_fd=dirfd, follow_symlinks=False)

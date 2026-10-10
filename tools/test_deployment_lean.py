@@ -13,7 +13,12 @@ from tools.check_deployment_lean import check
 class LeanDeploymentTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which('lake'),'Lean unavailable; mandatory kernel job covers this')
     def test_all_fixture_instances_and_standard_axioms(self):
+        expected=json.loads((ROOT/'examples/compose-two-agent/expected.json').read_text())
         for path in sorted((ROOT/'security_ir/fixtures').glob('*.json')):
             with self.subTest(fixture=path.stem):
-                self.assertEqual(check(json.loads(path.read_text()))['accepted'],path.stem=='clean')
+                self.assertEqual(check(json.loads(path.read_text()))['accepted'],expected[path.stem]['lean_accepted'])
+    @unittest.skipUnless(shutil.which('lake'),'Lean unavailable; mandatory kernel job covers this')
+    def test_documented_subset_differences(self):
+        from tools.check_deployment_subset_differential import run
+        self.assertEqual(run(),json.loads((ROOT/'deployment-evidence/subset-differential.json').read_text()))
 if __name__=='__main__':unittest.main()

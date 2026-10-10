@@ -504,13 +504,12 @@ def main(argv=None, runner=subprocess.call):
                         from tools.check_deployment_lean import check
                         checked = check(ir)
                         result["lean"] = checked
-                        result["scope"] = "Kernel-checked finite model candidate; CONDITIONAL retains runtime faithfulness; no deployment-assured result"
+                        result["scope"] = "Kernel-checked strict subset of finite model obligations; Python-only obligations listed in bundle. CONDITIONAL retains faithful extraction and full protocol refinement; no deployment-assured result"
                         for o in result["obligations"]:
                             if o["premise"] == "Lean-contract-instances":
                                 o.update(status="PROVEN_IN_MODEL" if checked["accepted"] else "REFUTED",
                                          detail=checked["axioms"])
-                        if not checked["accepted"]:
-                            result["verdict"] = "UNASSURED"
+                        result["verdict"] = "UNASSURED" if any(o["status"] in {"REFUTED", "UNASSESSED"} for o in result["obligations"]) else "CONDITIONAL"
                     if a.boundary_evidence:
                         from tools.check_deployment_evidence import check as check_boundary
                         check_boundary(a.boundary_evidence)

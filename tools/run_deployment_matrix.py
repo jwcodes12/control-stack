@@ -16,9 +16,9 @@ for name,e in expected.items():
     codes=[]
     for args in steps:
         p=subprocess.run([sys.executable,'tools/cstack.py',*args],cwd=ROOT,capture_output=True,text=True);codes.append(p.returncode)
-        want=1 if args[0]=='verify' and e['verdict']=='UNASSURED' else 0
+        want=1 if args[0]=='verify' and (e['verdict']=='UNASSURED' or not a.lean) else 0
         assert p.returncode==want,(name,args,p.stdout,p.stderr)
-    b=json.loads(Path(str(stem)+'.bundle.json').read_text()); assert b['verdict']==e['verdict']
+    b=json.loads(Path(str(stem)+'.bundle.json').read_text()); assert b['verdict']==(e['verdict'] if a.lean else 'UNASSURED')
     if e['bypass']:assert e['bypass'] in json.dumps(b)
     rows.append({'fixture':name,'expected':e['verdict'],'actual':b['verdict'],'exit_codes':codes,'kernel_checked':a.lean,'commands':steps})
     print(name,b['verdict'],codes,flush=True)

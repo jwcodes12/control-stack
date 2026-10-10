@@ -38,13 +38,29 @@ model this receiver with the generic sticky-bit gate's instantaneous cancellatio
 
 The conditional conclusion is that every scoped sink file is attributable to a
 reviewed, exactly approved, once-consumed release within the shared budget, with
-no agent or alternate deputy having bypass authority, **if the IR faithfully
-captures the runtime**. Faithfulness includes exhaustive scoped capabilities,
-path alias/mount resolution, all processes using the specified launcher, actual
-UID bindings, exact protocol transitions, byte/hash bindings, no database rollback,
-clock and durable publication semantics. It is a substantial residual premise,
-not a synonym for a passed test. Lean derives exclusive sink authority from explicit
-finite IR facts; it does not postulate `CompleteMediation` as a separate axiom.
+no agent or alternate deputy having bypass authority, subject to two distinct,
+unproved residual premises:
+
+1. **Faithful extraction**: the finite IR exhausts actual effective authority,
+   including path aliases, mounts, processes, UID bindings, descriptors and pinned
+   source/image correspondence.
+2. **Protocol refinement**: the implementation executes the model's transitions
+   with authentic role bindings, exact approval/byte hashes, unit costs, trusted
+   clock, no rollback and matching durable publication. In particular,
+   `RuntimeFaithful.publication : sinkEffects = model.bank` assumes the **full
+   model–runtime correspondence of sink effects**, not merely faithful IR capture.
+
+Passing tests or hashing sources proves neither premise universally. Lean derives
+exclusive direct sink authority from finite facts without a CompleteMediation
+axiom. **Lean rechecks a strict subset of the Python verifier.** Its projection
+checks direct sink/DB authority, agent/receiver UID separation, nonzero UIDs,
+unknown edges, privileged/host-network flags and a receiver write witness, and
+instantiates reused gate/one-use/budget contracts. Python alone checks transitive
+reachability excluding the broker/receiver, all trusted UID separation, exact role
+counts, exact sink/database writer counts and runtime drift. Bundles and reports
+list these two sets. A skipped Lean check always yields UNASSURED; CONDITIONAL
+requires both checks. The test suite deliberately exercises cases where Lean
+accepts but Python refutes, preventing a kernel-subset claim from hiding that gap.
 
 A result expires upon any changed mounts (including aliases), UIDs, role mappings,
 credentials or inherited descriptors, image digests, network topology, runtime
@@ -55,11 +71,21 @@ continuous drift monitor is claimed.
 Supported input is a single pinned, normalized Compose **JSON** file (a YAML subset),
 absolute long-form bind mounts (including a common `/channel` bind for the broker and its callers), numeric non-root users for every role, digest-pinned images and one internal
 network, with a separate selected runtime-facts JSON inventory (UIDs, image digests,
-mounts, networks and environment variable names only). The broker hosts `/channel/broker.sock` through its writable channel bind; agents, reviewer and approver see the same source through read-only channel binds. Connection submission is permitted, while the broker authorizes each operation separately. Missing shared channel inspection becomes UNKNOWN, not a guessed path from a role name. The inventory is caller
-supplied: RUNTIME_OBSERVED labels do not authenticate it. Synthetic fixtures use
-invented image digests and are not runnable container images. Live checks execute
-the existing native confined broker/receiver on this box and test the corresponding
-boundary; they do not claim the synthetic Compose deployment was launched.
+mounts, networks and environment variable names only). The broker hosts `/channel/broker.sock` through its writable channel bind; agents, reviewer and approver see the same source through read-only channel binds. Connection submission is permitted, while the broker authorizes each operation separately. Missing shared channel inspection becomes UNKNOWN, not a guessed path from a role name. The selected inventory is unauthenticated. Synthetic inventories remain static
+negative controls; live inventories are captured from `docker inspect`, retain a
+hash of raw daemon output, and explicitly disclaim independent attestation. The
+local offline imported image is pinned by its content-addressed Docker image ID,
+with trusted code baked in and a build/source manifest. The runnable clean Compose
+fixture is the artifact scanned and exercised in the real-container experiment.
+
+That experiment covers mounts and numeric UIDs under Docker's default seccomp,
+namespaces and UID mapping. Landlock is inactive on this host and is **not** an
+enforcement premise of the container result. The earlier native Linux guest checks
+separately include Landlock/libseccomp. A writable-sink negative also relaxes sink
+DAC to 0777; a writable bind alone does not defeat directory mode 0700. The UID
+collision negative demonstrates agent authority to HALT as admin, observed as an
+empty sink and a denied subsequent honest task; it does not demonstrate a direct
+sink write without a sink mount.
 
 Unsupported: arbitrary YAML/interpolation/overlays, builds or mutable image tags,
 non-bind volumes, secrets, devices, host network/privileged containers, unknown

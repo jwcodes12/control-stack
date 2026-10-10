@@ -69,34 +69,118 @@ These are native reference-boundary checks, not attestation that synthetic Compo
 images/inventories ran. Temporary UIDs exist only in processes; processes are
 reaped, ownership restored, socket removed, and the guest powers down.
 
+## Follow-up scope and real containers
+
+Follow-up handoff: `HANDOFF-SOL-PR45-FOLLOWUP.md`. A and B are implemented;
+C ran as **real Docker containers** with the same pinned Compose configurations
+that were scanned. No runtime-socket, privileged or host-network fixture was
+launched. The offline Alpine rootfs was imported without a network build; trusted
+sources and the experiment entry point are baked into content-addressed image
+`sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3`.
+Source hashes and the import archive hash are in
+`examples/compose-two-agent/image-pin.json`. Images/inventories in the examples
+are no longer invented image references, but static negative inventories remain
+synthetic. The imported image was removed after the run.
+
+Commands:
+
+- `python3 tools/build_deployment_container_image.py --output deployment-evidence/container-build`: PASS, offline import.
+- `python3 tools/run_deployment_containers.py --output deployment-evidence/containers`: PASS, three real-container cases, using `docker compose up --pull never`.
+- `python3 tools/check_deployment_container_evidence.py deployment-evidence/containers`: PASS, current pins, matching Compose, raw daemon facts and archived sink bytes.
+
+Evidence: `deployment-evidence/containers/{clean,writable-sink-mount,trusted-role-uid-collision}/`
+contains exact Compose, raw `docker inspect`, normalized runtime inventory, IR,
+kernel bundle, observed sink state and actual `sink/*.body` bytes.
+`commands.json` records workload/cleanup commands and results; `docker-info.json`
+records daemon settings; `cleanup.json` verifies no experiment containers,
+networks, volumes, image or scratch directory remains. `postgres:16-alpine` was
+left alone. Docker inventory is daemon-derived, **not independent attestation**.
+The sink observer reads files directly rather than broker logs.
+
+| Real-container case | Sink-state check | Result |
+|---|---|---|
+| clean | Exactly `1.body`: `exact-reviewed-two-agent-container-slice`; second agent and replay denied | CONDITIONAL |
+| writable-sink-mount | Agent directly publishes `2.body`: `unapproved real container mount` | UNASSURED |
+| trusted-role-uid-collision | Empty sink after agent calls HALT as trusted admin; subsequent honest task denied | UNASSURED |
+
+The writable-sink case explicitly changes DAC to 0777 as well as adding a RW bind;
+mode 0700 alone would prevent that direct write. UID collision is demonstrated as
+admin authority confusion and task suppression, **not** a direct sink write in an
+agent container without a sink mount. These containers use Docker default seccomp,
+namespaces and numeric UID mapping, **not Landlock**, which is inactive on this
+host. The container runtime claim covers mounts and UIDs only. Earlier native
+QEMU evidence above separately retains the in-flight HALT/Landlock checks.
+
+## Verdict consistency and differential evidence
+
+Skipped Lean means **UNASSURED**, including the clean fixture. CONDITIONAL needs
+successful exact-IR kernel checking and all Python obligations. The permitted
+fallback is explicit: Lean's `Accepted` is a **strict subset**. Bundles/reports list
+kernel checks versus Python-only role counts, full UID separation, transitive
+paths, exact writer sets and runtime drift. `docs/DEPLOYMENT-CLAIM-v0.md` explains
+this limitation. No equivalence of Python and Lean is claimed.
+
+`python3 tools/check_deployment_subset_differential.py --output deployment-evidence/subset-differential.json`:
+PASS, seed 20261010, **200 kernel-certified mutations, 125 agreements and 75 disclosed subset
+differences**. Drift, reviewer UID collision and missing reviewer are accepted by
+the kernel subset but refuted by Python, so the final verdict is UNASSURED. Zero
+cases were Python-accepted but kernel-refuted. The fixture table also records the
+expected subset acceptance separately in `expected.json`; all raw fixture kernel
+results are embedded in the matrix bundles.
+
 ## Fixture results
 
-Expected/actual results and exact scan/verify/report commands are recorded in
-`deployment-evidence/matrix/matrix.json`. Every case is kernel-checked from its raw
-IR projection; policy authorization is never used to remove reachability.
+`deployment-evidence/matrix/matrix.json` records exact scan/verify/report commands,
+actual verdicts and exits. Clean requires `--lean`; all negative fixtures are
+UNASSURED even when the documented kernel subset accepts their projection.
 
 | Fixture | Expected | Actual |
 |---|---|---|
-| clean | CONDITIONAL | CONDITIONAL |
-| writable-sink-mount | UNASSURED | UNASSURED |
 | agent-broker-db-access | UNASSURED | UNASSURED |
-| trusted-role-uid-collision | UNASSURED | UNASSURED |
-| privileged-container | UNASSURED | UNASSURED |
-| host-network | UNASSURED | UNASSURED |
 | alternate-deputy-sink-credentials | UNASSURED | UNASSURED |
+| channel-target-shadow | UNASSURED | UNASSURED |
+| clean | CONDITIONAL | CONDITIONAL |
+| credential-password | UNASSURED | UNASSURED |
+| daemon-uid-remap | UNASSURED | UNASSURED |
+| host-network | UNASSURED | UNASSURED |
+| inherited-descriptor | UNASSURED | UNASSURED |
+| injected-helper | UNASSURED | UNASSURED |
+| missing-isolated-network | UNASSURED | UNASSURED |
+| missing-reviewer-role | UNASSURED | UNASSURED |
+| mount-parent-alias | UNASSURED | UNASSURED |
+| post-capture-drift | UNASSURED | UNASSURED |
+| privileged-container | UNASSURED | UNASSURED |
+| runtime-alias | UNASSURED | UNASSURED |
+| runtime-code-tamper | UNASSURED | UNASSURED |
+| runtime-socket-mount | UNASSURED | UNASSURED |
+| storage-rollback | UNASSURED | UNASSURED |
+| trusted-reviewer-uid-collision | UNASSURED | UNASSURED |
+| trusted-role-uid-collision | UNASSURED | UNASSURED |
+| trusted-source-mount | UNASSURED | UNASSURED |
 | unknown-feature | UNASSURED | UNASSURED |
+| unlisted-environment | UNASSURED | UNASSURED |
+| unlisted-host-mount | UNASSURED | UNASSURED |
+| writable-channel-mount | UNASSURED | UNASSURED |
+| writable-sink-mount | UNASSURED | UNASSURED |
 
 ## UNKNOWN and residual premises
 
-Faithful extraction and protocol abstraction, exhaustive scoped process/capability
-coverage, source/image correspondence, real OS caller identities, mount aliases,
-trusted clock, byte/hash binding, approval semantics, kernel/storage correctness
-and no rollback remain trusted assumptions. Runtime tests sample boundaries and do
-not discharge these universally. Caller-supplied runtime inventories are unauthenticated.
-The clean fixture uses invented image digests and a synthetic inventory. UNKNOWN
-features, missing runtime facts, drift and reachable policy-forbidden paths produce
-UNASSURED; syntactically invalid inputs/pin mismatch produce usage failure (2).
-All scenario manifests, frozen evidence and EgressGate remain unchanged.
+1. **Faithful extraction**: the snapshot exhausts actual scoped capabilities,
+   processes, mount aliases, inherited descriptors, UID bindings and image/source
+   correspondence. Docker-daemon capture remains unauthenticated.
+2. **Protocol refinement**: actual implementation transitions, approval/hash
+   semantics, unit costs, trusted clock, no rollback and durable publication match
+   the model. `RuntimeFaithful.publication : sinkEffects = model.bank` assumes full
+   **model–runtime correspondence of sink effects**, not merely faithful IR capture.
+
+Neither is proved by successful example executions or source hashes. Extractor
+self-review: `docs/DEPLOYMENT-EXTRACTOR-GAPS.md`. Remaining covert/unobserved cases
+are aliases/hardlinks, inherited FDs, injected processes, code/image tampering,
+daemon UID remapping, storage rollback and post-capture changes. Each has a fixture
+showing reported divergence becomes UNKNOWN/drift; covert divergence is still
+missed and invalidates the residual assumptions. No known expressible fact in the
+restricted supported configuration profile silently closes an authority path.
+All frozen evidence, scenario statuses and EgressGate remain unchanged.
 
 ## Vacuity self-check
 
@@ -131,23 +215,26 @@ and were regenerated with build_results. The first final-head CI runtime asserti
 The full ledger was regenerated with
 Lean to retain its Lean section; no hand editing of generated files was used.
 
-## Commands, CI and draft PR
+## Follow-up commands, CI and draft PR
 
-- `lake build ControlStack.Deployment.Contracts`: PASS.
-- `lake env lean ControlStack/Deployment/Contracts.lean`: PASS, 16 standard-only axiom reports.
-- `python3 tools/test_deployment_slice.py`: PASS, eleven tests.
-- `docker compose -f <fixture>.compose.json config --quiet`: PASS for all eight files; syntax validation only, no images launched.
-- `python3 tools/test_deployment_runtime.py`: PASS, 17 tests, two host kernel skips.
-- `python3 tools/test_deployment_evidence.py`: PASS, archived raw sink checks.
-- `python3 tools/test_deployment_lean.py`: PASS, all eight raw fixture instances.
-- `python3 tools/run_deployment_matrix.py --output deployment-evidence/matrix --lean`: PASS, eight exact-IR kernel checks; `--boundary-evidence deployment-evidence/runtime-vm/slice-runtime` additionally attached TESTED_BOUNDARY evidence with explicit scope.
-- `python3 tools/cstack.py check --fast --only deployment`: PASS, 4/4 at the final source state; exact output in `deployment-evidence/deployment-check.txt`.
-- `python3 tools/cstack.py check --fast`: 40/41 PASS. The sole failure is the existing `test_confined_effect_broker` requiring root; the native host additionally lacks active Landlock. All four deployment-specific steps PASS. Exact output: `deployment-evidence/fast-check.txt`.
-- Generated registry, statement catalog, overview, ledger, trust-root and results
-  `--check`: PASS, including full Lean ledger generation/check and fast no-Lean checks.
-- Draft PR: https://github.com/jwcodes12/control-stack/pull/45 (draft, not merged). The three deployment jobs (fixtures, kernel, linux-boundary) passed on predecessor `42d691b`; the final socket, credential and effect-class corrections are independently rechecked. CI state at head: PENDING at final publication (the final commit omits `[skip ci]`). [Live checks at the current PR head](https://github.com/jwcodes12/control-stack/pull/45/checks) provide the authoritative changing state.
+- `python3 tools/test_deployment_slice.py`: PASS, 13 tests including the original hole reproductions, sensitive source variants and credential regex additions.
+- `python3 tools/test_deployment_evidence.py`: PASS, three tests, including actual container sink tampering and daemon security-setting drift.
+- Static matrix with `--lean`: PASS, 26 fixtures (one CONDITIONAL, 25 UNASSURED); final result in `deployment-evidence/followup-matrix-check.txt` and every exact bundle.
+- `python3 tools/cstack.py check --fast --only deployment`: PASS, 4/4; final result in `deployment-evidence/followup-deployment-check.txt`; requires all four deployment steps.
+- Generated registry, statement catalog, overview, results, ledger and trust-root `--check`: PASS. No generated content was hand-edited.
+- Existing broader local fast result remains 40/41 historically: root-only native broker test plus host Landlock limitation, described above. This is not claimed as a new full-suite pass.
+- CI at head: [live authoritative PR checks](https://github.com/jwcodes12/control-stack/pull/45/checks). Completion requires a final commit without `[skip ci]`, green required checks and a recorded head/check receipt in the PR description. The workflow now checks all expanded fixtures, the documented seeded subset differences and archived real-container bytes in addition to the native Linux boundary.
+- Draft PR: https://github.com/jwcodes12/control-stack/pull/45. Keep draft; do not merge.
 
-![Current deployment-slice CI](https://github.com/jwcodes12/control-stack/actions/workflows/deployment-slice.yml/badge.svg?branch=sol%2Fdeployment-slice-20261010&event=pull_request)
+## Follow-up failures and corrections
 
-Stopping scope: one conditional assurance case. Follow-ups are in
-`docs/DEPLOYMENT-SLICE-NEXT.md`; no HTTP/Kubernetes/remediation expansion.
+The first seeded batch parser hit Lean's abbreviated list rendering; the checker
+now prints every Boolean explicitly and checks all 200 values. An evidence check
+first compared relative versus absolute provenance paths; portable source-path
+normalization fixes that comparison while preserving every hash and selected fact.
+The first cleanup audit expected a combined repository/tag string in Docker JSON;
+it was corrected to inspect separate fields. Cleanup itself had already succeeded.
+
+Stopping scope remains the handoff's A/B requirements plus the attempted C milestone;
+all three real-container cases completed. Broader protocols/backends remain deferred
+in `docs/DEPLOYMENT-SLICE-NEXT.md`.

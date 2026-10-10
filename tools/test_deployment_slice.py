@@ -22,7 +22,8 @@ class DeploymentTests(unittest.TestCase):
             with self.subTest(name=name):
                 d=json.loads((ROOT/'security_ir/fixtures'/f'{name}.json').read_text())
                 bundle=verify(d)
-                self.assertEqual(bundle['verdict'],exp['verdict'])
+                self.assertEqual(bundle['verdict'],'UNASSURED')
+                self.assertEqual(any(o['status'] in {'REFUTED','UNASSESSED'} and o['premise']!='Lean-contract-instances' for o in bundle['obligations']), name!='clean')
                 if exp['bypass']:
                     self.assertIn(exp['bypass'],json.dumps(bundle))
     def test_deterministic_and_golden(self):
@@ -43,6 +44,24 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(f['uid'],owner)
         self.assertTrue(any(e['from']=='deputy' and e['to']=='sink' and e['capability']=='write' and e['reachability']=='PRESENT' for e in d['edges']))
         self.assertTrue(any(e['from']=='deputy' and e['capability']=='credential' and e['reachability']=='UNKNOWN' and e['provenance']['kind']=='UNKNOWN' for e in d['edges']))
+
+    def test_sensitive_bind_sources_and_credentials(self):
+        p=ROOT/'examples/compose-two-agent/clean.compose.json'
+        original=json.loads(p.read_text())
+        sources=['/run','/var/run','/var/run/docker.sock','/run/containerd.sock','/run/podman.sock','/','/proc','/sys','/dev','/etc','/var/lib/docker','/slice/trusted_stack','/slice/entry.py','/slice',str(ROOT/'trusted_stack'),str(ROOT/'tools/deployment_container_entry.py'),str(ROOT)]
+        with tempfile.TemporaryDirectory() as tmp:
+            cp=Path(tmp)/'compose.json';rp=Path(tmp)/'runtime.json'
+            for source in sources:
+                c=copy.deepcopy(original);c['services']['agent-a']['volumes'].append({'type':'bind','source':source,'target':'/attack','read_only':True})
+                cp.write_text(json.dumps(c))
+                r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':sorted(v['volumes'],key=lambda m:(m['source'],m['target'])),'networks':v['networks'],'env_names':sorted(v['environment'])} for k,v in c['services'].items()}}
+                rp.write_text(json.dumps(r));ir=collect(cp,rp,sha(cp))
+                self.assertTrue(any(e['from']=='agent-a' and e['capability']=='escape' and e['reachability']=='PRESENT' for e in ir['edges']),source)
+            for key in ('PASSWORD','PASS','PASSWD','AUTH','COOKIE','PRIVATE'):
+                c=copy.deepcopy(original);c['services']['agent-a']['environment'][key]='dummy-never-emit';cp.write_text(json.dumps(c))
+                ir=collect(cp,rp,sha(cp))
+                self.assertTrue(any(e['capability']=='credential' and e['reachability']=='UNKNOWN' and key in e['reason'] for e in ir['edges']))
+                self.assertNotIn('dummy-never-emit',json.dumps(ir))
 
     def test_missing_and_contradictory_data(self):
         for key in self.clean:
@@ -73,6 +92,15 @@ class DeploymentTests(unittest.TestCase):
             self.assertEqual(channel['provenance']['kind'],'UNKNOWN')
             self.assertEqual(verify(ir)['verdict'],'UNASSURED')
 
+    def test_runtime_types_do_not_coerce_into_observed_identity(self):
+        p=ROOT/'examples/compose-two-agent/clean.compose.json'
+        r=json.loads(p.with_name('clean.runtime.json').read_text())
+        r['services']['agent-a']['uid']=23701.0
+        with tempfile.TemporaryDirectory() as tmp:
+            rp=Path(tmp)/'runtime.json';rp.write_text(json.dumps(r))
+            ir=collect(p,rp,sha(p))
+            self.assertEqual(next(n['facts']['runtime_match'] for n in ir['nodes'] if n['id']=='agent-a'),'DRIFT')
+
     def test_source_conflict_and_missing_runtime(self):
         bad=copy.deepcopy(self.clean)
         bad['sources'].append(dict(bad['sources'][0],sha256='0'*64))
@@ -84,7 +112,7 @@ class DeploymentTests(unittest.TestCase):
     def test_mount_ancestor_and_unsupported_network(self):
         p=ROOT/'examples/compose-two-agent/clean.compose.json'; r=p.with_name('clean.runtime.json')
         c=json.loads(p.read_text())
-        c['services']['agent-a']['volumes']=[{'type':'bind','source':'/slice','target':'/all','read_only':False}]
+        c['services']['agent-a']['volumes']=[{'type':'bind','source':str(Path(c['x-cstack']['sink_source']).parent),'target':'/all','read_only':False}]
         with tempfile.TemporaryDirectory() as tmp:
             cp=Path(tmp)/'compose.json';cp.write_text(json.dumps(c))
             ir=collect(cp,r,sha(cp))
@@ -106,9 +134,10 @@ class DeploymentTests(unittest.TestCase):
             p=ROOT/'examples/compose-two-agent/clean.compose.json'; r=p.with_name('clean.runtime.json')
             self.assertEqual(call('scan',p,'--runtime',r,'--sha256',sha(p),'--output',out/'ir.json').returncode,0)
             self.assertEqual(call('scan',p,'--runtime',r,'--sha256','0'*64,'--output',out/'bad.json').returncode,2)
-            self.assertEqual(call('verify',out/'ir.json','--output',out/'bundle.json').returncode,0)
+            self.assertEqual(call('verify',out/'ir.json','--output',out/'bundle.json').returncode,1)
             self.assertEqual(call('report',out/'bundle.json','--output',out/'report.md').returncode,0)
-            self.assertIn('CONDITIONAL',(out/'report.md').read_text())
+            self.assertIn('UNASSURED',(out/'report.md').read_text())
+            self.assertIn('strict subset',(out/'report.md').read_text())
             self.assertEqual(call('verify',ROOT/'security_ir/fixtures/writable-sink-mount.json','--output',out/'bad.json').returncode,1)
     def test_runtime_drift_and_env_value_redaction(self):
         p=ROOT/'examples/compose-two-agent/clean.compose.json'; r=p.with_name('clean.runtime.json')

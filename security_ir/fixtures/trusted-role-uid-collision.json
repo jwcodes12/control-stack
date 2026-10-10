@@ -7,7 +7,7 @@
       "from": "agent-a",
       "provenance": {
         "kind": "STATIC_INFERRED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -20,7 +20,7 @@
       "from": "agent-b",
       "provenance": {
         "kind": "STATIC_INFERRED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -33,7 +33,7 @@
       "from": "approver",
       "provenance": {
         "kind": "STATIC_INFERRED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -46,7 +46,7 @@
       "from": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -59,7 +59,7 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -72,7 +72,7 @@
       "from": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -85,7 +85,7 @@
       "from": "reviewer",
       "provenance": {
         "kind": "STATIC_INFERRED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "reachability": "PRESENT",
@@ -99,7 +99,7 @@
       "id": "sink",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "sink"
@@ -109,7 +109,7 @@
       "id": "database",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "database"
@@ -119,16 +119,19 @@
       "id": "unknown",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "unknown"
     },
     {
       "facts": {
-        "env_names": [],
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
         "host_network": false,
-        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
         "privileged": false,
         "role": "agent",
         "runtime_match": "MATCH",
@@ -137,16 +140,19 @@
       "id": "agent-a",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
     },
     {
       "facts": {
-        "env_names": [],
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
         "host_network": false,
-        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
         "privileged": false,
         "role": "agent",
         "runtime_match": "MATCH",
@@ -155,16 +161,19 @@
       "id": "agent-b",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
     },
     {
       "facts": {
-        "env_names": [],
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
         "host_network": false,
-        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
         "privileged": false,
         "role": "approver",
         "runtime_match": "MATCH",
@@ -173,16 +182,19 @@
       "id": "approver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
     },
     {
       "facts": {
-        "env_names": [],
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
         "host_network": false,
-        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
         "privileged": false,
         "role": "broker",
         "runtime_match": "MATCH",
@@ -191,16 +203,19 @@
       "id": "broker",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
     },
     {
       "facts": {
-        "env_names": [],
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
         "host_network": false,
-        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
         "privileged": false,
         "role": "receiver",
         "runtime_match": "MATCH",
@@ -209,16 +224,19 @@
       "id": "receiver",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
     },
     {
       "facts": {
-        "env_names": [],
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
         "host_network": false,
-        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
         "privileged": false,
         "role": "reviewer",
         "runtime_match": "MATCH",
@@ -227,7 +245,7 @@
       "id": "reviewer",
       "provenance": {
         "kind": "DECLARED",
-        "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+        "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
         "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
       },
       "type": "service"
@@ -236,21 +254,21 @@
   "snapshot": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
     "budget": 1,
-    "compose_sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
-    "database_source": "/slice/db",
+    "compose_sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
-    "runtime_sha256": "180808628255f78510925874ae3fd1189c4e383a876a74dd3a5f119a287db0f4",
-    "sink_source": "/slice/sink"
+    "runtime_sha256": "ee7ee58d0b6c21e5e92ccb4145d6fe1157fe5891fdb4a2391c5be924228a515d",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
   },
   "sources": [
     {
       "kind": "DECLARED",
-      "sha256": "b9300fd87e00d03dae76897bbf86d82a51453f56c028275a5415039db89deff8",
+      "sha256": "1f97cc785c7ca18d86c69602fc890f6f745d6d6a2a018d880dcddbe3bee822df",
       "source": "examples/compose-two-agent/trusted-role-uid-collision.compose.json"
     },
     {
       "kind": "RUNTIME_OBSERVED",
-      "sha256": "180808628255f78510925874ae3fd1189c4e383a876a74dd3a5f119a287db0f4",
+      "sha256": "ee7ee58d0b6c21e5e92ccb4145d6fe1157fe5891fdb4a2391c5be924228a515d",
       "source": "examples/compose-two-agent/trusted-role-uid-collision.runtime.json"
     },
     {

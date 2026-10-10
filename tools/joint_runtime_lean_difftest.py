@@ -123,12 +123,76 @@ def _run_case(schedule):
         return examples
 
 
+
+def _run_crash_case(halt_before_recovery):
+    """Actually fault the real receiver between durable publication/receipt."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        directory = root / "receiver"
+        directory.mkdir(mode=0o700)
+        dbfile = root / "gate.db"
+        owner = os.geteuid()
+        agent, reviewer, approver = owner + 27001, owner + 27002, owner + 27003
+        roles = Principals(frozenset({agent}), frozenset({reviewer}),
+                           frozenset({approver}), frozenset({owner}))
+        c = Controller.bootstrap(dbfile, roles, 2, clock=lambda: 100)
+        body = b"exact-crash-recovery-body"
+        digest = c.stage(agent, body)
+        c.review(reviewer, digest)
+        c.issue_lease(owner, "lease", agent, 1, 200)
+        c.approve(approver, "nonce", digest, "label", agent, "lease", 150)
+
+        actions = []
+        checks = [(actions.copy(), _projection(c, dbfile, directory, owner))]
+        rid = c.release(agent, "nonce", digest, "label", "lease",
+                        record_effect=True)
+        actions.append(f".request {agent} {agent} {rid} 1")
+        checks.append((actions.copy(), _projection(c, dbfile, directory, owner)))
+
+        def abort_before_receipt():
+            raise RuntimeError("fault after durable file publication")
+
+        try:
+            deliver_record(c, rid, directory, after_publish=abort_before_receipt)
+        except RuntimeError as exc:
+            assert "fault after" in str(exc)
+        else:
+            raise AssertionError("crash fixture did not interrupt DB receipt")
+        assert (directory / f"{rid}.body").read_bytes() == body
+        actions.append(f".publish {rid}")
+        checks.append((actions.copy(), _projection(c, dbfile, directory, owner)))
+
+        if halt_before_recovery:
+            c.halt(owner)
+            actions.append(".halt")
+            checks.append((actions.copy(), _projection(c, dbfile, directory, owner)))
+            try:
+                deliver_record(c, rid, directory)
+            except Denied:
+                pass
+            else:
+                raise AssertionError("HALT allowed receipt reconciliation")
+        else:
+            assert deliver_record(c, rid, directory) == f"{rid}.body"
+        actions.append(f".receipt {rid}")
+        checks.append((actions.copy(), _projection(c, dbfile, directory, owner)))
+
+        examples = []
+        for events, expected in checks:
+            seq = "[" + ", ".join(events) + "]"
+            lhs = "ControlStack.EffectLifecycle.run " + _INITIAL + " " + seq
+            examples.append(f"example : ({lhs}) = {expected} := by decide")
+        return examples
+
+
 def main():
     source = ROOT / "reviews" / "family-strengthening" / "EffectLifecycle.lean"
     obligations = []
     for events in itertools.permutations(
             ("agent-a", "agent-b", "publish", "halt")):
         obligations.extend(_run_case(events))
+    obligations.extend(_run_crash_case(halt_before_recovery=False))
+    obligations.extend(_run_crash_case(halt_before_recovery=True))
     # Review-scoped Lean source is checked in full, followed by independent
     # runtime-observed projection equations. These cases are finite and do
     # not claim semantic correspondence beyond the tested operations.
@@ -143,7 +207,7 @@ def main():
             print(run.stdout[-16000:], file=sys.stderr)
             print(run.stderr[-16000:], file=sys.stderr)
             raise SystemExit(run.returncode)
-    print(f"PASS: 24 real-runtime schedules, {len(obligations)} "
+    print(f"PASS: 24 real-runtime schedules plus both crash/receipt paths, {len(obligations)} "
           "kernel-checked full-state checkpoints (bounded, not refinement proof)")
 
 

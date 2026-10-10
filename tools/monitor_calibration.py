@@ -16,6 +16,23 @@ from pathlib import Path
 _HASH = re.compile(r"[0-9a-f]{64}\Z")
 
 
+def _strict_json(text):
+    """Reject ambiguous repeated keys and nonstandard NaN/Infinity constants."""
+    def unique_object(pairs):
+        obj = {}
+        for key, value in pairs:
+            if key in obj:
+                raise ValueError("duplicate JSON object key")
+            obj[key] = value
+        return obj
+
+    def invalid_constant(value):
+        raise ValueError("non-finite JSON constant: " + value)
+
+    return json.loads(text, object_pairs_hook=unique_object,
+                      parse_constant=invalid_constant)
+
+
 def _declared_histories(value):
     if type(value) not in (list, tuple) or not value:
         raise ValueError("manifest must declare a nonempty list of histories")
@@ -133,7 +150,7 @@ def analyze(rows, *, alpha=0.05, minimum_per_class=30,
 def _load_manifest(path):
     try:
         raw = path.read_bytes()
-        data = json.loads(raw.decode("utf-8"))
+        data = _strict_json(raw.decode("utf-8"))
     except (OSError, ValueError, UnicodeDecodeError) as exc:
         raise ValueError("manifest is missing or not valid UTF-8 JSON") from exc
     required = {"histories", "monitor_sha256", "policy_sha256",
@@ -186,8 +203,8 @@ def main():
     rows = []
     for i, line in enumerate(lines, 1):
         try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError as exc:
+            rows.append(_strict_json(line))
+        except ValueError as exc:
             p.error(f"invalid JSON line {i}: {exc}")
     try:
         report = analyze(rows, alpha=manifest["alpha"] if manifest else (

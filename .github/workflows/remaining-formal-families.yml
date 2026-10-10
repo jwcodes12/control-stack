@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'reviews/family-strengthening/Remaining.lean'
+      - 'reviews/family-strengthening/EffectLifecycle.lean'
       - '.github/workflows/remaining-formal-families.yml'
   workflow_dispatch:
 permissions:
@@ -22,10 +23,13 @@ jobs:
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
           lake env lean reviews/family-strengthening/Remaining.lean | tee "$RUNNER_TEMP/remain-axioms.txt"
+          lake env lean reviews/family-strengthening/EffectLifecycle.lean | tee "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
           for claim in MonitorHistory.adaptive_miss_mass_le_budgets JointAdmission.budget_run JointAdmission.no_admissions_after_halt; do
             grep -F "$claim' depends on axioms:" "$RUNNER_TEMP/remain-axioms.txt"
           done
-          if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/remain-axioms.txt"; then
+          grep -F "EffectLifecycle.no_publications_in_halted_suffix' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          grep -F "EffectLifecycle.halt_cannot_undo_published_unreceipted' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/remain-axioms.txt" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"; then
             echo "Found unexpected sorry proof axiom"
             exit 1
           fi

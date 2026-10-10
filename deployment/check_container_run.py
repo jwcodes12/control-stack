@@ -28,11 +28,16 @@ def check(output):
             assert r['capture']['raw_sha256']==sha(raw) and r['capture']['independent_attestation'] is False
             assert len(rows)==6 and all(row['State']['Running'] for row in rows)
             assert r['services']==normalize(c,rows,project)
-            ir=collect(dest/'compose.json',scan_dir/'runtime.json',sha(dest/'compose.json'));stored=json.loads((scan_dir/'ir.json').read_text())
+            if (scan_dir/'fresh-inputs').exists():
+                from deployment.scan import replay_snapshot
+                ir=replay_snapshot(dest/'compose.json',scan_dir/'runtime.json',scan_dir/'fresh-inputs')
+            else:ir=collect(dest/'compose.json',scan_dir/'runtime.json',sha(dest/'compose.json'))
+            stored=json.loads((scan_dir/'ir.json').read_text())
             def portable(d):
                 d=json.loads(json.dumps(d))
                 for p in d['sources']+[x['provenance'] for x in d['nodes']+d['edges']]:
-                    if p['sha256']==sha(dest/'compose.json'):p['source']='compose.json'
+                    if 'fresh-inputs/' in p['source']:p['source']='fresh-inputs/'+p['source'].split('fresh-inputs/')[-1]
+                    elif p['sha256']==sha(dest/'compose.json'):p['source']='compose.json'
                     elif p['sha256']==sha(scan_dir/'runtime.json'):p['source']='runtime.json'
                     for root in [str(ROOT),str(Path(pin['host_root']).parent)]:
                         if p['source'].startswith(root+'/'):p['source']=p['source'][len(root)+1:]

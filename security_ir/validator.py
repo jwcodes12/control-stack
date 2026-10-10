@@ -18,7 +18,7 @@ def provenance(p):
 
 def validate(d):
     require(isinstance(d, dict) and set(d) == {'version','claim','sources','nodes','edges','snapshot'}, 'invalid IR fields')
-    require(type(d['version']) is int and d['version'] == 0 and d['claim'] == 'local-file-two-agent-v0', 'unsupported IR version/claim')
+    require(((type(d['version']) is int and d['version'] == 0) or d['version']=='0.1') and d['claim'] == 'local-file-two-agent-v0', 'unsupported IR version/claim')
     require(isinstance(d['sources'], list) and bool(d['sources']), 'missing sources')
     for p in d['sources']:
         provenance(p)

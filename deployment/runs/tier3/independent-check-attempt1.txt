@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/deployment/check_container_run.py", line 75, in <module>
+    p=argparse.ArgumentParser();p.add_argument('output');a=p.parse_args();check(a.output)
+                                                                          ~~~~~^^^^^^^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/deployment/check_container_run.py", line 45, in check
+    assert portable(ir)==portable(stored),(case,'IR differs')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('trusted-role-uid-collision', 'IR differs')

@@ -22,7 +22,7 @@ PRINCIPALS="Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23
 DELIVER="from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),"+PRINCIPALS+")\n"
 RPC="import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))"
 
-def run(output,pin_path=None):
+def run(output,pin_path=None,fresh=False):
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=False)
     pin=json.loads(Path(pin_path or ROOT/'examples/compose-two-agent/image-pin.json').read_text())
     state=Path(pin['host_root'])
@@ -72,7 +72,12 @@ def run(output,pin_path=None):
         cmd(['sudo','-n','python3','-c',backup,state/'db/gate.db',dest/'database.sqlite']);cmd(['sudo','-n','chown',os.getuid(),dest/'database.sqlite'])
         return files,value
     def scan(dest):
-        capture(compose,project,dest);ir=collect(compose,dest/'runtime.json',sha(compose));checked=check(ir);bundle=verify(ir)
+        capture(compose,project,dest)
+        if fresh:
+            from deployment.scan import scan as fresh_scan
+            ir=fresh_scan(compose,dest/'runtime.json',sha(compose),dest/'fresh-inputs')
+        else:ir=collect(compose,dest/'runtime.json',sha(compose))
+        checked=check(ir);bundle=verify(ir)
         for o in bundle['obligations']:
             if o['premise']=='Lean-contract-instances':o.update(status='PROVEN_IN_MODEL' if checked['accepted'] else 'REFUTED',detail=checked['axioms'])
         bundle['lean']=checked;bundle['verdict']='UNASSURED' if any(o['status'] in {'REFUTED','UNASSESSED'} for o in bundle['obligations']) else 'CONDITIONAL'
@@ -198,4 +203,4 @@ def run(output,pin_path=None):
     print('PASS: seven safe real-container cases, independent sink reconciliation, resources removed')
     return results
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');a=p.parse_args();run(a.output,a.pin)
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');a=p.parse_args();run(a.output,a.pin,a.fresh_scan)

@@ -1,3 +1,64 @@
+# Latest engineering continuation — delegated execution and empirical F6 (PR #40)
+
+**Exact-status rule:** Claims below describe branch source changes, **not** a
+deployment certificate. Inspect Actions jobs at the final HEAD before merge.
+All 28 scenarios remain CONDITIONAL. No independent reviewer has signed
+runtime correspondence or the policy premises.
+
+- **F8 runtime authorization:** one-hop, immutable, nonce-specific delegation
+  to an individually peer-authenticated agent UID. The grantor loses authority
+  to spend that nonce; the delegate cannot redelegate or borrow another
+  approval. Original lease owner and original global cap are charged within
+  the same SQLite transaction. Revoking the grant (by grantor/admin) prevents
+  later admissions *and* pending local-file publications; already durable
+  publications cannot be undone. See
+  [implementation scope](docs/DELEGATED-RELEASE-SCOPE.md) and
+  `trusted_stack/test_delegation.py`. Existing databases need an offline
+  trusted migration before the new schema is usable; this reference does not
+  automatically migrate them.
+- **F8 review-scoped Lean and correspondence testing:**
+  `reviews/family-strengthening/DelegatedAdmission.lean` explicitly models
+  one nonce, owner, delegate, immutable grant, revocation, one joint cap and
+  absorbing HALT, with safety lemmas and a positive accepted delegated-release
+  witness. `tools/delegated_lean_difftest.py` compares 72 actual SQLite
+  event permutations and each corresponding projected finite state to
+  kernel-checked Lean equations. These **bounded differential checks do NOT
+  establish a universal Python/Lean semantics-preserving refinement** and
+  cannot authenticate OS UIDs themselves.
+- **F6 real public monitor data (exploratory):**
+  `tools/redwood_f6_episode_report.py` reads the existing pinned LaStraj 2.0
+  raw per-trajectory score vectors in
+  `data/redwood-leaderboard/monitors.json`; one whole trajectory, not an
+  individual action, is the sampling unit. It computes exact
+  Clopper–Pearson one-sided upper bounds for attack misses and benign false
+  alarms with a simultaneous adjustment across **all 19 monitor variants**
+  (including the unscored variant). The report is always
+  `EXPLORATORY_NOT_PREREGISTERED`, regardless of numeric outcome. A
+  posthoc threshold and the small, history-unstratified, already-public
+  dataset cannot discharge positive adaptive F6 monitoring. See
+  [reproduction scope](docs/F6-TRAJECTORY-EMPIRICAL.md).
+- **Preservation:** `ControlStack/EgressGate.lean`, historical evidence,
+  preregistrations and VM receipts are unchanged by PR #40.
+
+New verification on a pinned, provisioned Linux runner:
+```sh
+python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
+python3 -m unittest tools.test_monitor_calibration tools.test_redwood_f6_episode_report -v
+python3 tools/redwood_f6_episode_report.py --threshold 8 --output /tmp/redwood-f6-report-unique.json
+lake env lean reviews/family-strengthening/DelegatedAdmission.lean
+python3 tools/delegated_lean_difftest.py
+python3 tools/joint_runtime_lean_difftest.py
+```
+
+**Undischarged:** universal OS/network/host effect capture, production-grade
+capability confinement, power-loss and runtime-scheduler refinement,
+actual Python-to-Lean proof for the whole delegated dispatcher, independently
+precommitted adaptive F6 held-out trials, independent attested review and
+native-hypervisor SC-01 usefulness. These require genuine environment and
+evidence work; passing a source CI suite is insufficient.
+
+---
+
 # Control-stack remaining-work execution — PR #40
 
 **Current continuation:** [single PR #40](https://github.com/jwcodes12/control-stack/pull/40) against main adds the next verified reference layers beyond merged PR #39. Source and CI claims here must be matched to PR #40's exact latest head; no deployment assurance is implied. The detailed previous handoff is retained below.

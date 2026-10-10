@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -204,10 +205,19 @@ def main():
     report["manifest_sha256"] = manifest_hash
     report["monitor_sha256"] = manifest["monitor_sha256"] if manifest else None
     report["policy_sha256"] = manifest["policy_sha256"] if manifest else None
-    # Check-before-write: failed/sparse measurements create inspectable
-    # receipts but never return success. No overwrite of frozen evidence.
-    a.output.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n",
-                        encoding="utf-8")
+    # Exclusive creation is essential: exists()+write_text() is a TOCTOU
+    # overwrite and a dangling symlink can redirect into frozen evidence.
+    # Preserve failed/sparse receipts for inspection, without ever replacing
+    # an existing path. Directory ownership/isolation is an external premise.
+    try:
+        fd = os.open(a.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                     os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as out:
+            out.write(json.dumps(report, sort_keys=True, indent=2) + "\n")
+            out.flush()
+            os.fsync(out.fileno())
+    except OSError as exc:
+        p.error(f"cannot create new receipt exclusively: {exc}")
     print(report["status"] + ": " + str(report["sample_size"]) + " samples")
     if report["status"] not in ("conditional_sample_bound",
                                 "conditional_limits_met"):

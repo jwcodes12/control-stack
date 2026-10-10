@@ -1,0 +1,22 @@
+name: agent-linux-confinement
+on:
+  pull_request:
+    paths:
+      - 'trusted_stack/agent_confinement.py'
+      - 'trusted_stack/test_agent_confinement.py'
+      - 'docs/AGENT-LINUX-CONFINEMENT.md'
+      - '.github/workflows/agent-linux-confinement.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Require actual host Landlock/libseccomp support
+        run: python3 -m trusted_stack.agent_confinement --probe --script /dev/null
+      - name: Test real kernel write/network/exec boundaries
+        run: python3 -m unittest trusted_stack.test_agent_confinement -v

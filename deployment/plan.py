@@ -109,6 +109,10 @@ def build_plan(c,r,ir,base_sha256,host=None):
     roles=[s.get('x-cstack-role') for s in c['services'].values()]
     if len(roles)!=6 or sorted(roles,key=str)!=['agent','agent','approver','broker','receiver','reviewer']:
         issue('/services','requires exactly two agents and one each broker, receiver, reviewer and approver; missing trusted services are not invented')
+    root=Path(__file__).resolve().parents[1]
+    for key,source in [('broker_sha256','controller.py'),('receiver_sha256','outbox_receiver.py')]:
+        expected=hashlib.sha256((root/'trusted_stack'/source).read_bytes()).hexdigest()
+        if claim.get(key)!=expected:issue('/x-cstack/'+key,'trusted source pin is missing or differs from reviewed code; inspect code and image correspondence before setting a pin, never infer it from the plan')
     # Preserve observations. A config patch cannot erase reported runtime authority.
     if isinstance(r,dict):
         for key in sorted(set(r)-{'services','capture'}):issue('/runtime/'+escape(key),'reported runtime fact remains outside supported capture; resolve and recapture it')

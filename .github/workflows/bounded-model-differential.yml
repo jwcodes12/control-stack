@@ -9,6 +9,7 @@ on:
       - 'ControlStack/Scenarios/SC26Transaction.lean'
       - 'scenarios/SC-26/harness/model.py'
       - 'scenarios/SC-26/harness/lean_difftest.py'
+      - 'reviews/statement-fidelity-2026-10-09/Counterexamples.lean'
       - '.github/workflows/bounded-model-differential.yml'
   workflow_dispatch:
 permissions:
@@ -30,6 +31,7 @@ jobs:
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           python3 tools/bounded_model_diff.py
+          lake env lean reviews/statement-fidelity-2026-10-09/Counterexamples.lean
       - name: SC-26 full-state independently sampled differential
         run: |
           export PATH="$HOME/.elan/bin:$PATH"

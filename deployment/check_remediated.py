@@ -39,14 +39,8 @@ def check(output):
             assert {m['target'] for m in r['services'][name]['mounts']}=={'/channel'}
             assert all(m['read_only'] for m in r['services'][name]['mounts'])
         stored=json.loads((dest/'ir.json').read_text());replayed=replay_snapshot(dest/'compose.json',dest/'runtime.json',dest/'fresh-inputs')
-        def portable(value):
-            value=json.loads(json.dumps(value))
-            for p in value['sources']+[item['provenance'] for item in value['nodes']+value['edges']]:
-                if 'fresh-inputs/' in p['source']:p['source']='fresh-inputs/'+p['source'].split('fresh-inputs/')[-1]
-                elif p['sha256']==sha(dest/'compose.json'):p['source']='compose.json'
-                elif p['sha256']==sha(dest/'runtime.json'):p['source']='runtime.json'
-            return value
-        assert portable(stored)==portable(replayed),'archived fresh IR mismatch'
+        from deployment.plan import portable_observation_ir
+        assert portable_observation_ir(stored,dest/'fresh-inputs')==portable_observation_ir(replayed,dest/'fresh-inputs'),'archived fresh IR mismatch'
         bundle=json.loads((dest/'bundle.json').read_text());base=verify(stored)
         assert bundle['ir_sha256']==base['ir_sha256'] and bundle['verdict']==row['remediated_verdict']=='CONDITIONAL'
         assert bundle['lean']['accepted'] and 'sorryAx' not in bundle['lean']['axioms']

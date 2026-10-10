@@ -1,0 +1,17 @@
+F.
+======================================================================
+FAIL: test_archive_replay (__main__.RemediationTests.test_archive_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/.git/tier5-repro/tools/test_deployment_remediated.py", line 17, in test_archive_replay
+    with contextlib.redirect_stdout(io.StringIO()):result=check(ARCHIVE)
+                                                          ~~~~~^^^^^^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/.git/tier5-repro/deployment/check_remediated.py", line 49, in check
+    assert portable(stored)==portable(replayed),'archived fresh IR mismatch'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: archived fresh IR mismatch
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.107s
+
+FAILED (failures=1)

@@ -89,3 +89,5 @@ T5.3 uses archived Tier 2 originals and launches only remediated configurations.
 Tier 5 local exit: planner five tests PASS; 44 prospective kernel certificates, 36 model accepted and eight named residual cases; two remediated live configurations and four honest completions PASS. Independent archive and two tamper tests PASS; resources removed. Original = archived Tier 2 evidence, no original bypass rerun. Self-review deployment/reviews/tier5-self-review.md. Final-head CI pending.
 
 Tier 5 CI attempt f1fbf63: fixture job FAIL because planner inferred an archived absolute fresh-input path unavailable on CI. Preserve the raw failure; infer local sibling inputs and compare all pinned IR content while normalizing only hash-identical known source labels. Add relocation and modified-observation rejection controls. No evidence files are edited. Final corrected-head CI pending.
+
+Tier 5 fresh checkout: six planner tests PASS; remediated archive replay FAIL on relocated trusted-source labels. Reuse the same hash-pinned known-artifact source-label normalization in the independent checker; retain both failure and corrected results. No evidence bytes altered.

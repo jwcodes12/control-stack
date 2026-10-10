@@ -149,6 +149,42 @@ class MonitorCalibratorTests(unittest.TestCase):
             self.assertNotEqual(subprocess.run(cmd, capture_output=True).returncode, 0)
             self.assertFalse(receipt.exists())
 
+    def test_duplicate_json_keys_fail_closed_for_manifest_and_sample(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = root / "manifest.json"
+            sample = root / "samples.jsonl"
+            receipt = root / "receipt.json"
+            sample.write_text("".join(json.dumps(r) + "\n" for r in self.rows()))
+            manifest.write_text(
+                '{"histories":["observed-a"],"histories":["missing-b"],'
+                '"alpha":0.05,"minimum_per_class":30,'
+                '"monitor_sha256":"' + "a" * 64 + '",'
+                '"policy_sha256":"' + "b" * 64 + '"}')
+            cmd = [sys.executable, "-m", "tools.monitor_calibration",
+                   "--input", str(sample), "--manifest", str(manifest),
+                   "--output", str(receipt)]
+            proc = subprocess.run(cmd, capture_output=True)
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertFalse(receipt.exists())
+            manifest.write_text(json.dumps({
+                "histories": ["observed-a"], "alpha": 0.05,
+                "minimum_per_class": 30,
+                "monitor_sha256": "a" * 64, "policy_sha256": "b" * 64
+            }))
+            sample.write_text(
+                '{"id":"1","history":"observed-a","attack":true,'
+                '"alarm":true,"alarm":false}\n')
+            proc = subprocess.run(cmd, capture_output=True)
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertFalse(receipt.exists())
+            sample.write_text(
+                '{"id":"1","history":"observed-a","attack":NaN,'
+                '"alarm":false}\n')
+            proc = subprocess.run(cmd, capture_output=True)
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertFalse(receipt.exists())
+
     def test_dangling_symlink_receipt_never_redirects_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -28,6 +28,8 @@ def run_one(controller, uid, req):
         "issue_lease": {"lease_id", "agent_uid", "budget", "expires"},
         "approve": {"nonce", "digest", "destination", "agent_uid", "lease_id", "expires"},
         "revoke": {"lease_id"},
+        "delegate": {"nonce", "delegate_uid"},
+        "revoke_delegation": {"nonce"},
         "release": {"nonce", "digest", "destination", "lease_id"},
         "effect_release": {"nonce", "digest", "destination", "lease_id"},
         "halt": set(),
@@ -51,6 +53,10 @@ def run_one(controller, uid, req):
         return controller.approve(uid, **params)
     if op == "revoke":
         return controller.revoke(uid, **params)
+    if op == "delegate":
+        return controller.delegate(uid, **params)
+    if op == "revoke_delegation":
+        return controller.revoke_delegation(uid, **params)
     if op == "release":
         return controller.release(uid, cost=1, **params)
     if op == "effect_release":

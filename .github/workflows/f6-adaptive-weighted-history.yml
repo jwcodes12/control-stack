@@ -1,0 +1,30 @@
+name: f6-adaptive-weighted-history
+on:
+  pull_request:
+    paths:
+      - 'reviews/family-strengthening/AdaptiveStrata.lean'
+      - '.github/workflows/f6-adaptive-weighted-history.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  f6-mixture-lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel check adaptive mixture claims and axiom list
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake env lean reviews/family-strengthening/AdaptiveStrata.lean | tee "$RUNNER_TEMP/adaptive-axioms.txt"
+          grep -F "AdaptiveStrata.weighted_history_miss_bound' depends on axioms:" "$RUNNER_TEMP/adaptive-axioms.txt"
+          grep -F "AdaptiveStrata.weighted_history_two_class_bounds' depends on axioms:" "$RUNNER_TEMP/adaptive-axioms.txt"
+          if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/adaptive-axioms.txt"; then
+            echo "Unexpected sorry proof axiom"
+            exit 1
+          fi

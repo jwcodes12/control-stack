@@ -1,0 +1,59 @@
+name: remaining-formal-families
+on:
+  pull_request:
+    paths:
+      - 'reviews/family-strengthening/Remaining.lean'
+      - 'reviews/family-strengthening/EffectLifecycle.lean'
+      - 'reviews/family-strengthening/DelegatedAdmission.lean'
+      - 'tools/delegated_lean_difftest.py'
+      - 'tools/joint_runtime_lean_difftest.py'
+      - 'trusted_stack/**'
+      - '.github/workflows/remaining-formal-families.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lean-remainder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel check F6 finite weighted histories and F8 concrete joint-budget transitions
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake env lean reviews/family-strengthening/Remaining.lean | tee "$RUNNER_TEMP/remain-axioms.txt"
+          lake env lean reviews/family-strengthening/EffectLifecycle.lean | tee "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          for claim in MonitorHistory.adaptive_miss_mass_le_budgets JointAdmission.budget_run JointAdmission.no_admissions_after_halt; do
+            grep -F "$claim' depends on axioms:" "$RUNNER_TEMP/remain-axioms.txt"
+          done
+          grep -F "EffectLifecycle.budget_run' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          grep -F "EffectLifecycle.unknown_effect_cannot_publish' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          grep -F "EffectLifecycle.no_publications_in_halted_suffix' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          grep -F "EffectLifecycle.halt_cannot_undo_published_unreceipted' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/remain-axioms.txt" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"; then
+            echo "Found unexpected sorry proof axiom"
+            exit 1
+          fi
+      - name: Differential actual SQLite and filesystem trace vs Lean lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          python3 tools/joint_runtime_lean_difftest.py
+      - name: Kernel check nonce-scoped delegation and actual SQLite bounded differential
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake env lean reviews/family-strengthening/DelegatedAdmission.lean | tee "$RUNNER_TEMP/delegation-axioms.txt"
+          grep -F "DelegatedAdmission.budget_run' depends on axioms:" "$RUNNER_TEMP/delegation-axioms.txt"
+          grep -F "DelegatedAdmission.delegated_positive_witness' does not depend on any axioms" "$RUNNER_TEMP/delegation-axioms.txt"
+          if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/delegation-axioms.txt"; then
+            exit 1
+          fi
+          python3 tools/delegated_lean_difftest.py

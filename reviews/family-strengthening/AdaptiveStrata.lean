@@ -34,11 +34,11 @@ theorem weighted_history_miss_bound
         ≤ ∑ h ∈ histories, historyProb h * missCap := by
           apply Finset.sum_le_sum
           intro h hh
-          exact mul_le_mul_of_nonneg_left (hCap h hh) (zero_le _)
+          exact mul_le_mul_of_nonneg_left (hCap h hh) (by positivity)
     _ = (∑ h ∈ histories, historyProb h) * missCap := by
           rw [Finset.sum_mul]
     _ ≤ 1 * missCap :=
-          mul_le_mul_of_nonneg_right hWeights (zero_le _)
+          mul_le_mul_of_nonneg_right hWeights (by positivity)
     _ = missCap := one_mul _
 
 /-- The missed-attack and benign-false-alarm distributions can be

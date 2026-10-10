@@ -10,8 +10,11 @@ import itertools
 import json
 import math
 import os
+import sys
 from pathlib import Path
 
+# Support both python3 -m tools.monitor_pair_replay and direct tools/...py.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from tools.redwood_f6_episode_report import binomial_upper
 
 ROOT = Path(__file__).resolve().parents[1]

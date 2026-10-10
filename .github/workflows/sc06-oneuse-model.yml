@@ -5,6 +5,7 @@ on:
     paths:
       - 'ControlStack/Scenarios/SC06OneUse.lean'
       - '.github/workflows/sc06-oneuse-model.yml'
+      - 'reviews/sc06-issuer-controls/Controls.lean'
   workflow_dispatch:
 
 permissions:
@@ -23,3 +24,4 @@ jobs:
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
           lake build ControlStack.Scenarios.SC06OneUse
+          lake env lean reviews/sc06-issuer-controls/Controls.lean

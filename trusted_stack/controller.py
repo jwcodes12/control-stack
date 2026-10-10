@@ -79,6 +79,14 @@ class Controller:
                 digest TEXT NOT NULL, destination TEXT NOT NULL,
                 agent_uid INTEGER NOT NULL, nonce TEXT UNIQUE NOT NULL,
                 lease_id TEXT NOT NULL, cost INTEGER NOT NULL, created INTEGER NOT NULL);
+            -- A deliberately narrow *real* effect: a content-bound SQLite append
+            -- in the SAME transaction as approval consumption and budget charge.
+            -- No filesystem/network/process effect is claimed.
+            CREATE TABLE effect_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                release_id INTEGER NOT NULL UNIQUE REFERENCES releases(id),
+                digest TEXT NOT NULL, destination TEXT NOT NULL,
+                body BLOB NOT NULL, created INTEGER NOT NULL);
             """)
             db.execute("INSERT INTO meta VALUES (1, ?, 0, 0)", (global_cap,))
         dirfd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
@@ -151,7 +159,10 @@ class Controller:
             value = fn(db, meta)
             db.commit()
             return value
-        except (Denied, sqlite3.Error, ValueError, TypeError, OverflowError) as e:
+        except sqlite3.Error as e:
+            db.rollback()
+            raise Denied("trusted state transaction failed closed") from e
+        except (Denied, ValueError, TypeError, OverflowError) as e:
             db.rollback()
             if isinstance(e, Denied):
                 raise
@@ -223,8 +234,15 @@ class Controller:
             return True
         return self._tx(apply)
 
-    def release(self, uid, nonce, digest, destination, lease_id, cost=1):
-        """Atomic *authorization record*, NOT execution of an external action."""
+    def release(self, uid, nonce, digest, destination, lease_id, cost=1, *, record_effect=False):
+        """Atomic one-use admission. Optional effect is ONLY a SQLite body append.
+
+        The effect and approval consumption commit together. This is NOT an
+        OS-effect adaptor, not an external idempotent receiver, and does not
+        guarantee another resource is mediated.
+        """
+        if type(record_effect) is not bool:
+            raise Denied("invalid effect mode")
         self._role(uid, "agents")
         nonce, digest, destination, lease_id = (self._token(nonce), self._digest(digest),
             self._destination(destination), self._token(lease_id))
@@ -252,6 +270,11 @@ class Controller:
             db.execute("UPDATE approvals SET used=1 WHERE nonce=?", (nonce,))
             cur = db.execute("INSERT INTO releases (digest,destination,agent_uid,nonce,lease_id,cost,created) VALUES (?,?,?,?,?,?,?)",
                              (digest, destination, uid, nonce, lease_id, cost, self._now()))
+            if record_effect:
+                # The only implemented effect is this exact reviewed byte string
+                # written to the trusted SQLite DB in the SAME transaction.
+                db.execute("INSERT INTO effect_records (release_id,digest,destination,body,created) VALUES (?,?,?,?,?)",
+                           (cur.lastrowid, digest, destination, body[0], self._now()))
             return cur.lastrowid
         return self._tx(apply)
 

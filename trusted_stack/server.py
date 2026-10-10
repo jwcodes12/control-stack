@@ -29,6 +29,7 @@ def run_one(controller, uid, req):
         "approve": {"nonce", "digest", "destination", "agent_uid", "lease_id", "expires"},
         "revoke": {"lease_id"},
         "release": {"nonce", "digest", "destination", "lease_id"},
+        "effect_release": {"nonce", "digest", "destination", "lease_id"},
         "halt": set(),
         "state": set(),
     }
@@ -52,6 +53,8 @@ def run_one(controller, uid, req):
         return controller.revoke(uid, **params)
     if op == "release":
         return controller.release(uid, cost=1, **params)
+    if op == "effect_release":
+        return controller.release(uid, cost=1, record_effect=True, **params)
     if op == "halt":
         return controller.halt(uid)
     return controller.state(uid)

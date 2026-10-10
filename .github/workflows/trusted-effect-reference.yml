@@ -1,0 +1,32 @@
+name: trusted-effect-reference
+on:
+  pull_request:
+    paths:
+      - 'trusted_stack/**'
+      - 'reviews/family-strengthening/F6F8.lean'
+      - '.github/workflows/trusted-effect-reference.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  python-effect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Full trusted reference unit and differential suite
+        run: python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
+  lean-family:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel-check F6 correlated monitors and F8 joint-family invariants
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake build ControlStack.GateComposition
+          lake env lean reviews/family-strengthening/F6F8.lean

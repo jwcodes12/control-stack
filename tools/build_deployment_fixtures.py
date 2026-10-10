@@ -15,9 +15,9 @@ def build():
     pin=json.loads((base/'image-pin.json').read_text())
     image=pin['image']
     host_root=pin['host_root']
-    def mount(source,target,read_only=False): return {'type':'bind','source':source,'target':target,'read_only':read_only}
+    def mount(source,target,read_only=False): return {'type':'bind','source':source,'target':target,'read_only':read_only,'bind':{'selinux':'z'}}
     c={'services':{},'networks':{'isolated':{'internal':True}},'x-cstack':{
-       'sink_source':host_root+'/sink','database_source':host_root+'/db','channel_source':host_root+'/channel','budget':1,
+       'sink_source':host_root+'/sink','database_source':host_root+'/db','channel_source':host_root+'/channel','budget':2,
        'broker_sha256':sha(ROOT/'trusted_stack/controller.py'),'receiver_sha256':sha(ROOT/'trusted_stack/outbox_receiver.py')}}
     for name,role,uid in [('agent-a','agent',23701),('agent-b','agent',23702),('broker','broker',23700),('receiver','receiver',23700),('reviewer','reviewer',23703),('approver','approver',23704)]:
         c['services'][name]={'x-cstack-role':role,'user':str(uid),'image':image,'environment':{'SLICE_ROLE':name,'PYTHONPATH':'/slice'},'networks':['isolated'],'volumes':[]}
@@ -60,7 +60,7 @@ def build():
     expected={}
     for name,c in cases.items():
         p=base/(name+'.compose.json'); p.write_text(dumps(c))
-        r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':sorted(v['volumes'],key=lambda m:(m['source'],m['target'])),'networks':v.get('networks',[]),'env_names':sorted(v['environment'])} for k,v in c['services'].items()}}
+        r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':sorted([{k:x for k,x in m.items() if k!='bind'} for m in v['volumes']],key=lambda m:(m['source'],m['target'])),'networks':v.get('networks',[]),'env_names':sorted(v['environment'])} for k,v in c['services'].items()}}
         if name in runtime_edits:
             section,key,value=runtime_edits[name]
             (r if section=='top' else r['services']['agent-a'])[key]=value

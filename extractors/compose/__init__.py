@@ -57,11 +57,15 @@ def collect(compose, runtime, expected_sha256):
         edge(src,'unknown','opaque','UNKNOWN',reason)
     if set(c)-{'services','networks','x-cstack'} or set(claim)-{'sink_source','database_source','budget','broker_sha256','receiver_sha256','channel_source'}:
         unknown('unknown','unsupported top-level Compose/claim feature')
+    def supported_bind(v):
+        return isinstance(v,dict) and set(v) in ({'type','source','target','read_only'},{'type','source','target','read_only','bind'}) and ('bind' not in v or v['bind']=={'selinux':'z'})
+    def selected_mounts(volumes):
+        return [{k:x for k,x in v.items() if k!='bind'} if supported_bind(v) else v for v in volumes]
     def channel_sources(service, writable=False):
         mounts = service.get('volumes',[]) if isinstance(service,dict) else []
         if not isinstance(mounts,list): return set()
         return {v['source'] for v in mounts if isinstance(v,dict)
-                and set(v)=={'type','source','target','read_only'}
+                and supported_bind(v)
                 and v.get('type')=='bind' and v.get('target')=='/channel'
                 and type(v.get('read_only')) is bool and (not writable or v['read_only'] is False)
                 and isinstance(v.get('source'),str) and v['source'].startswith('/')
@@ -87,7 +91,7 @@ def collect(compose, runtime, expected_sha256):
         observed = r.get('services',{}).get(name)
         if observed is not None:
             keys = ('uid','image','mounts','networks','env_names')
-            expected = {'uid':uid,'image':image,'mounts':sorted(s.get('volumes',[]),key=lambda v:(v.get('source',''),v.get('target',''))) if isinstance(s.get('volumes',[]),list) and all(isinstance(v,dict) for v in s.get('volumes',[])) else s.get('volumes',[]),'networks':s.get('networks',[]),'env_names':sorted(env)}
+            expected = {'uid':uid,'image':image,'mounts':sorted(selected_mounts(s.get('volumes',[])),key=lambda v:(v.get('source',''),v.get('target',''))) if isinstance(s.get('volumes',[]),list) and all(isinstance(v,dict) for v in s.get('volumes',[])) else s.get('volumes',[]),'networks':s.get('networks',[]),'env_names':sorted(env)}
             facts['runtime_match'] = 'MATCH' if isinstance(observed,dict) and set(observed) == set(keys) and json.dumps(observed,sort_keys=True) == json.dumps(expected,sort_keys=True) else 'DRIFT'
         nodes.append({'id':name,'type':'service','facts':facts,'provenance':cp})
         if set(s)-{'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'}:
@@ -108,7 +112,7 @@ def collect(compose, runtime, expected_sha256):
             unknown(name,'unsupported mounts')
             mounts = []
         for v in mounts:
-            if not isinstance(v,dict) or set(v) != {'type','source','target','read_only'} or v.get('type') != 'bind' or type(v.get('read_only')) is not bool:
+            if not supported_bind(v) or v.get('type') != 'bind' or type(v.get('read_only')) is not bool:
                 unknown(name,'unsupported volume feature')
                 continue
             source = v['source']

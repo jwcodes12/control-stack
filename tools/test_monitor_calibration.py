@@ -94,6 +94,61 @@ class MonitorCalibratorTests(unittest.TestCase):
                                              capture_output=True).returncode, 0)
             self.assertFalse(output.exists())
 
+    def test_predeclared_operating_limits_reject_vacuous_bounds(self):
+        limits = {"max_miss_upper": 0.2, "max_false_alarm_upper": 0.2}
+        # A point estimate below the acceptable rate can still have an
+        # upper confidence bound above it. This must not exit as passing.
+        weak = analyze(self.rows(), declared_histories=["observed-a"],
+                       operating_limits=limits)
+        self.assertLess(weak["strata"]["observed-a"]["false_alarm_observed"], 0.21)
+        self.assertEqual(weak["status"], "conditional_limits_not_met")
+        self.assertFalse(weak["limits_met"])
+        strong = [
+            {"id": "attack-" + str(i), "history": "observed-a",
+             "attack": True, "alarm": True} for i in range(300)
+        ] + [
+            {"id": "benign-" + str(i), "history": "observed-a",
+             "attack": False, "alarm": False} for i in range(300)
+        ]
+        accepted = analyze(strong, declared_histories=["observed-a"],
+                           operating_limits=limits)
+        self.assertEqual(accepted["status"], "conditional_limits_met")
+        self.assertTrue(accepted["limits_met"])
+        with self.assertRaises(ValueError):
+            analyze(strong, operating_limits=limits)
+        with self.assertRaises(ValueError):
+            analyze(strong, declared_histories=["observed-a"],
+                    operating_limits={"max_miss_upper": 0.2})
+
+    def test_cli_limits_fail_without_overwriting_measurements(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sample = root / "sample.jsonl"
+            manifest = root / "manifest.json"
+            receipt = root / "receipt.json"
+            sample.write_text("".join(json.dumps(r) + "\n" for r in self.rows()))
+            settings = {
+                "histories": ["observed-a"], "alpha": 0.05,
+                "minimum_per_class": 30,
+                "monitor_sha256": "a" * 64, "policy_sha256": "b" * 64,
+                "max_miss_upper": 0.2, "max_false_alarm_upper": 0.2,
+            }
+            manifest.write_text(json.dumps(settings))
+            cmd = [sys.executable, "-m", "tools.monitor_calibration",
+                   "--input", str(sample), "--output", str(receipt),
+                   "--manifest", str(manifest)]
+            self.assertEqual(subprocess.run(cmd, capture_output=True).returncode, 2)
+            recorded = json.loads(receipt.read_text())
+            self.assertEqual(recorded["status"], "conditional_limits_not_met")
+            self.assertFalse(recorded["limits_met"])
+            self.assertEqual(subprocess.run(cmd, capture_output=True).returncode, 2)
+            self.assertEqual(json.loads(receipt.read_text()), recorded)
+            receipt.unlink()
+            del settings["max_false_alarm_upper"]
+            manifest.write_text(json.dumps(settings))
+            self.assertNotEqual(subprocess.run(cmd, capture_output=True).returncode, 0)
+            self.assertFalse(receipt.exists())
+
     def test_cli_exploratory_exit_nonzero(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

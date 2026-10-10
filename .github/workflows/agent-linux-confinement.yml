@@ -4,6 +4,7 @@ on:
     paths:
       - 'trusted_stack/agent_confinement.py'
       - 'trusted_stack/test_agent_confinement.py'
+      - 'tools/test_confined_effect_broker.py'
       - 'docs/AGENT-LINUX-CONFINEMENT.md'
       - '.github/workflows/agent-linux-confinement.yml'
   workflow_dispatch:
@@ -20,3 +21,5 @@ jobs:
         run: python3 -m trusted_stack.agent_confinement --probe --script /dev/null
       - name: Test real kernel write/network/exec boundaries
         run: python3 -m unittest trusted_stack.test_agent_confinement -v
+      - name: Real delegated OS-UID broker and trusted file-effect end-to-end
+        run: sudo -n python3 tools/test_confined_effect_broker.py

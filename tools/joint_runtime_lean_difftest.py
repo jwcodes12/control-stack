@@ -30,11 +30,40 @@ def _finset(values):
 
 
 def _expected_state(cap, spent, halted, admitted, published, receipted):
-    flag = "true" if halted else "false"
-    return ("(⟨" + f"{cap}, {spent}, {flag}, " +
-            ", ".join(_finset(items) for items in
-                      (admitted, published, receipted)) +
-            "⟩ : ControlStack.EffectLifecycle.State)")
+    """Independent runtime projection; not a Lean-derived expected value."""
+    return {
+        "cap": cap,
+        "spent": spent,
+        "halted": halted,
+        "admitted": admitted,
+        "published": published,
+        "receipted": receipted,
+    }
+
+
+def _projection_obligations(actions, observed):
+    """Kernel-check all scalar and finite set data, not a fragile Finset Eq.
+
+    Whole-state `by decide` on derived Finset DecidableEq can get stuck
+    reducing proof-transport in Lean 4.34. For each finite set we instead
+    check its cardinality and membership for *every* runtime-observed ID.
+    These checks jointly entail exact set equality: there cannot be an
+    extra model element once all expected elements belong and cardinality
+    matches. No native_decide/trustCompiler/unsafe axiom is used.
+    """
+    seq = "[" + ", ".join(actions) + "]"
+    state = "ControlStack.EffectLifecycle.run " + _INITIAL + " " + seq
+    clauses = [
+        f"({state}).cap = {observed['cap']}",
+        f"({state}).spent = {observed['spent']}",
+        f"({state}).halted = {'true' if observed['halted'] else 'false'}",
+    ]
+    for field in ("admitted", "published", "receipted"):
+        values = sorted(observed[field])
+        clauses.append(f"({state}).{field}.card = {len(values)}")
+        for value in values:
+            clauses.append(f"{value} ∈ ({state}).{field}")
+    return ["example : " + " ∧ ".join(clauses) + " := by decide"]
 
 
 _INITIAL = "(⟨2, 0, false, ∅, ∅, ∅⟩ : ControlStack.EffectLifecycle.State)"
@@ -116,10 +145,8 @@ def _run_case(schedule):
                         assert (directory / name).read_bytes() == body
             claims.append((trace.copy(), _projection(c, dbfile, directory, owner)))
         examples = []
-        for actions, expected in claims:
-            seq = "[" + ", ".join(actions) + "]"
-            lhs = "ControlStack.EffectLifecycle.run " + _INITIAL + " " + seq
-            examples.append(f"example : ({lhs}) = {expected} := by decide")
+        for actions, observed in claims:
+            examples.extend(_projection_obligations(actions, observed))
         return examples
 
 
@@ -178,10 +205,8 @@ def _run_crash_case(halt_before_recovery):
         checks.append((actions.copy(), _projection(c, dbfile, directory, owner)))
 
         examples = []
-        for events, expected in checks:
-            seq = "[" + ", ".join(events) + "]"
-            lhs = "ControlStack.EffectLifecycle.run " + _INITIAL + " " + seq
-            examples.append(f"example : ({lhs}) = {expected} := by decide")
+        for events, observed in checks:
+            examples.extend(_projection_obligations(events, observed))
         return examples
 
 

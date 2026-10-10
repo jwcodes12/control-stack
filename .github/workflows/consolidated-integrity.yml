@@ -1,0 +1,62 @@
+name: consolidated-integrity
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-fidelity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reject changes to frozen evidence, preregistration and EgressGate.lean
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=1
+          diff_files="$(git diff --name-only origin/main...HEAD)"
+          printf '%s\n' "$diff_files"
+          if printf '%s\n' "$diff_files" | grep -E '^(ControlStack/EgressGate\.lean|prereg/|gateway/vm/receipts/|data/linuxarena/|data/redwood-leaderboard/|numerics/lastraj_|.*(/evidence/|/receipts/))'; then
+            echo 'ERROR: immutable proof target, experimental evidence or preregistration changed'
+            exit 1
+          fi
+      - name: Regenerated theorem registry and normalized catalog consistent
+        run: |
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py --check
+      - name: Manifest, overview and assurance indexes consistent
+        run: |
+          python3 tools/build_status.py --check
+          python3 tools/build_overview.py --check
+          python3 tools/portfolio_ledger.py --check --no-lean
+          python3 tools/check_scenarios.py --json > "$RUNNER_TEMP/scenario-lint.json"
+          python3 assurance/check_manifests.py passed
+  kernel-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install exact pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel-check F6 and F8 candidate proof statements with no sorryAx
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake build ControlStack.GateComposition ControlStack.Scenarios.SC25Audit ControlStack.Scenarios.SC26Transaction
+          lake env lean reviews/family-strengthening/F6F8.lean | tee "$RUNNER_TEMP/f6f8-axioms.txt"
+          lake env lean reviews/statement-fidelity-2026-10-09/Counterexamples.lean | tee "$RUNNER_TEMP/scope-axioms.txt"
+          grep -F 'CorrelatedMonitor.joint_misses_le_each' "$RUNNER_TEMP/f6f8-axioms.txt"
+          grep -F 'GateComposition.shared_family_invariants' "$RUNNER_TEMP/f6f8-axioms.txt"
+          grep -F 'ControlStack.SC26.sc26_safe' "$RUNNER_TEMP/scope-axioms.txt"
+          if grep -h -E '(sorryAx|\bsorry\b)' "$RUNNER_TEMP/f6f8-axioms.txt" "$RUNNER_TEMP/scope-axioms.txt"; then
+            echo 'ERROR: unexpected unsafe proof axiom'
+            exit 1
+          fi

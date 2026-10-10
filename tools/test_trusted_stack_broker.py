@@ -35,6 +35,17 @@ def by_uid(uid, socketpath, data):
     return json.loads(process.stdout)
 
 
+def assert_untrusted_cannot_bypass_file_root(uid, path):
+    """Prove real OS DAC rejects bypass into THIS broker-owned effect root."""
+    code = ("import os,sys; fd=os.open(sys.argv[1], "
+            "os.O_CREAT|os.O_EXCL|os.O_WRONLY, 0o600); os.close(fd)")
+    p = subprocess.run([sys.executable, "-c", code, str(path)],
+                       capture_output=True, text=True,
+                       preexec_fn=(lambda: os.setuid(uid)))
+    assert p.returncode != 0, "untrusted UID could bypass the broker output root"
+    assert not path.exists(), "untrusted write unexpectedly created an effect"
+
+
 def disconnect_by_uid(uid, socketpath, data):
     program = (
         "import socket,sys; "
@@ -63,6 +74,7 @@ def main():
         state.mkdir(mode=0o700)
         effectdir = state / "published"
         effectdir.mkdir(mode=0o700)
+        assert_untrusted_cannot_bypass_file_root(AGENT, effectdir / "rogue.bin")
         sockpath = root / "trusted.sock"
         cmd = [sys.executable, "-m", "trusted_stack.server",
                "--db", str(state / "state.sqlite"),

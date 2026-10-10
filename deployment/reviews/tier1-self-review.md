@@ -23,7 +23,7 @@ ExtractionFaithful. ProtocolRefinement.publication remains full model–runtime
 correspondence; concrete tests do not prove either residual premise.
 
 Build attempt 1 lacked decidability instances for the new finite predicates;
-attempt 2 passes. These are recorded in deployment/evidence/tier1/. Final-head CI
+attempt 2 passes. These are recorded in deployment/runs/tier1/. Final-head CI
 is a separate required exit check and will be recorded before Tier 2 begins.
 
 An optional bytecode compilation first hit a pre-existing root-owned tools/__pycache__
@@ -33,3 +33,7 @@ change or source modification was needed.
 Final local kernel regression: 2/2 PASS, including every fixture contract instance
 and the repeated full differential. Monotonic edge additions include both PRESENT
 and UNKNOWN reachability into sink, database and unknown resources.
+
+CI finding: the global immutable-evidence guard also protects newly named /evidence/
+directories. New R2 logs moved to deployment/runs rather than weakening that guard.
+Historical deployment-evidence and all frozen scenario/experiment paths unchanged.

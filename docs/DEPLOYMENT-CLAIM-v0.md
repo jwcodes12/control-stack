@@ -57,7 +57,7 @@ transitive reachability excluding broker/receiver, every agent/trusted UID and
 trusted role separation, exact role counts, runtime match, exact sink/database
 writers, nonzero UIDs, and absence of unknown or isolation escape authority.
 The raw projection is evaluated and each result proved by the Lean kernel.
-`deployment/evidence/tier1/differential.json` records all 26 fixtures and 250
+`deployment/runs/tier1/differential.json` records all 26 fixtures and 250
 seeded random mutations with zero differences. The additive test records 520
 mutations with zero negative-to-positive changes; this is a finite regression
 experiment, not a universal theorem over arbitrary repairs. A skipped Lean check

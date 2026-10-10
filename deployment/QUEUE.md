@@ -12,8 +12,8 @@ T1.3 | DONE | Existing tested mount/verdict regression in tools/test_deployment_
 T1.4 | DONE | Existing tested mount/verdict regression in tools/test_deployment_slice.py and deployment-evidence/matrix/
 T1.5 | DONE | Existing tested mount/verdict regression in tools/test_deployment_slice.py and deployment-evidence/matrix/
 T1.6 | DONE | ControlStack/Deployment/Contracts.lean; lean-build-attempt2.txt PASS
-T1.7 | DONE | deployment/evidence/tier1/differential.json: 26 fixtures + 250 mutations, zero differences, 276 kernel certificates
-T1.8 | DONE | deployment/evidence/tier1/monotonicity.json: 520 seeded strict additions, zero false improvements
+T1.7 | DONE | deployment/runs/tier1/differential.json: 26 fixtures + 250 mutations, zero differences, 276 kernel certificates
+T1.8 | DONE | deployment/runs/tier1/monotonicity.json: 520 seeded strict additions, zero false improvements
 T1.9 | DONE | ExtractionFaithful and ProtocolRefinement in Contracts.lean; claim/status/report updated
 T1.10 | DONE | Existing tested mount/verdict regression in tools/test_deployment_slice.py and deployment-evidence/matrix/
 T2.1 | TODO | Not yet started; tier order applies
@@ -61,3 +61,5 @@ G8 | GATED | Owner/resource prerequisite listed in handoff; not attempted
 G9 | GATED | Owner/resource prerequisite listed in handoff; not attempted
 
 Tier 1 local checks: exact-fixture Lean + full differential 2 PASS (362.740s); slice 13 PASS; runtime 17 with 2 host-Landlock skips; evidence 3 PASS; generated registry/catalog/overview/results/ledger/trust-root checks PASS. Frozen EgressGate SHA remains b491ec0accf6be75e7355667012b173760c5278b7180a31f4c4990ffad9f2af6. Final-head CI pending; no R2 claim.
+
+Tier 1 CI attempt 1 at 64498eb: source-fidelity FAIL because its frozen-evidence guard matches every /evidence/ directory, including new deployment logs. Relocate only the newly added R2 logs to deployment/runs; retain the guard and every frozen artifact unchanged. Exact failure in deployment/runs/tier1/ci-source-fidelity-failure.txt.

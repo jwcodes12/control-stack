@@ -256,5 +256,5 @@ obligations before the pending Lean check so the property is not vacuous.
 The theorem now explicitly separates ExtractionFaithful from ProtocolRefinement;
 ProtocolRefinement.publication : sinkEffects = model.bank is full model–runtime
 correspondence, not just capture fidelity. Neither residual is discharged.
-New evidence and failures are under `deployment/evidence/tier1/`; final-head CI
+New evidence and failures are under `deployment/runs/tier1/`; final-head CI
 must be recorded before advancing to Tier 2. R2 has not yet been reached.

@@ -20,5 +20,5 @@ class LeanDeploymentTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which('lake'),'Lean unavailable; mandatory kernel job covers this')
     def test_full_python_lean_agreement(self):
         from tools.check_deployment_subset_differential import run
-        self.assertEqual(run(),json.loads((ROOT/'deployment/evidence/tier1/differential.json').read_text()))
+        self.assertEqual(run(),json.loads((ROOT/'deployment/runs/tier1/differential.json').read_text()))
 if __name__=='__main__':unittest.main()

@@ -11,5 +11,14 @@ No future runtime verdict is promised. All 44 fixture projections are checked
 against Python and Lean; eight remaining model rejections name their residuals.
 Runtime facts, baked-code correspondence and custody cannot be patched away.
 
-Live remediation verification and its independent review are pending. Only
-remediated configurations may launch; originals must link the Tier 2 archive.
+Live review: the runner refuses any patched configuration other than the exact
+clean profile before changing only its pinned image, own state paths and honest
+shared cap of 2. Both repaired cases completed two honest tasks. The independent
+checker normalizes raw daemon records, replays pinned fresh observations, reads
+actual sink bytes and reconciles a SQLite backup. Relocation replay passes;
+modified bytes and a falsified selected UID fail. Own resource cleanup is checked.
+Originals are hash-pinned Tier 2 archives, not freshly executed. Mount removal
+and UID separation are observed configuration facts; no new bypass-denial claim.
+Two raw remediated IR certificates are rechecked separately in the Lean kernel.
+The earlier live negative CI job is explicitly skipped under John's new scope;
+its archived evidence remains checked. This skip is not counted as a pass.

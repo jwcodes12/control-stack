@@ -36,7 +36,7 @@ T4.4 | BLOCKED | Three concrete Tier 2 replay compilations failed; final unsolve
 T4.5 | DONE | contract-witnesses.json: 16 fixed contracts, 45 standard-axiom declarations; useful initial-to-release model trace; falsifying controls; CI mandatory checker
 T5.1 | DONE | deployment/plan.py; read-only RFC 6902 patch, redacted human diff, separately reviewed host actions and precise capture/custody residuals
 T5.2 | DONE | 44 static fixtures; 44 kernel certificates; 36 prospective finite-model acceptances, eight named residual cases; synthetic DECLARED facts never runtime evidence
-T5.3 | DOING | Defensive-only: original = archived Tier 2 evidence; launch ONLY remediated configurations for honest completion and scope correspondence
+T5.3 | DONE | Defensive-only: deployment/runs/tier5/remediated; originals archived Tier 2; two repaired live configurations, four honest completions; raw inventory/custody/SQLite/byte checks and tamper controls PASS. No new denial experiment.
 T6.1 | TODO | Not yet started; tier order applies
 T6.2 | TODO | Not yet started; tier order applies
 T6.3 | TODO | Not yet started; tier order applies
@@ -85,3 +85,5 @@ Tier 4 exit: 379913094b1fb9c3c1eee7846424d55cf6724737, 24 CI SUCCESS + 2 explici
 ## Defensive-only continuation — John via agent-bus message #2
 
 T5.3 uses archived Tier 2 originals and launches only remediated configurations. Tier 6 is static review of misconfigured Compose deployments, with no exploit code or attack payloads. Tier 7 is preregistered attribution of existing Tier 2 outcomes plus honest tasks; the original four-arm attack evaluation is GATED because the owner has no cyber-permissive access tier. If a task is flagged again, record its exact error as GATED and move on. T4.2 and T4.4 remain BLOCKED. Tier 8 remains required. Existing CI live negative boundary job is explicitly skipped under this scope; archive validation continues, and skipped work is never counted as passed. No merging.
+
+Tier 5 local exit: planner five tests PASS; 44 prospective kernel certificates, 36 model accepted and eight named residual cases; two remediated live configurations and four honest completions PASS. Independent archive and two tamper tests PASS; resources removed. Original = archived Tier 2 evidence, no original bypass rerun. Self-review deployment/reviews/tier5-self-review.md. Final-head CI pending.

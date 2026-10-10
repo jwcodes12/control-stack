@@ -297,3 +297,18 @@ compilations; the generic indexed replay theorem alone is proved. No concrete
 replay result is claimed. The independent abstract witness package has 16 contracts,
 45 checked declarations, a nonempty five-transaction broker release and falsifying
 controls. Draft #48 is stacked on #47; final CI pending. R2 is not yet complete.
+
+## R2 Tier 5 defensive-only continuation
+
+John's agent-bus message #2 supersedes the live evaluation scope. The planner is
+read-only, emits RFC 6902 operations and a redacted human diff, and retains host,
+image and runtime residuals. All 44 static fixtures have prospective kernel
+certificates: 36 model acceptances and eight named residual cases. These are
+DECLARED projections, not runtime captures. Two fixed repaired configurations
+were launched for honest work only: four completions, matching raw daemon UIDs
+and mounts, private custody, sink bytes and SQLite receipts. Independent replay
+and tamper tests pass. Originals are archived Tier 2 evidence; no live original
+bypass or fresh denial probe was performed. All own resources were removed.
+Tier 6 is static misconfiguration review. Tier 7 attributes existing outcomes and
+honest tasks; the original four-arm attack evaluation is GATED. T4.2 and T4.4
+remain BLOCKED. Final Tier 5 CI pending; R2 is not yet complete.

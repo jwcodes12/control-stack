@@ -20,6 +20,7 @@ jobs:
       - run: python3 tools/test_deployment_r2.py
       - run: python3 tools/test_deployment_scanner.py
       - run: python3 tools/test_deployment_plan.py
+      - run: python3 tools/test_deployment_remediated.py
       - run: python3 tools/build_deployment_fixtures.py --check
   kernel:
     runs-on: ubuntu-24.04
@@ -53,12 +54,12 @@ jobs:
           import json
           from pathlib import Path
           from deployment.kernel import check_many
-          paths=sorted(Path('deployment/runs/tier2/containers-final').rglob('bundle.json'))+sorted(Path('deployment/runs/tier3/containers-final').rglob('bundle.json'))
-          assert len(paths)==18
+          paths=sorted(Path('deployment/runs/tier2/containers-final').rglob('bundle.json'))+sorted(Path('deployment/runs/tier3/containers-final').rglob('bundle.json'))+sorted(Path('deployment/runs/tier5/remediated').rglob('bundle.json'))
+          assert len(paths)==20
           irs=[json.loads(p.with_name('ir.json').read_text()) for p in paths]
           accepted,axioms=check_many(irs)
           assert accepted==[json.loads(p.read_text())['lean']['accepted'] for p in paths]
-          print('PASS: eighteen raw container snapshot certificates, standard axioms')
+          print('PASS: twenty raw container snapshot certificates, standard axioms')
           PY
   linux-boundary:
     # John's defensive-only scope: archived negatives only, no live bypass reruns.

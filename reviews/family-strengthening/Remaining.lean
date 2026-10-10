@@ -1,5 +1,5 @@
 import Mathlib.Tactic
-import Mathlib.Data.NNReal.Defs
+import Mathlib.Basic.NNReal.Defs
 
 /-!
 Review-scoped, finite weighted adaptive-monitor boundary.

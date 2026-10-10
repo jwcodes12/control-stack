@@ -13,11 +13,12 @@ import stat
 import struct
 from pathlib import Path
 from .controller import Controller, Denied, Principals
+from .publisher import publish_effect
 
 MAX_REQUEST = 1500000
 
 
-def run_one(controller, uid, req):
+def run_one(controller, uid, req, *, effect_root=None):
     if type(req) is not dict or "op" not in req or type(req["op"]) is not str:
         raise Denied("invalid request")
     op = req["op"]
@@ -30,6 +31,7 @@ def run_one(controller, uid, req):
         "revoke": {"lease_id"},
         "release": {"nonce", "digest", "destination", "lease_id"},
         "effect_release": {"nonce", "digest", "destination", "lease_id"},
+        "publish_effect": {"release_id"},
         "halt": set(),
         "state": set(),
     }
@@ -55,12 +57,16 @@ def run_one(controller, uid, req):
         return controller.release(uid, cost=1, **params)
     if op == "effect_release":
         return controller.release(uid, cost=1, record_effect=True, **params)
+    if op == "publish_effect":
+        if effect_root is None:
+            raise Denied("effect root not configured")
+        return publish_effect(controller, uid, params["release_id"], effect_root)
     if op == "halt":
         return controller.halt(uid)
     return controller.state(uid)
 
 
-def serve(controller, path):
+def serve(controller, path, *, effect_root=None):
     """One request per connection. No secret data in error responses."""
     path = Path(path)
     if path.exists() or path.is_symlink():
@@ -88,7 +94,7 @@ def serve(controller, path):
                         data = bytes(frame)
                         if len(data) > MAX_REQUEST or not data.endswith(b"\n"):
                             raise Denied("invalid frame")
-                        answer = run_one(controller, uid, json.loads(data))
+                        answer = run_one(controller, uid, json.loads(data), effect_root=effect_root)
                         response = {"ok": True, "result": answer}
                     except (Denied, ValueError, TypeError, KeyError, json.JSONDecodeError, OSError):
                         response = {"ok": False, "error": "DENIED"}
@@ -110,6 +116,7 @@ def args():
     for role in ("agents", "reviewers", "approvers", "admins"):
         p.add_argument("--" + role, required=True, help="comma-separated trusted OS UIDs")
     p.add_argument("--bootstrap-cap", type=int, default=None)
+    p.add_argument("--effect-root", type=Path, default=None)
     a = p.parse_args()
     groups = {}
     for role in ("agents", "reviewers", "approvers", "admins"):
@@ -125,4 +132,4 @@ if __name__ == "__main__":
         c = Controller(a.db, principals)
     if os.geteuid() in principals.agents:
         raise SystemExit("broker must not run under an untrusted agent UID")
-    serve(c, a.socket)
+    serve(c, a.socket, effect_root=a.effect_root)

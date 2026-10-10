@@ -24,3 +24,19 @@ rejects unadmitted publication and receipts preceding publication. This
 closes the purely formal split-model composition gap. The concrete
 SQLite service still does not offer delegated authorization and is not
 proved to implement this Lean transition relation.
+
+**Bounded real-runtime/Lean differential (not a universal refinement):**
+`python3 tools/joint_runtime_lean_difftest.py` runs all 24 permutations of
+two separately tagged authorized SQLite releases, one local-file
+publication operation, and HALT. After each external method call it reads
+the actual SQLite release/receipt rows and local receiver filenames, and
+asks the Lean kernel (`by decide`) to compare that full projected state
+against `EffectLifecycle.run` on the corresponding abstract trace. File
+publication and receipt are modeled as two successive internal steps even
+when one successful runtime dispatch returns after both have completed.
+Failures or divergences stop the CI step. This checks only *selected
+bounded interleavings* under one trusted UID/time/file layout; it does not
+prove that Python implements Lean for arbitrary traces, concurrent
+syscalls, arbitrary OS side effects, power loss, delegation authorization
+or a hostile host. Runtime credential authenticity and full mediation
+remain explicit independent premises.

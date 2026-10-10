@@ -26,7 +26,7 @@ jobs:
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
-          lake build ControlStack.Scenarios.SC06OneUse ControlStack.Scenarios.SC08Exec ControlStack.Scenarios.SC25Audit
+          lake build ControlStack.Scenarios.SC06OneUse ControlStack.Scenarios.SC08Exec ControlStack.Scenarios.SC25Audit ControlStack.Scenarios.SC26Transaction
       - name: Compare independent Python and Lean transition semantics
         run: |
           export PATH="$HOME/.elan/bin:$PATH"

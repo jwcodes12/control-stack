@@ -21,6 +21,7 @@ jobs:
       - run: python3 tools/test_deployment_scanner.py
       - run: python3 tools/test_deployment_plan.py
       - run: python3 tools/test_deployment_remediated.py
+      - run: python3 tools/test_deployment_heldout.py
       - run: python3 tools/build_deployment_fixtures.py --check
   kernel:
     runs-on: ubuntu-24.04
@@ -35,6 +36,7 @@ jobs:
       - run: lake build ControlStack.Deployment.Contracts
       - run: python3 tools/check_deployment_contract_witnesses.py
       - run: python3 tools/check_deployment_plans.py
+      - run: python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/heldout-static.json
       - name: Check every raw fixture projection in the kernel
         run: |
           python3 - <<'PY'

@@ -312,3 +312,18 @@ bypass or fresh denial probe was performed. All own resources were removed.
 Tier 6 is static misconfiguration review. Tier 7 attributes existing outcomes and
 honest tasks; the original four-arm attack evaluation is GATED. T4.2 and T4.4
 remain BLOCKED. Final Tier 5 CI pending; R2 is not yet complete.
+
+## R2 Tier 6 static review
+
+Twenty-five independently authored static configurations were committed and
+hash-sealed before evaluation. They stipulate known code and custody and contain
+hypothetical selected facts, never runtime observations. Raw inputs fail closed
+because the author-facing interface omitted source-pin fields; an explicit copied
+model-input adapter instantiates the stated known-code hypothesis without changing
+sealed labels. Two supported mount-order misses were recorded and fixed in a new
+commit. Final finite score: zero false model acceptances, zero over-rejections,
+14 UNKNOWN, 22 model plans and three named residuals; 50 kernel certificates.
+The Python declaration baseline catches 2/20 negatives. This is restricted JSON
+finite extraction/planning coverage, not a fresh-scanner runtime assessment or an
+actual OPA comparison. TIER6-HELDOUT.md documents before/after and limits. No new
+exploit code, attack payloads or live workload. Final Tier 6 CI pending.

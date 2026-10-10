@@ -38,8 +38,8 @@ T5.1 | DONE | deployment/plan.py; read-only RFC 6902 patch, redacted human diff,
 T5.2 | DONE | 44 static fixtures; 44 kernel certificates; 36 prospective finite-model acceptances, eight named residual cases; synthetic DECLARED facts never runtime evidence
 T5.3 | DONE | Defensive-only: deployment/runs/tier5/remediated; originals archived Tier 2; two repaired live configurations, four honest completions; raw inventory/custody/SQLite/byte checks and tamper controls PASS. No new denial experiment.
 T6.1 | DONE | deployment/heldout/tier6: 25 independent static cases (5 supported, 12 refuted, 8 unknown), labelled and hash-sealed before scoring; separate blinded codex exec; two startup failures retained
-T6.2 | DOING | Raw static score: zero false model acceptances, 25 UNKNOWN, five supported cases rejected because author public interface omitted required trusted-source pin fields; labels unchanged; record before/after harness instantiation
-T6.3 | DOING | Hand-written declaration-only Python baseline catches 2/20 negatives, misses 18; actual OPA remains GATED
+T6.2 | DONE | 25 sealed static cases; final 50 kernel certificates: zero false model acceptances, zero over-rejections, 14 UNKNOWN, 22 prospective model plans and three named residuals. Raw/interface and pre-order-fix scores retained; no runtime assessment.
+T6.3 | DONE | declaration-only rules_baseline.py catches 2/20 author negatives and rejects 0/5 supported; scope limited, no OPA comparison claim; actual OPA GATED
 T7.1 | TODO | Not yet started; tier order applies
 T7.2 | TODO | Not yet started; tier order applies
 T7.3 | TODO | Not yet started; tier order applies
@@ -111,3 +111,5 @@ T6.2 correction committed before re-scoring: explicit --instantiate-known-code a
 T6.2 instantiated before-fix score: 50 kernel certificates, zero false model acceptances, 2/5 supported cases rejected (40%), 14/25 UNKNOWN (56%), 22/25 prospective plans accepted and three named residuals. Both supported misses are equivalent receiver mounts listed in a different order in the synthetic inventory. Preserve this result and failing regression. Fix comparison order only for unambiguous unique-target mount lists, keeping every mount field and multiplicity; labels stay frozen.
 
 T6.2 ordering fix committed before re-scoring: selected inventory lists compare independent of order only when mounts have unique targets and string paths; all fields and duplicates survive. Ambiguous targets are not sorted. Networks/environment names retain multiplicities. Known UID and undeclared-writer mismatches remain refutations. Corrected score pending.
+
+Tier 6 local exit: 25 independently sealed static configurations, corrected score and 50 kernel certificates PASS; three static/seal/order tests, seven planner tests, 13 slice tests, nine scanner tests, two remediated archive tests, 520 additions and fixture --check PASS. Full 44+250 differential PASS with zero Python/Lean differences. Self-review deployment/reviews/tier6-self-review.md; no real new workload. Final-head CI pending.

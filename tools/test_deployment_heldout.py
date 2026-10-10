@@ -20,6 +20,16 @@ class HeldoutTests(unittest.TestCase):
         self.assertEqual(model['metrics']['plan_model_accepted_count']+model['metrics']['plan_named_residual_count'],25)
         self.assertEqual((heldout.CORPUS/'SEAL.json').read_bytes(),seal_before)
         heldout.sealed_manifest()
+    def test_order_comparison_keeps_ambiguous_targets_and_extra_facts(self):
+        from extractors.compose import inventory_order
+        repeated={'mounts':[{'source':'/z','target':'/same','read_only':True},{'source':'/a','target':'/same','read_only':False}],'networks':['isolated','isolated'],'env_names':['PYTHONPATH']}
+        self.assertEqual(inventory_order(repeated),repeated)
+        extra={'mounts':[{'source':'/z','target':'/z','opaque':True},{'source':'/a','target':'/a'}],'networks':['isolated'],'env_names':['SLICE_ROLE','PYTHONPATH']}
+        compared=inventory_order(extra)
+        self.assertTrue(compared['mounts'][1]['opaque'])
+        self.assertEqual(extra['mounts'][0]['source'],'/z')
+        self.assertEqual(compared['networks'],['isolated'])
+
     def test_case_byte_changes_break_the_seal(self):
         with tempfile.TemporaryDirectory(prefix='cstack-r2-heldout-seal-',dir=ROOT/'.git') as temporary:
             corpus=Path(temporary)/'corpus';shutil.copytree(heldout.CORPUS,corpus)

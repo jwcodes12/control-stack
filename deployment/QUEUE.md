@@ -18,11 +18,11 @@ T1.9 | DONE | ExtractionFaithful and ProtocolRefinement in Contracts.lean; claim
 T1.10 | DONE | Existing tested mount/verdict regression in tools/test_deployment_slice.py and deployment-evidence/matrix/
 T2.1 | DONE | deployment/runs/tier2/build/image-pin.json; offline imported cstack-r2 image, builder hash, no setid entries; first build argument error corrected
 T2.2 | DONE | containers-attempt1: actual compose up, deployment/collect_docker.py, raw daemon pins, shared z labels with SELinux limits recorded
-T2.3 | DOING | Fixed safe seven-case harness deployment/run_containers.py; real run pending
-T2.4 | DOING | Fixed safe seven-case harness deployment/run_containers.py; real run pending
-T2.5 | DOING | Fixed safe seven-case harness deployment/run_containers.py; real run pending
-T2.6 | DOING | Fixed safe seven-case harness deployment/run_containers.py; real run pending
-T2.7 | DOING | Fixed safe seven-case harness deployment/run_containers.py; real run pending
+T2.3 | DONE | containers-final/clean/final: two distinct agents, two own-sink bodies, shared cap 2
+T2.4 | DONE | containers-final: writable sink and UID confusion SUCCEEDED; replay/concurrent overspend/direct egress BLOCKED; exact outcome labels
+T2.5 | DONE | containers-final/crash-retry and halt-inflight: actual KILL, unknown-commit gap, two dedup retries and fresh restart scan; HALT serialization
+T2.6 | DONE | containers-final/drift-uid/drift: actual UID 23705 versus pinned 23701; DRIFT and UNASSURED
+T2.7 | DONE | deployment/TIER2-AGREEMENT.md: seven safe cases; raw-byte/SQLite checker and cleanup pass
 T3.1 | TODO | Not yet started; tier order applies
 T3.2 | TODO | Not yet started; tier order applies
 T3.3 | TODO | Not yet started; tier order applies
@@ -69,3 +69,5 @@ Tier 1 exit: 08ce227b502f6b34e405804743b9f1d0f4b0b839, 25 CI SUCCESS + 2 explici
 Tier 2 draft PR #46: https://github.com/jwcodes12/control-stack/pull/46, base sol/deployment-slice-20261010. Static fixture tests 13 PASS and historical archive checker 3 PASS after shared z labels and new offline image pins. The live collector is deployment/collect_docker.py.
 
 Tier 2 first real run: seven safe cases PASS; independent raw inventory/SQLite/byte checker PASS. Self-review adds a fresh scan after receiver restart and stricter ownership, nonregular-sink and cleanup guards; final seven-case run is in progress. No dangerous fixture launched.
+
+Tier 2 final local run: seven safe cases PASS; 26 fixtures + 250 seeded differential still zero differences; 520 additive regressions PASS; fixture --check PASS. Final archive replay/tamper checks and nine kernel certificates recorded under deployment/runs/tier2. Self-review in deployment/reviews/tier2-self-review.md. Final-head CI pending.

@@ -10,7 +10,11 @@ sys.path.insert(0,str(ROOT))
 from extractors.compose import collect, sha
 
 def dumps(x): return json.dumps(x,sort_keys=True,indent=2)+'\n'
-def build():
+def build(check=False):
+    def write(path,value):
+        if check:
+            if not path.exists() or path.read_text()!=value:raise SystemExit('stale generated fixture: '+str(path))
+        else:path.write_text(value)
     base=ROOT/'examples/compose-two-agent'
     pin=json.loads((base/'image-pin.json').read_text())
     image=pin['image']
@@ -59,12 +63,12 @@ def build():
     for name in runtime_edits: mutation(name)
     expected={}
     for name,c in cases.items():
-        p=base/(name+'.compose.json'); p.write_text(dumps(c))
+        p=base/(name+'.compose.json'); write(p,dumps(c))
         r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':sorted([{k:x for k,x in m.items() if k!='bind'} for m in v['volumes']],key=lambda m:(m['source'],m['target'])),'networks':v.get('networks',[]),'env_names':sorted(v['environment'])} for k,v in c['services'].items()}}
         if name in runtime_edits:
             section,key,value=runtime_edits[name]
             (r if section=='top' else r['services']['agent-a'])[key]=value
-        rp=base/(name+'.runtime.json'); rp.write_text(dumps(r))
+        rp=base/(name+'.runtime.json'); write(rp,dumps(r))
         # Relative source paths make fixture provenance portable across clones.
         import os
         old=os.getcwd(); os.chdir(ROOT)
@@ -75,8 +79,11 @@ def build():
             for n in ir['nodes']+ir['edges']:
                 prov=n['provenance']
                 prov['source']=str(Path(prov['source']).relative_to(ROOT)) if prov['source'].startswith(str(ROOT)+'/') else prov['source']
-            (ROOT/'security_ir/fixtures'/(name+'.json')).write_text(dumps(ir))
+            write(ROOT/'security_ir/fixtures'/(name+'.json'),dumps(ir))
         finally: os.chdir(old)
         expected[name]={'compose_sha256':sha(p),'verdict':'CONDITIONAL' if name=='clean' else 'UNASSURED','lean_accepted':name=='clean','bypass':None if name=='clean' else {'writable-channel-mount':'unlisted-host-mount','channel-target-shadow':'unlisted-host-mount','credential-password':'opaque-credential-env-name:PASSWORD','missing-isolated-network':'unsupported service networks','mount-parent-alias':'unresolved mount source','trusted-reviewer-uid-collision':'trusted-role-uid-collision','missing-reviewer-role':'supported-roles'}.get(name, ('DRIFT' if runtime_edits[name][0]=='service' else 'unsupported/extra runtime service') if name in runtime_edits else name)}
-    (base/'expected.json').write_text(dumps(expected))
-if __name__=='__main__': build()
+    write(base/'expected.json',dumps(expected))
+if __name__=='__main__':
+    import argparse
+    p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args();build(a.check)
+    print('fixture generation consistent' if a.check else 'fixtures regenerated')

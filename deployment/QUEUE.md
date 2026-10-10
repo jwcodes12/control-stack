@@ -34,7 +34,7 @@ T4.2 | BLOCKED | Literal full-Accepted monotonicity is false: three kernel-check
 T4.3 | DONE | accepted_no_avoided_path via explicit closed-set certificate; path_edge_subset and accepted_path_safety_monotone; standard axioms
 T4.4 | BLOCKED | Three concrete Tier 2 replay compilations failed; final unsolved s0.halted=false / lease-cap guards. Generic indexed_receipts_sound passes; no concrete replay claim. See transcript-prototype-attempt3.txt.
 T4.5 | DONE | contract-witnesses.json: 16 fixed contracts, 45 standard-axiom declarations; useful initial-to-release model trace; falsifying controls; CI mandatory checker
-T5.1 | TODO | Not yet started; tier order applies
+T5.1 | DOING | Read-only RFC 6902 patch + human diff; fresh host and runtime residuals retained
 T5.2 | TODO | Not yet started; tier order applies
 T5.3 | TODO | Not yet started; tier order applies
 T6.1 | TODO | Not yet started; tier order applies
@@ -79,3 +79,5 @@ Tier 3 local exit: final fresh seven-case run PASS; nine archive kernel certific
 Tier 3 exit: 8c7ff7288b67b8ef46675fe558ba12d8edda04bb, 19 CI SUCCESS + 2 explicit SKIPPED. Receipt deployment/runs/tier3/ci-receipt-8c7ff72.json; fresh local checkout nine scanner tests PASS. Draft #47 remains open. Tier 4 branch sol/r2-tier4 is stacked on that exact tip.
 
 Tier 4 local exit: TrustedBroker/path contracts and witness module PASS; fixed 16-contract / 45-declaration package PASS; registry, source-normalized catalog, overview, results, ledger and trust-root checks PASS. T4.2 literal theorem BLOCKED by checked countermodels; T4.4 concrete replay BLOCKED after three compilation failures. No installed proof depends on sorryAx. Self-review deployment/reviews/tier4-self-review.md. Final-head CI pending.
+
+Tier 4 exit: 379913094b1fb9c3c1eee7846424d55cf6724737, 24 CI SUCCESS + 2 explicit SKIPPED. Exact-head receipt deployment/runs/tier4/ci-receipt-3799130.json. #48 remains draft/open; T4.2 and T4.4 remain explicitly BLOCKED. Tier 5 branch sol/r2-tier5 stacks on that exact tip.

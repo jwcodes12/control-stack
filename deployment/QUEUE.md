@@ -29,7 +29,7 @@ T3.3 | DONE | deployment/scan.py and actual symlink tests; unresolved source UNK
 T3.4 | DONE | nine stopped image exports; baked source/principal policy, USER, setid and entrypoint guards; final seven safe cases
 T3.5 | DONE | canonical IR/bundle key-order/whitespace test; nine actual image semantic observations identical
 T3.6 | DONE | security_ir/schema-v0.1.json, migrate.py and strict migration/unknown-field tests
-T4.1 | TODO | Not yet started; tier order applies
+T4.1 | DOING | TrustedBroker cap/history lemmas and publication correspondence prepared; kernel passes
 T4.2 | TODO | Not yet started; tier order applies
 T4.3 | TODO | Not yet started; tier order applies
 T4.4 | TODO | Not yet started; tier order applies
@@ -75,3 +75,5 @@ Tier 2 final local run: seven safe cases PASS; 26 fixtures + 250 seeded differen
 Tier 2 exit: a94813cc9a73400f1328f26b4af12da0636aef1f, 19 CI SUCCESS + 2 explicit SKIPPED, PR #46 draft/open. Receipt: deployment/runs/tier2/ci-receipt-a94813c.json. One pre-existing SC-01 cache probe failed to execute its encoder/decoder; unchanged failed-job rerun passed. Raw failure: deployment/runs/tier2/ci-viability-attempt1.txt. Tier 3 is stacked on that exact tip.
 
 Tier 3 local exit: final fresh seven-case run PASS; nine archive kernel certificates; nine scanner tests including archive relocation/tampering PASS; 44 fixtures + 250 mutations zero differences; 520 monotonic mutations PASS. First replay after principal-policy guard failed with UID-collision IR differs; retained, then recollected final run. Self-review: deployment/reviews/tier3-self-review.md. Draft #47; final-head CI pending.
+
+Tier 3 exit: 8c7ff7288b67b8ef46675fe558ba12d8edda04bb, 19 CI SUCCESS + 2 explicit SKIPPED. Receipt deployment/runs/tier3/ci-receipt-8c7ff72.json; fresh local checkout nine scanner tests PASS. Draft #47 remains open. Tier 4 branch sol/r2-tier4 is stacked on that exact tip.

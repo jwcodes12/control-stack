@@ -1,0 +1,255 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "FORBIDDEN",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "preopened-broker-channel",
+      "to": "broker"
+    },
+    {
+      "authorization": "FORBIDDEN",
+      "capability": "write",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "FORBIDDEN",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "preopened-broker-channel",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [],
+        "host_network": false,
+        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [],
+        "host_network": false,
+        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [],
+        "host_network": false,
+        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [],
+        "host_network": false,
+        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [],
+        "host_network": false,
+        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [],
+        "host_network": false,
+        "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 1,
+    "compose_sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+    "database_source": "/slice/db",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "runtime_sha256": "495d930d1bc39b49f58e4eaf221923a4d68a95612545986479b7da689b2ab78d",
+    "sink_source": "/slice/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+      "source": "examples/compose-two-agent/agent-broker-db-access.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "495d930d1bc39b49f58e4eaf221923a4d68a95612545986479b7da689b2ab78d",
+      "source": "examples/compose-two-agent/agent-broker-db-access.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/outbox_receiver.py"
+    }
+  ],
+  "version": 0
+}

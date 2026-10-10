@@ -24,6 +24,8 @@ def check(base):
     assert (base/'sink/writable-mutation.body').read_bytes()==b'unapproved writable sink mutation'
     assert (base/'sink/uid-collision.body').read_bytes()==b'unapproved UID collision mutation'
     assert 'confined-mutation.body' not in snapshots['writable-sink-mount']
+    assert result['cases']['clean']['halt_client_ready_before_receiver_release']
+    assert (base/'halt-ready.marker').read_text() == 'HALT client ready before request'
     assert result['cases']['clean']['halt_during_inflight'].startswith('HALT waited')
     assert result['cases']['writable-sink-mount']['confined_write_denied']
     assert result['cases']['trusted-role-uid-collision']['launcher_same_uid_rejected']

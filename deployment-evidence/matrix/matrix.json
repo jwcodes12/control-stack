@@ -1,0 +1,306 @@
+[
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/agent-broker-db-access.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/agent-broker-db-access.runtime.json",
+        "--sha256",
+        "efe67d6f7eee93030d315840f69629c6528f437f29fd560930829bf33b6566df",
+        "--output",
+        "deployment-evidence/matrix/agent-broker-db-access.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/agent-broker-db-access.ir.json",
+        "--output",
+        "deployment-evidence/matrix/agent-broker-db-access.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/agent-broker-db-access.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/agent-broker-db-access.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "agent-broker-db-access",
+    "kernel_checked": true
+  },
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/alternate-deputy-sink-credentials.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/alternate-deputy-sink-credentials.runtime.json",
+        "--sha256",
+        "d3d2c357968606ba8f99b022406920e09323dda44ce379908c170d061a30d3cc",
+        "--output",
+        "deployment-evidence/matrix/alternate-deputy-sink-credentials.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/alternate-deputy-sink-credentials.ir.json",
+        "--output",
+        "deployment-evidence/matrix/alternate-deputy-sink-credentials.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/alternate-deputy-sink-credentials.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/alternate-deputy-sink-credentials.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "alternate-deputy-sink-credentials",
+    "kernel_checked": true
+  },
+  {
+    "actual": "CONDITIONAL",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/clean.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/clean.runtime.json",
+        "--sha256",
+        "5755c6d130f541b8c766c1d93aa5de6dd3c6ba83cb477bd911d9ddd33f9aab62",
+        "--output",
+        "deployment-evidence/matrix/clean.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/clean.ir.json",
+        "--output",
+        "deployment-evidence/matrix/clean.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/clean.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/clean.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      0,
+      0
+    ],
+    "expected": "CONDITIONAL",
+    "fixture": "clean",
+    "kernel_checked": true
+  },
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/host-network.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/host-network.runtime.json",
+        "--sha256",
+        "b58c1ae5f0e1fa961b3350ffc89f8b105173eb41d26030b859c1a1a0862f545e",
+        "--output",
+        "deployment-evidence/matrix/host-network.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/host-network.ir.json",
+        "--output",
+        "deployment-evidence/matrix/host-network.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/host-network.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/host-network.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "host-network",
+    "kernel_checked": true
+  },
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/privileged-container.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/privileged-container.runtime.json",
+        "--sha256",
+        "e23a6b2c95fe14c080d18ae1057d256e1faa048b84334df9888ddcb6b1de1297",
+        "--output",
+        "deployment-evidence/matrix/privileged-container.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/privileged-container.ir.json",
+        "--output",
+        "deployment-evidence/matrix/privileged-container.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/privileged-container.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/privileged-container.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "privileged-container",
+    "kernel_checked": true
+  },
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/trusted-role-uid-collision.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/trusted-role-uid-collision.runtime.json",
+        "--sha256",
+        "d022307fc9dd1cebdf8522e9fc61763205b42aaf5a464176dcebcc59add8444d",
+        "--output",
+        "deployment-evidence/matrix/trusted-role-uid-collision.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/trusted-role-uid-collision.ir.json",
+        "--output",
+        "deployment-evidence/matrix/trusted-role-uid-collision.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/trusted-role-uid-collision.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/trusted-role-uid-collision.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "trusted-role-uid-collision",
+    "kernel_checked": true
+  },
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/unknown-feature.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/unknown-feature.runtime.json",
+        "--sha256",
+        "6ac96f93aba7cd93131a85bfaac851d49442f664868924e52a07956565ae1e7a",
+        "--output",
+        "deployment-evidence/matrix/unknown-feature.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/unknown-feature.ir.json",
+        "--output",
+        "deployment-evidence/matrix/unknown-feature.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/unknown-feature.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/unknown-feature.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "unknown-feature",
+    "kernel_checked": true
+  },
+  {
+    "actual": "UNASSURED",
+    "commands": [
+      [
+        "scan",
+        "examples/compose-two-agent/writable-sink-mount.compose.json",
+        "--runtime",
+        "examples/compose-two-agent/writable-sink-mount.runtime.json",
+        "--sha256",
+        "de2cb0cc1810d06c04c6dbe32fb873188b169619f64df3e8f46eb7ebac632ef6",
+        "--output",
+        "deployment-evidence/matrix/writable-sink-mount.ir.json"
+      ],
+      [
+        "verify",
+        "deployment-evidence/matrix/writable-sink-mount.ir.json",
+        "--output",
+        "deployment-evidence/matrix/writable-sink-mount.bundle.json",
+        "--lean",
+        "--boundary-evidence",
+        "deployment-evidence/runtime-vm/slice-runtime"
+      ],
+      [
+        "report",
+        "deployment-evidence/matrix/writable-sink-mount.bundle.json",
+        "--output",
+        "deployment-evidence/matrix/writable-sink-mount.md"
+      ]
+    ],
+    "exit_codes": [
+      0,
+      1,
+      0
+    ],
+    "expected": "UNASSURED",
+    "fixture": "writable-sink-mount",
+    "kernel_checked": true
+  }
+]

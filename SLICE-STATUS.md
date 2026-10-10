@@ -77,14 +77,14 @@ IR projection; policy authorization is never used to remove reachability.
 
 | Fixture | Expected | Actual |
 |---|---|---|
-| clean | CONDITIONAL | verification in progress |
-| writable-sink-mount | UNASSURED | verification in progress |
-| agent-broker-db-access | UNASSURED | verification in progress |
-| trusted-role-uid-collision | UNASSURED | verification in progress |
-| privileged-container | UNASSURED | verification in progress |
-| host-network | UNASSURED | verification in progress |
-| alternate-deputy-sink-credentials | UNASSURED | verification in progress |
-| unknown-feature | UNASSURED | verification in progress |
+| clean | CONDITIONAL | CONDITIONAL |
+| writable-sink-mount | UNASSURED | UNASSURED |
+| agent-broker-db-access | UNASSURED | UNASSURED |
+| trusted-role-uid-collision | UNASSURED | UNASSURED |
+| privileged-container | UNASSURED | UNASSURED |
+| host-network | UNASSURED | UNASSURED |
+| alternate-deputy-sink-credentials | UNASSURED | UNASSURED |
+| unknown-feature | UNASSURED | UNASSURED |
 
 ## UNKNOWN and residual premises
 
@@ -107,7 +107,7 @@ All scenario manifests, frozen evidence and EgressGate remain unchanged.
 | agent_not_receiver_uid / agent_call_legal | trusted-role UID collision |
 | Accepted finite facts | privileged container, host network, UNKNOWN feature |
 | protocol_safe / deployment_safe exact approval | disabled payload check: check_disabled_counterexample / SC26.payload_unchecked_breaks |
-| one_use | disabled nonce check: SC26.nonce_protects_budget_only |
+| one_use | disabled nonce check: nonce_disabled_counterexample (duplicate reserved keys; sink deduplication still prevents duplicate effects) |
 | gate_contract | disabled payload check falsifies the client's invariant; no reject-all usefulness: useful_acceptance |
 | broker_contract shared budget | bypass broker DB custody or disable cap guard; TrustedBroker release guard and SC26.no_cap_breaks |
 | sink deduplication portion | SC26.no_dedup_retry_duplicates / no_dedup_breaks_cap; actual receiver retry test |
@@ -122,25 +122,27 @@ evidence, then failed shutdown because /bin/poweroff was absent; the builder was
 fixed to /sbin/poweroff and the full guest check rerun to clean power-down.
 
 An initial fast check was 29/39: several existing script imports lacked the repo
-on PYTHONPATH, copied Lean cache lacked moved Core modules, and two existing tests
-required root. cstack now supplies repo PYTHONPATH; necessary Lean prerequisites
+on PYTHONPATH, copied Lean cache lacked moved Core modules, and one existing script required root (the local-receiver OS boundary script skips unprivileged runs). cstack now supplies repo PYTHONPATH; necessary Lean prerequisites
 were rebuilt. Existing generated result pages had two stale test-command listings
-and were regenerated with build_results. The full ledger must be generated with
+and were regenerated with build_results. The full ledger was regenerated with
 Lean to retain its Lean section; no hand editing of generated files was used.
 
 ## Commands, CI and draft PR
 
 - `lake build ControlStack.Deployment.Contracts`: PASS.
-- `lake env lean ControlStack/Deployment/Contracts.lean`: pending final archived output.
+- `lake env lean ControlStack/Deployment/Contracts.lean`: PASS, 16 standard-only axiom reports.
 - `python3 tools/test_deployment_slice.py`: PASS, nine tests.
 - `python3 tools/test_deployment_runtime.py`: PASS, 17 tests, two host kernel skips.
 - `python3 tools/test_deployment_evidence.py`: PASS, archived raw sink checks.
 - `python3 tools/test_deployment_lean.py`: PASS, all eight raw fixture instances.
-- `python3 tools/run_deployment_matrix.py --output deployment-evidence/matrix --lean`: final rerun pending boundary attachment.
-- `python3 tools/cstack.py check --fast`: final result pending.
+- `python3 tools/run_deployment_matrix.py --output deployment-evidence/matrix --lean`: PASS, eight exact-IR kernel checks; `--boundary-evidence deployment-evidence/runtime-vm/slice-runtime` additionally attached TESTED_BOUNDARY evidence with explicit scope.
+- `python3 tools/cstack.py check --fast --only deployment`: PASS, 4/4 at the final source state; exact output in `deployment-evidence/deployment-check.txt`.
+- `python3 tools/cstack.py check --fast`: 40/41 PASS. The sole failure is the existing `test_confined_effect_broker` requiring root; the native host additionally lacks active Landlock. All four deployment-specific steps PASS. Exact output: `deployment-evidence/fast-check.txt`.
 - Generated registry, statement catalog, overview, ledger, trust-root and results
-  `--check`: final audit pending.
-- Draft PR: pending publication. CI state at head: not yet published.
+  `--check`: PASS, including full Lean ledger generation/check and fast no-Lean checks.
+- Draft PR: https://github.com/jwcodes12/control-stack/pull/45 (draft, not merged). CI state at head: PENDING at final publication (the final commit omits `[skip ci]`). [Live checks at the current PR head](https://github.com/jwcodes12/control-stack/pull/45/checks) provide the authoritative changing state.
+
+![Current deployment-slice CI](https://github.com/jwcodes12/control-stack/actions/workflows/deployment-slice.yml/badge.svg?branch=sol%2Fdeployment-slice-20261010&event=pull_request)
 
 Stopping scope: one conditional assurance case. Follow-ups are in
 `docs/DEPLOYMENT-SLICE-NEXT.md`; no HTTP/Kubernetes/remediation expansion.

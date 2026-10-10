@@ -1,0 +1,56 @@
+lockdown,capability,landlock,yama{
+  "cases": {
+    "clean": {
+      "files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtdHdvLWFnZW50LXNsaWNl",
+          "sha256": "7534a1f834da4c4d067cd12b4ac649bc6e2b4d4ef784cd3fc3b5d9acf064e1f3",
+          "size": 30
+        }
+      },
+      "halt_client_ready_before_receiver_release": true,
+      "halt_during_inflight": "HALT waited for publication/receipt transaction; published bytes survive; new delivery denied",
+      "replay_denied": true,
+      "result": "PASS",
+      "sink_evidence": "/tmp/slice-runtime/clean-after-halt-sink.json",
+      "two_agents_shared_budget": true
+    },
+    "trusted-role-uid-collision": {
+      "direct_owner_bypass": true,
+      "launcher_error": "DENIED: distinct trusted broker UID mandatory",
+      "launcher_same_uid_rejected": true,
+      "result": "UNASSURED",
+      "sink_evidence": "/tmp/slice-runtime/trusted-role-uid-collision-sink.json"
+    },
+    "writable-sink-mount": {
+      "confined_write_denied": true,
+      "direct_helper_bypass": true,
+      "limitation": "native mode/authority mutation corresponding to writable mount, not Docker bind-mount execution",
+      "result": "UNASSURED",
+      "sink_evidence": "/tmp/slice-runtime/writable-sink-mount-sink.json"
+    }
+  },
+  "scope": "native Linux broker/receiver boundary; synthetic Compose was not launched",
+  "sink_directory": "/tmp/slice-runtime/sink",
+  "source_sha256": {
+    "tools/run_deployment_boundary.py": "5335bbcb1e570c9403c8032eca3474b0d2373ab241e1be0b78505b4b4ebb3aa3",
+    "tools/test_confined_effect_broker.py": "3238bfa5ddd56aa598d44cc78f73561323426f0a5134ddad5fc8232e24e52abc",
+    "trusted_stack/agent_confinement.py": "47d78068dc92dac61656fa473abe61373f356912808be0a20a69592baa440160",
+    "trusted_stack/controller.py": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "trusted_stack/outbox_receiver.py": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "trusted_stack/server.py": "25a171c786fefa71a7585f05b54bdf23e49611ccb63592b62a2d341184bf3761"
+  },
+  "temporary_accounts_created": false,
+  "uids": [
+    23700,
+    23701,
+    23702,
+    23703,
+    23704
+  ]
+}
+SOL_VM_RC=0
+
+[archive exported into runtime-vm/]
+
+[   40.376812] reboot: Power down

@@ -179,6 +179,13 @@ theorem check_disabled_counterexample :
     s.bank = [(0,SC26.tx1)] ∧ s.approvals = [(0,2,SC26.tx2)] ∧ ¬ SC26.Good SC26.R0 20 s :=
   SC26.payload_unchecked_breaks
 
+/-- Disabling the reused gate nonce guard makes reservation history nonunique,
+while receiver deduplication still prevents duplicate sink effects. -/
+theorem nonce_disabled_counterexample :
+    let s := SC26.run SC26.R0 20 {SC26.full with nonce := false} SC26.init
+      [.request 1 SC26.tx1, .approve 2 0 SC26.tx1, .execute 1 0, .execute 1 0]
+    s.reserved = [0,0] ∧ ¬ s.reserved.Nodup := by decide
+
 end ControlStack.Deployment
 #print axioms ControlStack.Deployment.exclusive_sink
 #print axioms ControlStack.Deployment.database_custody
@@ -196,3 +203,5 @@ end ControlStack.Deployment
 #print axioms ControlStack.Deployment.check_disabled_counterexample
 
 #print axioms ControlStack.Deployment.deployment_safe
+
+#print axioms ControlStack.Deployment.nonce_disabled_counterexample

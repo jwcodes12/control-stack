@@ -30,7 +30,7 @@ def run(output):
     os.chown(output,TRUSTED,TRUSTED)
     server=subprocess.Popen([sys.executable,'-m','trusted_stack.server','--db',str(db),'--socket',str(sock),'--agents',f'{A},{B}','--reviewers',str(REVIEWER),'--approvers',str(APPROVER),'--admins',str(TRUSTED),'--bootstrap-cap','1'],cwd=worker,preexec_fn=lambda:drop_identity(TRUSTED),stdout=subprocess.DEVNULL,stderr=subprocess.PIPE,text=True)
     children=[]
-    result={'scope':'native Linux broker/receiver boundary; synthetic Compose was not launched','uids':[TRUSTED,A,B,REVIEWER,APPROVER],'source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'trusted_stack/controller.py',ROOT/'trusted_stack/server.py',ROOT/'trusted_stack/outbox_receiver.py',ROOT/'trusted_stack/agent_confinement.py')},'cases':{}}
+    result={'scope':'native Linux broker/receiver boundary; synthetic Compose was not launched','uids':[TRUSTED,A,B,REVIEWER,APPROVER],'source_sha256':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'trusted_stack/controller.py',ROOT/'trusted_stack/server.py',ROOT/'trusted_stack/outbox_receiver.py',ROOT/'trusted_stack/agent_confinement.py',ROOT/'tools/run_deployment_boundary.py',ROOT/'tools/test_confined_effect_broker.py')},'cases':{}}
     def call(uid,data,allowed=True):
         res=by_uid(uid,worker,sock,data); assert res['ok'] is allowed,(data,res); return res
     def child(uid,code,*args):
@@ -79,8 +79,14 @@ print(deliver_record(Controller(Path(sys.argv[1]),roles),1,Path(sys.argv[2]),aft
             time.sleep(.02)
         else:raise RuntimeError('publication marker absent')
         files,evidence=observe('clean-inflight'); assert list(files)==['1.body'] and files['1.body']['sha256']==digest
-        haltcode="import sys,json; from trusted_stack.client import request; print(json.dumps(request(sys.argv[1],{'op':'halt'})))"
-        halt=child(TRUSTED,haltcode,sock); children.append(halt)
+        halt_ready=output/'halt-ready.marker'
+        haltcode="import sys,json; from pathlib import Path; from trusted_stack.client import request; Path(sys.argv[2]).write_text('HALT client ready before request'); print(json.dumps(request(sys.argv[1],{'op':'halt'})))"
+        halt=child(TRUSTED,haltcode,sock,halt_ready); children.append(halt)
+        for _ in range(300):
+            if halt_ready.exists(): break
+            if halt.poll() is not None: raise RuntimeError(halt.communicate())
+            time.sleep(.02)
+        else: raise RuntimeError('HALT client did not become ready')
         time.sleep(.15); assert halt.poll() is None,'HALT should wait for receiver SQLite writer lock'
         resume.write_text('continue'); finish(receiver); haltout=json.loads(finish(halt)); assert haltout['ok']
         files,evidence=observe('clean-after-halt'); assert list(files)==['1.body'] and files['1.body']['sha256']==digest
@@ -93,7 +99,7 @@ try: deliver_record(Controller(Path(sys.argv[1]),r),1,Path(sys.argv[2]))
 except Denied: print('HALT denied delivery')
 else: raise RuntimeError('post-HALT publication accepted')
 ''',db,sink); children.append(blocked); finish(blocked)
-        result['cases']['clean']={'result':'PASS','sink_evidence':evidence,'files':files,'two_agents_shared_budget':True,'replay_denied':True,'halt_during_inflight':'HALT waited for publication/receipt transaction; published bytes survive; new delivery denied'}
+        result['cases']['clean']={'result':'PASS','sink_evidence':evidence,'files':files,'two_agents_shared_budget':True,'replay_denied':True,'halt_client_ready_before_receiver_release':True,'halt_during_inflight':'HALT waited for publication/receipt transaction; published bytes survive; new delivery denied'}
         # Mutation 1: writable sink permission is a bypass for an unconfined
         # helper. The existing launcher still denies writes with Landlock.
         sink.chmod(0o777)

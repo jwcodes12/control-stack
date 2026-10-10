@@ -27,7 +27,9 @@ _DENY = (
     'finit_module delete_module shmget shmat shmctl semget semop semtimedop '
     'msgget msgsnd msgrcv msgctl chmod fchmod fchmodat fchmodat2 chown fchown '
     'lchown fchownat utime utimes futimesat utimensat setxattr lsetxattr '
-    'fsetxattr removexattr lremovexattr fremovexattr'
+    'fsetxattr removexattr lremovexattr fremovexattr ioctl perf_event_open '
+    'open_tree move_mount fsopen fsconfig fsmount fspick mount_setattr '
+    'memfd_secret semctl shmdt'
 ).split()
 _LIBC = ctypes.CDLL(None, use_errno=True)
 _LIBC.syscall.restype = ctypes.c_long

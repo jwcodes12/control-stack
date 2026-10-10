@@ -23,12 +23,12 @@ def projection(ir):
     nodes=[]
     for n in ir['nodes']:
         if n['type']=='service':
-            f=n['facts']; nodes.append('⟨'+','.join([str(ids[n['id']]),str(f['uid'] if f['uid'] is not None else 0),b(f['role']=='agent'),b(f['privileged']),b(f['host_network'])])+'⟩')
+            f=n['facts']; nodes.append('⟨'+','.join([str(ids[n['id']]),str(f['uid'] if f['uid'] is not None else 0),b(f['role']=='agent'),b(f['privileged']),b(f['host_network']),str({'agent':0,'broker':1,'receiver':2,'reviewer':3,'approver':4,'deputy':5}[f['role']]),b(f['runtime_match']=='MATCH')])+'⟩')
     edges=[]
     for e in ir['edges']:
         if e['reachability']=='ABSENT': continue
-        authority=e['capability'] in {'write','credential','escape','read','call'} and e['to'] in {'sink','database'}
-        edges.append('⟨'+','.join([str(ids[e['from']]),str(ids[e['to']]),b(authority),b(e['reachability']=='UNKNOWN')])+'⟩')
+        authority=e['to'] in {'sink','database'}
+        edges.append('⟨'+','.join([str(ids[e['from']]),str(ids[e['to']]),b(authority),b(e['reachability']=='UNKNOWN'),b(e['capability']=='write')])+'⟩')
     return '⟨['+','.join(nodes)+'],['+','.join(edges)+'],'+','.join(str(ids[k]) for k in ('receiver','broker','sink','database'))+'⟩'
 
 def check(ir):
@@ -37,7 +37,7 @@ def check(ir):
     if build.returncode: raise ValueError(build.stdout+build.stderr)
     # Projection accepted/refuted is decided IN LEAN, not Python.
     services = [n['facts'] for n in ir['nodes'] if n['type'] == 'service']
-    receiver_uid = next(f['uid'] for f in services if f['role'] == 'receiver')
+    receiver_uid = next((f['uid'] for f in services if f['role'] == 'receiver'),0)
     approvers = [f['uid'] or 0 for f in services if f['role'] == 'approver']
     admins = [f['uid'] or 0 for f in services if f['role'] == 'broker']
     principal = f'roles deployment {receiver_uid or 0} {approvers} {admins}'

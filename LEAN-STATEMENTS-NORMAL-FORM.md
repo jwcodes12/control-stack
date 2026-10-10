@@ -2176,7 +2176,7 @@ theorem defer_mono : DeferMonoClaim
 
 ### 265. exclusive_sink
 
-Source: ControlStack/Deployment/Contracts.lean:52 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:114 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem exclusive_sink (d : IR) (h : Accepted d) (e : Edge) (member : e ∈ d.edges) (authority : e.authority = true) (sink : e.target = d.sink) : e.source = d.receiver
@@ -2184,7 +2184,7 @@ theorem exclusive_sink (d : IR) (h : Accepted d) (e : Edge) (member : e ∈ d.ed
 
 ### 266. database_custody
 
-Source: ControlStack/Deployment/Contracts.lean:56 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:118 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem database_custody (d : IR) (h : Accepted d) (e : Edge) (member : e ∈ d.edges) (authority : e.authority = true) (db : e.target = d.database) : e.source = d.receiver ∨ e.source = d.broker
@@ -2192,7 +2192,7 @@ theorem database_custody (d : IR) (h : Accepted d) (e : Edge) (member : e ∈ d.
 
 ### 267. runtime_exclusive
 
-Source: ControlStack/Deployment/Contracts.lean:66 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:128 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem runtime_exclusive (d : IR) (actual : List Edge) (h : Accepted d) (faithful : Faithful d actual) (e : Edge) (member : e ∈ actual) (authority : e.authority = true) (sink : e.target = d.sink) : e.source = d.receiver
@@ -2200,7 +2200,7 @@ theorem runtime_exclusive (d : IR) (actual : List Edge) (h : Accepted d) (faithf
 
 ### 268. agent_not_receiver_uid
 
-Source: ControlStack/Deployment/Contracts.lean:72 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:134 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem agent_not_receiver_uid (d : IR) (h : Accepted d) (r a : Node) (hr : r ∈ d.nodes) (rid : r.id = d.receiver) (ha : a ∈ d.nodes) (agent : a.agent = true) : a.uid ≠ r.uid
@@ -2208,7 +2208,7 @@ theorem agent_not_receiver_uid (d : IR) (h : Accepted d) (r a : Node) (hr : r �
 
 ### 269. agent_call_legal
 
-Source: ControlStack/Deployment/Contracts.lean:81 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:143 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem agent_call_legal (d : IR) (h : Accepted d) (r a : Node) (hr : r ∈ d.nodes) (rid : r.id = d.receiver) (ha : a ∈ d.nodes) (agent : a.agent = true) (approvers admins : List Nat) (k : Nat) (tx : SC26.Tx) : SC26.legal (roles d r.uid approvers admins) (.bankCall a.uid k tx)
@@ -2216,7 +2216,7 @@ theorem agent_call_legal (d : IR) (h : Accepted d) (r a : Node) (hr : r ∈ d.no
 
 ### 270. protocol_safe
 
-Source: ControlStack/Deployment/Contracts.lean:89 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:151 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem protocol_safe (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op) (hops : ∀ o ∈ ops, SC26.legal R o) : SC26.Good R cap (SC26.run R cap SC26.full SC26.init ops)
@@ -2224,7 +2224,7 @@ theorem protocol_safe (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op) (hops : 
 
 ### 271. one_use
 
-Source: ControlStack/Deployment/Contracts.lean:93 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:155 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem one_use (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op) : (SC26.run R cap SC26.full SC26.init ops).reserved.Nodup
@@ -2232,7 +2232,7 @@ theorem one_use (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op) : (SC26.run R 
 
 ### 272. gate_contract
 
-Source: ControlStack/Deployment/Contracts.lean:97 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:159 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem gate_contract (R : SC26.Roles) (cap : Nat) (ops : List {o : SC26.Op // SC26.legal R o}) : (SC26.spec R cap).Inv ((SC26.sys R cap).run SC26.init ops) ∧ (SC26.sys R cap).effects SC26.init <+: (SC26.sys R cap).effects ((SC26.sys R cap).run SC26.init ops) ∧ ∀ e ∈ (SC26.sys R cap).effects ((SC26.sys R cap).run SC26.init ops), (SC26.spec R cap).ok ((SC26.sys R cap).run SC26.init ops) e
@@ -2240,7 +2240,7 @@ theorem gate_contract (R : SC26.Roles) (cap : Nat) (ops : List {o : SC26.Op // S
 
 ### 273. broker_contract
 
-Source: ControlStack/Deployment/Contracts.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:168 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem broker_contract (R : TrustedBroker.Roles) (cap : Nat) (t : TrustedBroker.State) (trace : TrustedBroker.Trace R (TrustedBroker.initial cap) t) : TrustedBroker.Safe t
@@ -2248,15 +2248,15 @@ theorem broker_contract (R : TrustedBroker.Roles) (cap : Nat) (t : TrustedBroker
 
 ### 274. deployment_safe
 
-Source: ControlStack/Deployment/Contracts.lean:127 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:192 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
-theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op) (actualEdges : List Edge) (sinkEffects : List (Nat × SC26.Tx)) (h : Accepted d) (faithful : RuntimeFaithful d r R cap ops actualEdges sinkEffects) : (∀ e ∈ actualEdges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧ (∀ e ∈ sinkEffects, ∃ req, SC26.reqOf (SC26.run R cap SC26.full SC26.init ops) e.1 = some req ∧ req.tx = e.2 ∧ e.1 ∈ (SC26.run R cap SC26.full SC26.init ops).reserved ∧ SC26.Approved R (SC26.run R cap SC26.full SC26.init ops) e.1 req) ∧ (sinkEffects.map Prod.fst).Nodup ∧ (sinkEffects.map (fun e => e.2.amount)).sum ≤ cap ∧ sinkEffects.length ≤ cap
+theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op) (actualEdges : List Edge) (sinkEffects : List (Nat × SC26.Tx)) (h : Accepted d) (extraction : ExtractionFaithful d r actualEdges) (refinement : ProtocolRefinement d r R cap ops sinkEffects) : (∀ e ∈ actualEdges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧ (∀ e ∈ sinkEffects, ∃ req, SC26.reqOf (SC26.run R cap SC26.full SC26.init ops) e.1 = some req ∧ req.tx = e.2 ∧ e.1 ∈ (SC26.run R cap SC26.full SC26.init ops).reserved ∧ SC26.Approved R (SC26.run R cap SC26.full SC26.init ops) e.1 req) ∧ (sinkEffects.map Prod.fst).Nodup ∧ (sinkEffects.map (fun e => e.2.amount)).sum ≤ cap ∧ sinkEffects.length ≤ cap
 ~~~
 
 ### 275. clean_accepted
 
-Source: ControlStack/Deployment/Contracts.lean:175 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:242 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem clean_accepted : Accepted clean
@@ -2264,7 +2264,7 @@ theorem clean_accepted : Accepted clean
 
 ### 276. useful_acceptance
 
-Source: ControlStack/Deployment/Contracts.lean:180 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:247 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem useful_acceptance : (SC26.run twoRoles 1 SC26.full SC26.init [.request 23701 payload, .approve 23703 0 payload, .execute 23701 0, .deliver 0, .arrive 0, .request 23702 payload, .approve 23703 1 payload, .execute 23702 1, .deliver 1, .arrive 1]).bank = [(0,payload)]
@@ -2272,7 +2272,7 @@ theorem useful_acceptance : (SC26.run twoRoles 1 SC26.full SC26.init [.request 2
 
 ### 277. writable_mount_refutes
 
-Source: ControlStack/Deployment/Contracts.lean:186 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:253 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem writable_mount_refutes : ¬ Accepted {clean with edges
@@ -2280,7 +2280,7 @@ theorem writable_mount_refutes : ¬ Accepted {clean with edges
 
 ### 278. unknown_refutes
 
-Source: ControlStack/Deployment/Contracts.lean:189 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:256 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem unknown_refutes : ¬ Accepted {clean with edges
@@ -2288,7 +2288,7 @@ theorem unknown_refutes : ¬ Accepted {clean with edges
 
 ### 279. check_disabled_counterexample
 
-Source: ControlStack/Deployment/Contracts.lean:194 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:261 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem check_disabled_counterexample : let s
@@ -2296,7 +2296,7 @@ theorem check_disabled_counterexample : let s
 
 ### 280. nonce_disabled_counterexample
 
-Source: ControlStack/Deployment/Contracts.lean:202 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/Contracts.lean:269 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem nonce_disabled_counterexample : let s

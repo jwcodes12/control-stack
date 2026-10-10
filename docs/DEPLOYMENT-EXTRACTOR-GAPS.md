@@ -23,8 +23,9 @@ extraction and full protocol refinement. Authorization labels never hide paths.
 The self-review found and closed the unlisted bind, writable channel, target
 shadow, environment-name and missing-network holes. Each has a fixture. No known
 **expressible configuration fact** in this restricted profile is silently accepted
-as denied authority. The permissive raw IR still allows Python/Lean subset
-mismatches; those are disclosed and tested rather than presented as equal checks.
+as denied authority. Tier 1 strengthens the Lean raw-IR projection to the full
+finite Python rules; 26 fixtures and 250 seeded mutations now agree. The historical
+subset discrepancies remain archived as historical evidence, not current scope.
 
 Still missed at the observational level: host symlink/hardlink aliases that change
 behind an allowed source, inherited descriptors, processes injected through Docker

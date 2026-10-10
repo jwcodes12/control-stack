@@ -18,7 +18,7 @@ class LeanDeploymentTests(unittest.TestCase):
             with self.subTest(fixture=path.stem):
                 self.assertEqual(check(json.loads(path.read_text()))['accepted'],expected[path.stem]['lean_accepted'])
     @unittest.skipUnless(shutil.which('lake'),'Lean unavailable; mandatory kernel job covers this')
-    def test_documented_subset_differences(self):
+    def test_full_python_lean_agreement(self):
         from tools.check_deployment_subset_differential import run
-        self.assertEqual(run(),json.loads((ROOT/'deployment-evidence/subset-differential.json').read_text()))
+        self.assertEqual(run(),json.loads((ROOT/'deployment/evidence/tier1/differential.json').read_text()))
 if __name__=='__main__':unittest.main()

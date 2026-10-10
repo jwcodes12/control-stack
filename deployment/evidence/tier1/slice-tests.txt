@@ -1,0 +1,14 @@
+F............
+======================================================================
+FAIL: test_cli_and_exit_codes (__main__.DeploymentTests.test_cli_and_exit_codes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/tools/test_deployment_slice.py", line 140, in test_cli_and_exit_codes
+    self.assertIn('strict subset',(out/'report.md').read_text())
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'strict subset' not found in '# Local file deployment slice\n\n**UNASSURED**\n\nconfiguration/model candidate; skipped kernel check means UNASSURED. Lean rechecks all finite configuration obligations; faithful extraction and protocol refinement remain unproved\n\n| Premise | Status | Evidence / limitation |\n|---|---|---|\n| supported-roles | CONDITIONAL | two agents, one named broker and one named receiver required |\n| identity-separation | CONDITIONAL | distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure |\n| runtime-snapshot:agent-a | CONDITIONAL | MATCH |\n| runtime-snapshot:agent-b | CONDITIONAL | MATCH |\n| runtime-snapshot:approver | CONDITIONAL | MATCH |\n| runtime-snapshot:broker | CONDITIONAL | MATCH |\n| runtime-snapshot:receiver | CONDITIONAL | MATCH |\n| runtime-snapshot:reviewer | CONDITIONAL | MATCH |\n| useful-sink-path | CONDITIONAL | exactly the receiver has the writable sink mount |\n| shared-database | CONDITIONAL | broker and receiver must use the same pinned database |\n| faithful-extraction | CONDITIONAL | snapshot exhausts actual effective authority, mounts, identities, processes and source/image correspondence; unproved |\n| protocol-refinement | CONDITIONAL | ProtocolRefinement.publication : sinkEffects = model.bank assumes full model-runtime correspondence, including actual protocol transitions, exact bytes, unit costs, clock, storage and no rollback; unproved |\n| Lean-contract-instances | UNASSESSED | run tools/check_deployment_lean.py against this exact IR to kernel-check facts and contracts; source names alone are not proof |\n\nKernel configuration obligations (consult Lean-contract-instances status): direct protected-resource authority, nonzero UIDs, all agent/trusted UID separation, exact role counts, runtime match, exact sink/database writer sets, transitive bypass reachability and closure, no unknown/privileged/host-network authority, reused gate/one-use/budget contracts.\n\nPython-only obligations: .\n\nResult lifetime: invalidated by changed mounts, UIDs, credentials, networks, image digests, trusted source hashes, policy/budget, or runtime inventory.\n'
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.754s
+
+FAILED (failures=1)

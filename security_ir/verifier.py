@@ -10,7 +10,7 @@ def verify(ir):
     def add(name,status,detail):
         obligations.append({'premise':name,'status':status,'detail':detail})
     agents = [k for k,v in services.items() if v['role']=='agent']
-    role_ok = len(agents)==2 and services.get('broker',{}).get('role')=='broker' and services.get('receiver',{}).get('role')=='receiver' and sum(v['role']=='broker' for v in services.values())==1 and sum(v['role']=='receiver' for v in services.values())==1 and sum(v['role']=='reviewer' for v in services.values())==1 and sum(v['role']=='approver' for v in services.values())==1
+    role_ok = len(services)==6 and len(agents)==2 and services.get('broker',{}).get('role')=='broker' and services.get('receiver',{}).get('role')=='receiver' and sum(v['role']=='broker' for v in services.values())==1 and sum(v['role']=='receiver' for v in services.values())==1 and sum(v['role']=='reviewer' for v in services.values())==1 and sum(v['role']=='approver' for v in services.values())==1
     add('supported-roles','CONDITIONAL' if role_ok else 'REFUTED','two agents, one named broker and one named receiver required')
     trusted = [k for k,v in services.items() if v['role'] in {'broker','receiver','reviewer','approver'}]
     uids = [services[k]['uid'] for k in agents+trusted]
@@ -45,13 +45,13 @@ def verify(ir):
         if seen & {'sink','database'}:
             add('exclusive-path:'+a,'REFUTED','bypass path reaches '+','.join(sorted(seen & {'sink','database'})))
     add('faithful-extraction','CONDITIONAL','snapshot exhausts actual effective authority, mounts, identities, processes and source/image correspondence; unproved')
-    add('protocol-refinement','CONDITIONAL','RuntimeFaithful.publication : sinkEffects = model.bank assumes full model-runtime correspondence, including actual protocol transitions, exact bytes, unit costs, clock, storage and no rollback; unproved')
+    add('protocol-refinement','CONDITIONAL','ProtocolRefinement.publication : sinkEffects = model.bank assumes full model-runtime correspondence, including actual protocol transitions, exact bytes, unit costs, clock, storage and no rollback; unproved')
     add('Lean-contract-instances','UNASSESSED','run tools/check_deployment_lean.py against this exact IR to kernel-check facts and contracts; source names alone are not proof')
-    return {'kernel_checked_obligations':['direct sink authority','direct database custody','agent/receiver UID separation','nonzero service UIDs','no unknown edges','no privileged/host-network nodes','receiver writable sink witness','reused gate/one-use/budget contracts'],
-            'python_only_obligations':['transitive bypass reachability excluding broker/receiver','all agent/trusted and trusted/trusted UID separation','exact role counts','runtime inventory match','exact writable database pair','exact sink writer count'], 'version':0,'claim':ir['claim'],'snapshot':ir['snapshot'],'ir_sha256':__import__('hashlib').sha256(json.dumps(ir,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
+    return {'kernel_checked_obligations':['direct protected-resource authority','nonzero UIDs','all agent/trusted UID separation','exact role counts','runtime match','exact sink/database writer sets','transitive bypass reachability and closure','no unknown/privileged/host-network authority','reused gate/one-use/budget contracts'],
+            'python_only_obligations':[], 'version':0,'claim':ir['claim'],'snapshot':ir['snapshot'],'ir_sha256':__import__('hashlib').sha256(json.dumps(ir,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
             'verdict':'UNASSURED' if any(o['status'] in {'REFUTED','UNASSESSED'} for o in obligations) else 'CONDITIONAL',
             'obligations':obligations,
-            'scope':'configuration/model candidate; skipped kernel check means UNASSURED. Lean rechecks a strict subset; faithful extraction and protocol refinement remain unproved'}
+            'scope':'configuration/model candidate; skipped kernel check means UNASSURED. Lean rechecks all finite configuration obligations; faithful extraction and protocol refinement remain unproved'}
 
 def report(bundle):
     if bundle.get('version') != 0 or bundle.get('verdict') not in {'CONDITIONAL','UNASSURED'}:
@@ -59,7 +59,7 @@ def report(bundle):
     lines = ['# Local file deployment slice', '', '**'+bundle['verdict']+'**', '', bundle['scope'], '', '| Premise | Status | Evidence / limitation |','|---|---|---|']
     for o in bundle['obligations']:
         lines.append('| '+o['premise'].replace('|','\\|')+' | '+o['status']+' | '+o['detail'].replace('|','\\|').replace('\n',' ')+' |')
-    for label, key in [('Lean projection subset (consult Lean-contract-instances status)','kernel_checked_obligations'),('Python-only obligations','python_only_obligations')]:
+    for label, key in [('Kernel configuration obligations (consult Lean-contract-instances status)','kernel_checked_obligations'),('Python-only obligations','python_only_obligations')]:
         lines += ['', label+': '+', '.join(bundle.get(key,[]))+'.']
     lines += ['', 'Result lifetime: invalidated by changed mounts, UIDs, credentials, networks, image digests, trusted source hashes, policy/budget, or runtime inventory.']
     return '\n'.join(lines)+'\n'

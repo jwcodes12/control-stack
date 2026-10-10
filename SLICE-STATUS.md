@@ -11,8 +11,9 @@ clone `/var/tmp/sol-deployment-slice-20261010`. Claim: `docs/DEPLOYMENT-CLAIM-v0
 `runtime_exclusive` transfers authority only under faithful runtime inclusion.
 `deployment_safe` joins that inclusion, actual caller identity binding and faithful
 protocol/publication abstraction with existing exact approval, deduplication and
-budget safety. Its unit-cost faithfulness premise derives a file-count bound as well as the weighted budget bound. Accepted facts also reject zero or unknown role UIDs. There is no bare CompleteMediation axiom. The runtime-faithfulness
-package is substantive and unproved; it includes implementation correspondence.
+budget safety. Its unit-cost faithfulness premise derives a file-count bound as well as the weighted budget bound. Accepted facts also reject zero or unknown role UIDs. There is no bare CompleteMediation axiom. The separate ExtractionFaithful and ProtocolRefinement
+structures are substantive and unproved; ProtocolRefinement.publication is full
+model–runtime correspondence of sink effects.
 
 `protocol_safe` reuses `SC26.sc26_safe`, `one_use` reuses `SC26.sc26_once`,
 `gate_contract` reuses `Gate.Spec.trace_safe`, and `broker_contract` reuses
@@ -111,7 +112,7 @@ namespaces and numeric UID mapping, **not Landlock**, which is inactive on this
 host. The container runtime claim covers mounts and UIDs only. Earlier native
 QEMU evidence above separately retains the in-flight HALT/Landlock checks.
 
-## Verdict consistency and differential evidence
+## Historical follow-up verdict consistency and differential evidence (superseded by R2 Tier 1)
 
 Skipped Lean means **UNASSURED**, including the clean fixture. CONDITIONAL needs
 successful exact-IR kernel checking and all Python obligations. The permitted
@@ -170,7 +171,7 @@ UNASSURED even when the documented kernel subset accepts their projection.
    correspondence. Docker-daemon capture remains unauthenticated.
 2. **Protocol refinement**: actual implementation transitions, approval/hash
    semantics, unit costs, trusted clock, no rollback and durable publication match
-   the model. `RuntimeFaithful.publication : sinkEffects = model.bank` assumes full
+   the model. `ProtocolRefinement.publication : sinkEffects = model.bank` assumes full
    **model–runtime correspondence of sink effects**, not merely faithful IR capture.
 
 Neither is proved by successful example executions or source hashes. Extractor
@@ -242,3 +243,18 @@ it was corrected to inspect separate fields. Cleanup itself had already succeede
 Stopping scope remains the handoff's A/B requirements plus the attempted C milestone;
 all three real-container cases completed. Broader protocols/backends remain deferred
 in `docs/DEPLOYMENT-SLICE-NEXT.md`.
+
+## R2 superseding handoff, Tier 1
+
+The earlier follow-up stopping scope and 125/200 strict-subset agreement are
+historical. The active queue is now `deployment/QUEUE.md` under the R2 handoff.
+Accepted now checks the full finite Python configuration rules. The new comparison
+is 26 fixtures plus 250 seeded mutations: zero differences, 276 kernel certificates.
+The additive test is 520 seeded feature/mount/environment/capability/edge additions,
+with no negative configuration becoming accepted. It compares configuration
+obligations before the pending Lean check so the property is not vacuous.
+The theorem now explicitly separates ExtractionFaithful from ProtocolRefinement;
+ProtocolRefinement.publication : sinkEffects = model.bank is full model–runtime
+correspondence, not just capture fidelity. Neither residual is discharged.
+New evidence and failures are under `deployment/evidence/tier1/`; final-head CI
+must be recorded before advancing to Tier 2. R2 has not yet been reached.

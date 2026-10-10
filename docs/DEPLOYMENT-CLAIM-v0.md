@@ -47,20 +47,27 @@ unproved residual premises:
 2. **Protocol refinement**: the implementation executes the model's transitions
    with authentic role bindings, exact approval/byte hashes, unit costs, trusted
    clock, no rollback and matching durable publication. In particular,
-   `RuntimeFaithful.publication : sinkEffects = model.bank` assumes the **full
+   `ProtocolRefinement.publication : sinkEffects = model.bank` assumes the **full
    model–runtime correspondence of sink effects**, not merely faithful IR capture.
 
 Passing tests or hashing sources proves neither premise universally. Lean derives
 exclusive direct sink authority from finite facts without a CompleteMediation
-axiom. **Lean rechecks a strict subset of the Python verifier.** Its projection
-checks direct sink/DB authority, agent/receiver UID separation, nonzero UIDs,
-unknown edges, privileged/host-network flags and a receiver write witness, and
-instantiates reused gate/one-use/budget contracts. Python alone checks transitive
-reachability excluding the broker/receiver, all trusted UID separation, exact role
-counts, exact sink/database writer counts and runtime drift. Bundles and reports
-list these two sets. A skipped Lean check always yields UNASSURED; CONDITIONAL
-requires both checks. The test suite deliberately exercises cases where Lean
-accepts but Python refutes, preventing a kernel-subset claim from hiding that gap.
+axiom. **Lean and Python check the same finite configuration obligations:**
+transitive reachability excluding broker/receiver, every agent/trusted UID and
+trusted role separation, exact role counts, runtime match, exact sink/database
+writers, nonzero UIDs, and absence of unknown or isolation escape authority.
+The raw projection is evaluated and each result proved by the Lean kernel.
+`deployment/evidence/tier1/differential.json` records all 26 fixtures and 250
+seeded random mutations with zero differences. The additive test records 520
+mutations with zero negative-to-positive changes; this is a finite regression
+experiment, not a universal theorem over arbitrary repairs. A skipped Lean check
+always yields UNASSURED; CONDITIONAL requires both checks.
+
+The actual theorem uses separate `ExtractionFaithful` and `ProtocolRefinement`
+structures. `ExtractionFaithful` carries effective-authority inclusion and receiver
+identity correspondence. `ProtocolRefinement` carries gate identity, actual caller
+binding, unit costs, and the full sink/model publication equation. Neither structure
+is automatically proved by a daemon snapshot or a successful concrete run.
 
 A result expires upon any changed mounts (including aliases), UIDs, role mappings,
 credentials or inherited descriptors, image digests, network topology, runtime

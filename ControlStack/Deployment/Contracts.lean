@@ -17,6 +17,9 @@ structure Node where
   agent : Bool
   privileged : Bool
   hostNetwork : Bool
+  /-- 0 agent, 1 broker, 2 receiver, 3 reviewer, 4 approver, 5 unsupported. -/
+  role : Nat
+  runtimeMatch : Bool
   deriving DecidableEq, Repr
 
 structure Edge where
@@ -25,6 +28,7 @@ structure Edge where
   /-- sink-write/credential/escape and database-access edges all count -/
   authority : Bool
   unknown : Bool
+  write : Bool
   deriving DecidableEq, Repr
 
 structure IR where
@@ -37,7 +41,7 @@ structure IR where
   deriving DecidableEq, Repr
 
 /-- These checks use identity and edges, never authorization labels. -/
-def Accepted (d : IR) : Prop :=
+def BaseAccepted (d : IR) : Prop :=
   (∀ e ∈ d.edges, e.unknown = false) ∧
   (∀ e ∈ d.edges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧
   (∀ e ∈ d.edges, e.authority = true → e.target = d.database → e.source = d.receiver ∨ e.source = d.broker) ∧
@@ -46,16 +50,74 @@ def Accepted (d : IR) : Prop :=
   (∃ e ∈ d.edges, e.source = d.receiver ∧ e.target = d.sink ∧ e.authority = true) ∧
   (∀ n ∈ d.nodes, 0 < n.uid)
 
-instance (d : IR) : Decidable (Accepted d) := by unfold Accepted; infer_instance
+instance (d : IR) : Decidable (BaseAccepted d) := by unfold BaseAccepted; infer_instance
+
+/-- Finite closure includes the start and every edge except trusted mediation.
+The explicit closure obligation below makes the bound independently checkable. -/
+def reachable (d : IR) (start : Nat) : List Nat :=
+  (List.range (d.nodes.length + d.edges.length + 4)).foldl (fun seen _ =>
+    (seen ++ d.edges.filterMap (fun e =>
+      if e.source ∈ seen ∧ e.target ≠ d.broker ∧ e.target ≠ d.receiver
+      then some e.target else none)).eraseDups) [start]
+
+def RoleChecked (d : IR) : Prop :=
+  d.nodes.length = 6 ∧
+  (d.nodes.filter (fun n => n.role == 0)).length = 2 ∧
+  (d.nodes.filter (fun n => n.role == 1)).length = 1 ∧
+  (d.nodes.filter (fun n => n.role == 2)).length = 1 ∧
+  (d.nodes.filter (fun n => n.role == 3)).length = 1 ∧
+  (d.nodes.filter (fun n => n.role == 4)).length = 1 ∧
+  (∀ n ∈ d.nodes, (n.agent = true ↔ n.role = 0) ∧
+    (n.id = d.broker ↔ n.role = 1) ∧ (n.id = d.receiver ↔ n.role = 2))
+
+def IdentityChecked (d : IR) : Prop :=
+  ∀ a ∈ d.nodes, ∀ b ∈ d.nodes, a.id ≠ b.id →
+    (a.uid = b.uid ↔ ((a.id = d.broker ∧ b.id = d.receiver) ∨
+                     (a.id = d.receiver ∧ b.id = d.broker)))
+
+def WritersChecked (d : IR) : Prop :=
+  (∀ e ∈ d.edges, e.target = d.sink → e.source = d.receiver ∧ e.write = true) ∧
+  (∀ e ∈ d.edges, e.target = d.database → e.source = d.broker ∨ e.source = d.receiver) ∧
+  ((d.edges.filter (fun e => e.target == d.sink && e.write)).map Edge.source = [d.receiver]) ∧
+  (d.edges.filter (fun e => e.target == d.database && e.write)).length = 2 ∧
+  (∃ e ∈ d.edges, e.target = d.database ∧ e.write = true ∧ e.source = d.broker) ∧
+  (∃ e ∈ d.edges, e.target = d.database ∧ e.write = true ∧ e.source = d.receiver)
+
+def NoBypass (d : IR) : Prop :=
+  ∀ a ∈ d.nodes, a.agent = true →
+    a.id ∈ reachable d a.id ∧ d.sink ∉ reachable d a.id ∧ d.database ∉ reachable d a.id ∧
+    (∀ e ∈ d.edges, e.source ∈ reachable d a.id →
+      e.target ≠ d.broker → e.target ≠ d.receiver → e.target ∈ reachable d a.id)
+
+instance (d : IR) : Decidable (RoleChecked d) := by unfold RoleChecked; infer_instance
+instance (d : IR) : Decidable (IdentityChecked d) := by unfold IdentityChecked; infer_instance
+instance (d : IR) : Decidable (WritersChecked d) := by unfold WritersChecked; infer_instance
+instance (d : IR) : Decidable (NoBypass d) := by unfold NoBypass; infer_instance
+
+/-- The kernel checks the same finite configuration obligations as Python.
+Runtime flags are input observations, not independent attestation. -/
+structure Accepted (d : IR) : Prop where
+  basic : BaseAccepted d
+  roles : RoleChecked d
+  identities : IdentityChecked d
+  runtime : ∀ n ∈ d.nodes, n.runtimeMatch = true
+  writers : WritersChecked d
+  bypass : NoBypass d
+
+instance (d : IR) : Decidable (Accepted d) :=
+  decidable_of_iff (BaseAccepted d ∧ RoleChecked d ∧ IdentityChecked d ∧
+    (∀ n ∈ d.nodes, n.runtimeMatch = true) ∧ WritersChecked d ∧ NoBypass d)
+    ⟨fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩,
+     fun h => ⟨h.basic, h.roles, h.identities, h.runtime, h.writers, h.bypass⟩⟩
 
 /-- Exclusive sink writer is DERIVED from the finite checked edge facts. -/
 theorem exclusive_sink (d : IR) (h : Accepted d) (e : Edge)
     (member : e ∈ d.edges) (authority : e.authority = true) (sink : e.target = d.sink) :
-    e.source = d.receiver := h.2.1 e member authority sink
+    e.source = d.receiver := h.basic.2.1 e member authority sink
 
 theorem database_custody (d : IR) (h : Accepted d) (e : Edge)
     (member : e ∈ d.edges) (authority : e.authority = true) (db : e.target = d.database) :
-    e.source = d.receiver ∨ e.source = d.broker := h.2.2.1 e member authority db
+    e.source = d.receiver ∨ e.source = d.broker := h.basic.2.2.1 e member authority db
 
 /-- Concrete runtime observations must be faithfully included in the IR;
 this is the residual implementation/environment premise, not kernel-proved. -/
@@ -71,7 +133,7 @@ theorem runtime_exclusive (d : IR) (actual : List Edge) (h : Accepted d)
 /-- From checked IR UID facts, an agent cannot carry the receiver identity. -/
 theorem agent_not_receiver_uid (d : IR) (h : Accepted d) (r a : Node)
     (hr : r ∈ d.nodes) (rid : r.id = d.receiver) (ha : a ∈ d.nodes)
-    (agent : a.agent = true) : a.uid ≠ r.uid := h.2.2.2.2.1 r hr rid a ha agent
+    (agent : a.agent = true) : a.uid ≠ r.uid := h.basic.2.2.2.2.1 r hr rid a ha agent
 
 /-- Role IDs are supplied as model parameters; actual SO_PEERCRED and human
 role bindings are part of the residual faithful abstraction. -/
@@ -107,14 +169,17 @@ theorem broker_contract (R : TrustedBroker.Roles) (cap : Nat) (t : TrustedBroker
     (trace : TrustedBroker.Trace R (TrustedBroker.initial cap) t) : TrustedBroker.Safe t :=
   TrustedBroker.trace_preserves R _ t (TrustedBroker.initial_safe cap) trace
 
-/-- Runtime-to-model inclusion is the sole residual trust package. It
-includes exact sink observations, authentic agent callers and protocol replay;
-none of these fields is established by a source hash or a successful example. -/
-structure RuntimeFaithful (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
-    (ops : List SC26.Op) (actualEdges : List Edge) (sinkEffects : List (Nat × SC26.Tx)) : Prop where
+/-- Faithful extraction exhausts effective runtime authority and identity facts.
+This environmental inclusion remains unproved by source hashes or examples. -/
+structure ExtractionFaithful (d : IR) (r : Node) (actualEdges : List Edge) : Prop where
   authority : Faithful d actualEdges
   receiverNode : r ∈ d.nodes
   receiverID : r.id = d.receiver
+
+/-- Full protocol refinement, separately assumed from authority extraction.
+publication is equality of actual sink effects and abstract model publication. -/
+structure ProtocolRefinement (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
+    (ops : List SC26.Op) (sinkEffects : List (Nat × SC26.Tx)) : Prop where
   gateUID : R.gate = r.uid
   callerBinding : ∀ c k tx, SC26.Op.bankCall c k tx ∈ ops →
     ∃ a ∈ d.nodes, a.agent = true ∧ c = a.uid
@@ -126,7 +191,8 @@ are joined through a substantive faithfulness premise, never CompleteMediation.
 The caller-binding field plus IR UID facts derives the legal-call premise. -/
 theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
     (ops : List SC26.Op) (actualEdges : List Edge) (sinkEffects : List (Nat × SC26.Tx))
-    (h : Accepted d) (faithful : RuntimeFaithful d r R cap ops actualEdges sinkEffects) :
+    (h : Accepted d) (extraction : ExtractionFaithful d r actualEdges)
+    (refinement : ProtocolRefinement d r R cap ops sinkEffects) :
     (∀ e ∈ actualEdges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧
     (∀ e ∈ sinkEffects, ∃ req, SC26.reqOf (SC26.run R cap SC26.full SC26.init ops) e.1 = some req ∧
       req.tx = e.2 ∧ e.1 ∈ (SC26.run R cap SC26.full SC26.init ops).reserved ∧
@@ -137,10 +203,10 @@ theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
     intro o ho
     cases o with
     | bankCall c k tx =>
-      obtain ⟨a, ha, agent, hc⟩ := faithful.callerBinding c k tx ho
+      obtain ⟨a, ha, agent, hc⟩ := refinement.callerBinding c k tx ho
       change c ≠ R.gate
-      rw [faithful.gateUID, hc]
-      exact agent_not_receiver_uid d h r a faithful.receiverNode faithful.receiverID ha agent
+      rw [refinement.gateUID, hc]
+      exact agent_not_receiver_uid d h r a extraction.receiverNode extraction.receiverID ha agent
     | request c tx => trivial
     | approve c k tx => trivial
     | execute c k => trivial
@@ -148,7 +214,7 @@ theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
     | arrive k => trivial
     | halt c => trivial
   have good := protocol_safe R cap ops legal
-  refine ⟨fun e he ha hs => runtime_exclusive d actualEdges h faithful.authority e he ha hs, ?_⟩
+  refine ⟨fun e he ha hs => runtime_exclusive d actualEdges h extraction.authority e he ha hs, ?_⟩
   have unit_sum : ∀ xs : List (Nat × SC26.Tx),
       (∀ e ∈ xs, e.2.amount = 1) → (xs.map (fun e => e.2.amount)).sum = xs.length := by
     intro xs
@@ -160,17 +226,18 @@ theorem deployment_safe (d : IR) (r : Node) (R : SC26.Roles) (cap : Nat)
       rw [hu e List.mem_cons_self, ih (fun x hx => hu x (List.mem_cons_of_mem _ hx))]
       omega
   have bound : (sinkEffects.map (fun e => e.2.amount)).sum ≤ cap := by
-    rw [faithful.publication]
+    rw [refinement.publication]
     exact good.2.2
   refine ⟨?_, ?_, bound, ?_⟩
-  · rw [faithful.publication]; exact good.1
-  · rw [faithful.publication]; exact good.2.1
-  · simpa [unit_sum sinkEffects faithful.unitCosts] using bound
+  · rw [refinement.publication]; exact good.1
+  · rw [refinement.publication]; exact good.2.1
+  · simpa [unit_sum sinkEffects refinement.unitCosts] using bound
 
 /-- Useful two-agent contract instance; both contend for one shared capacity. -/
-def clean : IR := ⟨[⟨0,23701,true,false,false⟩, ⟨1,23702,true,false,false⟩,
-    ⟨2,23700,false,false,false⟩, ⟨3,23700,false,false,false⟩],
-    [⟨3,4,true,false⟩, ⟨2,5,true,false⟩, ⟨3,5,true,false⟩], 3,2,4,5⟩
+def clean : IR := ⟨[⟨0,23701,true,false,false,0,true⟩, ⟨1,23702,true,false,false,0,true⟩,
+    ⟨2,23700,false,false,false,1,true⟩, ⟨3,23700,false,false,false,2,true⟩,
+    ⟨6,23703,false,false,false,3,true⟩, ⟨7,23704,false,false,false,4,true⟩],
+    [⟨3,4,true,false,true⟩, ⟨2,5,true,false,true⟩, ⟨3,5,true,false,true⟩], 3,2,4,5⟩
 
 theorem clean_accepted : Accepted clean := by decide
 
@@ -184,10 +251,10 @@ theorem useful_acceptance :
        .execute 23702 1, .deliver 1, .arrive 1]).bank = [(0,payload)] := by decide
 
 theorem writable_mount_refutes :
-    ¬ Accepted {clean with edges := ⟨0,4,true,false⟩ :: clean.edges} := by decide
+    ¬ Accepted {clean with edges := ⟨0,4,true,false,true⟩ :: clean.edges} := by decide
 
 theorem unknown_refutes :
-    ¬ Accepted {clean with edges := ⟨0,4,true,true⟩ :: clean.edges} := by decide
+    ¬ Accepted {clean with edges := ⟨0,4,true,true,true⟩ :: clean.edges} := by decide
 
 /-- Existing disabled payload guard counterexample, retained verbatim in its
 own module; this alias proves reuse and gives a falsifiable contract instance. -/

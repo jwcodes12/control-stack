@@ -504,7 +504,7 @@ def main(argv=None, runner=subprocess.call):
                         from tools.check_deployment_lean import check
                         checked = check(ir)
                         result["lean"] = checked
-                        result["scope"] = "Kernel-checked strict subset of finite model obligations; Python-only obligations listed in bundle. CONDITIONAL retains faithful extraction and full protocol refinement; no deployment-assured result"
+                        result["scope"] = "Kernel-checked finite configuration obligations agree with Python. CONDITIONAL retains faithful extraction and full protocol refinement; no deployment-assured result"
                         for o in result["obligations"]:
                             if o["premise"] == "Lean-contract-instances":
                                 o.update(status="PROVEN_IN_MODEL" if checked["accepted"] else "REFUTED",

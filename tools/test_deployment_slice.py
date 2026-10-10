@@ -137,7 +137,7 @@ class DeploymentTests(unittest.TestCase):
             self.assertEqual(call('verify',out/'ir.json','--output',out/'bundle.json').returncode,1)
             self.assertEqual(call('report',out/'bundle.json','--output',out/'report.md').returncode,0)
             self.assertIn('UNASSURED',(out/'report.md').read_text())
-            self.assertIn('strict subset',(out/'report.md').read_text())
+            self.assertIn('all finite configuration obligations',(out/'report.md').read_text())
             self.assertEqual(call('verify',ROOT/'security_ir/fixtures/writable-sink-mount.json','--output',out/'bad.json').returncode,1)
     def test_runtime_drift_and_env_value_redaction(self):
         p=ROOT/'examples/compose-two-agent/clean.compose.json'; r=p.with_name('clean.runtime.json')

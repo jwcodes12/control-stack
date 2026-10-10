@@ -20,12 +20,9 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin main --depth=1
-          diff_files="$(git diff --name-only origin/main...HEAD)"
-          printf '%s\n' "$diff_files"
-          if printf '%s\n' "$diff_files" | grep -E '^(ControlStack/EgressGate\.lean|prereg/|gateway/vm/receipts/|data/linuxarena/|data/redwood-leaderboard/|numerics/lastraj_|.*(/evidence/|/receipts/))'; then
-            echo 'ERROR: immutable proof target, experimental evidence or preregistration changed'
-            exit 1
-          fi
+          # The handoff explicitly authorizes one NEW prereg; existing files stay frozen.
+          # Its exact bytes must match the first addition commit and every input hash.
+          python3 tools/check_deployment_prereg.py --base origin/main
       - name: Regenerated theorem registry and normalized catalog consistent
         run: |
           python3 tools/build_registry.py --check

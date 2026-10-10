@@ -327,3 +327,16 @@ The Python declaration baseline catches 2/20 negatives. This is restricted JSON
 finite extraction/planning coverage, not a fresh-scanner runtime assessment or an
 actual OPA comparison. TIER6-HELDOUT.md documents before/after and limits. No new
 exploit code, attack payloads or live workload. Final Tier 6 CI pending.
+
+## R2 Tier 7 defensive attribution
+
+A new preregistration was frozen before retrospective analysis of seven Tier 2
+archives plus two already recorded honest remediation runs. Outcomes were already
+known; this is not a prospective four-arm experiment. Nine independent replays,
+six explicit honest workflow completions, nine approved deliveries and one
+unauthorized sink file are retained, including both configuration bypasses. Receipt
+gaps, missing monitor data and three unmeasured latency episodes remain explicit.
+A restricted Inspect-shaped v2 JSON export is locally schema-checked; no SDK install,
+loader validation or LLM evaluation. Original new-attack and four-arm tasks remain
+GATED. The exact new prereg path is hash-frozen at its first addition commit; all
+existing protected paths remain guarded. Four regression tests PASS; final CI pending.

@@ -41,9 +41,9 @@ T6.1 | DONE | deployment/heldout/tier6: 25 independent static cases (5 supported
 T6.2 | DONE | 25 sealed static cases; final 50 kernel certificates: zero false model acceptances, zero over-rejections, 14 UNKNOWN, 22 prospective model plans and three named residuals. Raw/interface and pre-order-fix scores retained; no runtime assessment.
 T6.3 | DONE | declaration-only rules_baseline.py catches 2/20 author negatives and rejects 0/5 supported; scope limited, no OPA comparison claim; actual OPA GATED
 T7.1 | DONE | New prereg/PREREG-DEPLOY-ARMS-v1.md and deployment/prereg-deploy-arms-freeze.json: nine archived episodes, fixed thresholds and honest timing gaps, frozen before attribution; retrospective, outcomes already known
-T7.2 | TODO | Defensive recast: archived outcome attribution plus already-recorded honest tasks, no new attack policies
-T7.3 | TODO | Defensive recast: attribution metrics on pinned archived data; original four-arm attack evaluation GATED
-T7.4 | TODO | Not yet started; tier order applies
+T7.2 | DONE | attribute_archives.py: nine independent archive replays; literal outcomes, two observed bypasses, six explicit honest workflows and gaps retained; no new attack policies
+T7.3 | DONE | Retrospective attribution metrics/H1-H4 PASS: six honest workflows, nine approved deliveries, one unauthorized file; monitor null, three unmeasured latencies; no four-arm result
+T7.4 | DONE | Episodes and restricted Inspect-v2 JSON schemas, deterministic converter, four regression tests; official field reference pinned; actual SDK loader validation GATED
 T8.1 | TODO | Not yet started; tier order applies
 T8.2 | TODO | Not yet started; tier order applies
 T8.3 | TODO | Not yet started; tier order applies
@@ -122,3 +122,7 @@ T7.2-original | GATED | New attack policies excluded by John’s defensive-only 
 T7.3-original | GATED | Original four-arm attack evaluation requires cyber-permissive access the owner does not have; replace only with archived outcome attribution, never claim four-arm results
 
 T7.1 freeze: new analysis preregistration and all Tier 2/Tier 5 source hashes committed before attribution execution. Exactly nine episodes; six explicit honest workflow completions. Retrospective known outcomes, no randomized arms or new attack policies. The original four-arm attack evaluation remains GATED.
+
+T7.1 CI guard: retain the full original protected-path patterns; permit only an A-status addition of the exact authorized new prereg, with current SHA equal to its earliest Git addition blob and frozen source inputs. Any existing prereg edit/delete and every other protected-path change still fails. No frozen artifact is edited.
+
+Tier 7 local exit: nine archived episodes independently replayed; H1-H4 integrity/coverage thresholds PASS, six explicit honest completions, both bypasses retained, one unauthorized sink file. Fifty archived harness durations; three unmeasured episodes and monitor data remain UNASSESSED/null. Four regression tests and first-addition/source freeze guards PASS. No new live workload. Self-review deployment/reviews/tier7-self-review.md; final-head CI pending.

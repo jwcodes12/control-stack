@@ -22,6 +22,8 @@ jobs:
       - run: python3 tools/test_deployment_plan.py
       - run: python3 tools/test_deployment_remediated.py
       - run: python3 tools/test_deployment_heldout.py
+      - run: python3 tools/test_deployment_attribution.py
+      - run: python3 tools/check_deployment_prereg.py
       - run: python3 tools/build_deployment_fixtures.py --check
   kernel:
     runs-on: ubuntu-24.04

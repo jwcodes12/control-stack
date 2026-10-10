@@ -38,8 +38,8 @@ T5.1 | DONE | deployment/plan.py; read-only RFC 6902 patch, redacted human diff,
 T5.2 | DONE | 44 static fixtures; 44 kernel certificates; 36 prospective finite-model acceptances, eight named residual cases; synthetic DECLARED facts never runtime evidence
 T5.3 | DONE | Defensive-only: deployment/runs/tier5/remediated; originals archived Tier 2; two repaired live configurations, four honest completions; raw inventory/custody/SQLite/byte checks and tamper controls PASS. No new denial experiment.
 T6.1 | DONE | deployment/heldout/tier6: 25 independent static cases (5 supported, 12 refuted, 8 unknown), labelled and hash-sealed before scoring; separate blinded codex exec; two startup failures retained
-T6.2 | TODO | Not yet started; tier order applies
-T6.3 | TODO | Not yet started; tier order applies
+T6.2 | DOING | Raw static score: zero false model acceptances, 25 UNKNOWN, five supported cases rejected because author public interface omitted required trusted-source pin fields; labels unchanged; record before/after harness instantiation
+T6.3 | DOING | Hand-written declaration-only Python baseline catches 2/20 negatives, misses 18; actual OPA remains GATED
 T7.1 | TODO | Not yet started; tier order applies
 T7.2 | TODO | Not yet started; tier order applies
 T7.3 | TODO | Not yet started; tier order applies
@@ -103,3 +103,5 @@ T6.1 author attempt 1: Codex failed before authoring with read-only filesystem e
 T6.1 author attempt 2: bwrap could not execute the Codex binary because its .local/bin symlink points inside the now-hidden .codex/packages directory. Restore only read-only executable packages into the private state mount; repository/session history remains hidden. Attempt 3 will be the final startup attempt under the time-box.
 
 Tier 6 corpus sealed: 25 cases; author checksums verified; SHA256SUMS hash 863bb6bf86acb2d51230c8856a2aa34546f2cf9d6afee40fed3d86ddf63c3a8a. Static hypotheses only; no exploit code, attack payloads or live deployment. Author could not run its shell tool but file writing and checksumming completed. This commit precedes every scanner/planner/baseline evaluation. Labels will not change.
+
+T6.2 first raw score: all 25 cases UNKNOWN and all five model-supported cases rejected because required broker/receiver source SHA claim fields were omitted from the author-facing public interface. Scanner correctly fails closed. Record the raw result and then explicitly instantiate the author-given known-code hypothesis in copied model inputs; never alter sealed cases or labels. This is an evaluator-interface correction, not a new runtime observation or automatic scanner pin inference.

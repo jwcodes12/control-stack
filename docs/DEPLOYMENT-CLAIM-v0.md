@@ -94,7 +94,12 @@ collision negative demonstrates agent authority to HALT as admin, observed as an
 empty sink and a denied subsequent honest task; it does not demonstrate a direct
 sink write without a sink mount.
 
-Unsupported: arbitrary YAML/interpolation/overlays, builds or mutable image tags,
+Fresh schema 0.1 scans normalize YAML/interpolation through the recorded Compose
+CLI and observe source realpaths and offline reference-image facts. YAML requires
+explicit x-cstack.roles. See deployment/TIER3-SCANNER.md. Legacy v0 snapshots do not
+gain these observations through schema-only migration.
+
+Unsupported: arbitrary overlays, builds or mutable image tags,
 non-bind volumes, secrets, devices, host network/privileged containers, unknown
 sidecars or dynamic deputies, root agents, user namespaces/UID remapping, symlink
 or aliased protected sources without faithful resolution, external host helpers,
@@ -102,3 +107,14 @@ HTTP sinks, Kubernetes, WASI, non-Linux systems, arbitrary filesystem destinatio
 whole-host containment, semantic approval quality and general network safety.
 Unsupported features introduce UNKNOWN authority edges and an UNASSURED verdict.
 UNKNOWN never means denied. Policy-forbidden but reachable paths remain bypasses.
+
+
+The Tier 4 TrustedBroker theorem is `deployment_broker_safe`. It transfers graph
+exclusivity, shared quota and one-use approval history to nonce-indexed sink effects
+under `BrokerProtocolRefinement`: actual model transactions, caller bindings and
+reverse-admission-order publication sublist. This is a substantive unproved link;
+it permits admitted-but-unpublished records. It does not replace the older SC26
+full byte-publication equality with a claim that image inspection verifies protocol
+semantics. Concrete Tier 2 transcript replay did not pass its three-attempt limit;
+see deployment/TIER4-TRANSCRIPT-BLOCKED.md. The model witness package is independent
+of that blocked runtime replay, and remaining R2 tiers are still pending.

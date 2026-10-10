@@ -284,3 +284,16 @@ independent replay/tamper checks are in deployment/runs/tier3/containers-final.
 The failed first replay after strengthening the policy guard is retained; the
 final run was recollected. Draft #47 is stacked on #46. Remaining extraction and
 protocol premises persist; Tier 3 does not complete R2. Final-head CI is pending.
+
+## R2 Tier 4 model update
+
+R2Contracts.lean adds a TrustedBroker-based conditional theorem, a universal
+no-bypass path lemma and edge-subset path-safety monotonicity. Its nonce-indexed
+publication sublist is an explicit unproved correspondence that permits pending
+admissions. The older SC26 publication equality remains separately scoped.
+Literal full-Accepted monotonicity is BLOCKED by three checked DB-writer-removal
+countermodels. Concrete Tier 2 transcript replay is BLOCKED after three failed
+compilations; the generic indexed replay theorem alone is proved. No concrete
+replay result is claimed. The independent abstract witness package has 16 contracts,
+45 checked declarations, a nonempty five-transaction broker release and falsifying
+controls. Draft #48 is stacked on #47; final CI pending. R2 is not yet complete.

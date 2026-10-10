@@ -1,0 +1,42 @@
+import json,hashlib
+from pathlib import Path
+root=Path.cwd()
+events=[e for e in json.loads((root/'deployment/runs/tier2/containers-final/events.json').read_text()) if e['case']=='clean']
+cp=json.loads((root/'deployment/runs/tier2/containers-final/clean/compose.json').read_text())
+source=(root/'.git/tier4-indexed-prep.lean').read_text()
+source+='''\nderiving instance DecidableEq for ControlStack.TrustedBroker.Lease\nderiving instance DecidableEq for ControlStack.TrustedBroker.Approval\nnamespace ControlStack.Deployment.TranscriptPrototype\nopen ControlStack\ndef R : TrustedBroker.Roles := {agent := fun uid => uid = 23701 ∨ uid = 23702, reviewer := fun uid => uid = 23703, approver := fun uid => uid = 23704, admin := fun uid => uid = 23700, separated := by intro uid h; rcases h with rfl | rfl <;> decide}\ndef s0 : TrustedBroker.State := TrustedBroker.initial 2\n'''
+leases={};approvals={};nonce_ids={};lease_ids={};digest_ids={}
+def ident(mapping,key):
+ if key not in mapping:mapping[key]=len(mapping)+1
+ return mapping[key]
+proof='(by try simp only [R]; all_goals decide)'
+for i,event in enumerate(events):
+ q=event['request'];uid=int(cp['services'][event['service']]['user']);before=f's{i}';after=f's{i+1}';op=q['op']
+ if not event['response']['ok']:
+  update=before;cert=f'TrustedBroker.Step.deny {before}'
+ elif op=='stage':
+  actual=event['response']['result'];assert hashlib.sha256(__import__('base64').b64decode(q['body_b64'])).hexdigest()==actual
+  digest=ident(digest_ids,actual);update=f'{{ {before} with artifacts := TrustedBroker.put {before}.artifacts {digest} true, intact := TrustedBroker.put {before}.intact {digest} true }}';cert=f'TrustedBroker.Step.stage {before} {uid} {digest} {proof} {proof}'
+ elif op=='review':
+  digest=ident(digest_ids,q['digest']);update=f'{{ {before} with reviews := TrustedBroker.put {before}.reviews {digest} (some {uid}) }}';cert=f'TrustedBroker.Step.review {before} {uid} {digest} {proof} {proof} {proof}'
+ elif op=='issue_lease':
+  key=ident(lease_ids,q['lease_id']);name=f'l{key}';leases[key]=name;source+=f'def {name} : TrustedBroker.Lease := ⟨{q["agent_uid"]},{q["budget"]},0,{q["expires"]},false⟩\n';update=f'{{ {before} with leases := TrustedBroker.put {before}.leases {key} (some {name}) }}';cert=f'TrustedBroker.Step.issue {before} {uid} {key} {name} 0 '+ ' '.join([proof]*8)
+ elif op=='approve':
+  nonce=ident(nonce_ids,q['nonce']);lease=ident(lease_ids,q['lease_id']);digest=ident(digest_ids,q['digest']);name=f'a{nonce}';approvals[nonce]=name;source+=f'def {name} : TrustedBroker.Approval := ⟨{digest},1,{q["agent_uid"]},{lease},{uid},{q["expires"]},false⟩\n';update=f'{{ {before} with approvals := TrustedBroker.put {before}.approvals {nonce} (some {name}) }}';cert=f'TrustedBroker.Step.approve {before} {uid} {nonce} {name} {leases[lease]} 0 23703 '+' '.join([proof]*14)
+ elif op=='effect_release':
+  nonce=ident(nonce_ids,q['nonce']);lease=ident(lease_ids,q['lease_id']);digest=ident(digest_ids,q['digest']);name=f'q{i}';source+=f'def {name} : TrustedBroker.Request := ⟨{uid},{nonce},{digest},1,{lease},1⟩\n';update=f'TrustedBroker.committed {before} {name} {approvals[nonce]} {leases[lease]}'
+  allowed='(by unfold TrustedBroker.Allowed; exact ⟨'+','.join(['by try simp only [R]; all_goals decide']*19+['⟨23703,by decide⟩','by decide'])+'⟩)'
+  cert=f'TrustedBroker.Step.release {before} 0 {name} {approvals[nonce]} {leases[lease]} {allowed}'
+ else:raise ValueError(op)
+ source+=f'def {after} : TrustedBroker.State := {update}\ntheorem tx{i} : TrustedBroker.Step R {before} {after} := {cert}\n'
+n=len(events)
+source+='def interpret : Nat → TrustedBroker.State\n'+''.join(f'  | {i} => s{i}\n' for i in range(n+1))+'  | _ => s0\n'
+source+='def replayStep (s op : Nat) : Nat :=\n'+''.join(f'  if s = {i} ∧ op = {i} then {i+1} else\n' for i in range(n))+'  s\n'
+source+='theorem table_checked (s op : Nat) : TrustedBroker.Step R (interpret s) (interpret (replayStep s op)) := by\n  unfold replayStep\n  split_ifs '+ ' '.join('with h'+str(i) if i==0 else 'h'+str(i) for i in range(n))+'\n'
+for i in range(n):source+=f'  · rcases h{i} with ⟨rfl,rfl⟩; exact tx{i}\n'
+source+='  · exact .deny _\ndef table : IndexedBrokerTable R := ⟨interpret,replayStep,table_checked⟩\n'
+source+='def receipts : List (CheckedTrace.Receipt Nat Nat) := ['+','.join(f'⟨{i},{i},{i+1}⟩' for i in range(n))+']\n'
+source+='theorem transcript_checked : CheckedTrace.verified table.step 0 receipts = true := by decide\n'
+source+=f'theorem runtime_trace : TrustedBroker.Trace R (TrustedBroker.initial 2) s{n} := by\n  simpa [table,interpret,receipts,CheckedTrace.recordedEnd,s0] using indexed_receipts_sound R table receipts 0 transcript_checked\n'
+source+='end ControlStack.Deployment.TranscriptPrototype\n#print axioms ControlStack.Deployment.TranscriptPrototype.runtime_trace\n'
+(root/'.git/tier4-prototype.lean').write_text(source)

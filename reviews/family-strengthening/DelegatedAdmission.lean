@@ -95,9 +95,9 @@ theorem budget_step (s : State) (a : Action) (h : s.spent ≤ s.cap) :
           s.spent + 1 > s.cap ∨
           (s.grant = none ∧ actor ≠ s.owner) ∨
           (s.grant ≠ none ∧ s.grant ≠ some actor)
-      · simpa [step, denied] using h
+      · simpa only [step, if_pos denied] using h
       · have within_cap : s.spent + 1 ≤ s.cap := by omega
-        simpa [step, denied] using within_cap
+        simpa only [step, if_neg denied] using within_cap
   | halt actor =>
       by_cases authorized : actor = s.admin
       · simpa [step, authorized] using h

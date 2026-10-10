@@ -16,6 +16,7 @@ class ArchivedBoundaryTests(unittest.TestCase):
         container_check(ROOT/'deployment-evidence/containers')
         with tempfile.TemporaryDirectory() as tmp:
             copy=Path(tmp)/'containers';shutil.copytree(ROOT/'deployment-evidence/containers',copy)
+            container_check(copy)
             (copy/'clean/sink/1.body').write_bytes(b'unapproved tamper')
             with self.assertRaises(AssertionError):container_check(copy)
     def test_daemon_capture_does_not_drop_security_overrides(self):

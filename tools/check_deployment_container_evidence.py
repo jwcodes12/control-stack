@@ -39,6 +39,8 @@ def check(output):
         def portable(d):
             d=json.loads(json.dumps(d))
             for p in d['sources']+[n['provenance'] for n in d['nodes']+d['edges']]:
+                if p['sha256']==sha(dest/'runtime.json'):p['source']='runtime.json'
+                elif p['sha256']==sha(original):p['source']='compose.json'
                 for root in (str(ROOT),str(Path(pin['host_root']).parent)):
                     if p['source'].startswith(root+'/'):p['source']=p['source'][len(root)+1:]
             return d

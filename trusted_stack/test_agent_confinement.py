@@ -39,12 +39,15 @@ class AgentConfinementTests(unittest.TestCase):
             created = root / "created"
             scratch = root / "scratch"
             victim.write_bytes(b"unchanged")
+            fifo = root / "outside-fifo"
+            os.mkfifo(fifo)
             script = root / "agent.py"
             script.write_text(
                 "import errno, os, socket, fcntl\n"
                 f"victim={str(victim)!r}\n"
                 f"created={str(created)!r}\n"
                 f"scratch={str(scratch)!r}\n"
+                f"fifo={str(fifo)!r}\n"
                 "def denied(op):\n"
                 "    try: op()\n"
                 "    except OSError as e:\n"
@@ -53,6 +56,8 @@ class AgentConfinementTests(unittest.TestCase):
                 "    raise RuntimeError('BYPASS: unauthorized effect succeeded')\n"
                 "denied(lambda: open(victim, 'wb').write(b'damaged'))\n"
                 "denied(lambda: os.mkdir(created))\n"
+                "denied(lambda: os.open(fifo, os.O_WRONLY|os.O_NONBLOCK))\n"
+                "denied(lambda: os.open(victim, os.O_RDONLY|os.O_TRUNC))\n"
                 "denied(lambda: os.unlink(victim))\n"
                 "denied(lambda: os.chmod(victim, 0o777))\n"
                 "denied(lambda: socket.socket(socket.AF_INET, socket.SOCK_STREAM))\n"

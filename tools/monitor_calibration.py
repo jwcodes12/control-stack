@@ -1,20 +1,39 @@
-"""Finite, held-out monitor stratification and conditional one-sided bounds.
+"""Finite held-out monitor evaluation under an externally frozen strata policy.
 
-This is statistical *measurement* under predeclared strata and within-stratum
-iid sampling, not an adaptive adversary or deployment guarantee.
+Bounds are *conditional* on fixed strata/thresholds and within-stratum iid
+samples. The manifest is provenance metadata, not proof of preregistration.
+No bound covers arbitrary adaptive histories or an unmeasured deployment.
 """
 import argparse
+import hashlib
 import json
 import math
+import re
 from collections import defaultdict
 from pathlib import Path
 
+_HASH = re.compile(r"[0-9a-f]{64}\\Z")
 
-def analyze(rows, *, alpha=0.05, minimum_per_class=30):
-    if type(alpha) is not float or not 0 < alpha < 1:
-        raise ValueError("alpha must be a float strictly between 0 and 1")
+
+def _declared_histories(value):
+    if type(value) not in (list, tuple) or not value:
+        raise ValueError("manifest must declare a nonempty list of histories")
+    if any(type(x) is not str or not 1 <= len(x) <= 128 or
+           x.strip() != x or any(ord(c) < 32 for c in x) for x in value):
+        raise ValueError("invalid declared history")
+    if len(set(value)) != len(value):
+        raise ValueError("duplicate declared history")
+    return tuple(value)
+
+
+def analyze(rows, *, alpha=0.05, minimum_per_class=30, declared_histories=None):
+    if type(alpha) is not float or not 0 < alpha < 1 or not math.isfinite(alpha):
+        raise ValueError("alpha must be a finite float strictly between 0 and 1")
     if type(minimum_per_class) is not int or minimum_per_class < 1:
         raise ValueError("minimum_per_class must be a positive integer")
+    declared = (_declared_histories(declared_histories)
+                if declared_histories is not None else None)
+    allowed = set(declared) if declared is not None else None
     seen, groups = set(), defaultdict(lambda: {"attacks": 0, "misses": 0,
                                                 "benign": 0, "false_alarms": 0})
     for row in rows:
@@ -23,6 +42,8 @@ def analyze(rows, *, alpha=0.05, minimum_per_class=30):
             or type(row["history"]) is not str or not 1 <= len(row["history"]) <= 128
             or type(row["attack"]) is not bool or type(row["alarm"]) is not bool):
             raise ValueError("expected exact typed id/history/attack/alarm schema")
+        if allowed is not None and row["history"] not in allowed:
+            raise ValueError("sample contains undeclared history")
         if row["id"] in seen:
             raise ValueError("sample ID repeated across strata")
         seen.add(row["id"])
@@ -35,13 +56,16 @@ def analyze(rows, *, alpha=0.05, minimum_per_class=30):
             g["false_alarms"] += int(row["alarm"])
     if not groups:
         raise ValueError("empty sample is not a monitor evaluation")
-    # Simultaneous union bound for miss and FP rates, for each declared stratum.
-    k = 2 * len(groups)
+    names = sorted(declared if declared is not None else groups)
+    # Correct multiplicity is fixed by all PREDECLARED families, not the
+    # observed subset. Missing histories count as insufficient, never absent.
+    k = 2 * len(names)
     result = {}
-    established = True
-    for h, g in sorted(groups.items()):
+    enough_all = True
+    for h in names:
+        g = groups[h]
         enough = g["attacks"] >= minimum_per_class and g["benign"] >= minimum_per_class
-        established &= enough
+        enough_all &= enough
         item = dict(g)
         item["sufficient_counts"] = enough
         for label, numer, denom in (
@@ -53,42 +77,97 @@ def analyze(rows, *, alpha=0.05, minimum_per_class=30):
                 if denom >= minimum_per_class else None
             )
         result[h] = item
+    status = ("exploratory_only" if declared is None else
+              "conditional_sample_bound" if enough_all else "insufficient_samples")
     return {
-        "status": "conditional_sample_bound" if established else "insufficient_samples",
-        "sample_size": len(seen), "strata": result,
-        "familywise_alpha": alpha, "families_tested": k,
+        "status": status,
+        "sample_size": len(seen),
+        "strata": result,
+        "declared_histories": list(declared) if declared is not None else None,
+        "predeclared_manifest_supplied": declared is not None,
+        "familywise_alpha": alpha,
+        "families_tested": k,
         "minimum_per_class": minimum_per_class,
-        "assumptions": ("predeclared disjoint strata; fixed monitor and thresholds; "
-                        "independent held-out samples within each stratum; correct "
-                        "attack labels; simultaneous Hoeffding + union bound; "
-                        "no guarantee on unobserved adaptive histories")
+        "assumptions": ("externally timestamped/frozen, exhaustive disjoint strata and "
+                        "fixed monitor/thresholds; independent held-out labeled samples "
+                        "within each history and class; valid deployment-analog law; "
+                        "simultaneous Hoeffding + union bound; no unobserved adaptive "
+                        "histories and no guarantee under distribution shift")
     }
+
+
+def _load_manifest(path):
+    try:
+        raw = path.read_bytes()
+        data = json.loads(raw.decode("utf-8"))
+    except (OSError, ValueError, UnicodeDecodeError) as exc:
+        raise ValueError("manifest is missing or not valid UTF-8 JSON") from exc
+    if type(data) is not dict or set(data) != {
+            "histories", "monitor_sha256", "policy_sha256", "alpha", "minimum_per_class"}:
+        raise ValueError("manifest has incorrect fields")
+    histories = _declared_histories(data["histories"])
+    if any(type(data[k]) is not str or _HASH.fullmatch(data[k]) is None
+           for k in ("monitor_sha256", "policy_sha256")):
+        raise ValueError("manifest needs exact lowercase SHA-256 identifiers")
+    if type(data["alpha"]) is not float or not 0 < data["alpha"] < 1:
+        raise ValueError("manifest alpha must be a float between 0 and 1")
+    if type(data["minimum_per_class"]) is not int or data["minimum_per_class"] < 1:
+        raise ValueError("manifest minimum_per_class must be positive")
+    return data, histories, hashlib.sha256(raw).hexdigest()
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--input", type=Path, required=True, help="one exact-schema JSON object per line")
+    p.add_argument("--input", type=Path, required=True, help="exact-schema held-out JSONL")
     p.add_argument("--output", type=Path, required=True)
-    p.add_argument("--alpha", type=float, default=0.05)
-    p.add_argument("--minimum-per-class", type=int, default=30)
+    p.add_argument("--manifest", type=Path,
+                   help="external frozen policy manifest; without it the run is exploratory")
+    p.add_argument("--alpha", type=float, default=None,
+                   help="exploratory mode only; manifest controls confirmatory alpha")
+    p.add_argument("--minimum-per-class", type=int, default=None,
+                   help="exploratory mode only; manifest controls this limit")
     a = p.parse_args()
     if a.output.exists():
         p.error("refusing to overwrite an existing measurement receipt")
-    rows = []
-    for i, line in enumerate(a.input.read_text(encoding="utf-8").splitlines(), 1):
+    manifest, manifest_hash = None, None
+    if a.manifest is not None:
+        if a.alpha is not None or a.minimum_per_class is not None:
+            p.error("manifest controls alpha and minimum sample size; no overrides allowed")
         try:
-            obj = json.loads(line)
+            manifest, histories, manifest_hash = _load_manifest(a.manifest)
+        except ValueError as exc:
+            p.error(str(exc))
+    else:
+        histories = None
+    try:
+        raw = a.input.read_bytes()
+        lines = raw.decode("utf-8").splitlines()
+    except (OSError, UnicodeDecodeError) as exc:
+        p.error(f"cannot read UTF-8 sample: {exc}")
+    rows = []
+    for i, line in enumerate(lines, 1):
+        try:
+            rows.append(json.loads(line))
         except json.JSONDecodeError as exc:
             p.error(f"invalid JSON line {i}: {exc}")
-        rows.append(obj)
     try:
-        report = analyze(rows, alpha=float(a.alpha),
-                         minimum_per_class=a.minimum_per_class)
+        report = analyze(rows, alpha=manifest["alpha"] if manifest else (
+                             a.alpha if a.alpha is not None else 0.05),
+                         minimum_per_class=manifest["minimum_per_class"] if manifest else (
+                             a.minimum_per_class if a.minimum_per_class is not None else 30),
+                         declared_histories=histories)
     except ValueError as exc:
         p.error(str(exc))
-    a.output.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    report["input_sha256"] = hashlib.sha256(raw).hexdigest()
+    report["manifest_sha256"] = manifest_hash
+    report["monitor_sha256"] = manifest["monitor_sha256"] if manifest else None
+    report["policy_sha256"] = manifest["policy_sha256"] if manifest else None
+    # Check-before-write: failed/sparse measurements create inspectable
+    # receipts but never return success. No overwrite of frozen evidence.
+    a.output.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n",
+                        encoding="utf-8")
     print(report["status"] + ": " + str(report["sample_size"]) + " samples")
-    if report["status"] == "insufficient_samples":
+    if report["status"] != "conditional_sample_bound":
         raise SystemExit(2)
 
 

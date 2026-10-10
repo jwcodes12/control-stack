@@ -1,5 +1,10 @@
-"""Statistical monitor audit must never certify missing labels or sparse strata."""
+"""Monitor evidence cannot become confirmatory via observed-strata selection."""
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
+from pathlib import Path
 
 from tools.monitor_calibration import analyze
 
@@ -13,7 +18,7 @@ class MonitorCalibratorTests(unittest.TestCase):
                   "attack": False, "alarm": i % 5 == 0} for i in range(n)])
 
     def test_rates_and_simultaneous_bounds(self):
-        result = analyze(self.rows())
+        result = analyze(self.rows(), declared_histories=["observed-a"])
         self.assertEqual(result["status"], "conditional_sample_bound")
         s = result["strata"]["observed-a"]
         self.assertEqual(s["attacks"], 35)
@@ -25,15 +30,15 @@ class MonitorCalibratorTests(unittest.TestCase):
         self.assertEqual(result["families_tested"], 2)
 
     def test_sparse_and_zero_attack_never_silently_certifies(self):
-        result = analyze(self.rows(8))
+        result = analyze(self.rows(8), declared_histories=["observed-a"])
         self.assertEqual(result["status"], "insufficient_samples")
         self.assertIsNone(result["strata"]["observed-a"]["miss_upper"])
         only_benign = [r for r in self.rows() if not r["attack"]]
-        result = analyze(only_benign)
+        result = analyze(only_benign, declared_histories=["observed-a"])
         self.assertEqual(result["status"], "insufficient_samples")
         self.assertIsNone(result["strata"]["observed-a"]["miss_upper"])
 
-    def test_duplicate_ids_invalid_types_and_unobserved_history(self):
+    def test_duplicate_ids_types_and_non_declared_histories(self):
         with self.assertRaises(ValueError):
             analyze(self.rows() + [self.rows()[0]])
         with self.assertRaises(ValueError):
@@ -41,17 +46,64 @@ class MonitorCalibratorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             analyze([{"id": "a", "history": "h", "attack": False,
                       "alarm": False, "unknown": "bypass"}])
-        split = self.rows() + [{"id": "sparse-a", "history": "adaptive-new",
-                               "attack": True, "alarm": False}]
-        self.assertEqual(analyze(split)["status"], "insufficient_samples")
+        with self.assertRaises(ValueError):
+            analyze(self.rows(), declared_histories=["other"])
+        with self.assertRaises(ValueError):
+            analyze(self.rows(), declared_histories=["observed-a", "observed-a"])
 
-    def test_bonferroni_number_of_histories_tightens_bounds(self):
-        rows = self.rows()
-        a = analyze(rows)["strata"]["observed-a"]["miss_upper"]
-        rows += [{"id": "b-" + r["id"], "history": "observed-b",
-                  "attack": r["attack"], "alarm": r["alarm"]}
-                 for r in self.rows()]
-        self.assertGreater(analyze(rows)["strata"]["observed-a"]["miss_upper"], a)
+    def test_missing_declared_history_fails_closed(self):
+        result = analyze(self.rows(), declared_histories=["observed-a", "missing-b"])
+        self.assertEqual(result["status"], "insufficient_samples")
+        self.assertEqual(result["families_tested"], 4)
+        self.assertEqual(result["strata"]["missing-b"]["attacks"], 0)
+        self.assertIsNone(result["strata"]["missing-b"]["miss_upper"])
+
+    def test_no_manifest_is_only_exploratory(self):
+        self.assertEqual(analyze(self.rows())["status"], "exploratory_only")
+
+    def test_bonferroni_penalty_counts_declared_families(self):
+        a = analyze(self.rows(), declared_histories=["observed-a"])
+        b = analyze(self.rows(), declared_histories=["observed-a", "missing-b"])
+        self.assertGreater(b["strata"]["observed-a"]["miss_upper"],
+                           a["strata"]["observed-a"]["miss_upper"])
+
+    def test_cli_manifest_receipt_and_no_override(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sample = root / "sample.jsonl"
+            manifest = root / "manifest.json"
+            sample.write_text("".join(json.dumps(r) + "\n" for r in self.rows()),
+                              encoding="utf-8")
+            manifest.write_text(json.dumps({
+                "histories": ["observed-a"],
+                "alpha": 0.05, "minimum_per_class": 30,
+                "monitor_sha256": "a" * 64, "policy_sha256": "b" * 64}),
+                encoding="utf-8")
+            output = root / "report.json"
+            cmd = [sys.executable, "-m", "tools.monitor_calibration",
+                   "--input", str(sample), "--output", str(output),
+                   "--manifest", str(manifest)]
+            self.assertEqual(subprocess.run(cmd, capture_output=True).returncode, 0)
+            report = json.loads(output.read_text())
+            self.assertEqual(report["status"], "conditional_sample_bound")
+            self.assertEqual(report["monitor_sha256"], "a" * 64)
+            self.assertEqual(len(report["input_sha256"]), 64)
+            self.assertNotEqual(subprocess.run(cmd, capture_output=True).returncode, 0)
+            output.unlink()
+            self.assertNotEqual(subprocess.run(cmd + ["--alpha", "0.9"],
+                                             capture_output=True).returncode, 0)
+            self.assertFalse(output.exists())
+
+    def test_cli_exploratory_exit_nonzero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sample = root / "rows.jsonl"
+            out = root / "report.json"
+            sample.write_text("".join(json.dumps(r) + "\n" for r in self.rows()))
+            cmd = [sys.executable, "-m", "tools.monitor_calibration",
+                   "--input", str(sample), "--output", str(out)]
+            self.assertEqual(subprocess.run(cmd, capture_output=True).returncode, 2)
+            self.assertEqual(json.loads(out.read_text())["status"], "exploratory_only")
 
 
 if __name__ == "__main__":

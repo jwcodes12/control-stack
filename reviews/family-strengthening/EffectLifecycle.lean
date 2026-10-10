@@ -22,7 +22,7 @@ structure State where
   admitted : Finset Nat
   published : Finset Nat
   receipted : Finset Nat
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 inductive Action where
   | request (agent delegate releaseId cost : Nat)

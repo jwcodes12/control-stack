@@ -1,0 +1,19 @@
+name: monitor-calibration
+on:
+  pull_request:
+    paths:
+      - 'tools/monitor_calibration.py'
+      - 'tools/test_monitor_calibration.py'
+      - '.github/workflows/monitor-calibration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  conditional-monitor-bound:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Typed history, sparse-sample, false-positive and union-bound tests
+        run: python3 -m unittest tools.test_monitor_calibration -v

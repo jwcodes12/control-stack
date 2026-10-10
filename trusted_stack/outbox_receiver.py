@@ -162,6 +162,20 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                     not controller.principals.allows(approval[4], "approvers") or
                     not controller.principals.allows(release_agent, "agents")):
                 raise Denied("delivery approval/release binding is invalid")
+            grant = db.execute(
+                "SELECT grantor_uid,delegate_uid,revoked FROM delegations WHERE nonce=?",
+                (nonce,)).fetchone()
+            executed = db.execute(
+                """SELECT nonce,grantor_uid,delegate_uid
+                   FROM delegated_releases WHERE release_id=?""",
+                (release_id,)).fetchone()
+            if grant is None:
+                if executed is not None:
+                    raise Denied("unjustified delegated executor receipt")
+            elif (grant[0] != release_agent or grant[2] != 0 or
+                  executed != (nonce, release_agent, grant[1]) or
+                  not controller.principals.allows(grant[1], "agents")):
+                raise Denied("delegated effect grant revoked or provenance invalid")
             lease = db.execute(
                 "SELECT agent_uid, expires, revoked FROM leases WHERE lease_id=?",
                 (release_lease,)).fetchone()

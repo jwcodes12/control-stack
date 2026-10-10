@@ -62,6 +62,20 @@ class LocalReceiverTests(unittest.TestCase):
         self.assertEqual(deliver_record(self.c, release_id, self.out), "1.body")
         self.assertEqual(len(self.receipts()), 1)
 
+    def test_revocation_blocks_delayed_external_delivery(self):
+        release_id = self.admit()
+        self.c.revoke(os.geteuid(), "lease")
+        with self.assertRaises(Denied):
+            deliver_record(self.c, release_id, self.out)
+        self.assertFalse((self.out / "1.body").exists())
+
+    def test_approval_and_lease_expiry_before_delayed_delivery(self):
+        release_id = self.admit()
+        advanced = Controller(self.db, self.roles, lambda: 151)
+        with self.assertRaises(Denied):
+            deliver_record(advanced, release_id, self.out)
+        self.assertFalse((self.out / "1.body").exists())
+
     def test_halt_serialization_and_no_post_halt_delivery(self):
         release_id = self.admit()
         self.c.halt(os.geteuid())

@@ -114,6 +114,20 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
             if row is None:
                 raise Denied("no committed effect record for release")
             digest, destination, body, release_digest, release_dest, nonce = row
+            # Admission-time approval alone is insufficient for delayed
+            # dispatch: respect later revocation and expiry before publishing.
+            approval = db.execute(
+                "SELECT expires,used,lease_id,signer_uid FROM approvals WHERE nonce=?",
+                (nonce,)).fetchone()
+            if approval is None or approval[1] != 1 or not controller.principals.allows(
+                    approval[3], "approvers"):
+                raise Denied("delivery approval no longer valid")
+            lease = db.execute(
+                "SELECT expires,revoked FROM leases WHERE lease_id=?",
+                (approval[2],)).fetchone()
+            if (lease is None or lease[1] or approval[0] <= controller._now()
+                    or lease[0] <= controller._now()):
+                raise Denied("external delivery revoked or expired")
             if (type(body) is not bytes or len(body) > MAX_BODY or
                     digest != hashlib.sha256(body).hexdigest() or
                     digest != release_digest or destination != release_dest):

@@ -12,7 +12,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-_HASH = re.compile(r"[0-9a-f]{64}\\Z")
+_HASH = re.compile(r"[0-9a-f]{64}\Z")
 
 
 def _declared_histories(value):

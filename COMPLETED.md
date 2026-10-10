@@ -35,6 +35,8 @@ python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v
 python3 -m unittest tools.test_monitor_calibration -v
 lake exe cache get
 lake env lean reviews/family-strengthening/Remaining.lean
+lake env lean reviews/family-strengthening/EffectLifecycle.lean
+python3 tools/joint_runtime_lean_difftest.py
 python3 tools/build_registry.py --check
 python3 tools/build_statement_catalog.py --check
 python3 tools/build_status.py --check

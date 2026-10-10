@@ -1,0 +1,11 @@
+# Trusted reference SQLite effect boundary
+
+The new broker operation `effect_release` consumes one exact, user-approved, reviewed artifact and appends its bytes to `effect_records` in the **same SQLite transaction** as the one-use nonce, lease/global budget charge and `releases` record. There is deliberately no filesystem execution, network transmission, process kill, deployment, bank transfer, or external effect sink. The database append is the entire modeled effect.
+
+Authorization is based on the broker-derived `SO_PEERCRED` caller UID, never a caller-provided UID (as long as traffic enters through `trusted_stack.server.serve`). The controller's direct Python methods and tests simulate identity and are not an authentication boundary. The trusted database directory, OS, clock, review/approver roles, SHA-256 collision resistance, and mediation completeness are premises. Existing database files without the new table are not automatically migrated: effect release fails closed rather than fabricating compatibility.
+
+The new `effect_records` table is keyed by the release ID and stores the exact reviewed body and digest. If insertion fails, the entire transaction rolls back: approval remains unused and neither effect, release, nor budget charge persists. Idempotency is per unique approved nonce. All other effects outside the database are unmediated by this implementation. A future external adapter needs an independently established delivery/idempotency and crash-recovery refinement before any stronger claim.
+
+Run `python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v`. Additional negative tests cover content substitution, forged roles, bad destinations, duplicate release races, HALT, an injected SQLite insertion failure and rollback.
+
+F6 adds a formally checked common-cause counterexample: two monitors can each have 50% recall on a finite population yet perfectly correlated misses, so a product-of-miss-rates bound is false without independence/conditional dependence assumptions. F8 adds a quantified family-invariant joint-step induction: every component invariant survives arbitrary interleaving **if every joint transition preserves all invariants**. Neither result establishes untested monitor accuracy, live dispatcher conformity or deployment assurance.

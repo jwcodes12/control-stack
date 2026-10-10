@@ -48,6 +48,21 @@ theorem confused_deputy_counterexample :
       .invokeTrustedDeputy).externalEffect = true := by
   rfl
 
+/-- A finite family of component invariants is preserved under arbitrary
+interleaving only when EVERY joint step preserves ALL of them simultaneously.
+This stronger quantification does not establish complete external mediation. -/
+theorem shared_family_invariants {S A ι : Type} (I : ι → S → Prop)
+    (step : S → A → S) (s : S) (actions : List A)
+    (hJoint : ∀ (x : S) (a : A), (∀ i, I i x) → ∀ i, I i (step x a))
+    (hInit : ∀ i, I i s) :
+    ∀ i, I i (run step s actions) := by
+  induction actions generalizing s with
+  | nil => simpa [run] using hInit
+  | cons a rest ih =>
+      change ∀ i, I i (run step (step s a) rest)
+      exact ih (step s a) (hJoint s a hInit)
+
+#print axioms shared_family_invariants
 #print axioms shared_invariants
 #print axioms confused_deputy_counterexample
 

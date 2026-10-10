@@ -57,7 +57,7 @@ actor-local budgets. It deliberately models only an abstract admission count. -/
 def step (cap : Nat) (s : BudgetState) : BudgetOp → BudgetState
   | .halt => { s with halted := true }
   | .release cost =>
-      if s.halted = false ∧ s.spent + cost ≤ cap
+      if s.halted = false ∧ 0 < cost ∧ s.spent + cost ≤ cap
       then { s with spent := s.spent + cost }
       else s
 
@@ -66,9 +66,10 @@ theorem step_within_cap (cap : Nat) (s : BudgetState) (a : BudgetOp)
   cases a with
   | halt => simpa [step] using h
   | release cost =>
-    unfold step
+    change (if s.halted = false ∧ 0 < cost ∧ s.spent + cost ≤ cap
+      then s.spent + cost else s.spent) ≤ cap
     split_ifs with hc
-    · exact hc.2
+    · exact hc.2.2
     · exact h
 
 theorem all_actor_interleavings_within_cap
@@ -82,6 +83,17 @@ theorem all_actor_interleavings_within_cap
       (step cap s a) rest).spent ≤ cap
     exact ih (step cap s a) (step_within_cap cap s a h)
 
+/-- A zero-cost request cannot increase effects without charging a budget. -/
+theorem zero_cost_rejected (cap : Nat) (s : BudgetState) :
+    step cap s (.release 0) = s := by
+  simp [step]
+
+/-- A release remains inert after trusted HALT regardless of its cost. -/
+theorem release_after_halt (cap : Nat) (s : BudgetState) (cost : Nat)
+    (h : s.halted = true) :
+    step cap s (.release cost) = s := by
+  simp [step, h]
+
 theorem sticky_halt (cap : Nat) (s : BudgetState) (a : BudgetOp)
     (h : s.halted = true) : (step cap s a).halted = true := by
   cases a with
@@ -90,5 +102,7 @@ theorem sticky_halt (cap : Nat) (s : BudgetState) (a : BudgetOp)
 
 #print axioms step_within_cap
 #print axioms all_actor_interleavings_within_cap
+#print axioms zero_cost_rejected
+#print axioms release_after_halt
 #print axioms sticky_halt
 end ControlStack.ReviewF8

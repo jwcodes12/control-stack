@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
 import secrets
 import sqlite3
 import stat
@@ -20,7 +21,7 @@ _FILE_FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
 _DIR_FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
 
 
-def _read_verified(dirfd: int, name: str, expected: bytes) -> None:
+def _read_verified(dirfd: int, name: str, expected: bytes, *, links: int = 1) -> None:
     try:
         fd = os.open(name, _FILE_FLAGS, dir_fd=dirfd)
     except FileNotFoundError as exc:
@@ -29,7 +30,7 @@ def _read_verified(dirfd: int, name: str, expected: bytes) -> None:
         raise Denied("receiver file cannot be safely opened") from exc
     try:
         info = os.fstat(fd)
-        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != links
                 or info.st_uid != os.geteuid() or info.st_mode & 0o077
                 or info.st_size != len(expected) or info.st_size > MAX_BODY):
             raise Denied("receiver file metadata differs from trusted record")
@@ -43,6 +44,33 @@ def _read_verified(dirfd: int, name: str, expected: bytes) -> None:
             raise Denied("receiver file content differs from trusted record")
     finally:
         os.close(fd)
+
+
+def _recover_interrupted_link_cleanup(dirfd: int, name: str, expected: bytes) -> None:
+    """Recover ONLY the post-link/pre-unlink crash state under a private owner.
+
+    Both names must be the exact same verified regular inode, and precisely
+    one trusted randomly named temporary link must remain. A third hardlink,
+    content mismatch, suspicious symlink or ambiguous debris is a denial.
+    This assumes no untrusted actor can mutate the private trusted directory.
+    """
+    _read_verified(dirfd, name, expected, links=2)
+    published = os.stat(name, dir_fd=dirfd, follow_symlinks=False)
+    matches = []
+    for candidate in os.listdir(dirfd):
+        if re.fullmatch(r"\\.pending-[0-9a-f]{32}", candidate) is None:
+            continue
+        try:
+            info = os.stat(candidate, dir_fd=dirfd, follow_symlinks=False)
+        except FileNotFoundError as exc:
+            raise Denied("receiver directory changed during reconciliation") from exc
+        if info.st_dev == published.st_dev and info.st_ino == published.st_ino:
+            matches.append(candidate)
+    if len(matches) != 1:
+        raise Denied("cannot identify a unique interrupted temporary hardlink")
+    os.unlink(matches[0], dir_fd=dirfd)
+    os.fsync(dirfd)
+    _read_verified(dirfd, name, expected)
 
 
 def _publish(dirfd: int, name: str, body: bytes) -> None:
@@ -129,8 +157,9 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
             lease = db.execute(
                 "SELECT expires,revoked FROM leases WHERE lease_id=?",
                 (approval[2],)).fetchone()
-            if (lease is None or lease[1] or approval[0] <= controller._now()
-                    or lease[0] <= controller._now()):
+            checked_at = controller._now()
+            if (lease is None or lease[1] or approval[0] <= checked_at
+                    or lease[0] <= checked_at):
                 raise Denied("external delivery revoked or expired")
             if (type(body) is not bytes or len(body) > MAX_BODY or
                     digest != hashlib.sha256(body).hexdigest() or
@@ -154,8 +183,9 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                     # ONLY missing files may be newly published. Any different
                     # preexisting bytes, symlink, or metadata mismatch fails shut.
                     if not isinstance(exc.__cause__, FileNotFoundError):
-                        raise
-                    _publish(dirfd, name, body)
+                        _recover_interrupted_link_cleanup(dirfd, name, body)
+                    else:
+                        _publish(dirfd, name, body)
                 if after_publish is not None:
                     after_publish()
                 db.execute(

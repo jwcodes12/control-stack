@@ -95,6 +95,43 @@ class LocalReceiverTests(unittest.TestCase):
         self.assertEqual((self.out / "1.body").read_bytes(), self.body)
         self.assertEqual(self.receipts(), [])
 
+
+    def test_partial_hardlink_cleanup_crash_reconciles_exact_inode(self):
+        release_id = self.admit()
+        # Simulate SIGKILL directly after hard-link publication but before
+        # cleanup/receipt: these are two names for ONE trusted verified inode.
+        pending = self.out / (".pending-" + "a" * 32)
+        pending.write_bytes(self.body)
+        pending.chmod(0o600)
+        os.link(pending, self.out / "1.body")
+        self.assertEqual((self.out / "1.body").stat().st_nlink, 2)
+        self.assertEqual(self.receipts(), [])
+        self.assertEqual(deliver_record(self.c, release_id, self.out), "1.body")
+        self.assertFalse(pending.exists())
+        self.assertEqual((self.out / "1.body").stat().st_nlink, 1)
+        self.assertEqual(self.receipts(), [(1, self.digest, "label/not-path")])
+
+    def test_unknown_hardlink_is_not_cleaned_or_receipted(self):
+        release_id = self.admit()
+        unwanted = self.out / "not-a-trusted-pending-link"
+        unwanted.write_bytes(self.body)
+        unwanted.chmod(0o600)
+        os.link(unwanted, self.out / "1.body")
+        with self.assertRaises(Denied):
+            deliver_record(self.c, release_id, self.out)
+        self.assertTrue(unwanted.exists())
+        self.assertEqual(self.receipts(), [])
+
+    def test_delayed_dispatch_uses_one_clock_sample_for_both_expiries(self):
+        release_id = self.admit()
+        samples = []
+        def clock():
+            samples.append(125)
+            return 125
+        fresh = Controller(self.db, self.roles, clock)
+        self.assertEqual(deliver_record(fresh, release_id, self.out), "1.body")
+        self.assertEqual(samples, [125])
+
     def test_uncommitted_replay_and_corrupt_receiver_refused(self):
         with self.assertRaises(Denied):
             deliver_record(self.c, 1, self.out)

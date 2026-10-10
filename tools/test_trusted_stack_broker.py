@@ -3,7 +3,7 @@
 
 This starts an actual Unix socket broker with a private SQLite state store,
 then makes agent, reviewer, approver, admin and forged requests from different
-host process UIDs. It invokes NO external deploy, exec or egress adapter.
+host process UIDs. It makes exactly one broker-owned file publication; no exec or egress.
 """
 import base64
 import hashlib
@@ -61,6 +61,8 @@ def main():
                         childdir / "trusted_stack")
         state = root / "private"
         state.mkdir(mode=0o700)
+        effectdir = state / "published"
+        effectdir.mkdir(mode=0o700)
         sockpath = root / "trusted.sock"
         cmd = [sys.executable, "-m", "trusted_stack.server",
                "--db", str(state / "state.sqlite"),
@@ -69,7 +71,8 @@ def main():
                "--reviewers", str(REVIEWER),
                "--approvers", str(APPROVER),
                "--admins", "0",
-               "--bootstrap-cap", "2"]
+               "--bootstrap-cap", "2",
+               "--effect-root", str(effectdir)]
         proc = subprocess.Popen(cmd, cwd=Path(__file__).resolve().parents[1],
                                 stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
         try:
@@ -100,7 +103,7 @@ def main():
             call(AGENT, {"op": "review", "digest": digest}, False)
             call(REVIEWER, {"op": "review", "digest": digest}, True)
             call(0, {"op": "issue_lease", "lease_id": "lease1", "agent_uid": AGENT,
-                     "budget": 1, "expires": int(time.time()) + 500}, True)
+                     "budget": 2, "expires": int(time.time()) + 500}, True)
             call(AGENT, {"op": "approve", "nonce": "n1", "digest": digest,
                          "destination": "staging/item", "agent_uid": AGENT,
                          "lease_id": "lease1", "expires": int(time.time()) + 400}, False)
@@ -118,12 +121,28 @@ def main():
             assert call(0, {"op": "state"}, True)["result"] == {
                 "global_cap": 2, "halted": False, "spent": 1, "releases": 1}
             call(AGENT, release, False)
+            # A SECOND, independently signed nonce creates the narrowly
+            # permitted real filesystem effect; the first record-only
+            # release still counts against shared budget.
+            call(APPROVER, {"op": "approve", "nonce": "n2", "digest": digest,
+                            "destination": "staging/item", "agent_uid": AGENT,
+                            "lease_id": "lease1", "expires": int(time.time()) + 400}, True)
+            call(AGENT, {**release, "op": "effect_release", "nonce": "n2"}, True)
+            publish = {"op": "publish_effect", "release_id": 2}
+            call(AGENT, publish, False)
+            call(OTHER, publish, False)
+            assert call(0, publish, True)["result"]["file"] == "effect-000000000002.bin"
+            assert (effectdir / "effect-000000000002.bin").read_bytes() == content
+            call(0, publish, True)  # reply loss/retry cannot duplicate a file
+            assert [p.name for p in effectdir.iterdir()] == ["effect-000000000002.bin"]
+            assert (effectdir / "effect-000000000002.bin").stat().st_mode & 0o077 == 0
             call(0, {"op": "halt"}, True)
+            call(0, publish, False)  # no new post-HALT publish operations
             call(AGENT, {"op": "stage", "body_b64": base64.b64encode(b"x").decode()}, False)
             assert call(0, {"op": "state"}, True)["result"] == {
                 "global_cap": 2, "halted": True, "spent": 1, "releases": 1}
             print(f"PASS: {checked} real Unix peer-credential broker checks, "
-                  "9 disconnected callers, 1 atomic release record; no external effects")
+                  "9 disconnected callers, 2 releases and 1 exact file effect")
         finally:
             proc.terminate()
             try:

@@ -7,8 +7,7 @@ Implemented as a reference control stack with a durable SQLite event gate:
 - trusted, shared, transactional per-agent leases and global cap with revocation (F5/F8);
 - atomic check-before-record, fail-closed state checks and irreversible sticky halt bit (F1/F3).
 
-**The modeled release is exclusively a SQLite row. It is not a real
-deployment, privileged syscall, network connection or executed process.**
+**The base modeled release is a SQLite row. An optional root-owned exact-byte\nfile publication is now implemented and tested, but it is NOT deployment,\narbitrary privileged syscall mediation, network connection or execution.**
 The service cannot prevent an agent from doing dangerous work on another
 resource not mediated by this broker. Tests are *not* an OS-verified refinement
 proof or proof of external effects after a crash.
@@ -28,3 +27,7 @@ Current blockers:
 These shortcomings are not silently promoted by the new code. The permitted
 native x86 KVM feasibility from \`reviews/assurance-priorities/host-port-readiness.md\`
 does not imply a frozen workload pass or no shared timing channel.
+
+October 10 extension: see [file publication trust boundary](../docs/REAL-FILE-OUTBOX.md),
+including Linux peer-credential integration and post-HALT tests. No scenario
+assurance category is promoted by this operation.

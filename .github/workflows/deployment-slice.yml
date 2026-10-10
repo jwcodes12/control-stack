@@ -47,8 +47,13 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y libseccomp2
       - name: Clean, two mutations and HALT during real publication
         run: sudo python3 tools/run_deployment_boundary.py --output /tmp/deployment-runtime
+      - name: Independently check raw sink evidence and package private files
+        run: |
+          sudo python3 tools/check_deployment_evidence.py /tmp/deployment-runtime
+          sudo tar -C /tmp -czf /tmp/deployment-runtime-sink-evidence.tar.gz deployment-runtime
+          sudo chown "$(id -u):$(id -g)" /tmp/deployment-runtime-sink-evidence.tar.gz
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: deployment-runtime-sink-evidence
-          path: /tmp/deployment-runtime
+          path: /tmp/deployment-runtime-sink-evidence.tar.gz

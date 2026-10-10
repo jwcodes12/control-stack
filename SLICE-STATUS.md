@@ -124,7 +124,9 @@ fixed to /sbin/poweroff and the full guest check rerun to clean power-down.
 An initial fast check was 29/39: several existing script imports lacked the repo
 on PYTHONPATH, copied Lean cache lacked moved Core modules, and one existing script required root (the local-receiver OS boundary script skips unprivileged runs). cstack now supplies repo PYTHONPATH; necessary Lean prerequisites
 were rebuilt. Existing generated result pages had two stale test-command listings
-and were regenerated with build_results. The full ledger was regenerated with
+and were regenerated with build_results. The first final-head CI runtime assertions passed, but artifact upload failed with EACCES while traversing the private root-owned directory (run 38028612537). The workflow now independently checks the raw sink as root, packages a tar file as root, and uploads that readable file without weakening sink/database permissions.
+
+The full ledger was regenerated with
 Lean to retain its Lean section; no hand editing of generated files was used.
 
 ## Commands, CI and draft PR

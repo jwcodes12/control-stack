@@ -44,6 +44,7 @@ def run(output):
         cmd(['sudo','-n','cp','-a',str(state/'sink'),str(dest/'sink')])
         cmd(['sudo','-n','chown','-R',str(__import__('os').getuid()),str(dest/'sink')])
         files={p.name:{'sha256':sha(p),'body_b64':base64.b64encode(p.read_bytes()).decode(),'size':p.stat().st_size} for p in sorted((dest/'sink').iterdir()) if p.is_file()}
+        if not files:(dest/'sink/.gitkeep').touch()  # Git cannot preserve an empty directory.
         (dest/'sink-state.json').write_text(json.dumps(files,sort_keys=True,indent=2)+'\n')
         return files
     compose=None

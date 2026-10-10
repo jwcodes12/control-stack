@@ -228,6 +228,10 @@ Lean to retain its Lean section; no hand editing of generated files was used.
 
 ## Follow-up failures and corrections
 
+The first follow-up CI fixture job failed because Git omitted the empty UID-collision
+sink directory. A zero-byte archival marker now preserves it; the checker validates
+and excludes only that marker, keeping unexpected sink files detectable.
+
 The first seeded batch parser hit Lean's abbreviated list rendering; the checker
 now prints every Boolean explicitly and checks all 200 values. An evidence check
 first compared relative versus absolute provenance paths; portable source-path

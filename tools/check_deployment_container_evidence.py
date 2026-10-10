@@ -45,7 +45,9 @@ def check(output):
         assert portable(ir)==portable(stored_ir),('IR mismatch',case)
         bundle=json.loads((dest/'bundle.json').read_text())
         assert bundle['ir_sha256']==verify(stored_ir)['ir_sha256']
-        actual={p.name:{'sha256':sha(p),'body_b64':base64.b64encode(p.read_bytes()).decode(),'size':p.stat().st_size} for p in sorted((dest/'sink').iterdir()) if p.is_file()}
+        marker=dest/'sink/.gitkeep'
+        if marker.exists():assert marker.read_bytes()==b'', 'invalid empty-directory archival marker'
+        actual={p.name:{'sha256':sha(p),'body_b64':base64.b64encode(p.read_bytes()).decode(),'size':p.stat().st_size} for p in sorted((dest/'sink').iterdir()) if p.is_file() and p.name!='.gitkeep'}
         assert actual==json.loads((dest/'sink-state.json').read_text())==expected['sink_files']
         assert bundle['verdict']==expected['verdict']
         if case=='clean':

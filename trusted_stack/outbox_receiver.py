@@ -139,29 +139,42 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                 raise Denied("HALT blocks even pending external delivery")
             row = db.execute(
                 """SELECT e.digest, e.destination, e.body,
-                          r.digest, r.destination, r.nonce
+                          r.digest, r.destination, r.nonce,
+                          r.agent_uid, r.lease_id
                    FROM effect_records e
                    JOIN releases r ON r.id=e.release_id
                    WHERE e.release_id=?""", (release_id,)).fetchone()
             if row is None:
                 raise Denied("no committed effect record for release")
-            digest, destination, body, release_digest, release_dest, nonce = row
-            # Admission-time approval alone is insufficient for delayed
-            # dispatch: respect later revocation and expiry before publishing.
+            (digest, destination, body, release_digest, release_dest, nonce,
+             release_agent, release_lease) = row
+            # An admission is not a perpetual authorization to dispatch.
+            # Bind the persisted release to the *same exact* approval, agent,
+            # reviewed artifact, destination and lease. Checking only the
+            # nonce or the approver's role would leave a confused-deputy gap.
             approval = db.execute(
-                "SELECT expires,used,lease_id,signer_uid FROM approvals WHERE nonce=?",
-                (nonce,)).fetchone()
-            if approval is None or approval[1] != 1 or not controller.principals.allows(
-                    approval[3], "approvers"):
-                raise Denied("delivery approval no longer valid")
+                """SELECT digest, destination, agent_uid, lease_id,
+                          signer_uid, expires, used
+                   FROM approvals WHERE nonce=?""", (nonce,)).fetchone()
+            if (approval is None or approval[:4] !=
+                    (digest, destination, release_agent, release_lease) or
+                    approval[6] != 1 or
+                    not controller.principals.allows(approval[4], "approvers") or
+                    not controller.principals.allows(release_agent, "agents")):
+                raise Denied("delivery approval/release binding is invalid")
             lease = db.execute(
-                "SELECT expires,revoked FROM leases WHERE lease_id=?",
-                (approval[2],)).fetchone()
+                "SELECT agent_uid, expires, revoked FROM leases WHERE lease_id=?",
+                (release_lease,)).fetchone()
             checked_at = controller._now()
-            if (lease is None or lease[1] or approval[0] <= checked_at
-                    or lease[0] <= checked_at):
+            if (lease is None or lease[0] != release_agent or lease[2] or
+                    approval[5] <= checked_at or lease[1] <= checked_at):
                 raise Denied("external delivery revoked or expired")
-            if (type(body) is not bytes or len(body) > MAX_BODY or
+            review = db.execute(
+                "SELECT reviewer_uid FROM reviews WHERE digest=?",
+                (digest,)).fetchone()
+            if (review is None or
+                    not controller.principals.allows(review[0], "reviewers") or
+                    type(body) is not bytes or len(body) > MAX_BODY or
                     digest != hashlib.sha256(body).hexdigest() or
                     digest != release_digest or destination != release_dest):
                 raise Denied("release and reviewed effect are inconsistent")

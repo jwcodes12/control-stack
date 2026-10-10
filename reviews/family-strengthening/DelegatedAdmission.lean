@@ -93,8 +93,8 @@ theorem budget_step (s : State) (a : Action) (h : s.spent ≤ s.cap) :
       by_cases denied :
           s.halted = true ∨ s.used = true ∨ s.revoked = true ∨
           s.spent + 1 > s.cap ∨
-          (if s.grant = none then actor ≠ s.owner
-           else s.grant ≠ some actor)
+          (s.grant = none ∧ actor ≠ s.owner) ∨
+          (s.grant ≠ none ∧ s.grant ≠ some actor)
       · simpa [step, denied] using h
       · have within_cap : s.spent + 1 ≤ s.cap := by omega
         simpa [step, denied] using within_cap

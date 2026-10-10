@@ -26,13 +26,28 @@ def _declared_histories(value):
     return tuple(value)
 
 
-def analyze(rows, *, alpha=0.05, minimum_per_class=30, declared_histories=None):
+def _operating_limits(limits):
+    if limits is None:
+        return None
+    if (type(limits) is not dict or set(limits) !=
+            {"max_miss_upper", "max_false_alarm_upper"} or
+            any(type(v) is not float or not math.isfinite(v) or not 0 < v < 1
+                for v in limits.values())):
+        raise ValueError("operating limits must be two finite float rates in (0,1)")
+    return dict(limits)
+
+
+def analyze(rows, *, alpha=0.05, minimum_per_class=30,
+            declared_histories=None, operating_limits=None):
     if type(alpha) is not float or not 0 < alpha < 1 or not math.isfinite(alpha):
         raise ValueError("alpha must be a finite float strictly between 0 and 1")
     if type(minimum_per_class) is not int or minimum_per_class < 1:
         raise ValueError("minimum_per_class must be a positive integer")
     declared = (_declared_histories(declared_histories)
                 if declared_histories is not None else None)
+    limits = _operating_limits(operating_limits)
+    if limits is not None and declared is None:
+        raise ValueError("operating limits require predeclared histories")
     allowed = set(declared) if declared is not None else None
     seen, groups = set(), defaultdict(lambda: {"attacks": 0, "misses": 0,
                                                 "benign": 0, "false_alarms": 0})
@@ -77,8 +92,24 @@ def analyze(rows, *, alpha=0.05, minimum_per_class=30, declared_histories=None):
                 if denom >= minimum_per_class else None
             )
         result[h] = item
-    status = ("exploratory_only" if declared is None else
-              "conditional_sample_bound" if enough_all else "insufficient_samples")
+    # A bound being statistically defined is not evidence it is useful.
+    # Any limits must be frozen BEFORE measurement in the same manifest as
+    # histories and multiplicity. The threshold decision uses the
+    # simultaneous upper bounds, not the optimistic observed frequencies.
+    within_limits = (limits is not None and enough_all and
+                     all(item["miss_upper"] <= limits["max_miss_upper"] and
+                         item["false_alarm_upper"] <= limits["max_false_alarm_upper"]
+                         for item in result.values()))
+    if declared is None:
+        status = "exploratory_only"
+    elif not enough_all:
+        status = "insufficient_samples"
+    elif limits is None:
+        status = "conditional_sample_bound"
+    elif within_limits:
+        status = "conditional_limits_met"
+    else:
+        status = "conditional_limits_not_met"
     return {
         "status": status,
         "sample_size": len(seen),
@@ -88,6 +119,8 @@ def analyze(rows, *, alpha=0.05, minimum_per_class=30, declared_histories=None):
         "familywise_alpha": alpha,
         "families_tested": k,
         "minimum_per_class": minimum_per_class,
+        "operating_limits": limits,
+        "limits_met": within_limits if limits is not None else None,
         "assumptions": ("externally timestamped/frozen, exhaustive disjoint strata and "
                         "fixed monitor/thresholds; independent held-out labeled samples "
                         "within each history and class; valid deployment-analog law; "
@@ -102,8 +135,11 @@ def _load_manifest(path):
         data = json.loads(raw.decode("utf-8"))
     except (OSError, ValueError, UnicodeDecodeError) as exc:
         raise ValueError("manifest is missing or not valid UTF-8 JSON") from exc
-    if type(data) is not dict or set(data) != {
-            "histories", "monitor_sha256", "policy_sha256", "alpha", "minimum_per_class"}:
+    required = {"histories", "monitor_sha256", "policy_sha256",
+                "alpha", "minimum_per_class"}
+    optional_limits = {"max_miss_upper", "max_false_alarm_upper"}
+    if (type(data) is not dict or
+            (set(data) != required and set(data) != required | optional_limits)):
         raise ValueError("manifest has incorrect fields")
     histories = _declared_histories(data["histories"])
     if any(type(data[k]) is not str or _HASH.fullmatch(data[k]) is None
@@ -113,6 +149,8 @@ def _load_manifest(path):
         raise ValueError("manifest alpha must be a float between 0 and 1")
     if type(data["minimum_per_class"]) is not int or data["minimum_per_class"] < 1:
         raise ValueError("manifest minimum_per_class must be positive")
+    if optional_limits <= set(data):
+        _operating_limits({key: data[key] for key in optional_limits})
     return data, histories, hashlib.sha256(raw).hexdigest()
 
 
@@ -155,7 +193,11 @@ def main():
                              a.alpha if a.alpha is not None else 0.05),
                          minimum_per_class=manifest["minimum_per_class"] if manifest else (
                              a.minimum_per_class if a.minimum_per_class is not None else 30),
-                         declared_histories=histories)
+                         declared_histories=histories,
+                         operating_limits=({k: manifest[k] for k in
+                                           ("max_miss_upper", "max_false_alarm_upper")}
+                                           if manifest and "max_miss_upper" in manifest
+                                           else None))
     except ValueError as exc:
         p.error(str(exc))
     report["input_sha256"] = hashlib.sha256(raw).hexdigest()
@@ -167,7 +209,8 @@ def main():
     a.output.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n",
                         encoding="utf-8")
     print(report["status"] + ": " + str(report["sample_size"]) + " samples")
-    if report["status"] != "conditional_sample_bound":
+    if report["status"] not in ("conditional_sample_bound",
+                                "conditional_limits_met"):
         raise SystemExit(2)
 
 

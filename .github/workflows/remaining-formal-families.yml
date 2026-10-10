@@ -4,6 +4,8 @@ on:
     paths:
       - 'reviews/family-strengthening/Remaining.lean'
       - 'reviews/family-strengthening/EffectLifecycle.lean'
+      - 'tools/joint_runtime_lean_difftest.py'
+      - 'trusted_stack/**'
       - '.github/workflows/remaining-formal-families.yml'
   workflow_dispatch:
 permissions:
@@ -35,3 +37,9 @@ jobs:
             echo "Found unexpected sorry proof axiom"
             exit 1
           fi
+      - name: Differential actual SQLite and filesystem trace vs Lean lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          python3 tools/joint_runtime_lean_difftest.py

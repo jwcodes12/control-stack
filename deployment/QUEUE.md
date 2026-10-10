@@ -37,7 +37,7 @@ T4.5 | DONE | contract-witnesses.json: 16 fixed contracts, 45 standard-axiom dec
 T5.1 | DONE | deployment/plan.py; read-only RFC 6902 patch, redacted human diff, separately reviewed host actions and precise capture/custody residuals
 T5.2 | DONE | 44 static fixtures; 44 kernel certificates; 36 prospective finite-model acceptances, eight named residual cases; synthetic DECLARED facts never runtime evidence
 T5.3 | DONE | Defensive-only: deployment/runs/tier5/remediated; originals archived Tier 2; two repaired live configurations, four honest completions; raw inventory/custody/SQLite/byte checks and tamper controls PASS. No new denial experiment.
-T6.1 | TODO | Not yet started; tier order applies
+T6.1 | DOING | Separate blind codex exec author; static misconfigured Compose only, no exploit code or attack payloads
 T6.2 | TODO | Not yet started; tier order applies
 T6.3 | TODO | Not yet started; tier order applies
 T7.1 | TODO | Not yet started; tier order applies
@@ -95,3 +95,5 @@ Tier 5 fresh checkout: six planner tests PASS; remediated archive replay FAIL on
 Tier 5 corrected fresh local checkout: six planner tests and two remediated archive/tamper tests PASS. Source relocation normalization preserves known artifact hashes and every other IR field. Corrected final-head CI pending.
 
 Tier 5 final review tightened read-only output protection: saved observation directories and pinned trusted-source inputs cannot be used as plan output. Relocation test also verifies a refused observation overwrite leaves all bytes intact. Re-run static checks; no additional container or bypass run.
+
+Tier 5 exit: c0f5f4512557cfd42b5073f2e5c79afbaeafa8fd, 18 CI SUCCESS and 3 explicit SKIPPED; PR #49 draft/open. Receipt deployment/runs/tier5/ci-receipt-c0f5f45.json. Tier 6 stacks on that exact tip; no R2 completion claim.

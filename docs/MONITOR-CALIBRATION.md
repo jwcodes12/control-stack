@@ -15,9 +15,25 @@ registration is still a human-controlled premise):
   "monitor_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "policy_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
   "alpha": 0.05,
-  "minimum_per_class": 30
+  "minimum_per_class": 30,
+  "max_miss_upper": 0.1,
+  "max_false_alarm_upper": 0.1
 }
 ```
+
+Both `max_miss_upper` and `max_false_alarm_upper` are optional as a pair,
+but **required if the run is meant to demonstrate useful monitoring**.
+These rates must be finite JSON decimal numbers strictly between zero and
+one, declared in the frozen manifest before samples are seen. A result is
+`conditional_limits_met` (exit 0) only when both simultaneous upper
+confidence bounds meet their corresponding limits in **every** declared
+history. `conditional_limits_not_met` exits 2 and preserves an inspectable
+receipt; insufficient samples also exit 2. Omitting both limits preserves
+`conditional_sample_bound` (exit 0), which only means valid bounds were
+computed, **not** that any recall/usefulness target passed.
+Even `conditional_limits_met` is not deployment assurance: complete
+history coverage, sampling, provenance, and external preregistration remain
+assumptions.
 
 The two hex identifiers are literal hash declarations, **not** independently
 verified by the tool or proof that the policy was actually frozen. Use the

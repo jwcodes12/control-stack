@@ -40,3 +40,23 @@ prove that Python implements Lean for arbitrary traces, concurrent
 syscalls, arbitrary OS side effects, power loss, delegation authorization
 or a hostile host. Runtime credential authenticity and full mediation
 remain explicit independent premises.
+
+
+**F6 adaptive-history mixture theorem (additional review scope):**
+`reviews/family-strengthening/AdaptiveStrata.lean` establishes that when
+every reachable, finitely enumerated history has conditional missed-attack
+probability bounded by `missCap`, and the realized distribution across
+those histories has total mass at most one, the aggregate missed-attack
+probability is bounded by the **same** `missCap`, not the number of histories
+times that cap. A second theorem separately treats benign false alarms and
+permits a different conditional history distribution for attacks and benign
+traffic. Correlations among monitor alarms are not assumed away.
+
+These are algebraic consequences of the supplied rate/mass assumptions.
+They are **not** a proof that the real monitor has uniform conditional recall
+under every adaptive history, that the history partition covers actual
+side channels, that `monitor_calibration.py` computes the theorem's inputs,
+or that its per-class i.i.d. Hoeffding bounds remain valid under adaptive
+sampling. The concrete evidence-to-theorem link remains an open refinement
+obligation. Execute the pinned Lean proof and inspect `#print axioms` via
+`lake env lean reviews/family-strengthening/AdaptiveStrata.lean`.

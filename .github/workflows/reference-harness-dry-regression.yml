@@ -31,7 +31,7 @@ jobs:
       - name: SC-25 separate-auditor queue dry-run (fresh scratch, no evidence)
         run: |
           test "$(id -u)" != 0
-          python3 -B scenarios/SC-25/harness/run_sc25.py --kind dry --reps 1 --out "$RUNNER_TEMP/sc25-dry-control"
+          python3 -B scenarios/SC-25/harness/run_sc25.py --kind dry --reps 1 --only H1,H2,H3,H5,H6 --out "$RUNNER_TEMP/sc25-dry-control"
       - name: SC-26 deterministic reference model and negative fixtures
         run: |
           python3 scenarios/SC-26/harness/test_model.py

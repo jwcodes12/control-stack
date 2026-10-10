@@ -1,0 +1,40 @@
+name: bounded-model-differential
+on:
+  pull_request:
+    paths:
+      - 'tools/bounded_model_diff.py'
+      - 'ControlStack/Scenarios/SC06OneUse.lean'
+      - 'ControlStack/Scenarios/SC08Exec.lean'
+      - 'ControlStack/Scenarios/SC25Audit.lean'
+      - 'ControlStack/Scenarios/SC26Transaction.lean'
+      - 'scenarios/SC-26/harness/model.py'
+      - 'scenarios/SC-26/harness/lean_difftest.py'
+      - '.github/workflows/bounded-model-differential.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-differential:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Build exact model dependencies
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake build ControlStack.Scenarios.SC06OneUse ControlStack.Scenarios.SC08Exec ControlStack.Scenarios.SC25Audit
+      - name: Compare independent Python and Lean transition semantics
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          python3 tools/bounded_model_diff.py
+      - name: SC-26 full-state independently sampled differential
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          python3 scenarios/SC-26/harness/lean_difftest.py -n 200
+      - name: Check explicit theorem axioms
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake env lean reviews/sc06-issuer-controls/Controls.lean

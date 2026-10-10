@@ -56,7 +56,7 @@ def deployment : IR := '''+raw+'''
 end SliceInstance
 '''
     source += f"\nnamespace SliceInstance\ndef principals : ControlStack.SC26.Roles := {principal}\ntheorem contract_checked (ops : List ControlStack.SC26.Op) (hops : ∀ o ∈ ops, ControlStack.SC26.legal principals o) : ControlStack.SC26.Good principals {cap} (ControlStack.SC26.run principals {cap} ControlStack.SC26.full ControlStack.SC26.init ops) := protocol_safe principals {cap} ops hops\ntheorem one_use_checked (ops : List ControlStack.SC26.Op) : (ControlStack.SC26.run principals {cap} ControlStack.SC26.full ControlStack.SC26.init ops).reserved.Nodup := one_use principals {cap} ops\nend SliceInstance\n#print axioms SliceInstance.contract_checked\n#print axioms SliceInstance.one_use_checked\n"
-    with tempfile.TemporaryDirectory(prefix='cstack-lean-') as tmp:
+    with tempfile.TemporaryDirectory(prefix='cstack-lean-',dir=ROOT/'.git') as tmp:
         path=Path(tmp)/'Instance.lean'; path.write_text(source)
         probe=subprocess.run(['lake','env','lean',str(path)],cwd=ROOT,capture_output=True,text=True)
         output=probe.stdout+probe.stderr

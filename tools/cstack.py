@@ -483,6 +483,12 @@ def main(argv=None, runner=subprocess.call):
     verify.add_argument("--output", required=True)
     verify.add_argument("--boundary-evidence", help="check raw archived native reference sink evidence; does not attest Compose")
     verify.add_argument("--lean", action="store_true", help="kernel-check the exact IR projection and contracts")
+    plan = sub.add_parser("plan", help="emit read-only JSON Patch and human diff for the reference profile")
+    plan.add_argument("compose", help="JSON Compose document; use the recorded normalized JSON for YAML")
+    plan.add_argument("--runtime", required=True)
+    plan.add_argument("--ir", required=True)
+    plan.add_argument("--inputs", help="fresh scanner input directory; defaults to the IR host-observation source")
+    plan.add_argument("--output", required=True)
     report = sub.add_parser("report", help="render an obligation bundle")
     report.add_argument("bundle")
     report.add_argument("--output", required=True)
@@ -490,6 +496,35 @@ def main(argv=None, runner=subprocess.call):
     if extra and a.cmd not in ("ledger", "new", "map"):
         ap.error(f"unrecognized arguments: {' '.join(extra)}")
     try:
+        if a.cmd == "plan":
+            try:
+                _import("security_ir")
+                from extractors.compose import sha
+                from security_ir import validate
+                from deployment.plan import build_plan
+                c = json.loads(Path(a.compose).read_text())
+                r = json.loads(Path(a.runtime).read_text())
+                ir = validate(json.loads(Path(a.ir).read_text()))
+                if Path(a.output).resolve() in {Path(a.compose).resolve(), Path(a.runtime).resolve(), Path(a.ir).resolve()}:
+                    raise UsageError("plan output must differ from its inputs")
+                host = None
+                if ir["version"] == "0.1":
+                    from deployment.scan import replay_snapshot
+                    source = next((p for p in ir["sources"] if Path(p["source"]).name == "host-observations.json"), None)
+                    if source is None:
+                        raise UsageError("schema-only migration has no fresh observation; provide a fresh scan")
+                    inputs = Path(a.inputs) if a.inputs else Path(source["source"]).parent
+                    replayed = replay_snapshot(a.compose, a.runtime, inputs)
+                    if replayed != ir:
+                        raise UsageError("plan inputs differ from the scanned IR")
+                    host = json.loads((inputs / "host-observations.json").read_text())
+                elif sha(a.compose) != ir["snapshot"]["compose_sha256"] or sha(a.runtime) != ir["snapshot"]["runtime_sha256"]:
+                    raise UsageError("plan inputs differ from the scanned IR")
+                result = build_plan(c, r, ir, sha(a.compose), host)
+                Path(a.output).write_text(json.dumps(result, sort_keys=True, indent=2) + "\n")
+                return 0
+            except (ValueError, OSError, TypeError, KeyError, AssertionError) as err:
+                raise UsageError(str(err)) from err
         if a.cmd in ("scan", "verify", "report"):
             _import("security_ir")
             from extractors.compose import collect

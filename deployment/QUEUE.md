@@ -34,9 +34,9 @@ T4.2 | BLOCKED | Literal full-Accepted monotonicity is false: three kernel-check
 T4.3 | DONE | accepted_no_avoided_path via explicit closed-set certificate; path_edge_subset and accepted_path_safety_monotone; standard axioms
 T4.4 | BLOCKED | Three concrete Tier 2 replay compilations failed; final unsolved s0.halted=false / lease-cap guards. Generic indexed_receipts_sound passes; no concrete replay claim. See transcript-prototype-attempt3.txt.
 T4.5 | DONE | contract-witnesses.json: 16 fixed contracts, 45 standard-axiom declarations; useful initial-to-release model trace; falsifying controls; CI mandatory checker
-T5.1 | DOING | Read-only RFC 6902 patch + human diff; fresh host and runtime residuals retained
-T5.2 | TODO | Not yet started; tier order applies
-T5.3 | TODO | Not yet started; tier order applies
+T5.1 | DONE | deployment/plan.py; read-only RFC 6902 patch, redacted human diff, separately reviewed host actions and precise capture/custody residuals
+T5.2 | DONE | 44 static fixtures; 44 kernel certificates; 36 prospective finite-model acceptances, eight named residual cases; synthetic DECLARED facts never runtime evidence
+T5.3 | DOING | Defensive-only: original = archived Tier 2 evidence; launch ONLY remediated configurations for honest completion and scope correspondence
 T6.1 | TODO | Not yet started; tier order applies
 T6.2 | TODO | Not yet started; tier order applies
 T6.3 | TODO | Not yet started; tier order applies
@@ -81,3 +81,7 @@ Tier 3 exit: 8c7ff7288b67b8ef46675fe558ba12d8edda04bb, 19 CI SUCCESS + 2 explici
 Tier 4 local exit: TrustedBroker/path contracts and witness module PASS; fixed 16-contract / 45-declaration package PASS; registry, source-normalized catalog, overview, results, ledger and trust-root checks PASS. T4.2 literal theorem BLOCKED by checked countermodels; T4.4 concrete replay BLOCKED after three compilation failures. No installed proof depends on sorryAx. Self-review deployment/reviews/tier4-self-review.md. Final-head CI pending.
 
 Tier 4 exit: 379913094b1fb9c3c1eee7846424d55cf6724737, 24 CI SUCCESS + 2 explicit SKIPPED. Exact-head receipt deployment/runs/tier4/ci-receipt-3799130.json. #48 remains draft/open; T4.2 and T4.4 remain explicitly BLOCKED. Tier 5 branch sol/r2-tier5 stacks on that exact tip.
+
+## Defensive-only continuation — John via agent-bus message #2
+
+T5.3 uses archived Tier 2 originals and launches only remediated configurations. Tier 6 is static review of misconfigured Compose deployments, with no exploit code or attack payloads. Tier 7 is preregistered attribution of existing Tier 2 outcomes plus honest tasks; the original four-arm attack evaluation is GATED because the owner has no cyber-permissive access tier. If a task is flagged again, record its exact error as GATED and move on. T4.2 and T4.4 remain BLOCKED. Tier 8 remains required. Existing CI live negative boundary job is explicitly skipped under this scope; archive validation continues, and skipped work is never counted as passed. No merging.

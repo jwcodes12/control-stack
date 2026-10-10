@@ -27,6 +27,8 @@ jobs:
           for claim in MonitorHistory.adaptive_miss_mass_le_budgets JointAdmission.budget_run JointAdmission.no_admissions_after_halt; do
             grep -F "$claim' depends on axioms:" "$RUNNER_TEMP/remain-axioms.txt"
           done
+          grep -F "EffectLifecycle.budget_run' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
+          grep -F "EffectLifecycle.unknown_effect_cannot_publish' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
           grep -F "EffectLifecycle.no_publications_in_halted_suffix' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
           grep -F "EffectLifecycle.halt_cannot_undo_published_unreceipted' depends on axioms:" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
           if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/remain-axioms.txt" "$RUNNER_TEMP/effect-lifecycle-axioms.txt"; then

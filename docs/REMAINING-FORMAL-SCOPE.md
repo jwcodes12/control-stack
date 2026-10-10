@@ -17,3 +17,10 @@ crash/HALT witness. It does **not** prove actor/delegate authorization,
 filesystem atomicity, or Python-to-Lean refinement. The 24-permutation
 `test_joint_trace_oracle.py` is a bounded integration differential over
 release, dispatch and HALT order; it is not exhaustive concurrency proof.
+
+The lifecycle model now also proves a **global cap invariant in that same
+state and for the same arbitrary tagged-agent/delegate interleavings** and
+rejects unadmitted publication and receipts preceding publication. This
+closes the purely formal split-model composition gap. The concrete
+SQLite service still does not offer delegated authorization and is not
+proved to implement this Lean transition relation.

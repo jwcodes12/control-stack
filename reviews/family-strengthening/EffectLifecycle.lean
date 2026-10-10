@@ -48,6 +48,50 @@ def step (s : State) (a : Action) : State :=
 
 def run (s : State) (events : List Action) : State := events.foldl step s
 
+
+/-- Admission, publication, receipt and HALT share ONE budget counter.
+Every request, including any delegated tag, is charged to that counter.
+This is a model property, not a broker correspondence theorem. -/
+theorem budget_step (s : State) (a : Action)
+    (h : s.spent ≤ s.cap) : (step s a).spent ≤ (step s a).cap := by
+  cases a with
+  | request agent delegate releaseId cost =>
+      by_cases denied :
+          s.halted = true ∨ cost = 0 ∨ s.spent + cost > s.cap ∨
+            releaseId ∈ s.admitted
+      · simpa [step, denied] using h
+      · have within_cap : s.spent + cost ≤ s.cap := by omega
+        simpa [step, denied] using within_cap
+  | publish releaseId =>
+      by_cases denied : s.halted = true ∨ releaseId ∉ s.admitted
+      · simpa [step, denied] using h
+      · simpa [step, denied] using h
+  | receipt releaseId =>
+      by_cases denied : s.halted = true ∨ releaseId ∉ s.published
+      · simpa [step, denied] using h
+      · simpa [step, denied] using h
+  | halt => simpa [step] using h
+
+theorem budget_run (s : State) (events : List Action)
+    (h : s.spent ≤ s.cap) : (run s events).spent ≤ (run s events).cap := by
+  induction events generalizing s with
+  | nil => simpa [run] using h
+  | cons a rest ih =>
+      change (run (step s a) rest).spent ≤ (run (step s a) rest).cap
+      exact ih (step s a) (budget_step s a h)
+
+/-- A publication request for an unadmitted id cannot create bytes. -/
+theorem unknown_effect_cannot_publish (s : State) (id : Nat)
+    (h : id ∉ s.admitted) :
+    (step s (.publish id)).published = s.published := by
+  simp [step, h]
+
+/-- A receipt request cannot invent a publication that has not occurred. -/
+theorem missing_publication_cannot_receipt (s : State) (id : Nat)
+    (h : id ∉ s.published) :
+    (step s (.receipt id)).receipted = s.receipted := by
+  simp [step, h]
+
 /-- No fresh external publication after HALT, including from admitted but
 not yet delivered work. Does NOT claim cancellation of earlier publications. -/
 theorem halted_blocks_publication (s : State) (a : Action)
@@ -85,6 +129,10 @@ theorem halt_cannot_undo_published_unreceipted :
     7 ∈ halted.published ∧ 7 ∉ halted.receipted := by
   decide
 
+#print axioms budget_step
+#print axioms budget_run
+#print axioms unknown_effect_cannot_publish
+#print axioms missing_publication_cannot_receipt
 #print axioms halted_blocks_publication
 #print axioms halt_absorbing
 #print axioms no_publications_in_halted_suffix

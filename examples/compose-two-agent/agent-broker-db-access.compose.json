@@ -1,0 +1,103 @@
+{
+  "networks": {
+    "isolated": {
+      "internal": true
+    }
+  },
+  "services": {
+    "agent-a": {
+      "environment": {},
+      "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "networks": [
+        "isolated"
+      ],
+      "user": "23701",
+      "volumes": [],
+      "x-cstack-role": "agent"
+    },
+    "agent-b": {
+      "environment": {},
+      "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "networks": [
+        "isolated"
+      ],
+      "user": "23702",
+      "volumes": [
+        {
+          "read_only": false,
+          "source": "/slice/db",
+          "target": "/bypass",
+          "type": "bind"
+        }
+      ],
+      "x-cstack-role": "agent"
+    },
+    "approver": {
+      "environment": {},
+      "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "networks": [
+        "isolated"
+      ],
+      "user": "23704",
+      "volumes": [],
+      "x-cstack-role": "approver"
+    },
+    "broker": {
+      "environment": {},
+      "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "networks": [
+        "isolated"
+      ],
+      "user": "23700",
+      "volumes": [
+        {
+          "read_only": false,
+          "source": "/slice/db",
+          "target": "/private",
+          "type": "bind"
+        }
+      ],
+      "x-cstack-role": "broker"
+    },
+    "receiver": {
+      "environment": {},
+      "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "networks": [
+        "isolated"
+      ],
+      "user": "23700",
+      "volumes": [
+        {
+          "read_only": false,
+          "source": "/slice/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/slice/sink",
+          "target": "/output",
+          "type": "bind"
+        }
+      ],
+      "x-cstack-role": "receiver"
+    },
+    "reviewer": {
+      "environment": {},
+      "image": "example.invalid/local-slice@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "networks": [
+        "isolated"
+      ],
+      "user": "23703",
+      "volumes": [],
+      "x-cstack-role": "reviewer"
+    }
+  },
+  "x-cstack": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 1,
+    "database_source": "/slice/db",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "sink_source": "/slice/sink"
+  }
+}

@@ -1,0 +1,54 @@
+name: deployment-slice
+on:
+  pull_request:
+  push:
+    branches: ['sol/deployment-slice-20261010']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fixtures:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python3 tools/test_deployment_slice.py
+      - run: python3 tools/test_deployment_runtime.py
+      - run: python3 tools/build_deployment_fixtures.py && git diff --exit-code security_ir/fixtures examples/compose-two-agent
+  kernel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: lake exe cache get
+      - run: lake build ControlStack.Deployment.Contracts
+      - name: Check every raw fixture projection in the kernel
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from tools.check_deployment_lean import check
+          for path in sorted(Path('security_ir/fixtures').glob('*.json')):
+              result = check(json.loads(path.read_text()))
+              assert result['accepted'] == (path.stem == 'clean'), path
+              print(path.stem, result['accepted'], result['axioms'])
+          PY
+  linux-boundary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install runtime already present on the development box
+        run: sudo apt-get update -qq && sudo apt-get install -y libseccomp2
+      - name: Clean, two mutations and HALT during real publication
+        run: sudo python3 tools/run_deployment_boundary.py --output /tmp/deployment-runtime
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-runtime-sink-evidence
+          path: /tmp/deployment-runtime

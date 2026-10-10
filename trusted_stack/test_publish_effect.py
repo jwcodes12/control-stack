@@ -1,5 +1,6 @@
 """Linux real-file effect: non-execution, replay, revocation and HALT."""
 import sqlite3
+import concurrent.futures
 import tempfile
 import unittest
 from pathlib import Path
@@ -41,6 +42,15 @@ class PublishEffectTests(unittest.TestCase):
         self.assertEqual(self.target.read_bytes(), self.body)
         self.assertEqual(self.publish(), got)
         self.assertEqual(len(list(self.root.iterdir())), 1)
+        self.assertEqual(self.c.state(ADMIN)["spent"], 1)
+
+    def test_parallel_admin_retries_do_not_duplicate_external_effect(self):
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+            futures = [pool.submit(self.publish) for _ in range(12)]
+            results = [f.result() for f in futures]
+        self.assertEqual(len({result["file"] for result in results}), 1)
+        self.assertEqual([p.name for p in self.root.iterdir()], [self.target.name])
+        self.assertEqual(self.target.read_bytes(), self.body)
         self.assertEqual(self.c.state(ADMIN)["spent"], 1)
 
     def test_no_agent_or_unconfigured_publish(self):

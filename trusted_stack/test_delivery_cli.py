@@ -46,5 +46,44 @@ class DeliveryCLITests(unittest.TestCase):
             self.assertEqual(denied.stderr.strip(), "DENIED")
 
 
+    def test_valid_real_clock_admin_dispatch_and_replay(self):
+        import time
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            output = path / "out"
+            output.mkdir(mode=0o700)
+            owner = os.geteuid()
+            agent, reviewer, approver = (owner + 16101, owner + 16102, owner + 16103)
+            roles = Principals(frozenset({agent}), frozenset({reviewer}),
+                               frozenset({approver}), frozenset({owner}))
+            db = path / "gate.db"
+            controller = Controller.bootstrap(db, roles, 2)
+            body = b"real-process-reviewed-bytes"
+            digest = controller.stage(agent, body)
+            controller.review(reviewer, digest)
+            expiry = int(time.time()) + 3600
+            controller.issue_lease(owner, "lease", agent, 2, expiry)
+            controller.approve(approver, "nonce", digest, "label",
+                               agent, "lease", expiry)
+            release_id = controller.release(agent, "nonce", digest, "label",
+                                            "lease", record_effect=True)
+            args = [sys.executable, "-m", "trusted_stack.deliver_cli",
+                    "--db", str(db), "--out", str(output), "--release-id", str(release_id),
+                    "--agents", str(agent), "--reviewers", str(reviewer),
+                    "--approvers", str(approver), "--admins", str(owner)]
+            first = subprocess.run(args, capture_output=True, text=True)
+            self.assertEqual(first.returncode, 0, first.stderr)
+            self.assertEqual(first.stdout.strip(), "1.body")
+            self.assertEqual((output / "1.body").read_bytes(), body)
+            second = subprocess.run(args, capture_output=True, text=True)
+            self.assertEqual(second.returncode, 0, second.stderr)
+            self.assertEqual(len(list(output.glob("*.body"))), 1)
+            self.assertEqual(len(list(output.glob(".pending-*"))), 0)
+            controller.halt(owner)
+            after_halt = subprocess.run(args, capture_output=True, text=True)
+            self.assertNotEqual(after_halt.returncode, 0)
+            self.assertEqual((output / "1.body").read_bytes(), body)
+
+
 if __name__ == "__main__":
     unittest.main()

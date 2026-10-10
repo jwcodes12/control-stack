@@ -1,6 +1,7 @@
-/-! Source-only adversarial theorem-scope controls; not runtime refinement. -/
 import ControlStack.Scenarios.SC25Audit
 import ControlStack.Scenarios.SC26Transaction
+
+/-! Source-only adversarial theorem-scope controls; not runtime refinement. -/
 
 namespace FidelityScope
 

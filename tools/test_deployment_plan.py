@@ -91,6 +91,9 @@ class PlanTests(unittest.TestCase):
             argv=[sys.executable,str(ROOT/'tools/cstack.py'),'plan',str(archive/'compose.json'),'--runtime',str(archive/'runtime.json'),'--ir',str(ir_path),'--output',str(out)]
             result=subprocess.run(argv,capture_output=True,text=True);self.assertEqual(result.returncode,0,result.stderr)
             self.assertEqual(len(json.loads(out.read_text())['patch']),1)
+            facts_path=archive/'fresh-inputs/host-observations.json';saved=facts_path.read_bytes()
+            overwrite=argv[:-1]+[str(facts_path)]
+            refused=subprocess.run(overwrite,capture_output=True,text=True);self.assertEqual(refused.returncode,2);self.assertEqual(saved,facts_path.read_bytes())
             out.unlink();facts=archive/'fresh-inputs/host-observations.json';facts.write_text(facts.read_text()+' ')
             result=subprocess.run(argv,capture_output=True,text=True);self.assertEqual(result.returncode,2);self.assertFalse(out.exists())
 

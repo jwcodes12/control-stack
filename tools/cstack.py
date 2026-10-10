@@ -507,6 +507,11 @@ def main(argv=None, runner=subprocess.call):
                 ir = validate(json.loads(Path(a.ir).read_text()))
                 if Path(a.output).resolve() in {Path(a.compose).resolve(), Path(a.runtime).resolve(), Path(a.ir).resolve()}:
                     raise UsageError("plan output must differ from its inputs")
+                source_inputs = {Path(p["source"]).resolve() for p in ir["sources"]}
+                source_inputs |= {p.resolve() for p in (ROOT / "trusted_stack").glob("*.py")}
+                source_inputs.add((ROOT / "tools/deployment_container_entry.py").resolve())
+                if Path(a.output).resolve() in source_inputs:
+                    raise UsageError("plan output must differ from its pinned source inputs")
                 host = None
                 if ir["version"] == "0.1":
                     from deployment.scan import replay_snapshot
@@ -515,6 +520,8 @@ def main(argv=None, runner=subprocess.call):
                         raise UsageError("schema-only migration has no fresh observation; provide a fresh scan")
                     candidates = [Path(a.ir).with_suffix(".inputs"), Path(a.ir).parent / "fresh-inputs", Path(source["source"]).parent]
                     inputs = Path(a.inputs) if a.inputs else next((p for p in candidates if (p / "host-observations.json").is_file()), candidates[-1])
+                    if Path(a.output).resolve().is_relative_to(inputs.resolve()):
+                        raise UsageError("plan output must be outside the saved observation inputs")
                     replayed = replay_snapshot(a.compose, a.runtime, inputs)
                     from deployment.plan import portable_observation_ir
                     if portable_observation_ir(replayed, inputs) != portable_observation_ir(ir, inputs):

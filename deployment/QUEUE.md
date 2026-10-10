@@ -93,3 +93,5 @@ Tier 5 CI attempt f1fbf63: fixture job FAIL because planner inferred an archived
 Tier 5 fresh checkout: six planner tests PASS; remediated archive replay FAIL on relocated trusted-source labels. Reuse the same hash-pinned known-artifact source-label normalization in the independent checker; retain both failure and corrected results. No evidence bytes altered.
 
 Tier 5 corrected fresh local checkout: six planner tests and two remediated archive/tamper tests PASS. Source relocation normalization preserves known artifact hashes and every other IR field. Corrected final-head CI pending.
+
+Tier 5 final review tightened read-only output protection: saved observation directories and pinned trusted-source inputs cannot be used as plan output. Relocation test also verifies a refused observation overwrite leaves all bytes intact. Re-run static checks; no additional container or bypass run.

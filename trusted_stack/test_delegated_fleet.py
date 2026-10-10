@@ -112,8 +112,14 @@ class DelegatedFleetTests(unittest.TestCase):
         with self.assertRaises(Denied):
             deliver_record(self.gate, rid, self.dest)
         with sqlite3.connect(self.db) as db:
-            present = db.execute("SELECT COUNT(*) FROM delivery_receipts").fetchone()
-            self.assertEqual(present, (0,))
+            # The CREATE TABLE statement itself occurs inside the
+            # interrupted transaction, so rollback may leave no table.
+            schema = db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='delivery_receipts'"
+            ).fetchone()
+            if schema is not None:
+                self.assertEqual(db.execute(
+                    "SELECT COUNT(*) FROM delivery_receipts").fetchone(), (0,))
 
     def test_mutated_delegation_provenance_cannot_publish(self):
         self.gate.delegate(self.a, "nonce-a", self.b)

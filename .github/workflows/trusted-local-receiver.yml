@@ -1,0 +1,19 @@
+name: trusted-local-receiver
+on:
+  pull_request:
+    paths:
+      - 'trusted_stack/**'
+      - 'docs/LOCAL-EFFECT-RECEIVER.md'
+      - '.github/workflows/trusted-local-receiver.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  local-receiver:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Existing trusted gate + real file receiver and crash/HALT negative controls
+        run: python3 -m unittest discover -s trusted_stack -p 'test_*.py' -v

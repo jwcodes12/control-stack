@@ -24,3 +24,5 @@ The earlier live negative CI job is explicitly skipped under John's new scope;
 its archived evidence remains checked. This skip is not counted as a pass.
 
 CI found an absolute archived-input path assumption. The planner now prefers local sibling inputs and compares every IR field, normalizing source labels only for known files with identical SHA-256 values. A relocated archive passes, and changing observation bytes is rejected. Fresh checkout checks are required before the corrected-head push.
+
+Fresh checkout also found trusted-source label relocation in the independent checker. The shared normalization compares hash-identical known artifacts only; replay still reconstructs the IR independently from saved observations. Corrected fresh checkout: six planner tests and two archive/tamper tests PASS. Failed and corrected results retained.

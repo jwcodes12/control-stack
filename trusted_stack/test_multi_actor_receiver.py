@@ -8,6 +8,7 @@ from pathlib import Path
 
 from trusted_stack.controller import Controller, Denied, Principals
 from trusted_stack.outbox_receiver import deliver_record
+from trusted_stack.server import run_one
 
 
 class ReceiverJointTests(unittest.TestCase):
@@ -68,6 +69,53 @@ class ReceiverJointTests(unittest.TestCase):
             with self.assertRaises(Denied):
                 deliver_record(controller, accepted[0], directory)
             self.assertEqual(controller.state(owner)["spent"], 3)
+
+
+    def test_delegated_cross_agent_release_fails_without_exact_approval(self):
+        """An agent's role alone does not confer another agent's lease.
+
+        The uid arguments simulate peer-authenticated broker identities;
+        this is not a proof of SO_PEERCRED, isolation, or true delegation.
+        """
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            directory = root / "effects"
+            directory.mkdir(mode=0o700)
+            owner = os.geteuid()
+            a, b = owner + 40101, owner + 40102
+            reviewer, approver = owner + 40103, owner + 40104
+            principals = Principals(frozenset({a, b}), frozenset({reviewer}),
+                                    frozenset({approver}), frozenset({owner}))
+            gate = Controller.bootstrap(root / "state.db", principals, 1,
+                                        clock=lambda: 100)
+            body = b"checked-cross-agent-approval"
+            digest = gate.stage(a, body)
+            gate.review(reviewer, digest)
+            gate.issue_lease(owner, "lease-a", a, 1, 200)
+            gate.issue_lease(owner, "lease-b", b, 1, 200)
+            gate.approve(approver, "nonce-a", digest, "reviewed-destination",
+                         a, "lease-a", 150)
+            request = {"op": "effect_release", "nonce": "nonce-a",
+                       "digest": digest, "destination": "reviewed-destination",
+                       "lease_id": "lease-a"}
+            with self.assertRaises(Denied):
+                run_one(gate, b, request)
+            # A client-supplied impersonation claim also fails the strict RPC
+            # shape check rather than changing the peer-derived actor.
+            with self.assertRaises(Denied):
+                run_one(gate, b, {**request, "agent_uid": a})
+            self.assertEqual(gate.state(owner)["spent"], 0)
+            self.assertEqual(len(list(directory.glob("*.body"))), 0)
+            release_id = run_one(gate, a, request)
+            self.assertEqual(deliver_record(gate, release_id, directory),
+                             str(release_id) + ".body")
+            self.assertEqual((directory / f"{release_id}.body").read_bytes(), body)
+            gate.approve(approver, "nonce-b", digest, "reviewed-destination",
+                         b, "lease-b", 150)
+            with self.assertRaises(Denied):
+                run_one(gate, b, {**request, "nonce": "nonce-b",
+                                   "lease_id": "lease-b"})
+            self.assertEqual(gate.state(owner)["spent"], 1)
 
 
 if __name__ == "__main__":

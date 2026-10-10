@@ -76,7 +76,32 @@ theorem halted_blocks_use (s : State) (actor : Nat)
 No independent per-agent counters or borrowed budgets exist here. -/
 theorem budget_step (s : State) (a : Action) (h : s.spent ≤ s.cap) :
     (step s a).spent ≤ (step s a).cap := by
-  cases a <;> simp only [step] <;> split <;> simp_all <;> omega
+  cases a with
+  | grant actor delegate =>
+      by_cases denied :
+          s.halted = true ∨ s.used = true ∨ s.revoked = true ∨
+          actor ≠ s.owner ∨ delegate = s.owner ∨ s.grant ≠ none
+      · simpa [step, denied] using h
+      · simpa [step, denied] using h
+  | revoke actor =>
+      by_cases denied :
+          s.halted = true ∨ (actor ≠ s.owner ∧ actor ≠ s.admin) ∨
+          s.grant = none
+      · simpa [step, denied] using h
+      · simpa [step, denied] using h
+  | use actor =>
+      by_cases denied :
+          s.halted = true ∨ s.used = true ∨ s.revoked = true ∨
+          s.spent + 1 > s.cap ∨
+          (if s.grant = none then actor ≠ s.owner
+           else s.grant ≠ some actor)
+      · simpa [step, denied] using h
+      · have within_cap : s.spent + 1 ≤ s.cap := by omega
+        simpa [step, denied] using within_cap
+  | halt actor =>
+      by_cases authorized : actor = s.admin
+      · simpa [step, authorized] using h
+      · simpa [step, authorized] using h
 
 theorem budget_run (s : State) (actions : List Action)
     (h : s.spent ≤ s.cap) :

@@ -40,7 +40,7 @@ T5.3 | DONE | Defensive-only: deployment/runs/tier5/remediated; originals archiv
 T6.1 | DONE | deployment/heldout/tier6: 25 independent static cases (5 supported, 12 refuted, 8 unknown), labelled and hash-sealed before scoring; separate blinded codex exec; two startup failures retained
 T6.2 | DONE | 25 sealed static cases; final 50 kernel certificates: zero false model acceptances, zero over-rejections, 14 UNKNOWN, 22 prospective model plans and three named residuals. Raw/interface and pre-order-fix scores retained; no runtime assessment.
 T6.3 | DONE | declaration-only rules_baseline.py catches 2/20 author negatives and rejects 0/5 supported; scope limited, no OPA comparison claim; actual OPA GATED
-T7.1 | DOING | Freeze new preregistration for retrospective attribution over Tier 2 archives and Tier 5 honest remediation; no new attack policies
+T7.1 | DONE | New prereg/PREREG-DEPLOY-ARMS-v1.md and deployment/prereg-deploy-arms-freeze.json: nine archived episodes, fixed thresholds and honest timing gaps, frozen before attribution; retrospective, outcomes already known
 T7.2 | TODO | Defensive recast: archived outcome attribution plus already-recorded honest tasks, no new attack policies
 T7.3 | TODO | Defensive recast: attribution metrics on pinned archived data; original four-arm attack evaluation GATED
 T7.4 | TODO | Not yet started; tier order applies
@@ -120,3 +120,5 @@ ID | status | evidence path or reason
 ---|---|---
 T7.2-original | GATED | New attack policies excluded by John’s defensive-only decision; no cyber-permissive access tier available to the owner
 T7.3-original | GATED | Original four-arm attack evaluation requires cyber-permissive access the owner does not have; replace only with archived outcome attribution, never claim four-arm results
+
+T7.1 freeze: new analysis preregistration and all Tier 2/Tier 5 source hashes committed before attribution execution. Exactly nine episodes; six explicit honest workflow completions. Retrospective known outcomes, no randomized arms or new attack policies. The original four-arm attack evaluation remains GATED.

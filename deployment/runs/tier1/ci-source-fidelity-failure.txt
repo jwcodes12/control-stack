@@ -1,0 +1,515 @@
+﻿2026-10-10T18:32:25.4724763Z Current runner version: '2.337.0'
+2026-10-10T18:32:25.4754846Z ##[group]Runner Image Provisioner
+2026-10-10T18:32:25.4755751Z Hosted Compute Agent
+2026-10-10T18:32:25.4756316Z Version: 20261002.596
+2026-10-10T18:32:25.4757068Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-10T18:32:25.4757850Z Build Date: 2026-10-02T22:28:27Z
+2026-10-10T18:32:25.4758966Z Worker ID: {34726775-fc58-4dec-ac93-a964c8e1c4fe}
+2026-10-10T18:32:25.4759737Z Region: westcentralus
+2026-10-10T18:32:25.4760353Z Cloud: Azure
+2026-10-10T18:32:25.4760941Z ##[endgroup]
+2026-10-10T18:32:25.4762468Z ##[group]Operating System
+2026-10-10T18:32:25.4763167Z Ubuntu
+2026-10-10T18:32:25.4763735Z 24.04.5
+2026-10-10T18:32:25.4764230Z LTS
+2026-10-10T18:32:25.4764785Z ##[endgroup]
+2026-10-10T18:32:25.4765363Z ##[group]Runner Image
+2026-10-10T18:32:25.4765984Z Image: ubuntu-24.04
+2026-10-10T18:32:25.4766603Z Version: 20261004.327.1
+2026-10-10T18:32:25.4767900Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-10T18:32:25.4769737Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-10T18:32:25.4770804Z ##[endgroup]
+2026-10-10T18:32:25.4771916Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T18:32:25.4774326Z Contents: read
+2026-10-10T18:32:25.4774951Z Metadata: read
+2026-10-10T18:32:25.4775495Z ##[endgroup]
+2026-10-10T18:32:25.4778016Z Secret source: Actions
+2026-10-10T18:32:25.4779477Z Cache mode: write
+2026-10-10T18:32:25.4780567Z Prepare workflow directory
+2026-10-10T18:32:25.5134859Z Prepare all required actions
+2026-10-10T18:32:25.5184849Z Getting action download info
+2026-10-10T18:32:25.8049204Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-10T18:32:25.9005813Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-10T18:32:26.0891148Z Complete job name: source-fidelity
+2026-10-10T18:32:26.1732652Z ##[group]Run actions/checkout@v4
+2026-10-10T18:32:26.1733635Z with:
+2026-10-10T18:32:26.1734100Z   fetch-depth: 0
+2026-10-10T18:32:26.1734613Z   repository: jwcodes12/control-stack
+2026-10-10T18:32:26.1738999Z   token: ***
+2026-10-10T18:32:26.1739477Z   ssh-strict: true
+2026-10-10T18:32:26.1739948Z   ssh-user: git
+2026-10-10T18:32:26.1740425Z   persist-credentials: true
+2026-10-10T18:32:26.1740943Z   clean: true
+2026-10-10T18:32:26.1741418Z   sparse-checkout-cone-mode: true
+2026-10-10T18:32:26.1741970Z   fetch-tags: false
+2026-10-10T18:32:26.1742441Z   show-progress: true
+2026-10-10T18:32:26.1742924Z   lfs: false
+2026-10-10T18:32:26.1743375Z   submodules: false
+2026-10-10T18:32:26.1743855Z   set-safe-directory: true
+2026-10-10T18:32:26.1744395Z   allow-unsafe-pr-checkout: false
+2026-10-10T18:32:26.1745235Z ##[endgroup]
+2026-10-10T18:32:26.2856783Z Syncing repository: jwcodes12/control-stack
+2026-10-10T18:32:26.2859749Z ##[group]Getting Git version info
+2026-10-10T18:32:26.2861143Z Working directory is '/home/runner/work/control-stack/control-stack'
+2026-10-10T18:32:26.2863189Z [command]/usr/bin/git version
+2026-10-10T18:32:26.2944637Z git version 2.55.0
+2026-10-10T18:32:26.2967262Z ##[endgroup]
+2026-10-10T18:32:26.2993338Z Temporarily overriding HOME='/home/runner/work/_temp/123aef73-5864-4a6b-bf2f-8b9593f6ce26' before making global git config changes
+2026-10-10T18:32:26.2997238Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T18:32:26.3001229Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/control-stack/control-stack
+2026-10-10T18:32:26.3052605Z Deleting the contents of '/home/runner/work/control-stack/control-stack'
+2026-10-10T18:32:26.3059262Z ##[group]Initializing the repository
+2026-10-10T18:32:26.3065079Z [command]/usr/bin/git init /home/runner/work/control-stack/control-stack
+2026-10-10T18:32:26.3193216Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T18:32:26.3194744Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T18:32:26.3196551Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T18:32:26.3198559Z hint: call:
+2026-10-10T18:32:26.3199561Z hint:
+2026-10-10T18:32:26.3200797Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T18:32:26.3202397Z hint:
+2026-10-10T18:32:26.3203789Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T18:32:26.3206009Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T18:32:26.3208062Z hint:
+2026-10-10T18:32:26.3209499Z hint: 	git branch -m <name>
+2026-10-10T18:32:26.3210591Z hint:
+2026-10-10T18:32:26.3212253Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T18:32:26.3215485Z Initialized empty Git repository in /home/runner/work/control-stack/control-stack/.git/
+2026-10-10T18:32:26.3219033Z [command]/usr/bin/git remote add origin https://github.com/jwcodes12/control-stack
+2026-10-10T18:32:26.3273812Z ##[endgroup]
+2026-10-10T18:32:26.3275174Z ##[group]Disabling automatic garbage collection
+2026-10-10T18:32:26.3278446Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-10T18:32:26.3313625Z ##[endgroup]
+2026-10-10T18:32:26.3315076Z ##[group]Setting up auth
+2026-10-10T18:32:26.3322795Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T18:32:26.3361191Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T18:32:26.3777049Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T18:32:26.3819598Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T18:32:26.4054310Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T18:32:26.4092075Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T18:32:26.4321573Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T18:32:26.4366563Z ##[endgroup]
+2026-10-10T18:32:26.4368046Z ##[group]Fetching the repository
+2026-10-10T18:32:26.4379431Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +8a0bd76b8b06c90146613cbe29ec55dacf93fed0:refs/remotes/pull/45/merge
+2026-10-10T18:32:27.9821178Z From https://github.com/jwcodes12/control-stack
+2026-10-10T18:32:27.9823710Z  * [new branch]      audit/sc08-reconcile-v2-20261009         -> origin/audit/sc08-reconcile-v2-20261009
+2026-10-10T18:32:27.9826810Z  * [new branch]      audit/sc10-read-effect-race-20261009     -> origin/audit/sc10-read-effect-race-20261009
+2026-10-10T18:32:27.9829811Z  * [new branch]      broker-joint-transition-20261009         -> origin/broker-joint-transition-20261009
+2026-10-10T18:32:27.9832254Z  * [new branch]      chatgpt/handoff-20261009                 -> origin/chatgpt/handoff-20261009
+2026-10-10T18:32:27.9834490Z  * [new branch]      claude/datacenter-f4-20261009            -> origin/claude/datacenter-f4-20261009
+2026-10-10T18:32:27.9836889Z  * [new branch]      claude/next-20261009                     -> origin/claude/next-20261009
+2026-10-10T18:32:27.9839357Z  * [new branch]      claude/refinements-20261009              -> origin/claude/refinements-20261009
+2026-10-10T18:32:27.9841364Z  * [new branch]      claude/sc26-joint                        -> origin/claude/sc26-joint
+2026-10-10T18:32:27.9843868Z  * [new branch]      docs/deployment-verifier-report-20261010 -> origin/docs/deployment-verifier-report-20261010
+2026-10-10T18:32:27.9846259Z  * [new branch]      egress-r10-controls                      -> origin/egress-r10-controls
+2026-10-10T18:32:27.9849179Z  * [new branch]      fidelity-kernel-20261009                 -> origin/fidelity-kernel-20261009
+2026-10-10T18:32:27.9851471Z  * [new branch]      finish/f4-datacenter-clean-20261009      -> origin/finish/f4-datacenter-clean-20261009
+2026-10-10T18:32:27.9853959Z  * [new branch]      finish/sc10-temporal-audit-20261009      -> origin/finish/sc10-temporal-audit-20261009
+2026-10-10T18:32:27.9858711Z  * [new branch]      finish/trace-certificates-20261009       -> origin/finish/trace-certificates-20261009
+2026-10-10T18:32:27.9861570Z  * [new branch]      fix/broker-disconnect-salvage-20261009   -> origin/fix/broker-disconnect-salvage-20261009
+2026-10-10T18:32:27.9864478Z  * [new branch]      fix/sc06-preingestion-consent-negative-control-20261009 -> origin/fix/sc06-preingestion-consent-negative-control-20261009
+2026-10-10T18:32:27.9867595Z  * [new branch]      fix/sc08-reconcile-v2-empty-receipts-20261009 -> origin/fix/sc08-reconcile-v2-empty-receipts-20261009
+2026-10-10T18:32:27.9870483Z  * [new branch]      fix/statement-catalog-drift-20261009     -> origin/fix/statement-catalog-drift-20261009
+2026-10-10T18:32:27.9873084Z  * [new branch]      fix/statement-catalog-trigger-coverage-20261009 -> origin/fix/statement-catalog-trigger-coverage-20261009
+2026-10-10T18:32:27.9875614Z  * [new branch]      handoff/control-stack-20261009           -> origin/handoff/control-stack-20261009
+2026-10-10T18:32:27.9878548Z  * [new branch]      hardening/sc06-issuer-negative-controls-20261009 -> origin/hardening/sc06-issuer-negative-controls-20261009
+2026-10-10T18:32:27.9881444Z  * [new branch]      hardening/sc08-receipt-nonempty-20261009 -> origin/hardening/sc08-receipt-nonempty-20261009
+2026-10-10T18:32:27.9883930Z  * [new branch]      hardening/sc10-atomic-store-v2-20261009  -> origin/hardening/sc10-atomic-store-v2-20261009
+2026-10-10T18:32:27.9886516Z  * [new branch]      lean-validation-run-20261008             -> origin/lean-validation-run-20261008
+2026-10-10T18:32:27.9889139Z  * [new branch]      main                                     -> origin/main
+2026-10-10T18:32:27.9891245Z  * [new branch]      primitive-completion-validation-20261009 -> origin/primitive-completion-validation-20261009
+2026-10-10T18:32:27.9893825Z  * [new branch]      primitive-enforcement-review-20261009    -> origin/primitive-enforcement-review-20261009
+2026-10-10T18:32:27.9896802Z  * [new branch]      primitive-impl-ci-20261009               -> origin/primitive-impl-ci-20261009
+2026-10-10T18:32:27.9899468Z  * [new branch]      primitives-completion-review-20261009    -> origin/primitives-completion-review-20261009
+2026-10-10T18:32:27.9902214Z  * [new branch]      proof/sc06-confirmation-reuse-20261009   -> origin/proof/sc06-confirmation-reuse-20261009
+2026-10-10T18:32:27.9904720Z  * [new branch]      proof/sc10-runtime-refinement-20261009   -> origin/proof/sc10-runtime-refinement-20261009
+2026-10-10T18:32:27.9907472Z  * [new branch]      refinement/broker-joint-model-clean-20261009 -> origin/refinement/broker-joint-model-clean-20261009
+2026-10-10T18:32:27.9910732Z  * [new branch]      refinement/checked-trace-clean-20261009  -> origin/refinement/checked-trace-clean-20261009
+2026-10-10T18:32:27.9913259Z  * [new branch]      refinement/sc06-context-oneuse-20261009  -> origin/refinement/sc06-context-oneuse-20261009
+2026-10-10T18:32:27.9916208Z  * [new branch]      refinement/trusted-broker-joint-model-20261009 -> origin/refinement/trusted-broker-joint-model-20261009
+2026-10-10T18:32:27.9919547Z  * [new branch]      review/sc06-issuer-auth-negative-control-20261009 -> origin/review/sc06-issuer-auth-negative-control-20261009
+2026-10-10T18:32:27.9922512Z  * [new branch]      review/sc08-pin-boundary-20261009        -> origin/review/sc08-pin-boundary-20261009
+2026-10-10T18:32:27.9924906Z  * [new branch]      sc01-assurance-priorities-20261008       -> origin/sc01-assurance-priorities-20261008
+2026-10-10T18:32:27.9927396Z  * [new branch]      sc01-priorities-validation-20261008      -> origin/sc01-priorities-validation-20261008
+2026-10-10T18:32:27.9930292Z  * [new branch]      sc01-repair-viability                    -> origin/sc01-repair-viability
+2026-10-10T18:32:27.9932774Z  * [new branch]      sc04-canonicalizer-correspondence-20261009 -> origin/sc04-canonicalizer-correspondence-20261009
+2026-10-10T18:32:27.9935494Z  * [new branch]      sc08-sealed-script-boundary-20261009     -> origin/sc08-sealed-script-boundary-20261009
+2026-10-10T18:32:27.9937998Z  * [new branch]      scenario-architecture-20261008           -> origin/scenario-architecture-20261008
+2026-10-10T18:32:27.9940605Z  * [new branch]      scenario-backbone-20261008               -> origin/scenario-backbone-20261008
+2026-10-10T18:32:27.9943095Z  * [new branch]      scenario-bundles-static-checker-20261008 -> origin/scenario-bundles-static-checker-20261008
+2026-10-10T18:32:27.9945665Z  * [new branch]      sol/deployment-slice-20261010            -> origin/sol/deployment-slice-20261010
+2026-10-10T18:32:27.9948015Z  * [new branch]      structure-branch-audit-20261008          -> origin/structure-branch-audit-20261008
+2026-10-10T18:32:27.9950622Z  * [new branch]      structure-merge-20261008                 -> origin/structure-merge-20261008
+2026-10-10T18:32:27.9953270Z  * [new branch]      structure-merge-20261008-gpt6-finish     -> origin/structure-merge-20261008-gpt6-finish
+2026-10-10T18:32:27.9956402Z  * [new branch]      test/broker-transition-oracle-clean-20261009 -> origin/test/broker-transition-oracle-clean-20261009
+2026-10-10T18:32:27.9959758Z  * [new branch]      work/complete-runtime-boundary-f6-f8-20261010 -> origin/work/complete-runtime-boundary-f6-f8-20261010
+2026-10-10T18:32:27.9962744Z  * [new branch]      work/consolidated-control-stack-20261009 -> origin/work/consolidated-control-stack-20261009
+2026-10-10T18:32:27.9965865Z  * [new branch]      work/effect-runtime-f6-f8-20261009       -> origin/work/effect-runtime-f6-f8-20261009
+2026-10-10T18:32:27.9969812Z  * [new branch]      work/portable-effect-contract-20261010   -> origin/work/portable-effect-contract-20261010
+2026-10-10T18:32:27.9973163Z  * [new branch]      work/runtime-f6-f8-completion-20261010   -> origin/work/runtime-f6-f8-completion-20261010
+2026-10-10T18:32:27.9976030Z  * [new ref]         8a0bd76b8b06c90146613cbe29ec55dacf93fed0 -> pull/45/merge
+2026-10-10T18:32:27.9979992Z ##[endgroup]
+2026-10-10T18:32:27.9981643Z ##[group]Determining the checkout info
+2026-10-10T18:32:27.9983465Z ##[endgroup]
+2026-10-10T18:32:27.9984509Z [command]/usr/bin/git sparse-checkout disable
+2026-10-10T18:32:27.9987552Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T18:32:27.9991325Z ##[group]Checking out the ref
+2026-10-10T18:32:27.9992946Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/45/merge
+2026-10-10T18:32:28.4887171Z Note: switching to 'refs/remotes/pull/45/merge'.
+2026-10-10T18:32:28.4887950Z 
+2026-10-10T18:32:28.4889109Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-10T18:32:28.4890586Z changes and commit them, and you can discard any commits you make in this
+2026-10-10T18:32:28.4891957Z state without impacting any branches by switching back to a branch.
+2026-10-10T18:32:28.4892636Z 
+2026-10-10T18:32:28.4893085Z If you want to create a new branch to retain commits you create, you may
+2026-10-10T18:32:28.4894300Z do so (now or later) by using -c with the switch command. Example:
+2026-10-10T18:32:28.4895043Z 
+2026-10-10T18:32:28.4895420Z   git switch -c <new-branch-name>
+2026-10-10T18:32:28.4896011Z 
+2026-10-10T18:32:28.4896364Z Or undo this operation with:
+2026-10-10T18:32:28.4896908Z 
+2026-10-10T18:32:28.4897283Z   git switch -
+2026-10-10T18:32:28.4897741Z 
+2026-10-10T18:32:28.4899287Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-10T18:32:28.4900016Z 
+2026-10-10T18:32:28.4900790Z HEAD is now at 8a0bd76 Merge 64498ebdcd0a6c68230d8495b6ac359871f3729f into 8d4bd456116baf434ab54d9c1068d98c4b0900f7
+2026-10-10T18:32:28.4919781Z ##[endgroup]
+2026-10-10T18:32:28.4970773Z [command]/usr/bin/git log -1 --format=%H
+2026-10-10T18:32:28.4999501Z 8a0bd76b8b06c90146613cbe29ec55dacf93fed0
+2026-10-10T18:32:28.5364856Z ##[group]Run actions/setup-python@v5
+2026-10-10T18:32:28.5365272Z with:
+2026-10-10T18:32:28.5365564Z   python-version: 3.12
+2026-10-10T18:32:28.5365907Z   check-latest: false
+2026-10-10T18:32:28.5369167Z   token: ***
+2026-10-10T18:32:28.5369504Z   update-environment: true
+2026-10-10T18:32:28.5369863Z   allow-prereleases: false
+2026-10-10T18:32:28.5370200Z   freethreaded: false
+2026-10-10T18:32:28.5370531Z ##[endgroup]
+2026-10-10T18:32:28.6782837Z ##[group]Installed versions
+2026-10-10T18:32:28.6877187Z (node:2370) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T18:32:28.6879160Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T18:32:28.6880050Z Successfully set up CPython (3.12.15)
+2026-10-10T18:32:28.6881149Z ##[endgroup]
+2026-10-10T18:32:28.7110583Z ##[group]Run set -euo pipefail
+2026-10-10T18:32:28.7111123Z [36;1mset -euo pipefail[0m
+2026-10-10T18:32:28.7111534Z [36;1mgit fetch origin main --depth=1[0m
+2026-10-10T18:32:28.7112009Z [36;1mdiff_files="$(git diff --name-only origin/main...HEAD)"[0m
+2026-10-10T18:32:28.7112493Z [36;1mprintf '%s\n' "$diff_files"[0m
+2026-10-10T18:32:28.7113505Z [36;1mif printf '%s\n' "$diff_files" | grep -E '^(ControlStack/EgressGate\.lean|prereg/|gateway/vm/receipts/|data/linuxarena/|data/redwood-leaderboard/|numerics/lastraj_|.*(/evidence/|/receipts/))'; then[0m
+2026-10-10T18:32:28.7114726Z [36;1m  echo 'ERROR: immutable proof target, experimental evidence or preregistration changed'[0m
+2026-10-10T18:32:28.7115321Z [36;1m  exit 1[0m
+2026-10-10T18:32:28.7115613Z [36;1mfi[0m
+2026-10-10T18:32:28.7452140Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-10T18:32:28.7452813Z env:
+2026-10-10T18:32:28.7453331Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T18:32:28.7454187Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T18:32:28.7454933Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T18:32:28.7455574Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T18:32:28.7456212Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T18:32:28.7456856Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T18:32:28.7457406Z ##[endgroup]
+2026-10-10T18:32:29.1830541Z From https://github.com/jwcodes12/control-stack
+2026-10-10T18:32:29.1874699Z  * branch            main       -> FETCH_HEAD
+2026-10-10T18:32:29.1875481Z .github/workflows/deployment-slice.yml
+2026-10-10T18:32:29.1876228Z CONTROL-STACK-DEPLOYMENT-VERIFIER-REPORT-2026-10-09.md
+2026-10-10T18:32:29.1876942Z ControlStack/Deployment/Contracts.lean
+2026-10-10T18:32:29.1877487Z LEAN-STATEMENTS-NORMAL-FORM.md
+2026-10-10T18:32:29.1877956Z SLICE-STATUS.md
+2026-10-10T18:32:29.1878864Z THEOREM-REGISTRY.json
+2026-10-10T18:32:29.1879311Z THEOREM-REGISTRY.md
+2026-10-10T18:32:29.1879835Z deployment-evidence/ci-artifact-failure.txt
+2026-10-10T18:32:29.1880427Z deployment-evidence/clean-lean.json
+2026-10-10T18:32:29.1881019Z deployment-evidence/container-build/image-pin.json
+2026-10-10T18:32:29.1881691Z deployment-evidence/containers/clean/bundle.json
+2026-10-10T18:32:29.1882335Z deployment-evidence/containers/clean/compose.json
+2026-10-10T18:32:29.1883109Z deployment-evidence/containers/clean/docker-inspect.raw.json
+2026-10-10T18:32:29.1883997Z deployment-evidence/containers/clean/ir.json
+2026-10-10T18:32:29.1884633Z deployment-evidence/containers/clean/result.json
+2026-10-10T18:32:29.1885338Z deployment-evidence/containers/clean/runtime.json
+2026-10-10T18:32:29.1885996Z deployment-evidence/containers/clean/sink-state.json
+2026-10-10T18:32:29.1886663Z deployment-evidence/containers/clean/sink/1.body
+2026-10-10T18:32:29.1887304Z deployment-evidence/containers/cleanup.json
+2026-10-10T18:32:29.1887923Z deployment-evidence/containers/commands.json
+2026-10-10T18:32:29.1889274Z deployment-evidence/containers/docker-info.json
+2026-10-10T18:32:29.1889887Z deployment-evidence/containers/result.json
+2026-10-10T18:32:29.1890685Z deployment-evidence/containers/trusted-role-uid-collision/bundle.json
+2026-10-10T18:32:29.1891602Z deployment-evidence/containers/trusted-role-uid-collision/compose.json
+2026-10-10T18:32:29.1892606Z deployment-evidence/containers/trusted-role-uid-collision/docker-inspect.raw.json
+2026-10-10T18:32:29.1893597Z deployment-evidence/containers/trusted-role-uid-collision/ir.json
+2026-10-10T18:32:29.1894483Z deployment-evidence/containers/trusted-role-uid-collision/result.json
+2026-10-10T18:32:29.1895399Z deployment-evidence/containers/trusted-role-uid-collision/runtime.json
+2026-10-10T18:32:29.1896362Z deployment-evidence/containers/trusted-role-uid-collision/sink-state.json
+2026-10-10T18:32:29.1897333Z deployment-evidence/containers/trusted-role-uid-collision/sink/.gitkeep
+2026-10-10T18:32:29.1898956Z deployment-evidence/containers/writable-sink-mount/bundle.json
+2026-10-10T18:32:29.1899870Z deployment-evidence/containers/writable-sink-mount/compose.json
+2026-10-10T18:32:29.1900865Z deployment-evidence/containers/writable-sink-mount/docker-inspect.raw.json
+2026-10-10T18:32:29.1901778Z deployment-evidence/containers/writable-sink-mount/ir.json
+2026-10-10T18:32:29.1902770Z deployment-evidence/containers/writable-sink-mount/result.json
+2026-10-10T18:32:29.1903668Z deployment-evidence/containers/writable-sink-mount/runtime.json
+2026-10-10T18:32:29.1904555Z deployment-evidence/containers/writable-sink-mount/sink-state.json
+2026-10-10T18:32:29.1905557Z deployment-evidence/containers/writable-sink-mount/sink/2.body
+2026-10-10T18:32:29.1906276Z deployment-evidence/contract-axioms.txt
+2026-10-10T18:32:29.1906853Z deployment-evidence/deployment-check.txt
+2026-10-10T18:32:29.1907421Z deployment-evidence/fast-check.txt
+2026-10-10T18:32:29.1908002Z deployment-evidence/followup-deployment-check.txt
+2026-10-10T18:32:29.1909008Z deployment-evidence/followup-matrix-check.txt
+2026-10-10T18:32:29.1909711Z deployment-evidence/host-confinement-failure.txt
+2026-10-10T18:32:29.1910478Z deployment-evidence/matrix/agent-broker-db-access.bundle.json
+2026-10-10T18:32:29.1911307Z deployment-evidence/matrix/agent-broker-db-access.ir.json
+2026-10-10T18:32:29.1912048Z deployment-evidence/matrix/agent-broker-db-access.md
+2026-10-10T18:32:29.1912966Z deployment-evidence/matrix/alternate-deputy-sink-credentials.bundle.json
+2026-10-10T18:32:29.1913948Z deployment-evidence/matrix/alternate-deputy-sink-credentials.ir.json
+2026-10-10T18:32:29.1914883Z deployment-evidence/matrix/alternate-deputy-sink-credentials.md
+2026-10-10T18:32:29.1915756Z deployment-evidence/matrix/channel-target-shadow.bundle.json
+2026-10-10T18:32:29.1916565Z deployment-evidence/matrix/channel-target-shadow.ir.json
+2026-10-10T18:32:29.1917301Z deployment-evidence/matrix/channel-target-shadow.md
+2026-10-10T18:32:29.1917959Z deployment-evidence/matrix/clean.bundle.json
+2026-10-10T18:32:29.1918835Z deployment-evidence/matrix/clean.ir.json
+2026-10-10T18:32:29.1919387Z deployment-evidence/matrix/clean.md
+2026-10-10T18:32:29.1920024Z deployment-evidence/matrix/credential-password.bundle.json
+2026-10-10T18:32:29.1920812Z deployment-evidence/matrix/credential-password.ir.json
+2026-10-10T18:32:29.1921512Z deployment-evidence/matrix/credential-password.md
+2026-10-10T18:32:29.1922161Z deployment-evidence/matrix/daemon-uid-remap.bundle.json
+2026-10-10T18:32:29.1922849Z deployment-evidence/matrix/daemon-uid-remap.ir.json
+2026-10-10T18:32:29.1923481Z deployment-evidence/matrix/daemon-uid-remap.md
+2026-10-10T18:32:29.1924115Z deployment-evidence/matrix/host-network.bundle.json
+2026-10-10T18:32:29.1924793Z deployment-evidence/matrix/host-network.ir.json
+2026-10-10T18:32:29.1925515Z deployment-evidence/matrix/host-network.md
+2026-10-10T18:32:29.1926207Z deployment-evidence/matrix/inherited-descriptor.bundle.json
+2026-10-10T18:32:29.1926985Z deployment-evidence/matrix/inherited-descriptor.ir.json
+2026-10-10T18:32:29.1927690Z deployment-evidence/matrix/inherited-descriptor.md
+2026-10-10T18:32:29.1928892Z deployment-evidence/matrix/injected-helper.bundle.json
+2026-10-10T18:32:29.1929585Z deployment-evidence/matrix/injected-helper.ir.json
+2026-10-10T18:32:29.1930210Z deployment-evidence/matrix/injected-helper.md
+2026-10-10T18:32:29.1930794Z deployment-evidence/matrix/matrix.json
+2026-10-10T18:32:29.1931490Z deployment-evidence/matrix/missing-isolated-network.bundle.json
+2026-10-10T18:32:29.1932375Z deployment-evidence/matrix/missing-isolated-network.ir.json
+2026-10-10T18:32:29.1933171Z deployment-evidence/matrix/missing-isolated-network.md
+2026-10-10T18:32:29.1933977Z deployment-evidence/matrix/missing-reviewer-role.bundle.json
+2026-10-10T18:32:29.1934811Z deployment-evidence/matrix/missing-reviewer-role.ir.json
+2026-10-10T18:32:29.1935543Z deployment-evidence/matrix/missing-reviewer-role.md
+2026-10-10T18:32:29.1936292Z deployment-evidence/matrix/mount-parent-alias.bundle.json
+2026-10-10T18:32:29.1937258Z deployment-evidence/matrix/mount-parent-alias.ir.json
+2026-10-10T18:32:29.1937947Z deployment-evidence/matrix/mount-parent-alias.md
+2026-10-10T18:32:29.1939013Z deployment-evidence/matrix/post-capture-drift.bundle.json
+2026-10-10T18:32:29.1939718Z deployment-evidence/matrix/post-capture-drift.ir.json
+2026-10-10T18:32:29.1940379Z deployment-evidence/matrix/post-capture-drift.md
+2026-10-10T18:32:29.1941089Z deployment-evidence/matrix/privileged-container.bundle.json
+2026-10-10T18:32:29.1941834Z deployment-evidence/matrix/privileged-container.ir.json
+2026-10-10T18:32:29.1942570Z deployment-evidence/matrix/privileged-container.md
+2026-10-10T18:32:29.1943208Z deployment-evidence/matrix/runtime-alias.bundle.json
+2026-10-10T18:32:29.1943839Z deployment-evidence/matrix/runtime-alias.ir.json
+2026-10-10T18:32:29.1944451Z deployment-evidence/matrix/runtime-alias.md
+2026-10-10T18:32:29.1945147Z deployment-evidence/matrix/runtime-code-tamper.bundle.json
+2026-10-10T18:32:29.1945929Z deployment-evidence/matrix/runtime-code-tamper.ir.json
+2026-10-10T18:32:29.1946627Z deployment-evidence/matrix/runtime-code-tamper.md
+2026-10-10T18:32:29.1947375Z deployment-evidence/matrix/runtime-socket-mount.bundle.json
+2026-10-10T18:32:29.1948164Z deployment-evidence/matrix/runtime-socket-mount.ir.json
+2026-10-10T18:32:29.1949141Z deployment-evidence/matrix/runtime-socket-mount.md
+2026-10-10T18:32:29.1949970Z deployment-evidence/matrix/storage-rollback.bundle.json
+2026-10-10T18:32:29.1950701Z deployment-evidence/matrix/storage-rollback.ir.json
+2026-10-10T18:32:29.1951406Z deployment-evidence/matrix/storage-rollback.md
+2026-10-10T18:32:29.1952216Z deployment-evidence/matrix/trusted-reviewer-uid-collision.bundle.json
+2026-10-10T18:32:29.1953163Z deployment-evidence/matrix/trusted-reviewer-uid-collision.ir.json
+2026-10-10T18:32:29.1954025Z deployment-evidence/matrix/trusted-reviewer-uid-collision.md
+2026-10-10T18:32:29.1954886Z deployment-evidence/matrix/trusted-role-uid-collision.bundle.json
+2026-10-10T18:32:29.1955762Z deployment-evidence/matrix/trusted-role-uid-collision.ir.json
+2026-10-10T18:32:29.1956548Z deployment-evidence/matrix/trusted-role-uid-collision.md
+2026-10-10T18:32:29.1957313Z deployment-evidence/matrix/trusted-source-mount.bundle.json
+2026-10-10T18:32:29.1958064Z deployment-evidence/matrix/trusted-source-mount.ir.json
+2026-10-10T18:32:29.1959104Z deployment-evidence/matrix/trusted-source-mount.md
+2026-10-10T18:32:29.1959797Z deployment-evidence/matrix/unknown-feature.bundle.json
+2026-10-10T18:32:29.1960461Z deployment-evidence/matrix/unknown-feature.ir.json
+2026-10-10T18:32:29.1961080Z deployment-evidence/matrix/unknown-feature.md
+2026-10-10T18:32:29.1961771Z deployment-evidence/matrix/unlisted-environment.bundle.json
+2026-10-10T18:32:29.1962534Z deployment-evidence/matrix/unlisted-environment.ir.json
+2026-10-10T18:32:29.1963215Z deployment-evidence/matrix/unlisted-environment.md
+2026-10-10T18:32:29.1964075Z deployment-evidence/matrix/unlisted-host-mount.bundle.json
+2026-10-10T18:32:29.1964875Z deployment-evidence/matrix/unlisted-host-mount.ir.json
+2026-10-10T18:32:29.1965906Z deployment-evidence/matrix/unlisted-host-mount.md
+2026-10-10T18:32:29.1966660Z deployment-evidence/matrix/writable-channel-mount.bundle.json
+2026-10-10T18:32:29.1967468Z deployment-evidence/matrix/writable-channel-mount.ir.json
+2026-10-10T18:32:29.1968605Z deployment-evidence/matrix/writable-channel-mount.md
+2026-10-10T18:32:29.1969396Z deployment-evidence/matrix/writable-sink-mount.bundle.json
+2026-10-10T18:32:29.1970176Z deployment-evidence/matrix/writable-sink-mount.ir.json
+2026-10-10T18:32:29.1970917Z deployment-evidence/matrix/writable-sink-mount.md
+2026-10-10T18:32:29.1971756Z deployment-evidence/runtime-vm/slice-runtime/clean-after-halt-sink.json
+2026-10-10T18:32:29.1972715Z deployment-evidence/runtime-vm/slice-runtime/clean-inflight-sink.json
+2026-10-10T18:32:29.1973604Z deployment-evidence/runtime-vm/slice-runtime/halt-ready.marker
+2026-10-10T18:32:29.1974429Z deployment-evidence/runtime-vm/slice-runtime/private/gate.db
+2026-10-10T18:32:29.1975506Z deployment-evidence/runtime-vm/slice-runtime/published.marker
+2026-10-10T18:32:29.1976352Z deployment-evidence/runtime-vm/slice-runtime/result.json
+2026-10-10T18:32:29.1977118Z deployment-evidence/runtime-vm/slice-runtime/resume.marker
+2026-10-10T18:32:29.1977831Z deployment-evidence/runtime-vm/slice-runtime/sink/1.body
+2026-10-10T18:32:29.1978860Z deployment-evidence/runtime-vm/slice-runtime/sink/2.body
+2026-10-10T18:32:29.1979580Z deployment-evidence/runtime-vm/slice-runtime/sink/3.body
+2026-10-10T18:32:29.1980500Z deployment-evidence/runtime-vm/slice-runtime/trusted-role-uid-collision-sink.json
+2026-10-10T18:32:29.1981503Z deployment-evidence/runtime-vm/slice-runtime/worker/agent-23701.py
+2026-10-10T18:32:29.1982382Z deployment-evidence/runtime-vm/slice-runtime/worker/agent-23702.py
+2026-10-10T18:32:29.1983310Z deployment-evidence/runtime-vm/slice-runtime/worker/writable-confined.py
+2026-10-10T18:32:29.1984268Z deployment-evidence/runtime-vm/slice-runtime/writable-sink-mount-sink.json
+2026-10-10T18:32:29.1985123Z deployment-evidence/subset-differential-check.txt
+2026-10-10T18:32:29.1985774Z deployment-evidence/subset-differential.json
+2026-10-10T18:32:29.1986384Z deployment-evidence/vm-assets.sha256
+2026-10-10T18:32:29.1986911Z deployment-evidence/vm-command.txt
+2026-10-10T18:32:29.1987428Z deployment-evidence/vm-console.txt
+2026-10-10T18:32:29.1987896Z deployment/QUEUE.md
+2026-10-10T18:32:29.1988549Z deployment/__init__.py
+2026-10-10T18:32:29.1989057Z deployment/evidence/tier1/differential-attempt1.txt
+2026-10-10T18:32:29.1989797Z deployment/evidence/tier1/differential-attempt2.txt
+2026-10-10T18:32:29.1990456Z deployment/evidence/tier1/differential.axioms.txt
+2026-10-10T18:32:29.1991075Z deployment/evidence/tier1/differential.json
+2026-10-10T18:32:29.1991690Z deployment/evidence/tier1/evidence-tests.txt
+2026-10-10T18:32:29.1992337Z deployment/evidence/tier1/lean-build-attempt1.txt
+2026-10-10T18:32:29.1992994Z deployment/evidence/tier1/lean-build-attempt2.txt
+2026-10-10T18:32:29.1993604Z deployment/evidence/tier1/lean-tests.txt
+2026-10-10T18:32:29.1994197Z deployment/evidence/tier1/monotonicity-attempt1.txt
+2026-10-10T18:32:29.1994853Z deployment/evidence/tier1/monotonicity-attempt2.txt
+2026-10-10T18:32:29.1995449Z deployment/evidence/tier1/monotonicity.json
+2026-10-10T18:32:29.1996004Z deployment/evidence/tier1/runtime-tests.txt
+2026-10-10T18:32:29.1996604Z deployment/evidence/tier1/slice-tests-attempt2.txt
+2026-10-10T18:32:29.1997213Z deployment/evidence/tier1/slice-tests.txt
+2026-10-10T18:32:29.1997723Z deployment/kernel.py
+2026-10-10T18:32:29.1998140Z deployment/reviews/tier1-self-review.md
+2026-10-10T18:32:29.1998947Z docs/DEPLOYMENT-CLAIM-v0.md
+2026-10-10T18:32:29.1999422Z docs/DEPLOYMENT-EXTRACTOR-GAPS.md
+2026-10-10T18:32:29.1999926Z docs/DEPLOYMENT-SLICE-NEXT.md
+2026-10-10T18:32:29.2000429Z examples/compose-two-agent/README.md
+2026-10-10T18:32:29.2001094Z examples/compose-two-agent/agent-broker-db-access.compose.json
+2026-10-10T18:32:29.2001914Z examples/compose-two-agent/agent-broker-db-access.runtime.json
+2026-10-10T18:32:29.2002894Z examples/compose-two-agent/alternate-deputy-sink-credentials.compose.json
+2026-10-10T18:32:29.2004225Z examples/compose-two-agent/alternate-deputy-sink-credentials.runtime.json
+2026-10-10T18:32:29.2005150Z examples/compose-two-agent/channel-target-shadow.compose.json
+2026-10-10T18:32:29.2005967Z examples/compose-two-agent/channel-target-shadow.runtime.json
+2026-10-10T18:32:29.2006679Z examples/compose-two-agent/clean.compose.json
+2026-10-10T18:32:29.2007273Z examples/compose-two-agent/clean.runtime.json
+2026-10-10T18:32:29.2007959Z examples/compose-two-agent/credential-password.compose.json
+2026-10-10T18:32:29.2008993Z examples/compose-two-agent/credential-password.runtime.json
+2026-10-10T18:32:29.2009763Z examples/compose-two-agent/daemon-uid-remap.compose.json
+2026-10-10T18:32:29.2010561Z examples/compose-two-agent/daemon-uid-remap.runtime.json
+2026-10-10T18:32:29.2011206Z examples/compose-two-agent/expected.json
+2026-10-10T18:32:29.2012053Z examples/compose-two-agent/host-network.compose.json
+2026-10-10T18:32:29.2012854Z examples/compose-two-agent/host-network.runtime.json
+2026-10-10T18:32:29.2013457Z examples/compose-two-agent/image-pin.json
+2026-10-10T18:32:29.2014128Z examples/compose-two-agent/inherited-descriptor.compose.json
+2026-10-10T18:32:29.2014914Z examples/compose-two-agent/inherited-descriptor.runtime.json
+2026-10-10T18:32:29.2015665Z examples/compose-two-agent/injected-helper.compose.json
+2026-10-10T18:32:29.2016346Z examples/compose-two-agent/injected-helper.runtime.json
+2026-10-10T18:32:29.2017115Z examples/compose-two-agent/missing-isolated-network.compose.json
+2026-10-10T18:32:29.2017981Z examples/compose-two-agent/missing-isolated-network.runtime.json
+2026-10-10T18:32:29.2019082Z examples/compose-two-agent/missing-reviewer-role.compose.json
+2026-10-10T18:32:29.2019947Z examples/compose-two-agent/missing-reviewer-role.runtime.json
+2026-10-10T18:32:29.2020729Z examples/compose-two-agent/mount-parent-alias.compose.json
+2026-10-10T18:32:29.2021518Z examples/compose-two-agent/mount-parent-alias.runtime.json
+2026-10-10T18:32:29.2022316Z examples/compose-two-agent/post-capture-drift.compose.json
+2026-10-10T18:32:29.2023061Z examples/compose-two-agent/post-capture-drift.runtime.json
+2026-10-10T18:32:29.2023834Z examples/compose-two-agent/privileged-container.compose.json
+2026-10-10T18:32:29.2024627Z examples/compose-two-agent/privileged-container.runtime.json
+2026-10-10T18:32:29.2025369Z examples/compose-two-agent/runtime-alias.compose.json
+2026-10-10T18:32:29.2026074Z examples/compose-two-agent/runtime-alias.runtime.json
+2026-10-10T18:32:29.2026865Z examples/compose-two-agent/runtime-code-tamper.compose.json
+2026-10-10T18:32:29.2027671Z examples/compose-two-agent/runtime-code-tamper.runtime.json
+2026-10-10T18:32:29.2028737Z examples/compose-two-agent/runtime-socket-mount.compose.json
+2026-10-10T18:32:29.2029575Z examples/compose-two-agent/runtime-socket-mount.runtime.json
+2026-10-10T18:32:29.2030380Z examples/compose-two-agent/storage-rollback.compose.json
+2026-10-10T18:32:29.2031169Z examples/compose-two-agent/storage-rollback.runtime.json
+2026-10-10T18:32:29.2032050Z examples/compose-two-agent/trusted-reviewer-uid-collision.compose.json
+2026-10-10T18:32:29.2033009Z examples/compose-two-agent/trusted-reviewer-uid-collision.runtime.json
+2026-10-10T18:32:29.2034024Z examples/compose-two-agent/trusted-role-uid-collision.compose.json
+2026-10-10T18:32:29.2034937Z examples/compose-two-agent/trusted-role-uid-collision.runtime.json
+2026-10-10T18:32:29.2035804Z examples/compose-two-agent/trusted-source-mount.compose.json
+2026-10-10T18:32:29.2036634Z examples/compose-two-agent/trusted-source-mount.runtime.json
+2026-10-10T18:32:29.2037377Z examples/compose-two-agent/unknown-feature.compose.json
+2026-10-10T18:32:29.2038080Z examples/compose-two-agent/unknown-feature.runtime.json
+2026-10-10T18:32:29.2039136Z examples/compose-two-agent/unlisted-environment.compose.json
+2026-10-10T18:32:29.2039939Z examples/compose-two-agent/unlisted-environment.runtime.json
+2026-10-10T18:32:29.2040747Z examples/compose-two-agent/unlisted-host-mount.compose.json
+2026-10-10T18:32:29.2041811Z examples/compose-two-agent/unlisted-host-mount.runtime.json
+2026-10-10T18:32:29.2042630Z examples/compose-two-agent/writable-channel-mount.compose.json
+2026-10-10T18:32:29.2043484Z examples/compose-two-agent/writable-channel-mount.runtime.json
+2026-10-10T18:32:29.2044450Z examples/compose-two-agent/writable-sink-mount.compose.json
+2026-10-10T18:32:29.2045349Z examples/compose-two-agent/writable-sink-mount.runtime.json
+2026-10-10T18:32:29.2046037Z extractors/__init__.py
+2026-10-10T18:32:29.2046472Z extractors/compose/__init__.py
+2026-10-10T18:32:29.2046972Z scenarios/SC-08/tests/README.md
+2026-10-10T18:32:29.2047445Z scenarios/SC-10/tests/README.md
+2026-10-10T18:32:29.2047903Z security_ir/SCHEMA-v0.md
+2026-10-10T18:32:29.2048602Z security_ir/__init__.py
+2026-10-10T18:32:29.2049121Z security_ir/fixtures/agent-broker-db-access.json
+2026-10-10T18:32:29.2049846Z security_ir/fixtures/alternate-deputy-sink-credentials.json
+2026-10-10T18:32:29.2050801Z security_ir/fixtures/channel-target-shadow.json
+2026-10-10T18:32:29.2051424Z security_ir/fixtures/clean.json
+2026-10-10T18:32:29.2051958Z security_ir/fixtures/credential-password.json
+2026-10-10T18:32:29.2052556Z security_ir/fixtures/daemon-uid-remap.json
+2026-10-10T18:32:29.2053109Z security_ir/fixtures/host-network.json
+2026-10-10T18:32:29.2053694Z security_ir/fixtures/inherited-descriptor.json
+2026-10-10T18:32:29.2054299Z security_ir/fixtures/injected-helper.json
+2026-10-10T18:32:29.2054915Z security_ir/fixtures/missing-isolated-network.json
+2026-10-10T18:32:29.2055572Z security_ir/fixtures/missing-reviewer-role.json
+2026-10-10T18:32:29.2056181Z security_ir/fixtures/mount-parent-alias.json
+2026-10-10T18:32:29.2056767Z security_ir/fixtures/post-capture-drift.json
+2026-10-10T18:32:29.2057356Z security_ir/fixtures/privileged-container.json
+2026-10-10T18:32:29.2057947Z security_ir/fixtures/runtime-alias.json
+2026-10-10T18:32:29.2058803Z security_ir/fixtures/runtime-code-tamper.json
+2026-10-10T18:32:29.2059421Z security_ir/fixtures/runtime-socket-mount.json
+2026-10-10T18:32:29.2060023Z security_ir/fixtures/storage-rollback.json
+2026-10-10T18:32:29.2060683Z security_ir/fixtures/trusted-reviewer-uid-collision.json
+2026-10-10T18:32:29.2061427Z security_ir/fixtures/trusted-role-uid-collision.json
+2026-10-10T18:32:29.2062088Z security_ir/fixtures/trusted-source-mount.json
+2026-10-10T18:32:29.2062684Z security_ir/fixtures/unknown-feature.json
+2026-10-10T18:32:29.2063274Z security_ir/fixtures/unlisted-environment.json
+2026-10-10T18:32:29.2063887Z security_ir/fixtures/unlisted-host-mount.json
+2026-10-10T18:32:29.2064505Z security_ir/fixtures/writable-channel-mount.json
+2026-10-10T18:32:29.2065247Z security_ir/fixtures/writable-sink-mount.json
+2026-10-10T18:32:29.2065846Z security_ir/schema-v0.json
+2026-10-10T18:32:29.2066308Z security_ir/validator.py
+2026-10-10T18:32:29.2066744Z security_ir/verifier.py
+2026-10-10T18:32:29.2067231Z tools/build_deployment_container_image.py
+2026-10-10T18:32:29.2067804Z tools/build_deployment_fixtures.py
+2026-10-10T18:32:29.2068631Z tools/build_deployment_runtime_vm.py
+2026-10-10T18:32:29.2069198Z tools/check_deployment_container_evidence.py
+2026-10-10T18:32:29.2069772Z tools/check_deployment_evidence.py
+2026-10-10T18:32:29.2070281Z tools/check_deployment_lean.py
+2026-10-10T18:32:29.2070773Z tools/check_deployment_monotonicity.py
+2026-10-10T18:32:29.2071332Z tools/check_deployment_subset_differential.py
+2026-10-10T18:32:29.2071906Z tools/collect_deployment_docker.py
+2026-10-10T18:32:29.2072375Z tools/cstack.py
+2026-10-10T18:32:29.2072774Z tools/deployment_container_entry.py
+2026-10-10T18:32:29.2073270Z tools/run_deployment_boundary.py
+2026-10-10T18:32:29.2073748Z tools/run_deployment_containers.py
+2026-10-10T18:32:29.2074236Z tools/run_deployment_matrix.py
+2026-10-10T18:32:29.2074720Z tools/test_deployment_evidence.py
+2026-10-10T18:32:29.2075194Z tools/test_deployment_lean.py
+2026-10-10T18:32:29.2075652Z tools/test_deployment_runtime.py
+2026-10-10T18:32:29.2076138Z tools/test_deployment_slice.py
+2026-10-10T18:32:29.2076998Z deployment/evidence/tier1/differential-attempt1.txt
+2026-10-10T18:32:29.2077672Z deployment/evidence/tier1/differential-attempt2.txt
+2026-10-10T18:32:29.2078908Z deployment/evidence/tier1/differential.axioms.txt
+2026-10-10T18:32:29.2079481Z deployment/evidence/tier1/differential.json
+2026-10-10T18:32:29.2079975Z deployment/evidence/tier1/evidence-tests.txt
+2026-10-10T18:32:29.2080475Z deployment/evidence/tier1/lean-build-attempt1.txt
+2026-10-10T18:32:29.2080974Z deployment/evidence/tier1/lean-build-attempt2.txt
+2026-10-10T18:32:29.2081440Z deployment/evidence/tier1/lean-tests.txt
+2026-10-10T18:32:29.2081910Z deployment/evidence/tier1/monotonicity-attempt1.txt
+2026-10-10T18:32:29.2082441Z deployment/evidence/tier1/monotonicity-attempt2.txt
+2026-10-10T18:32:29.2082937Z deployment/evidence/tier1/monotonicity.json
+2026-10-10T18:32:29.2083395Z deployment/evidence/tier1/runtime-tests.txt
+2026-10-10T18:32:29.2083867Z deployment/evidence/tier1/slice-tests-attempt2.txt
+2026-10-10T18:32:29.2084568Z deployment/evidence/tier1/slice-tests.txt
+2026-10-10T18:32:29.2085194Z ERROR: immutable proof target, experimental evidence or preregistration changed
+2026-10-10T18:32:29.2097978Z ##[error]Process completed with exit code 1.
+2026-10-10T18:32:29.2268094Z Post job cleanup.
+2026-10-10T18:32:29.3214357Z [command]/usr/bin/git version
+2026-10-10T18:32:29.3263390Z git version 2.55.0
+2026-10-10T18:32:29.3311269Z Temporarily overriding HOME='/home/runner/work/_temp/18b8f9e2-b06d-4559-81aa-7b710e1a991b' before making global git config changes
+2026-10-10T18:32:29.3314310Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T18:32:29.3317591Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/control-stack/control-stack
+2026-10-10T18:32:29.3363797Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T18:32:29.3403555Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T18:32:29.3697339Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T18:32:29.3729042Z http.https://github.com/.extraheader
+2026-10-10T18:32:29.3742910Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T18:32:29.3787536Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T18:32:29.4090490Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T18:32:29.4140116Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T18:32:29.4582304Z Cleaning up orphan processes
+2026-10-10T18:32:29.4918783Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

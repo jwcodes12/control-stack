@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/tools/check_deployment_subset_differential.py", line 47, in <module>
+    ap=argparse.ArgumentParser();ap.add_argument('--output');a=ap.parse_args();run(a.output)
+                                                                               ~~~^^^^^^^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/tools/check_deployment_subset_differential.py", line 36, in run
+    accepted,axioms=check_many([d for _,d in cases])
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/deployment/kernel.py", line 11, in check_many
+    definitions=''.join(f'def instance_{i} : IR := {projection(ir)}\n' for i,ir in enumerate(irs))
+  File "/var/tmp/sol-deployment-slice-20261010/deployment/kernel.py", line 11, in <genexpr>
+    definitions=''.join(f'def instance_{i} : IR := {projection(ir)}\n' for i,ir in enumerate(irs))
+                                                    ~~~~~~~~~~^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/tools/check_deployment_lean.py", line 17, in projection
+    validate(ir)
+    ~~~~~~~~^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/security_ir/validator.py", line 61, in validate
+    require(e['provenance']['kind'] != 'UNKNOWN' or e['reachability'] == 'UNKNOWN', 'UNKNOWN evidence cannot deny/reify a path')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/security_ir/validator.py", line 11, in require
+    raise InvalidIR(why)
+security_ir.validator.InvalidIR: UNKNOWN evidence cannot deny/reify a path

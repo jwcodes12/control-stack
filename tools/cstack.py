@@ -20,6 +20,7 @@ Exit codes: 0 ok; 1 a check, pin or dispatched tool failed; 2 usage error or unk
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -210,7 +211,8 @@ def run_check(full=False, only=None, root=ROOT, runner=subprocess.run, out=sys.s
     for name, argv, ok_rc in steps:
         t0 = time.monotonic()
         try:
-            p = runner(argv, cwd=root, capture_output=True, text=True, timeout=7200)
+            env = dict(os.environ, PYTHONPATH=str(root) + os.pathsep + os.environ.get("PYTHONPATH", ""))
+            p = runner(argv, cwd=root, capture_output=True, text=True, timeout=7200, env=env)
             rc, text = p.returncode, (p.stdout or "") + (p.stderr or "")
         except (OSError, subprocess.TimeoutExpired) as e:
             rc, text = -1, str(e)
@@ -471,10 +473,54 @@ def main(argv=None, runner=subprocess.call):
     g3 = mp.add_mutually_exclusive_group()
     g3.add_argument("--gaps", action="store_true")
     g3.add_argument("--researcher", metavar="COMPONENT")
+    scan = sub.add_parser("scan", help="read-only normalized Compose JSON collector")
+    scan.add_argument("compose")
+    scan.add_argument("--runtime", required=True)
+    scan.add_argument("--sha256", required=True, help="expected Compose file hash")
+    scan.add_argument("--output", required=True)
+    verify = sub.add_parser("verify", help="emit a scoped obligation bundle")
+    verify.add_argument("ir")
+    verify.add_argument("--output", required=True)
+    verify.add_argument("--boundary-evidence", help="check raw archived native reference sink evidence; does not attest Compose")
+    verify.add_argument("--lean", action="store_true", help="kernel-check the exact IR projection and contracts")
+    report = sub.add_parser("report", help="render an obligation bundle")
+    report.add_argument("bundle")
+    report.add_argument("--output", required=True)
     a, extra = ap.parse_known_args(argv)
     if extra and a.cmd not in ("ledger", "new", "map"):
         ap.error(f"unrecognized arguments: {' '.join(extra)}")
     try:
+        if a.cmd in ("scan", "verify", "report"):
+            _import("security_ir")
+            from extractors.compose import collect
+            from security_ir.verifier import verify, report
+            try:
+                if a.cmd == "scan":
+                    result = collect(a.compose, a.runtime, a.sha256)
+                elif a.cmd == "verify":
+                    ir = json.loads(Path(a.ir).read_text())
+                    result = verify(ir)
+                    if a.lean:
+                        from tools.check_deployment_lean import check
+                        checked = check(ir)
+                        result["lean"] = checked
+                        result["scope"] = "Kernel-checked finite configuration obligations agree with Python. CONDITIONAL retains faithful extraction and full protocol refinement; no deployment-assured result"
+                        for o in result["obligations"]:
+                            if o["premise"] == "Lean-contract-instances":
+                                o.update(status="PROVEN_IN_MODEL" if checked["accepted"] else "REFUTED",
+                                         detail=checked["axioms"])
+                        result["verdict"] = "UNASSURED" if any(o["status"] in {"REFUTED", "UNASSESSED"} for o in result["obligations"]) else "CONDITIONAL"
+                    if a.boundary_evidence:
+                        from tools.check_deployment_evidence import check as check_boundary
+                        check_boundary(a.boundary_evidence)
+                        result["obligations"].append({"premise":"native-reference-boundary","status":"TESTED_BOUNDARY",
+                            "detail":"Independent raw sink evidence at " + a.boundary_evidence + "; confined two-agent budget/replay, HALT during publication, writable-sink and UID-collision negatives. Native Linux guest test of pinned sources; does not attest this Compose inventory."})
+                else:
+                    result = report(json.loads(Path(a.bundle).read_text()))
+                Path(a.output).write_text(result if isinstance(result,str) else json.dumps(result,sort_keys=True,indent=2)+"\n")
+                return 1 if a.cmd == "verify" and result["verdict"] == "UNASSURED" else 0
+            except (ValueError, OSError, TypeError, KeyError, AssertionError) as err:
+                raise UsageError(str(err)) from err
         if a.cmd == "status":
             print(status_scenario(a.sid) if a.sid else status_portfolio())
             return 0

@@ -162,7 +162,7 @@ class Controller:
         except sqlite3.Error as e:
             db.rollback()
             raise Denied("trusted state transaction failed closed") from e
-        except (Denied, ValueError, TypeError, OverflowError):
+        except (Denied, ValueError, TypeError, OverflowError) as e:
             db.rollback()
             if isinstance(e, Denied):
                 raise

@@ -3,8 +3,7 @@ on:
   pull_request:
     paths:
       - 'trusted_stack/**'
-      - 'ControlStack/GateComposition.lean'
-      - 'ControlStack/Families/F6/CorrelatedMonitor.lean'
+      - 'reviews/family-strengthening/F6F8.lean'
       - '.github/workflows/trusted-effect-reference.yml'
   workflow_dispatch:
 permissions:
@@ -29,5 +28,4 @@ jobs:
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
-          lake env lean ControlStack/Families/F6/CorrelatedMonitor.lean
-          lake env lean ControlStack/GateComposition.lean
+          lake env lean reviews/family-strengthening/F6F8.lean

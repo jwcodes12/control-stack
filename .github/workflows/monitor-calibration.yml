@@ -4,6 +4,9 @@ on:
     paths:
       - 'tools/monitor_calibration.py'
       - 'tools/test_monitor_calibration.py'
+      - 'tools/redwood_f6_episode_report.py'
+      - 'tools/test_redwood_f6_episode_report.py'
+      - 'docs/F6-TRAJECTORY-EMPIRICAL.md'
       - '.github/workflows/monitor-calibration.yml'
   workflow_dispatch:
 permissions:
@@ -17,3 +20,8 @@ jobs:
         with: { python-version: '3.12' }
       - name: Typed history, sparse-sample, false-positive and union-bound tests
         run: python3 -m unittest tools.test_monitor_calibration -v
+      - name: LaStraj trajectory-level exact-binomial exploratory report (no deployment claims)
+        run: |
+          python3 -m unittest tools.test_redwood_f6_episode_report -v
+          python3 tools/redwood_f6_episode_report.py --threshold 8 --output "$RUNNER_TEMP/lastraj-f6-exploratory.json"
+          python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); assert r["status"] == "EXPLORATORY_NOT_PREREGISTERED"; assert r["monitors_total"] == 19; assert r["hypothesis_family_size_including_failed_monitors"] == 38' "$RUNNER_TEMP/lastraj-f6-exploratory.json"

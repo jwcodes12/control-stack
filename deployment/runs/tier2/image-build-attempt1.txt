@@ -1,0 +1,9 @@
+chown: cannot access 'cstack-r2-tier2:offline': No such file or directory
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/tools/build_deployment_container_image.py", line 18, in <module>
+    subprocess.run(['sudo','-n','chown',str(__import__('os').getuid()),str(archive),a.tag],check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.14/3.14.8/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['sudo', '-n', 'chown', '1000', 'deployment/runs/tier2/build/rootfs.tar', 'cstack-r2-tier2:offline']' returned non-zero exit status 1.

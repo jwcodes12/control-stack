@@ -1,0 +1,287 @@
+{
+  "cases": {
+    "clean": {
+      "agreement": true,
+      "final": {
+        "admitted": 2,
+        "delivered": 2,
+        "global_cap": 2,
+        "halted": false,
+        "records": [
+          {
+            "agent_uid": 23701,
+            "classification": "delivered",
+            "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+            "file_present": true,
+            "nonce": "a",
+            "receipt_present": true,
+            "release_id": 1
+          },
+          {
+            "agent_uid": 23702,
+            "classification": "delivered",
+            "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+            "file_present": true,
+            "nonce": "b",
+            "receipt_present": true,
+            "release_id": 2
+          }
+        ],
+        "spent": 2,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "direct-egress": "BLOCKED",
+        "egress_probe": {
+          "connected": false,
+          "error": "[Errno 101] Network unreachable"
+        },
+        "honest-agents": {
+          "agent-a": "SUCCEEDED",
+          "agent-b": "SUCCEEDED"
+        },
+        "nonce-replay": "BLOCKED"
+      },
+      "prediction": "CONDITIONAL",
+      "sink_files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+          "sha256": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+          "size": 28
+        },
+        "2.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+          "sha256": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+          "size": 28
+        }
+      }
+    },
+    "concurrent-cap1": {
+      "agreement": true,
+      "final": {
+        "admitted": 1,
+        "delivered": 1,
+        "global_cap": 1,
+        "halted": false,
+        "records": [
+          {
+            "agent_uid": 23701,
+            "classification": "delivered",
+            "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+            "file_present": true,
+            "nonce": "a",
+            "receipt_present": true,
+            "release_id": 1
+          }
+        ],
+        "spent": 1,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "accepted_contenders": 1,
+        "concurrent-double-spend": "BLOCKED",
+        "denied_contenders": 1
+      },
+      "prediction": "CONDITIONAL",
+      "sink_files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+          "sha256": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+          "size": 28
+        }
+      }
+    },
+    "crash-retry": {
+      "agreement": true,
+      "final": {
+        "admitted": 1,
+        "delivered": 1,
+        "global_cap": 1,
+        "halted": false,
+        "records": [
+          {
+            "agent_uid": 23701,
+            "classification": "delivered",
+            "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+            "file_present": true,
+            "nonce": "a",
+            "receipt_present": true,
+            "release_id": 1
+          }
+        ],
+        "spent": 1,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "after_crash": {
+          "admitted": 1,
+          "delivered": 0,
+          "global_cap": 1,
+          "halted": false,
+          "records": [
+            {
+              "agent_uid": 23701,
+              "classification": "unknown-commit",
+              "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+              "file_present": true,
+              "nonce": "a",
+              "receipt_present": false,
+              "release_id": 1
+            }
+          ],
+          "spent": 1,
+          "unknown_commit": 1
+        },
+        "crash-before-receipt": "SUCCEEDED",
+        "inflight": {
+          "admitted": 1,
+          "delivered": 0,
+          "global_cap": 1,
+          "halted": false,
+          "records": [
+            {
+              "agent_uid": 23701,
+              "classification": "unknown-commit",
+              "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+              "file_present": true,
+              "nonce": "a",
+              "receipt_present": false,
+              "release_id": 1
+            }
+          ],
+          "spent": 1,
+          "unknown_commit": 1
+        },
+        "nonce-replay": "BLOCKED",
+        "post_restart_reverified": true,
+        "restart-deduplicated-retry": "SUCCEEDED"
+      },
+      "prediction": "CONDITIONAL",
+      "sink_files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+          "sha256": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+          "size": 28
+        }
+      }
+    },
+    "drift-uid": {
+      "agreement": true,
+      "final": {
+        "admitted": 0,
+        "delivered": 0,
+        "global_cap": 1,
+        "halted": false,
+        "records": [],
+        "spent": 0,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "new_verdict": "UNASSURED",
+        "old_report_invalidated": true,
+        "running-uid-drift": "SUCCEEDED"
+      },
+      "prediction": "CONDITIONAL",
+      "sink_files": {}
+    },
+    "halt-inflight": {
+      "agreement": true,
+      "final": {
+        "admitted": 1,
+        "delivered": 1,
+        "global_cap": 1,
+        "halted": true,
+        "records": [
+          {
+            "agent_uid": 23701,
+            "classification": "delivered",
+            "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+            "file_present": true,
+            "nonce": "a",
+            "receipt_present": true,
+            "release_id": 1
+          }
+        ],
+        "spent": 1,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "halt-during-inflight": "SUCCEEDED",
+        "inflight": {
+          "admitted": 1,
+          "delivered": 0,
+          "global_cap": 1,
+          "halted": false,
+          "records": [
+            {
+              "agent_uid": 23701,
+              "classification": "unknown-commit",
+              "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+              "file_present": true,
+              "nonce": "a",
+              "receipt_present": false,
+              "release_id": 1
+            }
+          ],
+          "spent": 1,
+          "unknown_commit": 1
+        },
+        "new-post-halt-delivery": "BLOCKED",
+        "nonce-replay": "BLOCKED"
+      },
+      "prediction": "CONDITIONAL",
+      "sink_files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+          "sha256": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+          "size": 28
+        }
+      }
+    },
+    "trusted-role-uid-collision": {
+      "agreement": true,
+      "final": {
+        "admitted": 0,
+        "delivered": 0,
+        "global_cap": 1,
+        "halted": true,
+        "records": [],
+        "spent": 0,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "direct-sink-write": "UNOBSERVED",
+        "subsequent-honest-task": "BLOCKED",
+        "untrusted-admin-halt": "SUCCEEDED"
+      },
+      "prediction": "UNASSURED",
+      "sink_files": {}
+    },
+    "writable-sink-mount": {
+      "agreement": true,
+      "final": {
+        "admitted": 0,
+        "delivered": 0,
+        "global_cap": 1,
+        "halted": false,
+        "records": [],
+        "spent": 0,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "direct-write": "SUCCEEDED",
+        "sink_mode": "0777; explicit DAC mutation plus RW bind"
+      },
+      "prediction": "UNASSURED",
+      "sink_files": {
+        "2.body": {
+          "body_b64": "dW5hcHByb3ZlZCByMiBkaXJlY3Qgd3JpdGU=",
+          "sha256": "ed80fc45f60767f9abda83c41187b1d1c132a7033c8234638296b6a353a20ecc",
+          "size": 26
+        }
+      }
+    }
+  },
+  "image": "sha256:88216c258c8ac76b4654de6255e3114c6cd5d4208e3fed0d3aa082c6c8d5f2fc",
+  "scope": "real Docker, default namespaces/seccomp and numeric UIDs; daemon facts are not attestation; no host Landlock claim"
+}

@@ -52,7 +52,7 @@ jobs:
           export PATH="$HOME/.elan/bin:$PATH"
           lake env lean reviews/family-strengthening/DelegatedAdmission.lean | tee "$RUNNER_TEMP/delegation-axioms.txt"
           grep -F "DelegatedAdmission.budget_run' depends on axioms:" "$RUNNER_TEMP/delegation-axioms.txt"
-          grep -F "DelegatedAdmission.delegated_positive_witness' depends on axioms:" "$RUNNER_TEMP/delegation-axioms.txt"
+          grep -F "DelegatedAdmission.delegated_positive_witness' does not depend on any axioms" "$RUNNER_TEMP/delegation-axioms.txt"
           if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/delegation-axioms.txt"; then
             exit 1
           fi

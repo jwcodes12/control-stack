@@ -40,8 +40,8 @@ def step (s : State) (a : Action) : State :=
   | .use actor =>
       if s.halted = true ∨ s.used = true ∨ s.revoked = true ∨
          s.spent + 1 > s.cap ∨
-         (if s.grant = none then actor ≠ s.owner
-          else s.grant ≠ some actor)
+         (s.grant = none ∧ actor ≠ s.owner) ∨
+         (s.grant ≠ none ∧ s.grant ≠ some actor)
       then s else { s with spent := s.spent + 1, used := true }
   | .halt actor =>
       if actor = s.admin then { s with halted := true } else s

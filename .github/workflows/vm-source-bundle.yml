@@ -1,0 +1,25 @@
+name: vm-source-bundle
+on:
+  pull_request:
+    paths:
+      - 'tools/package_vm_replay.py'
+      - 'tools/test_vm_package.py'
+      - '.github/workflows/vm-source-bundle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Deterministic source package negative controls
+        run: python3 -m unittest tools.test_vm_package -v
+      - name: Rebuild and verify twice from same pinned source
+        run: |
+          python3 tools/package_vm_replay.py --output /tmp/sc01-source-one.tar.gz
+          python3 tools/package_vm_replay.py --output /tmp/sc01-source-two.tar.gz
+          cmp /tmp/sc01-source-one.tar.gz /tmp/sc01-source-two.tar.gz
+          python3 tools/package_vm_replay.py --verify /tmp/sc01-source-one.tar.gz

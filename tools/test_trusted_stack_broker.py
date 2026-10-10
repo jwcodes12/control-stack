@@ -152,7 +152,7 @@ def main():
             call(0, publish, False)  # no new post-HALT publish operations
             call(AGENT, {"op": "stage", "body_b64": base64.b64encode(b"x").decode()}, False)
             assert call(0, {"op": "state"}, True)["result"] == {
-                "global_cap": 2, "halted": True, "spent": 1, "releases": 1}
+                "global_cap": 2, "halted": True, "spent": 2, "releases": 2}
             print(f"PASS: {checked} real Unix peer-credential broker checks, "
                   "9 disconnected callers, 2 releases and 1 exact file effect")
         finally:

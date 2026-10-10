@@ -26,3 +26,5 @@ synthetic model completion. Conversion success is not an evaluation security pas
 The original four-arm/new-attack tasks remain GATED, and no live bypass is rerun.
 Four regression tests cover reproduction, schema truthfulness and protected paths.
 Final-head CI remains required before Tier 8; no R2 release completion claim.
+
+CI exposed a shallow-history assumption in export creation time and the immutable-addition check. Full checkout history is now required. The guard fails when the apparent addition is a shallow boundary, rather than accepting the current blob as original. A synthetic shallow-root regression and coordinated metadata-edit rejection pass. The raw CI failure is retained; archived data, prereg bytes and export remain unchanged.

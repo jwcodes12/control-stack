@@ -16,6 +16,10 @@ def check_freeze():
     path=ROOT/PREREG;assert path.is_file() and not path.is_symlink()
     expected=freeze['prereg_sha256'];assert hashlib.sha256(path.read_bytes()).hexdigest()==expected,'prereg freeze mismatch'
     commits=git('log','--reverse','--diff-filter=A','--format=%H','--',PREREG).decode().splitlines();assert commits,'new prereg has no addition commit'
+    shallow=Path(git('rev-parse','--git-path','shallow').decode().strip())
+    if not shallow.is_absolute():shallow=ROOT/shallow
+    boundaries=set(shallow.read_text().splitlines()) if shallow.exists() else set()
+    assert commits[0] not in boundaries,'prereg addition history reaches a shallow boundary; fetch complete history before validation'
     first=git('show',commits[0]+':'+PREREG)
     assert hashlib.sha256(first).hexdigest()==expected,'prereg changed after its first addition commit'
     for name,digest in freeze['inputs'].items():

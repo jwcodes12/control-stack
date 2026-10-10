@@ -23,7 +23,7 @@ T2.4 | DONE | containers-final: writable sink and UID confusion SUCCEEDED; repla
 T2.5 | DONE | containers-final/crash-retry and halt-inflight: actual KILL, unknown-commit gap, two dedup retries and fresh restart scan; HALT serialization
 T2.6 | DONE | containers-final/drift-uid/drift: actual UID 23705 versus pinned 23701; DRIFT and UNASSURED
 T2.7 | DONE | deployment/TIER2-AGREEMENT.md: seven safe cases; raw-byte/SQLite checker and cleanup pass
-T3.1 | TODO | Not yet started; tier order applies
+T3.1 | DOING | Compose normalizer, raw/canonical input provenance; fresh scan vs archived v0 parsing
 T3.2 | TODO | Not yet started; tier order applies
 T3.3 | TODO | Not yet started; tier order applies
 T3.4 | TODO | Not yet started; tier order applies
@@ -71,3 +71,5 @@ Tier 2 draft PR #46: https://github.com/jwcodes12/control-stack/pull/46, base so
 Tier 2 first real run: seven safe cases PASS; independent raw inventory/SQLite/byte checker PASS. Self-review adds a fresh scan after receiver restart and stricter ownership, nonregular-sink and cleanup guards; final seven-case run is in progress. No dangerous fixture launched.
 
 Tier 2 final local run: seven safe cases PASS; 26 fixtures + 250 seeded differential still zero differences; 520 additive regressions PASS; fixture --check PASS. Final archive replay/tamper checks and nine kernel certificates recorded under deployment/runs/tier2. Self-review in deployment/reviews/tier2-self-review.md. Final-head CI pending.
+
+Tier 2 exit: a94813cc9a73400f1328f26b4af12da0636aef1f, 19 CI SUCCESS + 2 explicit SKIPPED, PR #46 draft/open. Receipt: deployment/runs/tier2/ci-receipt-a94813c.json. One pre-existing SC-01 cache probe failed to execute its encoder/decoder; unchanged failed-job rerun passed. Raw failure: deployment/runs/tier2/ci-viability-attempt1.txt. Tier 3 is stacked on that exact tip.

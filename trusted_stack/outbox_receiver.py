@@ -75,6 +75,10 @@ def _publish(dirfd: int, name: str, body: bytes) -> None:
             os.unlink(temp, dir_fd=dirfd)
         except FileNotFoundError:
             pass
+        # Persist removal of the temporary hardlink. Without this second
+        # directory fsync, power loss could resurrect it and leave a valid
+        # published file with st_nlink=2, triggering fail-closed on restart.
+        os.fsync(dirfd)
 
 
 def deliver_record(controller: Controller, release_id: int, output_dir: Path,

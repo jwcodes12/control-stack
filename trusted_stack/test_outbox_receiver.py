@@ -49,6 +49,7 @@ class LocalReceiverTests(unittest.TestCase):
         reopened = Controller(self.db, self.roles, lambda: 100)
         self.assertEqual(deliver_record(reopened, release_id, self.out), "1.body")
         self.assertEqual(len(list(self.out.glob("*.body"))), 1)
+        self.assertEqual(list(self.out.glob(".pending-*")), [])
         self.assertEqual(reopened.state(os.geteuid())["spent"], 1)
 
     def test_crash_after_publish_before_receipt_reconciles(self):

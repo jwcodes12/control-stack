@@ -122,6 +122,44 @@ class LocalReceiverTests(unittest.TestCase):
         self.assertTrue(unwanted.exists())
         self.assertEqual(self.receipts(), [])
 
+    def test_mutated_authorization_provenance_denied_before_real_effect(self):
+        """A reviewed release must still match its exact approval and lease.
+
+        These are adversarial trusted-state corruption tests, NOT proof that
+        the OS prevents attackers from modifying the SQLite database.
+        """
+        release_id = self.admit()
+        other = self.agent + 777
+        cases = (
+            ("approvals", "digest", "0" * 64, self.digest, "nonce"),
+            ("approvals", "destination", "other", "label/not-path", "nonce"),
+            ("approvals", "agent_uid", other, self.agent, "nonce"),
+            ("approvals", "lease_id", "other", "lease", "nonce"),
+            ("approvals", "signer_uid", other, self.approver, "nonce"),
+            ("leases", "agent_uid", other, self.agent, "lease"),
+            ("releases", "agent_uid", other, self.agent, release_id),
+            ("releases", "lease_id", "other", "lease", release_id),
+            ("reviews", "reviewer_uid", other, self.reviewer, self.digest),
+        )
+        keys = {"approvals": "nonce", "leases": "lease_id",
+                "releases": "id", "reviews": "digest"}
+        for table, field, bad, original, key in cases:
+            # Only hardcoded trusted test fixtures are used for identifiers.
+            query = f"UPDATE {table} SET {field}=? WHERE {keys[table]}=?"
+            with self.subTest(table=table, field=field):
+                try:
+                    with sqlite3.connect(self.db) as con:
+                        con.execute(query, (bad, key))
+                    with self.assertRaises(Denied):
+                        deliver_record(self.c, release_id, self.out)
+                    self.assertEqual(self.receipts(), [])
+                    self.assertFalse((self.out / "1.body").exists())
+                finally:
+                    with sqlite3.connect(self.db) as con:
+                        con.execute(query, (original, key))
+        self.assertEqual(deliver_record(self.c, release_id, self.out), "1.body")
+        self.assertEqual((self.out / "1.body").read_bytes(), self.body)
+
     def test_delayed_dispatch_uses_one_clock_sample_for_both_expiries(self):
         release_id = self.admit()
         samples = []

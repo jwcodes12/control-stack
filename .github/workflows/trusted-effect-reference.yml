@@ -28,4 +28,5 @@ jobs:
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
+          lake build ControlStack.GateComposition
           lake env lean reviews/family-strengthening/F6F8.lean

@@ -1,4 +1,5 @@
 import Mathlib.Tactic
+import ControlStack.GateComposition
 
 /-!
 F6 non-independent ensemble sanity boundary.

@@ -11,6 +11,7 @@ sys.path.insert(0,str(ROOT))
 from deployment import pins
 from extractors.compose import collect,sha
 EXAMPLES=ROOT/'examples/compose-two-agent'
+HARDENED=ROOT/'examples/compose-two-agent-hardened'  # tracks the current trusted source
 
 class PinTests(unittest.TestCase):
     def setUp(self):
@@ -22,7 +23,7 @@ class PinTests(unittest.TestCase):
         old=(ROOT/'trusted_stack/controller.py').read_bytes()+b'\n# an earlier generation\n';(dest/'controller.py.pysrc').write_bytes(old)
         return pins.sha(dest/'controller.py.pysrc')
     def pinned_example(self,digest):
-        c=json.loads((EXAMPLES/'clean.compose.json').read_text());c['x-cstack']['broker_sha256']=digest
+        c=json.loads((HARDENED/'clean.compose.json').read_text());c['x-cstack']['broker_sha256']=digest
         path=self.tmp/'compose.json';path.write_text(json.dumps(c));return path
     def unknown_drift(self,ir):return any('hash drift' in e.get('reason','') for e in ir['edges'])
 
@@ -61,7 +62,7 @@ class PinTests(unittest.TestCase):
         self.assertFalse(pins.source_matches('trusted_stack/controller.py',digest),'vault bytes are checked by hash, not trusted by name')
 
     def test_replay_accepts_a_vaulted_generation_but_fresh_collection_does_not(self):
-        digest=self.fake_generation();compose=self.pinned_example(digest);runtime=EXAMPLES/'clean.runtime.json'
+        digest=self.fake_generation();compose=self.pinned_example(digest);runtime=HARDENED/'clean.runtime.json'
         replayed=collect(compose,runtime,sha(compose),replay=True);fresh=collect(compose,runtime,sha(compose))
         self.assertFalse(self.unknown_drift(replayed));self.assertEqual(replayed['snapshot']['broker_sha256'],digest)
         self.assertTrue(self.unknown_drift(fresh),'a fresh scan must require the current trusted source')

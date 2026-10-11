@@ -1,0 +1,312 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "FORBIDDEN",
+      "capability": "opaque",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "UNKNOWN",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "UNKNOWN",
+      "reason": "unlisted-host-mount: /var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink -> /bypass",
+      "to": "unknown"
+    },
+    {
+      "authorization": "FORBIDDEN",
+      "capability": "write",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+        "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 2,
+    "compose_sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+    "runtime_sha256": "05af59176a30f566222247462811747f257b8712a2904fbb88d669641286f616",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
+      "source": "examples/compose-two-agent-hardened/writable-sink-mount.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "05af59176a30f566222247462811747f257b8712a2904fbb88d669641286f616",
+      "source": "examples/compose-two-agent-hardened/writable-sink-mount.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+      "source": "trusted_stack/outbox_receiver.py"
+    }
+  ],
+  "version": 0
+}

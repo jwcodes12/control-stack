@@ -1,41 +1,13 @@
 {
-  "base_sha256": "01083f2c616ea4aefd0805166ff6f02ef9e0b8c744848fe262f3bfaf4d7bf704",
+  "base_sha256": "2021158b80f30af019a3710eac10fd351d8a0af6970426439af4ddbb16c96db2",
   "host_actions": [],
-  "human_diff": "--- declared.compose.json\n+++ proposed.compose.json\n@@ -6,6 +6,9 @@\n   },\n   \"services\": {\n     \"agent-a\": {\n+      \"cap_drop\": [\n+        \"ALL\"\n+      ],\n       \"environment\": {\n         \"PYTHONPATH\": \"/slice\",\n         \"SLICE_ROLE\": \"agent-a\"\n@@ -13,6 +16,9 @@\n       \"image\": \"sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd\",\n       \"networks\": [\n         \"isolated\"\n+      ],\n+      \"security_opt\": [\n+        \"no-new-privileges:true\"\n       ],\n       \"user\": \"23701\",\n       \"volumes\": [\n@@ -24,20 +30,14 @@\n           \"source\": \"/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel\",\n           \"target\": \"/channel\",\n           \"type\": \"bind\"\n-        },\n-        {\n-          \"bind\": {\n-            \"selinux\": \"z\"\n-          },\n-          \"read_only\": false,\n-          \"source\": \"/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink\",\n-          \"target\": \"/bypass\",\n-          \"type\": \"bind\"\n         }\n       ],\n       \"x-cstack-role\": \"agent\"\n     },\n     \"agent-b\": {\n+      \"cap_drop\": [\n+        \"ALL\"\n+      ],\n       \"environment\": {\n         \"PYTHONPATH\": \"/slice\",\n         \"SLICE_ROLE\": \"agent-b\"\n@@ -45,6 +45,9 @@\n       \"image\": \"sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd\",\n       \"networks\": [\n         \"isolated\"\n+      ],\n+      \"security_opt\": [\n+        \"no-new-privileges:true\"\n       ],\n       \"user\": \"23702\",\n       \"volumes\": [\n",
-  "ir_sha256": "a9a5219806a736090293f46464306106113a4ec88ac6d78a0beab56171d5dd45",
+  "human_diff": "--- declared.compose.json\n+++ proposed.compose.json\n@@ -29,15 +29,6 @@\n           \"read_only\": true,\n           \"source\": \"/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel\",\n           \"target\": \"/channel\",\n-          \"type\": \"bind\"\n-        },\n-        {\n-          \"bind\": {\n-            \"selinux\": \"z\"\n-          },\n-          \"read_only\": false,\n-          \"source\": \"/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink\",\n-          \"target\": \"/bypass\",\n           \"type\": \"bind\"\n         }\n       ],\n",
+  "ir_sha256": "0d21a084603dce11698cb947c877a7e13dc462b427ff0c5d1271a3ea12e8e827",
   "next_step": "Apply to a copy, review host actions, recreate only a safe own deployment, recollect and run fresh scan + kernel verify. Input files and runtime facts were not changed.",
   "patch": [
     {
-      "op": "add",
-      "path": "/services/agent-a/cap_drop",
-      "value": [
-        "ALL"
-      ]
-    },
-    {
-      "op": "add",
-      "path": "/services/agent-a/security_opt",
-      "value": [
-        "no-new-privileges:true"
-      ]
-    },
-    {
       "op": "remove",
       "path": "/services/agent-a/volumes/1"
-    },
-    {
-      "op": "add",
-      "path": "/services/agent-b/cap_drop",
-      "value": [
-        "ALL"
-      ]
-    },
-    {
-      "op": "add",
-      "path": "/services/agent-b/security_opt",
-      "value": [
-        "no-new-privileges:true"
-      ]
     }
   ],
   "residuals": [
@@ -44,16 +16,8 @@
       "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
     },
     {
-      "path": "/runtime/services/agent-a/hardening",
-      "reason": "runtime inventory does not report no-new-privileges and cap_drop; recreate with the hardened profile and recollect with the v2 collector"
-    },
-    {
       "path": "/runtime/services/agent-a/mounts",
       "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
-    },
-    {
-      "path": "/runtime/services/agent-b/hardening",
-      "reason": "runtime inventory does not report no-new-privileges and cap_drop; recreate with the hardened profile and recollect with the v2 collector"
     }
   ],
   "scope": "Reference-profile proposal; no prospective CONDITIONAL verdict or runtime enforcement claim.",

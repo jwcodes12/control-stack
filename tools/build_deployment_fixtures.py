@@ -9,6 +9,11 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from extractors.compose import HARDENED, collect, declared_hardening, sha
 
+# The legacy corpus is FROZEN at source generation r2-v0: archived evidence is bound to these exact bytes, so its
+# broker/receiver pins are the vaulted r2-v0 hashes and it is collected in replay mode. The hardened corpus below
+# tracks the CURRENT trusted source and is regenerated whenever it changes.
+FROZEN=ROOT/'deployment/pinned-sources/r2-v0'
+
 def dumps(x): return json.dumps(x,sort_keys=True,indent=2)+'\n'
 def build(check=False):
     def write(path,value):
@@ -22,7 +27,7 @@ def build(check=False):
     def mount(source,target,read_only=False): return {'type':'bind','source':source,'target':target,'read_only':read_only,'bind':{'selinux':'z'}}
     c={'services':{},'networks':{'isolated':{'internal':True}},'x-cstack':{
        'sink_source':host_root+'/sink','database_source':host_root+'/db','channel_source':host_root+'/channel','budget':2,
-       'broker_sha256':sha(ROOT/'trusted_stack/controller.py'),'receiver_sha256':sha(ROOT/'trusted_stack/outbox_receiver.py')}}
+       'broker_sha256':sha(FROZEN/'trusted_stack/controller.py.pysrc'),'receiver_sha256':sha(FROZEN/'trusted_stack/outbox_receiver.py.pysrc')}}
     for name,role,uid in [('agent-a','agent',23701),('agent-b','agent',23702),('broker','broker',23700),('receiver','receiver',23700),('reviewer','reviewer',23703),('approver','approver',23704)]:
         c['services'][name]={'x-cstack-role':role,'user':str(uid),'image':image,'environment':{'SLICE_ROLE':name,'PYTHONPATH':'/slice'},'networks':['isolated'],'volumes':[]}
     c['services']['broker']['volumes']=[mount(host_root+'/db','/private')]
@@ -95,7 +100,7 @@ def build(check=False):
         import os
         old=os.getcwd(); os.chdir(ROOT)
         try:
-            ir=collect(p.relative_to(ROOT),rp.relative_to(ROOT),sha(p))
+            ir=collect(p.relative_to(ROOT),rp.relative_to(ROOT),sha(p),replay=True)
             for n in ir['sources']:
                 n['source']=str(Path(n['source']).relative_to(ROOT)) if n['source'].startswith(str(ROOT)+'/') else n['source']
             for n in ir['nodes']+ir['edges']:
@@ -109,7 +114,7 @@ def build(check=False):
     # The legacy corpus above stays byte-identical because archived evidence is bound to it.
     hbase=ROOT/'examples/compose-two-agent-hardened';hfix=ROOT/'security_ir/fixtures-hardened'
     if not check:hbase.mkdir(exist_ok=True);hfix.mkdir(exist_ok=True)
-    h=copy.deepcopy(c)
+    h=copy.deepcopy(c);h['x-cstack'].update(broker_sha256=sha(ROOT/'trusted_stack/controller.py'),receiver_sha256=sha(ROOT/'trusted_stack/outbox_receiver.py'))
     for n in ('agent-a','agent-b'):h['services'][n].update(security_opt=list(HARDENED['security_opt']),cap_drop=list(HARDENED['cap_drop']))
     hcases={'clean':h}
     def hmutation(name):
@@ -118,7 +123,9 @@ def build(check=False):
     del hmutation('agent-missing-cap-drop')['services']['agent-b']['cap_drop']
     hmutation('agent-cap-drop-not-all')['services']['agent-a']['cap_drop']=['NET_RAW']
     hmutation('runtime-not-hardened')
-    named={'agent-missing-no-new-privileges':'agent-no-new-privileges-and-cap-drop-ALL-not-established','agent-missing-cap-drop':'agent-no-new-privileges-and-cap-drop-ALL-not-established','agent-cap-drop-not-all':'unsupported service feature: cap_drop','runtime-not-hardened':'DRIFT'}
+    hmutation('writable-sink-mount')['services']['agent-a']['volumes'].append(mount(host_root+'/sink','/bypass'))
+    hmutation('trusted-role-uid-collision')['services']['agent-a']['user']='23700'
+    named={'agent-missing-no-new-privileges':'agent-no-new-privileges-and-cap-drop-ALL-not-established','agent-missing-cap-drop':'agent-no-new-privileges-and-cap-drop-ALL-not-established','agent-cap-drop-not-all':'unsupported service feature: cap_drop','runtime-not-hardened':'DRIFT','writable-sink-mount':'writable-sink-mount','trusted-role-uid-collision':'trusted-role-uid-collision'}
     hexpected={}
     import os
     for name,hc in hcases.items():

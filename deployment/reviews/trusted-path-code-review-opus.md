@@ -21,7 +21,7 @@ Severity scale (from the request):
 | M3 | MEDIUM | Caller binding | SO_PEERCRED binding assumes agents cannot change UID. The Compose profile does not set `no-new-privileges` or `cap_drop`. Docker's default bounding set keeps CAP_SETUID, and the scanner checks setuid/setgid mode bits but not file capabilities. | No |
 | L1 | LOW (priority) | Framing | **Pre-authentication broker crash:** any UID that can connect can send deeply nested JSON. The resulting `RecursionError` is not caught, so the serve loop exits and the socket is unlinked. The container entry always bootstraps, so the broker then cannot restart. Confirmed by a PoC. | No |
 | L2 | LOW | HALT | `halt()` gives up after the 15 s SQLite busy timeout if a publication holds the writer lock longer, and reports Denied. | No |
-| L3 | LOW | Receiver | A crash before `link` leaves `.pending-<hex>` debris in the sink (possibly a truncated prefix of reviewed bytes) that is never cleaned. | Partly (post-link case only) |
+| L3 `.pending-*` debris | **Fixed in `r2-v3` (T9.5):** `_reap_unlinked_pending` under the DB lock (unit test with a real SIGKILL before `link`; non-trusted names, symlinks, two-link files and HALT are left alone). Sink audit still reports any non-`.body` file. |
 | L4 | LOW | Controller | `state()` does not convert `sqlite3.Error`, and the server does not catch it, so a long read lock would crash the broker. UNCONFIRMED: I found no agent-reachable trigger. | No |
 | L5 | LOW | Principals | UID 0 is accepted for every role, and broker UIDs ≥ 2^31 never match (signed `3i` unpack; fails closed). | No |
 | L6 | LOW | Startup | `server.py` bootstraps the DB before refusing an agent euid, and does not require the broker euid to be an admin. | No |

@@ -174,6 +174,10 @@ premises that were previously unstated. They are now part of this claim:
   Archived runs (v1 inventories, before this profile) replay under the rules they were
   produced with and do not satisfy the hardened profile; remediation plans now add both settings
   to the agents. Live evidence under the hardened profile is queued (T9.6).
-- **Sink scope is `<release_id>.body` names.** A receiver crash before `link` can leave a
-  `.pending-*` temporary file (possibly a prefix of reviewed bytes) that is not cleaned
-  up. The sink-side audit reports any non-`.body` file; none occurred in recorded runs.
+- **Sink scope is `<release_id>.body` names.** A receiver crash before `link` leaves a
+  `.pending-*` temporary file (possibly a prefix of reviewed bytes). **Fixed from source
+  generation `r2-v3` (T9.5):** each delivery reaps, under the DB writer lock, every
+  regular, singly-linked, receiver-owned `.pending-<32 hex>` file before publishing (a
+  two-link file is the post-link state and is still reconciled, not reaped; anything else is
+  left alone). The debris of a crash is thus removed by the next delivery, not at crash time;
+  the sink-side audit still reports any non-`.body` file, and none occurred in recorded runs.

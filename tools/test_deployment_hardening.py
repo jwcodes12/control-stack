@@ -220,5 +220,54 @@ class HardenedProfile(unittest.TestCase):
         v1=normalize(compose,[row('agent-a')],'p');self.assertNotIn('hardening',v1['agent-a']);self.assertFalse(inventory_has_hardening(v1));self.assertTrue(inventory_has_hardening({'x':v2}))
         self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',['no-new-privileges:true'])],'p')['agent-a'],'v1 normalization still treats any SecurityOpt as unsupported')
 
+class ReceiverDebris(Base):
+    """T9.5 (review L3): a crash before link leaves .pending-* debris; the receiver reaps it under the DB lock."""
+    def setUp(self):
+        super().setUp()
+        from trusted_stack.outbox_receiver import deliver_record
+        self.deliver=deliver_record
+        admin=ME;self.agent=admin+10001;self.reviewer=admin+10002;self.approver=admin+10003
+        self.roles=Principals(frozenset({self.agent}),frozenset({self.reviewer}),frozenset({self.approver}),frozenset({admin}))
+        self.db=self.root/'receiver.db';self.c=Controller.bootstrap(self.db,self.roles,2,lambda:100)
+        self.out=self.root/'effects';self.out.mkdir(mode=0o700)
+        self.body=b'reviewed\x00local-file-effect';self.digest=self.c.stage(self.agent,self.body)
+        self.c.review(self.reviewer,self.digest);self.c.issue_lease(admin,'lease',self.agent,2,200)
+        self.c.approve(self.approver,'nonce',self.digest,'label/not-path',self.agent,'lease',150)
+        self.release=self.c.release(self.agent,'nonce',self.digest,'label/not-path','lease',record_effect=True)
+    def listing(self):return sorted(p.name for p in self.out.iterdir())
+
+    def test_a_real_sigkill_before_link_leaves_debris_that_the_next_delivery_removes(self):
+        child=("import os,signal,sys;sys.path.insert(0,%r);from pathlib import Path\n"
+               "from trusted_stack.controller import Controller,Principals;from trusted_stack import outbox_receiver as r\n"
+               "roles=Principals(frozenset({%d}),frozenset({%d}),frozenset({%d}),frozenset({%d}))\n"
+               "os.link=lambda *a,**k:os.kill(os.getpid(),signal.SIGKILL)\n"
+               "r.deliver_record(Controller(Path(%r),roles,lambda:100),%d,Path(%r))\n")%(str(ROOT),self.agent,self.reviewer,self.approver,ME,str(self.db),self.release,str(self.out))
+        p=subprocess.run([sys.executable,'-c',child],capture_output=True,text=True)
+        self.assertEqual(p.returncode,-signal.SIGKILL,p.stderr)
+        debris=[n for n in self.listing() if n.startswith('.pending-')];self.assertEqual(len(debris),1,self.listing())
+        self.assertNotIn('1.body',self.listing())
+        self.assertEqual(self.deliver(self.c,self.release,self.out),'1.body')
+        self.assertEqual(self.listing(),['1.body']);self.assertEqual((self.out/'1.body').read_bytes(),self.body)
+
+    def test_only_unlinked_trusted_temporaries_are_reaped(self):
+        (self.out/('.pending-'+'a'*32)).write_bytes(self.body[:5])                # truncated prefix, never linked
+        (self.out/'notes.txt').write_text('operator file')                        # not the trusted pattern
+        (self.out/'.pending-short').write_text('x')                               # wrong pattern
+        (self.out/('.pending-'+'b'*32+'0')).write_text('x')                       # wrong pattern (too long)
+        (self.out/('.pending-'+'c'*32)).symlink_to(self.root/'elsewhere')         # never followed or removed
+        (self.out/('.pending-'+'d'*32)).write_bytes(self.body)
+        os.link(self.out/('.pending-'+'d'*32),self.out/'other-name')              # two links: post-link state, not debris
+        self.deliver(self.c,self.release,self.out)
+        left=self.listing()
+        self.assertNotIn('.pending-'+'a'*32,left);self.assertIn('1.body',left)
+        for kept in ('notes.txt','.pending-short','.pending-'+'b'*32+'0','.pending-'+'c'*32,'.pending-'+'d'*32,'other-name'):self.assertIn(kept,left)
+        self.assertTrue((self.out/('.pending-'+'c'*32)).is_symlink())
+
+    def test_a_halted_system_does_not_touch_the_directory(self):
+        debris=self.out/('.pending-'+'e'*32);debris.write_bytes(b'x')
+        self.c.halt(ME)
+        with self.assertRaises(Denied):self.deliver(self.c,self.release,self.out)
+        self.assertTrue(debris.exists())
+
 if __name__=='__main__':
     unittest.main()

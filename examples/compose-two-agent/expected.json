@@ -1,0 +1,266 @@
+{
+  "agent-broker-db-access": {
+    "bypass": "agent-broker-db-access",
+    "compose_sha256": "ba96e8c9e32ed68b710122b1a7e1480a9c715257be486ba38dcc65af70f18037",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "alternate-deputy-sink-credentials": {
+    "bypass": "alternate-deputy-sink-credentials",
+    "compose_sha256": "826fc343f0ea6494e06fc018c8c55ac7eda289011652150bc64dd60c5373abb9",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "apparmor-unconfined": {
+    "bypass": "security_opt",
+    "compose_sha256": "7f0ce7ba68ce2105467477c28916532893a3dfb3d57c4982413b881858f4778d",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "cap-add": {
+    "bypass": "cap_add",
+    "compose_sha256": "ef1aa59fe54eea8779b548b708dc712f0df99a31bbf1ec02f8d132dcefbacbd2",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "channel-target-shadow": {
+    "bypass": "unlisted-host-mount",
+    "compose_sha256": "e4fa93f65bf6ae10f0831734978716ba23aa8efc77d4f18404c74f1c1cbaec92",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "clean": {
+    "bypass": null,
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": true,
+    "verdict": "CONDITIONAL"
+  },
+  "command-override": {
+    "bypass": "command",
+    "compose_sha256": "db1be2d99b41acdf77d758ee3dc765035e89804b88a230f91e2c414bcbdb6911",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "configs": {
+    "bypass": "configs",
+    "compose_sha256": "b24b2c5719dd5d50ee8d001c5ba93201ffd2bbd0bfd92b53803d093607d4a6c6",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "credential-password": {
+    "bypass": "opaque-credential-env-name:PASSWORD",
+    "compose_sha256": "d29573402289fc41bfb30b84c240715cc83f2c784ba89e28bef7d421a74b67e2",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "daemon-uid-remap": {
+    "bypass": "unsupported/extra runtime service",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "depends-on": {
+    "bypass": "depends_on",
+    "compose_sha256": "f109e4c202ed40fb64480d035f1a9798b425cdd07b3f39323ec1c58190f88940",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "device-mount": {
+    "bypass": "devices",
+    "compose_sha256": "b60f77017a9d9781b5f150f4341f83c3fbc57d87f071155bc352af59d0b103ca",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "entrypoint-override": {
+    "bypass": "entrypoint",
+    "compose_sha256": "c49e2267b56be845e599ae2b1e5eb557ed54f72ae900f20ea53c6d55bd6ac823",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "extra-hosts": {
+    "bypass": "extra_hosts",
+    "compose_sha256": "7914e8ca8aed2288a15742ca618dbc8b90ee3a8178aa405d63fb33493399151b",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "host-ipc": {
+    "bypass": "ipc",
+    "compose_sha256": "2be07e43c13a67e806dc297c3eb0220528e0b41c85c834ba2d5b52829a94966c",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "host-network": {
+    "bypass": "host-network",
+    "compose_sha256": "279b69c401afcd6de90dcc4e00c05f004a12b54feea77f46d57c92a92d1f3217",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "host-pid": {
+    "bypass": "pid",
+    "compose_sha256": "773ac012dddac3a07578ed2aba01e6f088be375e45d4974cc4ecbfcfd9c8a669",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "inherited-descriptor": {
+    "bypass": "DRIFT",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "injected-helper": {
+    "bypass": "unsupported/extra runtime service",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "missing-isolated-network": {
+    "bypass": "unsupported service networks",
+    "compose_sha256": "d3c0d2eada331a9674dee075f028e284a5a2d843406a336a804c92e4595d71a3",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "missing-reviewer-role": {
+    "bypass": "supported-roles",
+    "compose_sha256": "756cf9976517202949d51ef7c72811850047e74c996f243de07b6815b60b0f6f",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "mount-parent-alias": {
+    "bypass": "unresolved mount source",
+    "compose_sha256": "3b4a50468d897e9b97f2f6a83c685621ac78b2f3e6f99c2c17b42366ef038678",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "named-volume": {
+    "bypass": "unsupported volume feature",
+    "compose_sha256": "9c947c60d7edc43d1563f0bb348d627ef5821d72b94051452b64a991fe4757c8",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "post-capture-drift": {
+    "bypass": "DRIFT",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "privileged-container": {
+    "bypass": "privileged-container",
+    "compose_sha256": "22075c570e161f70972b8d3b9f9d40e7928c042a1fb24518cd2d253a32c40137",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "published-port": {
+    "bypass": "ports",
+    "compose_sha256": "58b466751f0ff83aac3cfaea88d30e522a67ca15921f9093d82edfdf11fb8c88",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "read-only-rootfs": {
+    "bypass": "read_only",
+    "compose_sha256": "9c0c07373ced1f4da2fe4dfe4ae2726c4939e128a7d2bcb9bcfe16b9523b86a7",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "runtime-alias": {
+    "bypass": "unsupported/extra runtime service",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "runtime-code-tamper": {
+    "bypass": "DRIFT",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "runtime-socket-mount": {
+    "bypass": "runtime-socket-mount",
+    "compose_sha256": "66cc3e8168b9470d97ec70453f45af873357708fe427a060781dcb0f130109a3",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "seccomp-unconfined": {
+    "bypass": "security_opt",
+    "compose_sha256": "a343e66f1e666e67ca9dc9f4f3f75a8bc4c27abaf2c03fea3555aed2476b6b8c",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "secrets": {
+    "bypass": "secrets",
+    "compose_sha256": "536226bcfbd0387be8fd5c6ab0766327e56f1bbb08d2045702c422ebc94ce490",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "storage-rollback": {
+    "bypass": "unsupported/extra runtime service",
+    "compose_sha256": "f0d0581006eb77bc2bc482aa0bb54f511a32165d99c139cd2a163b8728c663ab",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "tmpfs": {
+    "bypass": "tmpfs",
+    "compose_sha256": "16e9e22c703bb7fc77a3daf7b84e2285023987f57ee64435ad322d4e54de8d9b",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "trusted-reviewer-uid-collision": {
+    "bypass": "trusted-role-uid-collision",
+    "compose_sha256": "a0fe45fca65ea375cea431957d77b7e0bc7683bd7d519667d8f4f8b316427843",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "trusted-role-uid-collision": {
+    "bypass": "trusted-role-uid-collision",
+    "compose_sha256": "0ab4248ef7c9dfe76b4681543dd366497da8488c62dcfbe8a37e07aa983785ad",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "trusted-source-mount": {
+    "bypass": "trusted-source-mount",
+    "compose_sha256": "6f9ce1ecee0ffb9face7927236848331b33799336577e3a197fd5d39c588d644",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "unknown-feature": {
+    "bypass": "unknown-feature",
+    "compose_sha256": "d757d9a3400f25e664e079795153a11295f099f4352c9efc125e49aab6710c35",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "unlisted-environment": {
+    "bypass": "unlisted-environment",
+    "compose_sha256": "9b9d18a09ad81dc95aff0fc5e6a4a987940d9fb96442d37c3f380d8630e421c7",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "unlisted-host-mount": {
+    "bypass": "unlisted-host-mount",
+    "compose_sha256": "883b1ecba2c306e0e195e21c969e472b8d4904be6a9344d8469f088753353441",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "userns-host": {
+    "bypass": "userns_mode",
+    "compose_sha256": "b608cf35d22d529fc4e89cd72757e953d867bd73f52e1eb3873f2bcbf0966fe9",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "volumes-from": {
+    "bypass": "volumes_from",
+    "compose_sha256": "bc06dbbae3625ab290170ba0f1b704a156e1f70b2abcbd67932142b779bedf4f",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "writable-channel-mount": {
+    "bypass": "unlisted-host-mount",
+    "compose_sha256": "a8158ae4483287376ed902cfa5147559f89b594f23c54ec3a99c41812f7a9739",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  },
+  "writable-sink-mount": {
+    "bypass": "writable-sink-mount",
+    "compose_sha256": "01083f2c616ea4aefd0805166ff6f02ef9e0b8c744848fe262f3bfaf4d7bf704",
+    "lean_accepted": false,
+    "verdict": "UNASSURED"
+  }
+}

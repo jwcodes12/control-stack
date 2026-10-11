@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/tools/run_deployment_boundary.py", line 128, in <module>
+    ap=argparse.ArgumentParser();ap.add_argument('--output',required=True,type=Path);a=ap.parse_args();run(a.output)
+  File "/var/tmp/sol-deployment-slice-20261010/tools/run_deployment_boundary.py", line 62, in run
+    confined(A,'a','lease-a',True); confined(B,'b','lease-b',False); confined(A,'a','lease-a',False)
+  File "/var/tmp/sol-deployment-slice-20261010/tools/run_deployment_boundary.py", line 61, in confined
+    p=subprocess.Popen([sys.executable,'-m','trusted_stack.agent_confinement','--script',str(path),'--broker-socket',str(sock),'--broker-uid',str(TRUSTED)],cwd=worker,preexec_fn=lambda:drop_identity(agent),stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True); children.append(p); finish(p)
+  File "/var/tmp/sol-deployment-slice-20261010/tools/run_deployment_boundary.py", line 39, in finish
+    out,err=p.communicate(timeout=20); assert p.returncode==0,(p.returncode,out,err); return out
+AssertionError: (78, '', 'DENIED: kernel syscall 444 denied (95)\n')

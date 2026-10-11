@@ -1,0 +1,325 @@
+﻿2026-10-10T23:00:00.2710214Z Current runner version: '2.337.0'
+2026-10-10T23:00:00.2734571Z ##[group]Runner Image Provisioner
+2026-10-10T23:00:00.2735462Z Hosted Compute Agent
+2026-10-10T23:00:00.2735997Z Version: 20261002.596
+2026-10-10T23:00:00.2736634Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-10T23:00:00.2737320Z Build Date: 2026-10-02T22:28:27Z
+2026-10-10T23:00:00.2737953Z Worker ID: {70a01d10-aa71-4514-b24a-345dc8178ccb}
+2026-10-10T23:00:00.2738688Z Region: northcentralus
+2026-10-10T23:00:00.2739210Z Cloud: Azure
+2026-10-10T23:00:00.2739748Z ##[endgroup]
+2026-10-10T23:00:00.2741017Z ##[group]Operating System
+2026-10-10T23:00:00.2741612Z Ubuntu
+2026-10-10T23:00:00.2742140Z 24.04.5
+2026-10-10T23:00:00.2743056Z LTS
+2026-10-10T23:00:00.2743582Z ##[endgroup]
+2026-10-10T23:00:00.2744091Z ##[group]Runner Image
+2026-10-10T23:00:00.2744654Z Image: ubuntu-24.04
+2026-10-10T23:00:00.2745265Z Version: 20261004.327.1
+2026-10-10T23:00:00.2746404Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-10T23:00:00.2747859Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-10T23:00:00.2748807Z ##[endgroup]
+2026-10-10T23:00:00.2749820Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T23:00:00.2752127Z Contents: read
+2026-10-10T23:00:00.2752977Z Metadata: read
+2026-10-10T23:00:00.2753511Z ##[endgroup]
+2026-10-10T23:00:00.2755574Z Secret source: Actions
+2026-10-10T23:00:00.2756436Z Cache mode: write
+2026-10-10T23:00:00.2757098Z Prepare workflow directory
+2026-10-10T23:00:00.3069595Z Prepare all required actions
+2026-10-10T23:00:00.3118309Z Getting action download info
+2026-10-10T23:00:00.5676387Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-10T23:00:00.6665527Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-10T23:00:00.8738833Z Complete job name: fixtures
+2026-10-10T23:00:00.9515055Z ##[group]Run actions/checkout@v4
+2026-10-10T23:00:00.9515893Z with:
+2026-10-10T23:00:00.9516460Z   repository: jwcodes12/control-stack
+2026-10-10T23:00:00.9520458Z   token: ***
+2026-10-10T23:00:00.9520921Z   ssh-strict: true
+2026-10-10T23:00:00.9521452Z   ssh-user: git
+2026-10-10T23:00:00.9521943Z   persist-credentials: true
+2026-10-10T23:00:00.9522979Z   clean: true
+2026-10-10T23:00:00.9523520Z   sparse-checkout-cone-mode: true
+2026-10-10T23:00:00.9524064Z   fetch-depth: 1
+2026-10-10T23:00:00.9524569Z   fetch-tags: false
+2026-10-10T23:00:00.9525059Z   show-progress: true
+2026-10-10T23:00:00.9525546Z   lfs: false
+2026-10-10T23:00:00.9526037Z   submodules: false
+2026-10-10T23:00:00.9526529Z   set-safe-directory: true
+2026-10-10T23:00:00.9527081Z   allow-unsafe-pr-checkout: false
+2026-10-10T23:00:00.9527848Z ##[endgroup]
+2026-10-10T23:00:01.0534995Z Syncing repository: jwcodes12/control-stack
+2026-10-10T23:00:01.0537704Z ##[group]Getting Git version info
+2026-10-10T23:00:01.0539111Z Working directory is '/home/runner/work/control-stack/control-stack'
+2026-10-10T23:00:01.0540828Z [command]/usr/bin/git version
+2026-10-10T23:00:01.0561537Z git version 2.55.0
+2026-10-10T23:00:01.0579921Z ##[endgroup]
+2026-10-10T23:00:01.0594226Z Temporarily overriding HOME='/home/runner/work/_temp/67472b0e-f31e-4153-81ed-6023f4238df8' before making global git config changes
+2026-10-10T23:00:01.0596248Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T23:00:01.0598458Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/control-stack/control-stack
+2026-10-10T23:00:01.0660374Z Deleting the contents of '/home/runner/work/control-stack/control-stack'
+2026-10-10T23:00:01.0670298Z ##[group]Initializing the repository
+2026-10-10T23:00:01.0671703Z [command]/usr/bin/git init /home/runner/work/control-stack/control-stack
+2026-10-10T23:00:01.0767393Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T23:00:01.0768620Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T23:00:01.0769882Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T23:00:01.0770655Z hint: call:
+2026-10-10T23:00:01.0771098Z hint:
+2026-10-10T23:00:01.0771746Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T23:00:01.0772645Z hint:
+2026-10-10T23:00:01.0773313Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T23:00:01.0774299Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T23:00:01.0775043Z hint:
+2026-10-10T23:00:01.0775560Z hint: 	git branch -m <name>
+2026-10-10T23:00:01.0776069Z hint:
+2026-10-10T23:00:01.0776725Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T23:00:01.0781633Z Initialized empty Git repository in /home/runner/work/control-stack/control-stack/.git/
+2026-10-10T23:00:01.0790826Z [command]/usr/bin/git remote add origin https://github.com/jwcodes12/control-stack
+2026-10-10T23:00:01.0843319Z ##[endgroup]
+2026-10-10T23:00:01.0844610Z ##[group]Disabling automatic garbage collection
+2026-10-10T23:00:01.0847623Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-10T23:00:01.0878968Z ##[endgroup]
+2026-10-10T23:00:01.0880065Z ##[group]Setting up auth
+2026-10-10T23:00:01.0886385Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T23:00:01.0915378Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T23:00:01.1260868Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T23:00:01.1297948Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T23:00:01.1498431Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T23:00:01.1529923Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T23:00:01.1716801Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T23:00:01.1756335Z ##[endgroup]
+2026-10-10T23:00:01.1758317Z ##[group]Fetching the repository
+2026-10-10T23:00:01.1766379Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +841b1b45cf1ebd363ee2e22c3cc287b58d3ba6f5:refs/remotes/pull/51/merge
+2026-10-10T23:00:02.2807624Z From https://github.com/jwcodes12/control-stack
+2026-10-10T23:00:02.2809552Z  * [new ref]         841b1b45cf1ebd363ee2e22c3cc287b58d3ba6f5 -> pull/51/merge
+2026-10-10T23:00:02.2814153Z ##[endgroup]
+2026-10-10T23:00:02.2816076Z ##[group]Determining the checkout info
+2026-10-10T23:00:02.2818268Z ##[endgroup]
+2026-10-10T23:00:02.2819846Z [command]/usr/bin/git sparse-checkout disable
+2026-10-10T23:00:02.2872992Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T23:00:02.2907667Z ##[group]Checking out the ref
+2026-10-10T23:00:02.2909698Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/51/merge
+2026-10-10T23:00:02.6346289Z Note: switching to 'refs/remotes/pull/51/merge'.
+2026-10-10T23:00:02.6347617Z 
+2026-10-10T23:00:02.6348449Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-10T23:00:02.6350421Z changes and commit them, and you can discard any commits you make in this
+2026-10-10T23:00:02.6352699Z state without impacting any branches by switching back to a branch.
+2026-10-10T23:00:02.6354110Z 
+2026-10-10T23:00:02.6354948Z If you want to create a new branch to retain commits you create, you may
+2026-10-10T23:00:02.6356849Z do so (now or later) by using -c with the switch command. Example:
+2026-10-10T23:00:02.6357986Z 
+2026-10-10T23:00:02.6358705Z   git switch -c <new-branch-name>
+2026-10-10T23:00:02.6359624Z 
+2026-10-10T23:00:02.6360350Z Or undo this operation with:
+2026-10-10T23:00:02.6361279Z 
+2026-10-10T23:00:02.6361929Z   git switch -
+2026-10-10T23:00:02.6362611Z 
+2026-10-10T23:00:02.6363626Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-10T23:00:02.6364972Z 
+2026-10-10T23:00:02.6366572Z HEAD is now at 841b1b4 Merge 455feb35074df2691fc61f42867ea3c9d8b98e76 into b263d0bbde0366ec84f2b2f3c9acbe23790b05d2
+2026-10-10T23:00:02.6371512Z ##[endgroup]
+2026-10-10T23:00:02.6402644Z [command]/usr/bin/git log -1 --format=%H
+2026-10-10T23:00:02.6425940Z 841b1b45cf1ebd363ee2e22c3cc287b58d3ba6f5
+2026-10-10T23:00:02.6817324Z ##[group]Run actions/setup-python@v5
+2026-10-10T23:00:02.6818726Z with:
+2026-10-10T23:00:02.6819776Z   python-version: 3.12
+2026-10-10T23:00:02.6820921Z   check-latest: false
+2026-10-10T23:00:02.6831192Z   token: ***
+2026-10-10T23:00:02.6832287Z   update-environment: true
+2026-10-10T23:00:02.6833679Z   allow-prereleases: false
+2026-10-10T23:00:02.6834974Z   freethreaded: false
+2026-10-10T23:00:02.6836048Z ##[endgroup]
+2026-10-10T23:00:02.8220110Z ##[group]Installed versions
+2026-10-10T23:00:02.8321127Z (node:2296) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T23:00:02.8322728Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T23:00:02.8323574Z Successfully set up CPython (3.12.15)
+2026-10-10T23:00:02.8325056Z ##[endgroup]
+2026-10-10T23:00:02.8504626Z ##[group]Run python3 tools/check_deployment_monotonicity.py
+2026-10-10T23:00:02.8505389Z [36;1mpython3 tools/check_deployment_monotonicity.py[0m
+2026-10-10T23:00:02.8749535Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:02.8750310Z env:
+2026-10-10T23:00:02.8751377Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:02.8752101Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:02.8752932Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:02.8753545Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:02.8754189Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:02.8754844Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:02.8755409Z ##[endgroup]
+2026-10-10T23:00:04.1079918Z PASS: 520 seeded additions; no negative fixture becomes accepted
+2026-10-10T23:00:04.1207863Z ##[group]Run python3 tools/test_deployment_slice.py
+2026-10-10T23:00:04.1208400Z [36;1mpython3 tools/test_deployment_slice.py[0m
+2026-10-10T23:00:04.1256136Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:04.1256561Z env:
+2026-10-10T23:00:04.1257098Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:04.1257743Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:04.1258337Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:04.1258829Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:04.1259322Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:04.1259838Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:04.1260286Z ##[endgroup]
+2026-10-10T23:00:05.0248352Z .............
+2026-10-10T23:00:05.0249435Z ----------------------------------------------------------------------
+2026-10-10T23:00:05.0250429Z Ran 13 tests in 0.707s
+2026-10-10T23:00:05.0250664Z 
+2026-10-10T23:00:05.0250831Z OK
+2026-10-10T23:00:05.0380227Z ##[group]Run python3 tools/test_deployment_runtime.py
+2026-10-10T23:00:05.0380716Z [36;1mpython3 tools/test_deployment_runtime.py[0m
+2026-10-10T23:00:05.0423298Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:05.0423769Z env:
+2026-10-10T23:00:05.0424162Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.0424691Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:05.0425219Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.0425886Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.0426370Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.0426813Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:05.0427212Z ##[endgroup]
+2026-10-10T23:00:05.8394248Z .................
+2026-10-10T23:00:05.8395264Z ----------------------------------------------------------------------
+2026-10-10T23:00:05.8396081Z Ran 17 tests in 0.665s
+2026-10-10T23:00:05.8396341Z 
+2026-10-10T23:00:05.8396542Z OK
+2026-10-10T23:00:05.8628812Z ##[group]Run python3 tools/test_deployment_evidence.py
+2026-10-10T23:00:05.8629326Z [36;1mpython3 tools/test_deployment_evidence.py[0m
+2026-10-10T23:00:05.8671668Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:05.8672026Z env:
+2026-10-10T23:00:05.8672625Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.8673224Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:05.8673732Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.8674236Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.8674684Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.8675142Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:05.8675569Z ##[endgroup]
+2026-10-10T23:00:05.9627771Z ...
+2026-10-10T23:00:05.9629455Z PASS: same pinned Compose, raw Docker-derived inventory and actual sink bytes; daemon/refinement remain conditional
+2026-10-10T23:00:05.9631549Z PASS: same pinned Compose, raw Docker-derived inventory and actual sink bytes; daemon/refinement remain conditional
+2026-10-10T23:00:05.9633081Z ----------------------------------------------------------------------
+2026-10-10T23:00:05.9634296Z Ran 3 tests in 0.041s
+2026-10-10T23:00:05.9634673Z 
+2026-10-10T23:00:05.9634818Z OK
+2026-10-10T23:00:05.9758582Z ##[group]Run python3 tools/test_deployment_r2.py
+2026-10-10T23:00:05.9759037Z [36;1mpython3 tools/test_deployment_r2.py[0m
+2026-10-10T23:00:05.9800657Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:05.9801022Z env:
+2026-10-10T23:00:05.9801441Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.9801978Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:05.9802999Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.9803478Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.9803948Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:05.9804408Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:05.9804800Z ##[endgroup]
+2026-10-10T23:00:06.1715224Z ..
+2026-10-10T23:00:06.1715781Z ----------------------------------------------------------------------
+2026-10-10T23:00:06.1716502Z Ran 2 tests in 0.131s
+2026-10-10T23:00:06.1716871Z 
+2026-10-10T23:00:06.1717067Z OK
+2026-10-10T23:00:06.1717913Z PASS: raw daemon inventory, same scanned/started mounts and UIDs, SQLite backups, actual sink bytes, crash gap, dedup, HALT and cleanup
+2026-10-10T23:00:06.1719167Z PASS: raw daemon inventory, same scanned/started mounts and UIDs, SQLite backups, actual sink bytes, crash gap, dedup, HALT and cleanup
+2026-10-10T23:00:06.1973836Z ##[group]Run python3 tools/test_deployment_scanner.py
+2026-10-10T23:00:06.1974321Z [36;1mpython3 tools/test_deployment_scanner.py[0m
+2026-10-10T23:00:06.2013372Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:06.2013759Z env:
+2026-10-10T23:00:06.2014133Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:06.2014642Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:06.2015213Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:06.2015663Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:06.2016108Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:06.2016702Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:06.2017097Z ##[endgroup]
+2026-10-10T23:00:08.5039505Z .........
+2026-10-10T23:00:08.5040280Z ----------------------------------------------------------------------
+2026-10-10T23:00:08.5041065Z Ran 9 tests in 2.208s
+2026-10-10T23:00:08.5041295Z 
+2026-10-10T23:00:08.5041600Z OK
+2026-10-10T23:00:08.5065607Z PASS: raw daemon inventory, same scanned/started mounts and UIDs, SQLite backups, actual sink bytes, crash gap, dedup, HALT and cleanup
+2026-10-10T23:00:08.5067099Z PASS: raw daemon inventory, same scanned/started mounts and UIDs, SQLite backups, actual sink bytes, crash gap, dedup, HALT and cleanup
+2026-10-10T23:00:08.5188679Z ##[group]Run python3 tools/test_deployment_plan.py
+2026-10-10T23:00:08.5189363Z [36;1mpython3 tools/test_deployment_plan.py[0m
+2026-10-10T23:00:08.5229930Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:08.5230280Z env:
+2026-10-10T23:00:08.5230628Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:08.5231189Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:08.5231767Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:08.5232240Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:08.5232954Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:08.5233390Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:08.5233830Z ##[endgroup]
+2026-10-10T23:00:09.2710413Z .......
+2026-10-10T23:00:09.2711037Z ----------------------------------------------------------------------
+2026-10-10T23:00:09.2711878Z Ran 7 tests in 0.681s
+2026-10-10T23:00:09.2712213Z 
+2026-10-10T23:00:09.2712638Z OK
+2026-10-10T23:00:09.2861289Z ##[group]Run python3 tools/test_deployment_remediated.py
+2026-10-10T23:00:09.2861818Z [36;1mpython3 tools/test_deployment_remediated.py[0m
+2026-10-10T23:00:09.2901972Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:09.2902509Z env:
+2026-10-10T23:00:09.2903047Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.2903689Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:09.2904315Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.2904835Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.2905380Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.2905851Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:09.2906304Z ##[endgroup]
+2026-10-10T23:00:09.4156206Z ..
+2026-10-10T23:00:09.4156943Z ----------------------------------------------------------------------
+2026-10-10T23:00:09.4157521Z Ran 2 tests in 0.056s
+2026-10-10T23:00:09.4157675Z 
+2026-10-10T23:00:09.4157854Z OK
+2026-10-10T23:00:09.4295427Z ##[group]Run python3 tools/test_deployment_heldout.py
+2026-10-10T23:00:09.4295947Z [36;1mpython3 tools/test_deployment_heldout.py[0m
+2026-10-10T23:00:09.4336106Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:09.4336511Z env:
+2026-10-10T23:00:09.4336865Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.4337545Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:09.4338075Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.4338538Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.4338979Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:09.4339409Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:09.4339831Z ##[endgroup]
+2026-10-10T23:00:10.0644676Z ...
+2026-10-10T23:00:10.0645369Z ----------------------------------------------------------------------
+2026-10-10T23:00:10.0646436Z Ran 3 tests in 0.390s
+2026-10-10T23:00:10.0646707Z 
+2026-10-10T23:00:10.0646916Z OK
+2026-10-10T23:00:10.0837679Z ##[group]Run python3 tools/test_deployment_attribution.py
+2026-10-10T23:00:10.0838315Z [36;1mpython3 tools/test_deployment_attribution.py[0m
+2026-10-10T23:00:10.0878538Z shell: /usr/bin/bash -e {0}
+2026-10-10T23:00:10.0878990Z env:
+2026-10-10T23:00:10.0879355Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:10.0879874Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib/pkgconfig
+2026-10-10T23:00:10.0880439Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:10.0880871Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:10.0881344Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.15/x64
+2026-10-10T23:00:10.0881789Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.15/x64/lib
+2026-10-10T23:00:10.0882195Z ##[endgroup]
+2026-10-10T23:00:10.3530130Z ..F.
+2026-10-10T23:00:10.3530896Z ======================================================================
+2026-10-10T23:00:10.3533100Z FAIL: test_reproduce_archived_attribution_and_export (__main__.AttributionTests.test_reproduce_archived_attribution_and_export)
+2026-10-10T23:00:10.3534628Z ----------------------------------------------------------------------
+2026-10-10T23:00:10.3535560Z Traceback (most recent call last):
+2026-10-10T23:00:10.3544415Z   File "/home/runner/work/control-stack/control-stack/tools/test_deployment_attribution.py", line 21, in test_reproduce_archived_attribution_and_export
+2026-10-10T23:00:10.3546020Z     output=convert(actual);self.assertEqual(output,json.loads((ROOT/'deployment/runs/tier7/attribution/inspect.json').read_text()))
+2026-10-10T23:00:10.3547073Z                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-10T23:00:10.3548033Z AssertionError: {'version': 2, 'status': 'success', 'eval':[43645 chars]}}}]} != {'eval': {'config': {}, 'created': '2026-10[43645 chars]': 2}
+2026-10-10T23:00:10.3549047Z Diff is 84472 characters long. Set self.maxDiff to None to see it.
+2026-10-10T23:00:10.3549423Z 
+2026-10-10T23:00:10.3549721Z ----------------------------------------------------------------------
+2026-10-10T23:00:10.3550280Z Ran 4 tests in 0.148s
+2026-10-10T23:00:10.3550598Z 
+2026-10-10T23:00:10.3550740Z FAILED (failures=1)
+2026-10-10T23:00:10.3711905Z ##[error]Process completed with exit code 1.
+2026-10-10T23:00:10.3867474Z Post job cleanup.
+2026-10-10T23:00:10.4737789Z [command]/usr/bin/git version
+2026-10-10T23:00:10.4775860Z git version 2.55.0
+2026-10-10T23:00:10.4810128Z Temporarily overriding HOME='/home/runner/work/_temp/72051dbc-abeb-4c07-b266-778a500d6df4' before making global git config changes
+2026-10-10T23:00:10.4811413Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T23:00:10.4815866Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/control-stack/control-stack
+2026-10-10T23:00:10.4855891Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T23:00:10.4889165Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T23:00:10.5134087Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T23:00:10.5160421Z http.https://github.com/.extraheader
+2026-10-10T23:00:10.5171632Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T23:00:10.5208162Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T23:00:10.5438893Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T23:00:10.5474710Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-10T23:00:10.5889354Z Cleaning up orphan processes
+2026-10-10T23:00:10.6116037Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

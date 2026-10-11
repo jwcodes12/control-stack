@@ -1,0 +1,178 @@
+{
+  "name": "cstack-r2-normalize",
+  "networks": {
+    "isolated": {
+      "internal": true,
+      "ipam": {},
+      "name": "cstack-r2-normalize_isolated"
+    }
+  },
+  "services": {
+    "agent-a": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "agent-a"
+      },
+      "image": "sha256:6f9a43149e0f7cdd9b37d7b52c821e823f549a957f7eb8055ba64b0e5d060d63",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23701",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "agent-b": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "agent-b"
+      },
+      "image": "sha256:6f9a43149e0f7cdd9b37d7b52c821e823f549a957f7eb8055ba64b0e5d060d63",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23702",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "approver": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "approver"
+      },
+      "image": "sha256:6f9a43149e0f7cdd9b37d7b52c821e823f549a957f7eb8055ba64b0e5d060d63",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23704",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "broker": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "broker"
+      },
+      "image": "sha256:6f9a43149e0f7cdd9b37d7b52c821e823f549a957f7eb8055ba64b0e5d060d63",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23700",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "receiver": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "receiver"
+      },
+      "image": "sha256:6f9a43149e0f7cdd9b37d7b52c821e823f549a957f7eb8055ba64b0e5d060d63",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23700",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+          "target": "/output",
+          "type": "bind"
+        }
+      ]
+    },
+    "reviewer": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "reviewer"
+      },
+      "image": "sha256:6f9a43149e0f7cdd9b37d7b52c821e823f549a957f7eb8055ba64b0e5d060d63",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23703",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    }
+  },
+  "x-cstack": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 2,
+    "channel_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  }
+}

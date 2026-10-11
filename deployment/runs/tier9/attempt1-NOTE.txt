@@ -1,0 +1,6 @@
+Attempt 1 of the hardened live run (2026-10-11). The `clean` case failed its own prediction check: the fresh scan returned
+UNASSURED with runtime-snapshot DRIFT on broker, receiver, reviewer and approver.
+Cause (found from this archive): declared_hardening() reported cap_drop None for a service that declares no cap_drop, while the
+daemon reports [] for it, so every non-agent service drifted. The fixture builder had used the same function on both sides, so no
+unit test saw the disagreement; only the real daemon did. Fix: an absent cap_drop is []; fixtures and golden outputs regenerated;
+attempt 2 is containers-hardened/. Docker cleanup after the failure: no cstack-r2- resources remained (cleanup.txt).

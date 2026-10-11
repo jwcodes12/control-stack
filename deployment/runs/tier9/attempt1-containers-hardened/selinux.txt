@@ -1,0 +1,3 @@
+Host: Enforcing
+Docker security options: ["name=seccomp,profile=builtin","name=cgroupns"]
+All disposable binds use shared z, never private Z on shared directories; daemon currently does not advertise SELinux enforcement. No host-wide relabel or LSM change.

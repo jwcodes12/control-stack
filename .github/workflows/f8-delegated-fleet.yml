@@ -1,0 +1,33 @@
+name: f8-delegated-fleet
+on:
+  pull_request:
+    paths:
+      - 'reviews/family-strengthening/DelegatedFleet.lean'
+      - 'trusted_stack/test_delegated_fleet.py'
+      - 'docs/F8-DELEGATED-FLEET.md'
+      - '.github/workflows/f8-delegated-fleet.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-and-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean
+        run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+      - name: Kernel-check shared-budget delegated fleet and inspect axioms
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake exe cache get
+          lake env lean reviews/family-strengthening/DelegatedFleet.lean | tee "$RUNNER_TEMP/fleet-axioms.txt"
+          grep -F "DelegatedFleet.global_budget_run' depends on axioms:" "$RUNNER_TEMP/fleet-axioms.txt"
+          grep -F "DelegatedFleet.two_agent_positive' does not depend on any axioms" "$RUNNER_TEMP/fleet-axioms.txt"
+          if grep -E 'sorryAx|\\bsorry\\b' "$RUNNER_TEMP/fleet-axioms.txt"; then
+            exit 1
+          fi
+      - name: Real SQLite delegated concurrent fault and HALT cases
+        run: python3 -m unittest trusted_stack.test_delegated_fleet -v

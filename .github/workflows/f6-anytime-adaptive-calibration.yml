@@ -1,0 +1,20 @@
+name: f6-anytime-adaptive-calibration
+on:
+  pull_request:
+    paths:
+      - 'tools/anytime_monitor_calibration.py'
+      - 'tools/test_anytime_monitor_calibration.py'
+      - 'docs/F6-ANYTIME-MONITOR.md'
+      - '.github/workflows/f6-anytime-adaptive-calibration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  statistics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Anytime conditional risk and adversarial input negative controls
+        run: python3 -m unittest tools.test_anytime_monitor_calibration -v

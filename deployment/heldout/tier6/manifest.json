@@ -1,0 +1,217 @@
+{
+  "author": "independent-codex-exec-tier6",
+  "basis": {
+    "corpus_label": "static hypothetical selected facts, no live deployment",
+    "source": "Only the public supported reference profile supplied in this independent session.",
+    "labels_fixed_before_evaluation": true,
+    "evaluation_performed": false,
+    "inventory_semantics": "Every runtime JSON is independently authored synthetic selected facts, a hypothesis rather than a real observation. Normal inventories mirror declared bind entries without bind options; the two explicit mismatch cases are documented in their reasons.",
+    "known_code_image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "hypotheses": {
+      "image_code_correspondence": "The shared hypothetical image identifies known code by stipulation, not measurement.",
+      "principal_policy": "agent-a=23701, agent-b=23702, broker=receiver=23700, reviewer=23703, approver=23704",
+      "host_directories": [
+        {
+          "source": "/workspace/sink",
+          "owner_uid": 23700,
+          "mode": "0700"
+        },
+        {
+          "source": "/workspace/db",
+          "owner_uid": 23700,
+          "mode": "0700"
+        },
+        {
+          "source": "/workspace/channel",
+          "owner_uid": 23700,
+          "mode": "0755"
+        }
+      ],
+      "budget": 2,
+      "egress": "Only the network declaration is analyzed; no live external egress claim is assessed."
+    },
+    "label_meanings": {
+      "SAFE_IN_SUPPORTED_MODEL": "Matches the supplied supported model under its given hypotheses; no live safety claim.",
+      "REFUTED_CONFIGURATION": "Explicit contradiction of the supplied principal, environment, mount, network or selected-inventory correspondence policy.",
+      "UNKNOWN_CONFIGURATION": "Unsupported declaration prevents assurance within the selected model."
+    },
+    "checksum_paths": "SHA256SUMS paths are relative to corpus/."
+  },
+  "cases": [
+    {
+      "id": "supported-minimal",
+      "compose": "cases/supported-minimal.compose.json",
+      "runtime": "cases/supported-minimal.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "The six principals, selected fields, private writer mounts and isolated network match the given supported model; receiver omits its optional channel mount."
+    },
+    {
+      "id": "supported-receiver-channel",
+      "compose": "cases/supported-receiver-channel.compose.json",
+      "runtime": "cases/supported-receiver-channel.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Receiver includes the explicitly optional read-write channel mount; all other authority remains within the given profile."
+    },
+    {
+      "id": "supported-reader-selinux",
+      "compose": "cases/supported-reader-selinux.compose.json",
+      "runtime": "cases/supported-reader-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "All four read-only channel consumers use the explicitly permitted bind.selinux=z option; it does not change declared read-only authority."
+    },
+    {
+      "id": "supported-private-selinux",
+      "compose": "cases/supported-private-selinux.compose.json",
+      "runtime": "cases/supported-private-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Broker and receiver private bind entries use the permitted selinux=z option while retaining the required source, target and writer permissions."
+    },
+    {
+      "id": "supported-all-selinux-with-channel",
+      "compose": "cases/supported-all-selinux-with-channel.compose.json",
+      "runtime": "cases/supported-all-selinux-with-channel.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Receiver has its optional channel mount and every bind uses the allowed selinux=z annotation; all required principals and mount permissions still follow the profile."
+    },
+    {
+      "id": "agent-root-identity",
+      "compose": "cases/agent-root-identity.compose.json",
+      "runtime": "cases/agent-root-identity.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent-a explicitly runs as UID 0 instead of UID 23701, granting excess identity authority and contradicting the principal policy."
+    },
+    {
+      "id": "agents-share-identity",
+      "compose": "cases/agents-share-identity.compose.json",
+      "runtime": "cases/agents-share-identity.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent-b uses agent-a's UID 23701 instead of its distinct UID 23702, collapsing the two required agent principals."
+    },
+    {
+      "id": "reviewer-channel-writer",
+      "compose": "cases/reviewer-channel-writer.compose.json",
+      "runtime": "cases/reviewer-channel-writer.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Reviewer has a read-write channel bind although its only permitted bind is read-only; the declaration grants an unauthorized writer path."
+    },
+    {
+      "id": "approver-output-writer",
+      "compose": "cases/approver-output-writer.compose.json",
+      "runtime": "cases/approver-output-writer.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Approver receives a writable sink bind in addition to its channel reader bind, exposing the receiver-only output writer path."
+    },
+    {
+      "id": "broker-output-writer",
+      "compose": "cases/broker-output-writer.compose.json",
+      "runtime": "cases/broker-output-writer.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Broker receives a writable sink bind, exceeding its permitted channel and database writer mounts."
+    },
+    {
+      "id": "receiver-output-readonly",
+      "compose": "cases/receiver-output-readonly.compose.json",
+      "runtime": "cases/receiver-output-readonly.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Receiver's required sink writer bind is read-only, contradicting the supported output configuration. This is a functional profile violation, without an assertion of an exploit."
+    },
+    {
+      "id": "receiver-output-wrong-source",
+      "compose": "cases/receiver-output-wrong-source.compose.json",
+      "runtime": "cases/receiver-output-wrong-source.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Receiver's /output writer bind points at the channel directory instead of the configured sink source; the required source-to-target correspondence is false."
+    },
+    {
+      "id": "credential-environment",
+      "compose": "cases/credential-environment.compose.json",
+      "runtime": "cases/credential-environment.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "An unlisted synthetic credential environment key is supplied to broker. Credentials and extra environment names violate the explicit supported policy; the value is a dummy marker."
+    },
+    {
+      "id": "reviewer-role-ambiguity",
+      "compose": "cases/reviewer-role-ambiguity.compose.json",
+      "runtime": "cases/reviewer-role-ambiguity.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Reviewer declares the approver role while retaining reviewer UID and environment identity, creating contradictory principal declarations."
+    },
+    {
+      "id": "network-not-internal",
+      "compose": "cases/network-not-internal.compose.json",
+      "runtime": "cases/network-not-internal.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "The sole declared network has internal=false instead of the required internal=true. This refutes the declaration profile without asserting measured external reachability."
+    },
+    {
+      "id": "inventory-uid-contradiction",
+      "compose": "cases/inventory-uid-contradiction.compose.json",
+      "runtime": "cases/inventory-uid-contradiction.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Compose retains agent-a UID 23701 but the synthetic selected inventory states UID 23700. The paired hypotheses contradict explicit principal correspondence."
+    },
+    {
+      "id": "inventory-undeclared-writer",
+      "compose": "cases/inventory-undeclared-writer.compose.json",
+      "runtime": "cases/inventory-undeclared-writer.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "The synthetic approver inventory adds a writable database mount absent from Compose. The pair contradicts selected mount correspondence and introduces unauthorized hypothetical writer authority."
+    },
+    {
+      "id": "unsupported-restart-policy",
+      "compose": "cases/unsupported-restart-policy.compose.json",
+      "runtime": "cases/unsupported-restart-policy.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "A restart declaration is outside the six supported service fields. Its presence requires UNKNOWN even though selected inventory facts match the supported baseline."
+    },
+    {
+      "id": "unsupported-service-labels",
+      "compose": "cases/unsupported-service-labels.compose.json",
+      "runtime": "cases/unsupported-service-labels.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "Service labels are an unlisted Compose feature. The harmless synthetic label cannot be treated as supported assurance."
+    },
+    {
+      "id": "unsupported-deploy-resources",
+      "compose": "cases/unsupported-deploy-resources.compose.json",
+      "runtime": "cases/unsupported-deploy-resources.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "Deploy resource limits are outside the selected service-field model; their effect is not represented by the inventory."
+    },
+    {
+      "id": "unsupported-rootfs-readonly",
+      "compose": "cases/unsupported-rootfs-readonly.compose.json",
+      "runtime": "cases/unsupported-rootfs-readonly.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "Service-level read_only is outside the supported field set, even when it appears restrictive; selected mount facts do not justify assurance for that declaration."
+    },
+    {
+      "id": "unsupported-tmpfs",
+      "compose": "cases/unsupported-tmpfs.compose.json",
+      "runtime": "cases/unsupported-tmpfs.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "An additional tmpfs declaration is not an allowed long-form bind and is outside the selected authority model. No assertion about its live effect is made."
+    },
+    {
+      "id": "unsupported-network-object",
+      "compose": "cases/unsupported-network-object.compose.json",
+      "runtime": "cases/unsupported-network-object.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "Service network membership is declared as an object rather than the required networks=[isolated] list. The alternative Compose form is unsupported despite the same selected network name."
+    },
+    {
+      "id": "unsupported-environment-list",
+      "compose": "cases/unsupported-environment-list.compose.json",
+      "runtime": "cases/unsupported-environment-list.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "Agent-b uses the Compose list form for environment rather than the required object. The represented key names agree, but this representation is outside the supported interface."
+    },
+    {
+      "id": "unsupported-bind-propagation",
+      "compose": "cases/unsupported-bind-propagation.compose.json",
+      "runtime": "cases/unsupported-bind-propagation.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "A bind.propagation option is supplied in addition to the allowed bind.selinux=z. This unmodelled bind option requires UNKNOWN; selected inventory deliberately omits the bind option object."
+    }
+  ]
+}

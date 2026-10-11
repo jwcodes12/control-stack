@@ -1,0 +1,91 @@
+name: deployment-slice
+on:
+  pull_request:
+  push:
+    branches: ['sol/deployment-slice-20261010']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fixtures:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python3 tools/check_deployment_monotonicity.py
+      - run: python3 tools/test_deployment_slice.py
+      - run: python3 tools/test_deployment_runtime.py
+      - run: python3 tools/test_deployment_evidence.py
+      - run: python3 tools/test_deployment_r2.py
+      - run: python3 tools/test_deployment_scanner.py
+      - run: python3 tools/test_deployment_plan.py
+      - run: python3 tools/test_deployment_remediated.py
+      - run: python3 tools/test_deployment_heldout.py
+      - run: python3 tools/test_deployment_attribution.py
+      - run: python3 tools/check_deployment_prereg.py
+      - run: python3 tools/build_deployment_fixtures.py --check
+  kernel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: lake exe cache get
+      - run: lake build ControlStack.Deployment.Contracts
+      - run: python3 tools/check_deployment_contract_witnesses.py
+      - run: python3 tools/check_deployment_plans.py
+      - run: python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/heldout-static.json
+      - name: Check every raw fixture projection in the kernel
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from tools.check_deployment_lean import check
+          expected = json.loads(Path('examples/compose-two-agent/expected.json').read_text())
+          for path in sorted(Path('security_ir/fixtures').glob('*.json')):
+              result = check(json.loads(path.read_text()))
+              assert result['accepted'] == expected[path.stem]['lean_accepted'], path
+              print(path.stem, result['accepted'], result['axioms'])
+          PY
+      - run: python3 tools/check_deployment_subset_differential.py
+      - name: Recheck archived R2 raw IR certificates
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from deployment.kernel import check_many
+          paths=sorted(Path('deployment/runs/tier2/containers-final').rglob('bundle.json'))+sorted(Path('deployment/runs/tier3/containers-final').rglob('bundle.json'))+sorted(Path('deployment/runs/tier5/remediated').rglob('bundle.json'))
+          assert len(paths)==20
+          irs=[json.loads(p.with_name('ir.json').read_text()) for p in paths]
+          accepted,axioms=check_many(irs)
+          assert accepted==[json.loads(p.read_text())['lean']['accepted'] for p in paths]
+          print('PASS: twenty raw container snapshot certificates, standard axioms')
+          PY
+  linux-boundary:
+    # John's defensive-only scope: archived negatives only, no live bypass reruns.
+    if: ${{ false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install runtime already present on the development box
+        run: sudo apt-get update -qq && sudo apt-get install -y libseccomp2
+      - name: Clean, two mutations and HALT during real publication
+        run: sudo python3 tools/run_deployment_boundary.py --output /tmp/deployment-runtime
+      - name: Independently check raw sink evidence and package private files
+        run: |
+          sudo python3 tools/check_deployment_evidence.py /tmp/deployment-runtime
+          sudo tar -C /tmp -czf /tmp/deployment-runtime-sink-evidence.tar.gz deployment-runtime
+          sudo chown "$(id -u):$(id -g)" /tmp/deployment-runtime-sink-evidence.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-runtime-sink-evidence
+          path: /tmp/deployment-runtime-sink-evidence.tar.gz

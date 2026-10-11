@@ -75,10 +75,20 @@ class Controller:
             CREATE TABLE leases (lease_id TEXT PRIMARY KEY, agent_uid INTEGER NOT NULL,
                 budget INTEGER NOT NULL, used INTEGER NOT NULL DEFAULT 0,
                 expires INTEGER NOT NULL, revoked INTEGER NOT NULL DEFAULT 0);
+            -- One-hop grants are bound to one preapproved nonce. A grant
+            -- cannot be transferred, expanded, replaced or reused.
+            CREATE TABLE delegations (
+                nonce TEXT PRIMARY KEY REFERENCES approvals(nonce),
+                grantor_uid INTEGER NOT NULL, delegate_uid INTEGER NOT NULL,
+                revoked INTEGER NOT NULL DEFAULT 0 CHECK(revoked IN (0,1)));
             CREATE TABLE releases (id INTEGER PRIMARY KEY AUTOINCREMENT,
                 digest TEXT NOT NULL, destination TEXT NOT NULL,
                 agent_uid INTEGER NOT NULL, nonce TEXT UNIQUE NOT NULL,
                 lease_id TEXT NOT NULL, cost INTEGER NOT NULL, created INTEGER NOT NULL);
+            CREATE TABLE delegated_releases (
+                release_id INTEGER PRIMARY KEY REFERENCES releases(id),
+                nonce TEXT UNIQUE NOT NULL, grantor_uid INTEGER NOT NULL,
+                delegate_uid INTEGER NOT NULL);
             -- A deliberately narrow *real* effect: a content-bound SQLite append
             -- in the SAME transaction as approval consumption and budget charge.
             -- No filesystem/network/process effect is claimed.
@@ -225,6 +235,50 @@ class Controller:
             return True
         return self._tx(apply)
 
+    def delegate(self, uid, nonce, delegate_uid):
+        """Grant one non-transitive, nonce-scoped release to one peer OS UID.
+
+        The grantor MUST own the reviewed approval and active lease. Only the
+        actual peer UID from SO_PEERCRED can exercise the grant, and the
+        original owner loses release authority for that nonce. Delegates
+        cannot issue onward grants. The approved content, destination,
+        lease, signer and budget are unchanged.
+        """
+        self._role(uid, "agents")
+        self._role(delegate_uid, "agents")
+        nonce = self._token(nonce)
+        if uid == delegate_uid:
+            raise Denied("delegation must identify another agent")
+        def apply(db, _):
+            now = self._now()
+            row = db.execute(
+                """SELECT a.agent_uid, a.lease_id, a.expires, a.used,
+                          l.agent_uid, l.expires, l.revoked
+                   FROM approvals a JOIN leases l ON a.lease_id=l.lease_id
+                   WHERE a.nonce=?""", (nonce,)).fetchone()
+            if (row is None or row[0] != uid or row[4] != uid or
+                    row[3] or row[6] or row[2] <= now or row[5] <= now):
+                raise Denied("only the active approval owner can delegate")
+            db.execute(
+                "INSERT INTO delegations (nonce,grantor_uid,delegate_uid) VALUES (?,?,?)",
+                (nonce, uid, delegate_uid))
+            return True
+        return self._tx(apply)
+
+    def revoke_delegation(self, uid, nonce):
+        """Irreversibly disable the nonce grant, including pending delivery."""
+        nonce = self._token(nonce)
+        def apply(db, _):
+            row = db.execute(
+                "SELECT grantor_uid FROM delegations WHERE nonce=?", (nonce,)
+            ).fetchone()
+            if row is None or (uid != row[0] and
+                               not self.principals.allows(uid, "admins")):
+                raise Denied("only grantor or trusted admin can revoke")
+            db.execute("UPDATE delegations SET revoked=1 WHERE nonce=?", (nonce,))
+            return True
+        return self._tx(apply)
+
     def revoke(self, uid, lease_id):
         self._role(uid, "admins")
         lease_id = self._token(lease_id)
@@ -251,14 +305,23 @@ class Controller:
         def apply(db, meta):
             approval = db.execute("SELECT digest,destination,agent_uid,lease_id,signer_uid,expires,used FROM approvals WHERE nonce=?",
                                   (nonce,)).fetchone()
-            if (approval is None or approval !=
-                (digest, destination, uid, lease_id, approval[4], approval[5], 0)
-                or approval[5] <= self._now()
-                or not self.principals.allows(approval[4], "approvers")):
+            if (approval is None or approval[0] != digest or
+                    approval[1] != destination or approval[3] != lease_id or
+                    approval[6] != 0 or approval[5] <= self._now() or
+                    not self.principals.allows(approval[4], "approvers")):
                 raise Denied("unapproved, expired, forged or already-used request")
+            owner = approval[2]
+            grant = db.execute(
+                "SELECT grantor_uid,delegate_uid,revoked FROM delegations WHERE nonce=?",
+                (nonce,)).fetchone()
+            if grant is None:
+                if uid != owner:
+                    raise Denied("lease belongs to another agent; no grant")
+            elif grant != (owner, uid, 0):
+                raise Denied("delegation identity, owner or status mismatched")
             lease = db.execute("SELECT agent_uid,budget,used,expires,revoked FROM leases WHERE lease_id=?",
                                (lease_id,)).fetchone()
-            if (lease is None or lease[0] != uid or lease[4] or lease[3] <= self._now()
+            if (lease is None or lease[0] != owner or lease[4] or lease[3] <= self._now()
                 or lease[2] + cost > lease[1] or meta[2] + cost > meta[0]):
                 raise Denied("rejected lease, expiry, revocation or budget")
             body = db.execute("SELECT body FROM artifacts WHERE digest=?", (digest,)).fetchone()
@@ -269,7 +332,12 @@ class Controller:
             db.execute("UPDATE meta SET spent=spent+? WHERE id=1", (cost,))
             db.execute("UPDATE approvals SET used=1 WHERE nonce=?", (nonce,))
             cur = db.execute("INSERT INTO releases (digest,destination,agent_uid,nonce,lease_id,cost,created) VALUES (?,?,?,?,?,?,?)",
-                             (digest, destination, uid, nonce, lease_id, cost, self._now()))
+                             (digest, destination, owner, nonce, lease_id, cost, self._now()))
+            if grant is not None:
+                db.execute(
+                    """INSERT INTO delegated_releases
+                       (release_id,nonce,grantor_uid,delegate_uid) VALUES (?,?,?,?)""",
+                    (cur.lastrowid, nonce, owner, uid))
             if record_effect:
                 # The only implemented effect is this exact reviewed byte string
                 # written to the trusted SQLite DB in the SAME transaction.

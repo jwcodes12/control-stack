@@ -1,0 +1,286 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 1,
+    "compose_sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "runtime_sha256": "413a04a2e85b5bdeaaa2d382bcf4c6ff0a46bb7f4da6b4ba2cf0dfa97ce3e0d7",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "9afc22c54737fa1177bc7d046f976297f3d396a4a42d8452f3fa12116604ae47",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "413a04a2e85b5bdeaaa2d382bcf4c6ff0a46bb7f4da6b4ba2cf0dfa97ce3e0d7",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/outbox_receiver.py"
+    }
+  ],
+  "version": 0
+}

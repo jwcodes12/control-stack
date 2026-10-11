@@ -1,0 +1,21 @@
+name: polyglot-effect-wire-contract
+on:
+  pull_request:
+    paths:
+      - 'interop/**'
+      - 'tools/test_polyglot_broker.py'
+      - '.github/workflows/polyglot-effect-wire-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cross-language-broker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Real Node and Python peer-UID request binding
+        run: sudo -n python3 tools/test_polyglot_broker.py

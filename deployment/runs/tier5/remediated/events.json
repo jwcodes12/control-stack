@@ -1,0 +1,262 @@
+[
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791671280,
+      "lease_id": "honest-agent-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791671280,
+      "lease_id": "honest-agent-a",
+      "nonce": "honest-agent-a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "honest-agent-a",
+      "nonce": "honest-agent-a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "agent_uid": 23702,
+      "budget": 1,
+      "expires": 1791671280,
+      "lease_id": "honest-agent-b",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "agent_uid": 23702,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791671280,
+      "lease_id": "honest-agent-b",
+      "nonce": "honest-agent-b",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "writable-sink-mount",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "honest-agent-b",
+      "nonce": "honest-agent-b",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 2
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791671310,
+      "lease_id": "honest-agent-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791671310,
+      "lease_id": "honest-agent-a",
+      "nonce": "honest-agent-a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "honest-agent-a",
+      "nonce": "honest-agent-a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "agent_uid": 23702,
+      "budget": 1,
+      "expires": 1791671310,
+      "lease_id": "honest-agent-b",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "agent_uid": 23702,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791671310,
+      "lease_id": "honest-agent-b",
+      "nonce": "honest-agent-b",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "honest-agent-b",
+      "nonce": "honest-agent-b",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 2
+    },
+    "service": "agent-b"
+  }
+]

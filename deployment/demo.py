@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 EXAMPLES=ROOT/'examples/compose-two-agent'
+HARDENED=ROOT/'examples/compose-two-agent-hardened'
 ROOTFS=Path('/var/tmp/sc01-vm-assets/build-root')
 TAG='cstack-r2-demo:offline'
 REPAIRED=('writable-sink-mount','trusted-role-uid-collision')
@@ -22,36 +23,37 @@ def dump(path,value):Path(path).write_text(json.dumps(value,sort_keys=True,inden
 def fixtures(out):
     from security_ir.verifier import verify,report
     from deployment.kernel import check_many
-    expected=json.loads((EXAMPLES/'expected.json').read_text());names=sorted(expected)
-    irs=[json.loads((ROOT/'security_ir/fixtures'/(n+'.json')).read_text()) for n in names]
-    accepted,axioms=check_many(irs);rows=[];bad=[]
-    for name,ir,lean in zip(names,irs,accepted):
+    # Legacy corpus (archived evidence is bound to it) plus the hardened-profile corpus (T9.4).
+    corpora=[('',EXAMPLES,ROOT/'security_ir/fixtures'),('hardened:',HARDENED,ROOT/'security_ir/fixtures-hardened')]
+    entries=[(prefix+n,exp,json.loads((fixture_dir/(n+'.json')).read_text())) for prefix,examples,fixture_dir in corpora for n,exp in sorted(json.loads((examples/'expected.json').read_text()).items())]
+    accepted,axioms=check_many([ir for _,_,ir in entries]);rows=[];bad=[]
+    for (name,exp,ir),lean in zip(entries,accepted):
         bundle=verify(ir)
         for o in bundle['obligations']:
             if o['premise']=='Lean-contract-instances':o.update(status='PROVEN_IN_MODEL' if lean else 'REFUTED',detail=axioms)
         bundle['verdict']='UNASSURED' if any(o['status'] in {'REFUTED','UNASSESSED'} for o in bundle['obligations']) else 'CONDITIONAL'
-        exp=expected[name];named=exp['bypass'] is None or exp['bypass'] in json.dumps(bundle)
+        named=exp['bypass'] is None or exp['bypass'] in json.dumps(bundle)
         ok=bundle['verdict']==exp['verdict'] and lean==exp['lean_accepted'] and named
         rows.append({'fixture':name,'expected':exp['verdict'],'actual':bundle['verdict'],'lean_accepted':lean,'bypass_named':named,'ok':ok})
         if not ok:bad.append(name)
-        if name=='clean' or name in REPAIRED:
-            dump(out/(name+'.bundle.json'),bundle);(out/(name+'.report.md')).write_text(report(bundle))
+        if name in {'clean','hardened:clean',*REPAIRED,*('hardened:'+x for x in REPAIRED)}:
+            stem=name.replace(':','-');dump(out/(stem+'.bundle.json'),bundle);(out/(stem+'.report.md')).write_text(report(bundle))
     dump(out/'fixtures.json',{'rows':rows,'axioms':axioms})
     false_conditional=[r['fixture'] for r in rows if r['actual']=='CONDITIONAL' and r['expected']!='CONDITIONAL']
-    detail=f"{len(rows)-len(bad)}/{len(rows)} fixtures match expected verdict and kernel result; false CONDITIONAL: {false_conditional or 'none'}"
+    detail=f"{len(rows)-len(bad)}/{len(rows)} fixtures (legacy + hardened profile) match expected verdict and kernel result; false CONDITIONAL: {false_conditional or 'none'}"
     return ('FAIL' if bad else 'PASS'),detail
 
 def plans(out):
     from extractors.compose import collect,sha
     from deployment.plan import build_plan,apply_patch
-    clean=json.loads((EXAMPLES/'clean.compose.json').read_text());done=[]
+    clean=json.loads((HARDENED/'clean.compose.json').read_text());done=[]
     for case in REPAIRED:
-        c=EXAMPLES/(case+'.compose.json');r=EXAMPLES/(case+'.runtime.json')
+        c=HARDENED/(case+'.compose.json');r=HARDENED/(case+'.runtime.json')
         plan=build_plan(json.loads(c.read_text()),json.loads(r.read_text()),collect(c,r,sha(c)),sha(c))
         dump(out/(case+'.plan.json'),plan)
-        if apply_patch(json.loads(c.read_text()),plan['patch'])!=clean:return 'FAIL',case+': patch does not yield the reference clean profile'
+        if apply_patch(json.loads(c.read_text()),plan['patch'])!=clean:return 'FAIL',case+': patch does not yield the reference hardened clean profile'
         done.append(case)
-    return 'PASS','read-only JSON Patch for '+', '.join(done)+' yields the reference clean profile'
+    return 'PASS','read-only JSON Patch for '+', '.join(done)+' yields the reference hardened clean profile'
 
 def live_prerequisites():
     missing=[]
@@ -90,7 +92,7 @@ def independent(out):
 def render(summary):
     lines=['# cstack demo','','**'+summary['result']+'**  (exit '+str(summary['exit'])+')','',summary['scope'],'','| Stage | Status | Detail |','|---|---|---|']
     lines+=['| '+s['stage']+' | '+s['status']+' | '+s['detail'].replace('|','\\|')+' |' for s in summary['stages']]
-    lines+=['','Claim ladder: fixture verdicts and Lean acceptance are PROVEN_IN_MODEL for the extracted IR only; the live stage is TESTED_BOUNDARY on this host (Docker default seccomp/namespaces, no Landlock, daemon-reported inventory, not independent attestation); faithful extraction and protocol refinement remain ASSUMED; bypass outcomes are archived Tier 2 measurements.']
+    lines+=['','Claim ladder: fixture verdicts and Lean acceptance are PROVEN_IN_MODEL for the extracted IR only; the live stage is TESTED_BOUNDARY on this host (Docker default seccomp/namespaces plus no-new-privileges and cap_drop ALL on the agents, no Landlock, daemon-reported inventory, not independent attestation); faithful extraction and protocol refinement remain ASSUMED; bypass outcomes are archived Tier 2 measurements.']
     return '\n'.join(lines)+'\n'
 
 def run(output,static_only=False):

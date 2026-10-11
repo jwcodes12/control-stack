@@ -13,23 +13,23 @@ from deployment.demo import render
 from extractors.compose import sha
 from deployment.plan import build_plan
 from security_ir.verifier import verify,report
-GOLDEN=ROOT/'deployment/golden';EXAMPLES=ROOT/'examples/compose-two-agent'
+GOLDEN=ROOT/'deployment/golden';EXAMPLES=HARDENED=ROOT/'examples/compose-two-agent-hardened'
 def schema(name):return json.loads((ROOT/'deployment/schemas'/(name+'-v0.1.json')).read_text())
 def cstack(*args):return subprocess.run([sys.executable,str(ROOT/'tools/cstack.py'),*map(str,args)],cwd=ROOT,capture_output=True,text=True)
 
 class Release(unittest.TestCase):
     def test_golden_bundles_reports_and_schema(self):
-        for name in ('clean','writable-sink-mount','trusted-role-uid-collision'):
+        for name,fixtures in (('clean','fixtures'),('writable-sink-mount','fixtures'),('trusted-role-uid-collision','fixtures'),('hardened-clean','fixtures-hardened')):
             with self.subTest(name=name):
-                bundle=verify(json.loads((ROOT/'security_ir/fixtures'/(name+'.json')).read_text()))
+                bundle=verify(json.loads((ROOT/'security_ir'/fixtures/(name.removeprefix('hardened-')+'.json')).read_text()))
                 validate(bundle,schema('bundle'))
                 self.assertEqual(bundle,json.loads((GOLDEN/(name+'.bundle.json')).read_text()))
                 self.assertEqual(report(bundle),(GOLDEN/(name+'.report.md')).read_text())
     def test_golden_plans_and_schema(self):
         for name in ('writable-sink-mount','trusted-role-uid-collision'):
             with self.subTest(name=name):
-                c=EXAMPLES/(name+'.compose.json');r=EXAMPLES/(name+'.runtime.json')
-                plan=build_plan(json.loads(c.read_text()),json.loads(r.read_text()),json.loads((ROOT/'security_ir/fixtures'/(name+'.json')).read_text()),sha(c))
+                c=HARDENED/(name+'.compose.json');r=HARDENED/(name+'.runtime.json')
+                plan=build_plan(json.loads(c.read_text()),json.loads(r.read_text()),json.loads((ROOT/'security_ir/fixtures-hardened'/(name+'.json')).read_text()),sha(c))
                 validate(plan,schema('plan'))
                 self.assertEqual(plan,json.loads((GOLDEN/(name+'.plan.json')).read_text()))
     def test_schema_rejects_assured_and_unknown_status(self):
@@ -52,10 +52,10 @@ class Release(unittest.TestCase):
             b=json.loads((GOLDEN/'clean.bundle.json').read_text());b['verdict']='ASSURED';(tmp/'assured.json').write_text(json.dumps(b))
             self.assertEqual(cstack('report',tmp/'assured.json','--output',tmp/'x.md').returncode,2)
             # plan: 0 proposal, 2 output overwriting an input
-            n='writable-sink-mount';args=[EXAMPLES/(n+'.compose.json'),'--runtime',EXAMPLES/(n+'.runtime.json'),'--ir',ROOT/'security_ir/fixtures'/(n+'.json')]
+            n='writable-sink-mount';args=[EXAMPLES/(n+'.compose.json'),'--runtime',EXAMPLES/(n+'.runtime.json'),'--ir',ROOT/'security_ir/fixtures-hardened'/(n+'.json')]
             self.assertEqual(cstack('plan',*args,'--output',tmp/'p.json').returncode,0)
             self.assertEqual(json.loads((tmp/'p.json').read_text()),json.loads((GOLDEN/(n+'.plan.json')).read_text()))
-            self.assertEqual(cstack('plan',*args,'--output',ROOT/'security_ir/fixtures'/(n+'.json')).returncode,2)
+            self.assertEqual(cstack('plan',*args,'--output',ROOT/'security_ir/fixtures-hardened'/(n+'.json')).returncode,2)
             # demo: 2 when the output directory already exists
             self.assertEqual(cstack('demo','--output',tmp).returncode,2)
     def test_demo_summary_schema_and_archived_run(self):
@@ -63,7 +63,7 @@ class Release(unittest.TestCase):
         validate({'result':'SKIPPED','exit':3,'stages':stages,'scope':'s'},schema('demo'))
         self.assertIn('SKIPPED',render({'result':'SKIPPED','exit':3,'stages':stages,'scope':'s'}))
         with self.assertRaises(ValueError):validate({'result':'PASS','exit':3,'stages':stages[:2],'scope':'s'},schema('demo'))
-        for path in sorted((ROOT/'deployment/runs/tier8').glob('*/demo.json')):
+        for path in sorted((ROOT/'deployment/runs/tier8').glob('*/demo.json'))+sorted((ROOT/'deployment/runs/tier9').glob('**/demo.json')):
             with self.subTest(path=str(path.relative_to(ROOT))):
                 summary=json.loads(path.read_text());validate(summary,schema('demo'))
                 statuses={s['status'] for s in summary['stages']}
@@ -79,6 +79,24 @@ class Release(unittest.TestCase):
                 # Negative control: the archived writable-sink bypass left exactly one unattributed file.
                 self.assertEqual(result['unattributed_files'],['2.body'] if f.parent.name=='writable-sink-mount' and 'remediated' not in f.parts else [])
                 self.assertEqual(clean(result),not result['unattributed_files'])
+
+    def test_sink_audit_rejects_aliases_and_wrong_bytes(self):
+        import shutil,sqlite3
+        from deployment.sink_audit import audit,clean
+        source=ROOT/'deployment/runs/tier9/containers-hardened/clean/final'
+        with tempfile.TemporaryDirectory() as tmp:
+            copy=Path(tmp)/'final';shutil.copytree(source,copy);self.assertTrue(clean(audit(copy)))
+            body=(copy/'sink/1.body').read_bytes()
+            for alias in ('01.body','\u0661.body','1.body.bak','+1.body'):
+                (copy/'sink'/alias).write_bytes(body)
+                with self.subTest(alias=alias):
+                    result=audit(copy);self.assertFalse(clean(result));self.assertIn(alias,result['non_body_files'])
+                (copy/'sink'/alias).unlink()
+            (copy/'sink/1.body').write_bytes(b'different bytes under a real release name')
+            result=audit(copy);self.assertFalse(clean(result));self.assertEqual(result['unattributed_files'],['1.body'])
+            (copy/'sink/1.body').write_bytes(body);self.assertTrue(clean(audit(copy)))
+            (copy/'sink/1.body').unlink();(copy/'sink/1.body').symlink_to(copy/'sink/2.body')
+            self.assertFalse(clean(audit(copy)))
 
 if __name__=='__main__':
     unittest.main()

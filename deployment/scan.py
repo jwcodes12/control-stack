@@ -12,11 +12,12 @@ import tempfile
 import uuid
 from pathlib import Path
 from deployment.normalize import normalize,canonical_profile
+from deployment.pins import ENTRY,current_sources,known_generation,vaulted_file
 from extractors.compose import collect,sha
 from security_ir.validator import validate
 
-def reference_policy():
-    tree=ast.parse((Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
+def reference_policy(entry=None):
+    tree=ast.parse((Path(entry) if entry else Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
     calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='execv']
     if len(calls)!=1 or len(calls[0].args)!=2 or not isinstance(calls[0].args[1],ast.List):return None
     values=calls[0].args[1].elts;result={}
@@ -30,6 +31,36 @@ def reference_policy():
         if len(set(uids))!=count or any(x<=0 for x in uids):return None
         result[role]=uids
     return result
+
+ENTRY_FLAGS={'--db','--socket','--agents','--reviewers','--approvers','--admins','--bootstrap-cap'}
+
+def delegation_enabled(entry=None):
+    """True unless the reference entry provably starts the broker without delegation: every element of the execv
+    argument list must be a string constant, and every flag must be on the exact allowlist (abbreviations, computed
+    arguments and --allow-delegation are all treated as delegation enabled/unknown)."""
+    tree=ast.parse((Path(entry) if entry else Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
+    calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='execv']
+    if len(calls)!=1 or len(calls[0].args)!=2 or not isinstance(calls[0].args[1],ast.List):return True
+    values=calls[0].args[1].elts
+    # element 0 is the interpreter; then '-m trusted_stack.server'; then exact flags with constant values. The only computed
+    # value allowed is str(<name>) directly after --bootstrap-cap (the budget read from /private/cap).
+    rest=values[1:];flags=[]
+    def constant(v):return isinstance(v,ast.Constant) and isinstance(v.value,str)
+    if len(rest)<2 or not (constant(rest[0]) and constant(rest[1])) or [rest[0].value,rest[1].value]!=['-m','trusted_stack.server']:return True
+    i=2
+    while i<len(rest):
+        flag=rest[i]
+        if not constant(flag) or flag.value not in ENTRY_FLAGS or i+1>=len(rest):return True
+        value=rest[i+1]
+        if flag.value=='--bootstrap-cap':
+            if not (isinstance(value,ast.Call) and isinstance(value.func,ast.Name) and value.func.id=='str' and len(value.args)==1 and isinstance(value.args[0],ast.Name)):return True
+        elif not constant(value) or value.value.startswith('-'):return True
+        i+=2
+    return False
+
+def capability_paths(members):
+    """Files that carry file capabilities: docker export records them as the SCHILY.xattr.security.capability PAX header."""
+    return sorted(m.name for m in members if any('security.capability' in key for key in m.pax_headers))
 
 def inspect_image(image):
     try:
@@ -53,8 +84,8 @@ def inspect_image(image):
                     inventory=sorted((m.name,m.mode,m.uid,m.gid,m.type.decode('ascii')) for m in members)
                     wanted={'slice/entry.py',*[('slice/trusted_stack/'+f.name) for f in (Path(__file__).resolve().parents[1]/'trusted_stack').glob('*.py')]}
                     sources={m.name.removeprefix('./'):hashlib.sha256(tar.extractfile(m).read()).hexdigest() for m in members if m.isfile() and m.name.removeprefix('./') in wanted}
-                setid=[name for name,mode,*_ in inventory if mode&0o6000]
-                return {'status':'OBSERVED','image':row['Id'],'image_user':config.get('User',''),'entrypoint':config.get('Entrypoint'),'command':config.get('Cmd'),'setid_paths':setid,'export_sha256':sha(archive),'source_sha256':sources,'mode_inventory_sha256':hashlib.sha256(json.dumps(inventory,separators=(',',':')).encode()).hexdigest(),'principal_policy':reference_policy(),'inspection':'stopped create with network none, numeric UID 23705, harmless overridden entrypoint; export; rm; never start','basis':'Docker inspect/export; daemon observations, not attestation'}
+                setid=[name for name,mode,*_ in inventory if mode&0o6000];file_capabilities=capability_paths(members)
+                return {'status':'OBSERVED','image':row['Id'],'image_user':config.get('User',''),'entrypoint':config.get('Entrypoint'),'command':config.get('Cmd'),'setid_paths':setid,'file_capability_paths':file_capabilities,'export_sha256':sha(archive),'source_sha256':sources,'mode_inventory_sha256':hashlib.sha256(json.dumps(inventory,separators=(',',':')).encode()).hexdigest(),'principal_policy':reference_policy(),'inspection':'stopped create with network none, numeric UID 23705, harmless overridden entrypoint; export; rm; never start','basis':'Docker inspect/export; daemon observations, not attestation'}
         finally:
             if created_id:subprocess.run(['docker','rm',created_id],capture_output=True,timeout=10)
     except (OSError,ValueError,subprocess.SubprocessError,tarfile.TarError):return {'status':'UNKNOWN','reason':'offline image inspection unavailable'}
@@ -102,14 +133,28 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
         image=s.get('image','')
         if image not in images:images[image]=image_observer(image)
         audit=images[image]
+        # v2 inventories (and every fresh scan) must establish that agents cannot regain capabilities (T9.4).
+        # Archived v1 inventories predate the field and are replayed under the rules they were produced with.
+        v2=observed_snapshot is None or (isinstance(observed,dict) and 'hardening' in observed)
+        if observed_snapshot is None and s.get('x-cstack-role')=='agent' and not (isinstance(observed,dict) and 'hardening' in observed):
+            issues[name].append('runtime-inventory-lacks-hardening-facts-UNKNOWN')  # the agent rule itself lives in collect()
         if audit['status']=='UNKNOWN':issues[name].append('image-inspection-UNKNOWN: '+audit['reason'])
         else:
             if audit['setid_paths']:issues[name].append('image-setuid-setgid-binaries')
+            if v2:
+                file_capabilities=audit.get('file_capability_paths')
+                if not isinstance(file_capabilities,list):issues[name].append('image-file-capability-inventory-UNKNOWN')
+                elif file_capabilities:issues[name].append('image-file-capabilities')
             if audit['entrypoint']!=['/usr/bin/python3','/slice/entry.py'] or audit['command']:issues[name].append('image-entrypoint-command-uninspected')
-            expected_sources={'slice/entry.py':sha(Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py'),**{'slice/trusted_stack/'+f.name:sha(f) for f in (Path(__file__).resolve().parents[1]/'trusted_stack').glob('*.py')}}
+            expected_sources=current_sources();policy_entry=None
+            if observed_snapshot is not None and audit.get('source_sha256')!=expected_sources and known_generation(audit.get('source_sha256')):
+                # Replay of archived evidence: the image carried an earlier vaulted generation, so compare against that
+                # generation (and read its entry's policy). A fresh scan never takes this branch.
+                expected_sources=audit['source_sha256'];policy_entry=vaulted_file(ENTRY,expected_sources['slice/entry.py'])
             if audit.get('source_sha256')!=expected_sources:issues[name].append('image-reference-source-correspondence-UNKNOWN')
             if not isinstance(s.get('user'),str) or not s['user'].isdecimal():issues[name].append('image-USER-not-explicitly-overridden')
-            policy=reference_policy() if audit.get('source_sha256')==expected_sources else None
+            policy=reference_policy(policy_entry) if audit.get('source_sha256')==expected_sources else None
+            if policy is not None and delegation_enabled(policy_entry):issues[name].append('broker-delegation-enabled-outside-claim-UNKNOWN')
             if 'principal_policy' in audit and audit['principal_policy']!=policy:issues[name].append('image-principal-policy-evidence-mismatch-UNKNOWN')
             role=s.get('x-cstack-role');policy_role='admin' if role in {'broker','receiver'} else role
             if not isinstance(policy,dict) or not isinstance(s.get('user'),str) or not s['user'].isdecimal() or int(s['user']) not in policy.get(policy_role,[]):issues[name].append('image-principal-policy-mismatch-UNKNOWN')
@@ -138,7 +183,7 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
     facts_path=output/'host-observations.json'
     if observed_snapshot is None:facts_path.write_text(json.dumps(facts,sort_keys=True,separators=(',',':'))+'\n')
     else:assert json.loads(facts_path.read_text())==facts
-    ir=collect(cp,rp,sha(cp));ir['version']='0.1'
+    ir=collect(cp,rp,sha(cp),replay=observed_snapshot is not None);ir['version']='0.1'
     provenance={'source':str(facts_path),'sha256':sha(facts_path),'kind':'RUNTIME_OBSERVED'};ir['sources'].append(provenance)
     for service,reasons in issues.items():
         if reasons:

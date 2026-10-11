@@ -1,0 +1,10 @@
+Positive control for the image file-capability scan (T9.4). Run 2026-10-11 on the box (OL 9.8 aarch64, Docker 29.8).
+A throwaway image is built from a tar of two files, one with a security.capability xattr; resources use the cstack-r2- prefix
+and were removed afterwards (docker ps -a / image ls --filter cstack-r2-: 0 left).
+
+  mkdir -p root/usr/bin; echo x > root/usr/bin/capfile; echo y > root/usr/bin/plain
+  sudo setfattr -n security.capability -v 0sAQAAAgAgAAAAAAAAAAAAAAAAAAA= root/usr/bin/capfile
+  sudo tar --xattrs --xattrs-include='security.*' --format=pax -C root -cf img.tar .
+  docker import img.tar cstack-r2-xattr-probe:1
+  python3 -c "from deployment.scan import inspect_image; print(inspect_image('cstack-r2-xattr-probe:1'))"
+  docker image rm cstack-r2-xattr-probe:1

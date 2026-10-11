@@ -1,3 +1,5 @@
+**SUPERSEDED (Tier 9, T4.4 finished): see `deployment/TIER4-TRANSCRIPT.md`.** The text below is the original blocked report, kept because the three failed attempts are evidence.
+
 # Concrete transcript replay did not pass
 
 The generic IndexedBrokerTable and indexed_receipts_sound theorem passed the

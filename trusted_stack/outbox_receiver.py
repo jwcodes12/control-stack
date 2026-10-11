@@ -73,6 +73,31 @@ def _recover_interrupted_link_cleanup(dirfd: int, name: str, expected: bytes) ->
     _read_verified(dirfd, name, expected)
 
 
+def _reap_unlinked_pending(dirfd: int) -> int:
+    """Remove crash debris: a trusted ``.pending-<hex>`` temporary file that never reached ``link``.
+
+    Only called while this process holds the DB writer lock, and every publication happens under that lock, so
+    no temporary file is in flight. A regular, singly-linked file owned by the receiver with the exact trusted
+    name pattern can only be a pre-link crash leftover (possibly a truncated prefix of reviewed bytes). Files
+    with two links are the post-link crash state and are left to _recover_interrupted_link_cleanup. Anything
+    else (other names, symlinks, other owners) is left alone; the sink audit reports it.
+    """
+    reaped = 0
+    for candidate in os.listdir(dirfd):
+        if re.fullmatch(r"\.pending-[0-9a-f]{32}", candidate) is None:
+            continue
+        try:
+            info = os.stat(candidate, dir_fd=dirfd, follow_symlinks=False)
+        except FileNotFoundError:
+            continue
+        if stat.S_ISREG(info.st_mode) and info.st_nlink == 1 and info.st_uid == os.geteuid():
+            os.unlink(candidate, dir_fd=dirfd)
+            reaped += 1
+    if reaped:
+        os.fsync(dirfd)
+    return reaped
+
+
 def _publish(dirfd: int, name: str, body: bytes) -> None:
     """Atomic no-overwrite name publication, durable before SQLite receipt."""
     temp = ".pending-" + secrets.token_hex(16)
@@ -137,6 +162,7 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
             db.execute("BEGIN IMMEDIATE")
             if db.execute("SELECT halted FROM meta WHERE id=1").fetchone() != (0,):
                 raise Denied("HALT blocks even pending external delivery")
+            _reap_unlinked_pending(dirfd)
             row = db.execute(
                 """SELECT e.digest, e.destination, e.body,
                           r.digest, r.destination, r.nonce,

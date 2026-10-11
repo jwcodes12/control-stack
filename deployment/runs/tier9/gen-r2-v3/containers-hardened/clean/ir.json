@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 2,
+    "compose_sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+    "runtime_sha256": "7ae491cb9a50e06ffc7cc01b20ba22621a90b76764a747e1fc534474a893be6d",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "10a357b41383edc75774f745540b62ce33f2e59b97d97745895410146ea34ec5",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "7ae491cb9a50e06ffc7cc01b20ba22621a90b76764a747e1fc534474a893be6d",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "57fe8f3e0415126b735df0059dd04f1b46f7c9592f82f1c324fa1fe3cd722b3c",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/clean/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

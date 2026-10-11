@@ -23,7 +23,9 @@ from tools.check_deployment_lean import check
 from deployment.run_containers import BODY,PRINCIPALS,DELIVER,RPC
 CASES=('writable-sink-mount','trusted-role-uid-collision')
 
-def run(output,pin_path):
+def run(output,pin_path,legacy=False):
+    """Default: the repair templates of the hardened profile, launched on the current source generation.
+    legacy=True reproduces the archived Tier 5 run from the frozen legacy templates."""
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=False)
     pin=json.loads(Path(pin_path).read_text());state=Path(pin['host_root'])
     assert state==ROOT/'deployment-container-state' and not state.exists()
@@ -47,8 +49,8 @@ def run(output,pin_path):
         assert image['RepoTags'] and all(tag.startswith('cstack-r2-') for tag in image['RepoTags']);owned=True
         for case in CASES:
             dest=output/case;dest.mkdir();project='cstack-r2-remediated-'+case;compose=dest/'compose.json'
-            base=ROOT/'examples/compose-two-agent';original=base/(case+'.compose.json');runtime=base/(case+'.runtime.json')
-            c=json.loads(original.read_text());r=json.loads(runtime.read_text());ir=collect(original,runtime,sha(original))
+            base=ROOT/('examples/compose-two-agent' if legacy else 'examples/compose-two-agent-hardened');original=base/(case+'.compose.json');runtime=base/(case+'.runtime.json')
+            c=json.loads(original.read_text());r=json.loads(runtime.read_text());ir=collect(original,runtime,sha(original),replay=legacy)
             plan=build_plan(c,r,ir,sha(original));candidate=apply_patch(c,plan['patch'])
             clean=json.loads((base/'clean.compose.json').read_text());assert candidate==clean,'launch only exact repaired clean profile'
             (dest/'plan.json').write_text(json.dumps(plan,sort_keys=True,indent=2)+'\n')
@@ -57,6 +59,7 @@ def run(output,pin_path):
             candidate['x-cstack']['budget']=2
             for service in candidate['services'].values():
                 service['image']=pin['image']
+                assert not legacy or 'security_opt' not in service
                 for mount in service['volumes']:
                     mount['source']=str(state)+mount['source'][len(old_root):]
                     assert Path(mount['source']).parent==state
@@ -99,7 +102,7 @@ def run(output,pin_path):
             results[case]={'original_basis':'original = archived Tier 2 evidence','original_path':str(original_path.relative_to(ROOT)),'original_sha256':sha(original_path),'original_outcomes':json.loads(original_path.read_text())['outcomes'],'remediated_verdict':bundle['verdict'],'honest_agents_completed':2,'final':actual,'sink_sha256':files,'scope':'UIDs and mounts match fresh daemon capture; private custody observed. No new bypass probes; absence of a mount is configuration evidence, not a fresh denial experiment.'}
             (dest/'result.json').write_text(json.dumps(results[case],sort_keys=True,indent=2)+'\n')
             cmd(dc('down','--volumes','--remove-orphans'));cmd(['sudo','-n','rm','-rf',state])
-        (output/'result.json').write_text(json.dumps({'image':pin['image'],'cases':results,'scope':'Honest tasks on remediated configurations only; originals archived Tier 2.'},sort_keys=True,indent=2)+'\n')
+        (output/'result.json').write_text(json.dumps({'image':pin['image'],'cases':results,'scope':'Honest tasks on remediated configurations only; originals archived Tier 2.',**({} if legacy else {'profile':'hardened'})},sort_keys=True,indent=2)+'\n')
     finally:
         if compose is not None:cmd(dc('down','--volumes','--remove-orphans'),False)
         if state.exists():cmd(['sudo','-n','rm','-rf',state])
@@ -111,4 +114,4 @@ def run(output,pin_path):
     print('PASS: two fixed remediated configurations, four honest completions; originals archived; own resources removed')
     return results
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--pin',required=True);args=parser.parse_args();run(args.output,args.pin)
+    parser=argparse.ArgumentParser();parser.add_argument('--output',required=True);parser.add_argument('--pin',required=True);parser.add_argument('--legacy',action='store_true');args=parser.parse_args();run(args.output,args.pin,args.legacy)

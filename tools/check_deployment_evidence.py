@@ -5,11 +5,14 @@ import json
 import sqlite3
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+import sys
+sys.path.insert(0,str(ROOT))
+from deployment.pins import require
 def check(base):
     base=Path(base)
     result=json.loads((base/'result.json').read_text())
     for path,pin in result['source_sha256'].items():
-        assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==pin,(path,'source drift')
+        require(path,pin,'source drift')
     snapshots={}
     for label in ['clean-inflight','clean-after-halt','writable-sink-mount','trusted-role-uid-collision']:
         observed=json.loads((base/(label+'-sink.json')).read_text())

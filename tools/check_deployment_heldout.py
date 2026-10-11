@@ -39,14 +39,15 @@ def evaluate(kernel=True,instantiate_known_code=False):
                 c['x-cstack']['broker_sha256']=sha(ROOT/'trusted_stack/controller.py')
                 c['x-cstack']['receiver_sha256']=sha(ROOT/'trusted_stack/outbox_receiver.py')
                 cp.write_text(json.dumps(c));input_path=cp
-            ir=collect(input_path,paths[1],sha(input_path))
+            # The sealed corpus evaluates the frozen v1 profile (pre-hardening); replay mode skips only the T9.4 agent-hardening rule.
+            ir=collect(input_path,paths[1],sha(input_path),replay=True)
             # Authored selected facts are hypotheses, never daemon observations.
             for p in ir['sources']+[item['provenance'] for item in ir['nodes']+ir['edges']]:
                 if p['sha256']==sha(paths[1]):p['kind']='DECLARED'
             accepted=configuration_accepted(ir);obligations=[o for o in verify(ir)['obligations'] if o['premise']!='Lean-contract-instances' and o['status'] in {'REFUTED','UNASSESSED'}]
             model_verdict='MODEL_ACCEPTED' if accepted else 'UNKNOWN' if any(o['status']=='UNASSESSED' for o in obligations) else 'REFUTED'
             plan=build_plan(c,r,ir,sha(input_path));candidate=apply_patch(c,plan['patch']);inventory=proposed_inventory(candidate,c,r)
-            cp.write_text(json.dumps(candidate));rp.write_text(json.dumps(inventory));proposed=collect(cp,rp,sha(cp))
+            cp.write_text(json.dumps(candidate));rp.write_text(json.dumps(inventory));proposed=collect(cp,rp,sha(cp),replay=True)
             for p in proposed['sources']+[item['provenance'] for item in proposed['nodes']+proposed['edges']]:
                 if p['sha256']==sha(rp):p['kind']='DECLARED'
             plan_accepted=configuration_accepted(proposed);remaining=[o for o in verify(proposed)['obligations'] if o['premise']!='Lean-contract-instances' and o['status'] in {'REFUTED','UNASSESSED'}]

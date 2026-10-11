@@ -8,7 +8,8 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.reconcile import reconcile
-from tools.collect_deployment_docker import normalize
+from deployment.pins import require
+from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from extractors.compose import collect,sha
 from security_ir.verifier import verify
 
@@ -16,8 +17,10 @@ def check(output):
     output=Path(output).resolve();pin=json.loads((output/'image-pin.json').read_text());result=json.loads((output/'result.json').read_text())
     assert pin['image']==result['image'] and pin['tag'].startswith('cstack-r2-')
     assert sha(output/'container-entry.py')==pin['entry_sha256']
-    for source,digest in pin['source_sha256'].items():assert sha(ROOT/source)==digest,('trusted source drift',source)
-    assert set(result['cases'])=={'clean','writable-sink-mount','trusted-role-uid-collision','concurrent-cap1','crash-retry','halt-inflight','drift-uid'}
+    for source,digest in pin['source_sha256'].items():require(source,digest)
+    hardened=result.get('profile')=='hardened'
+    from deployment.run_containers import CASES,SAFE
+    assert set(result['cases'])==set(SAFE if hardened else CASES)
     for case,expected in result['cases'].items():
         dest=output/case;c=json.loads((dest/'compose.json').read_text())
         assert expected==json.loads((dest/'result.json').read_text())
@@ -27,11 +30,16 @@ def check(output):
             r=json.loads((scan_dir/'runtime.json').read_text());raw=scan_dir/'docker-inspect.raw.json';rows=json.loads(raw.read_text())
             assert r['capture']['raw_sha256']==sha(raw) and r['capture']['independent_attestation'] is False
             assert len(rows)==6 and all(row['State']['Running'] for row in rows)
-            assert r['services']==normalize(c,rows,project)
+            assert r['services']==normalize(c,rows,project,inventory_has_hardening(r['services']))
+            if hardened:
+                # Read from the daemon's own report and the image export, not from the harness's verdict.
+                for agent in ('agent-a','agent-b'):assert r['services'][agent]['hardening']=={'no_new_privileges':True,'cap_drop':['ALL']},(case,agent,'agent not hardened')
+                observed=json.loads((scan_dir/'fresh-inputs/host-observations.json').read_text())['images']
+                assert observed and all(a['status']=='OBSERVED' and a['file_capability_paths']==[] and a['setid_paths']==[] for a in observed.values()),(case,'image capability inventory')
             if (scan_dir/'fresh-inputs').exists():
                 from deployment.scan import replay_snapshot
                 ir=replay_snapshot(dest/'compose.json',scan_dir/'runtime.json',scan_dir/'fresh-inputs')
-            else:ir=collect(dest/'compose.json',scan_dir/'runtime.json',sha(dest/'compose.json'))
+            else:ir=collect(dest/'compose.json',scan_dir/'runtime.json',sha(dest/'compose.json'),replay=True)
             stored=json.loads((scan_dir/'ir.json').read_text())
             def portable(d):
                 d=json.loads(json.dumps(d))

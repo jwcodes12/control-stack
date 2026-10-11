@@ -133,24 +133,61 @@ premises that were previously unstated. They are now part of this claim:
   maps the executor to the owning agent. The Lean `Allowed` rule has no delegate step.
   This claim therefore covers only runs whose sink-side audit
   (`deployment/sink_audit.py`) records zero `delegations` and `delegated_releases`
-  rows; every archived and demo run satisfies this. Disabling delegation in the R2 broker
-  is queued (T9).
-- **Client timeouts are indeterminate, and HALT has no liveness guarantee.** The broker
-  serves one connection at a time with a per-read timeout, so a slow sender can stall it.
-  Requests whose client already timed out can still commit later. Approvers must retry a
+  rows; every archived and demo run satisfies this. **Fixed from source generation `r2-v1`
+  (T9.2):** the broker command line rejects `delegate` and `revoke_delegation` unless
+  `--allow-delegation` is given, refuses to start on a database that already holds
+  delegation rows, and the scanner marks an entry that passes the flag UNKNOWN
+  (`broker-delegation-enabled-outside-claim-UNKNOWN`). Evidence archived under generation
+  `r2-v0` (every Tier 2-8 live run) still relies on the sink audit; live evidence on `r2-v1`
+  is queued (T9.6).
+- **Client timeouts are indeterminate, and HALT has no latency bound.** Approvers must retry a
   timed-out approval only with the **same nonce** (duplicates are rejected), never with a
-  fresh one. HALT through the socket can be delayed indefinitely, and `halt()` can return
-  Denied after the 15 s SQLite busy timeout. The dependable HALT path is a direct
-  `Controller.halt` call as the admin UID, retried until it commits. A malformed
-  deeply nested request can also crash the broker (fail-closed, operator restart needed;
-  queued as T9). None of these produce an unapproved sink file.
+  fresh one, because a request can still commit after its client gave up whenever the
+  database is busy (the controller waits up to 15 s; the client waits 6 s). HALT has no
+  latency bound; the dependable HALT path remains a direct `Controller.halt` call as the
+  admin UID. None of these produce an unapproved sink file. **Fixed from source generation
+  `r2-v2` (T9.3):** the broker handles each connection on a bounded thread with one total
+  3 s read deadline for the whole frame, at most 2 connections per caller UID and 12 in
+  all, so a slow sender can no longer stall other callers or make queued requests commit
+  later; a frame must begin with `{`; every per-connection failure, including a deeply
+  nested request, is answered DENIED instead of ending the service (the crash recorded
+  against `r2-v0`); a socket-side HALT is retried (idempotent) up to four times, about 60 s, and 4 of the 12 connection slots are reserved for reviewer/approver/admin UIDs so agents and strangers cannot starve it; the
+  broker refuses to start unless its UID is an admin and not an agent, before touching the
+  database; a restart reopens the existing database (the cap must agree) and clears only a
+  dead socket it owns. Archived `r2-v0` runs predate these fixes; live evidence on the new
+  generation is queued (T9.6).
 - **Agent UIDs cannot gain CAP_SETUID.** SO_PEERCRED binding assumes agents cannot switch
-  UID. The supported profile does not yet set `no-new-privileges` or `cap_drop`. Evidence
-  for the pinned offline image (`deployment/runs/tier8/capability-check`): no
-  setuid/setgid files, no `security.capability` xattrs, and an agent-UID container has
-  empty permitted/effective/ambient sets (CAP_SETUID only in the bounding set).
-  Regaining it would require a kernel-level escalation, which is in the TCB. Requiring
-  both settings in the profile is queued (T9).
-- **Sink scope is `<release_id>.body` names.** A receiver crash before `link` can leave a
-  `.pending-*` temporary file (possibly a prefix of reviewed bytes) that is not cleaned
-  up. The sink-side audit reports any non-`.body` file; none occurred in recorded runs.
+  UID. Evidence for the pinned offline image (`deployment/runs/tier8/capability-check`):
+  no setuid/setgid files, no `security.capability` xattrs, and an agent-UID container has
+  empty permitted/effective/ambient sets (CAP_SETUID only in the bounding set). Regaining it
+  would require a kernel-level escalation, which is in the TCB. **Enforced from the
+  hardened profile (T9.4):** `examples/compose-two-agent-hardened/` gives both agents
+  `security_opt: [no-new-privileges:true]` and `cap_drop: [ALL]`; the collector reports both
+  from the Docker daemon (v2 inventory: `hardening`); the extractor makes an agent that lacks
+  either, or whose daemon report disagrees with the declaration, an UNKNOWN edge
+  (`agent-no-new-privileges-and-cap-drop-ALL-not-established`); any other `security_opt` or
+  `cap_drop` value stays an unsupported feature; a fresh scan refuses an inventory that does
+  not report `hardening`; and the image scan records files carrying `security.capability`
+  (from the `SCHILY.xattr` PAX header of `docker export`), which make the image UNKNOWN. The
+  reading is unit-tested on a synthetic archive and has a positive control on a real image
+  that carries one file capability (`deployment/runs/tier9/capability-xattr-probe`).
+  Archived runs (v1 inventories, before this profile) replay under the rules they were
+  produced with and do not satisfy the hardened profile; remediation plans now add both settings
+  to the agents. Live evidence under the hardened profile is queued (T9.6).
+- **Sink scope is `<release_id>.body` names.** A receiver crash before `link` leaves a
+  `.pending-*` temporary file (possibly a prefix of reviewed bytes). **Fixed from source
+  generation `r2-v3` (T9.5):** each delivery reaps, under the DB writer lock, every
+  regular, singly-linked, receiver-owned `.pending-<32 hex>` file before publishing (a
+  two-link file is the post-link state and is still reconciled, not reaped; anything else is
+  left alone). The debris of a crash is thus removed by the next delivery, not at crash time;
+  the sink-side audit still reports any non-`.body` file, and none occurred in recorded runs.
+- **Limits found by the review of the T9 fixes** (`deployment/reviews/t9-hardening-review-opus.md`,
+  a model review of the author's own fixes; no independent human has seen them): evidence
+  from `r2-v0` ran a broker whose delegation could not be turned off, so for it the sink audit
+  (canonical `<id>.body` names, bytes equal to the release digest, zero delegation rows) is
+  the only evidence; the evidence checkers accept any vaulted generation per file and do not
+  pin one generation (run them without `python -O`); the receiver still publishes delegated
+  releases if a database has them (the broker refuses to start on one); the image scan hashes
+  only the listed source files, so a stray `.pyc` or extra module on the image path is not
+  seen; the pin vault is part of the TCB; two simultaneous broker starts can remove each
+  other's dead-socket check (no safety effect); `Principals` still accepts UID 0.

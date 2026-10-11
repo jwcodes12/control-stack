@@ -19,7 +19,7 @@ python3 tools/cstack.py demo --output /tmp/cstack-demo
 
 | Stage | What it does | Needs |
 |---|---|---|
-| verify fixtures + Lean kernel | 44 example deployments (1 clean, 43 misconfigured) through the Python verifier and the Lean kernel; compares with `examples/compose-two-agent/expected.json`; reports any false CONDITIONAL | Python 3.12+, Lean (pinned toolchain) |
+| verify fixtures + Lean kernel | 51 example deployments (the frozen legacy corpus of 1 clean + 43 misconfigured, plus the hardened profile's 1 clean + 6 misconfigured) through the Python verifier and the Lean kernel; compares with `examples/compose-two-agent/expected.json` and `examples/compose-two-agent-hardened/expected.json`; reports any false CONDITIONAL | Python 3.12+, Lean (pinned toolchain) |
 | plan remediation | read-only RFC 6902 patch for two misconfigured deployments; checks it yields the reference clean profile | Python |
 | live remediated containers | builds an offline image, starts each **repaired** deployment with Docker Compose, captures the daemon inventory, fresh-scans it, kernel-verifies it, runs an honest two-agent task, reconciles sink bytes against the broker database, removes every `cstack-r2-` resource | Docker + Compose, passwordless `sudo`, the offline rootfs |
 | independent sink-side check | separate checker replays the saved raw inventories and reconciles sink files with SQLite | Python |
@@ -28,6 +28,12 @@ Defensive scope: no bypass is launched live. Bypass outcomes are archived Tier 2
 measurements (`deployment/runs/tier2/containers-final`).
 
 `--static-only` runs the first two stages and reports the live ones as SKIPPED.
+
+Supported profile (hardened, from the source generation that introduced it): both agent
+services carry `security_opt: ["no-new-privileges:true"]` and `cap_drop: ["ALL"]`, the
+broker runs without delegation (no `--allow-delegation`), and the runtime inventory reports
+both settings. A deployment without them is UNASSURED (UNKNOWN edge), and `cstack plan`
+adds them. Reference files: `examples/compose-two-agent-hardened/`.
 
 ## Exit codes (stable)
 
@@ -83,7 +89,7 @@ support.
 | **Proven in model** | Lean kernel theorem over the finite IR or the abstract protocol; standard axioms only | `Accepted` instance per IR; `deployment_broker_safe`; `accepted_path_safety_monotone`; one-use and shared-budget contracts |
 | **Tested at boundary** | Observed on real containers on this host, read from sink-side state and the broker database, not from the gate's own log | 7 Tier 2 cases (clean, 2 configuration bypasses observed, replay/overspend/egress blocked, crash/HALT, UID drift); 2 Tier 5 repaired configs; demo live stage |
 | **Assumed** | Stated premise, not proved or tested universally | faithful extraction; protocol refinement (`sinkEffects = model.bank`); TCB components below; Docker inventory truthful |
-| **Measured** | Finite empirical counts with their denominators | 44 fixtures; 26+250 differential cases; 520 monotone additions; 25 sealed held-out cases; 9 archived episodes |
+| **Measured** | Finite empirical counts with their denominators | 51 fixtures (44 legacy + 7 hardened); 26+250 differential cases; 520 monotone additions; 25 sealed held-out cases; 9 archived episodes |
 
 ## Threat model (short)
 
@@ -110,3 +116,24 @@ A verdict expires on any change to mounts or aliases, UIDs or role mappings, cre
 inherited descriptors, image digests, network topology, runtime inventory, launcher,
 broker or receiver hashes, policy, budget, or storage/clock configuration. Re-collect and
 re-verify. No continuous drift monitoring is provided.
+
+## Changing trusted code (versioned pins)
+
+Archived runs record the SHA-256 of the broker, receiver and container entry they ran.
+Those digests stay checkable because every generation of the pinned files is kept in
+`deployment/pinned-sources/<generation>/` (append-only, `.pysrc` suffix; `deployment/pins.py`).
+A recorded digest is accepted only if the current file or a vaulted file **with that
+path** hashes to it; the vault is trusted by bytes, never by name.
+
+To change `trusted_stack/*.py` or `tools/deployment_container_entry.py`:
+
+1. edit the code;
+2. `python3 deployment/pins.py snapshot <new-generation>` (refuses an unchanged tree);
+3. regenerate the current-reference artifacts (`tools/build_deployment_fixtures.py`, then
+   `tools/build_deployment_golden.py`) so their pins name the new code. The frozen legacy
+   corpus (`examples/compose-two-agent`, `security_ir/fixtures`) is bound to archived
+   evidence at generation `r2-v0` and does not change;
+4. `python3 tools/test_deployment_pins.py` and the archive replays must still pass.
+
+Archive replays may use any vaulted generation. A **fresh** scan, collection, or live run
+requires the current tree, so evidence from an older generation never certifies new code.

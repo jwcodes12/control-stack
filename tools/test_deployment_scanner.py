@@ -12,20 +12,21 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.scan import scan
-from extractors.compose import sha
+from extractors.compose import declared_hardening,sha
+from deployment.scan import capability_paths
 from security_ir import validate,InvalidIR
 from security_ir.migrate import to_v01
 from security_ir.verifier import verify
 from tools.check_deployment_subset_differential import configuration_accepted
 
 def image_fixture(image):
-    return {'status':'OBSERVED','image':image,'image_user':'','entrypoint':['/usr/bin/python3','/slice/entry.py'],'command':None,'setid_paths':[],'mode_inventory_sha256':'0'*64,'source_sha256':{'slice/entry.py':sha(ROOT/'tools/deployment_container_entry.py'),**{'slice/trusted_stack/'+f.name:sha(f) for f in (ROOT/'trusted_stack').glob('*.py')}},'principal_policy':{'agent':[23701,23702],'reviewer':[23703],'approver':[23704],'admin':[23700]},'basis':'injected unit fixture; no actual image assessment'}
+    return {'status':'OBSERVED','image':image,'image_user':'','entrypoint':['/usr/bin/python3','/slice/entry.py'],'command':None,'setid_paths':[],'file_capability_paths':[],'mode_inventory_sha256':'0'*64,'source_sha256':{'slice/entry.py':sha(ROOT/'tools/deployment_container_entry.py'),**{'slice/trusted_stack/'+f.name:sha(f) for f in (ROOT/'trusted_stack').glob('*.py')}},'principal_policy':{'agent':[23701,23702],'reviewer':[23703],'approver':[23704],'admin':[23700]},'basis':'injected unit fixture; no actual image assessment'}
 
 class ScannerTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(prefix='cstack-r2-scan-test-',dir=ROOT/'.git');self.addCleanup(self.tmp.cleanup);self.base=Path(self.tmp.name)
         self.cp=self.base/'compose.json';self.rp=self.base/'runtime.json';self.out=self.base/'output'
-        self.c=json.loads((ROOT/'examples/compose-two-agent/clean.compose.json').read_text());old=self.c['x-cstack']['sink_source'].rsplit('/',1)[0]
+        self.c=json.loads((ROOT/'examples/compose-two-agent-hardened/clean.compose.json').read_text());old=self.c['x-cstack']['sink_source'].rsplit('/',1)[0]
         owner=23700
         state=self.base/'state';state.mkdir()
         for name in ('db','sink','channel'):(state/name).mkdir(mode=0o755 if name=='channel' else 0o700)
@@ -38,7 +39,7 @@ class ScannerTests(unittest.TestCase):
             for m in s['volumes']:m['source']=str(state)+m['source'][len(old):]
         self.refresh_runtime()
     def refresh_runtime(self):
-        self.r={'services':{name:{'uid':int(s['user']),'image':s['image'],'mounts':sorted([{k:v for k,v in m.items() if k!='bind'} for m in s['volumes']],key=lambda m:(m['source'],m['target'])),'networks':s['networks'],'env_names':sorted(s['environment'])} for name,s in self.c['services'].items()}}
+        self.r={'services':{name:{'uid':int(s['user']),'image':s['image'],'mounts':sorted([{k:v for k,v in m.items() if k!='bind'} for m in s['volumes']],key=lambda m:(m['source'],m['target'])),'networks':s['networks'],'env_names':sorted(s['environment']),'hardening':declared_hardening(s)} for name,s in self.c['services'].items()}}
     def run_scan(self,observer=image_fixture):
         self.cp.write_text(json.dumps(self.c));self.rp.write_text(json.dumps(self.r));return scan(self.cp,self.rp,sha(self.cp),self.out,observer)
     def test_positive_fixture_and_canonical_bytes(self):
@@ -76,6 +77,31 @@ class ScannerTests(unittest.TestCase):
                 else:d['source_sha256']={}
                 return d
             self.assertFalse(configuration_accepted(self.run_scan(observer)),kind)
+    def test_agents_must_not_be_able_to_regain_capabilities(self):
+        # T9.4 (review M3): no-new-privileges and cap_drop ALL are required of agents and must be observed at runtime.
+        for label,edit in (('no nnp',lambda c:c['services']['agent-a'].pop('security_opt')),('no cap_drop',lambda c:c['services']['agent-b'].pop('cap_drop')),
+                           ('partial cap_drop',lambda c:c['services']['agent-a'].update(cap_drop=['NET_RAW'])),('seccomp instead',lambda c:c['services']['agent-a'].update(security_opt=['seccomp=unconfined']))):
+            with self.subTest(label):
+                self.setUp();edit(self.c);self.refresh_runtime()
+                ir=self.run_scan();self.assertFalse(configuration_accepted(ir));self.assertIn('not-established' if label in {'no nnp','no cap_drop'} else 'unknown-feature',json.dumps(ir))
+        self.setUp();self.r['services']['agent-a']['hardening']['no_new_privileges']=False   # declared hardened, daemon reports otherwise
+        self.assertFalse(configuration_accepted(self.run_scan()))
+    def test_fresh_scan_refuses_an_inventory_that_does_not_report_hardening(self):
+        for service in self.r['services'].values():service.pop('hardening')
+        ir=self.run_scan();self.assertFalse(configuration_accepted(ir));self.assertIn('runtime-inventory-lacks-hardening-facts-UNKNOWN',json.dumps(ir))
+    def test_file_capabilities_in_the_image_are_unknown_or_refuted(self):
+        def with_caps(image):d=image_fixture(image);d['file_capability_paths']=['usr/bin/ping'];return d
+        def without_inventory(image):d=image_fixture(image);del d['file_capability_paths'];return d
+        ir=self.run_scan(with_caps);self.assertFalse(configuration_accepted(ir));self.assertIn('image-file-capabilities',json.dumps(ir))
+        ir=self.run_scan(without_inventory);self.assertFalse(configuration_accepted(ir));self.assertIn('image-file-capability-inventory-UNKNOWN',json.dumps(ir))
+    def test_capability_paths_reads_the_pax_xattr_header(self):
+        import io,tarfile
+        buffer=io.BytesIO()
+        with tarfile.open(fileobj=buffer,mode='w',format=tarfile.PAX_FORMAT) as tar:
+            for name,headers in (('usr/bin/ping',{'SCHILY.xattr.security.capability':'x'}),('usr/bin/plain',{}),('etc/other',{'SCHILY.xattr.user.comment':'x'})):
+                info=tarfile.TarInfo(name);info.pax_headers=headers;tar.addfile(info)
+        buffer.seek(0)
+        with tarfile.open(fileobj=buffer) as tar:self.assertEqual(capability_paths(tar.getmembers()),['usr/bin/ping'])
     def test_declared_roles_cannot_override_baked_admin_policy(self):
         self.c['services']['broker']['user']='23800';self.c['services']['receiver']['user']='23800'
         self.c['services']['agent-a']['user']='23700'

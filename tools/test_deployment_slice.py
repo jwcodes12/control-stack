@@ -29,7 +29,9 @@ class DeploymentTests(unittest.TestCase):
     def test_deterministic_and_golden(self):
         p=Path('examples/compose-two-agent/clean.compose.json')
         r=Path('examples/compose-two-agent/clean.runtime.json')
-        a=collect(p,r,sha(p)); b=collect(p,r,sha(p))
+        # The legacy corpus is frozen at source generation r2-v0 (see tools/build_deployment_fixtures.py), so it is
+        # collected in replay mode; a fresh collection of it correctly reports hash drift against the current source.
+        a=collect(p,r,sha(p),replay=True); b=collect(p,r,sha(p),replay=True)
         self.assertEqual(a,b)
         # Collector absolute trusted sources are normalized only for portable golden comparison.
         for item in a['sources']+[x['provenance'] for x in a['nodes']+a['edges']]:

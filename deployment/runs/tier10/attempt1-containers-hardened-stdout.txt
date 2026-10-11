@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/var/tmp/sol-deployment-slice-20261010/deployment/run_containers.py", line 213, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');p.add_argument('--hardened',action='store_true',help='hardened profile, current source generation, bypass cases excluded');a=p.parse_args();run(a.output,a.pin,a.fresh_scan,a.hardened)
+                                                                                                                                                                                                                                                                                                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/tmp/sol-deployment-slice-20261010/deployment/run_containers.py", line 134, in run
+    ir,bundle=scan(dest);prediction=bundle['verdict'];assert prediction==('UNASSURED' if template!='clean' else 'CONDITIONAL')
+                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+exit 1

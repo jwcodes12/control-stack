@@ -123,7 +123,11 @@ def collect(compose, runtime, expected_sha256, replay=False):
         for key in env:
             if key not in {'SLICE_ROLE','PYTHONPATH'} and not re.search(r'SINK|CREDENTIAL|TOKEN|SECRET|KEY|PASSWORD|PASS|PASSWD|AUTH|COOKIE|PRIVATE',key,re.I):
                 unknown(name,'unlisted-environment: '+key)
-        # Values intentionally neither serialized nor examined.
+        # Values are neither serialized nor examined, except the two fixed non-secret variables that choose what the reference image's entry
+        # runs: SLICE_ROLE must say 'broker' for exactly the broker role and PYTHONPATH must be /slice. A fresh scan already refused this;
+        # held-out round 2 showed the extractor itself did not (replay keeps the rules archived evidence was produced under).
+        if not replay and (env.get('PYTHONPATH') != '/slice' or (env.get('SLICE_ROLE') == 'broker') != (role == 'broker')):
+            unknown(name,'reference-entry-environment-mismatch')
         facts = {'role':role,'uid':uid,'image':image,'privileged':s.get('privileged',False) is True,
                  'host_network':s.get('network_mode') == 'host','env_names':sorted(env),'runtime_match':'MISSING'}
         observed = r.get('services',{}).get(name)

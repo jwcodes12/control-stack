@@ -15,9 +15,12 @@ from pathlib import Path
 from .controller import Controller, Denied, Principals
 
 MAX_REQUEST = 1500000
+DELEGATION_OPS = {"delegate", "revoke_delegation"}
 
 
-def run_one(controller, uid, req):
+def run_one(controller, uid, req, allow_delegation=True):
+    """allow_delegation defaults on for the library and its delegated-model tests; the command line turns it off
+    unless --allow-delegation is given (the reference deployment profile has no delegation step)."""
     if type(req) is not dict or "op" not in req or type(req["op"]) is not str:
         raise Denied("invalid request")
     op = req["op"]
@@ -37,6 +40,8 @@ def run_one(controller, uid, req):
     }
     if op not in shapes or set(params) != shapes[op]:
         raise Denied("unreviewed operation or payload shape")
+    if op in DELEGATION_OPS and not allow_delegation:
+        raise Denied("delegation is disabled in this profile")
     if op == "stage":
         try:
             body = base64.b64decode(params["body_b64"], validate=True)
@@ -66,7 +71,7 @@ def run_one(controller, uid, req):
     return controller.state(uid)
 
 
-def serve(controller, path):
+def serve(controller, path, allow_delegation=True):
     """One request per connection. No secret data in error responses."""
     path = Path(path)
     if path.exists() or path.is_symlink():
@@ -94,7 +99,7 @@ def serve(controller, path):
                         data = bytes(frame)
                         if len(data) > MAX_REQUEST or not data.endswith(b"\n"):
                             raise Denied("invalid frame")
-                        answer = run_one(controller, uid, json.loads(data))
+                        answer = run_one(controller, uid, json.loads(data), allow_delegation)
                         response = {"ok": True, "result": answer}
                     except (Denied, ValueError, TypeError, KeyError, json.JSONDecodeError, OSError):
                         response = {"ok": False, "error": "DENIED"}
@@ -109,6 +114,16 @@ def serve(controller, path):
             path.unlink(missing_ok=True)
 
 
+def delegation_rows(db):
+    """Rows in the delegations table (0 when the table does not exist yet). A broker started with delegation
+    disabled must not inherit a database in which a delegate could still release."""
+    import sqlite3
+    with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+        if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='delegations'").fetchone() is None:
+            return 0
+        return conn.execute("SELECT COUNT(*) FROM delegations").fetchone()[0]
+
+
 def args():
     p = argparse.ArgumentParser()
     p.add_argument("--db", type=Path, required=True)
@@ -116,6 +131,8 @@ def args():
     for role in ("agents", "reviewers", "approvers", "admins"):
         p.add_argument("--" + role, required=True, help="comma-separated trusted OS UIDs")
     p.add_argument("--bootstrap-cap", type=int, default=None)
+    p.add_argument("--allow-delegation", action="store_true",
+                   help="enable delegate/revoke_delegation; off by default and outside the R2 claim")
     a = p.parse_args()
     groups = {}
     for role in ("agents", "reviewers", "approvers", "admins"):
@@ -131,4 +148,6 @@ if __name__ == "__main__":
         c = Controller(a.db, principals)
     if os.geteuid() in principals.agents:
         raise SystemExit("broker must not run under an untrusted agent UID")
-    serve(c, a.socket)
+    if not a.allow_delegation and delegation_rows(a.db):
+        raise SystemExit("delegation disabled but the database already holds delegation rows; refusing to serve")
+    serve(c, a.socket, allow_delegation=a.allow_delegation)

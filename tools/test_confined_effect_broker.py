@@ -65,7 +65,7 @@ def run():
                "--db", str(dbfile), "--socket", str(socketpath),
                "--agents", f"{AGENT_OWNER},{AGENT_DELEGATE}",
                "--reviewers", str(REVIEWER), "--approvers", str(APPROVER),
-               "--admins", "0", "--bootstrap-cap", "1"]
+               "--admins", "0", "--bootstrap-cap", "1", "--allow-delegation"]
         server = subprocess.Popen(cmd, cwd=Path(__file__).resolve().parents[1],
                                   stdout=subprocess.DEVNULL,
                                   stderr=subprocess.PIPE, text=True)

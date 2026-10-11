@@ -75,8 +75,15 @@ class PinTests(unittest.TestCase):
         self.assertIsNone(pins.known_generation({**current,'slice/trusted_stack/extra.py':'2'*64}))
 
     def test_snapshot_is_append_only(self):
-        with self.assertRaises(SystemExit):pins.snapshot(pins.generations()[0].name)
-        with self.assertRaises(SystemExit):pins.snapshot('unchanged-copy')
+        pins.VAULT=self.tmp/'vault';shutil.copytree(self.vault,pins.VAULT)  # never touch the real vault
+        first=pins.generations()[0].name
+        with self.assertRaises(SystemExit):pins.snapshot(first)
+        if pins.known_generation(pins.current_sources()):
+            with self.assertRaises(SystemExit):pins.snapshot('unchanged-copy')
+        else:
+            pins.snapshot('next');self.assertIsNotNone(pins.known_generation(pins.current_sources()))
+            with self.assertRaises(SystemExit):pins.snapshot('again')
+        self.assertFalse((self.vault/'unchanged-copy').exists() or (self.vault/'next').exists())
 
 if __name__=='__main__':
     unittest.main()

@@ -32,6 +32,11 @@ def reference_policy(entry=None):
         result[role]=uids
     return result
 
+def delegation_enabled(entry=None):
+    """True when the reference entry starts the broker with --allow-delegation (outside the R2 claim)."""
+    tree=ast.parse((Path(entry) if entry else Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
+    return any(isinstance(n,ast.Constant) and n.value=='--allow-delegation' for n in ast.walk(tree))
+
 def inspect_image(image):
     try:
         p=subprocess.run(['docker','image','inspect',image],capture_output=True,text=True,timeout=10)
@@ -115,6 +120,7 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
             if audit.get('source_sha256')!=expected_sources:issues[name].append('image-reference-source-correspondence-UNKNOWN')
             if not isinstance(s.get('user'),str) or not s['user'].isdecimal():issues[name].append('image-USER-not-explicitly-overridden')
             policy=reference_policy(policy_entry) if audit.get('source_sha256')==expected_sources else None
+            if policy is not None and delegation_enabled(policy_entry):issues[name].append('broker-delegation-enabled-outside-claim-UNKNOWN')
             if 'principal_policy' in audit and audit['principal_policy']!=policy:issues[name].append('image-principal-policy-evidence-mismatch-UNKNOWN')
             role=s.get('x-cstack-role');policy_role='admin' if role in {'broker','receiver'} else role
             if not isinstance(policy,dict) or not isinstance(s.get('user'),str) or not s['user'].isdecimal() or int(s['user']) not in policy.get(policy_role,[]):issues[name].append('image-principal-policy-mismatch-UNKNOWN')

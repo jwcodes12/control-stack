@@ -133,8 +133,13 @@ premises that were previously unstated. They are now part of this claim:
   maps the executor to the owning agent. The Lean `Allowed` rule has no delegate step.
   This claim therefore covers only runs whose sink-side audit
   (`deployment/sink_audit.py`) records zero `delegations` and `delegated_releases`
-  rows; every archived and demo run satisfies this. Disabling delegation in the R2 broker
-  is queued (T9).
+  rows; every archived and demo run satisfies this. **Fixed from source generation `r2-v1`
+  (T9.2):** the broker command line rejects `delegate` and `revoke_delegation` unless
+  `--allow-delegation` is given, refuses to start on a database that already holds
+  delegation rows, and the scanner marks an entry that passes the flag UNKNOWN
+  (`broker-delegation-enabled-outside-claim-UNKNOWN`). Evidence archived under generation
+  `r2-v0` (every Tier 2-8 live run) still relies on the sink audit; live evidence on `r2-v1`
+  is queued (T9.6).
 - **Client timeouts are indeterminate, and HALT has no liveness guarantee.** The broker
   serves one connection at a time with a per-read timeout, so a slow sender can stall it.
   Requests whose client already timed out can still commit later. Approvers must retry a

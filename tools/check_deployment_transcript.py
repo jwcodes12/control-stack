@@ -10,7 +10,7 @@ import tempfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from tools.gen_deployment_transcript import OUT,archived,generate
+from tools.gen_deployment_transcript import OUT,archived,generate,recorded_clock
 
 STANDARD={'propext','Quot.sound','Classical.choice'}
 
@@ -35,9 +35,13 @@ def main(negatives=True):
             e=copy.deepcopy(e);[x for x in e if x['request']['op']=='effect_release' and not x['response']['ok']][0]['response']['ok']=True;e[8]['response']['result']=0;return e
         def wrong_reviewer(e):
             e=copy.deepcopy(e);[x for x in e if x['request']['op']=='review'][0]['service']='approver';return e
-        for label,mutate in (('release by an agent other than the approved one',swap_release_caller),('second release of the same nonce accepted',accept_replay),('review by a non-reviewer UID',wrong_reviewer)):
+        def unchanged(e):return copy.deepcopy(e)
+        expiry=max(int(x['request']['expires']) for x in events if 'expires' in x['request'])
+        clock=recorded_clock();assert clock<expiry   # the recorded clock really is before every expiry
+        for label,mutate,now in (('release by an agent other than the approved one',swap_release_caller,clock),('second release of the same nonce accepted',accept_replay,clock),('review by a non-reviewer UID',wrong_reviewer,clock),
+                                 ('clock after the approvals and leases expired',unchanged,expiry+1)):
             with tempfile.TemporaryDirectory(prefix='cstack-transcript-',dir=ROOT/'.git') as tmp:
-                path=Path(tmp)/'mutant.lean';path.write_text(generate(mutate(events),users,'Mutant'))
+                path=Path(tmp)/'mutant.lean';path.write_text(generate(mutate(events),users,'Mutant',now=now))
                 result=lean(path)
                 text=result.stdout+result.stderr
                 assert result.returncode!=0 and ('proved that the proposition' in text or 'failed to synthesize' in text),('mutated transcript was certified or failed for an unrelated reason',label,text[:300])

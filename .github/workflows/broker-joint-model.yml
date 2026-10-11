@@ -1,4 +1,7 @@
 name: broker-joint-model
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   pull_request:
     paths:
@@ -20,6 +23,15 @@ jobs:
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Cache pinned Lean dependency builds
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages
+            .lake/build
+          key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
       - name: Kernel replay and explicit trust-root axiom audit
         run: |
           set -euo pipefail

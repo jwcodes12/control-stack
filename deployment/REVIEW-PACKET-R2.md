@@ -27,6 +27,7 @@ protocol refinement hold (section 2).
 | `deployment_broker_safe` | `ControlStack/Deployment/R2Contracts.lean:101` | `BrokerProtocolRefinement` (reverse-admission-order publication sublist) is a fair abstraction of `trusted_stack/controller.py` + `outbox_receiver.py` |
 | `accepted_no_avoided_path` | R2Contracts.lean:20 | the closure certificate really covers transitive reachability |
 | `accepted_path_safety_monotone` | R2Contracts.lean:38 | (safety-only monotonicity; full `Accepted` monotonicity is **false** — see failures) |
+| `runtime_trace`, `final_safe`, `final_counts`, omission examples | `ControlStack/Deployment/TranscriptReplay.lean` (generated) | the recorded Tier 2 clean transcript really is a chain of `TrustedBroker.Step`s (check the numeric roles and the 21-conjunct `Allowed` obligations), and that the omission examples say what `deployment/TIER4-TRANSCRIPT.md` says |
 | witnesses / falsifying controls | `ControlStack/Deployment/Witnesses.lean`, `deployment/contract-witnesses.json` | non-vacuity: useful deployments are accepted and disabling a check breaks a theorem |
 
 **Empirical statements:** 51 fixtures (the frozen legacy corpus of 44 — 1 clean CONDITIONAL, 43
@@ -67,7 +68,7 @@ features (ports, depends_on, read_only, tmpfs, …) — they become UNKNOWN.
 | T2 CI | pre-existing SC-01 cache probe failed to execute (unrelated); rerun passed | `deployment/runs/tier2/ci-viability-attempt*` |
 | T3 | first replay after principal-policy guard: UID-collision IR differed | retained; recollected |
 | **T4.2** | requested full-`Accepted` monotonicity is **false** — 3 kernel-checked countermodels (removing DB writers breaks usefulness) | BLOCKED; `deployment/TIER4-MONOTONICITY.md`; safety-only monotonicity proved instead |
-| **T4.4** | concrete Lean replay of the Tier 2 clean transcript failed 3 compile attempts (unsolved `s0.halted = false`, lease/cap guards) | BLOCKED; `deployment/TIER4-TRANSCRIPT-BLOCKED.md`, `deployment/runs/tier4/transcript-prototype-attempt*.txt` |
+| **T4.4** | concrete Lean replay of the Tier 2 clean transcript failed 3 compile attempts (unsolved `s0.halted = false`, lease/cap guards) | Cause was `by try simp only [R]; all_goals decide` parsing as `try (…; …)`. Finished in Tier 9: `deployment/TIER4-TRANSCRIPT.md`; the failed attempts stay in `deployment/runs/tier4/transcript-prototype-attempt*.txt` |
 | T5 CI f1fbf63 | planner inferred an absolute archived path missing on CI | fixed with hash-pinned source-label normalization; raw failure kept |
 | T5 fresh checkout | remediated archive replay failed on relocated source labels | same normalization in checker; both results kept |
 | T5.1 (Sol session) | OpenAI `cyber_policy` flag ended a turn; owner has no cyber-permissive access | scope changed to defensive-only; new attack policies and four-arm evaluation GATED |
@@ -122,6 +123,7 @@ python3 tools/test_deployment_slice.py && python3 tools/test_deployment_release.
 python3 tools/check_deployment_monotonicity.py
 python3 tools/check_deployment_subset_differential.py              # Lean differential
 python3 tools/check_deployment_contract_witnesses.py
+python3 tools/check_deployment_transcript.py                          # T4.4: regenerate, build, axioms, 3 mutants rejected
 python3 tools/check_deployment_heldout.py --output /tmp/raw.json   # raw, fails closed
 python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/model.json
 

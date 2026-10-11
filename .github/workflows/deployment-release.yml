@@ -49,6 +49,8 @@ jobs:
         run: python3 tools/check_deployment_subset_differential.py
       - name: Contract witnesses and axiom report
         run: python3 tools/check_deployment_contract_witnesses.py
+      - name: T4.4 checked transcript replay (generated module, axioms, falsifying mutants)
+        run: python3 tools/check_deployment_transcript.py
       - name: Held-out sealed corpus in the kernel
         run: python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/heldout-static.json
       - name: Demo static stages; live stages must be reported SKIPPED, exit 3

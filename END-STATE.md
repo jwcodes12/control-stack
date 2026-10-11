@@ -39,12 +39,11 @@ HIGH issue and three MEDIUM ones, all fixed; its open LOW items are stated in th
 ## Still open but not resource-gated
 
 Items I judged not worth reopening or that need design decisions: T4.2 (false as stated;
-safety-only version proved); T4.4 (BLOCKED under the handoff time-box after three failed Lean
-attempts: an unfinished proof task, not a resource gate); `Principals` accepting UID 0; the
+safety-only version proved; T4.4 was finished in Tier 9, see `deployment/TIER4-TRANSCRIPT.md`);
+`Principals` accepting UID 0; the
 receiver still publishing delegated releases from an old database; evidence checkers not
 pinning a single source generation; the image scan hashing only listed source files. The
-handoff's stop condition ("every remaining task needs a resource") is therefore met only if
-BLOCKED tasks count as terminal.
+only BLOCKED task left is T4.2, which is blocked because its literal statement is false.
 
 ## Queue
 
@@ -53,7 +52,7 @@ BLOCKED tasks count as terminal.
 | T1 harden #45 | 10/10 DONE |
 | T2 real containers | 7/7 DONE |
 | T3 scanner coverage | 6/6 DONE |
-| T4 Lean | T4.1, T4.3, T4.5 DONE; **T4.2 BLOCKED** (literal monotonicity false: 3 kernel countermodels; safety-only monotonicity proved); **T4.4 BLOCKED** (concrete transcript replay failed 3 compile attempts) |
+| T4 Lean | T4.1, T4.3, T4.5 DONE; **T4.2 BLOCKED** (literal monotonicity false: 3 kernel countermodels; safety-only monotonicity proved); T4.4 DONE in Tier 9 (concrete replay of the archived clean transcript, generated Lean module, 3 falsifying mutants; the first three attempts failed on a `try a; b` parsing error) |
 | T5 remediation | 3/3 DONE (defensive: only repaired configs run live) |
 | T6 held-out | 3/3 DONE |
 | T7 attribution | 4/4 DONE (defensive recast); original T7.2/T7.3 attack arms GATED |
@@ -88,7 +87,7 @@ assumptions) and the slow-sender stall is fixed; database-busy timeouts remain i
 
 All are in `deployment/REVIEW-PACKET-R2.md` section 4, with raw evidence under
 `deployment/runs/tier*/`. Headline ones: two false CONDITIONALs in the original PR #45
-(fixed in T1); T4.2 and T4.4 BLOCKED; held-out contamination; the `cyber_policy` stop that
+(fixed in T1); T4.2 BLOCKED (false as stated), T4.4 blocked then finished; held-out contamination; the `cyber_policy` stop that
 forced the defensive-only scope; in Tier 9 a `None` vs `[]` disagreement that only the real
 Docker daemon exposed (`deployment/runs/tier9/attempt1-*`).
 

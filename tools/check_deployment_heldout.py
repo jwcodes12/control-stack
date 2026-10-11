@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Frozen static reference-profile corpus; no live launch or runtime assurance."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import hashlib
 import json

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """T4.4 checker: generated module is current, kernel-checked with standard axioms only, and mutated transcripts do NOT check."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import copy
 import json
 import re

@@ -2,6 +2,7 @@
 """Independent byte/daemon-inventory checks of the archived real-container run.
 This does not authenticate Docker or prove universal protocol refinement.
 """
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import base64
 import hashlib
@@ -10,14 +11,14 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from deployment.pins import require
+from deployment.pins import require_generation
 from extractors.compose import collect,sha
 from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from security_ir.verifier import verify
 
 def check(output):
     output=Path(output).resolve();pin=json.loads((ROOT/'deployment/legacy-image-pin.json').read_text())
-    for path,digest in pin['source_sha256'].items():require(path,digest,'image source drift')
+    require_generation(pin['source_sha256'],complete=False,what='image source drift')   # the pre-vault legacy pin records a subset
     assert sha(ROOT/'deployment/legacy-container-entry.py')==pin['entry_sha256']
     result=json.loads((output/'result.json').read_text())
     assert result['image']==pin['image']

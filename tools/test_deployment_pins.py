@@ -93,6 +93,27 @@ class PinTests(unittest.TestCase):
         (pins.TEMPLATES/(digest+'.json')).write_bytes((HARDENED/'clean.compose.json').read_bytes())
         self.assertNotIn(digest,pins.vaulted_templates('writable-sink-mount'),'a digest vaulted as clean is not a writable-sink-mount template')
 
+    def test_a_pin_set_must_belong_to_one_generation(self):
+        gens=pins.generations();old,new=pins.generation_sources(gens[0]),pins.current_sources()
+        self.assertEqual(pins.require_generation(old),gens[0].name);self.assertIn(pins.require_generation(new),{'current',*(g.name for g in gens)})
+        differing=[k for k in old if old[k]!=new.get(k)];self.assertTrue(differing)
+        mixed=dict(old);mixed[differing[0]]=new[differing[0]]     # every digest is individually vaulted, but no deployment ran this mixture
+        for path,digest in mixed.items():self.assertTrue(pins.source_matches(path.removeprefix('slice/') if path!='slice/entry.py' else pins.ENTRY,digest))
+        with self.assertRaises(pins.PinMismatch):pins.require_generation(mixed)
+        with self.assertRaises(pins.PinMismatch):pins.require_generation({k:v for k,v in old.items() if k!='slice/entry.py'})   # incomplete record
+        self.assertEqual(pins.require_generation({k:v for k,v in old.items() if k!='slice/entry.py'},complete=False),gens[0].name)
+        with self.assertRaises(pins.PinMismatch):pins.require_generation({})
+        with self.assertRaises(pins.PinMismatch):pins.require_generation({**old,'slice/trusted_stack/extra.py':'2'*64})
+
+    def test_checkers_refuse_to_run_without_assertions(self):
+        import subprocess
+        for module in ('deployment.check_container_run','deployment.check_remediated','deployment.scan','deployment.demo'):
+            with self.subTest(module=module):
+                p=subprocess.run([sys.executable,'-O','-c','import '+module],cwd=ROOT,capture_output=True,text=True);self.assertNotEqual(p.returncode,0);self.assertIn('python -O',p.stderr+p.stdout)
+        for f in sorted((ROOT/'tools').glob('check_deployment_*.py')):
+            with self.subTest(script=f.name):
+                p=subprocess.run([sys.executable,'-O',str(f)],cwd=ROOT,capture_output=True,text=True);self.assertNotEqual(p.returncode,0);self.assertIn('python -O',p.stderr+p.stdout)
+
     def test_snapshot_is_append_only(self):
         pins.VAULT=self.tmp/'vault';shutil.copytree(self.vault,pins.VAULT)  # never touch the real vault
         first=pins.generations()[0].name

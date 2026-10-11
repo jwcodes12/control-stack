@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Independent observer check of archived raw sink bytes and current source pins."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import hashlib
 import json
 import sqlite3

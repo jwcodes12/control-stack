@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Kernel check the fixed nonempty contract/witness package; reject missing rows."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import json
 import re

@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.reconcile import reconcile
-from deployment.pins import require
+from deployment.pins import require_generation
 from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from extractors.compose import collect,sha
 from security_ir.verifier import verify
@@ -17,7 +17,7 @@ def check(output):
     output=Path(output).resolve();pin=json.loads((output/'image-pin.json').read_text());result=json.loads((output/'result.json').read_text())
     assert pin['image']==result['image'] and pin['tag'].startswith('cstack-r2-')
     assert sha(output/'container-entry.py')==pin['entry_sha256']
-    for source,digest in pin['source_sha256'].items():require(source,digest)
+    require_generation(pin['source_sha256'],entry_sha256=pin['entry_sha256'])
     hardened=result.get('profile')=='hardened'
     from deployment.run_containers import CASES,SAFE
     assert set(result['cases'])==set(SAFE if hardened else CASES)

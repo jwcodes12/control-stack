@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Kernel-check every prospective static plan; declaration hypotheses only."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import json
 import sys

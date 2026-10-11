@@ -52,8 +52,26 @@ def source_matches(rel,digest):
     current=ROOT/rel
     return (current.is_file() and sha(current)==digest) or vaulted_file(rel,digest) is not None
 
+class PinMismatch(AssertionError):
+    """An archive's recorded source digests do not belong to one source generation."""
+
 def require(rel,digest,what='trusted source drift'):
-    assert source_matches(rel,digest),(what,rel)
+    if not source_matches(rel,digest):raise PinMismatch((what,rel))
+
+def require_generation(recorded,*,entry_sha256=None,complete=True,what='trusted source drift'):
+    """The recorded digests (repo paths such as trusted_stack/x.py, or in-image slice/ paths) must all come from ONE source
+    generation: the current tree or a single vaulted generation. Checking each file against any generation separately would accept
+    a mixture no deployment ever ran. complete=False accepts a recorded subset (the pre-vault legacy pin); a complete record must
+    equal the generation's full file set. Returns the generation name ('current' for the live tree)."""
+    image={}
+    for rel,digest in recorded.items():
+        key=rel if rel.startswith('slice/') else 'slice/'+rel if rel.startswith('trusted_stack/') else rel
+        image[key]=digest
+    if entry_sha256 is not None:image['slice/entry.py']=entry_sha256
+    candidates=[('current',current_sources()),*((g.name,generation_sources(g)) for g in generations())]
+    for name,files in candidates:
+        if image and all(files.get(k)==v for k,v in image.items()) and (not complete or set(image)==set(files)):return name
+    raise PinMismatch((what,'digests do not all belong to one source generation'))
 
 def generation_sources(gen):
     """The in-image source map a vaulted generation represents (hashes of the vaulted bytes)."""

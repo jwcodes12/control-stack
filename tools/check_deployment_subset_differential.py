@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """T1.7: full Python/Lean agreement, not the superseded strict subset fallback."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import copy
 import json

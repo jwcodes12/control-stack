@@ -13,6 +13,21 @@ ROOT = Path(__file__).resolve().parents[2]
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
+def inventory_order(observed):
+    """Order is irrelevant only for unambiguous selected inventories.
+    Preserve every field and duplicate; do not canonicalize repeated mount targets.
+    """
+    if not isinstance(observed,dict):return observed
+    value=dict(observed)
+    mounts=value.get('mounts')
+    if isinstance(mounts,list) and all(isinstance(m,dict) and isinstance(m.get('source'),str) and isinstance(m.get('target'),str) for m in mounts):
+        targets=[m['target'] for m in mounts]
+        if len(set(targets))==len(targets):value['mounts']=sorted(mounts,key=lambda m:(m['source'],m['target']))
+    for key in ('networks','env_names'):
+        items=value.get(key)
+        if isinstance(items,list) and all(isinstance(item,str) for item in items):value[key]=sorted(items)
+    return value
+
 def collect(compose, runtime, expected_sha256):
     compose, runtime = Path(compose), Path(runtime)
     if sha(compose) != expected_sha256:
@@ -92,7 +107,7 @@ def collect(compose, runtime, expected_sha256):
         if observed is not None:
             keys = ('uid','image','mounts','networks','env_names')
             expected = {'uid':uid,'image':image,'mounts':sorted(selected_mounts(s.get('volumes',[])),key=lambda v:(v.get('source',''),v.get('target',''))) if isinstance(s.get('volumes',[]),list) and all(isinstance(v,dict) for v in s.get('volumes',[])) else s.get('volumes',[]),'networks':s.get('networks',[]),'env_names':sorted(env)}
-            facts['runtime_match'] = 'MATCH' if isinstance(observed,dict) and set(observed) == set(keys) and json.dumps(observed,sort_keys=True) == json.dumps(expected,sort_keys=True) else 'DRIFT'
+            facts['runtime_match'] = 'MATCH' if isinstance(observed,dict) and set(observed) == set(keys) and json.dumps(inventory_order(observed),sort_keys=True) == json.dumps(inventory_order(expected),sort_keys=True) else 'DRIFT'
         nodes.append({'id':name,'type':'service','facts':facts,'provenance':cp})
         if set(s)-{'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'}:
             unknown(name,'unknown-feature: unsupported service feature: '+','.join(sorted(set(s)-{'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'})))

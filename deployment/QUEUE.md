@@ -37,9 +37,9 @@ T4.5 | DONE | contract-witnesses.json: 16 fixed contracts, 45 standard-axiom dec
 T5.1 | DONE | deployment/plan.py; read-only RFC 6902 patch, redacted human diff, separately reviewed host actions and precise capture/custody residuals
 T5.2 | DONE | 44 static fixtures; 44 kernel certificates; 36 prospective finite-model acceptances, eight named residual cases; synthetic DECLARED facts never runtime evidence
 T5.3 | DONE | Defensive-only: deployment/runs/tier5/remediated; originals archived Tier 2; two repaired live configurations, four honest completions; raw inventory/custody/SQLite/byte checks and tamper controls PASS. No new denial experiment.
-T6.1 | TODO | Not yet started; tier order applies
-T6.2 | TODO | Not yet started; tier order applies
-T6.3 | TODO | Not yet started; tier order applies
+T6.1 | DONE | deployment/heldout/tier6: 25 independent static cases (5 supported, 12 refuted, 8 unknown), labelled and hash-sealed before scoring; separate blinded codex exec; two startup failures retained
+T6.2 | DONE | 25 sealed static cases; final 50 kernel certificates: zero false model acceptances, zero over-rejections, 14 UNKNOWN, 22 prospective model plans and three named residuals. Raw/interface and pre-order-fix scores retained; no runtime assessment.
+T6.3 | DONE | declaration-only rules_baseline.py catches 2/20 author negatives and rejects 0/5 supported; scope limited, no OPA comparison claim; actual OPA GATED
 T7.1 | TODO | Not yet started; tier order applies
 T7.2 | TODO | Not yet started; tier order applies
 T7.3 | TODO | Not yet started; tier order applies
@@ -95,3 +95,21 @@ Tier 5 fresh checkout: six planner tests PASS; remediated archive replay FAIL on
 Tier 5 corrected fresh local checkout: six planner tests and two remediated archive/tamper tests PASS. Source relocation normalization preserves known artifact hashes and every other IR field. Corrected final-head CI pending.
 
 Tier 5 final review tightened read-only output protection: saved observation directories and pinned trusted-source inputs cannot be used as plan output. Relocation test also verifies a refused observation overwrite leaves all bytes intact. Re-run static checks; no additional container or bypass run.
+
+Tier 5 exit: c0f5f4512557cfd42b5073f2e5c79afbaeafa8fd, 18 CI SUCCESS and 3 explicit SKIPPED; PR #49 draft/open. Receipt deployment/runs/tier5/ci-receipt-c0f5f45.json. Tier 6 stacks on that exact tip; no R2 completion claim.
+
+T6.1 author attempt 1: Codex failed before authoring with read-only filesystem error initializing its in-process app-server. Preserve raw error; provide a fresh private writable Codex state directory under this clone, with no prior sessions or evaluator access. No corpus or evaluation produced.
+
+T6.1 author attempt 2: bwrap could not execute the Codex binary because its .local/bin symlink points inside the now-hidden .codex/packages directory. Restore only read-only executable packages into the private state mount; repository/session history remains hidden. Attempt 3 will be the final startup attempt under the time-box.
+
+Tier 6 corpus sealed: 25 cases; author checksums verified; SHA256SUMS hash 863bb6bf86acb2d51230c8856a2aa34546f2cf9d6afee40fed3d86ddf63c3a8a. Static hypotheses only; no exploit code, attack payloads or live deployment. Author could not run its shell tool but file writing and checksumming completed. This commit precedes every scanner/planner/baseline evaluation. Labels will not change.
+
+T6.2 first raw score: all 25 cases UNKNOWN and all five model-supported cases rejected because required broker/receiver source SHA claim fields were omitted from the author-facing public interface. Scanner correctly fails closed. Record the raw result and then explicitly instantiate the author-given known-code hypothesis in copied model inputs; never alter sealed cases or labels. This is an evaluator-interface correction, not a new runtime observation or automatic scanner pin inference.
+
+T6.2 correction committed before re-scoring: explicit --instantiate-known-code adds actual local trusted-source digests to copied model declarations under the sealed author-given correspondence hypothesis. Raw authored files and labels remain unchanged; raw CLI input still fails closed. This is not baked-image observation. Planner also names each missing/drifted source pin as a residual instead of hiding it behind a generic observation gap. Before score has 50 kernel certificates; corrected score pending.
+
+T6.2 instantiated before-fix score: 50 kernel certificates, zero false model acceptances, 2/5 supported cases rejected (40%), 14/25 UNKNOWN (56%), 22/25 prospective plans accepted and three named residuals. Both supported misses are equivalent receiver mounts listed in a different order in the synthetic inventory. Preserve this result and failing regression. Fix comparison order only for unambiguous unique-target mount lists, keeping every mount field and multiplicity; labels stay frozen.
+
+T6.2 ordering fix committed before re-scoring: selected inventory lists compare independent of order only when mounts have unique targets and string paths; all fields and duplicates survive. Ambiguous targets are not sorted. Networks/environment names retain multiplicities. Known UID and undeclared-writer mismatches remain refutations. Corrected score pending.
+
+Tier 6 local exit: 25 independently sealed static configurations, corrected score and 50 kernel certificates PASS; three static/seal/order tests, seven planner tests, 13 slice tests, nine scanner tests, two remediated archive tests, 520 additions and fixture --check PASS. Full 44+250 differential PASS with zero Python/Lean differences. Self-review deployment/reviews/tier6-self-review.md; no real new workload. Final-head CI pending.

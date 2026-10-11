@@ -1,0 +1,875 @@
+{
+  "author_seal_sha256": "863bb6bf86acb2d51230c8856a2aa34546f2cf9d6afee40fed3d86ddf63c3a8a",
+  "axioms": "'certificate_0' depends on axioms: [propext, Quot.sound]\n'certificate_1' depends on axioms: [propext, Quot.sound]\n'certificate_2' depends on axioms: [propext, Quot.sound]\n'certificate_3' depends on axioms: [propext, Quot.sound]\n'certificate_4' depends on axioms: [propext, Quot.sound]\n'certificate_5' depends on axioms: [propext, Quot.sound]\n'certificate_6' depends on axioms: [propext, Quot.sound]\n'certificate_7' depends on axioms: [propext, Quot.sound]\n'certificate_8' depends on axioms: [propext, Quot.sound]\n'certificate_9' depends on axioms: [propext, Quot.sound]\n'certificate_10' depends on axioms: [propext, Quot.sound]\n'certificate_11' depends on axioms: [propext, Quot.sound]\n'certificate_12' depends on axioms: [propext, Quot.sound]\n'certificate_13' depends on axioms: [propext, Quot.sound]\n'certificate_14' depends on axioms: [propext, Quot.sound]\n'certificate_15' depends on axioms: [propext, Quot.sound]\n'certificate_16' depends on axioms: [propext, Quot.sound]\n'certificate_17' depends on axioms: [propext, Quot.sound]\n'certificate_18' depends on axioms: [propext, Quot.sound]\n'certificate_19' depends on axioms: [propext, Quot.sound]\n'certificate_20' depends on axioms: [propext, Quot.sound]\n'certificate_21' depends on axioms: [propext, Quot.sound]\n'certificate_22' depends on axioms: [propext, Quot.sound]\n'certificate_23' depends on axioms: [propext, Quot.sound]\n'certificate_24' depends on axioms: [propext, Quot.sound]\n'certificate_25' depends on axioms: [propext, Quot.sound]\n'certificate_26' depends on axioms: [propext, Quot.sound]\n'certificate_27' depends on axioms: [propext, Quot.sound]\n'certificate_28' depends on axioms: [propext, Quot.sound]\n'certificate_29' depends on axioms: [propext, Quot.sound]\n'certificate_30' depends on axioms: [propext, Quot.sound]\n'certificate_31' depends on axioms: [propext, Quot.sound]\n'certificate_32' depends on axioms: [propext, Quot.sound]\n'certificate_33' depends on axioms: [propext, Quot.sound]\n'certificate_34' depends on axioms: [propext, Quot.sound]\n'certificate_35' depends on axioms: [propext, Quot.sound]\n'certificate_36' depends on axioms: [propext, Quot.sound]\n'certificate_37' depends on axioms: [propext, Quot.sound]\n'certificate_38' depends on axioms: [propext, Quot.sound]\n'certificate_39' depends on axioms: [propext, Quot.sound]\n'certificate_40' depends on axioms: [propext, Quot.sound]\n'certificate_41' depends on axioms: [propext, Quot.sound]\n'certificate_42' depends on axioms: [propext, Quot.sound]\n'certificate_43' depends on axioms: [propext, Quot.sound]\n'certificate_44' depends on axioms: [propext, Quot.sound]\n'certificate_45' depends on axioms: [propext, Quot.sound]\n'certificate_46' depends on axioms: [propext, Quot.sound]\n'certificate_47' depends on axioms: [propext, Quot.sound]\n'certificate_48' depends on axioms: [propext, Quot.sound]\n'certificate_49' depends on axioms: [propext, Quot.sound]\n",
+  "baseline_sha256": "b6c00303353dbf7265b41ab6ab78fb77a47f778ad925aaa1e7804c3d753eb389",
+  "basis": "Static finite reference-profile extraction and planner evaluation under author-given image, custody and selected-inventory hypotheses. MODEL_ACCEPTED is not a live CONDITIONAL verdict. Fresh image/realpath observation and Compose CLI normalization are covered separately by Tier 3, not this corpus. No runtime launch.",
+  "corpus_seal_sha256": "9982b6fb793a31678cd32e3cff8a0b66f3ca6f32367c2fa7d78d3d531e910a97",
+  "evaluator_sha256": "71dfeb6b2752fadd33dd7161ebadf7d310bdb5e7c1488e2768d18c1f48c60d78",
+  "gated_baseline": "Actual OPA/Conftest unavailable; this baseline is hand-written Python.",
+  "input_profile": "author-known-code-hypothesis-instantiated",
+  "instantiated_source_pins": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb"
+  },
+  "kernel_certificates": 50,
+  "metrics": {
+    "baseline_negative_caught": 2,
+    "baseline_negative_missed": 18,
+    "baseline_supported_rejected": 0,
+    "cases": 25,
+    "false_conditional_model_cases": [],
+    "false_conditional_model_count": 0,
+    "negative_cases": 20,
+    "over_rejection_count": 0,
+    "over_rejection_rate": 0.0,
+    "plan_model_accepted_count": 22,
+    "plan_named_residual_count": 3,
+    "supported_cases": 5,
+    "unknown_count": 14,
+    "unknown_rate": 0.56
+  },
+  "rows": [
+    {
+      "author_reason": "The six principals, selected fields, private writer mounts and isolated network match the given supported model; receiver omits its optional channel mount.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "id": "supported-minimal",
+      "model_accepted": true,
+      "model_verdict": "MODEL_ACCEPTED",
+      "obligations": [],
+      "plan_model_accepted": true,
+      "plan_ops": 0,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Receiver includes the explicitly optional read-write channel mount; all other authority remains within the given profile.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "id": "supported-receiver-channel",
+      "model_accepted": true,
+      "model_verdict": "MODEL_ACCEPTED",
+      "obligations": [],
+      "plan_model_accepted": true,
+      "plan_ops": 0,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/receiver/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "All four read-only channel consumers use the explicitly permitted bind.selinux=z option; it does not change declared read-only authority.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "id": "supported-reader-selinux",
+      "model_accepted": true,
+      "model_verdict": "MODEL_ACCEPTED",
+      "obligations": [],
+      "plan_model_accepted": true,
+      "plan_ops": 0,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Broker and receiver private bind entries use the permitted selinux=z option while retaining the required source, target and writer permissions.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "id": "supported-private-selinux",
+      "model_accepted": true,
+      "model_verdict": "MODEL_ACCEPTED",
+      "obligations": [],
+      "plan_model_accepted": true,
+      "plan_ops": 0,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Receiver has its optional channel mount and every bind uses the allowed selinux=z annotation; all required principals and mount permissions still follow the profile.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "id": "supported-all-selinux-with-channel",
+      "model_accepted": true,
+      "model_verdict": "MODEL_ACCEPTED",
+      "obligations": [],
+      "plan_model_accepted": true,
+      "plan_ops": 0,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/receiver/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Agent-a explicitly runs as UID 0 instead of UID 23701, granting excess identity authority and contradicting the principal policy.",
+      "baseline": {
+        "findings": [
+          "agent-a:root-user"
+        ],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "REJECT"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "agent-root-identity",
+      "model_accepted": false,
+      "model_verdict": "REFUTED",
+      "obligations": [
+        {
+          "detail": "distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure",
+          "premise": "identity-separation",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/agent-a/uid",
+          "reason": "captured uid differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Agent-b uses agent-a's UID 23701 instead of its distinct UID 23702, collapsing the two required agent principals.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "agents-share-identity",
+      "model_accepted": false,
+      "model_verdict": "REFUTED",
+      "obligations": [
+        {
+          "detail": "distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure",
+          "premise": "identity-separation",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/agent-b/uid",
+          "reason": "captured uid differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Reviewer has a read-write channel bind although its only permitted bind is read-only; the declaration grants an unauthorized writer path.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "reviewer-channel-writer",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unlisted-host-mount: /workspace/channel -> /channel",
+          "premise": "unknown:reviewer:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/reviewer/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Approver receives a writable sink bind in addition to its channel reader bind, exposing the receiver-only output writer path.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "approver-output-writer",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unlisted-host-mount: /workspace/sink -> /output",
+          "premise": "unknown:approver:unknown",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "writable-sink-mount: protected-sink-mount",
+          "premise": "sink-authority:approver",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "exactly the receiver has the writable sink mount",
+          "premise": "useful-sink-path",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/approver/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Broker receives a writable sink bind, exceeding its permitted channel and database writer mounts.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "broker-output-writer",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unlisted-host-mount: /workspace/sink -> /output",
+          "premise": "unknown:broker:unknown",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "writable-sink-mount: protected-sink-mount",
+          "premise": "sink-authority:broker",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "exactly the receiver has the writable sink mount",
+          "premise": "useful-sink-path",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/broker/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Receiver's required sink writer bind is read-only, contradicting the supported output configuration. This is a functional profile violation, without an assertion of an exploit.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "receiver-output-readonly",
+      "model_accepted": false,
+      "model_verdict": "REFUTED",
+      "obligations": [
+        {
+          "detail": "unprotected-sink-access: protected-sink-mount",
+          "premise": "sink-authority:receiver",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "exactly the receiver has the writable sink mount",
+          "premise": "useful-sink-path",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/receiver/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Receiver's /output writer bind points at the channel directory instead of the configured sink source; the required source-to-target correspondence is false.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "receiver-output-wrong-source",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unlisted-host-mount: /workspace/channel -> /output",
+          "premise": "unknown:receiver:unknown",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "exactly the receiver has the writable sink mount",
+          "premise": "useful-sink-path",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 2,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/receiver/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "An unlisted synthetic credential environment key is supplied to broker. Credentials and extra environment names violate the explicit supported policy; the value is a dummy marker.",
+      "baseline": {
+        "findings": [
+          "broker:credential-name"
+        ],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "REJECT"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "credential-environment",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "opaque-credential-env-name:API_TOKEN",
+          "premise": "unknown:broker:sink",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/broker/env_names",
+          "reason": "captured env_names differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "Reviewer declares the approver role while retaining reviewer UID and environment identity, creating contradictory principal declarations.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "reviewer-role-ambiguity",
+      "model_accepted": false,
+      "model_verdict": "REFUTED",
+      "obligations": [
+        {
+          "detail": "two agents, one named broker and one named receiver required",
+          "premise": "supported-roles",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "The sole declared network has internal=false instead of the required internal=true. This refutes the declaration profile without asserting measured external reachability.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "network-not-internal",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unsupported network topology",
+          "premise": "unknown:unknown:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Compose retains agent-a UID 23701 but the synthetic selected inventory states UID 23700. The paired hypotheses contradict explicit principal correspondence.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "inventory-uid-contradiction",
+      "model_accepted": false,
+      "model_verdict": "REFUTED",
+      "obligations": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:agent-a",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": false,
+      "plan_ops": 0,
+      "plan_remaining": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:agent-a",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/agent-a",
+          "reason": "existing inventory DRIFT; recreate/recapture against the reviewed Compose"
+        },
+        {
+          "path": "/runtime/services/agent-a/uid",
+          "reason": "captured uid differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "The synthetic approver inventory adds a writable database mount absent from Compose. The pair contradicts selected mount correspondence and introduces unauthorized hypothetical writer authority.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "id": "inventory-undeclared-writer",
+      "model_accepted": false,
+      "model_verdict": "REFUTED",
+      "obligations": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:approver",
+          "status": "REFUTED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 0,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/approver",
+          "reason": "existing inventory DRIFT; recreate/recapture against the reviewed Compose"
+        },
+        {
+          "path": "/runtime/services/approver/mounts",
+          "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+        }
+      ]
+    },
+    {
+      "author_reason": "A restart declaration is outside the six supported service fields. Its presence requires UNKNOWN even though selected inventory facts match the supported baseline.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-restart-policy",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unknown-feature: unsupported service feature: restart",
+          "premise": "unknown:broker:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Service labels are an unlisted Compose feature. The harmless synthetic label cannot be treated as supported assurance.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-service-labels",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unknown-feature: unsupported service feature: labels",
+          "premise": "unknown:reviewer:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Deploy resource limits are outside the selected service-field model; their effect is not represented by the inventory.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-deploy-resources",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unknown-feature: unsupported service feature: deploy",
+          "premise": "unknown:broker:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Service-level read_only is outside the supported field set, even when it appears restrictive; selected mount facts do not justify assurance for that declaration.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-rootfs-readonly",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unknown-feature: unsupported service feature: read_only",
+          "premise": "unknown:agent-a:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": false,
+      "plan_ops": 0,
+      "plan_remaining": [
+        {
+          "detail": "unknown-feature: unsupported service feature: read_only",
+          "premise": "unknown:agent-a:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/services/agent-a/read_only",
+          "reason": "read_only rootfs is unsupported; retain this restriction until scanner support exists"
+        }
+      ]
+    },
+    {
+      "author_reason": "An additional tmpfs declaration is not an allowed long-form bind and is outside the selected authority model. No assertion about its live effect is made.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-tmpfs",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "unknown-feature: unsupported service feature: tmpfs",
+          "premise": "unknown:reviewer:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        }
+      ]
+    },
+    {
+      "author_reason": "Service network membership is declared as an object rather than the required networks=[isolated] list. The alternative Compose form is unsupported despite the same selected network name.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-network-object",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:approver",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "unsupported service networks",
+          "premise": "unknown:approver:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/approver",
+          "reason": "existing inventory DRIFT; recreate/recapture against the reviewed Compose"
+        }
+      ]
+    },
+    {
+      "author_reason": "Agent-b uses the Compose list form for environment rather than the required object. The represented key names agree, but this representation is outside the supported interface.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-environment-list",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:agent-b",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "unsupported environment syntax",
+          "premise": "unknown:agent-b:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": false,
+      "plan_ops": 0,
+      "plan_remaining": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:agent-b",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "unsupported environment syntax",
+          "premise": "unknown:agent-b:unknown",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/agent-b",
+          "reason": "existing inventory DRIFT; recreate/recapture against the reviewed Compose"
+        },
+        {
+          "path": "/runtime/services/agent-b/env_names",
+          "reason": "captured env_names differs from the proposed configuration; recreate/recollect before verification"
+        },
+        {
+          "path": "/services/agent-b/environment",
+          "reason": "normalize environment to an explicit object before planning"
+        }
+      ]
+    },
+    {
+      "author_reason": "A bind.propagation option is supplied in addition to the allowed bind.selinux=z. This unmodelled bind option requires UNKNOWN; selected inventory deliberately omits the bind option object.",
+      "baseline": {
+        "findings": [],
+        "scope": "Common declaration-only deny rules; no identity separation, writer graph, required writers, inventory correspondence or completeness claim.",
+        "verdict": "ALLOW"
+      },
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "id": "unsupported-bind-propagation",
+      "model_accepted": false,
+      "model_verdict": "UNKNOWN",
+      "obligations": [
+        {
+          "detail": "DRIFT",
+          "premise": "runtime-snapshot:broker",
+          "status": "REFUTED"
+        },
+        {
+          "detail": "broker-channel-uninspected",
+          "premise": "unknown:agent-a:broker",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "broker-channel-uninspected",
+          "premise": "unknown:agent-b:broker",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "broker-channel-uninspected",
+          "premise": "unknown:approver:broker",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "unsupported volume feature",
+          "premise": "unknown:broker:unknown",
+          "status": "UNASSESSED"
+        },
+        {
+          "detail": "broker-channel-uninspected",
+          "premise": "unknown:reviewer:broker",
+          "status": "UNASSESSED"
+        }
+      ],
+      "plan_model_accepted": true,
+      "plan_ops": 1,
+      "plan_remaining": [],
+      "plan_residuals": [
+        {
+          "path": "/observations",
+          "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+        },
+        {
+          "path": "/runtime/services/broker",
+          "reason": "existing inventory DRIFT; recreate/recapture against the reviewed Compose"
+        }
+      ]
+    }
+  ]
+}

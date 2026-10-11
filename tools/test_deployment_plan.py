@@ -71,6 +71,13 @@ class PlanTests(unittest.TestCase):
             wrong=Path(tmp)/'wrong.json';wrong.write_text('{}');out=Path(tmp)/'plan.json'
             p=subprocess.run([sys.executable,str(ROOT/'tools/cstack.py'),'plan',str(wrong),'--runtime',str(base/'clean.runtime.json'),'--ir',str(ROOT/'security_ir/fixtures/clean.json'),'--output',str(out)],capture_output=True,text=True)
             self.assertEqual(p.returncode,2);self.assertFalse(out.exists())
+    def test_missing_source_pin_is_named_and_not_invented(self):
+        base=ROOT/'examples/compose-two-agent';c=json.loads((base/'clean.compose.json').read_text());r=json.loads((base/'clean.runtime.json').read_text())
+        ir=json.loads((ROOT/'security_ir/fixtures/clean.json').read_text());del c['x-cstack']['broker_sha256']
+        result=build_plan(c,r,ir,'unit-test-pin')
+        self.assertTrue(any(item['path']=='/x-cstack/broker_sha256' for item in result['residuals']))
+        self.assertFalse(any(operation['path']=='/x-cstack/broker_sha256' for operation in result['patch']))
+
     def test_missing_trusted_service_never_proposes_root_ownership(self):
         base=ROOT/'examples/compose-two-agent';c=json.loads((base/'clean.compose.json').read_text());r=json.loads((base/'clean.runtime.json').read_text())
         ir=json.loads((ROOT/'security_ir/fixtures/clean.json').read_text());del c['services']['receiver']

@@ -19,10 +19,11 @@ be deduplicated or replaced by an existing lemma is wasted work, and the English
 Real findings: `Accepted` identity is "iff" (English said "only if"); `runtime_trace` English omits the ten-step ordering; corrections are listed in RESULTS.md.
 **Caveat (Sol's own):** the G0 pass was not strictly blind; typed Lean was written after reading the source.
 
-## G1-G7 (161 claims): requested, not delivered
-Task sent 20:17 (strict-blind, flagged claims first, list in `HANDOFF-SOL-ONE-TO-ONE-B.md`); stop-after-current-eval sent 20:44 on the owner's instruction. Sol read both;
-at the time of writing no result files existed under `docs/lean-english/one-to-one/` after 18:32 and no bus reply had arrived. Treat G1-G7 as **not started** unless
-`RESULTS-G1-G7.md` / `PROGRESS-G1-G7.md` exist.
+## G1-G7 (161 claims): never started (confirmed by Sol)
+The orchestrator sent the task (20:17, bus message 6), a stop instruction (20:44, #7) and a note that nobody watches Sol's TUI (#8). Sol's reply to #8: it was **not** waiting on an
+approval and **not** running an evaluation; G1-G7 were never started; the original goal and the G0 receipts are complete. Cause: Sol treats bus messages as informational, not as the
+owner's instructions, so it waits for the owner to give new work **directly in its own thread** (its earlier progress note says the same). Nothing is running. To get Sol to do more
+work, the owner must instruct it in its Codex thread (the orchestrator cannot authorize it, and should not try to route around that).
 
 ## Resume plan
 1. **Reuse audit (first; orchestrator or any agent):** for every claim, one row: the shared core it instantiates, an existing lemma (repo, Mathlib/Std, other repos) that already

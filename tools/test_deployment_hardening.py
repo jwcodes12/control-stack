@@ -40,6 +40,14 @@ def start_cli(root,db,cap):
         except OSError:probe.close();time.sleep(0.05)
     return proc
 
+def wait_listening(path):
+    # The socket file appears at bind(), before listen(): wait until a connection is actually accepted.
+    for _ in range(200):
+        probe=socket.socket(socket.AF_UNIX)
+        try:probe.connect(str(path));probe.close();time.sleep(0.3);return  # let the probe connection release its slot
+        except OSError:probe.close();time.sleep(0.05)
+    raise AssertionError('broker never started listening')
+
 def raw(path,data=b'',keep=False):
     s=socket.socket(socket.AF_UNIX);s.settimeout(5);s.connect(str(path))
     try:
@@ -87,9 +95,7 @@ class DelegationProfile(Base):
         for allowed in (False,True):
             sock=self.root/f's{int(allowed)}.sock'
             threading.Thread(target=server.serve,args=(c,sock,allowed),daemon=True).start()
-            for _ in range(100):
-                if sock.exists():break
-                time.sleep(0.05)
+            wait_listening(sock)
             results[allowed]=request(str(sock),request_body)
         self.assertEqual(results[False],{'ok':False,'error':'DENIED'})
         self.assertTrue(results[True]['ok'],'with the gate open the same request succeeds, so the gate is what denied it')
@@ -129,9 +135,7 @@ class Serving(Base):
         self.sock=self.root/'b.sock'
     def start(self):
         threading.Thread(target=server.serve,args=(self.controller,self.sock,False),daemon=True).start()
-        for _ in range(100):
-            if self.sock.exists():break
-            time.sleep(0.05)
+        wait_listening(self.sock)
     def state_ok(self):
         reply=request(str(self.sock),{'op':'state'});self.assertTrue(reply['ok']);return reply
 

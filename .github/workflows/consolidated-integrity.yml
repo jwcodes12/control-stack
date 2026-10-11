@@ -28,6 +28,7 @@ jobs:
         run: |
           python3 tools/build_registry.py --check
           python3 tools/build_statement_catalog.py --check
+          python3 tools/build_lean_english_overview.py --check
       - name: Manifest, overview and assurance indexes consistent
         run: |
           python3 tools/build_status.py --check

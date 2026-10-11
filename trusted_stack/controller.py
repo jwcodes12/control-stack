@@ -43,6 +43,7 @@ class Principals:
 
 
 class Controller:
+    STAGING_QUOTA = 64 * 1024 * 1024  # total staged artifact bytes; refusing more is always safe
     def __init__(self, path: Path, principals: Principals, clock=None):
         self.path = Path(path)
         self.principals = principals
@@ -190,6 +191,10 @@ class Controller:
             old = db.execute("SELECT body FROM artifacts WHERE digest=?", (digest,)).fetchone()
             if old is not None and old[0] != body:
                 raise Denied("digest collision")
+            # Staging is the one agent-callable write that grows the database, so it has a total byte quota: a stuck
+            # or hostile agent cannot fill the disk the broker's HALT write also needs. Already-staged bytes stay free.
+            if old is None and db.execute("SELECT COALESCE(SUM(LENGTH(body)),0) FROM artifacts").fetchone()[0] + len(body) > self.STAGING_QUOTA:
+                raise Denied("staging quota exhausted")
             db.execute("INSERT OR IGNORE INTO artifacts VALUES (?, ?)", (digest, body))
             return digest
         return self._tx(apply)

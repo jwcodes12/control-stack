@@ -7,6 +7,7 @@ reference interface, not a network-facing or production authorization server.
 import argparse
 import base64
 import contextlib
+import fcntl
 import json
 import os
 import socket
@@ -26,7 +27,38 @@ RESERVED_FOR_TRUSTED = 4    # of those, slots only reviewer/approver/admin UIDs 
 DELEGATION_OPS = {"delegate", "revoke_delegation"}
 
 
-def run_one(controller, uid, req, allow_delegation=True, *, effect_root=None):
+class HaltLatch:
+    """In-process HALT latch. Once an admin asks for HALT, the broker starts no other mutating request until the database
+    records it, so a busy database cannot keep new releases flowing while HALT waits for the write lock, and a HALT that
+    could not be persisted before the caller gave up keeps being retried in the background."""
+
+    def __init__(self):
+        self.requested = threading.Event()
+        self.persisted = threading.Event()
+        self._lock = threading.Lock()
+        self._retrying = False
+
+    def refuse_if_halting(self, op):
+        if self.requested.is_set() and op not in ("halt", "state"):
+            raise Denied("HALT requested")
+
+    def keep_trying(self, controller, uid, pause=1.0):
+        with self._lock:
+            if self._retrying or self.persisted.is_set():
+                return
+            self._retrying = True
+
+        def loop():
+            while not self.persisted.is_set():
+                try:
+                    controller.halt(uid)
+                    self.persisted.set()
+                except Exception:
+                    time.sleep(pause)
+        threading.Thread(target=loop, daemon=True).start()
+
+
+def run_one(controller, uid, req, allow_delegation=True, *, effect_root=None, latch=None):
     """allow_delegation defaults on for the library and its delegated-model tests; the command line turns it off
     unless --allow-delegation is given (the reference deployment profile has no delegation step)."""
     if type(req) is not dict or "op" not in req or type(req["op"]) is not str:
@@ -51,6 +83,8 @@ def run_one(controller, uid, req, allow_delegation=True, *, effect_root=None):
         raise Denied("unreviewed operation or payload shape")
     if op in DELEGATION_OPS and not allow_delegation:
         raise Denied("delegation is disabled in this profile")
+    if latch is not None:
+        latch.refuse_if_halting(op)
     if op == "stage":
         try:
             body = base64.b64decode(params["body_b64"], validate=True)
@@ -80,7 +114,7 @@ def run_one(controller, uid, req, allow_delegation=True, *, effect_root=None):
             raise Denied("effect root not configured")
         return publish_effect(controller, uid, params["release_id"], effect_root)
     if op == "halt":
-        return halt_with_retry(controller, uid)
+        return halt_with_retry(controller, uid, latch=latch)
     return controller.state(uid)
 
 
@@ -106,21 +140,29 @@ def read_frame(conn, deadline_seconds):
     return data
 
 
-def halt_with_retry(controller, uid, attempts=4):
-    """HALT is idempotent, so a busy database is retried rather than reported as final."""
+def halt_with_retry(controller, uid, attempts=4, *, latch=None):
+    """HALT is idempotent, so a busy database is retried rather than reported as final. With a latch, an admin's
+    request also stops every other mutating request at once and is retried in the background if the caller gives up."""
+    if latch is not None and controller.principals.allows(uid, "admins"):
+        latch.requested.set()
     for attempt in range(attempts):
         try:
-            return controller.halt(uid)
+            result = controller.halt(uid)
+            if latch is not None:
+                latch.persisted.set()
+            return result
         except Denied as e:
             if "persistence unavailable" not in str(e) or attempt == attempts - 1:
+                if latch is not None and latch.requested.is_set() and "persistence unavailable" in str(e):
+                    latch.keep_trying(controller, uid)
                 raise
 
 
-def handle(controller, conn, uid, allow_delegation, effect_root=None):
+def handle(controller, conn, uid, allow_delegation, effect_root=None, latch=None):
     """Any failure becomes DENIED: a request must never be able to end the trusted service."""
     try:
         data = read_frame(conn, READ_DEADLINE)
-        answer = run_one(controller, uid, json.loads(data), allow_delegation, effect_root=effect_root)
+        answer = run_one(controller, uid, json.loads(data), allow_delegation, effect_root=effect_root, latch=latch)
         response = {"ok": True, "result": answer}
     except Exception:  # includes RecursionError from nested JSON and sqlite3.Error
         response = {"ok": False, "error": "DENIED"}
@@ -155,15 +197,19 @@ def serve(controller, path, allow_delegation=True, *, effect_root=None):
     read deadline and each caller UID may hold only PER_UID_CONNECTIONS, so a slow sender cannot stall other
     callers (including HALT). No secret data in error responses."""
     path = Path(path)
-    clear_stale_socket(path)
     if not path.parent.is_dir():
         raise Denied("trusted socket directory missing")
+    # Held until the process exits. Without it two simultaneous starts can each pass the dead-socket probe and
+    # then each unlink the other's live socket, leaving two brokers on one database and one of them unreachable.
+    lock_fd = lock_socket_path(path)
+    clear_stale_socket(path)
     active, lock = {}, threading.Lock()
+    latch = HaltLatch()
 
     def worker(conn, uid):
         try:
             with conn:
-                handle(controller, conn, uid, allow_delegation, effect_root)
+                handle(controller, conn, uid, allow_delegation, effect_root, latch)
         finally:
             release_slot(active, lock, uid)
 
@@ -202,6 +248,25 @@ def serve(controller, path, allow_delegation=True, *, effect_root=None):
                     conn.close()
         finally:
             path.unlink(missing_ok=True)
+            os.close(lock_fd)
+
+
+def lock_socket_path(path):
+    """Exclusive, non-blocking lock beside the socket; the descriptor is returned and stays open for the broker's life."""
+    lock_path = path.with_name(path.name + ".lock")
+    fd = os.open(lock_path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or info.st_mode & 0o077:
+            raise Denied("refusing a socket lock file this process does not own")
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as e:
+            raise Denied("another broker is starting or listening on this socket") from e
+    except BaseException:
+        os.close(fd)
+        raise
+    return fd
 
 
 def clear_stale_socket(path):

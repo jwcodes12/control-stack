@@ -13,6 +13,7 @@ import tempfile
 import threading
 import time
 import unittest
+import unittest.mock
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
@@ -189,6 +190,46 @@ class Serving(Base):
         plain=self.root/'plain';plain.write_text('x')
         with self.assertRaisesRegex(Denied,'refusing'):server.clear_stale_socket(plain)
 
+    def test_socket_lock_is_exclusive_and_symlinks_are_refused(self):
+        path=self.root/'lock.sock';held=server.lock_socket_path(path)
+        with self.assertRaisesRegex(Denied,'another broker'):server.lock_socket_path(path)
+        os.close(held);os.close(server.lock_socket_path(path))   # released with the descriptor (a killed broker releases it too)
+        link=self.root/'link.sock';(self.root/'elsewhere').write_text('x');(self.root/'link.sock.lock').symlink_to(self.root/'elsewhere')
+        with self.assertRaises(OSError):server.lock_socket_path(link)
+        loose=self.root/'loose.sock';lock=self.root/'loose.sock.lock';lock.write_text('');lock.chmod(0o644)
+        with self.assertRaisesRegex(Denied,'does not own'):server.lock_socket_path(loose)
+
+    def test_two_starts_cannot_both_pass_the_dead_socket_probe(self):
+        # Force the interleaving: both starts reach clear_stale_socket together. Without the lock both go on to unlink/bind.
+        db=self.root/'pair'/'gate.db';db.parent.mkdir(mode=0o700);controller=Controller.bootstrap(db,principals(),1)
+        gate=threading.Barrier(2);real=server.clear_stale_socket;outcome=[]
+        def synchronized(path):
+            with contextlib.suppress(threading.BrokenBarrierError):gate.wait(1.5)
+            return real(path)
+        def start():
+            try:server.serve(controller,self.root/'pair.sock')
+            except Denied as e:outcome.append(str(e))
+            except OSError as e:outcome.append('OSError '+str(e))
+        with unittest.mock.patch.object(server,'clear_stale_socket',synchronized):
+            threads=[threading.Thread(target=start,daemon=True) for _ in range(2)]
+            for t in threads:t.start()
+            time.sleep(3)
+        self.assertEqual(outcome,['another broker is starting or listening on this socket'],outcome)
+
+    def test_simultaneous_broker_starts_leave_exactly_one_listener(self):
+        db=self.root/'race'/'gate.db';db.parent.mkdir(mode=0o700);Controller.bootstrap(db,principals(),2)
+        argv=[sys.executable,'-m','trusted_stack.server','--db',str(db),'--socket',str(self.root/'x.sock'),'--agents',str(ME+10),'--reviewers',str(ME+11),'--approvers',str(ME+12),'--admins',str(ME)]
+        procs=[subprocess.Popen(argv,cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.PIPE,text=True) for _ in range(6)]
+        try:
+            wait_listening(self.root/'x.sock');time.sleep(1.5)
+            alive=[q for q in procs if q.poll() is None];self.assertEqual(len(alive),1,[q.poll() for q in procs])
+            self.assertTrue(all(q.returncode for q in procs if q.poll() is not None))
+            self.assertEqual(request(str(self.root/'x.sock'),{'op':'state'})['result']['global_cap'],2)
+        finally:
+            for q in procs:
+                if q.poll() is None:q.terminate()
+            for q in procs:q.communicate(timeout=10)
+
     def test_restart_after_a_kill_reuses_the_database_and_checks_the_cap(self):
         db=self.root/'restart'/'gate.db';db.parent.mkdir(mode=0o700)
         first=start_cli(self.root,db,2)
@@ -298,6 +339,40 @@ class HardenedProfile(unittest.TestCase):
         self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',None,None,['SYS_ADMIN'])],'p',hardening=True)['agent-a'])
         v1=normalize(compose,[row('agent-a')],'p',hardening=False);self.assertNotIn('hardening',v1['agent-a']);self.assertFalse(inventory_has_hardening(v1));self.assertTrue(inventory_has_hardening({'x':v2}))
         self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',['no-new-privileges:true'])],'p',hardening=False)['agent-a'],'v1 normalization still treats any SecurityOpt as unsupported')
+
+class Availability(Base):
+    """Open item 5: HALT latch and staging quota (safety is unchanged: both only refuse more)."""
+    def test_halt_latch_blocks_other_work_at_once_and_persists_in_the_background(self):
+        class Flaky:
+            def __init__(self,inner):self.inner=inner;self.principals=inner.principals;self.calls=0
+            def halt(self,uid):
+                self.calls+=1
+                if self.calls<=3:raise Denied('halt persistence unavailable')
+                return self.inner.halt(uid)
+            def __getattr__(self,name):return getattr(self.inner,name)
+        flaky=Flaky(self.controller);latch=server.HaltLatch();admin=OTHERS[2]
+        with self.assertRaises(Denied):server.halt_with_retry(flaky,admin,attempts=2,latch=latch)
+        self.assertTrue(latch.requested.is_set());self.assertFalse(latch.persisted.is_set())
+        # The database has not recorded the HALT yet, but nothing else may mutate state.
+        for req in ({'op':'stage','body_b64':'eA=='},{'op':'review','digest':'0'*64},{'op':'release','nonce':'n','digest':'0'*64,'destination':'d','lease_id':'l'}):
+            with self.subTest(op=req['op']),self.assertRaisesRegex(Denied,'HALT requested'):server.run_one(flaky,ME,req,latch=latch)
+        self.assertFalse(server.run_one(flaky,ME,{'op':'state'},latch=latch)['halted'])
+        for _ in range(100):
+            if latch.persisted.wait(0.1):break
+        self.assertTrue(latch.persisted.is_set());self.assertTrue(self.controller.state(admin)['halted'])
+    def test_only_an_admin_can_latch_a_halt(self):
+        latch=server.HaltLatch()
+        for uid in (ME,OTHERS[0],OTHERS[1],ME+999):
+            with self.subTest(uid=uid),self.assertRaises(Denied):server.run_one(self.controller,uid,{'op':'halt'},latch=latch)
+            self.assertFalse(latch.requested.is_set())
+        self.assertTrue(server.run_one(self.controller,OTHERS[2],{'op':'halt'},latch=latch));self.assertTrue(latch.persisted.is_set())
+    def test_staging_quota_refuses_new_bytes_but_not_known_ones(self):
+        self.controller.STAGING_QUOTA=10
+        digest=self.controller.stage(ME,b'abcdef')
+        self.assertEqual(self.controller.stage(ME,b'abcdef'),digest)       # already staged: free
+        with self.assertRaisesRegex(Denied,'quota'):self.controller.stage(ME,b'ghijkl')
+        self.assertTrue(self.controller.stage(ME,b'wxyz'))                  # exactly at the quota
+        with self.assertRaisesRegex(Denied,'quota'):self.controller.stage(ME,b'1')
 
 class ReceiverDebris(Base):
     """T9.5 (review L3): a crash before link leaves .pending-* debris; the receiver reaps it under the DB lock."""

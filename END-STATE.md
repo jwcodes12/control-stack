@@ -1,6 +1,6 @@
 # END-STATE — deployment verifier, handoff `HANDOFF-SOL-TO-R2.md`
 
-Date: 2026-10-11. Tiers 1–7 by Sol (GPT via Codex); Tier 8 by Claude Opus 5.5 after Sol's
+Date: 2026-10-11. Tiers 1–7 by Sol (GPT via Codex); Tiers 8–9 by Claude Opus 5.5 after Sol's
 thread hit its usage limit. Nothing merged; publication, tagging and merging are the owner's call.
 
 ## Reached level: scoped R2 (not R3, not R4)
@@ -9,11 +9,12 @@ All eleven section 7 gates are met for the claimed scope **except independent hu
 which is G1 (`deployment/RELEASE-GATES.md`). Concretely:
 
 - one command from a fresh clone: `python3 tools/cstack.py demo --output DIR` — PASS at
-  beb396a, all four stages, 112 s (`deployment/runs/tier8/demo-fresh-clone-final`);
-- zero known false CONDITIONALs (44/44 fixtures; 25 sealed held-out cases, zero false
+  bacf4d6 (Tier 9), all four stages, 112 s (`deployment/runs/tier9/demo-fresh-clone`; the
+  Tier 8 run is `deployment/runs/tier8/demo-fresh-clone-final`);
+- zero known false CONDITIONALs (51/51 fixtures: 44 frozen legacy + 7 hardened-profile; 25 sealed held-out cases, zero false
   acceptances in every scoring phase);
 - residual premises stated in `docs/DEPLOYMENT-CLAIM-v0.md`, including three found by the
-  Tier 8 trusted-path review;
+  Tier 8 trusted-path review and the limits found by the Tier 9 review of the fixes;
 - every recorded failure listed in `deployment/REVIEW-PACKET-R2.md` section 4.
 
 **What R2 does not mean:** no deployment is "assured"; CONDITIONAL rests on unproved
@@ -21,13 +22,29 @@ faithful extraction and protocol refinement; tested on one host (Oracle Linux 9.
 Docker 29.8, no Landlock); no LLM agent was ever run against it; only two live bypasses
 were observed, both on deliberately misconfigured deployments.
 
-## Not finished but grindable (no resource needed)
+## Tier 9: trusted-path hardening (done)
 
-T9.1–T9.6, trusted-path hardening from the Tier 8 review: versioned source pins, delegation off,
-server robustness (crash on malformed input, slow-sender stall, HALT retry), `no-new-privileges`
-plus `cap_drop`, pending-file reaper, then re-run the non-bypass live cases. None of these
-findings violates the claim's conclusion; all are stated as premises until fixed.
-So the stop condition "every remaining task needs a resource" is **not yet** met.
+T9.1–T9.6 fixed what the Tier 8 review found, in source generations `r2-v1`..`r2-v4`
+(`deployment/pinned-sources/`, `deployment/pins.py`): versioned pins so archived evidence
+keeps replaying; delegation off by default and flagged by the scanner; a threaded broker with
+a total read deadline, connection caps with slots reserved for trusted roles, catch-all
+errors, HALT retry and restart-safe startup; agents must carry `no-new-privileges` and
+`cap_drop: [ALL]` (v2 inventory, UNKNOWN edge, image file-capability scan with a positive
+control); the receiver reaps pre-link `.pending-*` debris. Live evidence on the fixed code:
+`deployment/runs/tier9/` (5 non-bypass cases + the demo; no bypass rerun).
+An Opus 5.5 review of those fixes (`deployment/reviews/t9-hardening-review-opus.md`) found no
+HIGH issue and three MEDIUM ones, all fixed; its open LOW items are stated in the claim.
+**None of this has had independent human review.**
+
+## Still open but not resource-gated
+
+Items I judged not worth reopening or that need design decisions: T4.2 (false as stated;
+safety-only version proved); T4.4 (BLOCKED under the handoff time-box after three failed Lean
+attempts: an unfinished proof task, not a resource gate); `Principals` accepting UID 0; the
+receiver still publishing delegated releases from an old database; evidence checkers not
+pinning a single source generation; the image scan hashing only listed source files. The
+handoff's stop condition ("every remaining task needs a resource") is therefore met only if
+BLOCKED tasks count as terminal.
 
 ## Queue
 
@@ -41,7 +58,7 @@ So the stop condition "every remaining task needs a resource" is **not yet** met
 | T6 held-out | 3/3 DONE |
 | T7 attribution | 4/4 DONE (defensive recast); original T7.2/T7.3 attack arms GATED |
 | T8 release | 6/6 DONE |
-| T9 hardening | 6 TODO |
+| T9 hardening | 6/6 DONE (fixes unreviewed by humans) |
 
 Full table: `deployment/QUEUE.md`.
 
@@ -60,17 +77,20 @@ Full table: `deployment/QUEUE.md`.
 ## Remaining premises
 
 Faithful extraction; protocol refinement; the TCB (kernel, Docker daemon and its reports,
-SQLite, Python, broker/receiver, scanner/verifier/serializer, Lean); and, from the Tier 8
-review: no delegation in covered runs (checked by `deployment/sink_audit.py`), timeouts
-are indeterminate (retry approvals only with the same nonce), no HALT liveness, and agent
-UIDs cannot regain CAP_SETUID (image evidence in `deployment/runs/tier8/capability-check`).
+SQLite, Python, broker/receiver, scanner/verifier/serializer, Lean); the pin vault; for Tier 2–8
+evidence (generation `r2-v0`) no delegation in covered runs (checked by
+`deployment/sink_audit.py`), indeterminate timeouts (retry approvals only with the same
+nonce), no HALT liveness, and agent UIDs cannot regain CAP_SETUID. On the hardened profile and
+current source the delegation and CAP_SETUID premises are enforced (UNKNOWN edges, not
+assumptions) and the slow-sender stall is fixed; database-busy timeouts remain indeterminate.
 
 ## Failures
 
 All are in `deployment/REVIEW-PACKET-R2.md` section 4, with raw evidence under
 `deployment/runs/tier*/`. Headline ones: two false CONDITIONALs in the original PR #45
 (fixed in T1); T4.2 and T4.4 BLOCKED; held-out contamination; the `cyber_policy` stop that
-forced the defensive-only scope.
+forced the defensive-only scope; in Tier 9 a `None` vs `[]` disagreement that only the real
+Docker daemon exposed (`deployment/runs/tier9/attempt1-*`).
 
 ## PR chain (stacked drafts; merge in order)
 
@@ -83,7 +103,8 @@ forced the defensive-only scope.
 | #49 | sol/r2-tier5 | c0f5f45 | 18 pass, 3 skipped |
 | #50 | sol/r2-tier6 | b263d0b | 18 pass, 3 skipped |
 | #51 | sol/r2-tier7 | b59ec73 | 18 pass, 3 skipped (`deployment/runs/tier7/ci-receipt-b59ec73.json`) |
-| Tier 8 | sol/r2-tier8 | this commit | see the PR's checks (recorded after the run) |
+| #52 (Tier 8) | sol/r2-tier8 | 062b558 | 20 pass, 4 skipped by design (live-containers, linux-boundary, lean-vcvio) |
+| Tier 9 | sol/r2-tier9 | this commit | see the PR's checks (recorded after the run) |
 
 ## Gated (needs a resource or owner decision)
 

@@ -43,7 +43,7 @@ Closed in source generation `r2-v6` (details and limits in `docs/DEPLOYMENT-CLAI
 generation and refuse `python -O`; the image scan inventories the whole `/slice` tree and the interpreter start-up hooks; an
 in-process HALT latch and a staging quota; `cstack plan` accepts a fresh scan's own IR; a start lock stops two brokers
 removing each other's socket; `publish_effect` is pinned outside the claim by a test; the T4.4 replay uses the recorded broker
-clock; live evidence for the five non-bypass cases and the demo on the final generation (`deployment/runs/tier10/`);
+clock; live evidence for the five non-bypass cases and the demo on the final generation `r2-v7` (`deployment/runs/tier10/`: the five cases, `cstack demo` in the dev clone, and in a fresh clone at d42de1c, all PASS; the earlier `r2-v6` runs are in `gen-r2-v6/`); the Lean differential, contract-witness, monotonicity and transcript checkers pass;
 a second held-out set (34 cases, blind `codex exec` author, hardened profile) that found **one false CONDITIONAL before
 any fix** (an agent whose `SLICE_ROLE` is `broker`; fixed in the extractor, so the post-fix figures are contaminated).
 

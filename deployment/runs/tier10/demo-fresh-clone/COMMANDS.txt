@@ -1,0 +1,4 @@
+git clone --branch eng/close-open-items https://github.com/jwcodes12/control-stack.git /var/tmp/cstack-r2-tier10-fresh   # at d42de1c
+cd /var/tmp/cstack-r2-tier10-fresh
+mkdir -p .lake && ln -s /home/opc/research/control-stack/.lake/packages .lake/packages   # prebuilt pinned Lean deps; no network
+python3 tools/cstack.py demo --output /var/tmp/cstack-r2-tier10-fresh-demo                # exit 0

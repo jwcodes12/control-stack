@@ -157,12 +157,23 @@ premises that were previously unstated. They are now part of this claim:
   dead socket it owns. Archived `r2-v0` runs predate these fixes; live evidence on the new
   generation is queued (T9.6).
 - **Agent UIDs cannot gain CAP_SETUID.** SO_PEERCRED binding assumes agents cannot switch
-  UID. The supported profile does not yet set `no-new-privileges` or `cap_drop`. Evidence
-  for the pinned offline image (`deployment/runs/tier8/capability-check`): no
-  setuid/setgid files, no `security.capability` xattrs, and an agent-UID container has
-  empty permitted/effective/ambient sets (CAP_SETUID only in the bounding set).
-  Regaining it would require a kernel-level escalation, which is in the TCB. Requiring
-  both settings in the profile is queued (T9).
+  UID. Evidence for the pinned offline image (`deployment/runs/tier8/capability-check`):
+  no setuid/setgid files, no `security.capability` xattrs, and an agent-UID container has
+  empty permitted/effective/ambient sets (CAP_SETUID only in the bounding set). Regaining it
+  would require a kernel-level escalation, which is in the TCB. **Enforced from the
+  hardened profile (T9.4):** `examples/compose-two-agent-hardened/` gives both agents
+  `security_opt: [no-new-privileges:true]` and `cap_drop: [ALL]`; the collector reports both
+  from the Docker daemon (v2 inventory: `hardening`); the extractor makes an agent that lacks
+  either, or whose daemon report disagrees with the declaration, an UNKNOWN edge
+  (`agent-no-new-privileges-and-cap-drop-ALL-not-established`); any other `security_opt` or
+  `cap_drop` value stays an unsupported feature; a fresh scan refuses an inventory that does
+  not report `hardening`; and the image scan records files carrying `security.capability`
+  (from the `SCHILY.xattr` PAX header of `docker export`), which make the image UNKNOWN. The
+  PAX-header reading is unit-tested on a synthetic archive and checked against the pinned
+  image's export; it has not been exercised on an image that really carries a file capability.
+  Archived runs (v1 inventories, before this profile) replay under the rules they were
+  produced with and do not satisfy the hardened profile; remediation plans now add both settings
+  to the agents. Live evidence under the hardened profile is queued (T9.6).
 - **Sink scope is `<release_id>.body` names.** A receiver crash before `link` can leave a
   `.pending-*` temporary file (possibly a prefix of reviewed bytes) that is not cleaned
   up. The sink-side audit reports any non-`.body` file; none occurred in recorded runs.

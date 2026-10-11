@@ -12,7 +12,7 @@ from deployment.pins import require
 from deployment.scan import replay_snapshot
 from deployment.plan import apply_patch
 from extractors.compose import sha
-from tools.collect_deployment_docker import normalize
+from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from security_ir.verifier import verify
 from deployment.run_containers import BODY
 
@@ -34,7 +34,7 @@ def check(output):
         c=json.loads((dest/'compose.json').read_text());r=json.loads((dest/'runtime.json').read_text());raw=dest/'docker-inspect.raw.json';inventory=json.loads(raw.read_text())
         assert len(inventory)==6 and all(entry['State']['Running'] for entry in inventory)
         assert r['capture']['raw_sha256']==sha(raw) and r['capture']['independent_attestation'] is False
-        assert r['services']==normalize(c,inventory,'cstack-r2-remediated-'+case)
+        assert r['services']==normalize(c,inventory,'cstack-r2-remediated-'+case,inventory_has_hardening(r['services']))
         assert {r['services'][name]['uid'] for name in ('agent-a','agent-b')}=={23701,23702}
         for name in ('agent-a','agent-b'):
             assert {m['target'] for m in r['services'][name]['mounts']}=={'/channel'}

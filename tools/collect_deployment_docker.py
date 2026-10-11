@@ -9,17 +9,24 @@ import json
 import subprocess
 from pathlib import Path
 
+NNP={'no-new-privileges','no-new-privileges:true'}
+
+def inventory_has_hardening(services):
+    return any(isinstance(s,dict) and 'hardening' in s for s in services.values())
+
 def capture(compose, project, output):
     c=json.loads(Path(compose).read_text()); output=Path(output); output.mkdir(parents=True,exist_ok=True)
     ids=subprocess.check_output(['docker','compose','-p',project,'-f',str(compose),'ps','-q'],text=True).split()
     if not ids: raise ValueError('no running containers to inspect')
     raw=subprocess.check_output(['docker','inspect',*ids])
     (output/'docker-inspect.raw.json').write_bytes(raw)
-    services=normalize(c,json.loads(raw),project)
+    services=normalize(c,json.loads(raw),project,hardening=True)
     result={'capture':{'kind':'docker-inspect','raw_sha256':hashlib.sha256(raw).hexdigest(),'independent_attestation':False},'services':services}
     (output/'runtime.json').write_text(json.dumps(result,sort_keys=True,indent=2)+'\n')
     return result
-def normalize(c, rows, project):
+def normalize(c, rows, project, hardening=False):
+    """hardening=True is the v2 inventory: it also reports no-new-privileges and cap_drop. Archived (v1) inventories
+    lack the field, so replay checkers pass hardening=inventory_has_hardening(...)."""
     services={}
     for row in rows:
         name=row['Config']['Labels']['com.docker.compose.service']
@@ -34,8 +41,9 @@ def normalize(c, rows, project):
                   'networks':sorted(n.removeprefix(project+'_') for n in row['NetworkSettings']['Networks']),
                   'env_names':sorted(e.split('=',1)[0] for e in row['Config']['Env'])}
         hc=row['HostConfig']
-        if hc['Privileged'] or hc.get('CapAdd') or hc.get('Devices') or hc.get('PidMode') or hc.get('IpcMode') not in ('private','') or hc.get('UsernsMode') != '' or hc.get('SecurityOpt') or hc.get('NetworkMode')=='host' or any(hc.get(k) for k in ('GroupAdd','VolumesFrom','Tmpfs','ExtraHosts','PortBindings','Sysctls','DeviceRequests')) or row['Config'].get('Entrypoint') != ['/usr/bin/python3','/slice/entry.py'] or row['Config'].get('Cmd'):
+        if hc['Privileged'] or hc.get('CapAdd') or hc.get('Devices') or hc.get('PidMode') or hc.get('IpcMode') not in ('private','') or hc.get('UsernsMode') != '' or (hc.get('SecurityOpt') if not hardening else set(hc.get('SecurityOpt') or [])-NNP) or hc.get('NetworkMode')=='host' or any(hc.get(k) for k in ('GroupAdd','VolumesFrom','Tmpfs','ExtraHosts','PortBindings','Sysctls','DeviceRequests')) or row['Config'].get('Entrypoint') != ['/usr/bin/python3','/slice/entry.py'] or row['Config'].get('Cmd'):
             observed['unsupported_runtime_security']='nondefault namespace/capability/device/security policy'
+        if hardening:observed['hardening']={'no_new_privileges':bool(set(hc.get('SecurityOpt') or [])&NNP),'cap_drop':sorted(hc.get('CapDrop') or [])}
         services[name]=observed
     return services
 

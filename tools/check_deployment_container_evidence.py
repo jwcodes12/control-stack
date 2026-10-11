@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.pins import require
 from extractors.compose import collect,sha
-from tools.collect_deployment_docker import normalize
+from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from security_ir.verifier import verify
 
 def check(output):
@@ -33,7 +33,7 @@ def check(output):
         assert hashlib.sha256(raw).hexdigest()==r['capture']['raw_sha256']
         rows=json.loads(raw)
         assert len(rows)==6 and all(row['State']['Running'] for row in rows)
-        assert r['services']==normalize(c,rows,'sol-pr45-followup'),('normalized daemon facts differ',case)
+        assert r['services']==normalize(c,rows,'sol-pr45-followup',inventory_has_hardening(r['services'])),('normalized daemon facts differ',case)
         assert all('unsupported_runtime_security' not in f for f in r['services'].values())
         ir=collect(original,dest/'runtime.json',sha(original),replay=True)
         stored_ir=json.loads((dest/'ir.json').read_text())

@@ -2,6 +2,7 @@
 import hashlib
 from deployment.pins import generations
 from deployment.scan import reference_policy
+from extractors.compose import HARDENED,declared_hardening
 from security_ir.verifier import verify
 import copy
 import difflib
@@ -27,8 +28,8 @@ def patch_diff(old,new,path=''):
     return [{'op':'replace','path':path,'value':new}]
 
 
-FIELDS={'image','user','volumes','networks','environment','x-cstack-role'}
-SELECTED={'uid','image','mounts','networks','env_names'}
+FIELDS={'image','user','volumes','networks','environment','x-cstack-role','security_opt','cap_drop'}
+SELECTED={'uid','image','mounts','networks','env_names','hardening'}
 KNOWN={'agent-a':'agent','agent-b':'agent','broker':'broker','receiver':'receiver','reviewer':'reviewer','approver':'approver'}
 def apply_patch(document,operations):
     document=copy.deepcopy(document)
@@ -45,6 +46,8 @@ def apply_patch(document,operations):
         elif op['op'] in {'add','replace'}:parent[key]=copy.deepcopy(op['value'])
         else:raise ValueError('unsupported patch operation')
     return document
+
+def role_of(c,name):return c['services'][name].get('x-cstack-role')
 
 def portable_observation_ir(ir,inputs):
     """Relocation changes only source labels for hash-identical known artifacts."""
@@ -83,6 +86,9 @@ def build_plan(c,r,ir,base_sha256,host=None):
             if key not in FIELDS:
                 if key=='read_only' and s[key] is True:issue(p+'/read_only','read_only rootfs is unsupported; retain this restriction until scanner support exists')
                 else:del s[key]
+        # Agents must not be able to regain capabilities (T9.4); no other role needs these settings.
+        if role=='agent' and name in agents[:2]:s['security_opt']=list(HARDENED['security_opt']);s['cap_drop']=list(HARDENED['cap_drop'])
+        else:s.pop('security_opt',None);s.pop('cap_drop',None)
         s['networks']=['isolated']
         if isinstance(s.get('environment'),dict):
             env=s['environment']
@@ -130,6 +136,8 @@ def build_plan(c,r,ir,base_sha256,host=None):
                 numeric=int(principal) if isinstance(principal,str) and principal.isdigit() else None
                 if numeric is None:issue('/services/'+escape(name)+'/user','numeric non-root UID must be reviewed for this unsupported role')
                 proposed={'uid':numeric,'image':service.get('image'),'mounts':sorted([{k:v for k,v in m.items() if k!='bind'} for m in service['volumes']],key=lambda m:(m['source'],m['target'])),'networks':service['networks'],'env_names':sorted(service.get('environment',{}))}
+                if role_of(c,name)=='agent' and 'hardening' not in obs:issue('/runtime/services/'+escape(name)+'/hardening','runtime inventory does not report no-new-privileges and cap_drop; recreate with the hardened profile and recollect with the v2 collector')
+                if 'hardening' in obs:proposed['hardening']=declared_hardening(service)
                 for key,value in proposed.items():
                     if obs.get(key)!=value:issue('/runtime/services/'+escape(name)+'/'+escape(key),'captured '+key+' differs from the proposed configuration; recreate/recollect before verification')
 

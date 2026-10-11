@@ -19,9 +19,9 @@ def cstack(*args):return subprocess.run([sys.executable,str(ROOT/'tools/cstack.p
 
 class Release(unittest.TestCase):
     def test_golden_bundles_reports_and_schema(self):
-        for name in ('clean','writable-sink-mount','trusted-role-uid-collision'):
+        for name,fixtures in (('clean','fixtures'),('writable-sink-mount','fixtures'),('trusted-role-uid-collision','fixtures'),('hardened-clean','fixtures-hardened')):
             with self.subTest(name=name):
-                bundle=verify(json.loads((ROOT/'security_ir/fixtures'/(name+'.json')).read_text()))
+                bundle=verify(json.loads((ROOT/'security_ir'/fixtures/(name.removeprefix('hardened-')+'.json')).read_text()))
                 validate(bundle,schema('bundle'))
                 self.assertEqual(bundle,json.loads((GOLDEN/(name+'.bundle.json')).read_text()))
                 self.assertEqual(report(bundle),(GOLDEN/(name+'.report.md')).read_text())

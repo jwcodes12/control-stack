@@ -186,5 +186,39 @@ class Serving(Base):
             self.assertNotEqual(p.returncode,0);self.assertIn(message,p.stderr)
             self.assertFalse((self.root/'a.db').exists(),'refused before bootstrapping a database')
 
+class HardenedProfile(unittest.TestCase):
+    """T9.4 (review M3): the hardened corpus is generated, accepted only when agents cannot regain capabilities."""
+    def test_hardened_fixtures_match_their_expectations(self):
+        from security_ir.verifier import verify
+        from tools.check_deployment_subset_differential import configuration_accepted
+        expected=json.loads((ROOT/'examples/compose-two-agent-hardened/expected.json').read_text())
+        self.assertGreaterEqual(len(expected),5)
+        for name,exp in expected.items():
+            with self.subTest(name=name):
+                ir=json.loads((ROOT/'security_ir/fixtures-hardened'/(name+'.json')).read_text())
+                self.assertEqual(configuration_accepted(ir),exp['lean_accepted'])
+                self.assertTrue(exp['bypass'] is None or exp['bypass'] in json.dumps(verify(ir)))
+
+    def test_legacy_corpus_is_untouched_and_does_not_require_hardening(self):
+        # Archived evidence is bound to these bytes; the hardened profile is additive.
+        legacy=json.loads((ROOT/'security_ir/fixtures/clean.json').read_text())
+        from tools.check_deployment_subset_differential import configuration_accepted
+        self.assertTrue(configuration_accepted(legacy))
+        self.assertNotIn('security_opt',(ROOT/'examples/compose-two-agent/clean.compose.json').read_text())
+
+    def test_hardening_is_reported_by_the_collector_and_replay_keeps_v1(self):
+        from tools.collect_deployment_docker import inventory_has_hardening,normalize
+        compose=json.loads((ROOT/'examples/compose-two-agent-hardened/clean.compose.json').read_text())
+        def row(name,security=None,drop=None,add=None):
+            return {'Config':{'Labels':{'com.docker.compose.service':name},'User':'23701','Env':['A=1'],'Entrypoint':['/usr/bin/python3','/slice/entry.py'],'Cmd':None},'Image':'sha256:x','Mounts':[],
+                    'NetworkSettings':{'Networks':{'p_isolated':{}}},'HostConfig':{'Privileged':False,'CapAdd':add,'CapDrop':drop,'SecurityOpt':security,'Devices':None,'PidMode':'','IpcMode':'private','UsernsMode':'','NetworkMode':'p_isolated','PortBindings':{}}}
+        v2=normalize(compose,[row('agent-a',['no-new-privileges:true'],['ALL'])],'p',hardening=True)['agent-a']
+        self.assertEqual(v2['hardening'],{'no_new_privileges':True,'cap_drop':['ALL']});self.assertNotIn('unsupported_runtime_security',v2)
+        plain=normalize(compose,[row('agent-a')],'p',hardening=True)['agent-a'];self.assertEqual(plain['hardening'],{'no_new_privileges':False,'cap_drop':[]})
+        seccomp=normalize(compose,[row('agent-a',['seccomp=unconfined'])],'p',hardening=True)['agent-a'];self.assertIn('unsupported_runtime_security',seccomp)
+        self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',None,None,['SYS_ADMIN'])],'p',hardening=True)['agent-a'])
+        v1=normalize(compose,[row('agent-a')],'p');self.assertNotIn('hardening',v1['agent-a']);self.assertFalse(inventory_has_hardening(v1));self.assertTrue(inventory_has_hardening({'x':v2}))
+        self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',['no-new-privileges:true'])],'p')['agent-a'],'v1 normalization still treats any SecurityOpt as unsupported')
+
 if __name__=='__main__':
     unittest.main()

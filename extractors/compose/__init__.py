@@ -13,6 +13,18 @@ ROOT = Path(__file__).resolve().parents[2]
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
+# The only security_opt / cap_drop values the supported profile accepts (T9.4). Anything else stays an
+# unsupported service feature. The requirement that agents HAVE them is enforced by the fresh scanner.
+HARDENED={'security_opt':['no-new-privileges:true'],'cap_drop':['ALL']}
+
+REFERENCE_HARDENING={'no_new_privileges':True,'cap_drop':['ALL']}
+
+def declared_hardening(service):
+    """What a runtime inventory must report for this declared service (same shape as the collector's 'hardening')."""
+    drop=service.get('cap_drop')
+    return {'no_new_privileges':service.get('security_opt')==HARDENED['security_opt'],
+            'cap_drop':sorted(drop) if isinstance(drop,list) and all(isinstance(x,str) for x in drop) else None}
+
 def inventory_order(observed):
     """Order is irrelevant only for unambiguous selected inventories.
     Preserve every field and duplicate; do not canonicalize repeated mount targets.
@@ -94,6 +106,9 @@ def collect(compose, runtime, expected_sha256, replay=False):
                 and isinstance(v.get('source'),str) and v['source'].startswith('/')
                 and '$' not in v['source'] and '..' not in v['source'].split('/')}
     broker_channels = channel_sources(services.get('broker'),writable=True)
+    # v2 runtime inventories report hardening; only then is it required of agents. Archived v1 inventories predate
+    # the field and replay under the rules they were produced with (a fresh scan refuses a v1 inventory).
+    inventory_v2 = any(isinstance(o,dict) and 'hardening' in o for o in r.get('services',{}).values()) if isinstance(r.get('services',{}),dict) else False
     for name, s in sorted(services.items()):
         if name in {'sink','database','unknown'} or not isinstance(s,dict):
             raise ValueError('invalid service')
@@ -115,10 +130,16 @@ def collect(compose, runtime, expected_sha256, replay=False):
         if observed is not None:
             keys = ('uid','image','mounts','networks','env_names')
             expected = {'uid':uid,'image':image,'mounts':sorted(selected_mounts(s.get('volumes',[])),key=lambda v:(v.get('source',''),v.get('target',''))) if isinstance(s.get('volumes',[]),list) and all(isinstance(v,dict) for v in s.get('volumes',[])) else s.get('volumes',[]),'networks':s.get('networks',[]),'env_names':sorted(env)}
-            facts['runtime_match'] = 'MATCH' if isinstance(observed,dict) and set(observed) == set(keys) and json.dumps(inventory_order(observed),sort_keys=True) == json.dumps(inventory_order(expected),sort_keys=True) else 'DRIFT'
+            core = {k:v for k,v in observed.items() if k != 'hardening'} if isinstance(observed,dict) else observed
+            hardening_ok = not isinstance(observed,dict) or 'hardening' not in observed or observed['hardening'] == declared_hardening(s)
+            facts['runtime_match'] = 'MATCH' if isinstance(observed,dict) and set(core) == set(keys) and hardening_ok and json.dumps(inventory_order(core),sort_keys=True) == json.dumps(inventory_order(expected),sort_keys=True) else 'DRIFT'
         nodes.append({'id':name,'type':'service','facts':facts,'provenance':cp})
-        if set(s)-{'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'}:
-            unknown(name,'unknown-feature: unsupported service feature: '+','.join(sorted(set(s)-{'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'})))
+        if inventory_v2 and role == 'agent' and not (declared_hardening(s) == REFERENCE_HARDENING and all(s.get(k) == HARDENED[k] for k in HARDENED)
+                and isinstance(observed,dict) and observed.get('hardening') == REFERENCE_HARDENING):
+            unknown(name,'agent-no-new-privileges-and-cap-drop-ALL-not-established')
+        supported_keys = {'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'}|{k for k in HARDENED if s.get(k) == HARDENED[k]}
+        if set(s)-supported_keys:
+            unknown(name,'unknown-feature: unsupported service feature: '+','.join(sorted(set(s)-supported_keys)))
         if 'privileged' in s and type(s['privileged']) is not bool:
             unknown(name,'unsupported privileged value')
         if 'network_mode' in s and s['network_mode'] != 'host':

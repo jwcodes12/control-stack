@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from extractors.compose import collect, sha
+from extractors.compose import HARDENED, collect, declared_hardening, sha
 
 def dumps(x): return json.dumps(x,sort_keys=True,indent=2)+'\n'
 def build(check=False):
@@ -105,6 +105,39 @@ def build(check=False):
         finally: os.chdir(old)
         expected[name]={'compose_sha256':sha(p),'verdict':'CONDITIONAL' if name=='clean' else 'UNASSURED','lean_accepted':name=='clean','bypass':None if name=='clean' else {'writable-channel-mount':'unlisted-host-mount','channel-target-shadow':'unlisted-host-mount','credential-password':'opaque-credential-env-name:PASSWORD','missing-isolated-network':'unsupported service networks','mount-parent-alias':'unresolved mount source','trusted-reviewer-uid-collision':'trusted-role-uid-collision','missing-reviewer-role':'supported-roles'}.get(name, coverage[name][0] if name in coverage else 'unsupported volume feature' if name=='named-volume' else name if name in {'secrets','configs'} else ('DRIFT' if runtime_edits[name][0]=='service' else 'unsupported/extra runtime service') if name in runtime_edits else name)}
     write(base/'expected.json',dumps(expected))
+    # Hardened profile (T9.4): agents carry no-new-privileges and cap_drop ALL, and the runtime inventory reports them (v2).
+    # The legacy corpus above stays byte-identical because archived evidence is bound to it.
+    hbase=ROOT/'examples/compose-two-agent-hardened';hfix=ROOT/'security_ir/fixtures-hardened'
+    if not check:hbase.mkdir(exist_ok=True);hfix.mkdir(exist_ok=True)
+    h=copy.deepcopy(c)
+    for n in ('agent-a','agent-b'):h['services'][n].update(security_opt=list(HARDENED['security_opt']),cap_drop=list(HARDENED['cap_drop']))
+    hcases={'clean':h}
+    def hmutation(name):
+        m=copy.deepcopy(h);hcases[name]=m;return m
+    del hmutation('agent-missing-no-new-privileges')['services']['agent-a']['security_opt']
+    del hmutation('agent-missing-cap-drop')['services']['agent-b']['cap_drop']
+    hmutation('agent-cap-drop-not-all')['services']['agent-a']['cap_drop']=['NET_RAW']
+    hmutation('runtime-not-hardened')
+    named={'agent-missing-no-new-privileges':'agent-no-new-privileges-and-cap-drop-ALL-not-established','agent-missing-cap-drop':'agent-no-new-privileges-and-cap-drop-ALL-not-established','agent-cap-drop-not-all':'unsupported service feature: cap_drop','runtime-not-hardened':'DRIFT'}
+    hexpected={}
+    import os
+    for name,hc in hcases.items():
+        p=hbase/(name+'.compose.json');write(p,dumps(hc))
+        r={'services':{k:{'uid':int(v['user']),'image':v['image'],'mounts':sorted([{k:x for k,x in m.items() if k!='bind'} for m in v['volumes']],key=lambda m:(m['source'],m['target'])),'networks':v.get('networks',[]),'env_names':sorted(v['environment']),'hardening':declared_hardening(v)} for k,v in hc['services'].items()}}
+        if name=='runtime-not-hardened':r['services']['agent-a']['hardening']['no_new_privileges']=False
+        rp=hbase/(name+'.runtime.json');write(rp,dumps(r))
+        old=os.getcwd();os.chdir(ROOT)
+        try:
+            ir=collect(p.relative_to(ROOT),rp.relative_to(ROOT),sha(p))
+            for n in ir['sources']:
+                n['source']=str(Path(n['source']).relative_to(ROOT)) if n['source'].startswith(str(ROOT)+'/') else n['source']
+            for n in ir['nodes']+ir['edges']:
+                prov=n['provenance']
+                prov['source']=str(Path(prov['source']).relative_to(ROOT)) if prov['source'].startswith(str(ROOT)+'/') else prov['source']
+            write(hfix/(name+'.json'),dumps(ir))
+        finally:os.chdir(old)
+        hexpected[name]={'compose_sha256':sha(p),'verdict':'CONDITIONAL' if name=='clean' else 'UNASSURED','lean_accepted':name=='clean','bypass':named.get(name)}
+    write(hbase/'expected.json',dumps(hexpected))
 if __name__=='__main__':
     import argparse
     p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');a=p.parse_args();build(a.check)

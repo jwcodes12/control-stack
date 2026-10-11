@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.reconcile import reconcile
 from deployment.pins import require
-from tools.collect_deployment_docker import normalize
+from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from extractors.compose import collect,sha
 from security_ir.verifier import verify
 
@@ -28,7 +28,7 @@ def check(output):
             r=json.loads((scan_dir/'runtime.json').read_text());raw=scan_dir/'docker-inspect.raw.json';rows=json.loads(raw.read_text())
             assert r['capture']['raw_sha256']==sha(raw) and r['capture']['independent_attestation'] is False
             assert len(rows)==6 and all(row['State']['Running'] for row in rows)
-            assert r['services']==normalize(c,rows,project)
+            assert r['services']==normalize(c,rows,project,inventory_has_hardening(r['services']))
             if (scan_dir/'fresh-inputs').exists():
                 from deployment.scan import replay_snapshot
                 ir=replay_snapshot(dest/'compose.json',scan_dir/'runtime.json',scan_dir/'fresh-inputs')

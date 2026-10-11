@@ -37,6 +37,10 @@ def delegation_enabled(entry=None):
     tree=ast.parse((Path(entry) if entry else Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
     return any(isinstance(n,ast.Constant) and n.value=='--allow-delegation' for n in ast.walk(tree))
 
+def capability_paths(members):
+    """Files that carry file capabilities: docker export records them as the SCHILY.xattr.security.capability PAX header."""
+    return sorted(m.name for m in members if any('security.capability' in key for key in m.pax_headers))
+
 def inspect_image(image):
     try:
         p=subprocess.run(['docker','image','inspect',image],capture_output=True,text=True,timeout=10)
@@ -59,8 +63,8 @@ def inspect_image(image):
                     inventory=sorted((m.name,m.mode,m.uid,m.gid,m.type.decode('ascii')) for m in members)
                     wanted={'slice/entry.py',*[('slice/trusted_stack/'+f.name) for f in (Path(__file__).resolve().parents[1]/'trusted_stack').glob('*.py')]}
                     sources={m.name.removeprefix('./'):hashlib.sha256(tar.extractfile(m).read()).hexdigest() for m in members if m.isfile() and m.name.removeprefix('./') in wanted}
-                setid=[name for name,mode,*_ in inventory if mode&0o6000]
-                return {'status':'OBSERVED','image':row['Id'],'image_user':config.get('User',''),'entrypoint':config.get('Entrypoint'),'command':config.get('Cmd'),'setid_paths':setid,'export_sha256':sha(archive),'source_sha256':sources,'mode_inventory_sha256':hashlib.sha256(json.dumps(inventory,separators=(',',':')).encode()).hexdigest(),'principal_policy':reference_policy(),'inspection':'stopped create with network none, numeric UID 23705, harmless overridden entrypoint; export; rm; never start','basis':'Docker inspect/export; daemon observations, not attestation'}
+                setid=[name for name,mode,*_ in inventory if mode&0o6000];file_capabilities=capability_paths(members)
+                return {'status':'OBSERVED','image':row['Id'],'image_user':config.get('User',''),'entrypoint':config.get('Entrypoint'),'command':config.get('Cmd'),'setid_paths':setid,'file_capability_paths':file_capabilities,'export_sha256':sha(archive),'source_sha256':sources,'mode_inventory_sha256':hashlib.sha256(json.dumps(inventory,separators=(',',':')).encode()).hexdigest(),'principal_policy':reference_policy(),'inspection':'stopped create with network none, numeric UID 23705, harmless overridden entrypoint; export; rm; never start','basis':'Docker inspect/export; daemon observations, not attestation'}
         finally:
             if created_id:subprocess.run(['docker','rm',created_id],capture_output=True,timeout=10)
     except (OSError,ValueError,subprocess.SubprocessError,tarfile.TarError):return {'status':'UNKNOWN','reason':'offline image inspection unavailable'}
@@ -108,9 +112,18 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
         image=s.get('image','')
         if image not in images:images[image]=image_observer(image)
         audit=images[image]
+        # v2 inventories (and every fresh scan) must establish that agents cannot regain capabilities (T9.4).
+        # Archived v1 inventories predate the field and are replayed under the rules they were produced with.
+        v2=observed_snapshot is None or (isinstance(observed,dict) and 'hardening' in observed)
+        if observed_snapshot is None and s.get('x-cstack-role')=='agent' and not (isinstance(observed,dict) and 'hardening' in observed):
+            issues[name].append('runtime-inventory-lacks-hardening-facts-UNKNOWN')  # the agent rule itself lives in collect()
         if audit['status']=='UNKNOWN':issues[name].append('image-inspection-UNKNOWN: '+audit['reason'])
         else:
             if audit['setid_paths']:issues[name].append('image-setuid-setgid-binaries')
+            if v2:
+                file_capabilities=audit.get('file_capability_paths')
+                if not isinstance(file_capabilities,list):issues[name].append('image-file-capability-inventory-UNKNOWN')
+                elif file_capabilities:issues[name].append('image-file-capabilities')
             if audit['entrypoint']!=['/usr/bin/python3','/slice/entry.py'] or audit['command']:issues[name].append('image-entrypoint-command-uninspected')
             expected_sources=current_sources();policy_entry=None
             if observed_snapshot is not None and audit.get('source_sha256')!=expected_sources and known_generation(audit.get('source_sha256')):

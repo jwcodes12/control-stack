@@ -69,5 +69,16 @@ class Release(unittest.TestCase):
                 statuses={s['status'] for s in summary['stages']}
                 self.assertEqual(summary['result'],'FAIL' if 'FAIL' in statuses else 'SKIPPED' if 'SKIPPED' in statuses else 'PASS')
 
+    def test_sink_audit_over_archives(self):
+        from deployment.sink_audit import audit,clean
+        finals=sorted(f for f in (ROOT/'deployment/runs').rglob('final') if (f/'database.sqlite').is_file())
+        self.assertGreaterEqual(len(finals),30)
+        for f in finals:
+            with self.subTest(case=str(f.relative_to(ROOT))):
+                result=audit(f);self.assertEqual((result['delegations'],result['delegated_releases'],result['non_body_files']),(0,0,[]))
+                # Negative control: the archived writable-sink bypass left exactly one unattributed file.
+                self.assertEqual(result['unattributed_files'],['2.body'] if f.parent.name=='writable-sink-mount' and 'remediated' not in f.parts else [])
+                self.assertEqual(clean(result),not result['unattributed_files'])
+
 if __name__=='__main__':
     unittest.main()

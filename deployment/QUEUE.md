@@ -44,12 +44,18 @@ T7.1 | DONE | New prereg/PREREG-DEPLOY-ARMS-v1.md and deployment/prereg-deploy-a
 T7.2 | DONE | attribute_archives.py: nine independent archive replays; literal outcomes, two observed bypasses, six explicit honest workflows and gaps retained; no new attack policies
 T7.3 | DONE | Retrospective attribution metrics/H1-H4 PASS: six honest workflows, nine approved deliveries, one unauthorized file; monitor null, three unmeasured latencies; no four-arm result
 T7.4 | DONE | Episodes and restricted Inspect-v2 JSON schemas, deterministic converter, four regression tests; official field reference pinned; actual SDK loader validation GATED
-T8.1 | DOING | deployment/RELEASE-GATES.md; security-review and exact-head CI rows pending
+T8.1 | DONE | deployment/RELEASE-GATES.md: 11 gates PASS or PASS (scoped); independent review G1 open; exact-head CI in END-STATE.md
 T8.2 | DONE | cstack demo; deployment/runs/tier8/demo-fresh-clone (fresh GitHub clone at 0f8f7b9, exit 0, all four stages PASS) and demo-dev-clone
 T8.3 | DOING | .github/workflows/deployment-release.yml; live job always skipped on GitHub runners and asserted SKIPPED, never a pass; first run pending
 T8.4 | DONE | deployment/schemas/{bundle,plan,demo}-v0.1.json; deployment/golden; tools/test_deployment_release.py 5 PASS (also in fresh clone)
 T8.5 | DONE | docs/DEPLOYMENT-QUICKSTART.md (quickstart, platforms/versions, exit codes, claim ladder, threat model, TCB, lifetime); delegation added to unsupported scope in the claim
-T8.6 | DOING | deployment/REVIEW-PACKET-R2.md; reproduction commands re-run PASS; awaiting trusted-path model review
+T8.6 | DONE | deployment/REVIEW-PACKET-R2.md; reproduction commands re-run PASS; trusted-path model review deployment/reviews/trusted-path-code-review-opus.md with dispositions
+T9.1 | TODO | Versioned trusted-source pins: archive replays and image pins check their own historical source hashes (git blobs), so trusted_stack can change without invalidating Tier 2-8 evidence. Prerequisite for T9.2-T9.5
+T9.2 | TODO | R2 broker profile without delegate/revoke_delegation (or a flag the scanner records); sink audit stays as evidence (review M1)
+T9.3 | TODO | server.py: catch every exception per connection, bound nesting/frame size, total per-connection deadline, bootstrap only when the DB is absent, reject UID 0 and non-admin broker euid, HALT retry (review M2, L1, L2, L4-L6)
+T9.4 | TODO | Supported profile requires no-new-privileges and cap_drop ALL for agents; scanner inventories security.capability xattrs; absence UNKNOWN (review M3)
+T9.5 | TODO | Receiver reaps unmatched .pending-* under the DB lock; unit test for pre-link crash (review L3)
+T9.6 | TODO | Re-run the non-bypass live cases (clean, concurrent-cap1, crash-retry, halt-inflight, drift-uid) and the demo on hardened code; regenerate pins; no bypass reruns (defensive scope)
 G1 | GATED | Owner/resource prerequisite listed in handoff; not attempted
 G2 | GATED | Owner/resource prerequisite listed in handoff; not attempted
 G3 | GATED | Owner/resource prerequisite listed in handoff; not attempted
@@ -135,3 +141,5 @@ Tier 7 handover (2026-10-11): Sol's Codex thread hit its usage limit after commi
 
 T8.2 DOING: `cstack demo --output DIR [--static-only]` (deployment/demo.py). Stages: 44 fixtures verified in Python and the Lean kernel; read-only plans for the two repaired cases; live remediated containers (honest work only, defensive scope); independent sink-side check; DEMO.md report. Exit 0 all PASS, 1 any FAIL, 2 usage, 3 SKIPPED stage (never a pass). Dev-clone run deployment/runs/tier8/demo-dev-clone PASS in 83 s; own resources removed. Fresh-clone run pending.
 T8.4 DOING: deployment/schemas/{bundle,plan,demo}-v0.1.json; deployment/golden/ bundles, reports and plans; tools/test_deployment_release.py 5 PASS (golden equality, schema rejection of ASSURED/unknown status, CLI exit codes).
+
+Tier 8 trusted-path review: no finding violates the claim conclusion; M1-M3 stated in the claim with sink-audit and image-capability evidence; trusted code unchanged; hardening queued T9.1-T9.6 (grindable, not resource-gated).

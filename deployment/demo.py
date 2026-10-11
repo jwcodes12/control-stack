@@ -81,7 +81,11 @@ def live(out):
 def independent(out):
     p=subprocess.run([sys.executable,str(ROOT/'deployment/check_remediated.py'),str(out/'remediated')],cwd=ROOT,capture_output=True,text=True)
     (out/'independent-check.txt').write_text(p.stdout+p.stderr)
-    return ('PASS' if p.returncode==0 else 'FAIL'),(p.stdout.strip().splitlines() or ['no output'])[-1]
+    if p.returncode:return 'FAIL',(p.stdout.strip().splitlines() or ['no output'])[-1]
+    from deployment.sink_audit import audit,clean
+    audits={f.parent.name:audit(f) for f in sorted((out/'remediated').glob('*/final'))};dump(out/'sink-audit.json',audits)
+    if len(audits)!=len(REPAIRED) or not all(map(clean,audits.values())):return 'FAIL','sink audit: '+json.dumps(audits,sort_keys=True)
+    return 'PASS',(p.stdout.strip().splitlines() or ['no output'])[-1]+'; sink audit: every file is an attributed <id>.body, no delegation used'
 
 def render(summary):
     lines=['# cstack demo','','**'+summary['result']+'**  (exit '+str(summary['exit'])+')','',summary['scope'],'','| Stage | Status | Detail |','|---|---|---|']

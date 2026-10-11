@@ -99,8 +99,7 @@ CLI and observe source realpaths and offline reference-image facts. YAML require
 explicit x-cstack.roles. See deployment/TIER3-SCANNER.md. Legacy v0 snapshots do not
 gain these observations through schema-only migration.
 
-Unsupported: lease delegation or forked leases (the Tier 2 container cases issue one
-lease per agent directly; `trusted_stack/test_delegation.py` is unit-level only),
+Unsupported: lease or approval delegation (see the trusted-path review note below),
 arbitrary overlays, builds or mutable image tags,
 non-bind volumes, secrets, devices, host network/privileged containers, unknown
 sidecars or dynamic deputies, root agents, user namespaces/UID remapping, symlink
@@ -120,3 +119,38 @@ full byte-publication equality with a claim that image inspection verifies proto
 semantics. Concrete Tier 2 transcript replay did not pass its three-attempt limit;
 see deployment/TIER4-TRANSCRIPT-BLOCKED.md. The model witness package is independent
 of that blocked runtime replay, and remaining R2 tiers are still pending.
+
+## Trusted-path review dispositions (Tier 8)
+
+A model code review of the broker/receiver path (`deployment/reviews/trusted-path-code-review-opus.md`;
+not an independent human review) found no violation of the conclusion above and three
+premises that were previously unstated. They are now part of this claim:
+
+- **Delegation is enabled in the deployed broker and invisible to the scanner.** An agent
+  can call `delegate` so that the other agent UID executes its approval. Every sink file
+  stays attributable to a reviewed, exactly approved, once-consumed, in-budget release,
+  but "bound to agent" and "actual caller binding" then hold only under a refinement that
+  maps the executor to the owning agent. The Lean `Allowed` rule has no delegate step.
+  This claim therefore covers only runs whose sink-side audit
+  (`deployment/sink_audit.py`) records zero `delegations` and `delegated_releases`
+  rows; every archived and demo run satisfies this. Disabling delegation in the R2 broker
+  is queued (T9).
+- **Client timeouts are indeterminate, and HALT has no liveness guarantee.** The broker
+  serves one connection at a time with a per-read timeout, so a slow sender can stall it.
+  Requests whose client already timed out can still commit later. Approvers must retry a
+  timed-out approval only with the **same nonce** (duplicates are rejected), never with a
+  fresh one. HALT through the socket can be delayed indefinitely, and `halt()` can return
+  Denied after the 15 s SQLite busy timeout. The dependable HALT path is a direct
+  `Controller.halt` call as the admin UID, retried until it commits. A malformed
+  deeply nested request can also crash the broker (fail-closed, operator restart needed;
+  queued as T9). None of these produce an unapproved sink file.
+- **Agent UIDs cannot gain CAP_SETUID.** SO_PEERCRED binding assumes agents cannot switch
+  UID. The supported profile does not yet set `no-new-privileges` or `cap_drop`. Evidence
+  for the pinned offline image (`deployment/runs/tier8/capability-check`): no
+  setuid/setgid files, no `security.capability` xattrs, and an agent-UID container has
+  empty permitted/effective/ambient sets (CAP_SETUID only in the bounding set).
+  Regaining it would require a kernel-level escalation, which is in the TCB. Requiring
+  both settings in the profile is queued (T9).
+- **Sink scope is `<release_id>.body` names.** A receiver crash before `link` can leave a
+  `.pending-*` temporary file (possibly a prefix of reviewed bytes) that is not cleaned
+  up. The sink-side audit reports any non-`.body` file; none occurred in recorded runs.

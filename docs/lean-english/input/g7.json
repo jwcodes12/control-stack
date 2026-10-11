@@ -1,0 +1,168 @@
+[
+ {
+  "id": "SC-27",
+  "title": "Tampered evidence and assurance manifests",
+  "bad_event": "A verifier accepts a manifest whose evidence log is not exactly a log independently anchored (modification, reordering, truncation or extension after anchoring).",
+  "adversary": "Model: a writer that can append, rewrite the whole log and publish its own heads.",
+  "scope": "Lean model only. Entries are protected only once anchored (rewrite_before_anchor_window). Not: anchor-service compromise. The repo's own manifests are not yet anchored externally. Runtime: single-host reference run (scenarios/SC-27/evidence/run-1), benign workloads, one UID (separate principals remain a premise). Runtime witness is extension-only (fork alarm on non-extension); the Lean model would permit anchoring tampered storage later \u2014 closed by SC27ExtensionOnly (sc27_ext_safe, tampered_never_anchored; periodic_anchor_launders shows the original periodic witness launders a rewrite). FINDING from the SC27Refinement proof: the run-1 witness did not alarm on truncation-to-empty (safety unaffected); FIXED in harness_v2 and confirmed by run-2 under PREREG-SC27-ANCHOR-v2 (v1 witness silent as control).",
+  "status": "CONDITIONAL",
+  "theorems": [
+   {
+    "name": "ControlStack.SC27Chain.sc27_safe",
+    "path": "ControlStack/Scenarios/SC27Chain.lean"
+   },
+   {
+    "name": "ControlStack.SC27Chain.tamper_after_anchor_detected",
+    "path": "ControlStack/Scenarios/SC27Chain.lean"
+   },
+   {
+    "name": "ControlStack.SC27Chain.halt_freezes",
+    "path": "ControlStack/Scenarios/SC27Chain.lean"
+   },
+   {
+    "name": "ControlStack.SC27ExtensionOnly.sc27_ext_safe",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean"
+   },
+   {
+    "name": "ControlStack.SC27ExtensionOnly.tampered_never_anchored",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean"
+   },
+   {
+    "name": "ControlStack.SC27ExtensionOnly.anchors_chain",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean"
+   },
+   {
+    "name": "ControlStack.SC27ExtensionOnly.alarm_iff",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean"
+   },
+   {
+    "name": "ControlStack.SC27Refinement.concrete_ext_safe",
+    "path": "ControlStack/Scenarios/SC27Refinement.lean"
+   },
+   {
+    "name": "ControlStack.SC27Refinement.concrete_tampered_never_anchored",
+    "path": "ControlStack/Scenarios/SC27Refinement.lean"
+   }
+  ],
+  "assumptions": [
+   {
+    "id": "independent_anchor",
+    "text": "An independently administered witness records heads (not the writer).",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "hash_injective_on_run",
+    "text": "Chain head is injective on accepted/anchored logs (collision resistance).",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "anchor_frequency",
+    "text": "Anchoring happens soon enough that the pre-anchor window is acceptable.",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "model_runtime_correspondence",
+    "text": "Two links: concrete writer/witness/verifier event machine \u2192 SC27ExtensionOnly: PROVED (SC27Refinement.simulation/concrete_ext_safe/concrete_tampered_never_anchored, under TraceInj); Python \u2192 concrete machine: TESTED (run-1). FINDING (refinement, empty_truncation_silent): witness.py raises no fork alarm when an anchored log is truncated to EMPTY (safety unaffected; alarm completeness fails in that case); fixed in harness_v2; confirmed by run-2 (PREREG-SC27-ANCHOR-v2).",
+    "proof": "THEOREM_VERIFIED"
+   }
+  ]
+ },
+ {
+  "id": "SC-28",
+  "title": "Multiple agents individually within limits jointly exceed the overall budget",
+  "bad_event": "Total consumption across agents and all their descendants exceeds the global budget, a lease's lineage exceeds its budget, or work continues after revocation or HALT. Read \"by X\" as \"by an operation carrying X's authenticated identity\" (credential separation is a premise, not a theorem).",
+  "adversary": "Model: any trace of issue/fork/work/revoke/restart/halt operations (rollback excluded). Runtime evidence: benign workloads only (process trees incl. a session-detached daemon); no adversarial workloads were run.",
+  "scope": "Lean joint model plus a single-host cgroup v2 mechanism check (CPU time, pids) with benign workloads. Not: adversarial workloads, GPUs, network/token spend, multi-host budgets, ledger rollback. The check flag(s) meter model properties of the platform (environment premises), not gate behaviour (REVIEW-PACKET finding 6).",
+  "status": "CONDITIONAL",
+  "theorems": [
+   {
+    "name": "ControlStack.SC28.sc28_safe",
+    "path": "ControlStack/Scenarios/SC28Budget.lean"
+   },
+   {
+    "name": "ControlStack.SC28.revoked_lease_stops",
+    "path": "ControlStack/Scenarios/SC28Budget.lean"
+   },
+   {
+    "name": "ControlStack.SC28.fork_shares_lease",
+    "path": "ControlStack/Scenarios/SC28Budget.lean"
+   },
+   {
+    "name": "ControlStack.SC28.halt_freezes",
+    "path": "ControlStack/Scenarios/SC28Budget.lean"
+   },
+   {
+    "name": "ControlStack.AuthInstances.sc28_safe_authenticated",
+    "path": "ControlStack/Scenarios/AuthInstancesA.lean"
+   },
+   {
+    "name": "ControlStack.AuthInstances.forged28_consumes_without_auth",
+    "path": "ControlStack/Scenarios/AuthInstancesA.lean"
+   },
+   {
+    "name": "ControlStack.SC28Liveness.honest_steps_progress",
+    "path": "ControlStack/Scenarios/SC28Liveness.lean"
+   },
+   {
+    "name": "ControlStack.SC28Liveness.progress_interleaved",
+    "path": "ControlStack/Scenarios/SC28Liveness.lean"
+   },
+   {
+    "name": "ControlStack.SC28Liveness.global_cap_blocks_honest",
+    "path": "ControlStack/Scenarios/SC28Liveness.lean"
+   },
+   {
+    "name": "ControlStack.AntiRollback.rollback_transfer",
+    "path": "ControlStack/Core/AntiRollback.lean"
+   },
+   {
+    "name": "ControlStack.AntiRollback.sc28_rollback_safe",
+    "path": "ControlStack/Core/AntiRollback.lean"
+   },
+   {
+    "name": "ControlStack.SC28Refinement.concrete_safe",
+    "path": "ControlStack/Scenarios/SC28Refinement.lean"
+   },
+   {
+    "name": "ControlStack.SC28Refinement.concrete_revoked_stops",
+    "path": "ControlStack/Scenarios/SC28Refinement.lean"
+   },
+   {
+    "name": "ControlStack.SC28Refinement.exclusive_placement_safe",
+    "path": "ControlStack/Scenarios/SC28Refinement.lean"
+   }
+  ],
+  "assumptions": [
+   {
+    "id": "credential_separation",
+    "text": "Every operation carrying a trusted role's identity (approver, reviewer, admin, auditor, verifier, user) is that principal's own act: agents cannot obtain or forge trusted identities. Not modelled: the Lean models read caller identity as authenticated (REVIEW-PACKET-2026-10-09 finding 1). Reduced in Lean (sc28_safe_authenticated, Core/Authenticated + AuthenticatedLog): forging a claimed identity has no effect; the residual premise is issuer authenticity (platform identity = true issuer). work w claims worker w, so a forged worker cannot charge another worker's lease.",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "trusted_meter",
+    "text": "The meter sees every unit of consumption by every descendant (kernel cgroup accounting with launch-time placement).",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "anti_rollback",
+    "text": "The budget ledger is never rolled back (external monotonic anchor). Reduced in Lean (Core/AntiRollback: rollback_transfer, sc28_rollback_safe): with a trusted monotonic anchor and fail-closed checks, safety holds under arbitrary backup restores; the residual premise is anchor trust.",
+    "proof": "THEOREM_VERIFIED"
+   },
+   {
+    "id": "adversarial_workloads",
+    "text": "Mechanism holds against workloads that try to evade accounting or termination.",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "honest_usefulness",
+    "text": "Honest jobs complete within their leases. Formal counterpart: SC28Liveness.lean (progress under interleaving; availability prices stated as witnesses).",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "model_runtime_correspondence",
+    "text": "Two links: concrete cgroup controller event machine (placement before exec, kernel-enforced hierarchical limits, fork inheritance, revoke = cgroup.kill, HALT = freeze+kill) \u2192 SC28 model: PROVED (SC28Refinement.simulation/concrete_safe/concrete_revoked_stops; exclusive_placement_safe); Python meter \u2192 concrete machine: TESTED (run-1 H1\u2013H5).",
+    "proof": "THEOREM_VERIFIED"
+   }
+  ]
+ }
+]

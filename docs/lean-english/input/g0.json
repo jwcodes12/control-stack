@@ -1,0 +1,133 @@
+[
+ {
+  "id": "DEPLOY",
+  "title": "Deployment verifier: accepted configuration + broker protocol model + transcript replay",
+  "bad_event": "An agent causes a file to appear in the protected sink that is not attributable to a reviewed, exactly approved, once-consumed release within a shared budget, or an agent/deputy has an authority path to the sink or database that avoids the broker/receiver.",
+  "adversary": "Two untrusted agent UIDs in containers sharing one budget; trusted broker/receiver/reviewer/approver; configuration read from Compose + daemon inventory.",
+  "scope": "Finite configuration graph (IR) plus a transition model of the SQLite broker; NOT the Python code, Docker, or the kernel. Model-to-code correspondence (BrokerProtocolRefinement, ProtocolRefinement) and faithful extraction (ExtractionFaithful) are explicit hypotheses.",
+  "status": "CONDITIONAL",
+  "theorems": [
+   {
+    "name": "ControlStack.Deployment.Accepted",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.exclusive_sink",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.database_custody",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.runtime_exclusive",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.agent_not_receiver_uid",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.agent_call_legal",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.protocol_safe",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.one_use",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.gate_contract",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.broker_contract",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.deployment_safe",
+    "path": "ControlStack/Deployment/Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.accepted_no_avoided_path",
+    "path": "ControlStack/Deployment/R2Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.accepted_path_safety_monotone",
+    "path": "ControlStack/Deployment/R2Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.path_edge_subset",
+    "path": "ControlStack/Deployment/R2Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.requested_monotonicity_counterexample",
+    "path": "ControlStack/Deployment/R2Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.deployment_broker_safe",
+    "path": "ControlStack/Deployment/R2Contracts.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.indexed_receipts_sound",
+    "path": "ControlStack/Deployment/R2Contracts.lean"
+   },
+   {
+    "name": "ControlStack.TrustedBroker.transaction_preserves",
+    "path": "ControlStack/TrustedBroker.lean"
+   },
+   {
+    "name": "ControlStack.TrustedBroker.transaction_coherent",
+    "path": "ControlStack/TrustedBroker.lean"
+   },
+   {
+    "name": "ControlStack.TrustedBroker.halted_absorbing",
+    "path": "ControlStack/TrustedBroker.lean"
+   },
+   {
+    "name": "ControlStack.TrustedBroker.committed_nonce_unusable",
+    "path": "ControlStack/TrustedBroker.lean"
+   },
+   {
+    "name": "ControlStack.TrustedBroker.trace_preserves",
+    "path": "ControlStack/TrustedBroker.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.TranscriptReplay.runtime_trace",
+    "path": "ControlStack/Deployment/TranscriptReplay.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.TranscriptReplay.final_safe",
+    "path": "ControlStack/Deployment/TranscriptReplay.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.TranscriptReplay.replay_was_not_allowed",
+    "path": "ControlStack/Deployment/TranscriptReplay.lean"
+   },
+   {
+    "name": "ControlStack.Deployment.TranscriptReplay.omitted_tail_is_accepted",
+    "path": "ControlStack/Deployment/TranscriptReplay.lean"
+   }
+  ],
+  "assumptions": [
+   {
+    "id": "faithful_extraction",
+    "text": "The IR contains every authority edge the real deployment has.",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "protocol_refinement",
+    "text": "The Python broker and receiver implement the Lean transition model and sink files correspond to published nonces.",
+    "proof": "NOT_PROVED"
+   },
+   {
+    "id": "tcb",
+    "text": "Kernel, Docker daemon reports, SQLite, Python, scanner/serializer are trusted.",
+    "proof": "NOT_PROVED"
+   }
+  ]
+ }
+]

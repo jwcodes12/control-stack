@@ -1,0 +1,135 @@
+{
+  "capture": {
+    "independent_attestation": false,
+    "kind": "docker-inspect",
+    "raw_sha256": "9f32f035b073dc83b220f8318fdbc7988e215eaeb7761919e2d4008e7d6d3d77"
+  },
+  "services": {
+    "agent-a": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:86b04e54ef4bb2bbf5e33ecec7a8fd077f1a446ae27151a4a96cbe8c70f67d34",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23701
+    },
+    "agent-b": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:86b04e54ef4bb2bbf5e33ecec7a8fd077f1a446ae27151a4a96cbe8c70f67d34",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23702
+    },
+    "approver": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:86b04e54ef4bb2bbf5e33ecec7a8fd077f1a446ae27151a4a96cbe8c70f67d34",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23704
+    },
+    "broker": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:86b04e54ef4bb2bbf5e33ecec7a8fd077f1a446ae27151a4a96cbe8c70f67d34",
+      "mounts": [
+        {
+          "read_only": false,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23700
+    },
+    "receiver": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:86b04e54ef4bb2bbf5e33ecec7a8fd077f1a446ae27151a4a96cbe8c70f67d34",
+      "mounts": [
+        {
+          "read_only": false,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/sink",
+          "target": "/output",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23700
+    },
+    "reviewer": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:86b04e54ef4bb2bbf5e33ecec7a8fd077f1a446ae27151a4a96cbe8c70f67d34",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/cstack-r2-tier8-fresh/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23703
+    }
+  }
+}

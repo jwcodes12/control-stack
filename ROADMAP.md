@@ -1,4 +1,24 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-09: all 28 scenarios CONDITIONAL with Lean models; preregistered single-host runtime evidence for 15 scenarios)
+# ROADMAP: control-stack status (kept current; last updated 2026-10-11: deployment verifier at scoped R2 with Tiers 1-10 merged; all 28 scenarios CONDITIONAL with Lean models; preregistered single-host runtime evidence for 15 scenarios)
+
+## Deployment verifier and what is next — 2026-10-11 (all PRs merged, none open; source generation `r2-v7`)
+Full handoff: `deployment/HANDOFF-NEXT.md`. State: scoped R2 for the local-file two-agent slice, every release gate met **except independent human review (G1)**;
+verdicts never exceed CONDITIONAL. Read `END-STATE.md`, `docs/DEPLOYMENT-CLAIM-v0.md` (section "Tier 10"), `deployment/REVIEW-PACKET-R2.md`.
+
+Order of work (owner's decision):
+1. **Done:** merge every open PR (#45-#54).
+2. **In flight:** one-to-one check of the plain-English statements of 187 headline Lean claims (`docs/LEAN-CLAIMS-IN-PLAIN-ENGLISH.md`, `docs/lean-english/`;
+   Sol with the proofledger gate). The 26 deployment-stack claims are checked (19 equivalent, 2 weaker, 3 stronger, 2 undecided; 5 of 6 planted wrong
+   statements caught). 161 scenario claims not yet reached; a strictly blind pass is still owed.
+3. **Next: simplify the Lean** (scope to be confirmed): integrate the proved provenance invariant (`docs/lean-english/one-to-one/ProvenanceDraft.lean`) and reword the
+   headline claim to what is proved; named fields for `Allowed` and `Accepted`; state the three repeated patterns (gate invariant, authenticated adversary, refinement
+   transfer) once; remove duplicated helpers; apply the English corrections; decide T4.2 (literal monotonicity is false, keep the safety-only theorem); check reuse of lemmas
+   already in `alignment-contrib/lean/StabilityDebate`, `control-tree`, `proofledger`.
+4. **Then: human- and resource-gated work** (below).
+5. **Then: researcher-friendly presentation** (`docs/PLAN-RESEARCHER-FRIENDLY.md`): pattern pages, glossary, premise view, claim cards, counterexample gallery, reading paths, demos, review kit.
+
+Needs John (deployment verifier): G1 independent human review; G2 real LLM agents (ControlArena/inspect_ai, API budget; attack arms need a cyber-permissive tier); G3 OPA/trivy/hadolint
+baselines; G4 Kubernetes extractor; G5 host Landlock (kernel boot parameter); G6 TPM/HSM, GPU residue, multi-host; G7 HTTP sink with egress; G8 Windows/macOS/WASI; G9 tag, publish, outreach;
+human-written held-out sets; F6/F8 gates (monitor recall calibration, live OS correspondence, native-VM usefulness, outside expert review).
 
 ## Scenario completion and first end-to-end evidence: 2026-10-09 (branch `claude/sc26-joint`)
 

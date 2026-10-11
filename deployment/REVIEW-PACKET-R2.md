@@ -85,6 +85,16 @@ features (ports, depends_on, read_only, tmpfs, …) — they become UNKNOWN.
 
 ## 5. Weak points a reviewer should weigh (self-identified)
 
+- **English versions of the Lean claims (Tier 10).** `docs/LEAN-CLAIMS-IN-PLAIN-ENGLISH.md` states 187 headline Lean claims
+  in plain English (blocks in `docs/lean-english/part-g*.md`, written by Sonnet from the Lean source). They are *claims under test*,
+  not results: a one-to-one check (blind back-translation to Lean plus a gate-checked equivalence proof, by Sol with the
+  proofledger gate; `docs/lean-english/ONE-TO-ONE.md`) was in progress when this was written. The translators' own list of the
+  claims most likely to say less than their scenario's harm (for example `deployment_broker_safe`, which concludes only that each
+  published nonce has a *used* approval, not who signed it or that a reviewer saw the digest) is at the top of that file. The claim
+  of record in `docs/DEPLOYMENT-CLAIM-v0.md` ("reviewed, exactly approved, once-consumed release") is therefore stronger than the
+  Lean conclusion until the provenance invariant is proved; the reviewed/exact-approval parts are guards of the model's `approve` and
+  `release` steps, plus tested correspondence, not reachable-state theorems.
+
 - **Held-out round 2 (hardened profile, 34 cases).** Before any fix the static evaluation produced one false
   CONDITIONAL (see section 4); the post-fix 0/26 is contaminated. 22/34 cases are UNKNOWN. The author was
   again a blind `codex exec`, not a person. Round 1's 2/5 figure stays the round-1 number.

@@ -1,0 +1,4 @@
+open ControlStack ControlStack.Deployment
+theorem claim : Claim := by
+ rfl
+theorem witness : Witness := clean_accepted

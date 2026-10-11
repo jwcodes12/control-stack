@@ -1,0 +1,35 @@
+--- upstream/leangate.py
++++ local/leangate_imports.py
+@@ -76,6 +76,14 @@
+         f.unlink(missing_ok=True)
+ 
+ 
++
++def import_header() -> str:
++    modules = os.environ.get("PL_IMPORTS", "Mathlib").split()
++    if not modules or any(not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*", m) for m in modules):
++        raise ValueError("PL_IMPORTS must be whitespace-separated Lean module names")
++    return "\n".join("import " + m for m in modules)
++
++
+ def check_statement(cid: str, statement: str, dep_statements: list[str] = ()) -> tuple[bool, str]:
+     """Statement must compile (after its dependencies' statements only), live in PL_<cid>, and
+     define Claim and Witness : Prop.  `dep_statements` lets a stack statement reference
+@@ -89,7 +97,7 @@
+         return False, f"statement must open `namespace PL_{cid}`"
+     nonce = secrets.token_hex(4)
+     deps = "\n".join(dep_statements)
+-    text = (f"import Mathlib\n{deps}\n{statement}\n"
++    text = (f"{import_header()}\n{deps}\n{statement}\n"
+             f"example : Prop := PL_{cid}.Claim\nexample : Prop := PL_{cid}.Witness\n")
+     rc, out = run_lean(text, f"stmt_{cid}_{nonce}")
+     if rc != 0 or re.search(r"\berror\b", out):
+@@ -115,7 +123,7 @@
+     ns = f"PLProof_{cid}_{nonce}"
+     final = f"gate_{nonce}"
+     text = "\n".join([
+-        "import Mathlib",
++        import_header(),
+         *dep_texts,
+         statement,
+         f"namespace {ns}",

@@ -1,0 +1,3 @@
+inspect_image -> status OBSERVED, setid_paths [], file_capability_paths ['usr/bin/capfile']
+Meaning: `docker export` carries security.capability as a PAX xattr header and the scanner reports it. A scan of an
+image like this one is marked image-file-capabilities (UNKNOWN edge), not accepted.

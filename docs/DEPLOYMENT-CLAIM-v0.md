@@ -169,8 +169,8 @@ premises that were previously unstated. They are now part of this claim:
   `cap_drop` value stays an unsupported feature; a fresh scan refuses an inventory that does
   not report `hardening`; and the image scan records files carrying `security.capability`
   (from the `SCHILY.xattr` PAX header of `docker export`), which make the image UNKNOWN. The
-  PAX-header reading is unit-tested on a synthetic archive and checked against the pinned
-  image's export; it has not been exercised on an image that really carries a file capability.
+  reading is unit-tested on a synthetic archive and has a positive control on a real image
+  that carries one file capability (`deployment/runs/tier9/capability-xattr-probe`).
   Archived runs (v1 inventories, before this profile) replay under the rules they were
   produced with and do not satisfy the hardened profile; remediation plans now add both settings
   to the agents. Live evidence under the hardened profile is queued (T9.6).

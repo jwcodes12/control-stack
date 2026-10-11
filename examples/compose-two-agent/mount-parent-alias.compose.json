@@ -10,13 +10,16 @@
         "PYTHONPATH": "/slice",
         "SLICE_ROLE": "agent-a"
       },
-      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
       "networks": [
         "isolated"
       ],
       "user": "23701",
       "volumes": [
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": true,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel/../channel",
           "target": "/channel",
@@ -30,13 +33,16 @@
         "PYTHONPATH": "/slice",
         "SLICE_ROLE": "agent-b"
       },
-      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
       "networks": [
         "isolated"
       ],
       "user": "23702",
       "volumes": [
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": true,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
           "target": "/channel",
@@ -50,13 +56,16 @@
         "PYTHONPATH": "/slice",
         "SLICE_ROLE": "approver"
       },
-      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
       "networks": [
         "isolated"
       ],
       "user": "23704",
       "volumes": [
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": true,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
           "target": "/channel",
@@ -70,19 +79,25 @@
         "PYTHONPATH": "/slice",
         "SLICE_ROLE": "broker"
       },
-      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
       "networks": [
         "isolated"
       ],
       "user": "23700",
       "volumes": [
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": false,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
           "target": "/private",
           "type": "bind"
         },
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": false,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
           "target": "/channel",
@@ -96,19 +111,25 @@
         "PYTHONPATH": "/slice",
         "SLICE_ROLE": "receiver"
       },
-      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
       "networks": [
         "isolated"
       ],
       "user": "23700",
       "volumes": [
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": false,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
           "target": "/private",
           "type": "bind"
         },
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": false,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
           "target": "/output",
@@ -122,13 +143,16 @@
         "PYTHONPATH": "/slice",
         "SLICE_ROLE": "reviewer"
       },
-      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "image": "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd",
       "networks": [
         "isolated"
       ],
       "user": "23703",
       "volumes": [
         {
+          "bind": {
+            "selinux": "z"
+          },
           "read_only": true,
           "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
           "target": "/channel",
@@ -140,7 +164,7 @@
   },
   "x-cstack": {
     "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
-    "budget": 1,
+    "budget": 2,
     "channel_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
     "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
     "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",

@@ -1,0 +1,573 @@
+[
+  {
+    "case": "clean",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791660071,
+      "lease_id": "lease-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660071,
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "agent_uid": 23702,
+      "budget": 1,
+      "expires": 1791660071,
+      "lease_id": "lease-b",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "agent_uid": 23702,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660071,
+      "lease_id": "lease-b",
+      "nonce": "b",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "error": "DENIED",
+      "ok": false
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "clean",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-b",
+      "nonce": "b",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 2
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "op": "halt"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "trusted-role-uid-collision",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "error": "DENIED",
+      "ok": false
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791660151,
+      "lease_id": "lease-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660151,
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "agent_uid": 23702,
+      "budget": 1,
+      "expires": 1791660151,
+      "lease_id": "lease-b",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "concurrent-cap1",
+    "request": {
+      "agent_uid": 23702,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660151,
+      "lease_id": "lease-b",
+      "nonce": "b",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "concurrent-cap1",
+    "concurrent": true,
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "concurrent-cap1",
+    "concurrent": true,
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-b",
+      "nonce": "b",
+      "op": "effect_release"
+    },
+    "response": {
+      "error": "DENIED",
+      "ok": false
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791660178,
+      "lease_id": "lease-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660178,
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "agent_uid": 23702,
+      "budget": 1,
+      "expires": 1791660178,
+      "lease_id": "lease-b",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "agent_uid": 23702,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660178,
+      "lease_id": "lease-b",
+      "nonce": "b",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "crash-retry",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "error": "DENIED",
+      "ok": false
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791660226,
+      "lease_id": "lease-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660226,
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-b"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "agent_uid": 23702,
+      "budget": 1,
+      "expires": 1791660226,
+      "lease_id": "lease-b",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "agent_uid": 23702,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791660226,
+      "lease_id": "lease-b",
+      "nonce": "b",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "error": "DENIED",
+      "ok": false
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "halt-inflight",
+    "request": {
+      "op": "halt"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  }
+]

@@ -15,9 +15,9 @@ from tools.collect_deployment_docker import normalize
 from security_ir.verifier import verify
 
 def check(output):
-    output=Path(output).resolve();pin=json.loads((ROOT/'examples/compose-two-agent/image-pin.json').read_text())
+    output=Path(output).resolve();pin=json.loads((ROOT/'deployment/legacy-image-pin.json').read_text())
     for path,digest in pin['source_sha256'].items():assert sha(ROOT/path)==digest,('image source drift',path)
-    assert sha(ROOT/'tools/deployment_container_entry.py')==pin['entry_sha256']
+    assert sha(ROOT/'deployment/legacy-container-entry.py')==pin['entry_sha256']
     result=json.loads((output/'result.json').read_text())
     assert result['image']==pin['image']
     assert set(result['cases'])=={'clean','writable-sink-mount','trusted-role-uid-collision'}
@@ -25,8 +25,8 @@ def check(output):
     assert not any('rootless' in x or 'userns' in x for x in info['SecurityOptions']), 'UID remap outside experiment scope'
     for case,expected in result['cases'].items():
         dest=output/case
-        original=ROOT/'examples/compose-two-agent'/f'{case}.compose.json'
-        assert sha(original)==sha(dest/'compose.json'),('scanned/launched Compose differs',case)
+        original=dest/'compose.json'
+        assert all(s['image']==pin['image'] for s in json.loads(original.read_text())['services'].values()),('archived image pin differs',case)
         c=json.loads(original.read_text());r=json.loads((dest/'runtime.json').read_text())
         raw=(dest/'docker-inspect.raw.json').read_bytes()
         assert hashlib.sha256(raw).hexdigest()==r['capture']['raw_sha256']

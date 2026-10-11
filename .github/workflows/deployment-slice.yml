@@ -17,7 +17,8 @@ jobs:
       - run: python3 tools/test_deployment_slice.py
       - run: python3 tools/test_deployment_runtime.py
       - run: python3 tools/test_deployment_evidence.py
-      - run: python3 tools/build_deployment_fixtures.py && git diff --exit-code security_ir/fixtures examples/compose-two-agent
+      - run: python3 tools/test_deployment_r2.py
+      - run: python3 tools/build_deployment_fixtures.py --check
   kernel:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
@@ -42,6 +43,19 @@ jobs:
               print(path.stem, result['accepted'], result['axioms'])
           PY
       - run: python3 tools/check_deployment_subset_differential.py
+      - name: Recheck archived R2 raw IR certificates
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from deployment.kernel import check_many
+          paths=sorted(Path('deployment/runs/tier2/containers-final').rglob('bundle.json'))
+          assert len(paths)==9
+          irs=[json.loads(p.with_name('ir.json').read_text()) for p in paths]
+          accepted,axioms=check_many(irs)
+          assert accepted==[json.loads(p.read_text())['lean']['accepted'] for p in paths]
+          print('PASS: nine raw container snapshot certificates, standard axioms')
+          PY
   linux-boundary:
     runs-on: ubuntu-24.04
     timeout-minutes: 10

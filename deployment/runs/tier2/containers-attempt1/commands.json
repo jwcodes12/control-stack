@@ -1,0 +1,2755 @@
+[
+  {
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd"
+    ],
+    "ended_monotonic": 812635.182149412,
+    "exit": 0,
+    "started_monotonic": 812635.135449517,
+    "stderr": "",
+    "stdout": "[\n    {\n        \"Id\": \"sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd\",\n        \"RepoTags\": [\n            \"cstack-r2-tier2:offline\"\n        ],\n        \"RepoDigests\": [\n            \"cstack-r2-tier2@sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd\"\n        ],\n        \"Comment\": \"Imported from -\",\n        \"Created\": \"2026-10-10T18:41:10.884845585Z\",\n        \"Config\": {\n            \"Env\": [\n                \"PYTHONPATH=/slice\"\n            ],\n            \"Entrypoint\": [\n                \"/usr/bin/python3\",\n                \"/slice/entry.py\"\n            ],\n            \"WorkingDir\": \"/slice\"\n        },\n        \"Architecture\": \"arm64\",\n        \"Variant\": \"v8\",\n        \"Os\": \"linux\",\n        \"Size\": 132743440,\n        \"RootFS\": {\n            \"Type\": \"layers\",\n            \"Layers\": [\n                \"sha256:d1718865cd857b4a776c72a64ff1dcc023bf4666079d2e63005d247ff21c219f\"\n            ]\n        },\n        \"Metadata\": {\n            \"LastTagTime\": \"2026-10-10T18:41:10.91459018Z\"\n        },\n        \"Descriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd\",\n            \"size\": 406\n        }\n    }\n]\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .}}"
+    ],
+    "ended_monotonic": 812635.253709616,
+    "exit": 0,
+    "started_monotonic": 812635.182216012,
+    "stderr": "",
+    "stdout": "{\"ID\":\"04aa675b-e4cb-4e4b-8793-e2fca7f068c0\",\"Containers\":0,\"ContainersRunning\":0,\"ContainersPaused\":0,\"ContainersStopped\":0,\"Images\":2,\"Driver\":\"overlayfs\",\"DriverStatus\":[[\"driver-type\",\"io.containerd.snapshotter.v1\"]],\"Plugins\":{\"Volume\":[\"local\"],\"Network\":[\"bridge\",\"host\",\"ipvlan\",\"macvlan\",\"null\",\"overlay\"],\"Authorization\":null,\"Log\":[\"awslogs\",\"fluentd\",\"gcplogs\",\"gelf\",\"journald\",\"json-file\",\"local\",\"splunk\",\"syslog\"]},\"MemoryLimit\":true,\"SwapLimit\":true,\"CpuCfsPeriod\":true,\"CpuCfsQuota\":true,\"CPUShares\":true,\"CPUSet\":true,\"PidsLimit\":true,\"IPv4Forwarding\":true,\"Debug\":false,\"NFd\":24,\"OomKillDisable\":false,\"NGoroutines\":51,\"SystemTime\":\"2026-10-10T18:44:40.829510798Z\",\"LoggingDriver\":\"json-file\",\"CgroupDriver\":\"systemd\",\"CgroupVersion\":\"2\",\"NEventsListener\":0,\"KernelVersion\":\"6.12.0-206.104.3.3.el9uek.aarch64\",\"OperatingSystem\":\"Oracle Linux Server 9.8\",\"OSVersion\":\"9.8\",\"OSType\":\"linux\",\"Architecture\":\"aarch64\",\"IndexServerAddress\":\"https://index.docker.io/v1/\",\"RegistryConfig\":{\"InsecureRegistryCIDRs\":[\"::1/128\",\"127.0.0.0/8\"],\"IndexConfigs\":{\"docker.io\":{\"Name\":\"docker.io\",\"Mirrors\":[],\"Secure\":true,\"Official\":true}},\"Mirrors\":[]},\"NCPU\":2,\"MemTotal\":15647113216,\"GenericResources\":null,\"DockerRootDir\":\"/var/lib/docker\",\"HttpProxy\":\"\",\"HttpsProxy\":\"\",\"NoProxy\":\"\",\"Name\":\"claude-code-dev\",\"Labels\":[],\"ExperimentalBuild\":false,\"ServerVersion\":\"29.8.0\",\"Runtimes\":{\"io.containerd.runc.v2\":{\"path\":\"runc\",\"status\":{\"org.opencontainers.runtime-spec.features\":\"{\\\"ociVersionMin\\\":\\\"1.0.0\\\",\\\"ociVersionMax\\\":\\\"1.3.0\\\",\\\"hooks\\\":[\\\"prestart\\\",\\\"createRuntime\\\",\\\"createContainer\\\",\\\"startContainer\\\",\\\"poststart\\\",\\\"poststop\\\"],\\\"mountOptions\\\":[\\\"async\\\",\\\"atime\\\",\\\"bind\\\",\\\"defaults\\\",\\\"dev\\\",\\\"diratime\\\",\\\"dirsync\\\",\\\"exec\\\",\\\"iversion\\\",\\\"lazytime\\\",\\\"loud\\\",\\\"mand\\\",\\\"noatime\\\",\\\"nodev\\\",\\\"nodiratime\\\",\\\"noexec\\\",\\\"noiversion\\\",\\\"nolazytime\\\",\\\"nomand\\\",\\\"norelatime\\\",\\\"nostrictatime\\\",\\\"nosuid\\\",\\\"nosymfollow\\\",\\\"private\\\",\\\"ratime\\\",\\\"rbind\\\",\\\"rdev\\\",\\\"rdiratime\\\",\\\"relatime\\\",\\\"remount\\\",\\\"rexec\\\",\\\"rnoatime\\\",\\\"rnodev\\\",\\\"rnodiratime\\\",\\\"rnoexec\\\",\\\"rnorelatime\\\",\\\"rnostrictatime\\\",\\\"rnosuid\\\",\\\"rnosymfollow\\\",\\\"ro\\\",\\\"rprivate\\\",\\\"rrelatime\\\",\\\"rro\\\",\\\"rrw\\\",\\\"rshared\\\",\\\"rslave\\\",\\\"rstrictatime\\\",\\\"rsuid\\\",\\\"rsymfollow\\\",\\\"runbindable\\\",\\\"rw\\\",\\\"shared\\\",\\\"silent\\\",\\\"slave\\\",\\\"strictatime\\\",\\\"suid\\\",\\\"symfollow\\\",\\\"sync\\\",\\\"tmpcopyup\\\",\\\"unbindable\\\"],\\\"linux\\\":{\\\"namespaces\\\":[\\\"cgroup\\\",\\\"ipc\\\",\\\"mount\\\",\\\"network\\\",\\\"pid\\\",\\\"time\\\",\\\"user\\\",\\\"uts\\\"],\\\"capabilities\\\":[\\\"CAP_CHOWN\\\",\\\"CAP_DAC_OVERRIDE\\\",\\\"CAP_DAC_READ_SEARCH\\\",\\\"CAP_FOWNER\\\",\\\"CAP_FSETID\\\",\\\"CAP_KILL\\\",\\\"CAP_SETGID\\\",\\\"CAP_SETUID\\\",\\\"CAP_SETPCAP\\\",\\\"CAP_LINUX_IMMUTABLE\\\",\\\"CAP_NET_BIND_SERVICE\\\",\\\"CAP_NET_BROADCAST\\\",\\\"CAP_NET_ADMIN\\\",\\\"CAP_NET_RAW\\\",\\\"CAP_IPC_LOCK\\\",\\\"CAP_IPC_OWNER\\\",\\\"CAP_SYS_MODULE\\\",\\\"CAP_SYS_RAWIO\\\",\\\"CAP_SYS_CHROOT\\\",\\\"CAP_SYS_PTRACE\\\",\\\"CAP_SYS_PACCT\\\",\\\"CAP_SYS_ADMIN\\\",\\\"CAP_SYS_BOOT\\\",\\\"CAP_SYS_NICE\\\",\\\"CAP_SYS_RESOURCE\\\",\\\"CAP_SYS_TIME\\\",\\\"CAP_SYS_TTY_CONFIG\\\",\\\"CAP_MKNOD\\\",\\\"CAP_LEASE\\\",\\\"CAP_AUDIT_WRITE\\\",\\\"CAP_AUDIT_CONTROL\\\",\\\"CAP_SETFCAP\\\",\\\"CAP_MAC_OVERRIDE\\\",\\\"CAP_MAC_ADMIN\\\",\\\"CAP_SYSLOG\\\",\\\"CAP_WAKE_ALARM\\\",\\\"CAP_BLOCK_SUSPEND\\\",\\\"CAP_AUDIT_READ\\\",\\\"CAP_PERFMON\\\",\\\"CAP_BPF\\\",\\\"CAP_CHECKPOINT_RESTORE\\\"],\\\"cgroup\\\":{\\\"v1\\\":true,\\\"v2\\\":true,\\\"systemd\\\":true,\\\"systemdUser\\\":true,\\\"rdma\\\":true},\\\"seccomp\\\":{\\\"enabled\\\":true,\\\"actions\\\":[\\\"SCMP_ACT_ALLOW\\\",\\\"SCMP_ACT_ERRNO\\\",\\\"SCMP_ACT_KILL\\\",\\\"SCMP_ACT_KILL_PROCESS\\\",\\\"SCMP_ACT_KILL_THREAD\\\",\\\"SCMP_ACT_LOG\\\",\\\"SCMP_ACT_NOTIFY\\\",\\\"SCMP_ACT_TRACE\\\",\\\"SCMP_ACT_TRAP\\\"],\\\"operators\\\":[\\\"SCMP_CMP_EQ\\\",\\\"SCMP_CMP_GE\\\",\\\"SCMP_CMP_GT\\\",\\\"SCMP_CMP_LE\\\",\\\"SCMP_CMP_LT\\\",\\\"SCMP_CMP_MASKED_EQ\\\",\\\"SCMP_CMP_NE\\\"],\\\"archs\\\":[\\\"SCMP_ARCH_AARCH64\\\",\\\"SCMP_ARCH_ARM\\\",\\\"SCMP_ARCH_LOONGARCH64\\\",\\\"SCMP_ARCH_MIPS\\\",\\\"SCMP_ARCH_MIPS64\\\",\\\"SCMP_ARCH_MIPS64N32\\\",\\\"SCMP_ARCH_MIPSEL\\\",\\\"SCMP_ARCH_MIPSEL64\\\",\\\"SCMP_ARCH_MIPSEL64N32\\\",\\\"SCMP_ARCH_PPC\\\",\\\"SCMP_ARCH_PPC64\\\",\\\"SCMP_ARCH_PPC64LE\\\",\\\"SCMP_ARCH_RISCV64\\\",\\\"SCMP_ARCH_S390\\\",\\\"SCMP_ARCH_S390X\\\",\\\"SCMP_ARCH_X32\\\",\\\"SCMP_ARCH_X86\\\",\\\"SCMP_ARCH_X86_64\\\"],\\\"knownFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\",\\\"SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV\\\"],\\\"supportedFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\"]},\\\"apparmor\\\":{\\\"enabled\\\":true},\\\"selinux\\\":{\\\"enabled\\\":true},\\\"intelRdt\\\":{\\\"enabled\\\":true,\\\"schemata\\\":true,\\\"monitoring\\\":true},\\\"memoryPolicy\\\":{\\\"modes\\\":[\\\"MPOL_BIND\\\",\\\"MPOL_DEFAULT\\\",\\\"MPOL_INTERLEAVE\\\",\\\"MPOL_LOCAL\\\",\\\"MPOL_PREFERRED\\\",\\\"MPOL_PREFERRED_MANY\\\",\\\"MPOL_WEIGHTED_INTERLEAVE\\\"],\\\"flags\\\":[\\\"MPOL_F_NUMA_BALANCING\\\",\\\"MPOL_F_RELATIVE_NODES\\\",\\\"MPOL_F_STATIC_NODES\\\"]},\\\"mountExtensions\\\":{\\\"idmap\\\":{\\\"enabled\\\":true}},\\\"netDevices\\\":{\\\"enabled\\\":true}},\\\"annotations\\\":{\\\"io.github.seccomp.libseccomp.version\\\":\\\"2.5.2\\\",\\\"org.opencontainers.runc.checkpoint.enabled\\\":\\\"true\\\",\\\"org.opencontainers.runc.commit\\\":\\\"v1.5.1-0-g8f2685a4\\\",\\\"org.opencontainers.runc.version\\\":\\\"1.5.1\\\"},\\\"potentiallyUnsafeConfigAnnotations\\\":[\\\"bundle\\\",\\\"org.systemd.property.\\\",\\\"org.criu.config\\\"]}\"}},\"runc\":{\"path\":\"runc\",\"status\":{\"org.opencontainers.runtime-spec.features\":\"{\\\"ociVersionMin\\\":\\\"1.0.0\\\",\\\"ociVersionMax\\\":\\\"1.3.0\\\",\\\"hooks\\\":[\\\"prestart\\\",\\\"createRuntime\\\",\\\"createContainer\\\",\\\"startContainer\\\",\\\"poststart\\\",\\\"poststop\\\"],\\\"mountOptions\\\":[\\\"async\\\",\\\"atime\\\",\\\"bind\\\",\\\"defaults\\\",\\\"dev\\\",\\\"diratime\\\",\\\"dirsync\\\",\\\"exec\\\",\\\"iversion\\\",\\\"lazytime\\\",\\\"loud\\\",\\\"mand\\\",\\\"noatime\\\",\\\"nodev\\\",\\\"nodiratime\\\",\\\"noexec\\\",\\\"noiversion\\\",\\\"nolazytime\\\",\\\"nomand\\\",\\\"norelatime\\\",\\\"nostrictatime\\\",\\\"nosuid\\\",\\\"nosymfollow\\\",\\\"private\\\",\\\"ratime\\\",\\\"rbind\\\",\\\"rdev\\\",\\\"rdiratime\\\",\\\"relatime\\\",\\\"remount\\\",\\\"rexec\\\",\\\"rnoatime\\\",\\\"rnodev\\\",\\\"rnodiratime\\\",\\\"rnoexec\\\",\\\"rnorelatime\\\",\\\"rnostrictatime\\\",\\\"rnosuid\\\",\\\"rnosymfollow\\\",\\\"ro\\\",\\\"rprivate\\\",\\\"rrelatime\\\",\\\"rro\\\",\\\"rrw\\\",\\\"rshared\\\",\\\"rslave\\\",\\\"rstrictatime\\\",\\\"rsuid\\\",\\\"rsymfollow\\\",\\\"runbindable\\\",\\\"rw\\\",\\\"shared\\\",\\\"silent\\\",\\\"slave\\\",\\\"strictatime\\\",\\\"suid\\\",\\\"symfollow\\\",\\\"sync\\\",\\\"tmpcopyup\\\",\\\"unbindable\\\"],\\\"linux\\\":{\\\"namespaces\\\":[\\\"cgroup\\\",\\\"ipc\\\",\\\"mount\\\",\\\"network\\\",\\\"pid\\\",\\\"time\\\",\\\"user\\\",\\\"uts\\\"],\\\"capabilities\\\":[\\\"CAP_CHOWN\\\",\\\"CAP_DAC_OVERRIDE\\\",\\\"CAP_DAC_READ_SEARCH\\\",\\\"CAP_FOWNER\\\",\\\"CAP_FSETID\\\",\\\"CAP_KILL\\\",\\\"CAP_SETGID\\\",\\\"CAP_SETUID\\\",\\\"CAP_SETPCAP\\\",\\\"CAP_LINUX_IMMUTABLE\\\",\\\"CAP_NET_BIND_SERVICE\\\",\\\"CAP_NET_BROADCAST\\\",\\\"CAP_NET_ADMIN\\\",\\\"CAP_NET_RAW\\\",\\\"CAP_IPC_LOCK\\\",\\\"CAP_IPC_OWNER\\\",\\\"CAP_SYS_MODULE\\\",\\\"CAP_SYS_RAWIO\\\",\\\"CAP_SYS_CHROOT\\\",\\\"CAP_SYS_PTRACE\\\",\\\"CAP_SYS_PACCT\\\",\\\"CAP_SYS_ADMIN\\\",\\\"CAP_SYS_BOOT\\\",\\\"CAP_SYS_NICE\\\",\\\"CAP_SYS_RESOURCE\\\",\\\"CAP_SYS_TIME\\\",\\\"CAP_SYS_TTY_CONFIG\\\",\\\"CAP_MKNOD\\\",\\\"CAP_LEASE\\\",\\\"CAP_AUDIT_WRITE\\\",\\\"CAP_AUDIT_CONTROL\\\",\\\"CAP_SETFCAP\\\",\\\"CAP_MAC_OVERRIDE\\\",\\\"CAP_MAC_ADMIN\\\",\\\"CAP_SYSLOG\\\",\\\"CAP_WAKE_ALARM\\\",\\\"CAP_BLOCK_SUSPEND\\\",\\\"CAP_AUDIT_READ\\\",\\\"CAP_PERFMON\\\",\\\"CAP_BPF\\\",\\\"CAP_CHECKPOINT_RESTORE\\\"],\\\"cgroup\\\":{\\\"v1\\\":true,\\\"v2\\\":true,\\\"systemd\\\":true,\\\"systemdUser\\\":true,\\\"rdma\\\":true},\\\"seccomp\\\":{\\\"enabled\\\":true,\\\"actions\\\":[\\\"SCMP_ACT_ALLOW\\\",\\\"SCMP_ACT_ERRNO\\\",\\\"SCMP_ACT_KILL\\\",\\\"SCMP_ACT_KILL_PROCESS\\\",\\\"SCMP_ACT_KILL_THREAD\\\",\\\"SCMP_ACT_LOG\\\",\\\"SCMP_ACT_NOTIFY\\\",\\\"SCMP_ACT_TRACE\\\",\\\"SCMP_ACT_TRAP\\\"],\\\"operators\\\":[\\\"SCMP_CMP_EQ\\\",\\\"SCMP_CMP_GE\\\",\\\"SCMP_CMP_GT\\\",\\\"SCMP_CMP_LE\\\",\\\"SCMP_CMP_LT\\\",\\\"SCMP_CMP_MASKED_EQ\\\",\\\"SCMP_CMP_NE\\\"],\\\"archs\\\":[\\\"SCMP_ARCH_AARCH64\\\",\\\"SCMP_ARCH_ARM\\\",\\\"SCMP_ARCH_LOONGARCH64\\\",\\\"SCMP_ARCH_MIPS\\\",\\\"SCMP_ARCH_MIPS64\\\",\\\"SCMP_ARCH_MIPS64N32\\\",\\\"SCMP_ARCH_MIPSEL\\\",\\\"SCMP_ARCH_MIPSEL64\\\",\\\"SCMP_ARCH_MIPSEL64N32\\\",\\\"SCMP_ARCH_PPC\\\",\\\"SCMP_ARCH_PPC64\\\",\\\"SCMP_ARCH_PPC64LE\\\",\\\"SCMP_ARCH_RISCV64\\\",\\\"SCMP_ARCH_S390\\\",\\\"SCMP_ARCH_S390X\\\",\\\"SCMP_ARCH_X32\\\",\\\"SCMP_ARCH_X86\\\",\\\"SCMP_ARCH_X86_64\\\"],\\\"knownFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\",\\\"SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV\\\"],\\\"supportedFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\"]},\\\"apparmor\\\":{\\\"enabled\\\":true},\\\"selinux\\\":{\\\"enabled\\\":true},\\\"intelRdt\\\":{\\\"enabled\\\":true,\\\"schemata\\\":true,\\\"monitoring\\\":true},\\\"memoryPolicy\\\":{\\\"modes\\\":[\\\"MPOL_BIND\\\",\\\"MPOL_DEFAULT\\\",\\\"MPOL_INTERLEAVE\\\",\\\"MPOL_LOCAL\\\",\\\"MPOL_PREFERRED\\\",\\\"MPOL_PREFERRED_MANY\\\",\\\"MPOL_WEIGHTED_INTERLEAVE\\\"],\\\"flags\\\":[\\\"MPOL_F_NUMA_BALANCING\\\",\\\"MPOL_F_RELATIVE_NODES\\\",\\\"MPOL_F_STATIC_NODES\\\"]},\\\"mountExtensions\\\":{\\\"idmap\\\":{\\\"enabled\\\":true}},\\\"netDevices\\\":{\\\"enabled\\\":true}},\\\"annotations\\\":{\\\"io.github.seccomp.libseccomp.version\\\":\\\"2.5.2\\\",\\\"org.opencontainers.runc.checkpoint.enabled\\\":\\\"true\\\",\\\"org.opencontainers.runc.commit\\\":\\\"v1.5.1-0-g8f2685a4\\\",\\\"org.opencontainers.runc.version\\\":\\\"1.5.1\\\"},\\\"potentiallyUnsafeConfigAnnotations\\\":[\\\"bundle\\\",\\\"org.systemd.property.\\\",\\\"org.criu.config\\\"]}\"}}},\"DefaultRuntime\":\"runc\",\"Swarm\":{\"NodeID\":\"\",\"NodeAddr\":\"\",\"LocalNodeState\":\"inactive\",\"ControlAvailable\":false,\"Error\":\"\",\"RemoteManagers\":null},\"LiveRestoreEnabled\":false,\"Isolation\":\"\",\"InitBinary\":\"docker-init\",\"ContainerdCommit\":{\"ID\":\"1294c24a7da8e5a793ed378161673abe94118892\"},\"RuncCommit\":{\"ID\":\"v1.5.1-0-g8f2685a4\"},\"InitCommit\":{\"ID\":\"de40ad0\"},\"SecurityOptions\":[\"name=seccomp,profile=builtin\",\"name=cgroupns\"],\"FirewallBackend\":{\"Driver\":\"iptables+firewalld\",\"Info\":[[\"EnableUserlandProxy\",\"true\"],[\"UserlandProxyPath\",\"/usr/bin/docker-proxy\"]]},\"CDISpecDirs\":[\"/etc/cdi\",\"/var/run/cdi\"],\"Containerd\":{\"Address\":\"/run/containerd/containerd.sock\",\"Namespaces\":{\"Containers\":\"moby\",\"Plugins\":\"plugins.moby\"}},\"Warnings\":null,\"ClientInfo\":{\"Debug\":false,\"Platform\":{\"Name\":\"Docker Engine - Community\"},\"Version\":\"29.8.0\",\"DefaultAPIVersion\":\"1.56\",\"GitCommit\":\"88096ef\",\"GoVersion\":\"go1.26.8\",\"Os\":\"linux\",\"Arch\":\"arm64\",\"BuildTime\":\"Thu Sep  3 21:51:39 2026\",\"Context\":\"default\",\"Plugins\":[{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.37.1\",\"ShortDescription\":\"Docker Buildx\",\"Name\":\"buildx\",\"Path\":\"/usr/libexec/docker/cli-plugins/docker-buildx\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v5.5.1\",\"ShortDescription\":\"Docker Compose\",\"Name\":\"compose\",\"Path\":\"/usr/libexec/docker/cli-plugins/docker-compose\"}],\"Warnings\":null}}\n"
+  },
+  {
+    "argv": [
+      "getenforce"
+    ],
+    "ended_monotonic": 812635.255916259,
+    "exit": 0,
+    "started_monotonic": 812635.254011857,
+    "stderr": "",
+    "stdout": "Enforcing\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .SecurityOptions}}"
+    ],
+    "ended_monotonic": 812635.321925056,
+    "exit": 0,
+    "started_monotonic": 812635.255922579,
+    "stderr": "",
+    "stdout": "[\"name=seccomp,profile=builtin\",\"name=cgroupns\"]\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812635.354841095,
+    "exit": 0,
+    "started_monotonic": 812635.322996418,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812635.379573604,
+    "exit": 0,
+    "started_monotonic": 812635.354862335,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812637.441469428,
+    "exit": 0,
+    "started_monotonic": 812635.379588364,
+    "stderr": " Network cstack-r2-clean_isolated Creating \n Network cstack-r2-clean_isolated Creating \n Network cstack-r2-clean_isolated Created \n Network cstack-r2-clean_isolated Created \n Container cstack-r2-clean-reviewer-1 Creating \n Container cstack-r2-clean-approver-1 Creating \n Container cstack-r2-clean-receiver-1 Creating \n Container cstack-r2-clean-broker-1 Creating \n Container cstack-r2-clean-agent-b-1 Creating \n Container cstack-r2-clean-agent-a-1 Creating \n Container cstack-r2-clean-receiver-1 Created \n Container cstack-r2-clean-broker-1 Created \n Container cstack-r2-clean-approver-1 Created \n Container cstack-r2-clean-reviewer-1 Created \n Container cstack-r2-clean-agent-a-1 Created \n Container cstack-r2-clean-agent-b-1 Created \n Container cstack-r2-clean-approver-1 Starting \n Container cstack-r2-clean-agent-b-1 Starting \n Container cstack-r2-clean-broker-1 Starting \n Container cstack-r2-clean-receiver-1 Starting \n Container cstack-r2-clean-reviewer-1 Starting \n Container cstack-r2-clean-agent-a-1 Starting \n Container cstack-r2-clean-approver-1 Started \n Container cstack-r2-clean-agent-b-1 Started \n Container cstack-r2-clean-broker-1 Started \n Container cstack-r2-clean-receiver-1 Started \n Container cstack-r2-clean-reviewer-1 Started \n Container cstack-r2-clean-agent-a-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812650.505902907,
+    "exit": 0,
+    "started_monotonic": 812650.358460494,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 812650.649347316,
+    "exit": 0,
+    "started_monotonic": 812650.505999507,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791659695}"
+    ],
+    "ended_monotonic": 812650.795043447,
+    "exit": 0,
+    "started_monotonic": 812650.649418196,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791659695}"
+    ],
+    "ended_monotonic": 812650.946004824,
+    "exit": 0,
+    "started_monotonic": 812650.795112327,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812651.08710211,
+    "exit": 0,
+    "started_monotonic": 812650.946090064,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791659695}"
+    ],
+    "ended_monotonic": 812651.234890924,
+    "exit": 0,
+    "started_monotonic": 812651.08716703,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791659695}"
+    ],
+    "ended_monotonic": 812651.379067893,
+    "exit": 0,
+    "started_monotonic": 812651.234956244,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812651.52057862,
+    "exit": 0,
+    "started_monotonic": 812651.379130413,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812651.651424134,
+    "exit": 0,
+    "started_monotonic": 812651.52064006,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-b\"}"
+    ],
+    "ended_monotonic": 812651.798980387,
+    "exit": 0,
+    "started_monotonic": 812651.651494694,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 2}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 812652.030387939,
+    "exit": 0,
+    "started_monotonic": 812651.799025427,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,2,Path('/output')))"
+    ],
+    "ended_monotonic": 812652.262856212,
+    "exit": 0,
+    "started_monotonic": 812652.030406979,
+    "stderr": "",
+    "stdout": "2.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,socket\ns=socket.socket();s.settimeout(1)\ntry:s.connect(('192.0.2.1',9));print(json.dumps({'connected':True}))\nexcept OSError as e:print(json.dumps({'connected':False,'error':str(e)}))\nassert not any(line.split()[1]=='00000000' for line in open('/proc/net/route').readlines()[1:])"
+    ],
+    "ended_monotonic": 812652.392822685,
+    "exit": 0,
+    "started_monotonic": 812652.262871012,
+    "stderr": "",
+    "stdout": "{\"connected\": false, \"error\": \"[Errno 101] Network unreachable\"}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/final/sink"
+    ],
+    "ended_monotonic": 812652.424307922,
+    "exit": 0,
+    "started_monotonic": 812652.393055565,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/final/sink"
+    ],
+    "ended_monotonic": 812652.451204754,
+    "exit": 0,
+    "started_monotonic": 812652.424334002,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812652.519421434,
+    "exit": 0,
+    "started_monotonic": 812652.453815677,
+    "stderr": "",
+    "stdout": "{\"admitted\": 2, \"delivered\": 2, \"global_cap\": 2, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}, {\"agent_uid\": 23702, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"b\", \"receipt_present\": true, \"release_id\": 2}], \"spent\": 2, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/final/database.sqlite"
+    ],
+    "ended_monotonic": 812652.565228768,
+    "exit": 0,
+    "started_monotonic": 812652.519739474,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/final/database.sqlite"
+    ],
+    "ended_monotonic": 812652.588788236,
+    "exit": 0,
+    "started_monotonic": 812652.565288608,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/clean/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812663.507180591,
+    "exit": 0,
+    "started_monotonic": 812652.589214036,
+    "stderr": " Container cstack-r2-clean-reviewer-1 Stopping \n Container cstack-r2-clean-agent-b-1 Stopping \n Container cstack-r2-clean-agent-a-1 Stopping \n Container cstack-r2-clean-broker-1 Stopping \n Container cstack-r2-clean-approver-1 Stopping \n Container cstack-r2-clean-receiver-1 Stopping \n Container cstack-r2-clean-agent-a-1 Stopped \n Container cstack-r2-clean-agent-a-1 Removing \n Container cstack-r2-clean-agent-a-1 Removed \n Container cstack-r2-clean-approver-1 Stopped \n Container cstack-r2-clean-approver-1 Removing \n Container cstack-r2-clean-approver-1 Removed \n Container cstack-r2-clean-reviewer-1 Stopped \n Container cstack-r2-clean-reviewer-1 Removing \n Container cstack-r2-clean-reviewer-1 Removed \n Container cstack-r2-clean-receiver-1 Stopped \n Container cstack-r2-clean-receiver-1 Removing \n Container cstack-r2-clean-receiver-1 Removed \n Container cstack-r2-clean-agent-b-1 Stopped \n Container cstack-r2-clean-agent-b-1 Removing \n Container cstack-r2-clean-broker-1 Stopped \n Container cstack-r2-clean-broker-1 Removing \n Container cstack-r2-clean-agent-b-1 Removed \n Container cstack-r2-clean-broker-1 Removed \n Network cstack-r2-clean_isolated Removing \n Network cstack-r2-clean_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812663.538056588,
+    "exit": 0,
+    "started_monotonic": 812663.507186911,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812663.563544178,
+    "exit": 0,
+    "started_monotonic": 812663.538906029,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812663.586058004,
+    "exit": 0,
+    "started_monotonic": 812663.563564298,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "777",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812663.60815083,
+    "exit": 0,
+    "started_monotonic": 812663.586078004,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-writable-sink-mount",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812665.336644662,
+    "exit": 0,
+    "started_monotonic": 812663.60816207,
+    "stderr": " Network cstack-r2-writable-sink-mount_isolated Creating \n Network cstack-r2-writable-sink-mount_isolated Creating \n Network cstack-r2-writable-sink-mount_isolated Created \n Network cstack-r2-writable-sink-mount_isolated Created \n Container cstack-r2-writable-sink-mount-reviewer-1 Creating \n Container cstack-r2-writable-sink-mount-broker-1 Creating \n Container cstack-r2-writable-sink-mount-receiver-1 Creating \n Container cstack-r2-writable-sink-mount-agent-b-1 Creating \n Container cstack-r2-writable-sink-mount-approver-1 Creating \n Container cstack-r2-writable-sink-mount-agent-a-1 Creating \n Container cstack-r2-writable-sink-mount-agent-b-1 Created \n Container cstack-r2-writable-sink-mount-receiver-1 Created \n Container cstack-r2-writable-sink-mount-approver-1 Created \n Container cstack-r2-writable-sink-mount-agent-a-1 Created \n Container cstack-r2-writable-sink-mount-broker-1 Created \n Container cstack-r2-writable-sink-mount-reviewer-1 Created \n Container cstack-r2-writable-sink-mount-agent-a-1 Starting \n Container cstack-r2-writable-sink-mount-reviewer-1 Starting \n Container cstack-r2-writable-sink-mount-approver-1 Starting \n Container cstack-r2-writable-sink-mount-agent-b-1 Starting \n Container cstack-r2-writable-sink-mount-broker-1 Starting \n Container cstack-r2-writable-sink-mount-receiver-1 Starting \n Container cstack-r2-writable-sink-mount-agent-a-1 Started \n Container cstack-r2-writable-sink-mount-reviewer-1 Started \n Container cstack-r2-writable-sink-mount-approver-1 Started \n Container cstack-r2-writable-sink-mount-agent-b-1 Started \n Container cstack-r2-writable-sink-mount-broker-1 Started \n Container cstack-r2-writable-sink-mount-receiver-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-writable-sink-mount",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import os;from pathlib import Path;f=Path('/bypass/2.body').open('xb');f.write(b'unapproved r2 direct write');f.flush();os.fsync(f.fileno());f.close()"
+    ],
+    "ended_monotonic": 812678.424942889,
+    "exit": 0,
+    "started_monotonic": 812678.280346119,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/final/sink"
+    ],
+    "ended_monotonic": 812678.458024048,
+    "exit": 0,
+    "started_monotonic": 812678.425153769,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/final/sink"
+    ],
+    "ended_monotonic": 812678.484287919,
+    "exit": 0,
+    "started_monotonic": 812678.458053968,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812678.552841199,
+    "exit": 0,
+    "started_monotonic": 812678.48584852,
+    "stderr": "",
+    "stdout": "{\"admitted\": 0, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [], \"spent\": 0, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/final/database.sqlite"
+    ],
+    "ended_monotonic": 812678.599990135,
+    "exit": 0,
+    "started_monotonic": 812678.55316864,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/final/database.sqlite"
+    ],
+    "ended_monotonic": 812678.625429245,
+    "exit": 0,
+    "started_monotonic": 812678.600047575,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-writable-sink-mount",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/writable-sink-mount/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812689.542572559,
+    "exit": 0,
+    "started_monotonic": 812678.625758445,
+    "stderr": " Container cstack-r2-writable-sink-mount-approver-1 Stopping \n Container cstack-r2-writable-sink-mount-receiver-1 Stopping \n Container cstack-r2-writable-sink-mount-broker-1 Stopping \n Container cstack-r2-writable-sink-mount-agent-b-1 Stopping \n Container cstack-r2-writable-sink-mount-agent-a-1 Stopping \n Container cstack-r2-writable-sink-mount-reviewer-1 Stopping \n Container cstack-r2-writable-sink-mount-agent-a-1 Stopped \n Container cstack-r2-writable-sink-mount-agent-a-1 Removing \n Container cstack-r2-writable-sink-mount-agent-a-1 Removed \n Container cstack-r2-writable-sink-mount-broker-1 Stopped \n Container cstack-r2-writable-sink-mount-broker-1 Removing \n Container cstack-r2-writable-sink-mount-broker-1 Removed \n Container cstack-r2-writable-sink-mount-agent-b-1 Stopped \n Container cstack-r2-writable-sink-mount-agent-b-1 Removing \n Container cstack-r2-writable-sink-mount-receiver-1 Stopped \n Container cstack-r2-writable-sink-mount-receiver-1 Removing \n Container cstack-r2-writable-sink-mount-agent-b-1 Removed \n Container cstack-r2-writable-sink-mount-reviewer-1 Stopped \n Container cstack-r2-writable-sink-mount-reviewer-1 Removing \n Container cstack-r2-writable-sink-mount-receiver-1 Removed \n Container cstack-r2-writable-sink-mount-approver-1 Stopped \n Container cstack-r2-writable-sink-mount-approver-1 Removing \n Container cstack-r2-writable-sink-mount-reviewer-1 Removed \n Container cstack-r2-writable-sink-mount-approver-1 Removed \n Network cstack-r2-writable-sink-mount_isolated Removing \n Network cstack-r2-writable-sink-mount_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812689.576213078,
+    "exit": 0,
+    "started_monotonic": 812689.542579039,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812689.601998549,
+    "exit": 0,
+    "started_monotonic": 812689.577136159,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812689.625194856,
+    "exit": 0,
+    "started_monotonic": 812689.602017269,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-trusted-role-uid-collision",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812691.513539636,
+    "exit": 0,
+    "started_monotonic": 812689.625214136,
+    "stderr": " Network cstack-r2-trusted-role-uid-collision_isolated Creating \n Network cstack-r2-trusted-role-uid-collision_isolated Creating \n Network cstack-r2-trusted-role-uid-collision_isolated Created \n Network cstack-r2-trusted-role-uid-collision_isolated Created \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Creating \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Creating \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Creating \n Container cstack-r2-trusted-role-uid-collision-broker-1 Creating \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Creating \n Container cstack-r2-trusted-role-uid-collision-approver-1 Creating \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Created \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Created \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Created \n Container cstack-r2-trusted-role-uid-collision-broker-1 Created \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Created \n Container cstack-r2-trusted-role-uid-collision-approver-1 Created \n Container cstack-r2-trusted-role-uid-collision-approver-1 Starting \n Container cstack-r2-trusted-role-uid-collision-broker-1 Starting \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Starting \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Starting \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Starting \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Starting \n Container cstack-r2-trusted-role-uid-collision-approver-1 Started \n Container cstack-r2-trusted-role-uid-collision-broker-1 Started \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Started \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Started \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Started \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-trusted-role-uid-collision",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"halt\"}"
+    ],
+    "ended_monotonic": 812704.43783679,
+    "exit": 0,
+    "started_monotonic": 812704.284152489,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-trusted-role-uid-collision",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812704.57422467,
+    "exit": 0,
+    "started_monotonic": 812704.43790523,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/final/sink"
+    ],
+    "ended_monotonic": 812704.603380424,
+    "exit": 0,
+    "started_monotonic": 812704.57441807,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/final/sink"
+    ],
+    "ended_monotonic": 812704.631665778,
+    "exit": 0,
+    "started_monotonic": 812704.603405264,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812704.702186461,
+    "exit": 0,
+    "started_monotonic": 812704.632185498,
+    "stderr": "",
+    "stdout": "{\"admitted\": 0, \"delivered\": 0, \"global_cap\": 1, \"halted\": true, \"records\": [], \"spent\": 0, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/final/database.sqlite"
+    ],
+    "ended_monotonic": 812704.750464517,
+    "exit": 0,
+    "started_monotonic": 812704.702497861,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/final/database.sqlite"
+    ],
+    "ended_monotonic": 812704.775639107,
+    "exit": 0,
+    "started_monotonic": 812704.750488837,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-trusted-role-uid-collision",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/trusted-role-uid-collision/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812715.703960074,
+    "exit": 0,
+    "started_monotonic": 812704.775952027,
+    "stderr": " Container cstack-r2-trusted-role-uid-collision-agent-b-1 Stopping \n Container cstack-r2-trusted-role-uid-collision-approver-1 Stopping \n Container cstack-r2-trusted-role-uid-collision-broker-1 Stopping \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Stopping \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Stopping \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Stopping \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Stopped \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Removing \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Stopped \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Removing \n Container cstack-r2-trusted-role-uid-collision-reviewer-1 Removed \n Container cstack-r2-trusted-role-uid-collision-agent-b-1 Removed \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Stopped \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Removing \n Container cstack-r2-trusted-role-uid-collision-receiver-1 Removed \n Container cstack-r2-trusted-role-uid-collision-broker-1 Stopped \n Container cstack-r2-trusted-role-uid-collision-broker-1 Removing \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Stopped \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Removing \n Container cstack-r2-trusted-role-uid-collision-broker-1 Removed \n Container cstack-r2-trusted-role-uid-collision-agent-a-1 Removed \n Container cstack-r2-trusted-role-uid-collision-approver-1 Stopped \n Container cstack-r2-trusted-role-uid-collision-approver-1 Removing \n Container cstack-r2-trusted-role-uid-collision-approver-1 Removed \n Network cstack-r2-trusted-role-uid-collision_isolated Removing \n Network cstack-r2-trusted-role-uid-collision_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812715.74298844,
+    "exit": 0,
+    "started_monotonic": 812715.703965234,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812715.774538077,
+    "exit": 0,
+    "started_monotonic": 812715.744612642,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812715.797149304,
+    "exit": 0,
+    "started_monotonic": 812715.774557557,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812717.536270829,
+    "exit": 0,
+    "started_monotonic": 812715.797165904,
+    "stderr": " Network cstack-r2-concurrent-cap1_isolated Creating \n Network cstack-r2-concurrent-cap1_isolated Creating \n Network cstack-r2-concurrent-cap1_isolated Created \n Network cstack-r2-concurrent-cap1_isolated Created \n Container cstack-r2-concurrent-cap1-reviewer-1 Creating \n Container cstack-r2-concurrent-cap1-receiver-1 Creating \n Container cstack-r2-concurrent-cap1-broker-1 Creating \n Container cstack-r2-concurrent-cap1-approver-1 Creating \n Container cstack-r2-concurrent-cap1-agent-b-1 Creating \n Container cstack-r2-concurrent-cap1-agent-a-1 Creating \n Container cstack-r2-concurrent-cap1-broker-1 Created \n Container cstack-r2-concurrent-cap1-agent-b-1 Created \n Container cstack-r2-concurrent-cap1-reviewer-1 Created \n Container cstack-r2-concurrent-cap1-receiver-1 Created \n Container cstack-r2-concurrent-cap1-agent-a-1 Created \n Container cstack-r2-concurrent-cap1-approver-1 Created \n Container cstack-r2-concurrent-cap1-receiver-1 Starting \n Container cstack-r2-concurrent-cap1-reviewer-1 Starting \n Container cstack-r2-concurrent-cap1-agent-a-1 Starting \n Container cstack-r2-concurrent-cap1-agent-b-1 Starting \n Container cstack-r2-concurrent-cap1-approver-1 Starting \n Container cstack-r2-concurrent-cap1-broker-1 Starting \n Container cstack-r2-concurrent-cap1-receiver-1 Started \n Container cstack-r2-concurrent-cap1-reviewer-1 Started \n Container cstack-r2-concurrent-cap1-agent-a-1 Started \n Container cstack-r2-concurrent-cap1-agent-b-1 Started \n Container cstack-r2-concurrent-cap1-approver-1 Started \n Container cstack-r2-concurrent-cap1-broker-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812730.89234749,
+    "exit": 0,
+    "started_monotonic": 812730.73946563,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 812731.044764909,
+    "exit": 0,
+    "started_monotonic": 812730.89241277,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791659776}"
+    ],
+    "ended_monotonic": 812731.19037328,
+    "exit": 0,
+    "started_monotonic": 812731.044834149,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791659776}"
+    ],
+    "ended_monotonic": 812731.340713737,
+    "exit": 0,
+    "started_monotonic": 812731.190439681,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812731.503470089,
+    "exit": 0,
+    "started_monotonic": 812731.340782377,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791659776}"
+    ],
+    "ended_monotonic": 812731.64896318,
+    "exit": 0,
+    "started_monotonic": 812731.503531649,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791659776}"
+    ],
+    "ended_monotonic": 812731.799221356,
+    "exit": 0,
+    "started_monotonic": 812731.64903206,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "touch",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel/race-go"
+    ],
+    "ended_monotonic": 812731.994364426,
+    "exit": 0,
+    "started_monotonic": 812731.962230308,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys,time;from pathlib import Path;from trusted_stack.client import request;print('READY',flush=True)\nwhile not Path('/channel/race-go').exists():time.sleep(.01)\nprint(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812732.02375946,
+    "exit": 0,
+    "started_monotonic": 812731.799947237,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys,time;from pathlib import Path;from trusted_stack.client import request;print('READY',flush=True)\nwhile not Path('/channel/race-go').exists():time.sleep(.01)\nprint(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-b\"}"
+    ],
+    "ended_monotonic": 812732.0239271,
+    "exit": 0,
+    "started_monotonic": 812731.800522518,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 812732.297216382,
+    "exit": 0,
+    "started_monotonic": 812732.02398902,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/final/sink"
+    ],
+    "ended_monotonic": 812732.324882774,
+    "exit": 0,
+    "started_monotonic": 812732.297444422,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/final/sink"
+    ],
+    "ended_monotonic": 812732.352195086,
+    "exit": 0,
+    "started_monotonic": 812732.324910574,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812732.42318437,
+    "exit": 0,
+    "started_monotonic": 812732.353737768,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 1, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/final/database.sqlite"
+    ],
+    "ended_monotonic": 812732.481477958,
+    "exit": 0,
+    "started_monotonic": 812732.42355997,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/final/database.sqlite"
+    ],
+    "ended_monotonic": 812732.50885147,
+    "exit": 0,
+    "started_monotonic": 812732.481502518,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/concurrent-cap1/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812743.457929142,
+    "exit": 0,
+    "started_monotonic": 812732.509210751,
+    "stderr": " Container cstack-r2-concurrent-cap1-approver-1 Stopping \n Container cstack-r2-concurrent-cap1-receiver-1 Stopping \n Container cstack-r2-concurrent-cap1-broker-1 Stopping \n Container cstack-r2-concurrent-cap1-reviewer-1 Stopping \n Container cstack-r2-concurrent-cap1-agent-b-1 Stopping \n Container cstack-r2-concurrent-cap1-agent-a-1 Stopping \n Container cstack-r2-concurrent-cap1-reviewer-1 Stopped \n Container cstack-r2-concurrent-cap1-reviewer-1 Removing \n Container cstack-r2-concurrent-cap1-reviewer-1 Removed \n Container cstack-r2-concurrent-cap1-agent-b-1 Stopped \n Container cstack-r2-concurrent-cap1-agent-b-1 Removing \n Container cstack-r2-concurrent-cap1-agent-b-1 Removed \n Container cstack-r2-concurrent-cap1-broker-1 Stopped \n Container cstack-r2-concurrent-cap1-broker-1 Removing \n Container cstack-r2-concurrent-cap1-receiver-1 Stopped \n Container cstack-r2-concurrent-cap1-receiver-1 Removing \n Container cstack-r2-concurrent-cap1-broker-1 Removed \n Container cstack-r2-concurrent-cap1-agent-a-1 Stopped \n Container cstack-r2-concurrent-cap1-agent-a-1 Removing \n Container cstack-r2-concurrent-cap1-receiver-1 Removed \n Container cstack-r2-concurrent-cap1-agent-a-1 Removed \n Container cstack-r2-concurrent-cap1-approver-1 Stopped \n Container cstack-r2-concurrent-cap1-approver-1 Removing \n Container cstack-r2-concurrent-cap1-approver-1 Removed \n Network cstack-r2-concurrent-cap1_isolated Removing \n Network cstack-r2-concurrent-cap1_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812743.49830543,
+    "exit": 0,
+    "started_monotonic": 812743.457935062,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812743.5407674,
+    "exit": 0,
+    "started_monotonic": 812743.499214351,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812743.567928312,
+    "exit": 0,
+    "started_monotonic": 812743.54078824,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812745.91443535,
+    "exit": 0,
+    "started_monotonic": 812743.567941112,
+    "stderr": " Network cstack-r2-crash-retry_isolated Creating \n Network cstack-r2-crash-retry_isolated Creating \n Network cstack-r2-crash-retry_isolated Created \n Network cstack-r2-crash-retry_isolated Created \n Container cstack-r2-crash-retry-reviewer-1 Creating \n Container cstack-r2-crash-retry-approver-1 Creating \n Container cstack-r2-crash-retry-agent-b-1 Creating \n Container cstack-r2-crash-retry-agent-a-1 Creating \n Container cstack-r2-crash-retry-receiver-1 Creating \n Container cstack-r2-crash-retry-broker-1 Creating \n Container cstack-r2-crash-retry-reviewer-1 Created \n Container cstack-r2-crash-retry-receiver-1 Created \n Container cstack-r2-crash-retry-agent-b-1 Created \n Container cstack-r2-crash-retry-broker-1 Created \n Container cstack-r2-crash-retry-agent-a-1 Created \n Container cstack-r2-crash-retry-approver-1 Created \n Container cstack-r2-crash-retry-broker-1 Starting \n Container cstack-r2-crash-retry-receiver-1 Starting \n Container cstack-r2-crash-retry-reviewer-1 Starting \n Container cstack-r2-crash-retry-agent-a-1 Starting \n Container cstack-r2-crash-retry-agent-b-1 Starting \n Container cstack-r2-crash-retry-approver-1 Starting \n Container cstack-r2-crash-retry-broker-1 Started \n Container cstack-r2-crash-retry-receiver-1 Started \n Container cstack-r2-crash-retry-reviewer-1 Started \n Container cstack-r2-crash-retry-agent-a-1 Started \n Container cstack-r2-crash-retry-agent-b-1 Started \n Container cstack-r2-crash-retry-approver-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812759.049339792,
+    "exit": 0,
+    "started_monotonic": 812758.895266891,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 812759.20053837,
+    "exit": 0,
+    "started_monotonic": 812759.049399672,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791659804}"
+    ],
+    "ended_monotonic": 812759.351583707,
+    "exit": 0,
+    "started_monotonic": 812759.20060557,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791659804}"
+    ],
+    "ended_monotonic": 812759.525300791,
+    "exit": 0,
+    "started_monotonic": 812759.351651307,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812759.665032556,
+    "exit": 0,
+    "started_monotonic": 812759.525368311,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791659804}"
+    ],
+    "ended_monotonic": 812759.811441448,
+    "exit": 0,
+    "started_monotonic": 812759.665095316,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791659804}"
+    ],
+    "ended_monotonic": 812759.950968492,
+    "exit": 0,
+    "started_monotonic": 812759.811504008,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812760.10220695,
+    "exit": 0,
+    "started_monotonic": 812759.951033732,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812760.226952496,
+    "exit": 0,
+    "started_monotonic": 812760.10227207,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812760.270645988,
+    "exit": 1,
+    "started_monotonic": 812760.227551937,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812760.333862622,
+    "exit": 1,
+    "started_monotonic": 812760.301104423,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812760.395239134,
+    "exit": 1,
+    "started_monotonic": 812760.363995857,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812760.450640199,
+    "exit": 1,
+    "started_monotonic": 812760.425398609,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812760.503206501,
+    "exit": 0,
+    "started_monotonic": 812760.480786715,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/inflight/sink"
+    ],
+    "ended_monotonic": 812760.526467168,
+    "exit": 0,
+    "started_monotonic": 812760.503415941,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/inflight/sink"
+    ],
+    "ended_monotonic": 812760.551398158,
+    "exit": 0,
+    "started_monotonic": 812760.526493488,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812760.626657166,
+    "exit": 0,
+    "started_monotonic": 812760.55331876,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"unknown-commit\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": false, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 1}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 812760.676757065,
+    "exit": 0,
+    "started_monotonic": 812760.626991486,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 812760.709100583,
+    "exit": 0,
+    "started_monotonic": 812760.676783905,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "ps",
+      "-q",
+      "receiver"
+    ],
+    "ended_monotonic": 812760.797859727,
+    "exit": 0,
+    "started_monotonic": 812760.709119383,
+    "stderr": "",
+    "stdout": "3100cb72a0a6bc48550f2552821da3c4687ba97a183ebba7fb7e966f4c406329\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "kill",
+      "-s",
+      "KILL",
+      "3100cb72a0a6bc48550f2552821da3c4687ba97a183ebba7fb7e966f4c406329"
+    ],
+    "ended_monotonic": 812760.971533732,
+    "exit": 0,
+    "started_monotonic": 812760.797867287,
+    "stderr": "",
+    "stdout": "3100cb72a0a6bc48550f2552821da3c4687ba97a183ebba7fb7e966f4c406329\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nimport time\ndef hook():\n Path('/private/published-ready').write_text('durable publication before receipt')\n while not Path('/private/publish-go').exists():time.sleep(.01)\nprint(deliver_record(controller,1,Path('/output'),after_publish=hook))"
+    ],
+    "ended_monotonic": 812760.971621052,
+    "exit": 137,
+    "started_monotonic": 812760.227536337,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/after-crash/sink"
+    ],
+    "ended_monotonic": 812761.004907571,
+    "exit": 0,
+    "started_monotonic": 812760.972120372,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/after-crash/sink"
+    ],
+    "ended_monotonic": 812761.02965712,
+    "exit": 0,
+    "started_monotonic": 812761.004928771,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812761.095892758,
+    "exit": 0,
+    "started_monotonic": 812761.031082162,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"unknown-commit\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": false, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 1}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/after-crash/database.sqlite"
+    ],
+    "ended_monotonic": 812761.143123493,
+    "exit": 0,
+    "started_monotonic": 812761.096232518,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/after-crash/database.sqlite"
+    ],
+    "ended_monotonic": 812761.165436199,
+    "exit": 0,
+    "started_monotonic": 812761.143144853,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "start",
+      "3100cb72a0a6bc48550f2552821da3c4687ba97a183ebba7fb7e966f4c406329"
+    ],
+    "ended_monotonic": 812761.399253394,
+    "exit": 0,
+    "started_monotonic": 812761.165449359,
+    "stderr": "",
+    "stdout": "3100cb72a0a6bc48550f2552821da3c4687ba97a183ebba7fb7e966f4c406329\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 812761.623958939,
+    "exit": 0,
+    "started_monotonic": 812761.399270554,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 812761.838774511,
+    "exit": 0,
+    "started_monotonic": 812761.623975619,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/final/sink"
+    ],
+    "ended_monotonic": 812761.86337814,
+    "exit": 0,
+    "started_monotonic": 812761.838943831,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/final/sink"
+    ],
+    "ended_monotonic": 812761.885907886,
+    "exit": 0,
+    "started_monotonic": 812761.86340166,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812761.94884732,
+    "exit": 0,
+    "started_monotonic": 812761.887405648,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 1, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/final/database.sqlite"
+    ],
+    "ended_monotonic": 812761.996917657,
+    "exit": 0,
+    "started_monotonic": 812761.949396201,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/final/database.sqlite"
+    ],
+    "ended_monotonic": 812762.021371326,
+    "exit": 0,
+    "started_monotonic": 812761.996945937,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/crash-retry/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812772.912056329,
+    "exit": 0,
+    "started_monotonic": 812762.021747646,
+    "stderr": " Container cstack-r2-crash-retry-reviewer-1 Stopping \n Container cstack-r2-crash-retry-agent-b-1 Stopping \n Container cstack-r2-crash-retry-approver-1 Stopping \n Container cstack-r2-crash-retry-agent-a-1 Stopping \n Container cstack-r2-crash-retry-broker-1 Stopping \n Container cstack-r2-crash-retry-receiver-1 Stopping \n Container cstack-r2-crash-retry-reviewer-1 Stopped \n Container cstack-r2-crash-retry-reviewer-1 Removing \n Container cstack-r2-crash-retry-agent-a-1 Stopped \n Container cstack-r2-crash-retry-agent-a-1 Removing \n Container cstack-r2-crash-retry-reviewer-1 Removed \n Container cstack-r2-crash-retry-agent-a-1 Removed \n Container cstack-r2-crash-retry-receiver-1 Stopped \n Container cstack-r2-crash-retry-receiver-1 Removing \n Container cstack-r2-crash-retry-receiver-1 Removed \n Container cstack-r2-crash-retry-agent-b-1 Stopped \n Container cstack-r2-crash-retry-agent-b-1 Removing \n Container cstack-r2-crash-retry-agent-b-1 Removed \n Container cstack-r2-crash-retry-broker-1 Stopped \n Container cstack-r2-crash-retry-broker-1 Removing \n Container cstack-r2-crash-retry-broker-1 Removed \n Container cstack-r2-crash-retry-approver-1 Stopped \n Container cstack-r2-crash-retry-approver-1 Removing \n Container cstack-r2-crash-retry-approver-1 Removed \n Network cstack-r2-crash-retry_isolated Removing \n Network cstack-r2-crash-retry_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812772.945879249,
+    "exit": 0,
+    "started_monotonic": 812772.912061849,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812772.975364683,
+    "exit": 0,
+    "started_monotonic": 812772.94686281,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812773.002434915,
+    "exit": 0,
+    "started_monotonic": 812772.975387803,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812775.054548208,
+    "exit": 0,
+    "started_monotonic": 812773.002452555,
+    "stderr": " Network cstack-r2-halt-inflight_isolated Creating \n Network cstack-r2-halt-inflight_isolated Creating \n Network cstack-r2-halt-inflight_isolated Created \n Network cstack-r2-halt-inflight_isolated Created \n Container cstack-r2-halt-inflight-reviewer-1 Creating \n Container cstack-r2-halt-inflight-agent-b-1 Creating \n Container cstack-r2-halt-inflight-receiver-1 Creating \n Container cstack-r2-halt-inflight-broker-1 Creating \n Container cstack-r2-halt-inflight-agent-a-1 Creating \n Container cstack-r2-halt-inflight-approver-1 Creating \n Container cstack-r2-halt-inflight-agent-b-1 Created \n Container cstack-r2-halt-inflight-receiver-1 Created \n Container cstack-r2-halt-inflight-broker-1 Created \n Container cstack-r2-halt-inflight-reviewer-1 Created \n Container cstack-r2-halt-inflight-approver-1 Created \n Container cstack-r2-halt-inflight-agent-a-1 Created \n Container cstack-r2-halt-inflight-approver-1 Starting \n Container cstack-r2-halt-inflight-agent-b-1 Starting \n Container cstack-r2-halt-inflight-receiver-1 Starting \n Container cstack-r2-halt-inflight-broker-1 Starting \n Container cstack-r2-halt-inflight-reviewer-1 Starting \n Container cstack-r2-halt-inflight-agent-a-1 Starting \n Container cstack-r2-halt-inflight-approver-1 Started \n Container cstack-r2-halt-inflight-agent-b-1 Started \n Container cstack-r2-halt-inflight-receiver-1 Started \n Container cstack-r2-halt-inflight-broker-1 Started \n Container cstack-r2-halt-inflight-reviewer-1 Started \n Container cstack-r2-halt-inflight-agent-a-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812788.387676842,
+    "exit": 0,
+    "started_monotonic": 812788.230112617,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 812788.538059939,
+    "exit": 0,
+    "started_monotonic": 812788.387737962,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791659833}"
+    ],
+    "ended_monotonic": 812788.685204192,
+    "exit": 0,
+    "started_monotonic": 812788.538124939,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791659833}"
+    ],
+    "ended_monotonic": 812788.835257608,
+    "exit": 0,
+    "started_monotonic": 812788.685314192,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 812788.975130693,
+    "exit": 0,
+    "started_monotonic": 812788.835327369,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791659833}"
+    ],
+    "ended_monotonic": 812789.11708286,
+    "exit": 0,
+    "started_monotonic": 812788.975200693,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791659833}"
+    ],
+    "ended_monotonic": 812789.269072198,
+    "exit": 0,
+    "started_monotonic": 812789.11714782,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812789.413638808,
+    "exit": 0,
+    "started_monotonic": 812789.269136519,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 812789.55112429,
+    "exit": 0,
+    "started_monotonic": 812789.413721608,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812789.598301625,
+    "exit": 1,
+    "started_monotonic": 812789.551925771,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812789.669406149,
+    "exit": 1,
+    "started_monotonic": 812789.628425181,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812789.735088026,
+    "exit": 1,
+    "started_monotonic": 812789.699565225,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812789.795387537,
+    "exit": 1,
+    "started_monotonic": 812789.765298742,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 812789.8491532,
+    "exit": 0,
+    "started_monotonic": 812789.825510533,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/inflight/sink"
+    ],
+    "ended_monotonic": 812789.873434549,
+    "exit": 0,
+    "started_monotonic": 812789.849369241,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/inflight/sink"
+    ],
+    "ended_monotonic": 812789.898241538,
+    "exit": 0,
+    "started_monotonic": 812789.873458149,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812789.964251496,
+    "exit": 0,
+    "started_monotonic": 812789.89970302,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"unknown-commit\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": false, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 1}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 812790.01056615,
+    "exit": 0,
+    "started_monotonic": 812789.964577496,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 812790.03577106,
+    "exit": 0,
+    "started_monotonic": 812790.01058995,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "touch",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/publish-go"
+    ],
+    "ended_monotonic": 812790.261595165,
+    "exit": 0,
+    "started_monotonic": 812790.237039136,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nimport time\ndef hook():\n Path('/private/published-ready').write_text('durable publication before receipt')\n while not Path('/private/publish-go').exists():time.sleep(.01)\nprint(deliver_record(controller,1,Path('/output'),after_publish=hook))"
+    ],
+    "ended_monotonic": 812790.303193054,
+    "exit": 0,
+    "started_monotonic": 812789.551902651,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"halt\"}"
+    ],
+    "ended_monotonic": 812790.31706639,
+    "exit": 0,
+    "started_monotonic": 812790.036898181,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nfrom trusted_stack.controller import Denied\ntry:deliver_record(controller,1,Path('/output'));raise AssertionError('post-HALT delivery succeeded')\nexcept Denied:print('HALT blocks subsequent delivery')"
+    ],
+    "ended_monotonic": 812790.528783479,
+    "exit": 0,
+    "started_monotonic": 812790.317105951,
+    "stderr": "",
+    "stdout": "HALT blocks subsequent delivery\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/final/sink"
+    ],
+    "ended_monotonic": 812790.551483546,
+    "exit": 0,
+    "started_monotonic": 812790.52895716,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/final/sink"
+    ],
+    "ended_monotonic": 812790.576913296,
+    "exit": 0,
+    "started_monotonic": 812790.551511546,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812790.63964889,
+    "exit": 0,
+    "started_monotonic": 812790.578539778,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 1, \"global_cap\": 1, \"halted\": true, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/final/database.sqlite"
+    ],
+    "ended_monotonic": 812790.687448786,
+    "exit": 0,
+    "started_monotonic": 812790.63996617,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/final/database.sqlite"
+    ],
+    "ended_monotonic": 812790.711633094,
+    "exit": 0,
+    "started_monotonic": 812790.687472226,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/halt-inflight/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812801.847520106,
+    "exit": 0,
+    "started_monotonic": 812790.711960535,
+    "stderr": " Container cstack-r2-halt-inflight-broker-1 Stopping \n Container cstack-r2-halt-inflight-receiver-1 Stopping \n Container cstack-r2-halt-inflight-reviewer-1 Stopping \n Container cstack-r2-halt-inflight-agent-a-1 Stopping \n Container cstack-r2-halt-inflight-agent-b-1 Stopping \n Container cstack-r2-halt-inflight-approver-1 Stopping \n Container cstack-r2-halt-inflight-agent-b-1 Stopped \n Container cstack-r2-halt-inflight-agent-b-1 Removing \n Container cstack-r2-halt-inflight-agent-b-1 Removed \n Container cstack-r2-halt-inflight-broker-1 Stopped \n Container cstack-r2-halt-inflight-broker-1 Removing \n Container cstack-r2-halt-inflight-broker-1 Removed \n Container cstack-r2-halt-inflight-approver-1 Stopped \n Container cstack-r2-halt-inflight-approver-1 Removing \n Container cstack-r2-halt-inflight-approver-1 Removed \n Container cstack-r2-halt-inflight-receiver-1 Stopped \n Container cstack-r2-halt-inflight-receiver-1 Removing \n Container cstack-r2-halt-inflight-agent-a-1 Stopped \n Container cstack-r2-halt-inflight-agent-a-1 Removing \n Container cstack-r2-halt-inflight-receiver-1 Removed \n Container cstack-r2-halt-inflight-reviewer-1 Stopped \n Container cstack-r2-halt-inflight-reviewer-1 Removing \n Container cstack-r2-halt-inflight-agent-a-1 Removed \n Container cstack-r2-halt-inflight-reviewer-1 Removed \n Network cstack-r2-halt-inflight_isolated Removing \n Network cstack-r2-halt-inflight_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812801.878975463,
+    "exit": 0,
+    "started_monotonic": 812801.847525306,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812801.906078295,
+    "exit": 0,
+    "started_monotonic": 812801.879898104,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812801.932633166,
+    "exit": 0,
+    "started_monotonic": 812801.906098455,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 812803.9691338,
+    "exit": 0,
+    "started_monotonic": 812801.932649046,
+    "stderr": " Network cstack-r2-drift-uid_isolated Creating \n Network cstack-r2-drift-uid_isolated Creating \n Network cstack-r2-drift-uid_isolated Created \n Network cstack-r2-drift-uid_isolated Created \n Container cstack-r2-drift-uid-reviewer-1 Creating \n Container cstack-r2-drift-uid-approver-1 Creating \n Container cstack-r2-drift-uid-agent-b-1 Creating \n Container cstack-r2-drift-uid-agent-a-1 Creating \n Container cstack-r2-drift-uid-receiver-1 Creating \n Container cstack-r2-drift-uid-broker-1 Creating \n Container cstack-r2-drift-uid-broker-1 Created \n Container cstack-r2-drift-uid-receiver-1 Created \n Container cstack-r2-drift-uid-agent-b-1 Created \n Container cstack-r2-drift-uid-reviewer-1 Created \n Container cstack-r2-drift-uid-approver-1 Created \n Container cstack-r2-drift-uid-agent-a-1 Created \n Container cstack-r2-drift-uid-agent-a-1 Starting \n Container cstack-r2-drift-uid-agent-b-1 Starting \n Container cstack-r2-drift-uid-approver-1 Starting \n Container cstack-r2-drift-uid-broker-1 Starting \n Container cstack-r2-drift-uid-receiver-1 Starting \n Container cstack-r2-drift-uid-reviewer-1 Starting \n Container cstack-r2-drift-uid-agent-a-1 Started \n Container cstack-r2-drift-uid-agent-b-1 Started \n Container cstack-r2-drift-uid-approver-1 Started \n Container cstack-r2-drift-uid-broker-1 Started \n Container cstack-r2-drift-uid-receiver-1 Started \n Container cstack-r2-drift-uid-reviewer-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/drift-launch.compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never",
+      "--no-deps",
+      "--force-recreate",
+      "agent-a"
+    ],
+    "ended_monotonic": 812827.847407348,
+    "exit": 0,
+    "started_monotonic": 812817.27971376,
+    "stderr": " Container cstack-r2-drift-uid-agent-a-1 Recreate \n Container cstack-r2-drift-uid-agent-a-1 Recreated \n Container cstack-r2-drift-uid-agent-a-1 Starting \n Container cstack-r2-drift-uid-agent-a-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/final/sink"
+    ],
+    "ended_monotonic": 812840.359576379,
+    "exit": 0,
+    "started_monotonic": 812840.328260023,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/final/sink"
+    ],
+    "ended_monotonic": 812840.388751013,
+    "exit": 0,
+    "started_monotonic": 812840.359600339,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/reconcile.py",
+      "--db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "--sink",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 812840.462020497,
+    "exit": 0,
+    "started_monotonic": 812840.389180253,
+    "stderr": "",
+    "stdout": "{\"admitted\": 0, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [], \"spent\": 0, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db/gate.db",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/final/database.sqlite"
+    ],
+    "ended_monotonic": 812840.511222594,
+    "exit": 0,
+    "started_monotonic": 812840.462390458,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/final/database.sqlite"
+    ],
+    "ended_monotonic": 812840.536073303,
+    "exit": 0,
+    "started_monotonic": 812840.511245994,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812851.46722839,
+    "exit": 0,
+    "started_monotonic": 812840.536449583,
+    "stderr": " Container cstack-r2-drift-uid-agent-a-1 Stopping \n Container cstack-r2-drift-uid-approver-1 Stopping \n Container cstack-r2-drift-uid-agent-b-1 Stopping \n Container cstack-r2-drift-uid-receiver-1 Stopping \n Container cstack-r2-drift-uid-broker-1 Stopping \n Container cstack-r2-drift-uid-reviewer-1 Stopping \n Container cstack-r2-drift-uid-agent-a-1 Stopped \n Container cstack-r2-drift-uid-agent-a-1 Removing \n Container cstack-r2-drift-uid-agent-a-1 Removed \n Container cstack-r2-drift-uid-agent-b-1 Stopped \n Container cstack-r2-drift-uid-agent-b-1 Removing \n Container cstack-r2-drift-uid-agent-b-1 Removed \n Container cstack-r2-drift-uid-reviewer-1 Stopped \n Container cstack-r2-drift-uid-reviewer-1 Removing \n Container cstack-r2-drift-uid-reviewer-1 Removed \n Container cstack-r2-drift-uid-broker-1 Stopped \n Container cstack-r2-drift-uid-broker-1 Removing \n Container cstack-r2-drift-uid-broker-1 Removed \n Container cstack-r2-drift-uid-receiver-1 Stopped \n Container cstack-r2-drift-uid-receiver-1 Removing \n Container cstack-r2-drift-uid-approver-1 Stopped \n Container cstack-r2-drift-uid-approver-1 Removing \n Container cstack-r2-drift-uid-receiver-1 Removed \n Container cstack-r2-drift-uid-approver-1 Removed \n Network cstack-r2-drift-uid_isolated Removing \n Network cstack-r2-drift-uid_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/var/tmp/sol-deployment-slice-20261010/deployment-container-state"
+    ],
+    "ended_monotonic": 812851.499654028,
+    "exit": 0,
+    "started_monotonic": 812851.46723411,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier2/containers-attempt1/drift-uid/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 812851.585132446,
+    "exit": 0,
+    "started_monotonic": 812851.500194908,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "rm",
+      "sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd"
+    ],
+    "ended_monotonic": 812851.719164921,
+    "exit": 0,
+    "started_monotonic": 812851.585180686,
+    "stderr": "",
+    "stdout": "Untagged: cstack-r2-tier2:offline\nDeleted: sha256:96df477e52a682a0cdca70d70f8e20874fa52bdf3d78770d4ef0ef5b3d1223cd\n"
+  }
+]

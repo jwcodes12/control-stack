@@ -258,3 +258,16 @@ ProtocolRefinement.publication : sinkEffects = model.bank is full model–runtim
 correspondence, not just capture fidelity. Neither residual is discharged.
 New evidence and failures are under `deployment/runs/tier1/`; final-head CI
 must be recorded before advancing to Tier 2. R2 has not yet been reached.
+
+## R2 Tier 2 real-container update
+
+Draft PR #46 is stacked on the green Tier 1 tip of #45. Both honest agents now
+complete their own approved task under one shared cap of 2. Separate cap-1 races,
+replay, direct egress, writable-sink and UID-confusion negatives, actual receiver
+KILL/restart/dedup, in-flight HALT and a running UID drift are archived in
+deployment/runs/tier2/containers-final. Independent raw-byte/SQLite replay and
+nine kernel snapshot certificates support deployment/TIER2-AGREEMENT.md.
+Shared z labels are explicit; Docker does not advertise SELinux enforcement, and
+host Landlock remains inactive. Every cstack-r2 resource is removed afterward.
+The stronger Tier 2 evidence does not discharge the two residual premises or
+complete the remaining R2 tiers. Final-head CI is still required before Tier 3.

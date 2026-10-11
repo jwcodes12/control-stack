@@ -61,7 +61,8 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
                 "--approvers", str(approver), "--admins", str(owner),
             ]
             forged = args[:]
-            forged[-1] = str(agent)
+            # An admin set that overlaps no other role, so only the real-UID check (not the role-disjointness check) can refuse it.
+            forged[-1] = str(owner + 1)
             denied = subprocess.run(
                 forged, capture_output=True, text=True, timeout=15, cwd=code,
                 user=agent, group=agent, extra_groups=[])

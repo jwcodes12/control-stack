@@ -153,7 +153,9 @@ def halt_with_retry(controller, uid, attempts=4, *, latch=None):
             return result
         except Denied as e:
             if "persistence unavailable" not in str(e) or attempt == attempts - 1:
-                if latch is not None and latch.requested.is_set() and "persistence unavailable" in str(e):
+                # Any failure of an admin's HALT (a busy write, or the database being unopenable while another connection holds it)
+                # is retried in the background for as long as this broker process lives.
+                if latch is not None and latch.requested.is_set():
                     latch.keep_trying(controller, uid)
                 raise
 

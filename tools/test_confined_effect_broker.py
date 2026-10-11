@@ -59,7 +59,11 @@ def run():
         outdir.mkdir(mode=0o700)
         for owned in (root, dbdir, outdir):
             os.chown(owned, ADMIN, ADMIN)  # the admin-run broker creates its socket and database here
-        forbidden = root / "forbidden-effect"
+        # A directory the delegate UID could write to by permissions alone, so the refusal below is the sandbox's, not file mode.
+        scratch = root / "scratch"
+        scratch.mkdir(mode=0o777)
+        scratch.chmod(0o777)
+        forbidden = scratch / "forbidden-effect"
         socketpath = root / "trusted.sock"
         dbfile = dbdir / "state.db"
         cmd = [sys.executable, "-m", "trusted_stack.server",

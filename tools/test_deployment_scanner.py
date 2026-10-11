@@ -131,6 +131,11 @@ class ScannerTests(unittest.TestCase):
             members=tar.getmembers();tree=slice_tree(members)
             self.assertEqual([e[0] for e in tree],['slice','slice/entry.py','slice/trusted_stack/a.py'])   # 'slicer' is not under slice/
             self.assertEqual(startup_hooks(members),['usr/lib/python3/sitecustomize.py','usr/lib/python3/x.pth'])
+        # Any form of the start-up modules counts: package directory, bytecode, extension suffix.
+        class M:
+            def __init__(self,name):self.name=name
+        forms=['a/sitecustomize/__init__.py','a/sitecustomize.pyc','a/usercustomize.cpython-311-aarch64-linux-gnu.so','a/__pycache__/sitecustomize.cpython-314.pyc']
+        self.assertEqual(startup_hooks([M(n) for n in forms+['a/customize.py','a/mysitecustomize.py']]),sorted(forms))
         self.assertEqual(slice_tree_problems(tree,['slice/entry.py','slice/trusted_stack/a.py']),['missing slice/trusted_stack'])
     def test_plan_accepts_a_fresh_scans_own_ir_even_with_fresh_only_unknown_reasons(self):
         # Open item 6: the planner replayed under replay rules, so a fresh IR carrying fresh-only UNKNOWN reasons was rejected.

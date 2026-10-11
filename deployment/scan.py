@@ -62,7 +62,7 @@ def capability_paths(members):
     """Files that carry file capabilities: docker export records them as the SCHILY.xattr.security.capability PAX header."""
     return sorted(m.name for m in members if any('security.capability' in key for key in m.pax_headers))
 
-STARTUP_HOOKS={'sitecustomize.py','usercustomize.py'}
+STARTUP_HOOKS={'sitecustomize','usercustomize'}
 
 def slice_tree(members):
     """Everything the image holds under /slice (first on sys.path via PYTHONPATH): a stray module, .pyc or link there is code
@@ -70,8 +70,10 @@ def slice_tree(members):
     return sorted([m.name.removeprefix('./').rstrip('/'),m.type.decode('ascii'),m.mode&0o7777,m.uid] for m in members if m.name.removeprefix('./').rstrip('/').split('/')[0]=='slice')
 
 def startup_hooks(members):
-    """Files the interpreter runs at start-up without being imported by name."""
-    return sorted(m.name for m in members if m.name.rsplit('/',1)[-1] in STARTUP_HOOKS or m.name.endswith('.pth'))
+    """Files the interpreter runs at start-up without being imported by name: any *.pth, and any path component whose module name is
+    sitecustomize or usercustomize in any form (.py, .pyc, a package directory, an extension suffix)."""
+    def hook(name):return name.endswith('.pth') or any(part.split('.',1)[0] in STARTUP_HOOKS for part in name.split('/'))
+    return sorted(m.name for m in members if hook(m.name))
 
 def slice_tree_problems(tree,source_names,blocked_uids=frozenset()):
     """[] when the inventory is exactly the reference tree: two directories and the named regular files, none writable by group

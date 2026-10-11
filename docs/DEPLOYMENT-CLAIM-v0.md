@@ -186,12 +186,13 @@ premises that were previously unstated. They are now part of this claim:
   a model review of the author's own fixes; no independent human has seen them). Status after
   Tier 10 (below): evidence from `r2-v0` still ran a broker whose delegation could not be turned
   off, so for it the sink audit (canonical `<id>.body` names, bytes equal to the release digest,
-  zero delegation rows) remains the only evidence; the pin vault is part of the TCB. The other
-  limits found by that review are closed in Tier 10.
+  zero delegation rows) remains the only evidence; the pin vault (and the template vault) is part of the TCB. The other
+  limits found by that review are addressed in Tier 10, as stated below, and a model review of those changes
+  (`deployment/reviews/t10-open-items-review-opus.md`) found no HIGH issue and one MEDIUM, fixed.
 
 ## Tier 10: closing the open engineering items
 
-Source generation `r2-v6`. Each item has a regression test; none has had independent human review.
+Source generation `r2-v7` (`r2-v6` was the first Tier 10 generation; the review's L1 fix changed `server.py`, so the live evidence was redone on `r2-v7` and the `r2-v6` runs are kept under `deployment/runs/tier10/gen-r2-v6/`). Each item has a regression test; none has had independent human review.
 
 - **`Principals` refuses UID 0** (review L5). UID 0 ignores every file permission the role
   boundaries use, so it can no longer be a role. The root-run broker tests now run the broker and
@@ -202,21 +203,27 @@ Source generation `r2-v6`. Each item has a regression test; none has had indepen
 - **Evidence checkers bind one source generation and refuse `python -O`.** `pins.require_generation`
   requires every recorded source digest to belong to the current tree or to one vaulted generation
   (a mixture no deployment ran is rejected; a complete record must equal the generation's whole file
-  set). Every `check_deployment_*` script and the `deployment` package refuse to run under `-O`,
+  set); `pins.generation_holding` does the same for partial records (the boundary-evidence checker, and the
+  two claim pins of a replayed collection). Hardened-profile archives must come from the current tree or from
+  `r2-v3` or later (the first generation with delegation off, the threaded broker and the reaper). Replay of an
+  archive whose host observations predate the `/slice` inventory still skips that rule: the rule set is chosen
+  by which keys were recorded, not by the generation. Every `check_deployment_*` script and the `deployment` package refuse to run under `-O`,
   where `assert` disappears. The hardened remediation templates embed the source pins, so their
   digests are vaulted too (`deployment/pinned-templates/`, `pins.py vault-templates`).
 - **The image scan inventories the whole `/slice` tree** and the interpreter start-up hooks
-  (`*.pth`, `sitecustomize.py`, `usercustomize.py`). `/slice` is first on `sys.path`, so a stray
+  (`*.pth` and any `sitecustomize`/`usercustomize` module in any form, anywhere in the image). `/slice` is first on `sys.path`, so a stray
   `.pyc`, an extra module that shadows the standard library, a symlink, a group/other-writable file
   or a file owned by a role UID makes the image UNKNOWN
   (`image-slice-tree-differs-from-reference-UNKNOWN`). The first live attempt of the new check caught
   documentation files that the image builder had shipped into the import tree
-  (`deployment/runs/tier10/attempt1-NOTE.txt`); the builder now adds only the reference files, root-owned.
+  (`deployment/runs/tier10/gen-r2-v6/attempt1-NOTE.txt`); the builder now adds only the reference files, root-owned.
   The rest of the base image (the Python installation outside `/slice`) is still trusted, not inspected.
 - **HALT availability.** An admin's HALT request sets an in-process latch: from that moment the broker
   starts no other mutating request, even while the database is too busy to record the HALT, and a HALT
-  the caller gave up on is retried in the background until it persists. Staging has a total byte quota
-  (64 MiB) so a stuck agent cannot fill the disk HALT's own write needs. Not fixed: a separate
+  the caller gave up on, for any failure, is retried in the background for as long as that broker process lives (a restart starts
+  with a fresh latch; the database's own `halted` flag is what survives). Staging has a total byte quota
+  (64 MiB) so a stuck agent cannot make the database itself grow without bound. It does not stop an agent filling the host disk through its container's writable layer (the profile
+  does not make the root filesystem read-only), so a separate filesystem for the database is a premise. Not fixed: a separate
   receiver process still depends on SQLite's own lock scheduling, and one agent can exhaust the shared
   staging quota for the other (availability, not safety).
 - **`cstack plan` accepts a fresh scan's own IR.** A scan's IR carries UNKNOWN reasons that replay rules
@@ -230,7 +237,7 @@ Source generation `r2-v6`. Each item has a regression test; none has had indepen
 - **Transcript replay uses the recorded clock** instead of `now = 0`: the database's own
   `releases.created` for the two releases, with every expiry after it; a mutant with a later clock is
   rejected. That the recorded value is the broker's clock remains a premise.
-- **Live evidence on the final generation** (`deployment/runs/tier10/`): the five non-bypass hardened
+- **Live evidence on the final generation** (`deployment/runs/tier10/`, final generation; the earlier `r2-v6` runs are in `gen-r2-v6/`): the five non-bypass hardened
   cases and the demo run on `r2-v6` and pass the independent checkers. Bypass cases were not rerun
   (defensive scope).
 - **Held-out round 2** (`deployment/heldout/tier10`): 34 cases sealed by a separate blind `codex exec`

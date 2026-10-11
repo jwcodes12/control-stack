@@ -361,6 +361,19 @@ class Availability(Base):
         for _ in range(100):
             if latch.persisted.wait(0.1):break
         self.assertTrue(latch.persisted.is_set());self.assertTrue(self.controller.state(admin)['halted'])
+    def test_halt_that_cannot_even_open_the_database_is_still_retried(self):
+        # Review L1: the failure text is 'controller state unavailable' (the database could not be opened), not 'persistence unavailable'.
+        class Locked:
+            def __init__(self,inner):self.inner=inner;self.principals=inner.principals;self.calls=0
+            def halt(self,uid):
+                self.calls+=1
+                if self.calls<=2:raise Denied('controller state unavailable')
+                return self.inner.halt(uid)
+        locked=Locked(self.controller);latch=server.HaltLatch()
+        with self.assertRaises(Denied):server.halt_with_retry(locked,OTHERS[2],latch=latch)
+        for _ in range(100):
+            if latch.persisted.wait(0.1):break
+        self.assertTrue(latch.persisted.is_set());self.assertTrue(self.controller.state(OTHERS[2])['halted'])
     def test_only_an_admin_can_latch_a_halt(self):
         latch=server.HaltLatch()
         for uid in (ME,OTHERS[0],OTHERS[1],ME+999):

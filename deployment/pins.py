@@ -70,7 +70,7 @@ def require_generation(recorded,*,entry_sha256=None,complete=True,what='trusted 
     if entry_sha256 is not None:image['slice/entry.py']=entry_sha256
     candidates=[('current',current_sources()),*((g.name,generation_sources(g)) for g in generations())]
     for name,files in candidates:
-        if image and all(files.get(k)==v for k,v in image.items()) and (not complete or set(image)==set(files)):return name
+        if image and all(k in files and isinstance(v,str) and files[k]==v for k,v in image.items()) and (not complete or set(image)==set(files)):return name
     raise PinMismatch((what,'digests do not all belong to one source generation'))
 
 def generation_sources(gen):
@@ -85,6 +85,23 @@ def generation_sources(gen):
 def known_generation(recorded):
     """The vaulted generation whose in-image source map equals recorded exactly, else None."""
     return next((g for g in generations() if recorded and generation_sources(g)==recorded),None)
+
+def generation_holding(recorded):
+    """Name of ONE generation ('current' for the live tree) whose file for every recorded repo path (any tracked path, including the
+    boundary tools) has exactly the recorded digest; None if no single generation does."""
+    places=[('current',lambda rel:ROOT/rel),*((g.name,(lambda rel,g=g:g/(rel+'.pysrc'))) for g in generations())]
+    for name,locate in places:
+        if recorded and all(isinstance(d,str) and locate(rel).is_file() and sha(locate(rel))==d for rel,d in recorded.items()):return name
+    return None
+
+MIN_HARDENED_GENERATION='r2-v3'  # first generation with delegation off by default (T9.2), the threaded broker (T9.3) and the reaper (T9.5)
+
+def generation_rank(name):return int(name.rsplit('-v',1)[1])
+
+def require_hardened_generation(name):
+    """A hardened-profile archive must come from the current tree or a generation that includes the fixes the profile depends on."""
+    if name!='current' and generation_rank(name)<generation_rank(MIN_HARDENED_GENERATION):
+        raise PinMismatch(('hardened-profile evidence from a generation that predates the T9 fixes',name))
 
 def vault_templates():
     """Content-address the current hardened reference templates (they embed the trusted-source pins, so they change with every

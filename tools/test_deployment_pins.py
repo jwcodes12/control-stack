@@ -21,6 +21,7 @@ class PinTests(unittest.TestCase):
         """A vault holding one historical-looking controller that differs from the current one."""
         pins.VAULT=self.tmp/'vault';dest=pins.VAULT/'old'/'trusted_stack';dest.mkdir(parents=True)
         old=(ROOT/'trusted_stack/controller.py').read_bytes()+b'\n# an earlier generation\n';(dest/'controller.py.pysrc').write_bytes(old)
+        (dest/'outbox_receiver.py.pysrc').write_bytes((ROOT/'trusted_stack/outbox_receiver.py').read_bytes())   # the receiver did not change in this fake generation
         return pins.sha(dest/'controller.py.pysrc')
     def pinned_example(self,digest):
         c=json.loads((HARDENED/'clean.compose.json').read_text());c['x-cstack']['broker_sha256']=digest
@@ -113,6 +114,33 @@ class PinTests(unittest.TestCase):
         for f in sorted((ROOT/'tools').glob('check_deployment_*.py')):
             with self.subTest(script=f.name):
                 p=subprocess.run([sys.executable,'-O',str(f)],cwd=ROOT,capture_output=True,text=True);self.assertNotEqual(p.returncode,0);self.assertIn('python -O',p.stderr+p.stdout)
+
+    def test_replay_pins_must_come_from_one_generation(self):
+        # Review M1: a controller of one generation with a receiver of another is a mixture no deployment ran.
+        runtime=HARDENED/'clean.runtime.json';gens=pins.generations()
+        def pinned(broker,receiver):
+            c=json.loads((HARDENED/'clean.compose.json').read_text());c['x-cstack'].update(broker_sha256=broker,receiver_sha256=receiver)
+            path=self.tmp/'mixed.json';path.write_text(json.dumps(c));return path
+        old=pins.generation_sources(gens[0]);new=pins.generation_sources(gens[-1])
+        self.assertNotEqual(old['slice/trusted_stack/controller.py'],new['slice/trusted_stack/controller.py'])
+        same=pinned(old['slice/trusted_stack/controller.py'],old['slice/trusted_stack/outbox_receiver.py'])
+        self.assertFalse(self.unknown_drift(collect(same,runtime,sha(same),replay=True)))
+        mixed=pinned(old['slice/trusted_stack/controller.py'],new['slice/trusted_stack/outbox_receiver.py'])
+        if old['slice/trusted_stack/outbox_receiver.py']!=new['slice/trusted_stack/outbox_receiver.py']:
+            self.assertTrue(self.unknown_drift(collect(mixed,runtime,sha(mixed),replay=True)))
+        self.assertEqual(pins.generation_holding({'trusted_stack/controller.py':old['slice/trusted_stack/controller.py']}),gens[0].name)
+        self.assertIsNone(pins.generation_holding({'trusted_stack/controller.py':old['slice/trusted_stack/controller.py'],'trusted_stack/server.py':new['slice/trusted_stack/server.py']}))
+        self.assertIsNone(pins.generation_holding({}));self.assertIsNone(pins.generation_holding({'trusted_stack/controller.py':None}))
+
+    def test_hardened_evidence_needs_a_generation_with_the_fixes(self):
+        pins.require_hardened_generation('current');pins.require_hardened_generation(pins.MIN_HARDENED_GENERATION)
+        pins.require_hardened_generation('r2-v12')    # numeric, not lexical, ordering
+        for early in ('r2-v0','r2-v1','r2-v2'):
+            with self.assertRaises(pins.PinMismatch):pins.require_hardened_generation(early)
+
+    def test_a_null_digest_never_satisfies_an_absent_file(self):
+        old=pins.generation_sources(pins.generations()[0])
+        with self.assertRaises(pins.PinMismatch):pins.require_generation({'trusted_stack/controller.py':old['slice/trusted_stack/controller.py'],'trusted_stack/nonexistent.py':None},complete=False)
 
     def test_snapshot_is_append_only(self):
         pins.VAULT=self.tmp/'vault';shutil.copytree(self.vault,pins.VAULT)  # never touch the real vault

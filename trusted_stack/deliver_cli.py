@@ -30,12 +30,14 @@ def _uids(raw):
 
 
 def main():
-    p = argparse.ArgumentParser(description="Trusted fixed-file receiver only")
+    p = argparse.ArgumentParser(description="Trusted fixed-file receiver only", allow_abbrev=False)
     p.add_argument("--db", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--release-id", type=int, required=True)
     for role in ("agents", "reviewers", "approvers", "admins"):
         p.add_argument("--" + role, type=_uids, required=True)
+    p.add_argument("--allow-delegation", action="store_true",
+                   help="deliver releases made through a delegation grant; off by default and outside the R2 claim")
     a = p.parse_args()
     try:
         principals = Principals(
@@ -46,7 +48,7 @@ def main():
         if not principals.allows(os.geteuid(), "admins"):
             raise Denied("current OS principal is not an admin")
         controller = Controller(a.db, principals)
-        path = deliver_record(controller, a.release_id, a.out)
+        path = deliver_record(controller, a.release_id, a.out, allow_delegation=a.allow_delegation)
     except (Denied, ValueError, OSError):
         print("DENIED", file=sys.stderr)
         raise SystemExit(1)

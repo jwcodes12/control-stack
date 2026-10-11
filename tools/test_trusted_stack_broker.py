@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from trusted_stack.client import request
 
 AGENT, REVIEWER, APPROVER, OTHER = 23501, 23502, 23503, 23504
+ADMIN = 23500  # Principals refuses UID 0, so the broker runs as a disposable non-root admin UID
 
 
 def by_uid(uid, socketpath, data):
@@ -72,8 +73,11 @@ def main():
                         childdir / "trusted_stack")
         state = root / "private"
         state.mkdir(mode=0o700)
+        os.chown(root, ADMIN, ADMIN)   # the admin-run broker creates its socket here
+        os.chown(state, ADMIN, ADMIN)
         effectdir = state / "published"
         effectdir.mkdir(mode=0o700)
+        os.chown(effectdir, ADMIN, ADMIN)
         assert_untrusted_cannot_bypass_file_root(AGENT, effectdir / "rogue.bin")
         sockpath = root / "trusted.sock"
         cmd = [sys.executable, "-m", "trusted_stack.server",
@@ -82,10 +86,11 @@ def main():
                "--agents", str(AGENT),
                "--reviewers", str(REVIEWER),
                "--approvers", str(APPROVER),
-               "--admins", "0",
+               "--admins", str(ADMIN),
                "--bootstrap-cap", "2",
                "--effect-root", str(effectdir)]
-        proc = subprocess.Popen(cmd, cwd=Path(__file__).resolve().parents[1],
+        # The broker runs from the readable copy of the package: the checkout may be private to another UID.
+        proc = subprocess.Popen(cmd, cwd=childdir, user=ADMIN, group=ADMIN, extra_groups=[],
                                 stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
         try:
             for _ in range(100):
@@ -110,11 +115,11 @@ def main():
             # Deliberately malformed frames cause no persistent state changes.
             for _ in range(8):
                 disconnect_by_uid(AGENT, sockpath, {})
-            assert call(0, {"op": "state"}, True)["result"]["releases"] == 0
+            assert call(ADMIN, {"op": "state"}, True)["result"]["releases"] == 0
             call(AGENT, {"op": "stage", "body_b64": base64.b64encode(content).decode()}, True)
             call(AGENT, {"op": "review", "digest": digest}, False)
             call(REVIEWER, {"op": "review", "digest": digest}, True)
-            call(0, {"op": "issue_lease", "lease_id": "lease1", "agent_uid": AGENT,
+            call(ADMIN, {"op": "issue_lease", "lease_id": "lease1", "agent_uid": AGENT,
                      "budget": 2, "expires": int(time.time()) + 500}, True)
             call(AGENT, {"op": "approve", "nonce": "n1", "digest": digest,
                          "destination": "staging/item", "agent_uid": AGENT,
@@ -130,7 +135,7 @@ def main():
             # Observe persistence through a separate trusted connection, then
             # demonstrate that retry never duplicates the committed release.
             disconnect_by_uid(AGENT, sockpath, release)
-            assert call(0, {"op": "state"}, True)["result"] == {
+            assert call(ADMIN, {"op": "state"}, True)["result"] == {
                 "global_cap": 2, "halted": False, "spent": 1, "releases": 1}
             call(AGENT, release, False)
             # A SECOND, independently signed nonce creates the narrowly
@@ -143,15 +148,15 @@ def main():
             publish = {"op": "publish_effect", "release_id": 2}
             call(AGENT, publish, False)
             call(OTHER, publish, False)
-            assert call(0, publish, True)["result"]["file"] == "effect-000000000002.bin"
+            assert call(ADMIN, publish, True)["result"]["file"] == "effect-000000000002.bin"
             assert (effectdir / "effect-000000000002.bin").read_bytes() == content
-            call(0, publish, True)  # reply loss/retry cannot duplicate a file
+            call(ADMIN, publish, True)  # reply loss/retry cannot duplicate a file
             assert [p.name for p in effectdir.iterdir()] == ["effect-000000000002.bin"]
             assert (effectdir / "effect-000000000002.bin").stat().st_mode & 0o077 == 0
-            call(0, {"op": "halt"}, True)
-            call(0, publish, False)  # no new post-HALT publish operations
+            call(ADMIN, {"op": "halt"}, True)
+            call(ADMIN, publish, False)  # no new post-HALT publish operations
             call(AGENT, {"op": "stage", "body_b64": base64.b64encode(b"x").decode()}, False)
-            assert call(0, {"op": "state"}, True)["result"] == {
+            assert call(ADMIN, {"op": "state"}, True)["result"] == {
                 "global_cap": 2, "halted": True, "spent": 2, "releases": 2}
             print(f"PASS: {checked} real Unix peer-credential broker checks, "
                   "9 disconnected callers, 2 releases and 1 exact file effect")

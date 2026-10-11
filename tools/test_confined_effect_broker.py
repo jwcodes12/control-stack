@@ -17,14 +17,13 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from trusted_stack.controller import Controller, Principals
-from trusted_stack.outbox_receiver import deliver_record
 from trusted_stack.client import request
 
 AGENT_OWNER = 23701
 AGENT_DELEGATE = 23702
 REVIEWER = 23703
 APPROVER = 23704
+ADMIN = 23700  # Principals refuses UID 0: the broker, the admin calls and the receiver run as this disposable UID
 
 
 def drop_identity(uid):
@@ -58,6 +57,8 @@ def run():
         dbdir.mkdir(mode=0o700)
         outdir = root / "published"
         outdir.mkdir(mode=0o700)
+        for owned in (root, dbdir, outdir):
+            os.chown(owned, ADMIN, ADMIN)  # the admin-run broker creates its socket and database here
         forbidden = root / "forbidden-effect"
         socketpath = root / "trusted.sock"
         dbfile = dbdir / "state.db"
@@ -65,8 +66,8 @@ def run():
                "--db", str(dbfile), "--socket", str(socketpath),
                "--agents", f"{AGENT_OWNER},{AGENT_DELEGATE}",
                "--reviewers", str(REVIEWER), "--approvers", str(APPROVER),
-               "--admins", "0", "--bootstrap-cap", "1", "--allow-delegation"]
-        server = subprocess.Popen(cmd, cwd=Path(__file__).resolve().parents[1],
+               "--admins", str(ADMIN), "--bootstrap-cap", "1", "--allow-delegation"]
+        server = subprocess.Popen(cmd, cwd=childdir, user=ADMIN, group=ADMIN, extra_groups=[],
                                   stdout=subprocess.DEVNULL,
                                   stderr=subprocess.PIPE, text=True)
         try:
@@ -88,7 +89,7 @@ def run():
                 "body_b64": base64.b64encode(body).decode()})
             call(REVIEWER, {"op": "review", "digest": digest})
             expiry = int(time.time()) + 300
-            call(0, {"op": "issue_lease", "lease_id": "lease-a",
+            call(ADMIN, {"op": "issue_lease", "lease_id": "lease-a",
                      "agent_uid": AGENT_OWNER, "budget": 1, "expires": expiry})
             call(APPROVER, {"op": "approve", "nonce": "nonce-a",
                             "digest": digest, "destination": "trusted/local-effect",
@@ -121,21 +122,26 @@ def run():
             proc = subprocess.run(
                 [sys.executable, "-m", "trusted_stack.agent_confinement",
                  "--script", str(scriptpath), "--broker-socket", str(socketpath),
-                 "--broker-uid", "0"],
+                 "--broker-uid", str(ADMIN)],
                 preexec_fn=lambda: drop_identity(AGENT_DELEGATE),
                 cwd=childdir, capture_output=True, text=True, timeout=30)
             assert proc.returncode == 0, (proc.returncode, proc.stderr)
             assert not forbidden.exists(), "forbidden file created"
-            state = call(0, {"op": "state"})["result"]
+            state = call(ADMIN, {"op": "state"})["result"]
             assert state["spent"] == 1 and state["releases"] == 1, state
-            roles = Principals(frozenset({AGENT_OWNER, AGENT_DELEGATE}),
-                               frozenset({REVIEWER}), frozenset({APPROVER}),
-                               frozenset({0}))
-            controller = Controller(dbfile, roles)
-            assert deliver_record(controller, 1, outdir) == "1.body"
+            # The receiver also runs as the owner (admin) UID; it refuses any other caller.
+            deliver = ("import sys;from pathlib import Path;"
+                       "from trusted_stack.controller import Controller,Principals;"
+                       "from trusted_stack.outbox_receiver import deliver_record;"
+                       "r=Principals(frozenset({%d,%d}),frozenset({%d}),frozenset({%d}),frozenset({%d}));"
+                       "print(deliver_record(Controller(Path(sys.argv[1]),r),1,Path(sys.argv[2]),allow_delegation=True))"
+                       % (AGENT_OWNER, AGENT_DELEGATE, REVIEWER, APPROVER, ADMIN))
+            done = subprocess.run([sys.executable, "-c", deliver, str(dbfile), str(outdir)], cwd=childdir,
+                                  user=ADMIN, group=ADMIN, extra_groups=[], capture_output=True, text=True, timeout=30)
+            assert done.returncode == 0 and done.stdout.strip() == "1.body", (done.returncode, done.stderr)
             assert (outdir / "1.body").read_bytes() == body
             call(AGENT_DELEGATE, req, allowed=False)
-            call(0, {"op": "halt"})
+            call(ADMIN, {"op": "halt"})
             assert (outdir / "1.body").read_bytes() == body
             print("PASS: real kernel-confined delegate, SO_PEERCRED, one shared "
                   "budget, exactly-one trusted file effect, replay/HALT negatives")

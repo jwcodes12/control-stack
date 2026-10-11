@@ -28,7 +28,7 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
             db = root / "gate.db"
             # UID 65534/GID 65534 is used only as a deliberately
             # unprivileged child identity inside this disposable test.
-            agent, reviewer, approver, owner = 65534, 65533, 65532, 0
+            agent, reviewer, approver, owner = 65534, 65533, 65532, 65531  # Principals refuses UID 0
             roles = Principals(frozenset({agent}), frozenset({reviewer}),
                                frozenset({approver}), frozenset({owner}))
             controller = Controller.bootstrap(db, roles, 1)
@@ -45,6 +45,8 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
             # Expose the parent as traversable. The test must not succeed
             # trivially due solely to the temporary parent being mode 0700.
             root.chmod(0o711)
+            for owned in (root, directory, db):
+                os.chown(owned, owner, owner)  # the receiver runs as the non-root owner
             args = [
                 sys.executable, "-m", "trusted_stack.deliver_cli",
                 "--db", str(db), "--out", str(directory),
@@ -77,7 +79,8 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
                     receipts = 0
                 self.assertEqual(receipts, 0)
             accepted = subprocess.run(
-                args, capture_output=True, text=True, timeout=15)
+                args, capture_output=True, text=True, timeout=15,
+                user=owner, group=owner, extra_groups=[])
             self.assertEqual(accepted.returncode, 0, accepted.stderr)
             self.assertEqual((directory / f"{release_id}.body").read_bytes(), body)
             with sqlite3.connect(db) as con:

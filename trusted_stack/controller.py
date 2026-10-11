@@ -32,8 +32,9 @@ class Principals:
 
     def __post_init__(self):
         groups = (self.agents, self.reviewers, self.approvers, self.admins)
-        if not all(g and all(type(x) is int and x >= 0 for x in g) for g in groups):
-            raise ValueError("four explicit nonempty UID role sets required")
+        # UID 0 bypasses every file permission this design relies on, so it can never be a role.
+        if not all(g and all(type(x) is int and x >= 1 for x in g) for g in groups):
+            raise ValueError("four explicit nonempty non-root UID role sets required")
         if sum(map(len, groups)) != len(set().union(*groups)):
             raise ValueError("agent and trusted roles must be disjoint")
 

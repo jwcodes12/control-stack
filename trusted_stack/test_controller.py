@@ -158,6 +158,14 @@ class GateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Principals(frozenset({1}), frozenset({1}), frozenset({2}), frozenset({3}))
 
+    def test_root_uid_is_never_a_role(self):
+        # UID 0 ignores the file permissions every role boundary relies on.
+        for group in range(4):
+            sets = [frozenset({10 + i}) for i in range(4)]
+            sets[group] = frozenset({0, 10 + group})
+            with self.subTest(group=group), self.assertRaises(ValueError):
+                Principals(*sets)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -82,7 +82,7 @@ class DelegatedFleetTests(unittest.TestCase):
             else:
                 self.assertEqual(rows[0], (self.c, "nonce-c"))
             self.assertEqual(db.execute("SELECT SUM(used) FROM leases").fetchone(), (1,))
-        self.assertEqual(deliver_record(self.gate, rid, self.dest), f"{rid}.body")
+        self.assertEqual(deliver_record(self.gate, rid, self.dest, allow_delegation=True), f"{rid}.body")
         self.assertEqual((self.dest / f"{rid}.body").read_bytes(), self.body)
         reopened = Controller(self.db, self.gate.principals, clock=lambda: 100)
         self.assertEqual(reopened.state(self.admin)["spent"], 1)
@@ -94,7 +94,7 @@ class DelegatedFleetTests(unittest.TestCase):
         rid = self._attempt("delegate")
         self.gate.revoke_delegation(self.a, "nonce-a")
         with self.assertRaises(Denied):
-            deliver_record(self.gate, rid, self.dest)
+            deliver_record(self.gate, rid, self.dest, allow_delegation=True)
         self.assertEqual(list(self.dest.iterdir()), [])
         self.assertEqual(self.gate.state(self.admin)["spent"], 1)
         with self.assertRaises(Denied):
@@ -106,11 +106,11 @@ class DelegatedFleetTests(unittest.TestCase):
         def injected_crash():
             raise RuntimeError("fault after durable publication")
         with self.assertRaises(RuntimeError):
-            deliver_record(self.gate, rid, self.dest, after_publish=injected_crash)
+            deliver_record(self.gate, rid, self.dest, after_publish=injected_crash, allow_delegation=True)
         self.assertEqual((self.dest / f"{rid}.body").read_bytes(), self.body)
         self.gate.halt(self.admin)
         with self.assertRaises(Denied):
-            deliver_record(self.gate, rid, self.dest)
+            deliver_record(self.gate, rid, self.dest, allow_delegation=True)
         with sqlite3.connect(self.db) as db:
             # The CREATE TABLE statement itself occurs inside the
             # interrupted transaction, so rollback may leave no table.
@@ -128,7 +128,7 @@ class DelegatedFleetTests(unittest.TestCase):
             db.execute("UPDATE delegated_releases SET delegate_uid=? WHERE release_id=?",
                        (self.c, rid))
         with self.assertRaises(Denied):
-            deliver_record(self.gate, rid, self.dest)
+            deliver_record(self.gate, rid, self.dest, allow_delegation=True)
         self.assertEqual(list(self.dest.iterdir()), [])
 
 

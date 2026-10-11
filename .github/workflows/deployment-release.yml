@@ -53,6 +53,8 @@ jobs:
         run: python3 tools/check_deployment_transcript.py
       - name: Held-out sealed corpus in the kernel
         run: python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/heldout-static.json
+      - name: Held-out round 2 (hardened profile, post-fix; the pre-fix false CONDITIONAL is archived)
+        run: python3 tools/check_deployment_heldout.py --corpus deployment/heldout/tier10 --fresh-rules --instantiate-known-code --output /tmp/heldout-round2.json
       - name: Demo static stages; live stages must be reported SKIPPED, exit 3
         run: |
           set +e

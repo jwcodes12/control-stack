@@ -250,3 +250,42 @@ Source generation `r2-v7` (`r2-v6` was the first Tier 10 generation; the review'
   by that fix. The hand-written baseline caught 0 of the 26 negatives. The author is the same model
   family as the original builder and a different one from the fixer; it is not an independent human.
 
+## Post-Tier-10 Lean simplification (model-only; not a new release claim)
+
+The next-phase proof work is staged in draft PR #55. The existing theorem
+`Deployment.deployment_broker_safe` remains intentionally narrow: it establishes
+that each nonce listed as published at the sink has a **used** approval in the final
+abstract broker state, conditional on accepted IR, faithful authority extraction,
+and `BrokerProtocolRefinement`. It does **not** conclude that published file bytes
+or destination exactly match a past reviewed and signed release.
+
+`Deployment.Provenance.deployment_broker_provenance` separately proves a
+reachable-state **model invariant**: each retained final-state approval is
+attributed to an approver-role signer, agent-role owner, staged digest, a current
+reviewer-role record and a lease whose owner matches. A positive model trace and
+an unreviewed-state counterexample are supplied in
+`ControlStack/Deployment/ProvenanceWitnesses.lean`. This does not preserve
+an immutable release-time reviewer/digest/destination/bytes receipt; review
+entries can be overwritten, and the broker's release history stores a nonce but
+no signed per-release content record. Exactly-reviewed bytes remain a guard on
+the model transition and an implementation/refinement **premise**, not a
+standalone theorem about the real receiver.
+
+Named views now expose every conjunct of `TrustedBroker.Allowed`,
+`Deployment.BaseAccepted`, and `Deployment.WritersChecked`, with bidirectional
+equivalence to the original predicates; `Deployment.Accepted` already had
+six named fields. These views are a proof-maintenance convenience, **not**
+new stronger authorization checks. A reusable finite forward-simulation lemma
+is instantiated by SC-25; it transports model claims and does not supply
+OS/runtime correspondence.
+
+**T4.2 disposition:** full `Accepted` monotonicity under edge deletion is
+false, demonstrated by the three retained kernel countermodels. Only
+`accepted_path_safety_monotone` (an accepted *larger* IR implies a no-bypass
+property of an edge-restricted smaller IR with the same nodes/roles) is a
+proved model claim. Do not say that the smaller IR is accepted.
+
+These additional proofs are still model-authored, have had **no independent human
+review**, and must pass the exact Lean 4.34.0 build, axiom review and static
+checkers before being treated as kernel-checked in the updated branch. Scoped
+R2 remains **CONDITIONAL**; G1 independent human review remains open.

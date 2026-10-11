@@ -2,6 +2,9 @@ name: deployment-release
 # T8.3 release gate for the scoped R2 local-file slice.
 # Live container stages cannot run here (offline rootfs, passwordless sudo and the box-local image are absent);
 # they are reported SKIPPED and never counted as a pass. Run `cstack demo` on the supported host for them.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   pull_request:
   workflow_dispatch:
@@ -43,8 +46,19 @@ jobs:
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Cache pinned Lean dependency builds
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages
+            .lake/build
+          key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
       - run: lake exe cache get
-      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses
+      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
+      - name: Full project Lean build (all root imports)
+        run: lake build
       - name: Python/Lean differential (fixtures + 250 seeded mutations)
         run: python3 tools/check_deployment_subset_differential.py
       - name: Contract witnesses and axiom report

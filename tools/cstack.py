@@ -529,9 +529,17 @@ def main(argv=None, runner=subprocess.call):
                     inputs = Path(a.inputs) if a.inputs else next((p for p in candidates if (p / "host-observations.json").is_file()), candidates[-1])
                     if Path(a.output).resolve().is_relative_to(inputs.resolve()):
                         raise UsageError("plan output must be outside the saved observation inputs")
-                    replayed = replay_snapshot(a.compose, a.runtime, inputs)
                     from deployment.plan import portable_observation_ir
-                    if portable_observation_ir(replayed, inputs) != portable_observation_ir(ir, inputs):
+                    wanted = portable_observation_ir(ir, inputs)
+                    # An archived IR was produced under replay rules; a fresh scan's own IR under the fresh-scan rules (which add
+                    # UNKNOWN edges for facts older inventories lack). Either must reproduce the given IR exactly.
+                    for fresh_rules in (False, True):
+                        try:
+                            if portable_observation_ir(replay_snapshot(a.compose, a.runtime, inputs, fresh_rules), inputs) == wanted:
+                                break
+                        except (ValueError, AssertionError, KeyError):
+                            pass
+                    else:
                         raise UsageError("plan inputs differ from the scanned IR")
                     host = json.loads((inputs / "host-observations.json").read_text())
                 elif sha(a.compose) != ir["snapshot"]["compose_sha256"] or sha(a.runtime) != ir["snapshot"]["runtime_sha256"]:

@@ -118,6 +118,7 @@ class DelegationProfile(Base):
         entry.write_text(ok);self.assertFalse(delegation_enabled(entry),'the conforming shape is accepted')
         for label,source in (('exact flag',head+"'--allow-delegation'])\n"),('abbreviation',head+"'--allow-deleg'])\n"),('short prefix',head+"'--al'])\n"),
                              ('assembled',head+"'--allow'+'-delegation'])\n"),('variable',head+"flag])\n"),('unknown flag',head+"'--other','x'])\n"),
+                             ('effect root (a second file-effect path, outside the claim)',head+"'--effect-root','/private/published'])\n"),
                              ('flag as a value',head+"'--socket','--allow-delegation'])\n"),('computed cap',head+"'--bootstrap-cap',cap+1])\n"),
                              ('no execv',"import os\n"),('extra argument',head+"'--bootstrap-cap',str(cap),'x'])\n")):
             with self.subTest(label):

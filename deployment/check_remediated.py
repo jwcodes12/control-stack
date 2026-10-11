@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.reconcile import reconcile
-from deployment.pins import require
+from deployment.pins import require,vaulted_templates
 from deployment.scan import replay_snapshot
 from deployment.plan import apply_patch
 from extractors.compose import sha
@@ -29,10 +29,16 @@ def check(output):
         assert row['original_basis']=='original = archived Tier 2 evidence'
         assert row['original_path']==str(original.relative_to(ROOT)) and row['original_sha256']==sha(original)
         assert row['original_outcomes']==json.loads(original.read_text())['outcomes']
-        base=ROOT/('examples/compose-two-agent-hardened' if hardened else 'examples/compose-two-agent')
-        template=json.loads((base/f'{case}.compose.json').read_text())
-        plan=json.loads((dest/'plan.json').read_text());assert plan['base_sha256']==sha(base/f'{case}.compose.json')
-        assert apply_patch(template,plan['patch'])==json.loads((base/'clean.compose.json').read_text())
+        plan=json.loads((dest/'plan.json').read_text())
+        if hardened:
+            # The hardened templates embed the trusted-source pins, so they change with every source generation: the plan's base digest
+            # must name a vaulted (or current) template of this case, and the patched result must be a vaulted (or current) clean reference.
+            templates=vaulted_templates(case);assert plan['base_sha256'] in templates,(case,'plan base is not a vaulted reference template')
+            template=json.loads(templates[plan['base_sha256']].read_text());references=[json.loads(f.read_text()) for f in vaulted_templates('clean').values()]
+        else:
+            base=ROOT/'examples/compose-two-agent';assert plan['base_sha256']==sha(base/f'{case}.compose.json')
+            template=json.loads((base/f'{case}.compose.json').read_text());references=[json.loads((base/'clean.compose.json').read_text())]
+        assert apply_patch(template,plan['patch']) in references,(case,'patched template is not a reference clean profile')
         c=json.loads((dest/'compose.json').read_text());r=json.loads((dest/'runtime.json').read_text());raw=dest/'docker-inspect.raw.json';inventory=json.loads(raw.read_text())
         assert len(inventory)==6 and all(entry['State']['Running'] for entry in inventory)
         assert r['capture']['raw_sha256']==sha(raw) and r['capture']['independent_attestation'] is False

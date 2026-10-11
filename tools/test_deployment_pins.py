@@ -75,6 +75,24 @@ class PinTests(unittest.TestCase):
         self.assertIsNone(pins.known_generation({k:v for k,v in current.items() if k!='slice/entry.py'}),'a missing file is not a generation')
         self.assertIsNone(pins.known_generation({**current,'slice/trusted_stack/extra.py':'2'*64}))
 
+    def test_every_archived_remediation_plan_names_a_vaulted_template(self):
+        # The hardened templates embed the trusted-source pins and change with each generation; archives name them only by digest.
+        seen=0
+        for f in sorted((ROOT/'deployment/runs').rglob('plan.json')):
+            plan=json.loads(f.read_text());case=f.parent.name
+            if 'tier9' not in f.parts:continue
+            with self.subTest(plan=str(f.relative_to(ROOT))):self.assertIn(plan['base_sha256'],pins.vaulted_templates(case));seen+=1
+        self.assertGreaterEqual(seen,4)
+        self.assertIn(sha(HARDENED/'clean.compose.json'),pins.vaulted_templates('clean'),'run `python3 deployment/pins.py vault-templates` after regenerating fixtures')
+
+    def test_template_vault_is_checked_by_hash_and_name(self):
+        pins.TEMPLATES=self.tmp/'templates';self.addCleanup(setattr,pins,'TEMPLATES',ROOT/'deployment/pinned-templates')
+        pins.vault_templates();self.assertEqual(pins.vault_templates(),len(pins.TEMPLATE_NAMES),'idempotent')
+        digest=sha(HARDENED/'clean.compose.json');(pins.TEMPLATES/(digest+'.json')).write_text('{}')
+        self.assertEqual(set(pins.vaulted_templates('clean')),{digest},'only the current file now: a vaulted copy that no longer hashes to its name is ignored')
+        (pins.TEMPLATES/(digest+'.json')).write_bytes((HARDENED/'clean.compose.json').read_bytes())
+        self.assertNotIn(digest,pins.vaulted_templates('writable-sink-mount'),'a digest vaulted as clean is not a writable-sink-mount template')
+
     def test_snapshot_is_append_only(self):
         pins.VAULT=self.tmp/'vault';shutil.copytree(self.vault,pins.VAULT)  # never touch the real vault
         first=pins.generations()[0].name

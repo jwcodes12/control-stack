@@ -62,6 +62,33 @@ def capability_paths(members):
     """Files that carry file capabilities: docker export records them as the SCHILY.xattr.security.capability PAX header."""
     return sorted(m.name for m in members if any('security.capability' in key for key in m.pax_headers))
 
+STARTUP_HOOKS={'sitecustomize.py','usercustomize.py'}
+
+def slice_tree(members):
+    """Everything the image holds under /slice (first on sys.path via PYTHONPATH): a stray module, .pyc or link there is code
+    the entrypoint could import, so the whole tree is inventoried, not just the files the reference names."""
+    return sorted([m.name.removeprefix('./').rstrip('/'),m.type.decode('ascii'),m.mode&0o7777,m.uid] for m in members if m.name.removeprefix('./').rstrip('/').split('/')[0]=='slice')
+
+def startup_hooks(members):
+    """Files the interpreter runs at start-up without being imported by name."""
+    return sorted(m.name for m in members if m.name.rsplit('/',1)[-1] in STARTUP_HOOKS or m.name.endswith('.pth'))
+
+def slice_tree_problems(tree,source_names,blocked_uids=frozenset()):
+    """[] when the inventory is exactly the reference tree: two directories and the named regular files, none writable by group
+    or other and none owned by a role UID. Anything else is reported by name."""
+    expected={'slice':'5','slice/trusted_stack':'5',**{name:'0' for name in source_names}}
+    problems=[]
+    seen={}
+    for entry in tree:
+        if not (isinstance(entry,list) and len(entry)==4 and isinstance(entry[0],str)):return ['malformed inventory']
+        name,kind,mode,uid=entry;seen[name]=kind
+        if name not in expected:problems.append('unexpected '+name)
+        elif kind!=expected[name]:problems.append('wrong type '+name)
+        elif not isinstance(mode,int) or mode&0o022:problems.append('group/other-writable '+name)
+        elif uid in blocked_uids:problems.append('agent-owned '+name)
+    problems+=['missing '+name for name in expected if name not in seen]
+    return problems
+
 def inspect_image(image):
     try:
         p=subprocess.run(['docker','image','inspect',image],capture_output=True,text=True,timeout=10)
@@ -85,12 +112,17 @@ def inspect_image(image):
                     wanted={'slice/entry.py',*[('slice/trusted_stack/'+f.name) for f in (Path(__file__).resolve().parents[1]/'trusted_stack').glob('*.py')]}
                     sources={m.name.removeprefix('./'):hashlib.sha256(tar.extractfile(m).read()).hexdigest() for m in members if m.isfile() and m.name.removeprefix('./') in wanted}
                 setid=[name for name,mode,*_ in inventory if mode&0o6000];file_capabilities=capability_paths(members)
-                return {'status':'OBSERVED','image':row['Id'],'image_user':config.get('User',''),'entrypoint':config.get('Entrypoint'),'command':config.get('Cmd'),'setid_paths':setid,'file_capability_paths':file_capabilities,'export_sha256':sha(archive),'source_sha256':sources,'mode_inventory_sha256':hashlib.sha256(json.dumps(inventory,separators=(',',':')).encode()).hexdigest(),'principal_policy':reference_policy(),'inspection':'stopped create with network none, numeric UID 23705, harmless overridden entrypoint; export; rm; never start','basis':'Docker inspect/export; daemon observations, not attestation'}
+                tree=slice_tree(members);hooks=startup_hooks(members)
+                return {'status':'OBSERVED','slice_tree':tree,'startup_hooks':hooks,'image':row['Id'],'image_user':config.get('User',''),'entrypoint':config.get('Entrypoint'),'command':config.get('Cmd'),'setid_paths':setid,'file_capability_paths':file_capabilities,'export_sha256':sha(archive),'source_sha256':sources,'mode_inventory_sha256':hashlib.sha256(json.dumps(inventory,separators=(',',':')).encode()).hexdigest(),'principal_policy':reference_policy(),'inspection':'stopped create with network none, numeric UID 23705, harmless overridden entrypoint; export; rm; never start','basis':'Docker inspect/export; daemon observations, not attestation'}
         finally:
             if created_id:subprocess.run(['docker','rm',created_id],capture_output=True,timeout=10)
     except (OSError,ValueError,subprocess.SubprocessError,tarfile.TarError):return {'status':'UNKNOWN','reason':'offline image inspection unavailable'}
 
-def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,observed_snapshot=None):
+def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,observed_snapshot=None,fresh_rules=False):
+    """observed_snapshot replays archived observations. Replay normally applies the rules the archive was produced under (older
+    inventories and images lack newer facts); fresh_rules=True replays the SAME observations under the fresh-scan rules, which is how
+    a fresh scan's own IR is reproduced exactly."""
+    fresh=observed_snapshot is None or fresh_rules
     output=Path(output);output.mkdir(parents=True,exist_ok=True)
     if observed_snapshot is None:cp,metadata=normalize(compose,output,expected_sha256)
     else:
@@ -135,8 +167,8 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
         audit=images[image]
         # v2 inventories (and every fresh scan) must establish that agents cannot regain capabilities (T9.4).
         # Archived v1 inventories predate the field and are replayed under the rules they were produced with.
-        v2=observed_snapshot is None or (isinstance(observed,dict) and 'hardening' in observed)
-        if observed_snapshot is None and s.get('x-cstack-role')=='agent' and not (isinstance(observed,dict) and 'hardening' in observed):
+        v2=fresh or (isinstance(observed,dict) and 'hardening' in observed)
+        if fresh and s.get('x-cstack-role')=='agent' and not (isinstance(observed,dict) and 'hardening' in observed):
             issues[name].append('runtime-inventory-lacks-hardening-facts-UNKNOWN')  # the agent rule itself lives in collect()
         if audit['status']=='UNKNOWN':issues[name].append('image-inspection-UNKNOWN: '+audit['reason'])
         else:
@@ -145,6 +177,12 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
                 file_capabilities=audit.get('file_capability_paths')
                 if not isinstance(file_capabilities,list):issues[name].append('image-file-capability-inventory-UNKNOWN')
                 elif file_capabilities:issues[name].append('image-file-capabilities')
+            if fresh or 'slice_tree' in audit:
+                # Fresh scans must see the whole /slice tree and the start-up hooks; archived audits predate both fields.
+                hooks=audit.get('startup_hooks')
+                if not isinstance(hooks,list):issues[name].append('image-startup-hook-inventory-UNKNOWN')
+                elif hooks:issues[name].append('image-python-startup-hooks')
+                if not isinstance(audit.get('slice_tree'),list):issues[name].append('image-slice-tree-inventory-UNKNOWN')
             if audit['entrypoint']!=['/usr/bin/python3','/slice/entry.py'] or audit['command']:issues[name].append('image-entrypoint-command-uninspected')
             expected_sources=current_sources();policy_entry=None
             if observed_snapshot is not None and audit.get('source_sha256')!=expected_sources and known_generation(audit.get('source_sha256')):
@@ -154,6 +192,8 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
             if audit.get('source_sha256')!=expected_sources:issues[name].append('image-reference-source-correspondence-UNKNOWN')
             if not isinstance(s.get('user'),str) or not s['user'].isdecimal():issues[name].append('image-USER-not-explicitly-overridden')
             policy=reference_policy(policy_entry) if audit.get('source_sha256')==expected_sources else None
+            blocked={u for uids in (policy or {}).values() for u in uids if isinstance(uids,list)}
+            if isinstance(audit.get('slice_tree'),list) and slice_tree_problems(audit['slice_tree'],expected_sources,blocked):issues[name].append('image-slice-tree-differs-from-reference-UNKNOWN')
             if policy is not None and delegation_enabled(policy_entry):issues[name].append('broker-delegation-enabled-outside-claim-UNKNOWN')
             if 'principal_policy' in audit and audit['principal_policy']!=policy:issues[name].append('image-principal-policy-evidence-mismatch-UNKNOWN')
             role=s.get('x-cstack-role');policy_role='admin' if role in {'broker','receiver'} else role
@@ -183,7 +223,7 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
     facts_path=output/'host-observations.json'
     if observed_snapshot is None:facts_path.write_text(json.dumps(facts,sort_keys=True,separators=(',',':'))+'\n')
     else:assert json.loads(facts_path.read_text())==facts
-    ir=collect(cp,rp,sha(cp),replay=observed_snapshot is not None);ir['version']='0.1'
+    ir=collect(cp,rp,sha(cp),replay=not fresh);ir['version']='0.1'
     provenance={'source':str(facts_path),'sha256':sha(facts_path),'kind':'RUNTIME_OBSERVED'};ir['sources'].append(provenance)
     for service,reasons in issues.items():
         if reasons:
@@ -195,8 +235,8 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
     return validate(ir)
 
 
-def replay_snapshot(compose,runtime,output):
+def replay_snapshot(compose,runtime,output,fresh_rules=False):
     """Reconstruct an archived observation; this is not a fresh host assessment."""
     output=Path(output);facts=json.loads((output/'host-observations.json').read_text())
     def no_new_observation(image):raise AssertionError('archived image observation missing')
-    return scan(compose,runtime,sha(compose),output,no_new_observation,facts)
+    return scan(compose,runtime,sha(compose),output,no_new_observation,facts,fresh_rules)

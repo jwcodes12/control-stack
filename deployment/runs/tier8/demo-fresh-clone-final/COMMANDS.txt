@@ -1,0 +1,5 @@
+git clone --branch sol/r2-tier8 https://github.com/jwcodes12/control-stack.git /var/tmp/cstack-r2-tier8-fresh   # at beb396a
+cd /var/tmp/cstack-r2-tier8-fresh
+mkdir -p .lake && ln -s /home/opc/research/control-stack/.lake/packages .lake/packages   # prebuilt pinned Lean deps; no network
+python3 tools/cstack.py demo --output /var/tmp/cstack-r2-tier8-fresh-demo                # exit 0, 112 s wall
+python3 tools/test_deployment_release.py                                                 # 5 PASS

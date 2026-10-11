@@ -1,0 +1,44 @@
+{
+  "final": {
+    "admitted": 2,
+    "delivered": 2,
+    "global_cap": 2,
+    "halted": false,
+    "records": [
+      {
+        "agent_uid": 23701,
+        "classification": "delivered",
+        "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+        "file_present": true,
+        "nonce": "honest-agent-a",
+        "receipt_present": true,
+        "release_id": 1
+      },
+      {
+        "agent_uid": 23702,
+        "classification": "delivered",
+        "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+        "file_present": true,
+        "nonce": "honest-agent-b",
+        "receipt_present": true,
+        "release_id": 2
+      }
+    ],
+    "spent": 2,
+    "unknown_commit": 0
+  },
+  "honest_agents_completed": 2,
+  "original_basis": "original = archived Tier 2 evidence",
+  "original_outcomes": {
+    "direct-write": "SUCCEEDED",
+    "sink_mode": "0777; explicit DAC mutation plus RW bind"
+  },
+  "original_path": "deployment/runs/tier2/containers-final/writable-sink-mount/result.json",
+  "original_sha256": "f59405fc98d215bb47539cba1a02662ced48d2e5d1222342ed3a5014bed87098",
+  "remediated_verdict": "CONDITIONAL",
+  "scope": "UIDs and mounts match fresh daemon capture; private custody observed. No new bypass probes; absence of a mount is configuration evidence, not a fresh denial experiment.",
+  "sink_sha256": {
+    "1.body": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+    "2.body": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+  }
+}

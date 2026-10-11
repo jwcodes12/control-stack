@@ -492,10 +492,17 @@ def main(argv=None, runner=subprocess.call):
     report = sub.add_parser("report", help="render an obligation bundle")
     report.add_argument("bundle")
     report.add_argument("--output", required=True)
+    demo = sub.add_parser("demo", help="fixtures+Lean, plan, live remediated containers, independent check, report")
+    demo.add_argument("--output", required=True, help="new directory for every demo artifact")
+    demo.add_argument("--static-only", action="store_true", help="skip live containers (reported SKIPPED, exit 3)")
     a, extra = ap.parse_known_args(argv)
     if extra and a.cmd not in ("ledger", "new", "map"):
         ap.error(f"unrecognized arguments: {' '.join(extra)}")
     try:
+        if a.cmd == "demo":
+            if Path(a.output).exists():
+                raise UsageError("demo output must be a new directory")
+            return _import("deployment.demo").demo.run(a.output, a.static_only)
         if a.cmd == "plan":
             try:
                 _import("security_ir")

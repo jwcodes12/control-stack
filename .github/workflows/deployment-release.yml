@@ -56,7 +56,7 @@ jobs:
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
       - run: lake exe cache get
-      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
+      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.GuardNecessity ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
       - name: Full project Lean build (all root imports)
         run: lake build
       - name: Python/Lean differential (fixtures + 250 seeded mutations)

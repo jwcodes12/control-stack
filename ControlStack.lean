@@ -1,4 +1,5 @@
 import ControlStack.Deployment.NamedContracts
+import ControlStack.Deployment.GuardNecessity
 import ControlStack.Deployment.ProvenanceWitnesses
 import ControlStack.Scenarios.SC25RefinementReuse
 import ControlStack.PolicyTamper

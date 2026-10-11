@@ -56,12 +56,16 @@ def collect(compose, runtime, expected_sha256, replay=False):
         return p
     cp, rp = prov(compose,'DECLARED'), prov(runtime,'RUNTIME_OBSERVED')
     claim = c.get('x-cstack', {})
+    # A replay may accept vaulted earlier code, but the two pins must come from ONE generation (or the current tree): a controller of
+    # one generation with a receiver of another is a mixture no deployment ran.
+    pair = None
+    if replay and isinstance(claim, dict) and isinstance(claim.get('broker_sha256'), str) and isinstance(claim.get('receiver_sha256'), str):
+        from deployment.pins import generation_holding
+        if generation_holding({'trusted_stack/controller.py': claim['broker_sha256'], 'trusted_stack/outbox_receiver.py': claim['receiver_sha256']}) is not None:
+            pair = {'broker_sha256': claim['broker_sha256'], 'receiver_sha256': claim['receiver_sha256']}
     def archived(rel, key):
         # Only a replay may accept a vaulted earlier generation; the label stays the repo path.
-        pin = claim.get(key) if isinstance(claim, dict) else None
-        if replay and isinstance(pin, str):
-            from deployment.pins import vaulted_file
-            return pin if vaulted_file(rel, pin) else None
+        return pair[key] if pair else None
     bp = prov(ROOT/'trusted_stack/controller.py','STATIC_INFERRED',archived('trusted_stack/controller.py','broker_sha256'))
     op = prov(ROOT/'trusted_stack/outbox_receiver.py','STATIC_INFERRED',archived('trusted_stack/outbox_receiver.py','receiver_sha256'))
     sink = claim.get('sink_source', '/UNSPECIFIED-SINK')
@@ -123,7 +127,11 @@ def collect(compose, runtime, expected_sha256, replay=False):
         for key in env:
             if key not in {'SLICE_ROLE','PYTHONPATH'} and not re.search(r'SINK|CREDENTIAL|TOKEN|SECRET|KEY|PASSWORD|PASS|PASSWD|AUTH|COOKIE|PRIVATE',key,re.I):
                 unknown(name,'unlisted-environment: '+key)
-        # Values intentionally neither serialized nor examined.
+        # Values are neither serialized nor examined, except the two fixed non-secret variables that choose what the reference image's entry
+        # runs: SLICE_ROLE must say 'broker' for exactly the broker role and PYTHONPATH must be /slice. A fresh scan already refused this;
+        # held-out round 2 showed the extractor itself did not (replay keeps the rules archived evidence was produced under).
+        if not replay and (env.get('PYTHONPATH') != '/slice' or (env.get('SLICE_ROLE') == 'broker') != (role == 'broker')):
+            unknown(name,'reference-entry-environment-mismatch')
         facts = {'role':role,'uid':uid,'image':image,'privileged':s.get('privileged',False) is True,
                  'host_network':s.get('network_mode') == 'host','env_names':sorted(env),'runtime_match':'MISSING'}
         observed = r.get('services',{}).get(name)

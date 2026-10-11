@@ -26,12 +26,15 @@ axiom report, and runs falsifying controls.
 
 ## Falsifying controls
 
-Three mutated transcripts do **not** elaborate (checked in `check_deployment_transcript.py`): the release by an agent other
-than the approved one, a second release of the same nonce reported as accepted, and a review by a non-reviewer UID.
+Four mutated transcripts do **not** elaborate (checked in `check_deployment_transcript.py`): the release by an agent other
+than the approved one, a second release of the same nonce reported as accepted, a review by a non-reviewer UID, and a clock past the expiries.
 
 ## Limits (not claimed)
 
-- No timestamp was recorded. `now = 0` is a feasible witness for the expiry guards, not the broker's clock.
+- The requests carry no timestamp. The model clock is the database's own `releases.created` (1791658272) from the same archived run, used
+  for every step: the issue and approve requests were made no later than the first release, and every lease and approval expiry in the
+  transcript (1791660071) is greater than it, so the expiry guards hold for any clock value up to that point. A fourth mutated
+  transcript with the clock set one second past the expiries does not elaborate. That `created` is the broker's clock is a premise.
 - Completeness and authenticity of the log are premises, not results.
 - The link from model releases to sink files is the receiver refinement premise (bytes are checked by
   `deployment/check_container_run.py`, not here).

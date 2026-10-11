@@ -1,0 +1,164 @@
+{
+  "services": {
+    "agent-a": {
+      "uid": 23701,
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "no_new_privileges": true,
+        "cap_drop": [
+          "ALL"
+        ]
+      }
+    },
+    "agent-b": {
+      "uid": 23702,
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "no_new_privileges": true,
+        "cap_drop": [
+          "ALL"
+        ]
+      }
+    },
+    "broker": {
+      "uid": 23700,
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": false
+        },
+        {
+          "type": "bind",
+          "source": "/workspace/db",
+          "target": "/private",
+          "read_only": false
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "no_new_privileges": false,
+        "cap_drop": []
+      }
+    },
+    "receiver": {
+      "uid": 23700,
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/workspace/db",
+          "target": "/private",
+          "read_only": false
+        },
+        {
+          "type": "bind",
+          "source": "/workspace/sink",
+          "target": "/output",
+          "read_only": false
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "no_new_privileges": false,
+        "cap_drop": []
+      }
+    },
+    "reviewer": {
+      "uid": 23703,
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        },
+        {
+          "type": "bind",
+          "source": "/workspace/sink",
+          "target": "/output",
+          "read_only": false
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "no_new_privileges": false,
+        "cap_drop": []
+      }
+    },
+    "approver": {
+      "uid": 23704,
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "mounts": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "no_new_privileges": false,
+        "cap_drop": []
+      }
+    }
+  }
+}

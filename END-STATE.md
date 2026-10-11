@@ -1,7 +1,7 @@
 # END-STATE — deployment verifier, handoff `HANDOFF-SOL-TO-R2.md`
 
 Date: 2026-10-11. Tiers 1–7 by Sol (GPT via Codex); Tiers 8–9 by Claude Opus 5.5 after Sol's
-thread hit its usage limit. Nothing merged; publication, tagging and merging are the owner's call.
+thread hit its usage limit; Tier 10 (closure of the open engineering items, below) by Claude. Publication and tagging are the owner's call.
 
 ## Reached level: scoped R2 (not R3, not R4)
 
@@ -36,14 +36,23 @@ An Opus 5.5 review of those fixes (`deployment/reviews/t9-hardening-review-opus.
 HIGH issue and three MEDIUM ones, all fixed; its open LOW items are stated in the claim.
 **None of this has had independent human review.**
 
-## Still open but not resource-gated
+## Tier 10: the open engineering items (done, unreviewed by humans)
 
-Items I judged not worth reopening or that need design decisions: T4.2 (false as stated;
-safety-only version proved; T4.4 was finished in Tier 9, see `deployment/TIER4-TRANSCRIPT.md`);
-`Principals` accepting UID 0; the
-receiver still publishing delegated releases from an old database; evidence checkers not
-pinning a single source generation; the image scan hashing only listed source files. The
-only BLOCKED task left is T4.2, which is blocked because its literal statement is false.
+Closed in source generation `r2-v6` (details and limits in `docs/DEPLOYMENT-CLAIM-v0.md`, section "Tier 10"):
+`Principals` refuses UID 0; the receiver refuses delegated releases by default; the evidence checkers bind one source
+generation and refuse `python -O`; the image scan inventories the whole `/slice` tree and the interpreter start-up hooks; an
+in-process HALT latch and a staging quota; `cstack plan` accepts a fresh scan's own IR; a start lock stops two brokers
+removing each other's socket; `publish_effect` is pinned outside the claim by a test; the T4.4 replay uses the recorded broker
+clock; live evidence for the five non-bypass cases and the demo on the final generation `r2-v7` (`deployment/runs/tier10/`: the five cases, `cstack demo` in the dev clone, and in a fresh clone at d42de1c, all PASS; the earlier `r2-v6` runs are in `gen-r2-v6/`); the Lean differential, contract-witness, monotonicity and transcript checkers pass;
+a second held-out set (34 cases, blind `codex exec` author, hardened profile) that found **one false CONDITIONAL before
+any fix** (an agent whose `SLICE_ROLE` is `broker`; fixed in the extractor, so the post-fix figures are contaminated).
+
+## Still open
+
+T4.2 (false as stated; the safety-only version is proved); independence of the held-out authors (all model-written); the
+F6/F8 Lean candidates from #41 (their own gates are open); the base image outside `/slice` is trusted, not inspected;
+receiver-side SQLite lock scheduling and per-agent staging quotas; one tested host. Everything else is in the gated table
+below.
 
 ## Queue
 
@@ -58,6 +67,7 @@ only BLOCKED task left is T4.2, which is blocked because its literal statement i
 | T7 attribution | 4/4 DONE (defensive recast); original T7.2/T7.3 attack arms GATED |
 | T8 release | 6/6 DONE |
 | T9 hardening | 6/6 DONE (fixes unreviewed by humans) |
+| T10 open items | DONE (see above; unreviewed by humans) |
 
 Full table: `deployment/QUEUE.md`.
 

@@ -7,6 +7,7 @@ forges --admins on the CLI. This does not prove absence of other OS bypasses.
 """
 import os
 import sqlite3
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -28,7 +29,7 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
             db = root / "gate.db"
             # UID 65534/GID 65534 is used only as a deliberately
             # unprivileged child identity inside this disposable test.
-            agent, reviewer, approver, owner = 65534, 65533, 65532, 0
+            agent, reviewer, approver, owner = 65534, 65533, 65532, 65531  # Principals refuses UID 0
             roles = Principals(frozenset({agent}), frozenset({reviewer}),
                                frozenset({approver}), frozenset({owner}))
             controller = Controller.bootstrap(db, roles, 1)
@@ -45,6 +46,13 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
             # Expose the parent as traversable. The test must not succeed
             # trivially due solely to the temporary parent being mode 0700.
             root.chmod(0o711)
+            for owned in (root, directory, db):
+                os.chown(owned, owner, owner)  # the receiver runs as the non-root owner
+            # The checkout may be private to another UID (CI): every child imports a readable copy of the package, so a denial below
+            # is the receiver's authorization decision and not an import failure.
+            code = root / "code"
+            code.mkdir(mode=0o755)
+            shutil.copytree(Path(__file__).resolve().parents[1] / "trusted_stack", code / "trusted_stack")
             args = [
                 sys.executable, "-m", "trusted_stack.deliver_cli",
                 "--db", str(db), "--out", str(directory),
@@ -53,18 +61,21 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
                 "--approvers", str(approver), "--admins", str(owner),
             ]
             forged = args[:]
-            forged[-1] = str(agent)
+            # An admin set that overlaps no other role, so only the real-UID check (not the role-disjointness check) can refuse it.
+            forged[-1] = str(owner + 1)
             denied = subprocess.run(
-                forged, capture_output=True, text=True, timeout=15,
+                forged, capture_output=True, text=True, timeout=15, cwd=code,
                 user=agent, group=agent, extra_groups=[])
             self.assertNotEqual(denied.returncode, 0, denied.stdout)
+            self.assertEqual(denied.stderr.strip(), "DENIED")  # the receiver's own refusal, not an import or startup failure
             self.assertFalse((directory / f"{release_id}.body").exists())
             # The kernel identity, not a caller-provided flag, must remain
             # authoritative when the caller lists the genuine admin too.
             denied = subprocess.run(
-                args, capture_output=True, text=True, timeout=15,
+                args, capture_output=True, text=True, timeout=15, cwd=code,
                 user=agent, group=agent, extra_groups=[])
             self.assertNotEqual(denied.returncode, 0, denied.stdout)
+            self.assertEqual(denied.stderr.strip(), "DENIED")  # the receiver's own refusal, not an import or startup failure
             self.assertFalse((directory / f"{release_id}.body").exists())
             with sqlite3.connect(db) as con:
                 self.assertEqual(
@@ -77,7 +88,8 @@ class LocalReceiverRealUIDTests(unittest.TestCase):
                     receipts = 0
                 self.assertEqual(receipts, 0)
             accepted = subprocess.run(
-                args, capture_output=True, text=True, timeout=15)
+                args, capture_output=True, text=True, timeout=15, cwd=code,
+                user=owner, group=owner, extra_groups=[])
             self.assertEqual(accepted.returncode, 0, accepted.stderr)
             self.assertEqual((directory / f"{release_id}.body").read_bytes(), body)
             with sqlite3.connect(db) as con:

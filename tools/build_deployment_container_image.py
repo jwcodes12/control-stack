@@ -17,8 +17,13 @@ archive=a.output/'rootfs.tar'
 subprocess.run(['sudo','-n','tar','--exclude=./boot','--exclude=./dev','--exclude=./proc','--exclude=./sys','--exclude=./root','-C',str(a.rootfs),'-cf',str(archive),'.'],check=True)
 subprocess.run(['sudo','-n','chown',str(__import__('os').getuid()),str(archive)],check=True)
 with tarfile.open(archive,'a') as tar:
-    tar.add(ROOT/'trusted_stack',arcname='slice/trusted_stack',filter=lambda info: None if '__pycache__' in info.name else info)
-    tar.add(ROOT/'tools/deployment_container_entry.py',arcname='slice/entry.py')
+    # The image's /slice tree must be exactly the reference (deployment/scan.py slice_tree_problems): the .py files the entry imports and
+    # nothing else (no docs, no caches), owned by root so no agent UID can edit what the broker imports.
+    def reference_only(info):
+        if '__pycache__' in info.name or (info.isfile() and not info.name.endswith('.py')):return None
+        info.uid=info.gid=0;info.uname=info.gname='root';return info
+    tar.add(ROOT/'trusted_stack',arcname='slice/trusted_stack',filter=reference_only)
+    tar.add(ROOT/'tools/deployment_container_entry.py',arcname='slice/entry.py',filter=reference_only)
 cmd=['docker','import','--change','WORKDIR /slice','--change','ENV PYTHONPATH=/slice','--change','ENTRYPOINT ["/usr/bin/python3", "/slice/entry.py"]',str(archive),a.tag]
 p=subprocess.run(cmd,check=True,capture_output=True,text=True)
 manifest={'host_root':str(ROOT/'deployment-container-state'),'image':p.stdout.strip(),'rootfs_sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'source_sha256':{str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted((ROOT/'trusted_stack').glob('*.py'))},'entry_sha256':hashlib.sha256((ROOT/'tools/deployment_container_entry.py').read_bytes()).hexdigest(),'offline':True,'tag':a.tag,'build_script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}

@@ -135,7 +135,7 @@ def _publish(dirfd: int, name: str, body: bytes) -> None:
 
 
 def deliver_record(controller: Controller, release_id: int, output_dir: Path,
-                   *, after_publish=None) -> str:
+                   *, after_publish=None, allow_delegation=False) -> str:
     """Publish one previously committed reviewed artifact under <id>.body.
 
     DB writer lock linearizes with HALT. If killed after filesystem publication
@@ -143,6 +143,8 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
     executing a second effect. A HALT occurring after that crash may leave the
     file present and receipt absent, correctly recording the in-flight gap.
     after_publish is a local, trusted test fault hook, not exposed by server.py.
+    Delegated releases are outside the deployment claim: unless allow_delegation is set, a release that has a
+    delegation grant or a delegated-executor row is refused, whatever the broker that wrote the database allowed.
     """
     if not controller.principals.allows(os.geteuid(), "admins"):
         raise Denied("only the actual trusted admin OS UID may deliver")
@@ -195,6 +197,8 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                 """SELECT nonce,grantor_uid,delegate_uid
                    FROM delegated_releases WHERE release_id=?""",
                 (release_id,)).fetchone()
+            if (grant is not None or executed is not None) and not allow_delegation:
+                raise Denied("delegated releases are not delivered in this profile")
             if grant is None:
                 if executed is not None:
                     raise Denied("unjustified delegated executor receipt")

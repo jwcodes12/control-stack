@@ -16,12 +16,12 @@ import tempfile
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from trusted_stack.client import request
 
 AGENT = 24611
 REVIEWER = 24612
 APPROVER = 24613
 OTHER = 24614
+ADMIN = 24610  # Principals refuses UID 0, so the broker and the admin calls use a disposable non-root UID
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -70,15 +70,17 @@ def main():
         shutil.copy2(ROOT / "interop/node/control_stack_client.mjs", client)
         dbdir = root / "private"
         dbdir.mkdir(mode=0o700)
+        os.chown(root, ADMIN, ADMIN)  # the admin-run broker creates its socket here
+        os.chown(dbdir, ADMIN, ADMIN)
         socket = root / "control.sock"
         proc = subprocess.Popen([
             sys.executable, "-m", "trusted_stack.server",
             "--db", str(dbdir / "db.sqlite"), "--socket", str(socket),
             "--agents", str(AGENT), "--reviewers", str(REVIEWER),
-            "--approvers", str(APPROVER), "--admins", "0",
+            "--approvers", str(APPROVER), "--admins", str(ADMIN),
             "--bootstrap-cap", "2",
-        ], cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
-           text=True)
+        ], cwd=worker, user=ADMIN, group=ADMIN, extra_groups=[],
+           stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
         try:
             for _ in range(100):
                 if socket.exists():
@@ -96,10 +98,10 @@ def main():
             assert python(REVIEWER, socket, {"op": "review", "digest": digest},
                           worker)["ok"] is True
             expiry = int(time.time()) + 200
-            assert request(socket, {
+            assert python(ADMIN, socket, {
                 "op": "issue_lease", "lease_id": "polyglot",
                 "agent_uid": AGENT, "budget": 1, "expires": expiry
-            })["ok"] is True
+            }, worker)["ok"] is True
             assert python(APPROVER, socket, {
                 "op": "approve", "nonce": "one-use-polyglot", "digest": digest,
                 "destination": "trusted/output", "agent_uid": AGENT,
@@ -115,9 +117,9 @@ def main():
             assert js(AGENT, node, client, socket, effect, worker) == {
                 "ok": True, "result": 1}
             assert python(AGENT, socket, effect, worker)["ok"] is False
-            assert request(socket, {"op": "state"})["result"] == {
+            assert python(ADMIN, socket, {"op": "state"}, worker)["result"] == {
                 "global_cap": 2, "halted": False, "spent": 1, "releases": 1}
-            assert request(socket, {"op": "halt"})["ok"] is True
+            assert python(ADMIN, socket, {"op": "halt"}, worker)["ok"] is True
             assert js(AGENT, node, client, socket, stage, worker)["ok"] is False
             print("PASS: Node and Python have identical broker admission, "
                   "SO_PEERCRED identity, one-use/HALT semantics")

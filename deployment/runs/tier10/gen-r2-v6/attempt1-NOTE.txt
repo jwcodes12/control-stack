@@ -1,0 +1,5 @@
+Attempt 1 (kept as evidence). The fresh scan of the clean case returned UNASSURED instead of CONDITIONAL: the new closed-world
+/slice tree check (open item 4) reported `slice/trusted_stack/README.md` and `slice/trusted_stack/STATUS.md` as unexpected.
+tools/build_deployment_container_image.py added the whole trusted_stack directory (documentation files and builder-owned UID 1000
+entries included) to the image's import tree. Nothing was wrong with the broker or the containers; the scanner correctly refused an
+image whose /slice tree is not exactly the reference. Fix: the image builder now adds only the reference .py files, root-owned.

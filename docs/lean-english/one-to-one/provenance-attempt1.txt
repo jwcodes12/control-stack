@@ -1,0 +1,69 @@
+docs/lean-english/one-to-one/ProvenanceDraft.lean:31:31: error: Tactic `split` failed: Could not split an `if` or `match` expression in the goal
+
+Hint: Use `set_option trace.split.failure true` to display additional diagnostic information
+
+R : Roles
+s : State
+h : ReviewProvenance R s
+uid digest : ℕ
+live : s.halted = false
+role✝ : R.agent uid
+key reviewer : ℕ
+lookup :
+  { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted,
+          artifacts := put s.artifacts digest true, intact := put s.intact digest true, reviews := s.reviews,
+          approvals := s.approvals, leases := s.leases, consumed := s.consumed }.reviews
+      key =
+    some reviewer
+role : R.reviewer reviewer
+artifact : s.artifacts key = true
+⊢ key = digest ∨ s.artifacts key = true
+docs/lean-english/one-to-one/ProvenanceDraft.lean:56:39: error: Tactic `split` failed: Could not split an `if` or `match` expression in the goal
+
+Hint: Use `set_option trace.split.failure true` to display additional diagnostic information
+
+R : Roles
+s : State
+reviews : ReviewProvenance R s
+h : ApprovalProvenance R s
+uid digest : ℕ
+live : s.halted = false
+role : R.agent uid
+nonce : ℕ
+a : Approval
+lookup :
+  { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted,
+          artifacts := put s.artifacts digest true, intact := put s.intact digest true, reviews := s.reviews,
+          approvals := s.approvals, leases := s.leases, consumed := s.consumed }.approvals
+      nonce =
+    some a
+signer : R.approver a.signer
+agent : R.agent a.agent
+artifact : s.artifacts a.digest = true
+review : ∃ reviewer, s.reviews a.digest = some reviewer ∧ R.reviewer reviewer
+lease : ∃ l, s.leases a.lease = some l ∧ l.agent = a.agent
+⊢ a.digest = digest ∨ s.artifacts a.digest = true
+docs/lean-english/one-to-one/ProvenanceDraft.lean:86:75: error: Application type mismatch: The argument
+  reviewer
+has type
+  ℕ
+of sort `Type` but is expected to have type
+  ∃ reviewer,
+    { cap := s.cap, spent := s.spent, releases := s.releases, halted := s.halted, artifacts := s.artifacts,
+              intact := s.intact, reviews := s.reviews, approvals := put s.approvals nonce (some a), leases := s.leases,
+              consumed := s.consumed }.reviews
+          a.digest =
+        some reviewer ∧
+      R.reviewer reviewer
+of sort `Prop` in the application
+  And.intro reviewer
+docs/lean-english/one-to-one/ProvenanceDraft.lean:86:84: error: Application type mismatch: The argument
+  review
+has type
+  s.reviews a.digest = some reviewer
+of sort `Prop` but is expected to have type
+  Lease
+of sort `Type` in the application
+  Exists.intro review
+docs/lean-english/one-to-one/ProvenanceDraft.lean:86:12: error: Insufficient number of fields for `⟨...⟩` constructor: Constructor `Eq.refl` does not have explicit fields, but 3 were provided
+'ControlStack.Deployment.OneToOne.deployment_broker_provenance' depends on axioms: [propext, sorryAx, Quot.sound]

@@ -2412,7 +2412,7 @@ theorem indexed_receipts_sound (R : TrustedBroker.Roles) (table : IndexedBrokerT
 
 ### 294. tx0
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:27 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:31 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx0 : TrustedBroker.Step R s0 s1
@@ -2420,7 +2420,7 @@ theorem tx0 : TrustedBroker.Step R s0 s1
 
 ### 295. tx1
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:29 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:33 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx1 : TrustedBroker.Step R s1 s2
@@ -2428,7 +2428,7 @@ theorem tx1 : TrustedBroker.Step R s1 s2
 
 ### 296. tx2
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:32 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:36 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx2 : TrustedBroker.Step R s2 s3
@@ -2436,7 +2436,7 @@ theorem tx2 : TrustedBroker.Step R s2 s3
 
 ### 297. tx3
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:35 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:39 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx3 : TrustedBroker.Step R s3 s4
@@ -2444,7 +2444,7 @@ theorem tx3 : TrustedBroker.Step R s3 s4
 
 ### 298. tx4
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:37 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:41 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx4 : TrustedBroker.Step R s4 s5
@@ -2452,7 +2452,7 @@ theorem tx4 : TrustedBroker.Step R s4 s5
 
 ### 299. tx5
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:40 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:44 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx5 : TrustedBroker.Step R s5 s6
@@ -2460,7 +2460,7 @@ theorem tx5 : TrustedBroker.Step R s5 s6
 
 ### 300. tx6
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:43 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:47 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx6 : TrustedBroker.Step R s6 s7
@@ -2468,7 +2468,7 @@ theorem tx6 : TrustedBroker.Step R s6 s7
 
 ### 301. tx7
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:46 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:50 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx7 : TrustedBroker.Step R s7 s8
@@ -2476,7 +2476,7 @@ theorem tx7 : TrustedBroker.Step R s7 s8
 
 ### 302. tx8
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:49 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:53 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx8 : TrustedBroker.Step R s8 s9
@@ -2484,7 +2484,7 @@ theorem tx8 : TrustedBroker.Step R s8 s9
 
 ### 303. tx9
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:52 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:56 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem tx9 : TrustedBroker.Step R s9 s10
@@ -2492,7 +2492,7 @@ theorem tx9 : TrustedBroker.Step R s9 s10
 
 ### 304. table_checked
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:81 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:85 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem table_checked (s op : Nat) : TrustedBroker.Step R (interpret s) (interpret (replayStep s op))
@@ -2500,7 +2500,7 @@ theorem table_checked (s op : Nat) : TrustedBroker.Step R (interpret s) (interpr
 
 ### 305. transcript_checked
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:100 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem transcript_checked : CheckedTrace.verified table.step 0 receipts = true
@@ -2508,7 +2508,7 @@ theorem transcript_checked : CheckedTrace.verified table.step 0 receipts = true
 
 ### 306. recorded_end
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:102 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:106 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem recorded_end : CheckedTrace.recordedEnd 0 receipts = 10
@@ -2516,7 +2516,7 @@ theorem recorded_end : CheckedTrace.recordedEnd 0 receipts = 10
 
 ### 307. runtime_trace
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:104 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:108 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem runtime_trace : TrustedBroker.Trace R (TrustedBroker.initial 2) s10
@@ -2524,7 +2524,7 @@ theorem runtime_trace : TrustedBroker.Trace R (TrustedBroker.initial 2) s10
 
 ### 308. final_safe
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:109 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:113 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem final_safe : TrustedBroker.Safe s10
@@ -2532,7 +2532,7 @@ theorem final_safe : TrustedBroker.Safe s10
 
 ### 309. final_coherent
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:112 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:116 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem final_coherent : TrustedBroker.Coherent s10
@@ -2540,7 +2540,7 @@ theorem final_coherent : TrustedBroker.Coherent s10
 
 ### 310. final_counts
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:116 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:120 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem final_counts : s10.cap = 2 ∧ s10.spent = 2 ∧ s10.releases = 2 ∧ s10.consumed = [2, 1] ∧ s10.halted = false
@@ -2548,7 +2548,7 @@ theorem final_counts : s10.cap = 2 ∧ s10.spent = 2 ∧ s10.releases = 2 ∧ s1
 
 ### 311. replay_was_not_allowed
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:121 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:125 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem replay_was_not_allowed (now : Nat) (a' : TrustedBroker.Approval) (l' : TrustedBroker.Lease) : ¬ TrustedBroker.Allowed R s8 now q8 a' l'
@@ -2556,7 +2556,7 @@ theorem replay_was_not_allowed (now : Nat) (a' : TrustedBroker.Approval) (l' : T
 
 ### 312. omitted_state_change_is_rejected
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:129 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:133 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem omitted_state_change_is_rejected : CheckedTrace.verified table.step 0 withoutMiddleRelease = false
@@ -2564,7 +2564,7 @@ theorem omitted_state_change_is_rejected : CheckedTrace.verified table.step 0 wi
 
 ### 313. omitted_tail_is_accepted
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:133 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:137 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem omitted_tail_is_accepted : CheckedTrace.verified table.step 0 withoutLastRelease = true
@@ -2572,7 +2572,7 @@ theorem omitted_tail_is_accepted : CheckedTrace.verified table.step 0 withoutLas
 
 ### 314. omitted_tail_changes_the_end
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:134 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:138 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem omitted_tail_changes_the_end : CheckedTrace.recordedEnd 0 withoutLastRelease ≠ CheckedTrace.recordedEnd 0 receipts
@@ -2580,7 +2580,7 @@ theorem omitted_tail_changes_the_end : CheckedTrace.recordedEnd 0 withoutLastRel
 
 ### 315. omitted_denial_breaks_the_id_chain
 
-Source: ControlStack/Deployment/TranscriptReplay.lean:139 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
+Source: ControlStack/Deployment/TranscriptReplay.lean:143 | Family: UNMAPPED | Adversary: UNKNOWN | Status: SOURCE_ONLY
 
 ~~~lean
 theorem omitted_denial_breaks_the_id_chain : CheckedTrace.verified table.step 0 withoutDenial = false

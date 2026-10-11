@@ -2,6 +2,7 @@
 """Kernel-check raw IR projection and reused contracts at the current source head.
 No handwritten acceptance bit and no native_decide. Exit 1 on failed/refuted model.
 """
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import json
 import re

@@ -6,6 +6,7 @@ import argparse
 import base64
 import hashlib
 import json
+import sqlite3
 import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -19,8 +20,15 @@ def archived():
     users={k:int(v['user']) for k,v in json.loads((RUN/'clean/compose.json').read_text())['services'].items()}
     return events,users
 
-def generate(events=None,users=None,namespace='ControlStack.Deployment.TranscriptReplay'):
-    if events is None:events,users=archived()
+def recorded_clock():
+    """The broker's own timestamp for the releases (releases.created in the archived final database). Requests carry only absolute
+    `expires` values; the clock at issue/approve time was not recorded, but it cannot be later than the first release."""
+    with sqlite3.connect('file:'+str(RUN/'clean/final/database.sqlite')+'?mode=ro',uri=True) as db:
+        return max(row[0] for row in db.execute('SELECT created FROM releases'))
+
+def generate(events=None,users=None,namespace='ControlStack.Deployment.TranscriptReplay',now=None):
+    if events is None:events,users=archived();now=recorded_clock()
+    if now is None:now=0
     assert len(events)==10 and all(e['case']=='clean' for e in events)
     ids={'digest':{},'lease':{},'nonce':{},'dest':{}}
     def ident(kind,key):
@@ -46,13 +54,13 @@ def generate(events=None,users=None,namespace='ControlStack.Deployment.Transcrip
             defs.append(f'def {a} : TrustedBroker.State := {{ {b} with reviews := TrustedBroker.put {b}.reviews {d} (some {uid}) }}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.review {b} {uid} {d} (by ok) (by ok) (by ok)')
         elif op=='issue_lease':
             k=ident('lease',q['lease_id']);name=f'l{k}';leases[k]=name
-            defs.append(f'def {name} : TrustedBroker.Lease := ⟨{q["agent_uid"]}, {q["budget"]}, 0, {q["expires"]}, false⟩\ndef {a} : TrustedBroker.State := {{ {b} with leases := TrustedBroker.put {b}.leases {k} (some {name}) }}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.issue {b} {uid} {k} {name} 0 '+' '.join(['(by ok)']*8))
+            defs.append(f'def {name} : TrustedBroker.Lease := ⟨{q["agent_uid"]}, {q["budget"]}, 0, {q["expires"]}, false⟩\ndef {a} : TrustedBroker.State := {{ {b} with leases := TrustedBroker.put {b}.leases {k} (some {name}) }}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.issue {b} {uid} {k} {name} now '+' '.join(['(by ok)']*8))
         elif op=='approve':
             nonce=ident('nonce',q['nonce']);k=ident('lease',q['lease_id']);d=ident('digest',q['digest']);dest=ident('dest',q['destination']);name=f'a{nonce}';approvals[nonce]=name
-            defs.append(f'def {name} : TrustedBroker.Approval := ⟨{d}, {dest}, {q["agent_uid"]}, {k}, {uid}, {q["expires"]}, false⟩\ndef {a} : TrustedBroker.State := {{ {b} with approvals := TrustedBroker.put {b}.approvals {nonce} (some {name}) }}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.approve {b} {uid} {nonce} {name} {leases[k]} 0 23703 '+' '.join(['(by ok)']*14))
+            defs.append(f'def {name} : TrustedBroker.Approval := ⟨{d}, {dest}, {q["agent_uid"]}, {k}, {uid}, {q["expires"]}, false⟩\ndef {a} : TrustedBroker.State := {{ {b} with approvals := TrustedBroker.put {b}.approvals {nonce} (some {name}) }}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.approve {b} {uid} {nonce} {name} {leases[k]} now 23703 '+' '.join(['(by ok)']*14))
         elif op=='effect_release':
             nonce=ident('nonce',q['nonce']);k=ident('lease',q['lease_id']);d=ident('digest',q['digest']);dest=ident('dest',q['destination']);name=f'q{i}'
-            defs.append(f'def {name} : TrustedBroker.Request := ⟨{uid}, {nonce}, {d}, {dest}, {k}, 1⟩\ndef {a} : TrustedBroker.State := TrustedBroker.committed {b} {name} {approvals[nonce]} {leases[k]}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.release {b} 0 {name} {approvals[nonce]} {leases[k]} ⟨'+', '.join(['(by ok)']*19+['⟨23703, rfl⟩','(by ok)'])+'⟩')
+            defs.append(f'def {name} : TrustedBroker.Request := ⟨{uid}, {nonce}, {d}, {dest}, {k}, 1⟩\ndef {a} : TrustedBroker.State := TrustedBroker.committed {b} {name} {approvals[nonce]} {leases[k]}\ntheorem tx{i} : TrustedBroker.Step R {b} {a} := TrustedBroker.Step.release {b} now {name} {approvals[nonce]} {leases[k]} ⟨'+', '.join(['(by ok)']*19+['⟨23703, rfl⟩','(by ok)'])+'⟩')
         else:raise ValueError(op)
     # Allowed has 21 conjuncts; the reviewer existential is the 20th, nonce freshness the 21st
     head=f'''import ControlStack.Deployment.R2Contracts
@@ -66,8 +74,8 @@ What this establishes: the ten recorded requests/responses, read as `TrustedBrok
 (a denied response is an identity step), form a chain accepted by `CheckedTrace.verified`, hence a `TrustedBroker.Trace`
 from the initial state with cap 2, whose end state is Safe and Coherent with spent = releases = 2.
 What it does NOT establish (and the omission examples below show it): that the transcript is complete (events the broker never reported are invisible; see the
-omission examples), that the wall-clock `now` witness (0) is the broker's clock (it is only a feasible witness: no
-timestamp was recorded), that the log is authentic, or any link from model releases to sink files (that is the receiver
+omission examples), that `now` is the broker's clock at every step (it is the database's own `releases.created` for the two releases; the issue and approve
+requests were made earlier, and the model clock is only required to be at most their expiries), that the log is authentic, or any link from model releases to sink files (that is the receiver
 refinement premise, checked on bytes by deployment/check_container_run.py).
 -/
 namespace {namespace}
@@ -80,6 +88,10 @@ def R : TrustedBroker.Roles :=
     admin := fun u => u = 23700, separated := by intro u h; rcases h with rfl | rfl <;> decide }}
 
 def s0 : TrustedBroker.State := TrustedBroker.initial 2
+
+/-- The recorded `releases.created` of the archived database (database.sqlite, same run). Every issue/approve request in the transcript was
+made no later than the first release, and every lease and approval expiry in it is strictly greater than this value. -/
+def now : Nat := {now}
 '''
     tail=[]
     tail.append('def interpret : Nat → TrustedBroker.State\n'+''.join(f'  | {i} => s{i}\n' for i in range(n+1))+'  | _ => s0\n')

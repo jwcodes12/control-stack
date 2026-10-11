@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Freeze the one explicitly authorized new prereg; preserve all prior guards."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import hashlib
 import json

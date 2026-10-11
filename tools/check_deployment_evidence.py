@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Independent observer check of archived raw sink bytes and current source pins."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import hashlib
 import json
 import sqlite3
@@ -7,12 +8,11 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 import sys
 sys.path.insert(0,str(ROOT))
-from deployment.pins import require
+from deployment.pins import PinMismatch,generation_holding
 def check(base):
     base=Path(base)
     result=json.loads((base/'result.json').read_text())
-    for path,pin in result['source_sha256'].items():
-        require(path,pin,'source drift')
+    if generation_holding(result['source_sha256']) is None:raise PinMismatch(('source drift','recorded digests do not all belong to one source generation'))
     snapshots={}
     for label in ['clean-inflight','clean-after-halt','writable-sink-mount','trusted-role-uid-collision']:
         observed=json.loads((base/(label+'-sink.json')).read_text())

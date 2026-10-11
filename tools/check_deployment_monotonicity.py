@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Additive authority mutations of all predeclared fixtures (static only)."""
+if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
 import argparse
 import copy
 import json

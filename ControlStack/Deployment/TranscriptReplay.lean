@@ -9,8 +9,8 @@ What this establishes: the ten recorded requests/responses, read as `TrustedBrok
 (a denied response is an identity step), form a chain accepted by `CheckedTrace.verified`, hence a `TrustedBroker.Trace`
 from the initial state with cap 2, whose end state is Safe and Coherent with spent = releases = 2.
 What it does NOT establish (and the omission examples below show it): that the transcript is complete (events the broker never reported are invisible; see the
-omission examples), that the wall-clock `now` witness (0) is the broker's clock (it is only a feasible witness: no
-timestamp was recorded), that the log is authentic, or any link from model releases to sink files (that is the receiver
+omission examples), that `now` is the broker's clock at every step (it is the database's own `releases.created` for the two releases; the issue and approve
+requests were made earlier, and the model clock is only required to be at most their expiries), that the log is authentic, or any link from model releases to sink files (that is the receiver
 refinement premise, checked on bytes by deployment/check_container_run.py).
 -/
 namespace ControlStack.Deployment.TranscriptReplay
@@ -23,33 +23,37 @@ def R : TrustedBroker.Roles :=
     admin := fun u => u = 23700, separated := by intro u h; rcases h with rfl | rfl <;> decide }
 
 def s0 : TrustedBroker.State := TrustedBroker.initial 2
+
+/-- The recorded `releases.created` of the archived database (database.sqlite, same run). Every issue/approve request in the transcript was
+made no later than the first release, and every lease and approval expiry in it is strictly greater than this value. -/
+def now : Nat := 1791658272
 def s1 : TrustedBroker.State := { s0 with artifacts := TrustedBroker.put s0.artifacts 1 true, intact := TrustedBroker.put s0.intact 1 true }
 theorem tx0 : TrustedBroker.Step R s0 s1 := TrustedBroker.Step.stage s0 23701 1 (by ok) (by ok)
 def s2 : TrustedBroker.State := { s1 with reviews := TrustedBroker.put s1.reviews 1 (some 23703) }
 theorem tx1 : TrustedBroker.Step R s1 s2 := TrustedBroker.Step.review s1 23703 1 (by ok) (by ok) (by ok)
 def l1 : TrustedBroker.Lease := ⟨23701, 1, 0, 1791660071, false⟩
 def s3 : TrustedBroker.State := { s2 with leases := TrustedBroker.put s2.leases 1 (some l1) }
-theorem tx2 : TrustedBroker.Step R s2 s3 := TrustedBroker.Step.issue s2 23700 1 l1 0 (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
+theorem tx2 : TrustedBroker.Step R s2 s3 := TrustedBroker.Step.issue s2 23700 1 l1 now (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
 def a1 : TrustedBroker.Approval := ⟨1, 1, 23701, 1, 23704, 1791660071, false⟩
 def s4 : TrustedBroker.State := { s3 with approvals := TrustedBroker.put s3.approvals 1 (some a1) }
-theorem tx3 : TrustedBroker.Step R s3 s4 := TrustedBroker.Step.approve s3 23704 1 a1 l1 0 23703 (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
+theorem tx3 : TrustedBroker.Step R s3 s4 := TrustedBroker.Step.approve s3 23704 1 a1 l1 now 23703 (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
 def s5 : TrustedBroker.State := { s4 with artifacts := TrustedBroker.put s4.artifacts 1 true, intact := TrustedBroker.put s4.intact 1 true }
 theorem tx4 : TrustedBroker.Step R s4 s5 := TrustedBroker.Step.stage s4 23702 1 (by ok) (by ok)
 def l2 : TrustedBroker.Lease := ⟨23702, 1, 0, 1791660071, false⟩
 def s6 : TrustedBroker.State := { s5 with leases := TrustedBroker.put s5.leases 2 (some l2) }
-theorem tx5 : TrustedBroker.Step R s5 s6 := TrustedBroker.Step.issue s5 23700 2 l2 0 (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
+theorem tx5 : TrustedBroker.Step R s5 s6 := TrustedBroker.Step.issue s5 23700 2 l2 now (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
 def a2 : TrustedBroker.Approval := ⟨1, 1, 23702, 2, 23704, 1791660071, false⟩
 def s7 : TrustedBroker.State := { s6 with approvals := TrustedBroker.put s6.approvals 2 (some a2) }
-theorem tx6 : TrustedBroker.Step R s6 s7 := TrustedBroker.Step.approve s6 23704 2 a2 l2 0 23703 (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
+theorem tx6 : TrustedBroker.Step R s6 s7 := TrustedBroker.Step.approve s6 23704 2 a2 l2 now 23703 (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok) (by ok)
 def q7 : TrustedBroker.Request := ⟨23701, 1, 1, 1, 1, 1⟩
 def s8 : TrustedBroker.State := TrustedBroker.committed s7 q7 a1 l1
-theorem tx7 : TrustedBroker.Step R s7 s8 := TrustedBroker.Step.release s7 0 q7 a1 l1 ⟨(by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), ⟨23703, rfl⟩, (by ok)⟩
+theorem tx7 : TrustedBroker.Step R s7 s8 := TrustedBroker.Step.release s7 now q7 a1 l1 ⟨(by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), ⟨23703, rfl⟩, (by ok)⟩
 def q8 : TrustedBroker.Request := ⟨23701, 1, 1, 1, 1, 1⟩
 def s9 : TrustedBroker.State := s8
 theorem tx8 : TrustedBroker.Step R s8 s9 := TrustedBroker.Step.deny s8
 def q9 : TrustedBroker.Request := ⟨23702, 2, 1, 1, 2, 1⟩
 def s10 : TrustedBroker.State := TrustedBroker.committed s9 q9 a2 l2
-theorem tx9 : TrustedBroker.Step R s9 s10 := TrustedBroker.Step.release s9 0 q9 a2 l2 ⟨(by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), ⟨23703, rfl⟩, (by ok)⟩
+theorem tx9 : TrustedBroker.Step R s9 s10 := TrustedBroker.Step.release s9 now q9 a2 l2 ⟨(by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), (by ok), ⟨23703, rfl⟩, (by ok)⟩
 
 def interpret : Nat → TrustedBroker.State
   | 0 => s0

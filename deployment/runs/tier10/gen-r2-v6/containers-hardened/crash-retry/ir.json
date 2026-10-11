@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:29afff53630bb57f47575514d5f6d4e34ae3ee0f33bf74b6f4f5d5b17bbeb7da",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:29afff53630bb57f47575514d5f6d4e34ae3ee0f33bf74b6f4f5d5b17bbeb7da",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:29afff53630bb57f47575514d5f6d4e34ae3ee0f33bf74b6f4f5d5b17bbeb7da",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:29afff53630bb57f47575514d5f6d4e34ae3ee0f33bf74b6f4f5d5b17bbeb7da",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:29afff53630bb57f47575514d5f6d4e34ae3ee0f33bf74b6f4f5d5b17bbeb7da",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:29afff53630bb57f47575514d5f6d4e34ae3ee0f33bf74b6f4f5d5b17bbeb7da",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "a0de397b884df87829797d030f272b4e65bcc3a107e1aa8c5143e3e418ab5939",
+    "budget": 1,
+    "compose_sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "d4c2423d96d5a07754a20d06b1d772a8dd72342e275c534829264a3b141e410b",
+    "runtime_sha256": "eb4a44fb12255b4a161ac3fa60f2cd333702a55711b5b794c0cb0c6a88b41100",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "1174ecb85c76aa3b8ccfb73b623d22852d744a918edcd4064bb2f2362ad815d2",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "eb4a44fb12255b4a161ac3fa60f2cd333702a55711b5b794c0cb0c6a88b41100",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "a0de397b884df87829797d030f272b4e65bcc3a107e1aa8c5143e3e418ab5939",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "d4c2423d96d5a07754a20d06b1d772a8dd72342e275c534829264a3b141e410b",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "2c81e0bad1900e03ac968951c0834f5f400d604606fb4bd6f72484ec862e99e3",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier10/containers-hardened/crash-retry/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

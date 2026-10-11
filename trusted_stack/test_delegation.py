@@ -60,9 +60,9 @@ class DelegatedReleaseTests(unittest.TestCase):
                 "SELECT nonce,grantor_uid,delegate_uid FROM delegated_releases WHERE release_id=?",
                 (rid,)).fetchone(), ("nonce-a", self.a, self.b))
             self.assertEqual(con.execute("SELECT spent FROM meta").fetchone(), (1,))
-        self.assertEqual(deliver_record(self.gate, rid, self.out), str(rid) + ".body")
+        self.assertEqual(deliver_record(self.gate, rid, self.out, allow_delegation=True), str(rid) + ".body")
         self.assertEqual((self.out / f"{rid}.body").read_bytes(), self.body)
-        self.assertEqual(deliver_record(self.gate, rid, self.out), str(rid) + ".body")
+        self.assertEqual(deliver_record(self.gate, rid, self.out, allow_delegation=True), str(rid) + ".body")
         with self.assertRaises(Denied):
             self.release(self.b)
 
@@ -88,19 +88,23 @@ class DelegatedReleaseTests(unittest.TestCase):
     def test_revocation_and_halt_block_pending_effect(self):
         self.grant()
         rid = self.release(self.b)
+        # The default receiver refuses a delegated release even while the grant is live and the effect is intact.
+        with self.assertRaisesRegex(Denied, "delegated releases are not delivered"):
+            deliver_record(self.gate, rid, self.out)
+        self.assertEqual(list(self.out.glob("*.body")), [])
         with self.assertRaises(Denied):
             run_one(self.gate, self.c, {"op": "revoke_delegation", "nonce": "nonce-a"})
         self.assertTrue(run_one(self.gate, self.a,
                                {"op": "revoke_delegation", "nonce": "nonce-a"}))
         with self.assertRaises(Denied):
-            deliver_record(self.gate, rid, self.out)
+            deliver_record(self.gate, rid, self.out, allow_delegation=True)
         self.assertEqual(list(self.out.glob("*.body")), [])
         self.assertEqual(self.gate.state(self.admin)["spent"], 1)
         self.gate.halt(self.admin)
         with self.assertRaises(Denied):
             self.grant()
         with self.assertRaises(Denied):
-            deliver_record(self.gate, rid, self.out)
+            deliver_record(self.gate, rid, self.out, allow_delegation=True)
 
     def test_revocation_before_admission_prevents_delegate_and_owner(self):
         self.grant()
@@ -123,7 +127,7 @@ class DelegatedReleaseTests(unittest.TestCase):
                 pass
         self.assertEqual(len(outcomes), 1)
         self.assertEqual(self.gate.state(self.admin)["spent"], 1)
-        self.assertEqual(deliver_record(self.gate, outcomes[0], self.out),
+        self.assertEqual(deliver_record(self.gate, outcomes[0], self.out, allow_delegation=True),
                          str(outcomes[0]) + ".body")
 
 

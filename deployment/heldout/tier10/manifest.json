@@ -1,0 +1,264 @@
+{
+  "author": "independent-codex-exec-tier10",
+  "basis": "static hypothetical selected facts, no live deployment",
+  "hypotheses": {
+    "host_directories": {
+      "/workspace/sink": {
+        "owner_uid": 23700,
+        "mode": "0700"
+      },
+      "/workspace/db": {
+        "owner_uid": 23700,
+        "mode": "0700"
+      },
+      "/workspace/channel": {
+        "owner_uid": 23700,
+        "mode": "0755"
+      }
+    },
+    "image_code_correspondence": "Given known-code hypothesis, not measured.",
+    "principal_policy": "Given public policy hypothesis, not measured.",
+    "runtime": "All inventories are synthetic selected facts, never real observations.",
+    "labels": "Independently fixed before evaluation; no evaluation performed."
+  },
+  "cases": [
+    {
+      "id": "supported-minimal",
+      "compose": "cases/supported-minimal.compose.json",
+      "runtime": "cases/supported-minimal.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Exact hardened profile; receiver omits optional channel."
+    },
+    {
+      "id": "supported-receiver-channel",
+      "compose": "cases/supported-receiver-channel.compose.json",
+      "runtime": "cases/supported-receiver-channel.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Receiver has the allowed optional writable channel."
+    },
+    {
+      "id": "supported-agent-a-selinux",
+      "compose": "cases/supported-agent-a-selinux.compose.json",
+      "runtime": "cases/supported-agent-a-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Allowed optional selinux z on agent-a binds."
+    },
+    {
+      "id": "supported-agent-b-selinux",
+      "compose": "cases/supported-agent-b-selinux.compose.json",
+      "runtime": "cases/supported-agent-b-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Allowed optional selinux z on agent-b binds."
+    },
+    {
+      "id": "supported-broker-selinux",
+      "compose": "cases/supported-broker-selinux.compose.json",
+      "runtime": "cases/supported-broker-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Allowed optional selinux z on broker binds."
+    },
+    {
+      "id": "supported-receiver-selinux",
+      "compose": "cases/supported-receiver-selinux.compose.json",
+      "runtime": "cases/supported-receiver-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Allowed optional selinux z on receiver binds."
+    },
+    {
+      "id": "supported-reviewer-selinux",
+      "compose": "cases/supported-reviewer-selinux.compose.json",
+      "runtime": "cases/supported-reviewer-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Allowed optional selinux z on reviewer binds."
+    },
+    {
+      "id": "supported-approver-selinux",
+      "compose": "cases/supported-approver-selinux.compose.json",
+      "runtime": "cases/supported-approver-selinux.runtime.json",
+      "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+      "reason": "Allowed optional selinux z on approver binds."
+    },
+    {
+      "id": "agent-sink-write",
+      "compose": "cases/agent-sink-write.compose.json",
+      "runtime": "cases/agent-sink-write.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent a has direct writable sink access."
+    },
+    {
+      "id": "agent-db-read",
+      "compose": "cases/agent-db-read.compose.json",
+      "runtime": "cases/agent-db-read.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent b receives forbidden database access even though read only."
+    },
+    {
+      "id": "agent-channel-write",
+      "compose": "cases/agent-channel-write.compose.json",
+      "runtime": "cases/agent-channel-write.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent channel must be read only."
+    },
+    {
+      "id": "reviewer-sink-write",
+      "compose": "cases/reviewer-sink-write.compose.json",
+      "runtime": "cases/reviewer-sink-write.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Reviewer has an unauthorized sink writer path."
+    },
+    {
+      "id": "approver-db-read",
+      "compose": "cases/approver-db-read.compose.json",
+      "runtime": "cases/approver-db-read.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Approver receives an unauthorized database path."
+    },
+    {
+      "id": "agent-trusted-uid",
+      "compose": "cases/agent-trusted-uid.compose.json",
+      "runtime": "cases/agent-trusted-uid.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent takes storage-owner and trusted-role UID 23700."
+    },
+    {
+      "id": "agents-shared-uid",
+      "compose": "cases/agents-shared-uid.compose.json",
+      "runtime": "cases/agents-shared-uid.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent b collapses its principal into agent a UID."
+    },
+    {
+      "id": "agent-role-impersonation",
+      "compose": "cases/agent-role-impersonation.compose.json",
+      "runtime": "cases/agent-role-impersonation.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent environment selects trusted broker role."
+    },
+    {
+      "id": "agent-role-marker",
+      "compose": "cases/agent-role-marker.compose.json",
+      "runtime": "cases/agent-role-marker.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent role marker claims trusted receiver role."
+    },
+    {
+      "id": "missing-no-new-privileges",
+      "compose": "cases/missing-no-new-privileges.compose.json",
+      "runtime": "cases/missing-no-new-privileges.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent lacks required privilege hardening."
+    },
+    {
+      "id": "missing-cap-drop",
+      "compose": "cases/missing-cap-drop.compose.json",
+      "runtime": "cases/missing-cap-drop.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent lacks required ALL capability drop."
+    },
+    {
+      "id": "disabled-no-new-privileges",
+      "compose": "cases/disabled-no-new-privileges.compose.json",
+      "runtime": "cases/disabled-no-new-privileges.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent explicitly disables required no-new-privileges."
+    },
+    {
+      "id": "partial-cap-drop",
+      "compose": "cases/partial-cap-drop.compose.json",
+      "runtime": "cases/partial-cap-drop.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Dropping NET_RAW alone fails the ALL requirement."
+    },
+    {
+      "id": "hardening-scalar",
+      "compose": "cases/hardening-scalar.compose.json",
+      "runtime": "cases/hardening-scalar.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Agent security_opt scalar fails exact list requirement."
+    },
+    {
+      "id": "noninternal-network",
+      "compose": "cases/noninternal-network.compose.json",
+      "runtime": "cases/noninternal-network.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Sole network explicitly fails internal isolation requirement."
+    },
+    {
+      "id": "inventory-uid-mismatch",
+      "compose": "cases/inventory-uid-mismatch.compose.json",
+      "runtime": "cases/inventory-uid-mismatch.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Synthetic selected inventory contradicts Compose by assigning agent trusted UID."
+    },
+    {
+      "id": "inventory-hardening-mismatch",
+      "compose": "cases/inventory-hardening-mismatch.compose.json",
+      "runtime": "cases/inventory-hardening-mismatch.runtime.json",
+      "ground_truth": "REFUTED_CONFIGURATION",
+      "reason": "Synthetic inventory contradicts required Compose no-new-privileges."
+    },
+    {
+      "id": "unsupported-command",
+      "compose": "cases/unsupported-command.compose.json",
+      "runtime": "cases/unsupported-command.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "command declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-entrypoint",
+      "compose": "cases/unsupported-entrypoint.compose.json",
+      "runtime": "cases/unsupported-entrypoint.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "entrypoint declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-build",
+      "compose": "cases/unsupported-build.compose.json",
+      "runtime": "cases/unsupported-build.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "build declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-healthcheck",
+      "compose": "cases/unsupported-healthcheck.compose.json",
+      "runtime": "cases/unsupported-healthcheck.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "healthcheck declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-restart",
+      "compose": "cases/unsupported-restart.compose.json",
+      "runtime": "cases/unsupported-restart.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "restart declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-resources",
+      "compose": "cases/unsupported-resources.compose.json",
+      "runtime": "cases/unsupported-resources.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "resources declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-tmpfs",
+      "compose": "cases/unsupported-tmpfs.compose.json",
+      "runtime": "cases/unsupported-tmpfs.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "tmpfs declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-labels",
+      "compose": "cases/unsupported-labels.compose.json",
+      "runtime": "cases/unsupported-labels.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "labels declaration is outside supported selected Compose fields; assurance is unavailable."
+    },
+    {
+      "id": "unsupported-inventory-metadata",
+      "compose": "cases/unsupported-inventory-metadata.compose.json",
+      "runtime": "cases/unsupported-inventory-metadata.runtime.json",
+      "ground_truth": "UNKNOWN_CONFIGURATION",
+      "reason": "Additional hypothetical kernel metadata falls outside the selected inventory interface."
+    }
+  ]
+}

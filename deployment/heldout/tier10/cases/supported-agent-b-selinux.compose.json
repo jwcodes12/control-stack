@@ -1,0 +1,162 @@
+{
+  "x-cstack": {
+    "sink_source": "/workspace/sink",
+    "database_source": "/workspace/db",
+    "channel_source": "/workspace/channel",
+    "budget": 2
+  },
+  "services": {
+    "agent-a": {
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "user": "23701",
+      "x-cstack-role": "agent",
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "agent-a"
+      },
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        }
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "cap_drop": [
+        "ALL"
+      ]
+    },
+    "agent-b": {
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "user": "23702",
+      "x-cstack-role": "agent",
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "agent-b"
+      },
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true,
+          "bind": {
+            "selinux": "z"
+          }
+        }
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "cap_drop": [
+        "ALL"
+      ]
+    },
+    "broker": {
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "user": "23700",
+      "x-cstack-role": "broker",
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "broker"
+      },
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": false
+        },
+        {
+          "type": "bind",
+          "source": "/workspace/db",
+          "target": "/private",
+          "read_only": false
+        }
+      ]
+    },
+    "receiver": {
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "user": "23700",
+      "x-cstack-role": "receiver",
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "receiver"
+      },
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/workspace/db",
+          "target": "/private",
+          "read_only": false
+        },
+        {
+          "type": "bind",
+          "source": "/workspace/sink",
+          "target": "/output",
+          "read_only": false
+        }
+      ]
+    },
+    "reviewer": {
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "user": "23703",
+      "x-cstack-role": "reviewer",
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "reviewer"
+      },
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        }
+      ]
+    },
+    "approver": {
+      "image": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "user": "23704",
+      "x-cstack-role": "approver",
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "approver"
+      },
+      "networks": [
+        "isolated"
+      ],
+      "volumes": [
+        {
+          "type": "bind",
+          "source": "/workspace/channel",
+          "target": "/channel",
+          "read_only": true
+        }
+      ]
+    }
+  },
+  "networks": {
+    "isolated": {
+      "internal": true
+    }
+  }
+}

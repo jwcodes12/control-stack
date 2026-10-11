@@ -79,9 +79,25 @@ features (ports, depends_on, read_only, tmpfs, …) — they become UNKNOWN.
 | T8 | `cstack demo` first call: `ModuleNotFoundError: deployment` | fixed via `_import`; not in archived runs |
 | T9.6 attempt 1 | hardened live `clean` case: fresh scan UNASSURED, DRIFT on broker/receiver/reviewer/approver. `declared_hardening` said `cap_drop: None` for a service with no `cap_drop`; the daemon reports `[]`. The fixture builder used the same function on both sides, so no unit test saw it | fixed (absent = `[]`), fixtures/goldens regenerated; raw run kept in `deployment/runs/tier9/attempt1-*`. Lesson: only the real daemon disagreed with the shared helper |
 | T9 | `tools/run_deployment_boundary.py` and `tools/test_confined_effect_broker.py` need Landlock (host has none): not re-run here | unchanged skip; the CI `linux-boundary` job covers them where available |
-| T9.3 | `UID 0` is still accepted by `Principals` (review L5, second half) | open: the root-run broker tests would need rework; the configuration verifier already requires nonzero UIDs |
+| T9.3 | `UID 0` was still accepted by `Principals` (review L5, second half) | fixed in Tier 10: refused; the root-run broker tests use a disposable non-root admin UID |
+| T10 live attempt 1 | the hardened `clean` case came back UNASSURED: the new whole-`/slice` check found `README.md`/`STATUS.md` in the image's import tree | scanner correct, image builder fixed to ship only reference files; raw attempt in `deployment/runs/tier10/gen-r2-v6/attempt1-*` |
+| **T10 held-out round 2** | pre-fix: **1 false CONDITIONAL / 26 negatives** (`agent-role-impersonation`: `SLICE_ROLE=broker` on an agent; the fresh scan already marked it UNKNOWN, `collect` did not read the value) | extractor checks `SLICE_ROLE`/`PYTHONPATH` under fresh rules; post-fix figures are contaminated; pre-fix result in `deployment/runs/tier10/heldout/before-fix-*.json` |
 
 ## 5. Weak points a reviewer should weigh (self-identified)
+
+- **English versions of the Lean claims (Tier 10).** `docs/LEAN-CLAIMS-IN-PLAIN-ENGLISH.md` states 187 headline Lean claims
+  in plain English (blocks in `docs/lean-english/part-g*.md`, written by Sonnet from the Lean source). They are *claims under test*,
+  not results: a one-to-one check (blind back-translation to Lean plus a gate-checked equivalence proof, by Sol with the
+  proofledger gate; `docs/lean-english/ONE-TO-ONE.md`) was in progress when this was written. The translators' own list of the
+  claims most likely to say less than their scenario's harm (for example `deployment_broker_safe`, which concludes only that each
+  published nonce has a *used* approval, not who signed it or that a reviewer saw the digest) is at the top of that file. The claim
+  of record in `docs/DEPLOYMENT-CLAIM-v0.md` ("reviewed, exactly approved, once-consumed release") is therefore stronger than the
+  Lean conclusion until the provenance invariant is proved; the reviewed/exact-approval parts are guards of the model's `approve` and
+  `release` steps, plus tested correspondence, not reachable-state theorems.
+
+- **Held-out round 2 (hardened profile, 34 cases).** Before any fix the static evaluation produced one false
+  CONDITIONAL (see section 4); the post-fix 0/26 is contaminated. 22/34 cases are UNKNOWN. The author was
+  again a blind `codex exec`, not a person. Round 1's 2/5 figure stays the round-1 number.
 
 - **Held-out contamination.** The headline "zero over-rejections" on the 25 sealed cases is
   measured *after* a mount-order fix prompted by those same cases. The uncontaminated

@@ -29,6 +29,8 @@ def proposed_inventory(c,original_c,observed):
         if data['uid']!=int(original_c['services'][name]['user']) and c['services'][name]['user']==original_c['services'][name]['user']:r['services'][name]['uid']=data['uid']
     return r
 
+HARDENING_OPS=4
+
 def matrix():
     base=ROOT/'examples/compose-two-agent';rows=[];irs=[]
     with tempfile.TemporaryDirectory(prefix='cstack-r2-plan-',dir=ROOT/'.git') as tmp:
@@ -37,7 +39,7 @@ def matrix():
             name=source.name.removesuffix('.compose.json');c=json.loads(source.read_text());runtime=base/(name+'.runtime.json');r=json.loads(runtime.read_text());ir=collect(source,runtime,sha(source))
             plan=build_plan(c,r,ir,sha(source));candidate=apply_patch(c,plan['patch'])
             cp.write_text(json.dumps(candidate));rp.write_text(json.dumps(proposed_inventory(candidate,c,r)))
-            proposed=collect(cp,rp,sha(cp))
+            proposed=collect(cp,rp,sha(cp),replay=True)  # the legacy corpus is frozen at the vaulted r2-v0 broker/receiver pins
             for p in proposed['sources']+[n['provenance'] for n in proposed['nodes']+proposed['edges']]:
                 if p['sha256']==sha(rp):p['kind']='DECLARED'
             accepted=configuration_accepted(proposed);bad=[o for o in verify(proposed)['obligations'] if o['status'] in {'REFUTED','UNASSESSED'} and o['premise']!='Lean-contract-instances']
@@ -48,8 +50,11 @@ def matrix():
                         assert any(o['premise'].split(':',1)[1] in p['path'] for p in plan['residuals']),(name,o)
                     elif 'read_only' in o['detail']:assert any('read_only' in p['path'] for p in plan['residuals']),(name,o)
                     else:assert any(p['path'].startswith('/runtime/') for p in plan['residuals']),(name,o)
-            if name=='clean':assert plan['patch']==[]
-            if name in {'writable-sink-mount','trusted-role-uid-collision'}:assert len(plan['patch'])==1
+            # Since T9.4 the planner also adds no-new-privileges and cap_drop ALL to the two agents (4 operations).
+            hardening=[op for op in plan['patch'] if {'security_opt','cap_drop'}&set(op['path'].split('/'))]
+            assert len(hardening)==HARDENING_OPS,(name,len(hardening))
+            if name=='clean':assert plan['patch']==hardening
+            if name in {'writable-sink-mount','trusted-role-uid-collision'}:assert len(plan['patch'])==1+HARDENING_OPS
             rows.append({'case':name,'patch_ops':len(plan['patch']),'prospective_model_accepted':accepted,'remaining_model_causes':bad,'residuals':plan['residuals'],'basis':'synthetic declared selected facts; not runtime evidence'})
             irs.append(proposed)
     return rows,irs
@@ -97,7 +102,7 @@ class PlanTests(unittest.TestCase):
             ir_path.write_text(json.dumps(ir))
             argv=[sys.executable,str(ROOT/'tools/cstack.py'),'plan',str(archive/'compose.json'),'--runtime',str(archive/'runtime.json'),'--ir',str(ir_path),'--output',str(out)]
             result=subprocess.run(argv,capture_output=True,text=True);self.assertEqual(result.returncode,0,result.stderr)
-            self.assertEqual(len(json.loads(out.read_text())['patch']),1)
+            self.assertEqual(len(json.loads(out.read_text())['patch']),1+HARDENING_OPS)
             facts_path=archive/'fresh-inputs/host-observations.json';saved=facts_path.read_bytes()
             overwrite=argv[:-1]+[str(facts_path)]
             refused=subprocess.run(overwrite,capture_output=True,text=True);self.assertEqual(refused.returncode,2);self.assertEqual(saved,facts_path.read_bytes())
@@ -110,6 +115,6 @@ class PlanTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='cstack-r2-plan-fresh-',dir=ROOT/'.git') as tmp:
             out=Path(tmp)/'plan.json';p=subprocess.run([sys.executable,str(ROOT/'tools/cstack.py'),'plan',str(paths[0]),'--runtime',str(paths[1]),'--ir',str(paths[2]),'--output',str(out)],capture_output=True,text=True)
             self.assertEqual(p.returncode,0,p.stderr);result=json.loads(out.read_text())
-            self.assertEqual(len(result['patch']),1);self.assertEqual(result['host_actions'][0]['mode'],'0o700');self.assertTrue(any(r['path'].endswith('/mounts') for r in result['residuals']))
+            self.assertEqual(len(result['patch']),1+HARDENING_OPS);self.assertEqual(result['host_actions'][0]['mode'],'0o700');self.assertTrue(any(r['path'].endswith('/mounts') for r in result['residuals']))
         self.assertEqual(before,[p.read_bytes() for p in paths])
 if __name__=='__main__':unittest.main()

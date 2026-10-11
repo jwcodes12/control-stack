@@ -22,6 +22,7 @@ jobs:
           python3 tools/test_deployment_pins.py
           python3 tools/test_deployment_hardening.py
           python3 tools/build_deployment_fixtures.py --check
+          python3 tools/build_deployment_golden.py --check
       - name: Monotonicity (520 seeded strict additions)
         run: python3 tools/check_deployment_monotonicity.py
       - name: Held-out sealed corpus regression (static)

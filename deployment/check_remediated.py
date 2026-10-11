@@ -21,6 +21,7 @@ def check(output):
     assert result['image']==pin['image'] and pin['tag'].startswith('cstack-r2-')
     for source,digest in pin['source_sha256'].items():require(source,digest)
     require('tools/deployment_container_entry.py',pin['entry_sha256'])
+    hardened=result.get('profile')=='hardened'
     assert set(result['cases'])=={'writable-sink-mount','trusted-role-uid-collision'}
     for case,row in result['cases'].items():
         dest=output/case;assert row==json.loads((dest/'result.json').read_text())
@@ -28,14 +29,19 @@ def check(output):
         assert row['original_basis']=='original = archived Tier 2 evidence'
         assert row['original_path']==str(original.relative_to(ROOT)) and row['original_sha256']==sha(original)
         assert row['original_outcomes']==json.loads(original.read_text())['outcomes']
-        template=json.loads((ROOT/'examples/compose-two-agent'/f'{case}.compose.json').read_text())
-        plan=json.loads((dest/'plan.json').read_text());assert plan['base_sha256']==sha(ROOT/'examples/compose-two-agent'/f'{case}.compose.json')
-        assert apply_patch(template,plan['patch'])==json.loads((ROOT/'examples/compose-two-agent/clean.compose.json').read_text())
+        base=ROOT/('examples/compose-two-agent-hardened' if hardened else 'examples/compose-two-agent')
+        template=json.loads((base/f'{case}.compose.json').read_text())
+        plan=json.loads((dest/'plan.json').read_text());assert plan['base_sha256']==sha(base/f'{case}.compose.json')
+        assert apply_patch(template,plan['patch'])==json.loads((base/'clean.compose.json').read_text())
         c=json.loads((dest/'compose.json').read_text());r=json.loads((dest/'runtime.json').read_text());raw=dest/'docker-inspect.raw.json';inventory=json.loads(raw.read_text())
         assert len(inventory)==6 and all(entry['State']['Running'] for entry in inventory)
         assert r['capture']['raw_sha256']==sha(raw) and r['capture']['independent_attestation'] is False
         assert r['services']==normalize(c,inventory,'cstack-r2-remediated-'+case,inventory_has_hardening(r['services']))
         assert {r['services'][name]['uid'] for name in ('agent-a','agent-b')}=={23701,23702}
+        if hardened:
+            for name in ('agent-a','agent-b'):assert r['services'][name]['hardening']=={'no_new_privileges':True,'cap_drop':['ALL']},(case,name,'agent not hardened')
+            observed=json.loads((dest/'fresh-inputs/host-observations.json').read_text())['images']
+            assert observed and all(a['status']=='OBSERVED' and a['file_capability_paths']==[] and a['setid_paths']==[] for a in observed.values()),(case,'image capability inventory')
         for name in ('agent-a','agent-b'):
             assert {m['target'] for m in r['services'][name]['mounts']}=={'/channel'}
             assert all(m['read_only'] for m in r['services'][name]['mounts'])

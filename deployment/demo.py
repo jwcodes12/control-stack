@@ -92,7 +92,7 @@ def independent(out):
 def render(summary):
     lines=['# cstack demo','','**'+summary['result']+'**  (exit '+str(summary['exit'])+')','',summary['scope'],'','| Stage | Status | Detail |','|---|---|---|']
     lines+=['| '+s['stage']+' | '+s['status']+' | '+s['detail'].replace('|','\\|')+' |' for s in summary['stages']]
-    lines+=['','Claim ladder: fixture verdicts and Lean acceptance are PROVEN_IN_MODEL for the extracted IR only; the live stage is TESTED_BOUNDARY on this host (Docker default seccomp/namespaces, no Landlock, daemon-reported inventory, not independent attestation); faithful extraction and protocol refinement remain ASSUMED; bypass outcomes are archived Tier 2 measurements.']
+    lines+=['','Claim ladder: fixture verdicts and Lean acceptance are PROVEN_IN_MODEL for the extracted IR only; the live stage is TESTED_BOUNDARY on this host (Docker default seccomp/namespaces plus no-new-privileges and cap_drop ALL on the agents, no Landlock, daemon-reported inventory, not independent attestation); faithful extraction and protocol refinement remain ASSUMED; bypass outcomes are archived Tier 2 measurements.']
     return '\n'.join(lines)+'\n'
 
 def run(output,static_only=False):

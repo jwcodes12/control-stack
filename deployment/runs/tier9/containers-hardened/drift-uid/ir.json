@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:e148da897fd2364e108aea1fb7061bc387a7e37fa6b7a6fab543ecdc0e47ee55",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 1,
+    "compose_sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+    "runtime_sha256": "848117079023f5baf508f6f4ca374fa0515589d5b018758e97dc07cba342ce42",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "1813aa08fc57133a0527aa59c83906ad3706f67567427304048365dd3caa830f",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "848117079023f5baf508f6f4ca374fa0515589d5b018758e97dc07cba342ce42",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "7c2874685c26ac3de994f48c8872e8c61a4a1af6481f9a5cc78ae9be8baf7d8e",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/containers-hardened/drift-uid/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

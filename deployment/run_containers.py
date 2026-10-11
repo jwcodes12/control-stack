@@ -18,11 +18,18 @@ from security_ir.verifier import verify,report
 from tools.check_deployment_lean import check
 BODY=b'exact-reviewed-r2-agent-task'
 CASES=('clean','writable-sink-mount','trusted-role-uid-collision','concurrent-cap1','crash-retry','halt-inflight','drift-uid')
+# Defensive scope: bypass cases (a deliberately misconfigured deployment that is then abused) are archived Tier 2
+# evidence only. The hardened-profile run launches the five cases that need no bypass.
+BYPASS=('writable-sink-mount','trusted-role-uid-collision')
+SAFE=tuple(case for case in CASES if case not in BYPASS)
 PRINCIPALS="Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700}))"
 DELIVER="from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),"+PRINCIPALS+")\n"
 RPC="import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))"
 
-def run(output,pin_path=None,fresh=False):
+def run(output,pin_path=None,fresh=False,hardened=False):
+    """hardened=True runs the SAFE cases from examples/compose-two-agent-hardened with fresh scanning (the current
+    source generation); hardened=False reproduces the archived Tier 2/3 seven-case run."""
+    cases=SAFE if hardened else CASES;fresh=fresh or hardened
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=False)
     pin=json.loads(Path(pin_path or ROOT/'examples/compose-two-agent/image-pin.json').read_text())
     state=Path(pin['host_root'])
@@ -98,16 +105,16 @@ def run(output,pin_path=None,fresh=False):
         image_owned=True
         (output/'docker-info.json').write_text(cmd(['docker','info','--format','{{json .}}']).stdout)
         (output/'selinux.txt').write_text('Host: '+cmd(['getenforce']).stdout+'Docker security options: '+cmd(['docker','info','--format','{{json .SecurityOptions}}']).stdout+'All disposable binds use shared z, never private Z on shared directories; daemon currently does not advertise SELinux enforcement. No host-wide relabel or LSM change.\n')
-        for case in CASES:
+        for case in cases:
             dest=output/case;dest.mkdir();project='cstack-r2-'+case;compose=dest/'compose.json'
-            template=case if case in CASES[:3] else 'clean';c=json.loads((ROOT/'examples/compose-two-agent'/f'{template}.compose.json').read_text())
+            template=case if case in CASES[:3] else 'clean';c=json.loads((ROOT/('examples/compose-two-agent-hardened' if hardened else 'examples/compose-two-agent')/f'{template}.compose.json').read_text())
             old_root=c['x-cstack']['sink_source'].rsplit('/',1)[0]
             for key in ('sink_source','database_source','channel_source'):c['x-cstack'][key]=str(state)+c['x-cstack'][key][len(old_root):]
             c['x-cstack']['budget']=2 if case=='clean' else 1
             for service in c['services'].values():
                 service['image']=pin['image']
                 assert not service.get('privileged') and not service.get('network_mode')
-                assert set(service)<={'x-cstack-role','user','image','environment','networks','volumes'}
+                assert set(service)<={'x-cstack-role','user','image','environment','networks','volumes'}|({'security_opt','cap_drop'} if hardened else set())
                 for mount in service['volumes']:
                     assert mount['type']=='bind' and type(mount['read_only']) is bool
                     assert mount['source'].startswith(old_root+'/')
@@ -184,7 +191,7 @@ def run(output,pin_path=None,fresh=False):
             results[case]={'prediction':prediction,'outcomes':outcomes,'final':final,'sink_files':files,'agreement':True}
             (dest/'result.json').write_text(json.dumps(results[case],sort_keys=True,indent=2)+'\n')
             cmd(dc('down','--volumes','--remove-orphans'));cmd(['sudo','-n','rm','-rf',state])
-        (output/'result.json').write_text(json.dumps({'scope':'real Docker, default namespaces/seccomp and numeric UIDs; daemon facts are not attestation; no host Landlock claim','image':pin['image'],'cases':results},sort_keys=True,indent=2)+'\n')
+        (output/'result.json').write_text(json.dumps({'scope':'real Docker, default namespaces/seccomp and numeric UIDs; daemon facts are not attestation; no host Landlock claim','image':pin['image'],'cases':results,**({'profile':'hardened'} if hardened else {})},sort_keys=True,indent=2)+'\n')
     finally:
         for p,argv,_ in children:
             if p.poll() is None:p.terminate()
@@ -200,7 +207,7 @@ def run(output,pin_path=None,fresh=False):
         (output/'cleanup.txt').write_text('remaining cstack-r2 containers:\n'+left+'\n'+networks+'\n'+images+'\n'+volumes)
         (output/'commands.json').write_text(json.dumps(commands,sort_keys=True,indent=2)+'\n')
         assert not (left or networks or images or volumes),'R2 resources remain'
-    print('PASS: seven safe real-container cases, independent sink reconciliation, resources removed')
+    print('PASS: '+str(len(cases))+' safe real-container cases, independent sink reconciliation, resources removed')
     return results
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');a=p.parse_args();run(a.output,a.pin,a.fresh_scan)
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');p.add_argument('--hardened',action='store_true',help='hardened profile, current source generation, bypass cases excluded');a=p.parse_args();run(a.output,a.pin,a.fresh_scan,a.hardened)

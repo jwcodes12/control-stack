@@ -29,10 +29,12 @@ protocol refinement hold (section 2).
 | `accepted_path_safety_monotone` | R2Contracts.lean:38 | (safety-only monotonicity; full `Accepted` monotonicity is **false** — see failures) |
 | witnesses / falsifying controls | `ControlStack/Deployment/Witnesses.lean`, `deployment/contract-witnesses.json` | non-vacuity: useful deployments are accepted and disabling a check breaks a theorem |
 
-**Empirical statements:** 44 fixtures (1 clean CONDITIONAL, 43 UNASSURED with the bypass
-named); Python/Lean differential 26 fixtures + 250 seeded mutations, zero differences;
+**Empirical statements:** 51 fixtures (the frozen legacy corpus of 44 — 1 clean CONDITIONAL, 43
+UNASSURED with the bypass named — plus 7 of the hardened profile: 1 clean, 6 UNASSURED); Python/Lean differential 26 fixtures + 250 seeded mutations, zero differences;
 520 seeded strict additions, zero false improvements; 7 Tier 2 real-container cases;
-2 Tier 5 repaired configurations; 25-case sealed held-out corpus; 9 archived episodes.
+2 Tier 5 repaired configurations; 25-case sealed held-out corpus; 9 archived episodes; and, on the
+hardened profile and the hardened source generation (T9), 5 live non-bypass cases plus the 2
+repaired configurations.
 
 ## 2. Remaining premises (unproved)
 
@@ -74,6 +76,9 @@ features (ports, depends_on, read_only, tmpfs, …) — they become UNKNOWN.
 | T7 CI 455feb3 | shallow checkout changed `eval.created` in the Inspect export | full-history checkout; guard rejects shallow prereg addition; fixed at 575aad1 |
 | Sol session end | OpenAI usage limit reached mid-Tier 7 push | Claude pushed 575aad1 and continued Tier 8 |
 | T8 | `cstack demo` first call: `ModuleNotFoundError: deployment` | fixed via `_import`; not in archived runs |
+| T9.6 attempt 1 | hardened live `clean` case: fresh scan UNASSURED, DRIFT on broker/receiver/reviewer/approver. `declared_hardening` said `cap_drop: None` for a service with no `cap_drop`; the daemon reports `[]`. The fixture builder used the same function on both sides, so no unit test saw it | fixed (absent = `[]`), fixtures/goldens regenerated; raw run kept in `deployment/runs/tier9/attempt1-*`. Lesson: only the real daemon disagreed with the shared helper |
+| T9 | `tools/run_deployment_boundary.py` and `tools/test_confined_effect_broker.py` need Landlock (host has none): not re-run here | unchanged skip; the CI `linux-boundary` job covers them where available |
+| T9.3 | `UID 0` is still accepted by `Principals` (review L5, second half) | open: the root-run broker tests would need rework; the configuration verifier already requires nonzero UIDs |
 
 ## 5. Weak points a reviewer should weigh (self-identified)
 
@@ -93,6 +98,17 @@ features (ports, depends_on, read_only, tmpfs, …) — they become UNKNOWN.
   except the safety-only `accepted_path_safety_monotone`.
 - **Trusted-path code review** (`deployment/reviews/trusted-path-code-review-opus.md`) is a
   model review.
+- **The T9 fixes have had no independent review at all.** The broker is now multithreaded
+  (new concurrency paths; the Lean model and the refinement premise were not re-examined
+  for them), the frame deadline and connection caps are constants chosen by the author, and
+  the hardened profile's UNKNOWN-edge rule lives in the extractor (TCB), not in Lean. A
+  reviewer should read `trusted_stack/server.py`, `trusted_stack/outbox_receiver.py`
+  (`_reap_unlinked_pending`) and the `inventory_v2` rule in `extractors/compose/__init__.py`
+  first.
+- **Evidence generations.** Tier 2–8 live evidence was produced by source generation `r2-v0`
+  (delegation always on, single-threaded broker, unhardened agents). It still replays, and its
+  premises are the ones stated in the claim. Only the Tier 9 runs
+  (`deployment/runs/tier9/`) exercise the fixed code.
 
 ## 6. Reproduction
 
@@ -112,7 +128,11 @@ python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp
 # replay archived real-container evidence without launching anything
 python3 deployment/check_container_run.py deployment/runs/tier2/containers-final
 python3 deployment/check_remediated.py deployment/runs/tier5/remediated
+python3 deployment/check_container_run.py deployment/runs/tier9/containers-hardened   # hardened generation
+python3 deployment/check_remediated.py deployment/runs/tier9/demo-dev-clone/remediated
+python3 tools/test_deployment_pins.py && python3 tools/test_deployment_hardening.py
+python3 tools/build_deployment_fixtures.py --check && python3 tools/build_deployment_golden.py --check
 python3 deployment/attribute_archives.py --output /tmp/attribution
 ```
 
-PR chain (merge in order, owner's decision): #45 → #46 → #47 → #48 → #49 → #50 → #51 → Tier 8.
+PR chain (merge in order, owner's decision): #45 → #46 → #47 → #48 → #49 → #50 → #51 → #52 (Tier 8) → Tier 9.

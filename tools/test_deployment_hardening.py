@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """T9 trusted-path hardening: each fix from deployment/reviews/trusted-path-code-review-opus.md has a regression test here."""
 import contextlib
+import io
 import json
 import os
 import signal
@@ -268,6 +269,25 @@ class ReceiverDebris(Base):
         self.c.halt(ME)
         with self.assertRaises(Denied):self.deliver(self.c,self.release,self.out)
         self.assertTrue(debris.exists())
+
+class ArchivedHardenedRuns(unittest.TestCase):
+    """T9.6: live evidence on the hardened profile replays under the independent checkers."""
+    def test_five_safe_cases_replay(self):
+        from deployment.check_container_run import check
+        with contextlib.redirect_stdout(io.StringIO()):result=check(ROOT/'deployment/runs/tier9/containers-hardened')
+        self.assertEqual(result['profile'],'hardened');self.assertEqual(set(result['cases']),{'clean','concurrent-cap1','crash-retry','halt-inflight','drift-uid'})
+        self.assertFalse({'writable-sink-mount','trusted-role-uid-collision'}&set(result['cases']),'no bypass case is rerun live')
+    def test_demo_remediated_run_replays(self):
+        from deployment.check_remediated import check
+        with contextlib.redirect_stdout(io.StringIO()):result=check(ROOT/'deployment/runs/tier9/demo-dev-clone/remediated')
+        self.assertEqual(set(result['cases']),{'writable-sink-mount','trusted-role-uid-collision'})
+    def test_a_tampered_agent_hardening_report_is_rejected(self):
+        import shutil
+        from deployment.check_container_run import check
+        with tempfile.TemporaryDirectory(dir=ROOT/'.git') as tmp:
+            copy=Path(tmp)/'run';shutil.copytree(ROOT/'deployment/runs/tier9/containers-hardened',copy)
+            path=copy/'clean/runtime.json';value=json.loads(path.read_text());value['services']['agent-a']['hardening']['no_new_privileges']=False;path.write_text(json.dumps(value,sort_keys=True,indent=2)+'\n')
+            with self.assertRaises(AssertionError):check(copy)
 
 if __name__=='__main__':
     unittest.main()

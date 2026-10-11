@@ -21,7 +21,7 @@ REFERENCE_HARDENING={'no_new_privileges':True,'cap_drop':['ALL']}
 
 def declared_hardening(service):
     """What a runtime inventory must report for this declared service (same shape as the collector's 'hardening')."""
-    drop=service.get('cap_drop')
+    drop=service.get('cap_drop',[])
     return {'no_new_privileges':service.get('security_opt')==HARDENED['security_opt'],
             'cap_drop':sorted(drop) if isinstance(drop,list) and all(isinstance(x,str) for x in drop) else None}
 

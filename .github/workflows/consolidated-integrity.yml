@@ -19,7 +19,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin main --depth=1
+          # Full history: the frozen prereg's first-addition commit now lives in main, and a --depth=1 fetch would make it a shallow boundary.
+          git fetch origin main
           # The handoff explicitly authorizes one NEW prereg; existing files stay frozen.
           # Its exact bytes must match the first addition commit and every input hash.
           python3 tools/check_deployment_prereg.py --base origin/main

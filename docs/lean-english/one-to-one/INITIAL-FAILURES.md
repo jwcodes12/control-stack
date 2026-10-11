@@ -1,0 +1,9 @@
+# Failures retained during G0 review
+
+1. Unmodified proofledger gate, five initial probes: `error: object file '/home/opc/research/control-stack/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib.olean' of module Mathlib does not exist`. No package was installed. Local imports option resolves this while preserving all security checks.
+2. First configured run: proof namespace did not inherit the statement namespace's `open` commands; Lean rejected `Unknown identifier clean` / `Unknown identifier clean_accepted`. Add explicit trusted namespace opens in proof text. Failed aggregate output is in g0-gate-run.txt and g0-corrected-first-eight.txt.
+3. Accepted/weak sink conclusion controls: `failed to synthesize Decidable (Back distinctBroker)` and `Decidable ¬Orig clean ...`. Unfold only the independently defined predicates before kernel `decide`; never use native_decide.
+4. Full-state HALT equality: `simp_all made no progress`. Prove identity constructors by rfl, reject false-live guards, and rewrite the halted field using its hypothesis for the halt constructor. Final gate passes.
+5. Provenance attempt 1: simplification had already changed the goal into a disjunction, so `split` failed; nested existential/conjunction tuple was malformed. Raw output is provenance-attempt1.txt. Correct tuple nesting and use the preserved artifact equality; provenance-attempt2.txt and provenance.gate.txt pass with standard axioms only. The failed attempt's error-term sorryAx is not a proof and is not counted as accepted.
+
+Initial per-claim transient logs were overwritten by corrected nonce runs. Aggregate failures above and retained raw provenance output remain; no claim of a clean first attempt is made. Final receipts bind exact final statement/proof bytes. Temporary gate files are removed by the gate itself.

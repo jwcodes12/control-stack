@@ -9,7 +9,7 @@ def Claim : Prop := ∀ (larger : IR) (start target : Nat), (Back larger start t
 def Witness : Prop := Accepted clean
 end PL_g0_14
 
-namespace PLProof_g0_14_50b14d383650
+namespace ReviewProof_g0_14
 open PL_g0_14
 open ControlStack ControlStack.Deployment
 theorem claim : Claim := by
@@ -17,6 +17,8 @@ theorem claim : Claim := by
  rfl
 theorem witness : Witness := clean_accepted
 
-end PLProof_g0_14_50b14d383650
-theorem gate_50b14d383650 : PL_g0_14.Claim := PLProof_g0_14_50b14d383650.claim
-#print axioms gate_50b14d383650
+theorem original_contract (d larger : IR) (subset : ∀ e ∈ d.edges, e ∈ larger.edges) (broker : d.broker = larger.broker) (receiver : d.receiver = larger.receiver) (start target : Nat) (path : AvoidedPath d start target) : Orig larger start target := path_edge_subset d larger subset broker receiver start target path
+
+end ReviewProof_g0_14
+#print axioms ReviewProof_g0_14.claim
+#print axioms ReviewProof_g0_14.witness

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "ir_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "kernel_checked_obligations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "lean": {
+      "additionalProperties": false,
+      "properties": {
+        "accepted": {
+          "type": "boolean"
+        },
+        "axioms": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "accepted",
+        "axioms",
+        "source"
+      ],
+      "type": "object"
+    },
+    "obligations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "premise": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PROVEN_IN_MODEL",
+              "TESTED_BOUNDARY",
+              "CONDITIONAL",
+              "REFUTED",
+              "UNASSESSED"
+            ]
+          }
+        },
+        "required": [
+          "premise",
+          "status",
+          "detail"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "python_only_obligations": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "scope": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "snapshot": {
+      "type": "object"
+    },
+    "verdict": {
+      "description": "No ASSURED verdict exists. CONDITIONAL iff no obligation is REFUTED or UNASSESSED.",
+      "enum": [
+        "CONDITIONAL",
+        "UNASSURED"
+      ]
+    },
+    "version": {
+      "enum": [
+        0,
+        "0.1"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "claim",
+    "snapshot",
+    "ir_sha256",
+    "verdict",
+    "obligations",
+    "scope",
+    "kernel_checked_obligations",
+    "python_only_obligations"
+  ],
+  "title": "cstack verify obligation bundle v0.1",
+  "type": "object"
+}

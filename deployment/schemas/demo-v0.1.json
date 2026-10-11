@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "exit": {
+      "enum": [
+        0,
+        1,
+        3
+      ]
+    },
+    "result": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "SKIPPED"
+      ]
+    },
+    "scope": {
+      "type": "string"
+    },
+    "stages": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "type": "string"
+          },
+          "seconds": {
+            "minimum": 0,
+            "type": "number"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "SKIPPED"
+            ]
+          }
+        },
+        "required": [
+          "stage",
+          "status",
+          "detail",
+          "seconds"
+        ],
+        "type": "object"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    }
+  },
+  "required": [
+    "result",
+    "exit",
+    "stages",
+    "scope"
+  ],
+  "title": "cstack demo summary v0.1",
+  "type": "object"
+}

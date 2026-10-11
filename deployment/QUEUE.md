@@ -130,3 +130,8 @@ Tier 7 local exit: nine archived episodes independently replayed; H1-H4 integrit
 Tier 7 CI attempt 455feb3: fixture FAIL reproducing Inspect export because shallow checkout treated the current commit as the prereg addition, changing eval.created. Raw failure retained. All deployment CI jobs now fetch full history; the guard rejects a prereg addition at a shallow boundary, and the regression checks this explicitly. Attribution inputs/output bytes remain unchanged. Corrected final-head CI pending.
 
 Tier 7 handover (2026-10-11): Sol's Codex thread hit its usage limit after committing 575aad1 locally. Claude (Opus 5.5) is continuing at John's request with the same handoff and rules. Fresh-checkout attribution tests (4 PASS) are recorded in deployment/runs/tier7/fresh-checkout-attribution-tests.txt; the prereg guard PASSes locally. Pushing the corrected head for final CI.
+
+## Tier 8 (Claude, Opus 5.5, continuing Sol's handoff)
+
+T8.2 DOING: `cstack demo --output DIR [--static-only]` (deployment/demo.py). Stages: 44 fixtures verified in Python and the Lean kernel; read-only plans for the two repaired cases; live remediated containers (honest work only, defensive scope); independent sink-side check; DEMO.md report. Exit 0 all PASS, 1 any FAIL, 2 usage, 3 SKIPPED stage (never a pass). Dev-clone run deployment/runs/tier8/demo-dev-clone PASS in 83 s; own resources removed. Fresh-clone run pending.
+T8.4 DOING: deployment/schemas/{bundle,plan,demo}-v0.1.json; deployment/golden/ bundles, reports and plans; tools/test_deployment_release.py 5 PASS (golden equality, schema rejection of ASSURED/unknown status, CLI exit codes).

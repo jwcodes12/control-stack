@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "base_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "host_actions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "cause": {
+            "type": "string"
+          },
+          "mode": {
+            "type": [
+              "string",
+              "integer"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "uid",
+          "mode",
+          "cause"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "human_diff": {
+      "type": "string"
+    },
+    "ir_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "next_step": {
+      "type": "string"
+    },
+    "patch": {
+      "description": "RFC 6902 operations against the input Compose JSON",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "op": {
+            "enum": [
+              "add",
+              "remove",
+              "replace"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "value": {}
+        },
+        "required": [
+          "op",
+          "path"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "residuals": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "version": {
+      "const": "0.1"
+    }
+  },
+  "required": [
+    "version",
+    "base_sha256",
+    "ir_sha256",
+    "patch",
+    "human_diff",
+    "host_actions",
+    "residuals",
+    "next_step",
+    "scope"
+  ],
+  "title": "cstack plan remediation proposal v0.1",
+  "type": "object"
+}

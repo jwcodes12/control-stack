@@ -1,0 +1,110 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "ir_sha256": "a9a5219806a736090293f46464306106113a4ec88ac6d78a0beab56171d5dd45",
+  "kernel_checked_obligations": [
+    "direct protected-resource authority",
+    "nonzero UIDs",
+    "all agent/trusted UID separation",
+    "exact role counts",
+    "runtime match",
+    "exact sink/database writer sets",
+    "transitive bypass reachability and closure",
+    "no unknown/privileged/host-network authority",
+    "reused gate/one-use/budget contracts"
+  ],
+  "obligations": [
+    {
+      "detail": "two agents, one named broker and one named receiver required",
+      "premise": "supported-roles",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure",
+      "premise": "identity-separation",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:agent-a",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:agent-b",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:approver",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:broker",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:receiver",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:reviewer",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "unlisted-host-mount: /var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink -> /bypass",
+      "premise": "unknown:agent-a:unknown",
+      "status": "UNASSESSED"
+    },
+    {
+      "detail": "writable-sink-mount: protected-sink-mount",
+      "premise": "sink-authority:agent-a",
+      "status": "REFUTED"
+    },
+    {
+      "detail": "exactly the receiver has the writable sink mount",
+      "premise": "useful-sink-path",
+      "status": "REFUTED"
+    },
+    {
+      "detail": "broker and receiver must use the same pinned database",
+      "premise": "shared-database",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "bypass path reaches sink",
+      "premise": "exclusive-path:agent-a",
+      "status": "REFUTED"
+    },
+    {
+      "detail": "snapshot exhausts actual effective authority, mounts, identities, processes and source/image correspondence; unproved",
+      "premise": "faithful-extraction",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "ProtocolRefinement.publication : sinkEffects = model.bank assumes full model-runtime correspondence, including actual protocol transitions, exact bytes, unit costs, clock, storage and no rollback; unproved",
+      "premise": "protocol-refinement",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "run tools/check_deployment_lean.py against this exact IR to kernel-check facts and contracts; source names alone are not proof",
+      "premise": "Lean-contract-instances",
+      "status": "UNASSESSED"
+    }
+  ],
+  "python_only_obligations": [],
+  "scope": "configuration/model candidate; skipped kernel check means UNASSURED. Lean rechecks all finite configuration obligations; faithful extraction and protocol refinement remain unproved",
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 2,
+    "compose_sha256": "01083f2c616ea4aefd0805166ff6f02ef9e0b8c744848fe262f3bfaf4d7bf704",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "runtime_sha256": "4493fcaa1d03d27668824de9c25149ba9aab7849f9448b14498c3f53868aa076",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "verdict": "UNASSURED",
+  "version": 0
+}

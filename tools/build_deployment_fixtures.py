@@ -51,6 +51,28 @@ def build(check=False):
     mutation('mount-parent-alias')['services']['agent-a']['volumes'][-1]['source']=host_root+'/channel/../channel'
     mutation('trusted-reviewer-uid-collision')['services']['agent-a']['user']='23703'
     mutation('missing-reviewer-role')['services']['reviewer']['x-cstack-role']='approver'
+    coverage={
+        'cap-add':('cap_add',['SYS_ADMIN']),
+        'device-mount':('devices',['/dev/zero:/dev/zero']),
+        'host-pid':('pid','host'),
+        'host-ipc':('ipc','host'),
+        'seccomp-unconfined':('security_opt',['seccomp=unconfined']),
+        'apparmor-unconfined':('security_opt',['apparmor=unconfined']),
+        'userns-host':('userns_mode','host'),
+        'volumes-from':('volumes_from',['receiver']),
+        'tmpfs':('tmpfs',['/scratch']),
+        'extra-hosts':('extra_hosts',['outside:host-gateway']),
+        'published-port':('ports',['9999:9999']),
+        'read-only-rootfs':('read_only',True),
+        'depends-on':('depends_on',{'broker':{'condition':'service_started'}}),
+        'entrypoint-override':('entrypoint',['/usr/bin/python3','-c','print("benign override")']),
+        'command-override':('command',['-c','print("benign override")']),
+    }
+    for name,(key,value) in coverage.items():mutation(name)['services']['agent-a'][key]=value
+    m=mutation('named-volume');m['volumes']={'opaque':{}}
+    m['services']['agent-a']['volumes'].append({'type':'volume','source':'opaque','target':'/cache','read_only':False})
+    for field in ('secrets','configs'):
+        m=mutation(field);m[field]={'opaque':{'file':'/slice/dummy'}};m['services']['agent-a'][field]=['opaque']
     runtime_edits = {
         'runtime-alias': ('top','aliases', {'channel':'sink'}),
         'inherited-descriptor': ('service','inherited_fds', [3]),
@@ -81,7 +103,7 @@ def build(check=False):
                 prov['source']=str(Path(prov['source']).relative_to(ROOT)) if prov['source'].startswith(str(ROOT)+'/') else prov['source']
             write(ROOT/'security_ir/fixtures'/(name+'.json'),dumps(ir))
         finally: os.chdir(old)
-        expected[name]={'compose_sha256':sha(p),'verdict':'CONDITIONAL' if name=='clean' else 'UNASSURED','lean_accepted':name=='clean','bypass':None if name=='clean' else {'writable-channel-mount':'unlisted-host-mount','channel-target-shadow':'unlisted-host-mount','credential-password':'opaque-credential-env-name:PASSWORD','missing-isolated-network':'unsupported service networks','mount-parent-alias':'unresolved mount source','trusted-reviewer-uid-collision':'trusted-role-uid-collision','missing-reviewer-role':'supported-roles'}.get(name, ('DRIFT' if runtime_edits[name][0]=='service' else 'unsupported/extra runtime service') if name in runtime_edits else name)}
+        expected[name]={'compose_sha256':sha(p),'verdict':'CONDITIONAL' if name=='clean' else 'UNASSURED','lean_accepted':name=='clean','bypass':None if name=='clean' else {'writable-channel-mount':'unlisted-host-mount','channel-target-shadow':'unlisted-host-mount','credential-password':'opaque-credential-env-name:PASSWORD','missing-isolated-network':'unsupported service networks','mount-parent-alias':'unresolved mount source','trusted-reviewer-uid-collision':'trusted-role-uid-collision','missing-reviewer-role':'supported-roles'}.get(name, coverage[name][0] if name in coverage else 'unsupported volume feature' if name=='named-volume' else name if name in {'secrets','configs'} else ('DRIFT' if runtime_edits[name][0]=='service' else 'unsupported/extra runtime service') if name in runtime_edits else name)}
     write(base/'expected.json',dumps(expected))
 if __name__=='__main__':
     import argparse

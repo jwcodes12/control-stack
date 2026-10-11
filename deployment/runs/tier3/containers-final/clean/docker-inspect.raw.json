@@ -1,0 +1,1352 @@
+[
+    {
+        "Id": "4dfb503567e00cd5a2f9a014c383acbd462af3640a6b21c061f86b105c42473e",
+        "Created": "2026-10-10T19:50:02.443337613Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2755446,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-10T19:50:03.008757595Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+        "ResolvConfPath": "/var/lib/docker/containers/4dfb503567e00cd5a2f9a014c383acbd462af3640a6b21c061f86b105c42473e/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/4dfb503567e00cd5a2f9a014c383acbd462af3640a6b21c061f86b105c42473e/hostname",
+        "HostsPath": "/var/lib/docker/containers/4dfb503567e00cd5a2f9a014c383acbd462af3640a6b21c061f86b105c42473e/hosts",
+        "LogPath": "/var/lib/docker/containers/4dfb503567e00cd5a2f9a014c383acbd462af3640a6b21c061f86b105c42473e/4dfb503567e00cd5a2f9a014c383acbd462af3640a6b21c061f86b105c42473e-json.log",
+        "Name": "/cstack-r2-clean-agent-a-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-clean_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "4dfb503567e0",
+            "Domainname": "",
+            "User": "23701",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=agent-a"
+            ],
+            "Cmd": null,
+            "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "f12f2d1c198761b50494b3918347f4afad0bb7ad0385159b701a6731e9ce24b8",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-clean",
+                "com.docker.compose.project.config_files": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean/compose.json",
+                "com.docker.compose.project.working_dir": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean",
+                "com.docker.compose.service": "agent-a",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "15938af0458d31c937aa9e3ea699b9c84b3d120c5da3b359fc19718864934a5d",
+            "SandboxKey": "/var/run/docker/netns/15938af0458d",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-clean_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-clean-agent-a-1",
+                        "agent-a"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "9974df049d75e13983dad073c8ee07f6c432a6d1f8983a7182ab3e25a25844a9",
+                    "EndpointID": "530c9f439fc6c1f314b619a9f58b7507721ac46f021918a9c1bf154db146fb90",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.2",
+                    "MacAddress": "9a:e8:e6:82:00:16",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-clean-agent-a-1",
+                        "agent-a",
+                        "4dfb503567e0"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "e679e59bcad0755bde1e3b4a52ae0661e4ed1c62127844e1e7c0cd24d33c24fa",
+        "Created": "2026-10-10T19:50:02.443427173Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2755566,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-10T19:50:03.4747905Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+        "ResolvConfPath": "/var/lib/docker/containers/e679e59bcad0755bde1e3b4a52ae0661e4ed1c62127844e1e7c0cd24d33c24fa/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/e679e59bcad0755bde1e3b4a52ae0661e4ed1c62127844e1e7c0cd24d33c24fa/hostname",
+        "HostsPath": "/var/lib/docker/containers/e679e59bcad0755bde1e3b4a52ae0661e4ed1c62127844e1e7c0cd24d33c24fa/hosts",
+        "LogPath": "/var/lib/docker/containers/e679e59bcad0755bde1e3b4a52ae0661e4ed1c62127844e1e7c0cd24d33c24fa/e679e59bcad0755bde1e3b4a52ae0661e4ed1c62127844e1e7c0cd24d33c24fa-json.log",
+        "Name": "/cstack-r2-clean-agent-b-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-clean_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "e679e59bcad0",
+            "Domainname": "",
+            "User": "23702",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=agent-b"
+            ],
+            "Cmd": null,
+            "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "ac2054641ea7df5d3be2c914db5db32123d008a0a9ce5fead35304b941ed2c9c",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-clean",
+                "com.docker.compose.project.config_files": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean/compose.json",
+                "com.docker.compose.project.working_dir": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean",
+                "com.docker.compose.service": "agent-b",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "2f835851189d9306c796d46f395ca38f9de1e7ac77306cb353c9c9fa456e3969",
+            "SandboxKey": "/var/run/docker/netns/2f835851189d",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-clean_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-clean-agent-b-1",
+                        "agent-b"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "9974df049d75e13983dad073c8ee07f6c432a6d1f8983a7182ab3e25a25844a9",
+                    "EndpointID": "34f2dc2cf9aea6b39f01e5ea28aca4f26bc6e4038a8f87a948057160df9f6e99",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.4",
+                    "MacAddress": "6a:15:39:6d:d9:e3",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-clean-agent-b-1",
+                        "agent-b",
+                        "e679e59bcad0"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "e0606a487f2882b91350e121b382406b10e03d9ced1619ea4df71e1f5f3c17c1",
+        "Created": "2026-10-10T19:50:02.446427217Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2755626,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-10T19:50:03.736664966Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+        "ResolvConfPath": "/var/lib/docker/containers/e0606a487f2882b91350e121b382406b10e03d9ced1619ea4df71e1f5f3c17c1/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/e0606a487f2882b91350e121b382406b10e03d9ced1619ea4df71e1f5f3c17c1/hostname",
+        "HostsPath": "/var/lib/docker/containers/e0606a487f2882b91350e121b382406b10e03d9ced1619ea4df71e1f5f3c17c1/hosts",
+        "LogPath": "/var/lib/docker/containers/e0606a487f2882b91350e121b382406b10e03d9ced1619ea4df71e1f5f3c17c1/e0606a487f2882b91350e121b382406b10e03d9ced1619ea4df71e1f5f3c17c1-json.log",
+        "Name": "/cstack-r2-clean-approver-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-clean_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "e0606a487f28",
+            "Domainname": "",
+            "User": "23704",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "SLICE_ROLE=approver",
+                "PYTHONPATH=/slice"
+            ],
+            "Cmd": null,
+            "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "aec3eb139202a2aed8ba9f59bc0ab6b0fad4839fe8cc00f63389a24fec42ef8e",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-clean",
+                "com.docker.compose.project.config_files": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean/compose.json",
+                "com.docker.compose.project.working_dir": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean",
+                "com.docker.compose.service": "approver",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "96a1ac22c989ff046c928003b259c9b6dcd556c09f3405b166b851b836418037",
+            "SandboxKey": "/var/run/docker/netns/96a1ac22c989",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-clean_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-clean-approver-1",
+                        "approver"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "9974df049d75e13983dad073c8ee07f6c432a6d1f8983a7182ab3e25a25844a9",
+                    "EndpointID": "f5a2db3ab10eaa6f088416743699c0adc73f1911ac1716c75b6aa07619f86f9e",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.5",
+                    "MacAddress": "86:07:e4:dc:96:9b",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-clean-approver-1",
+                        "approver",
+                        "e0606a487f28"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "3cf9f9eed42a1cdc6b191883bd147a9fe2aa04a6a7473bbfec2a50519d12f8bb",
+        "Created": "2026-10-10T19:50:02.441595851Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2755682,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-10T19:50:03.983240215Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+        "ResolvConfPath": "/var/lib/docker/containers/3cf9f9eed42a1cdc6b191883bd147a9fe2aa04a6a7473bbfec2a50519d12f8bb/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/3cf9f9eed42a1cdc6b191883bd147a9fe2aa04a6a7473bbfec2a50519d12f8bb/hostname",
+        "HostsPath": "/var/lib/docker/containers/3cf9f9eed42a1cdc6b191883bd147a9fe2aa04a6a7473bbfec2a50519d12f8bb/hosts",
+        "LogPath": "/var/lib/docker/containers/3cf9f9eed42a1cdc6b191883bd147a9fe2aa04a6a7473bbfec2a50519d12f8bb/3cf9f9eed42a1cdc6b191883bd147a9fe2aa04a6a7473bbfec2a50519d12f8bb-json.log",
+        "Name": "/cstack-r2-clean-broker-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel:/channel:rw,z",
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db:/private:rw,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-clean_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+                "Destination": "/private",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "3cf9f9eed42a",
+            "Domainname": "",
+            "User": "23700",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=broker"
+            ],
+            "Cmd": null,
+            "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "b6ce90b2e834517c6105a9b3257143bec3b0e0112ba64a72b69dab12d923db0c",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-clean",
+                "com.docker.compose.project.config_files": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean/compose.json",
+                "com.docker.compose.project.working_dir": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean",
+                "com.docker.compose.service": "broker",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "630db6bd72aea61484402e28b7d5ae9af551acfd1de3c2c347fe6286fbddc10e",
+            "SandboxKey": "/var/run/docker/netns/630db6bd72ae",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-clean_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-clean-broker-1",
+                        "broker"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "9974df049d75e13983dad073c8ee07f6c432a6d1f8983a7182ab3e25a25844a9",
+                    "EndpointID": "60d2b0065d3c65f72841816dfedca5d23ee33ce5c60a47ba4bba2f5c7b4b2227",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.6",
+                    "MacAddress": "a6:e9:7b:d0:21:dd",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-clean-broker-1",
+                        "broker",
+                        "3cf9f9eed42a"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "fc040b4697cd9359ba11d22d95ababfb3e210e829dde72d4972d0dde998b45f3",
+        "Created": "2026-10-10T19:50:02.444648855Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2755508,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-10T19:50:03.241822427Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+        "ResolvConfPath": "/var/lib/docker/containers/fc040b4697cd9359ba11d22d95ababfb3e210e829dde72d4972d0dde998b45f3/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/fc040b4697cd9359ba11d22d95ababfb3e210e829dde72d4972d0dde998b45f3/hostname",
+        "HostsPath": "/var/lib/docker/containers/fc040b4697cd9359ba11d22d95ababfb3e210e829dde72d4972d0dde998b45f3/hosts",
+        "LogPath": "/var/lib/docker/containers/fc040b4697cd9359ba11d22d95ababfb3e210e829dde72d4972d0dde998b45f3/fc040b4697cd9359ba11d22d95ababfb3e210e829dde72d4972d0dde998b45f3-json.log",
+        "Name": "/cstack-r2-clean-receiver-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink:/output:rw,z",
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db:/private:rw,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-clean_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+                "Destination": "/output",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+                "Destination": "/private",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "fc040b4697cd",
+            "Domainname": "",
+            "User": "23700",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=receiver"
+            ],
+            "Cmd": null,
+            "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "444c191e7e6c62c9d8911201caa7d6e929dec5b858ff98ff5f3dcd2b169e243a",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-clean",
+                "com.docker.compose.project.config_files": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean/compose.json",
+                "com.docker.compose.project.working_dir": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean",
+                "com.docker.compose.service": "receiver",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "0476d60d1240146d69bd4cbab459e46b7cb28d682e295695a7785b31855555c9",
+            "SandboxKey": "/var/run/docker/netns/0476d60d1240",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-clean_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-clean-receiver-1",
+                        "receiver"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "9974df049d75e13983dad073c8ee07f6c432a6d1f8983a7182ab3e25a25844a9",
+                    "EndpointID": "84982f6a85ec0468bd35508e5d9f487be3bda98186da76d2dd2d7316b93a9ca8",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.3",
+                    "MacAddress": "4e:ec:18:d6:8e:c8",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-clean-receiver-1",
+                        "receiver",
+                        "fc040b4697cd"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "956f50065f5374f15308d2aeb69a5ccbf3f3a65ae1b078abf0175305bf416612",
+        "Created": "2026-10-10T19:50:02.442418172Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 2755741,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-10T19:50:04.239005274Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+        "ResolvConfPath": "/var/lib/docker/containers/956f50065f5374f15308d2aeb69a5ccbf3f3a65ae1b078abf0175305bf416612/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/956f50065f5374f15308d2aeb69a5ccbf3f3a65ae1b078abf0175305bf416612/hostname",
+        "HostsPath": "/var/lib/docker/containers/956f50065f5374f15308d2aeb69a5ccbf3f3a65ae1b078abf0175305bf416612/hosts",
+        "LogPath": "/var/lib/docker/containers/956f50065f5374f15308d2aeb69a5ccbf3f3a65ae1b078abf0175305bf416612/956f50065f5374f15308d2aeb69a5ccbf3f3a65ae1b078abf0175305bf416612-json.log",
+        "Name": "/cstack-r2-clean-reviewer-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-clean_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "956f50065f53",
+            "Domainname": "",
+            "User": "23703",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=reviewer"
+            ],
+            "Cmd": null,
+            "Image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "489394ad97578fa1032020d4431991efe069409c8a15cec82dad0ccfc2ee10fe",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-clean",
+                "com.docker.compose.project.config_files": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean/compose.json",
+                "com.docker.compose.project.working_dir": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier3/containers-final/clean",
+                "com.docker.compose.service": "reviewer",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "2ee8efd38cda0bcd9ac5986fe3a00611c1c61a509dc338542b7bc5b216c4e0d9",
+            "SandboxKey": "/var/run/docker/netns/2ee8efd38cda",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-clean_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-clean-reviewer-1",
+                        "reviewer"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "9974df049d75e13983dad073c8ee07f6c432a6d1f8983a7182ab3e25a25844a9",
+                    "EndpointID": "974a845a1ea6b28b6e5d53a45c59d7d1baaabf92b4625f9d7208e46a43b938e0",
+                    "Gateway": "",
+                    "IPAddress": "172.18.0.7",
+                    "MacAddress": "f6:da:ec:a2:7d:3e",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-clean-reviewer-1",
+                        "reviewer",
+                        "956f50065f53"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:c91a7a7f643c7daaafbbe3b1c36475b5b8e9489105200dc0d81f2c05f1be49be",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    }
+]

@@ -271,3 +271,16 @@ Shared z labels are explicit; Docker does not advertise SELinux enforcement, and
 host Landlock remains inactive. Every cstack-r2 resource is removed afterward.
 The stronger Tier 2 evidence does not discharge the two residual premises or
 complete the remaining R2 tiers. Final-head CI is still required before Tier 3.
+
+## R2 Tier 3 fresh-scanner update
+
+The default scan now normalizes JSON/YAML through the recorded Compose CLI,
+observes realpaths and store custody, and inspects a stopped local image export.
+It checks the known baked principal policy against role UIDs. Schema 0.1 has a
+strict schema-only v0 migration. Coverage is 44 static fixtures plus real alias
+and deterministic semantic-input tests; 250 differential and 520 monotonic
+mutations pass. Nine fresh real-container snapshots, seven safe outcomes and
+independent replay/tamper checks are in deployment/runs/tier3/containers-final.
+The failed first replay after strengthening the policy guard is retained; the
+final run was recollected. Draft #47 is stacked on #46. Remaining extraction and
+protocol premises persist; Tier 3 does not complete R2. Final-head CI is pending.

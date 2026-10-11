@@ -48,13 +48,13 @@ def verify(ir):
     add('protocol-refinement','CONDITIONAL','ProtocolRefinement.publication : sinkEffects = model.bank assumes full model-runtime correspondence, including actual protocol transitions, exact bytes, unit costs, clock, storage and no rollback; unproved')
     add('Lean-contract-instances','UNASSESSED','run tools/check_deployment_lean.py against this exact IR to kernel-check facts and contracts; source names alone are not proof')
     return {'kernel_checked_obligations':['direct protected-resource authority','nonzero UIDs','all agent/trusted UID separation','exact role counts','runtime match','exact sink/database writer sets','transitive bypass reachability and closure','no unknown/privileged/host-network authority','reused gate/one-use/budget contracts'],
-            'python_only_obligations':[], 'version':0,'claim':ir['claim'],'snapshot':ir['snapshot'],'ir_sha256':__import__('hashlib').sha256(json.dumps(ir,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
+            'python_only_obligations':[], 'version':ir['version'],'claim':ir['claim'],'snapshot':ir['snapshot'],'ir_sha256':__import__('hashlib').sha256(json.dumps(ir,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
             'verdict':'UNASSURED' if any(o['status'] in {'REFUTED','UNASSESSED'} for o in obligations) else 'CONDITIONAL',
             'obligations':obligations,
             'scope':'configuration/model candidate; skipped kernel check means UNASSURED. Lean rechecks all finite configuration obligations; faithful extraction and protocol refinement remain unproved'}
 
 def report(bundle):
-    if bundle.get('version') != 0 or bundle.get('verdict') not in {'CONDITIONAL','UNASSURED'}:
+    if bundle.get('version') not in (0,'0.1') or bundle.get('verdict') not in {'CONDITIONAL','UNASSURED'}:
         raise ValueError('invalid obligation bundle')
     lines = ['# Local file deployment slice', '', '**'+bundle['verdict']+'**', '', bundle['scope'], '', '| Premise | Status | Evidence / limitation |','|---|---|---|']
     for o in bundle['obligations']:

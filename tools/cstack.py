@@ -473,7 +473,7 @@ def main(argv=None, runner=subprocess.call):
     g3 = mp.add_mutually_exclusive_group()
     g3.add_argument("--gaps", action="store_true")
     g3.add_argument("--researcher", metavar="COMPONENT")
-    scan = sub.add_parser("scan", help="read-only normalized Compose JSON collector")
+    scan = sub.add_parser("scan", help="read-only Compose JSON/YAML normalization and fresh host/image scan")
     scan.add_argument("compose")
     scan.add_argument("--runtime", required=True)
     scan.add_argument("--sha256", required=True, help="expected Compose file hash")
@@ -496,7 +496,10 @@ def main(argv=None, runner=subprocess.call):
             from security_ir.verifier import verify, report
             try:
                 if a.cmd == "scan":
-                    result = collect(a.compose, a.runtime, a.sha256)
+                    if Path(a.output).resolve() in {Path(a.compose).resolve(),Path(a.runtime).resolve()}:
+                        raise ValueError("scan output must differ from input")
+                    from deployment.scan import scan as fresh_scan
+                    result = fresh_scan(a.compose, a.runtime, a.sha256, Path(a.output).with_suffix(".inputs"))
                 elif a.cmd == "verify":
                     ir = json.loads(Path(a.ir).read_text())
                     result = verify(ir)

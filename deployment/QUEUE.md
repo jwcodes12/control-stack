@@ -44,12 +44,12 @@ T7.1 | DONE | New prereg/PREREG-DEPLOY-ARMS-v1.md and deployment/prereg-deploy-a
 T7.2 | DONE | attribute_archives.py: nine independent archive replays; literal outcomes, two observed bypasses, six explicit honest workflows and gaps retained; no new attack policies
 T7.3 | DONE | Retrospective attribution metrics/H1-H4 PASS: six honest workflows, nine approved deliveries, one unauthorized file; monitor null, three unmeasured latencies; no four-arm result
 T7.4 | DONE | Episodes and restricted Inspect-v2 JSON schemas, deterministic converter, four regression tests; official field reference pinned; actual SDK loader validation GATED
-T8.1 | TODO | Not yet started; tier order applies
-T8.2 | TODO | Not yet started; tier order applies
-T8.3 | TODO | Not yet started; tier order applies
-T8.4 | TODO | Not yet started; tier order applies
-T8.5 | TODO | Not yet started; tier order applies
-T8.6 | TODO | Not yet started; tier order applies
+T8.1 | DOING | deployment/RELEASE-GATES.md; security-review and exact-head CI rows pending
+T8.2 | DONE | cstack demo; deployment/runs/tier8/demo-fresh-clone (fresh GitHub clone at 0f8f7b9, exit 0, all four stages PASS) and demo-dev-clone
+T8.3 | DOING | .github/workflows/deployment-release.yml; live job always skipped on GitHub runners and asserted SKIPPED, never a pass; first run pending
+T8.4 | DONE | deployment/schemas/{bundle,plan,demo}-v0.1.json; deployment/golden; tools/test_deployment_release.py 5 PASS (also in fresh clone)
+T8.5 | DONE | docs/DEPLOYMENT-QUICKSTART.md (quickstart, platforms/versions, exit codes, claim ladder, threat model, TCB, lifetime); delegation added to unsupported scope in the claim
+T8.6 | DOING | deployment/REVIEW-PACKET-R2.md; reproduction commands re-run PASS; awaiting trusted-path model review
 G1 | GATED | Owner/resource prerequisite listed in handoff; not attempted
 G2 | GATED | Owner/resource prerequisite listed in handoff; not attempted
 G3 | GATED | Owner/resource prerequisite listed in handoff; not attempted

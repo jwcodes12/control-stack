@@ -99,7 +99,9 @@ CLI and observe source realpaths and offline reference-image facts. YAML require
 explicit x-cstack.roles. See deployment/TIER3-SCANNER.md. Legacy v0 snapshots do not
 gain these observations through schema-only migration.
 
-Unsupported: arbitrary overlays, builds or mutable image tags,
+Unsupported: lease delegation or forked leases (the Tier 2 container cases issue one
+lease per agent directly; `trusted_stack/test_delegation.py` is unit-level only),
+arbitrary overlays, builds or mutable image tags,
 non-bind volumes, secrets, devices, host network/privileged containers, unknown
 sidecars or dynamic deputies, root agents, user namespaces/UID remapping, symlink
 or aliased protected sources without faithful resolution, external host helpers,

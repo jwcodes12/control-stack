@@ -1,0 +1,25 @@
+{
+  "base_sha256": "01083f2c616ea4aefd0805166ff6f02ef9e0b8c744848fe262f3bfaf4d7bf704",
+  "host_actions": [],
+  "human_diff": "--- declared.compose.json\n+++ proposed.compose.json\n@@ -23,15 +23,6 @@\n           \"read_only\": true,\n           \"source\": \"/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel\",\n           \"target\": \"/channel\",\n-          \"type\": \"bind\"\n-        },\n-        {\n-          \"bind\": {\n-            \"selinux\": \"z\"\n-          },\n-          \"read_only\": false,\n-          \"source\": \"/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink\",\n-          \"target\": \"/bypass\",\n           \"type\": \"bind\"\n         }\n       ],\n",
+  "ir_sha256": "17a8d94f18d26ca273bdc9a43b6705285c339b91ab9b059a5081c120fb536530",
+  "next_step": "Apply to a copy, review host actions, recreate only a safe own deployment, recollect and run fresh scan + kernel verify. Input files and runtime facts were not changed.",
+  "patch": [
+    {
+      "op": "remove",
+      "path": "/services/agent-a/volumes/1"
+    }
+  ],
+  "residuals": [
+    {
+      "path": "/observations",
+      "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+    },
+    {
+      "path": "/runtime/services/agent-a/mounts",
+      "reason": "captured mounts differs from the proposed configuration; recreate/recollect before verification"
+    }
+  ],
+  "scope": "Reference-profile proposal; no prospective CONDITIONAL verdict or runtime enforcement claim.",
+  "version": "0.1"
+}

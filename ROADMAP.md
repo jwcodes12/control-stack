@@ -6,10 +6,10 @@ verdicts never exceed CONDITIONAL. Read `END-STATE.md`, `docs/DEPLOYMENT-CLAIM-v
 
 Order of work (owner's decision):
 1. **Done:** merge every open PR (#45-#54).
-2. **In flight:** one-to-one check of the plain-English statements of 187 headline Lean claims (`docs/LEAN-CLAIMS-IN-PLAIN-ENGLISH.md`, `docs/lean-english/`;
+2. **Paused (stopped by owner after the G0 pass; see `docs/lean-english/SOL-HANDOFF.md`):** one-to-one check of the plain-English statements of 187 headline Lean claims (`docs/LEAN-CLAIMS-IN-PLAIN-ENGLISH.md`, `docs/lean-english/`;
    Sol with the proofledger gate). The 26 deployment-stack claims are checked (19 equivalent, 2 weaker, 3 stronger, 2 undecided; 5 of 6 planted wrong
    statements caught). 161 scenario claims not yet reached; a strictly blind pass is still owed.
-3. **Next: simplify the Lean** (scope to be confirmed): integrate the proved provenance invariant (`docs/lean-english/one-to-one/ProvenanceDraft.lean`) and reword the
+3. **Next: reuse audit, then simplify the Lean** (do the audit BEFORE resuming the English check: reuse existing lemmas/cores instead of reinventing; scope to be confirmed): integrate the proved provenance invariant (`docs/lean-english/one-to-one/ProvenanceDraft.lean`) and reword the
    headline claim to what is proved; named fields for `Allowed` and `Accepted`; state the three repeated patterns (gate invariant, authenticated adversary, refinement
    transfer) once; remove duplicated helpers; apply the English corrections; decide T4.2 (literal monotonicity is false, keep the safety-only theorem); check reuse of lemmas
    already in `alignment-contrib/lean/StabilityDebate`, `control-tree`, `proofledger`.

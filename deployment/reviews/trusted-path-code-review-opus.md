@@ -246,11 +246,11 @@ the current sources. A trusted-code fix therefore first needs versioned historic
 | Finding | Disposition |
 |---|---|
 | M1 delegation | Claim amended: covered runs must show zero delegation rows; new `deployment/sink_audit.py` checks this in the demo and over all 30+ archived runs (all zero). Disable in the R2 broker: T9.2. |
-| M2 slow sender / late commit | Claim amended: timeouts are indeterminate, retry only with the same nonce, HALT via direct `Controller.halt` with retries, no HALT liveness. Server fix: T9.3. |
+| M2 slow sender / late commit | Claim amended (retry only with the same nonce; direct `Controller.halt` stays the dependable HALT path). **Fixed in `r2-v2` (T9.3):** total frame deadline, bounded threads, per-UID connection cap; database-busy indeterminacy remains stated. Tests: `tools/test_deployment_hardening.py` (`Serving`). |
 | M3 CAP_SETUID | Checked on the actual imported image: no setid files, no `security.capability` xattrs, agent-UID container CapPrm/CapEff/CapAmb = 0 (`deployment/runs/tier8/capability-check`). Premise stated in the claim. Profile `no-new-privileges` + `cap_drop: [ALL]` and scanner xattr inventory: T9.4. |
-| L1 nested-JSON crash | Fail-closed availability defect; stated in the claim. Fix (catch per connection, bound nesting, bootstrap only when absent): T9.3. |
-| L2 HALT busy timeout | Stated in the claim (retry until commit). T9.3. |
+| L1 nested-JSON crash | **Fixed in `r2-v2` (T9.3):** every per-connection exception is DENIED, frames must begin with `{`, restart reopens the database and clears a dead socket. Regression: nested JSON then a normal request, and kill/restart. |
+| L2 HALT busy timeout | **Fixed in `r2-v2` for the socket path:** `halt_with_retry` (4 attempts; other denials final). `Controller.halt` itself unchanged. |
 | L3 `.pending-*` debris | Claim scoped to `<id>.body`; sink audit reports any non-`.body` file (none recorded). Reaper: T9.5. |
-| L4, L5, L6 | Hardening, T9.3. |
+| L4, L5, L6 | L4 covered by the catch-all. L5: peer UID unpacked unsigned (`iII`); **UID 0 is still accepted by `Principals`** (the configuration verifier requires nonzero; the root-run broker tests would need reworking), so this part stays open. L6: fixed (agent/non-admin euid refused before any database is created). |
 | L7 reconcile direction | Covered by `deployment/sink_audit.py` (file → release), with the archived writable-sink `2.body` as its negative control. |
 | L8 | Noted in the review packet; SQLite contention is covered by threaded unit tests only. |

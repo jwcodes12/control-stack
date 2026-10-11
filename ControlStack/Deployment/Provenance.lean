@@ -136,4 +136,4 @@ theorem deployment_broker_provenance (d : IR) (R : Roles) (cap : Nat)
   obtain ⟨a,lookup,used⟩ := (coherent nonce).mp (refinement.publication.subset (by simpa using member))
   exact ⟨a,lookup,used,hp nonce a lookup⟩
 end ControlStack.Deployment.Provenance
-#print axioms ControlStack.Deployment.OneToOne.deployment_broker_provenance
+#print axioms ControlStack.Deployment.Provenance.deployment_broker_provenance

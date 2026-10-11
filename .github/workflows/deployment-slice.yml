@@ -53,18 +53,8 @@ jobs:
       - run: python3 tools/check_deployment_contract_witnesses.py
       - run: python3 tools/check_deployment_plans.py
       - run: python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/heldout-static.json
-      - name: Check every raw fixture projection in the kernel
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          from tools.check_deployment_lean import check
-          expected = json.loads(Path('examples/compose-two-agent/expected.json').read_text())
-          for path in sorted(Path('security_ir/fixtures').glob('*.json')):
-              result = check(json.loads(path.read_text()))
-              assert result['accepted'] == expected[path.stem]['lean_accepted'], path
-              print(path.stem, result['accepted'], result['axioms'])
-          PY
+      - name: Batch kernel-check all raw IR fixtures and SC26 contract/axiom obligations
+        run: python3 -m tools.check_deployment_fixture_batch
       - run: python3 tools/check_deployment_subset_differential.py
       - name: Recheck archived R2 raw IR certificates
         run: |

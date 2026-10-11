@@ -1,0 +1,135 @@
+{
+  "capture": {
+    "independent_attestation": false,
+    "kind": "docker-inspect",
+    "raw_sha256": "07d638db462fca71561514f83045acb1503079fd105a7f764b81dc7e78b7965d"
+  },
+  "services": {
+    "agent-a": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23701
+    },
+    "agent-b": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23702
+    },
+    "approver": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23704
+    },
+    "broker": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "mounts": [
+        {
+          "read_only": false,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23700
+    },
+    "receiver": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "mounts": [
+        {
+          "read_only": false,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink",
+          "target": "/output",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23700
+    },
+    "reviewer": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23703
+    }
+  }
+}

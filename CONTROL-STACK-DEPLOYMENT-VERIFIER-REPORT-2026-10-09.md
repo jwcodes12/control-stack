@@ -347,3 +347,12 @@ The stable first product should **make uncertainty explicit**, discover a danger
 **Independent background:** [Cedar Lean specification](https://github.com/cedar-policy/cedar-spec), [Batfish](https://github.com/batfish/batfish), [AWS Access Analyzer/Zelkova documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-concepts.html), [OPA Conftest](https://github.com/open-policy-agent/conftest), [ControlArena](https://control-arena.aisi.org.uk/), [Google DeepMind AI Control Roadmap announcement](https://deepmind.google/blog/securing-the-future-of-ai-agents/), [WASI release status](https://github.com/bytecodealliance/wasi.dev/blob/main/docs/releases/index.md), [Kubernetes NetworkPolicy host-network limitations](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
 
 **Interpretation note:** External documentation establishes capabilities/limits of candidate components; the particular extraction/enforcement architecture, milestones, effort estimates and acceptance gates above are **recommendations**, not claims that those components are already integrated or formally verified in control-stack.
+
+### R2 handoff Tier 1 update (2026-10-10)
+
+The implementation now has distinct ExtractionFaithful and ProtocolRefinement
+premises. ProtocolRefinement.publication is full model–runtime correspondence of
+sink effects. Finite configuration checking has full Python/Lean agreement on 26
+fixtures and 250 seeded mutations, and 520 additive regressions show no negative
+fixture becoming accepted. These tests do not discharge the residual premises or
+establish R2; later tiers and release gates remain in deployment/QUEUE.md.

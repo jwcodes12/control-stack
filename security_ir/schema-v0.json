@@ -1,0 +1,270 @@
+{
+  "$comment": "validator.py adds referential integrity, unique IDs/edge triples, provenance-source pin consistency and UNKNOWN/absence rules.",
+  "$defs": {
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "DECLARED",
+            "STATIC_INFERRED",
+            "RUNTIME_OBSERVED",
+            "ENFORCED_TESTED",
+            "UNKNOWN"
+          ]
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "sha256",
+        "kind"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "const": "local-file-two-agent-v0"
+    },
+    "edges": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "authorization": {
+            "enum": [
+              "PERMITTED",
+              "FORBIDDEN",
+              "UNKNOWN"
+            ]
+          },
+          "capability": {
+            "enum": [
+              "write",
+              "read",
+              "call",
+              "escape",
+              "credential",
+              "opaque"
+            ]
+          },
+          "from": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          },
+          "reachability": {
+            "enum": [
+              "PRESENT",
+              "ABSENT",
+              "UNKNOWN"
+            ]
+          },
+          "reason": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "to": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "capability",
+          "reachability",
+          "authorization",
+          "provenance",
+          "reason"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "nodes": {
+      "items": {
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "else": {
+              "properties": {
+                "facts": {
+                  "maxProperties": 0,
+                  "type": "object"
+                }
+              }
+            },
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "service"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "facts": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "env_names": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "host_network": {
+                      "type": "boolean"
+                    },
+                    "image": {
+                      "type": "string"
+                    },
+                    "privileged": {
+                      "type": "boolean"
+                    },
+                    "role": {
+                      "enum": [
+                        "agent",
+                        "broker",
+                        "receiver",
+                        "reviewer",
+                        "approver",
+                        "deputy"
+                      ]
+                    },
+                    "runtime_match": {
+                      "enum": [
+                        "MATCH",
+                        "MISSING",
+                        "DRIFT"
+                      ]
+                    },
+                    "uid": {
+                      "minimum": 0,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "uid",
+                    "image",
+                    "privileged",
+                    "host_network",
+                    "env_names",
+                    "runtime_match"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "facts": {
+            "type": "object"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          },
+          "type": {
+            "enum": [
+              "service",
+              "sink",
+              "database",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "facts",
+          "provenance"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "broker_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "budget": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "compose_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "database_source": {
+          "pattern": "^/",
+          "type": "string"
+        },
+        "receiver_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "runtime_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "sink_source": {
+          "pattern": "^/",
+          "type": "string"
+        }
+      },
+      "required": [
+        "compose_sha256",
+        "runtime_sha256",
+        "broker_sha256",
+        "receiver_sha256",
+        "budget",
+        "sink_source",
+        "database_source"
+      ],
+      "type": "object"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/provenance"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "version": {
+      "const": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "version",
+    "claim",
+    "sources",
+    "nodes",
+    "edges",
+    "snapshot"
+  ],
+  "type": "object"
+}

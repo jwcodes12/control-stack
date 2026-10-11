@@ -12,6 +12,7 @@ Commands are listed only for files that exist. Run them from the repository root
 
 ## Harness
 
+- Unit tests: `python3 -m unittest discover -s scenarios/SC-08/harness -p 'test_*.py'`
 - Runner: `scenarios/SC-08/harness/run_sc08.py` (runs unprivileged and refuses to run as root; evidence runs need the frozen prereg)
 
 ## Evidence

@@ -1,0 +1,286 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:7b9a35caabc64d6cc70268c34ab7047d17993b81ac657144a706ec3c2e3d29e3",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+        "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 1,
+    "compose_sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+    "runtime_sha256": "c85779548ae37289a8bf848bef85d5b29fd3673e3dec530acd9fe4a867aac3df",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "a2f32d1095fa265c2373028b8a98bd5c32154d5ef291249573af2cc55ea4e7c9",
+      "source": "examples/compose-two-agent/missing-reviewer-role.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "c85779548ae37289a8bf848bef85d5b29fd3673e3dec530acd9fe4a867aac3df",
+      "source": "examples/compose-two-agent/missing-reviewer-role.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "405e35d5d29658f62d83ab999e7cffa3a13786913aaaa925daa4b297f1baa9fb",
+      "source": "trusted_stack/outbox_receiver.py"
+    }
+  ],
+  "version": 0
+}

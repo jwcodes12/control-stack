@@ -1,0 +1,31 @@
+{
+  "exit": 0,
+  "result": "PASS",
+  "scope": "Scoped R2 local-file two-agent slice. Verdicts never exceed CONDITIONAL; SKIPPED stages are not passes; no bypass is rerun live (defensive scope).",
+  "stages": [
+    {
+      "detail": "51/51 fixtures (legacy + hardened profile) match expected verdict and kernel result; false CONDITIONAL: none",
+      "seconds": 21.8,
+      "stage": "verify fixtures + Lean kernel",
+      "status": "PASS"
+    },
+    {
+      "detail": "read-only JSON Patch for writable-sink-mount, trusted-role-uid-collision yields the reference hardened clean profile",
+      "seconds": 0.0,
+      "stage": "plan remediation",
+      "status": "PASS"
+    },
+    {
+      "detail": "fresh daemon capture, fresh scan and kernel CONDITIONAL for trusted-role-uid-collision, writable-sink-mount; 4 honest deliveries; own resources removed",
+      "seconds": 75.4,
+      "stage": "live remediated containers",
+      "status": "PASS"
+    },
+    {
+      "detail": "PASS: two remediated raw inventories, fresh observation replay, four honest deliveries, archived originals and cleanup; sink audit: every file is an attributed <id>.body, no delegation used",
+      "seconds": 0.2,
+      "stage": "independent sink-side check",
+      "status": "PASS"
+    }
+  ]
+}

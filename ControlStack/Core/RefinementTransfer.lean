@@ -3,7 +3,7 @@ import Std
 /-!
 Reusable *model-to-model* trace-refinement induction. Each client still owes
 the one-step simulation and complete effect-observation correspondence; this
-lemma proves nothing about a deployed OS, Python process or missing events.
+result proves nothing about a deployed OS, Python process or missing events.
 -/
 namespace ControlStack.RefinementTransfer
 

@@ -1,0 +1,16 @@
+import json,subprocess
+from pathlib import Path
+root=Path.cwd();work=root/'.git/tier10-blind-work';home=Path('/home/opc');out=root/'deployment/runs/tier10/heldout-author'
+args=['bwrap','--ro-bind','/','/','--tmpfs','/var/tmp','--bind',str(work),'/var/tmp/work','--tmpfs','/tmp','--unshare-pid','--proc','/proc']
+for path in [home/'research',home/'.claude',home/'agent-bus',home/'.gemini']:
+ if path.exists():args+=['--tmpfs',str(path)]
+args+=['--bind',str(root/'.git/tier10-codex-state'),str(home/'.codex')]
+args+=['--ro-bind',str(home/'.codex/packages'),str(home/'.codex/packages')]
+args+=['--chdir','/var/tmp/work','--']
+guard=['/usr/bin/python3','-c',"from pathlib import Path; paths=['/var/tmp/sol-deployment-slice-20261010','/home/opc/research/control-stack','/home/opc/research/proofledger']; assert all(not Path(p).exists() for p in paths); print('PASS: repository copies, verifier, extractor and fixtures hidden; readonly host filesystem, writable scratch only')"]
+probe=subprocess.run(args+guard,capture_output=True,text=True);(out/'blinding-preflight.txt').write_text(probe.stdout+probe.stderr);assert probe.returncode==0
+cmd=args+['/home/opc/.local/bin/codex','exec','--skip-git-repo-check','--sandbox','danger-full-access','--json','--output-last-message','/var/tmp/work/author-final.txt','-']
+(out/'author-launch.json').write_text(json.dumps({'argv':cmd,'basis':'Separate codex exec; /var/tmp and home research hidden with bwrap, no existing evaluator or fixtures; static configs only; fresh private Codex state.'},indent=2)+'\n')
+with (out/'author-session.jsonl').open('w') as log:
+ p=subprocess.run(cmd,input=(work/'prompt.txt').read_text(),stdout=log,stderr=subprocess.STDOUT,text=True,timeout=1800)
+(out/'author-exit.txt').write_text(str(p.returncode)+'\n')

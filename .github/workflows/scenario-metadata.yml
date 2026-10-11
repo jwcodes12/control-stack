@@ -1,6 +1,10 @@
 name: scenario-metadata
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   push:
+    branches: [main]
     paths: ['scenarios/**', 'tools/check_scenarios.py', 'tools/test_check_scenarios.py', 'THEOREM-REGISTRY.json', '.github/workflows/scenario-metadata.yml']
   pull_request:
     paths: ['scenarios/**', 'tools/check_scenarios.py', 'tools/test_check_scenarios.py', 'THEOREM-REGISTRY.json', '.github/workflows/scenario-metadata.yml']

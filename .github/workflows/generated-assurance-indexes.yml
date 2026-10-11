@@ -1,6 +1,10 @@
 name: generated-assurance-indexes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   push:
+    branches: [main]
     paths: ['ControlStack/**', 'proofs/**', 'ledger/**', 'scenarios/**', 'registry/**', 'tools/build_registry.py', 'tools/build_status.py', '.github/workflows/generated-assurance-indexes.yml']
   pull_request:
     paths: ['ControlStack/**', 'proofs/**', 'ledger/**', 'scenarios/**', 'registry/**', 'tools/build_registry.py', 'tools/build_status.py', '.github/workflows/generated-assurance-indexes.yml']

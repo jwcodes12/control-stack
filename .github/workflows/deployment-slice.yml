@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python3 tools/check_deployment_monotonicity.py
@@ -22,12 +23,15 @@ jobs:
       - run: python3 tools/test_deployment_plan.py
       - run: python3 tools/test_deployment_remediated.py
       - run: python3 tools/test_deployment_heldout.py
+      - run: python3 tools/test_deployment_attribution.py
+      - run: python3 tools/check_deployment_prereg.py
       - run: python3 tools/build_deployment_fixtures.py --check
   kernel:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
       - name: Install pinned Lean
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
@@ -70,6 +74,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
       - name: Install runtime already present on the development box
         run: sudo apt-get update -qq && sudo apt-get install -y libseccomp2
       - name: Clean, two mutations and HALT during real publication

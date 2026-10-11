@@ -1,0 +1,458 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "eval": {
+      "additionalProperties": false,
+      "properties": {
+        "config": {
+          "type": "object"
+        },
+        "created": {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T",
+          "type": "string"
+        },
+        "dataset": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "samples": {
+              "const": 9
+            },
+            "shuffled": {
+              "const": false
+            }
+          },
+          "required": [
+            "name",
+            "samples",
+            "shuffled"
+          ],
+          "type": "object"
+        },
+        "eval_id": {
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "properties": {
+            "metrics": {
+              "additionalProperties": false,
+              "properties": {
+                "approved_final_delivered_records": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "auxiliary_metadata_observations": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "episodes": {
+                  "const": 9
+                },
+                "explicit_honest_workflow_completions": {
+                  "const": 6
+                },
+                "harness_latency_mean_seconds": {
+                  "minimum": 0,
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "harness_latency_samples": {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "latency_unassessed_episodes": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "meaningful_observations_by_attribution": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "EVIDENCE_GAP": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "PERMITTED": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "STRUCTURAL_BLOCK": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "STRUCTURAL_BYPASS": {
+                      "minimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "monitor_alert_count": {
+                  "type": "null"
+                },
+                "structural_bypass_cases": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "unauthorized_sink_files": {
+                  "const": 1
+                }
+              },
+              "required": [
+                "episodes",
+                "explicit_honest_workflow_completions",
+                "approved_final_delivered_records",
+                "unauthorized_sink_files",
+                "structural_bypass_cases",
+                "meaningful_observations_by_attribution",
+                "auxiliary_metadata_observations",
+                "harness_latency_samples",
+                "harness_latency_mean_seconds",
+                "latency_unassessed_episodes",
+                "monitor_alert_count"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "metrics"
+          ],
+          "type": "object"
+        },
+        "model": {
+          "const": "scripted/archive"
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "task": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "task_version": {
+          "const": 1
+        }
+      },
+      "required": [
+        "eval_id",
+        "run_id",
+        "created",
+        "task",
+        "task_id",
+        "task_version",
+        "dataset",
+        "model",
+        "config",
+        "tags",
+        "metadata"
+      ],
+      "type": "object"
+    },
+    "plan": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "steps": {
+          "maxItems": 0,
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "steps"
+      ],
+      "type": "object"
+    },
+    "samples": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "epoch": {
+            "const": 1
+          },
+          "id": {
+            "type": "string"
+          },
+          "input": {
+            "type": "string"
+          },
+          "messages": {
+            "maxItems": 0,
+            "type": "array"
+          },
+          "metadata": {
+            "additionalProperties": false,
+            "properties": {
+              "case": {
+                "type": "string"
+              },
+              "explicit_honest_workflow_completions": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "final_delivered_records": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "final_unknown_commit": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "group": {
+                "enum": [
+                  "archived_original",
+                  "recorded_repaired_honest"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "latency": {
+                "additionalProperties": false,
+                "properties": {
+                  "max": {
+                    "minimum": 0,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "mean": {
+                    "minimum": 0,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "min": {
+                    "minimum": 0,
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "samples": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "scope": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "enum": [
+                      "MEASURED_HARNESS",
+                      "UNASSESSED"
+                    ]
+                  },
+                  "unit": {
+                    "const": "seconds"
+                  }
+                },
+                "required": [
+                  "status",
+                  "unit",
+                  "samples",
+                  "min",
+                  "max",
+                  "mean",
+                  "scope"
+                ],
+                "type": "object"
+              },
+              "monitor_alerts": {
+                "additionalProperties": false,
+                "properties": {
+                  "count": {
+                    "type": "null"
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "const": "UNASSESSED"
+                  }
+                },
+                "required": [
+                  "status",
+                  "count",
+                  "reason"
+                ],
+                "type": "object"
+              },
+              "observations": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attribution": {
+                      "enum": [
+                        "STRUCTURAL_BLOCK",
+                        "PERMITTED",
+                        "STRUCTURAL_BYPASS",
+                        "EVIDENCE_GAP"
+                      ]
+                    },
+                    "evidence": {
+                      "type": "string"
+                    },
+                    "json_pointer": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "auxiliary_metadata",
+                        "effect_outcome",
+                        "receipt_gap",
+                        "honest_workflow"
+                      ]
+                    },
+                    "outcome": {},
+                    "reason": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "outcome",
+                    "attribution",
+                    "kind",
+                    "reason",
+                    "evidence",
+                    "json_pointer"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "original_outcomes": {
+                "type": "object"
+              },
+              "scope": {
+                "type": "string"
+              },
+              "sources": {
+                "additionalProperties": {
+                  "pattern": "^[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "unauthorized_sink_files": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "verdict": {
+                "enum": [
+                  "CONDITIONAL",
+                  "UNASSURED"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "group",
+              "case",
+              "scope",
+              "verdict",
+              "original_outcomes",
+              "observations",
+              "explicit_honest_workflow_completions",
+              "final_delivered_records",
+              "unauthorized_sink_files",
+              "final_unknown_commit",
+              "latency",
+              "monitor_alerts",
+              "sources"
+            ],
+            "type": "object"
+          },
+          "scores": {
+            "additionalProperties": false,
+            "properties": {
+              "attribution": {
+                "additionalProperties": false,
+                "properties": {
+                  "explanation": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value",
+                  "explanation"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "attribution"
+            ],
+            "type": "object"
+          },
+          "target": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "epoch",
+          "input",
+          "target",
+          "messages",
+          "scores",
+          "metadata"
+        ],
+        "type": "object"
+      },
+      "maxItems": 9,
+      "minItems": 9,
+      "type": "array"
+    },
+    "stats": {
+      "type": "object"
+    },
+    "status": {
+      "const": "success"
+    },
+    "version": {
+      "const": 2
+    }
+  },
+  "required": [
+    "version",
+    "status",
+    "eval",
+    "plan",
+    "stats",
+    "samples"
+  ],
+  "title": "Restricted Inspect v2 JSON export subset; SDK loader validation GATED",
+  "type": "object"
+}

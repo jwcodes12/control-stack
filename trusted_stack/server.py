@@ -16,6 +16,7 @@ import threading
 import time
 from pathlib import Path
 from .controller import Controller, Denied, Principals
+from .publisher import publish_effect
 
 MAX_REQUEST = 1500000
 READ_DEADLINE = 3.0         # seconds to receive one whole frame
@@ -25,7 +26,7 @@ RESERVED_FOR_TRUSTED = 4    # of those, slots only reviewer/approver/admin UIDs 
 DELEGATION_OPS = {"delegate", "revoke_delegation"}
 
 
-def run_one(controller, uid, req, allow_delegation=True):
+def run_one(controller, uid, req, allow_delegation=True, *, effect_root=None):
     """allow_delegation defaults on for the library and its delegated-model tests; the command line turns it off
     unless --allow-delegation is given (the reference deployment profile has no delegation step)."""
     if type(req) is not dict or "op" not in req or type(req["op"]) is not str:
@@ -42,6 +43,7 @@ def run_one(controller, uid, req, allow_delegation=True):
         "revoke_delegation": {"nonce"},
         "release": {"nonce", "digest", "destination", "lease_id"},
         "effect_release": {"nonce", "digest", "destination", "lease_id"},
+        "publish_effect": {"release_id"},
         "halt": set(),
         "state": set(),
     }
@@ -73,6 +75,10 @@ def run_one(controller, uid, req, allow_delegation=True):
         return controller.release(uid, cost=1, **params)
     if op == "effect_release":
         return controller.release(uid, cost=1, record_effect=True, **params)
+    if op == "publish_effect":
+        if effect_root is None:
+            raise Denied("effect root not configured")
+        return publish_effect(controller, uid, params["release_id"], effect_root)
     if op == "halt":
         return halt_with_retry(controller, uid)
     return controller.state(uid)
@@ -110,11 +116,11 @@ def halt_with_retry(controller, uid, attempts=4):
                 raise
 
 
-def handle(controller, conn, uid, allow_delegation):
+def handle(controller, conn, uid, allow_delegation, effect_root=None):
     """Any failure becomes DENIED: a request must never be able to end the trusted service."""
     try:
         data = read_frame(conn, READ_DEADLINE)
-        answer = run_one(controller, uid, json.loads(data), allow_delegation)
+        answer = run_one(controller, uid, json.loads(data), allow_delegation, effect_root=effect_root)
         response = {"ok": True, "result": answer}
     except Exception:  # includes RecursionError from nested JSON and sqlite3.Error
         response = {"ok": False, "error": "DENIED"}
@@ -144,7 +150,7 @@ def release_slot(active, lock, uid):
             del active[uid]
 
 
-def serve(controller, path, allow_delegation=True):
+def serve(controller, path, allow_delegation=True, *, effect_root=None):
     """One request per connection, handled on a bounded number of threads. Every connection has a total
     read deadline and each caller UID may hold only PER_UID_CONNECTIONS, so a slow sender cannot stall other
     callers (including HALT). No secret data in error responses."""
@@ -157,7 +163,7 @@ def serve(controller, path, allow_delegation=True):
     def worker(conn, uid):
         try:
             with conn:
-                handle(controller, conn, uid, allow_delegation)
+                handle(controller, conn, uid, allow_delegation, effect_root)
         finally:
             release_slot(active, lock, uid)
 
@@ -234,6 +240,7 @@ def args():
     for role in ("agents", "reviewers", "approvers", "admins"):
         p.add_argument("--" + role, required=True, help="comma-separated trusted OS UIDs")
     p.add_argument("--bootstrap-cap", type=int, default=None)
+    p.add_argument("--effect-root", type=Path, default=None)
     p.add_argument("--allow-delegation", action="store_true",
                    help="enable delegate/revoke_delegation; off by default and outside the R2 claim")
     a = p.parse_args()
@@ -266,7 +273,7 @@ def main():
             raise SystemExit("--bootstrap-cap disagrees with the existing database")
     if not a.allow_delegation and delegation_rows(a.db):
         raise SystemExit("delegation disabled but the database already holds delegation rows; refusing to serve")
-    serve(c, a.socket, allow_delegation=a.allow_delegation)
+    serve(c, a.socket, allow_delegation=a.allow_delegation, effect_root=a.effect_root)
 
 
 if __name__ == "__main__":

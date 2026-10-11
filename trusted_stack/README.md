@@ -1,8 +1,17 @@
 # Trusted-stack reference service — F1 / F3 / F4 / F5 / F7 / F8
 
+**October 10 extension:** The broker now optionally supports
+`--effect-root /private/broker-owned/directory` and an administrator-only
+`publish_effect` RPC. This writes **one exact approved content body** to a
+private, release-ID-derived file after SQLite authorization, using
+no-replace linking, file+directory fsync and idempotent retry. See
+[precise effect boundary](../docs/REAL-FILE-OUTBOX.md). Only the file output
+is a real OS effect. Arbitrary syscalls, network, execution, non-broker
+effects, credential custody and deployment correspondence remain unproved.
+
+
 This is a **narrow, non-production reference enforcement boundary**.
-The only modeled external effect is a durable record in SQLite's
-\`releases\` table. **It does not launch programs, deploy artifacts, execute
+The default modeled effect is a durable SQLite release record.\nThe optional file publication is a narrowly mediated separate operation. **It does not launch programs, deploy artifacts, execute
 privileged commands, provide OS sandboxing or confine observations.** It
 cannot be counted as a deployment-validated implementation of F1/F3/F4/F5/F7/F8.
 

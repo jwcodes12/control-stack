@@ -32,7 +32,7 @@ structure AllowedFields (roles : Roles) (s : State) (now : Nat) (r : Request) (a
   nonce_not_consumed : r.nonce ∉ s.consumed
 
 /-- Bidirectional specification equivalence: retains every historical guard. -/
-theorem Allowed_iff_allowedfields (roles : Roles) (s : State) (now : Nat) (r : Request) (a : Approval) (l : Lease) :
+theorem allowed_iff_allowedfields (roles : Roles) (s : State) (now : Nat) (r : Request) (a : Approval) (l : Lease) :
     Allowed roles s now r a l ↔ AllowedFields roles s now r a l := by
   constructor
   · intro h
@@ -55,7 +55,7 @@ structure BaseAcceptedFields (d : IR) : Prop where
   positive_uids : ∀ n ∈ d.nodes, 0 < n.uid
 
 /-- Bidirectional specification equivalence: retains every historical guard. -/
-theorem BaseAccepted_iff_baseacceptedfields (d : IR) :
+theorem baseAccepted_iff_baseacceptedfields (d : IR) :
     BaseAccepted d ↔ BaseAcceptedFields d := by
   constructor
   · intro h
@@ -73,7 +73,7 @@ structure WritersCheckedFields (d : IR) : Prop where
   receiver_database_writer_exists : ∃ e ∈ d.edges, e.target = d.database ∧ e.write = true ∧ e.source = d.receiver
 
 /-- Bidirectional specification equivalence: retains every historical guard. -/
-theorem WritersChecked_iff_writerscheckedfields (d : IR) :
+theorem writersChecked_iff_writerscheckedfields (d : IR) :
     WritersChecked d ↔ WritersCheckedFields d := by
   constructor
   · intro h

@@ -134,7 +134,9 @@ def collect(compose, runtime, expected_sha256, replay=False):
             hardening_ok = not isinstance(observed,dict) or 'hardening' not in observed or observed['hardening'] == declared_hardening(s)
             facts['runtime_match'] = 'MATCH' if isinstance(observed,dict) and set(core) == set(keys) and hardening_ok and json.dumps(inventory_order(core),sort_keys=True) == json.dumps(inventory_order(expected),sort_keys=True) else 'DRIFT'
         nodes.append({'id':name,'type':'service','facts':facts,'provenance':cp})
-        if inventory_v2 and role == 'agent' and not (declared_hardening(s) == REFERENCE_HARDENING and all(s.get(k) == HARDENED[k] for k in HARDENED)
+        # A fresh collection requires the hardened profile whether or not the inventory reports it (silence is not hardening);
+        # only replay of archived v1 inventories skips the rule.
+        if (inventory_v2 or not replay) and role == 'agent' and not (declared_hardening(s) == REFERENCE_HARDENING and all(s.get(k) == HARDENED[k] for k in HARDENED)
                 and isinstance(observed,dict) and observed.get('hardening') == REFERENCE_HARDENING):
             unknown(name,'agent-no-new-privileges-and-cap-drop-ALL-not-established')
         supported_keys = {'image','user','volumes','networks','environment','privileged','network_mode','x-cstack-role'}|{k for k in HARDENED if s.get(k) == HARDENED[k]}

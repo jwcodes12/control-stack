@@ -3,7 +3,8 @@ Archived evidence records the SHA-256 of the trusted source it ran. Those hashes
 trusted_stack changes, so each generation of the pinned files is kept under deployment/pinned-sources/<gen>/
 (append-only; one file per repo path, suffix .pysrc so no test runner collects it). A recorded digest is accepted
 for a repo path when the current tree matches it, or when some vaulted generation holds a file for that path
-whose own SHA-256 equals the digest. The vault is never trusted by name: only its bytes' hash counts.
+whose own SHA-256 equals the digest. A recorded digest is only ever compared with the hash of vaulted BYTES, never with a file name; but the vault itself is part of the
+trusted computing base (anything placed in it becomes acceptable on replay) and must be reviewed with the code.
 A fresh scan or live run still requires the CURRENT tree (see current_sources), never a vaulted generation.
 """
 import argparse

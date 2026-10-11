@@ -1,0 +1,7 @@
+git clone --branch sol/r2-tier9 https://github.com/jwcodes12/control-stack.git /var/tmp/cstack-r2-tier9-fresh   # at a3d4363
+cd /var/tmp/cstack-r2-tier9-fresh
+mkdir -p .lake && ln -s /home/opc/research/control-stack/.lake/packages .lake/packages   # prebuilt pinned Lean deps; no network
+python3 tools/cstack.py demo --output /var/tmp/cstack-r2-tier9-fresh-demo                # exit 0, 114 s wall
+# then in the fresh clone (all OK): test_deployment_{release,pins,hardening,slice,plan,scanner,remediated,attribution,r2,heldout},
+#   build_deployment_fixtures.py --check, build_deployment_golden.py --check
+# docker afterwards: only postgres:16-alpine (no cstack-r2- containers, networks, images or volumes)

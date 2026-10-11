@@ -20,7 +20,8 @@ from .controller import Controller, Denied, Principals
 MAX_REQUEST = 1500000
 READ_DEADLINE = 3.0         # seconds to receive one whole frame
 PER_UID_CONNECTIONS = 2     # concurrent connections one caller UID may hold
-MAX_CONNECTIONS = 12        # below the listen backlog, leaving room for trusted roles
+MAX_CONNECTIONS = 12        # below the listen backlog
+RESERVED_FOR_TRUSTED = 4    # of those, slots only reviewer/approver/admin UIDs may use, so agents and strangers cannot starve HALT
 DELEGATION_OPS = {"delegate", "revoke_delegation"}
 
 
@@ -127,9 +128,10 @@ def handle(controller, conn, uid, allow_delegation):
         pass
 
 
-def claim_slot(active, lock, uid):
+def claim_slot(active, lock, uid, trusted=False):
     with lock:
-        if sum(active.values()) >= MAX_CONNECTIONS or active.get(uid, 0) >= PER_UID_CONNECTIONS:
+        limit = MAX_CONNECTIONS if trusted else MAX_CONNECTIONS - RESERVED_FOR_TRUSTED
+        if sum(active.values()) >= limit or active.get(uid, 0) >= PER_UID_CONNECTIONS:
             return False
         active[uid] = active.get(uid, 0) + 1
         return True
@@ -164,11 +166,22 @@ def serve(controller, path, allow_delegation=True):
         os.chmod(path, 0o666)  # auth by SO_PEERCRED, not socket file mode
         sock.listen(16)
         try:
+            principals = controller.principals
             while True:
-                conn, _ = sock.accept()
-                uid = struct.unpack("iII", conn.getsockopt(socket.SOL_SOCKET,
-                      socket.SO_PEERCRED, struct.calcsize("iII")))[1]
-                if not claim_slot(active, lock, uid):
+                # Nothing a caller does may end the accept loop: transient failures drop that one connection.
+                try:
+                    conn, _ = sock.accept()
+                except OSError:
+                    time.sleep(0.05)
+                    continue
+                try:
+                    uid = struct.unpack("iII", conn.getsockopt(socket.SOL_SOCKET,
+                          socket.SO_PEERCRED, struct.calcsize("iII")))[1]
+                except (OSError, struct.error):
+                    conn.close()
+                    continue
+                trusted = any(principals.allows(uid, role) for role in ("reviewers", "approvers", "admins"))
+                if not claim_slot(active, lock, uid, trusted):
                     with conn:
                         try:
                             conn.settimeout(1)
@@ -176,7 +189,11 @@ def serve(controller, path, allow_delegation=True):
                         except OSError:
                             pass
                     continue
-                threading.Thread(target=worker, args=(conn, uid), daemon=True).start()
+                try:
+                    threading.Thread(target=worker, args=(conn, uid), daemon=True).start()
+                except Exception:  # RuntimeError: can't start new thread
+                    release_slot(active, lock, uid)
+                    conn.close()
         finally:
             path.unlink(missing_ok=True)
 
@@ -204,14 +221,14 @@ def delegation_rows(db):
     """Rows in the delegations table (0 when the table does not exist yet). A broker started with delegation
     disabled must not inherit a database in which a delegate could still release."""
     import sqlite3
-    with contextlib.closing(sqlite3.connect(f"file:{db}?mode=ro", uri=True)) as conn:
+    with contextlib.closing(sqlite3.connect(Path(db).resolve().as_uri() + "?mode=ro", uri=True)) as conn:
         if conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='delegations'").fetchone() is None:
             return 0
         return conn.execute("SELECT COUNT(*) FROM delegations").fetchone()[0]
 
 
 def args():
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(allow_abbrev=False)  # no prefix matching: '--allow' must not silently enable delegation
     p.add_argument("--db", type=Path, required=True)
     p.add_argument("--socket", type=Path, required=True)
     for role in ("agents", "reviewers", "approvers", "admins"):
@@ -228,7 +245,7 @@ def args():
 
 def stored_cap(db):
     import sqlite3
-    with contextlib.closing(sqlite3.connect(f"file:{db}?mode=ro", uri=True)) as conn:
+    with contextlib.closing(sqlite3.connect(Path(db).resolve().as_uri() + "?mode=ro", uri=True)) as conn:
         return conn.execute("SELECT global_cap FROM meta WHERE id=1").fetchone()[0]
 
 
@@ -243,9 +260,10 @@ def main():
         c = Controller.bootstrap(a.db, principals, a.bootstrap_cap)
     else:
         # A restart (for example `docker start`) reopens the existing database; --bootstrap-cap must still agree with it.
+        # Open it read-write FIRST: that rolls back the journal a killed broker may have left, which a read-only open cannot.
+        c = Controller(a.db, principals)
         if a.bootstrap_cap is not None and stored_cap(a.db) != a.bootstrap_cap:
             raise SystemExit("--bootstrap-cap disagrees with the existing database")
-        c = Controller(a.db, principals)
     if not a.allow_delegation and delegation_rows(a.db):
         raise SystemExit("delegation disabled but the database already holds delegation rows; refusing to serve")
     serve(c, a.socket, allow_delegation=a.allow_delegation)

@@ -24,7 +24,7 @@ def capture(compose, project, output):
     result={'capture':{'kind':'docker-inspect','raw_sha256':hashlib.sha256(raw).hexdigest(),'independent_attestation':False},'services':services}
     (output/'runtime.json').write_text(json.dumps(result,sort_keys=True,indent=2)+'\n')
     return result
-def normalize(c, rows, project, hardening=False):
+def normalize(c, rows, project, hardening=True):
     """hardening=True is the v2 inventory: it also reports no-new-privileges and cap_drop. Archived (v1) inventories
     lack the field, so replay checkers pass hardening=inventory_has_hardening(...)."""
     services={}

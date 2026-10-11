@@ -151,7 +151,7 @@ premises that were previously unstated. They are now part of this claim:
   all, so a slow sender can no longer stall other callers or make queued requests commit
   later; a frame must begin with `{`; every per-connection failure, including a deeply
   nested request, is answered DENIED instead of ending the service (the crash recorded
-  against `r2-v0`); a socket-side HALT is retried until it commits (it is idempotent); the
+  against `r2-v0`); a socket-side HALT is retried (idempotent) up to four times, about 60 s, and 4 of the 12 connection slots are reserved for reviewer/approver/admin UIDs so agents and strangers cannot starve it; the
   broker refuses to start unless its UID is an admin and not an agent, before touching the
   database; a restart reopens the existing database (the cap must agree) and clears only a
   dead socket it owns. Archived `r2-v0` runs predate these fixes; live evidence on the new
@@ -181,3 +181,13 @@ premises that were previously unstated. They are now part of this claim:
   two-link file is the post-link state and is still reconciled, not reaped; anything else is
   left alone). The debris of a crash is thus removed by the next delivery, not at crash time;
   the sink-side audit still reports any non-`.body` file, and none occurred in recorded runs.
+- **Limits found by the review of the T9 fixes** (`deployment/reviews/t9-hardening-review-opus.md`,
+  a model review of the author's own fixes; no independent human has seen them): evidence
+  from `r2-v0` ran a broker whose delegation could not be turned off, so for it the sink audit
+  (canonical `<id>.body` names, bytes equal to the release digest, zero delegation rows) is
+  the only evidence; the evidence checkers accept any vaulted generation per file and do not
+  pin one generation (run them without `python -O`); the receiver still publishes delegated
+  releases if a database has them (the broker refuses to start on one); the image scan hashes
+  only the listed source files, so a stray `.pyc` or extra module on the image path is not
+  seen; the pin vault is part of the TCB; two simultaneous broker starts can remove each
+  other's dead-socket check (no safety effect); `Principals` still accepts UID 0.

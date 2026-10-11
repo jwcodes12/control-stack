@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:d963eec05c4ba20dc311253c2265bdd1d2a3e056d7c92f82819a1ad77b4e9738",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:d963eec05c4ba20dc311253c2265bdd1d2a3e056d7c92f82819a1ad77b4e9738",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:d963eec05c4ba20dc311253c2265bdd1d2a3e056d7c92f82819a1ad77b4e9738",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:d963eec05c4ba20dc311253c2265bdd1d2a3e056d7c92f82819a1ad77b4e9738",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:d963eec05c4ba20dc311253c2265bdd1d2a3e056d7c92f82819a1ad77b4e9738",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:d963eec05c4ba20dc311253c2265bdd1d2a3e056d7c92f82819a1ad77b4e9738",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+        "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+    "budget": 2,
+    "compose_sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+    "runtime_sha256": "37c25c89071de3a56a38d7154179fe6c3f3817e54d9797c195d21c5a21124515",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "692ba8be4d2dc040f50d064f6d68213619e7533d496929874db2be477e1f9d2b",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "37c25c89071de3a56a38d7154179fe6c3f3817e54d9797c195d21c5a21124515",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "fa046623384cb237eb21fefd616bde3bf4bdbbf7127a0dc449df21209f532549",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "319e1578169e7be617f994ea2d828019d174b6c2a915370fc9f489501de0bba1",
+      "source": "/var/tmp/sol-deployment-slice-20261010/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "739c146708ad1e4479efe379c0f117960a0fcd9b9c5793ed860a683cf0a8fb7c",
+      "source": "/var/tmp/sol-deployment-slice-20261010/deployment/runs/tier9/demo-dev-clone/remediated/writable-sink-mount/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

@@ -63,7 +63,7 @@ class Release(unittest.TestCase):
         validate({'result':'SKIPPED','exit':3,'stages':stages,'scope':'s'},schema('demo'))
         self.assertIn('SKIPPED',render({'result':'SKIPPED','exit':3,'stages':stages,'scope':'s'}))
         with self.assertRaises(ValueError):validate({'result':'PASS','exit':3,'stages':stages[:2],'scope':'s'},schema('demo'))
-        for path in sorted((ROOT/'deployment/runs/tier8').glob('*/demo.json')):
+        for path in sorted((ROOT/'deployment/runs/tier8').glob('*/demo.json'))+sorted((ROOT/'deployment/runs/tier9').glob('**/demo.json')):
             with self.subTest(path=str(path.relative_to(ROOT))):
                 summary=json.loads(path.read_text());validate(summary,schema('demo'))
                 statuses={s['status'] for s in summary['stages']}
@@ -79,6 +79,24 @@ class Release(unittest.TestCase):
                 # Negative control: the archived writable-sink bypass left exactly one unattributed file.
                 self.assertEqual(result['unattributed_files'],['2.body'] if f.parent.name=='writable-sink-mount' and 'remediated' not in f.parts else [])
                 self.assertEqual(clean(result),not result['unattributed_files'])
+
+    def test_sink_audit_rejects_aliases_and_wrong_bytes(self):
+        import shutil,sqlite3
+        from deployment.sink_audit import audit,clean
+        source=ROOT/'deployment/runs/tier9/containers-hardened/clean/final'
+        with tempfile.TemporaryDirectory() as tmp:
+            copy=Path(tmp)/'final';shutil.copytree(source,copy);self.assertTrue(clean(audit(copy)))
+            body=(copy/'sink/1.body').read_bytes()
+            for alias in ('01.body','\u0661.body','1.body.bak','+1.body'):
+                (copy/'sink'/alias).write_bytes(body)
+                with self.subTest(alias=alias):
+                    result=audit(copy);self.assertFalse(clean(result));self.assertIn(alias,result['non_body_files'])
+                (copy/'sink'/alias).unlink()
+            (copy/'sink/1.body').write_bytes(b'different bytes under a real release name')
+            result=audit(copy);self.assertFalse(clean(result));self.assertEqual(result['unattributed_files'],['1.body'])
+            (copy/'sink/1.body').write_bytes(body);self.assertTrue(clean(audit(copy)))
+            (copy/'sink/1.body').unlink();(copy/'sink/1.body').symlink_to(copy/'sink/2.body')
+            self.assertFalse(clean(audit(copy)))
 
 if __name__=='__main__':
     unittest.main()

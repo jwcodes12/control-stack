@@ -32,10 +32,31 @@ def reference_policy(entry=None):
         result[role]=uids
     return result
 
+ENTRY_FLAGS={'--db','--socket','--agents','--reviewers','--approvers','--admins','--bootstrap-cap'}
+
 def delegation_enabled(entry=None):
-    """True when the reference entry starts the broker with --allow-delegation (outside the R2 claim)."""
+    """True unless the reference entry provably starts the broker without delegation: every element of the execv
+    argument list must be a string constant, and every flag must be on the exact allowlist (abbreviations, computed
+    arguments and --allow-delegation are all treated as delegation enabled/unknown)."""
     tree=ast.parse((Path(entry) if entry else Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
-    return any(isinstance(n,ast.Constant) and n.value=='--allow-delegation' for n in ast.walk(tree))
+    calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='execv']
+    if len(calls)!=1 or len(calls[0].args)!=2 or not isinstance(calls[0].args[1],ast.List):return True
+    values=calls[0].args[1].elts
+    # element 0 is the interpreter; then '-m trusted_stack.server'; then exact flags with constant values. The only computed
+    # value allowed is str(<name>) directly after --bootstrap-cap (the budget read from /private/cap).
+    rest=values[1:];flags=[]
+    def constant(v):return isinstance(v,ast.Constant) and isinstance(v.value,str)
+    if len(rest)<2 or not (constant(rest[0]) and constant(rest[1])) or [rest[0].value,rest[1].value]!=['-m','trusted_stack.server']:return True
+    i=2
+    while i<len(rest):
+        flag=rest[i]
+        if not constant(flag) or flag.value not in ENTRY_FLAGS or i+1>=len(rest):return True
+        value=rest[i+1]
+        if flag.value=='--bootstrap-cap':
+            if not (isinstance(value,ast.Call) and isinstance(value.func,ast.Name) and value.func.id=='str' and len(value.args)==1 and isinstance(value.args[0],ast.Name)):return True
+        elif not constant(value) or value.value.startswith('-'):return True
+        i+=2
+    return False
 
 def capability_paths(members):
     """Files that carry file capabilities: docker export records them as the SCHILY.xattr.security.capability PAX header."""

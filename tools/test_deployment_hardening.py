@@ -76,13 +76,24 @@ class DelegationProfile(Base):
     def test_other_operations_are_unchanged(self):
         self.assertIsInstance(server.run_one(self.controller,OTHERS[2],{'op':'state'},allow_delegation=False),dict)
 
-    def test_over_a_real_socket(self):
-        sock=self.root/'b.sock';t=threading.Thread(target=server.serve,args=(self.controller,sock,False),daemon=True);t.start()
-        for _ in range(100):
-            if sock.exists():break
-            time.sleep(0.05)
-        reply=request(str(sock),{'op':'delegate','nonce':'n','delegate_uid':OTHERS[0]})
-        self.assertEqual(reply,{'ok':False,'error':'DENIED'})
+    def test_over_a_real_socket_the_gate_decides_and_a_legitimate_delegation_would_succeed(self):
+        # A state in which `delegate` is valid: two agents, an active approval owned by the first.
+        a1,a2=ME,ME+5;roles=Principals(frozenset({a1,a2}),frozenset({OTHERS[0]}),frozenset({OTHERS[1]}),frozenset({OTHERS[2]}))
+        db=self.root/'two.db';c=Controller.bootstrap(db,roles,2)
+        digest=c.stage(a1,b'body');c.review(OTHERS[0],digest);expires=int(time.time())+600
+        c.issue_lease(OTHERS[2],'lease',a1,2,expires);c.approve(OTHERS[1],'n',digest,'label',a1,'lease',expires)
+        request_body={'op':'delegate','nonce':'n','delegate_uid':a2}
+        results={}
+        for allowed in (False,True):
+            sock=self.root/f's{int(allowed)}.sock'
+            threading.Thread(target=server.serve,args=(c,sock,allowed),daemon=True).start()
+            for _ in range(100):
+                if sock.exists():break
+                time.sleep(0.05)
+            results[allowed]=request(str(sock),request_body)
+        self.assertEqual(results[False],{'ok':False,'error':'DENIED'})
+        self.assertTrue(results[True]['ok'],'with the gate open the same request succeeds, so the gate is what denied it')
+        self.assertEqual(server.delegation_rows(db),1)
 
     def test_broker_refuses_to_serve_a_database_that_already_holds_delegations(self):
         with contextlib.closing(sqlite3.connect(self.db)) as db:
@@ -94,8 +105,20 @@ class DelegationProfile(Base):
 
     def test_scanner_flags_an_entry_that_enables_delegation(self):
         self.assertFalse(delegation_enabled(),'reference entry must not enable delegation')
-        entry=self.root/'entry.py';entry.write_text("import os\nos.execv('x',['x','--agents','1','--allow-delegation'])\n")
-        self.assertTrue(delegation_enabled(entry))
+        head="import os,sys\ncap=1\nos.execv(sys.executable,[sys.executable,'-m','trusted_stack.server','--db','/p',"
+        entry=self.root/'entry.py'
+        ok=head+"'--bootstrap-cap',str(cap)])\n"
+        entry.write_text(ok);self.assertFalse(delegation_enabled(entry),'the conforming shape is accepted')
+        for label,source in (('exact flag',head+"'--allow-delegation'])\n"),('abbreviation',head+"'--allow-deleg'])\n"),('short prefix',head+"'--al'])\n"),
+                             ('assembled',head+"'--allow'+'-delegation'])\n"),('variable',head+"flag])\n"),('unknown flag',head+"'--other','x'])\n"),
+                             ('flag as a value',head+"'--socket','--allow-delegation'])\n"),('computed cap',head+"'--bootstrap-cap',cap+1])\n"),
+                             ('no execv',"import os\n"),('extra argument',head+"'--bootstrap-cap',str(cap),'x'])\n")):
+            with self.subTest(label):
+                entry.write_text(source);self.assertTrue(delegation_enabled(entry))
+
+    def test_the_broker_parser_does_not_accept_abbreviated_flags(self):
+        p=cli(self.root,self.root/'g.db','--allow')
+        self.assertNotEqual(p.returncode,0);self.assertIn('unrecognized',p.stderr);self.assertFalse((self.root/'g.db').exists())
 
 class Serving(Base):
     """T9.3 (review M2, L1, L2, L4, L5, L6): the broker survives hostile input and slow senders."""
@@ -177,6 +200,40 @@ class Serving(Base):
         finally:second.send_signal(signal.SIGKILL);second.wait()
         wrong=cli(self.root,db,cap=5);self.assertNotEqual(wrong.returncode,0);self.assertIn('disagrees',wrong.stderr)
 
+    def test_restart_after_a_kill_inside_a_write_transaction(self):
+        db=self.root/'hot'/'gate.db';db.parent.mkdir(mode=0o700)
+        first=start_cli(self.root,db,2);self.assertIsNone(first.poll());first.send_signal(signal.SIGKILL);first.wait()
+        child=("import os,signal,sqlite3\nc=sqlite3.connect(%r,isolation_level=None);c.execute('PRAGMA cache_size=5');c.execute('BEGIN IMMEDIATE');c.execute('UPDATE meta SET spent=spent+1');c.execute('CREATE TABLE junk(x)')\nfor _ in range(400):c.execute('INSERT INTO junk VALUES (zeroblob(4000))')\n"
+               "os.kill(os.getpid(),signal.SIGKILL)\n")%str(db)
+        subprocess.run([sys.executable,'-c',child]);self.assertTrue(db.with_name('gate.db-journal').exists(),'precondition: a hot journal')
+        second=start_cli(self.root,db,2)
+        try:
+            self.assertIsNone(second.poll(),second.stderr.read() if second.poll() is not None else '')
+            self.assertEqual(request(str(self.root/'x.sock'),{'op':'state'})['result']['spent'],0,'the interrupted transaction was rolled back')
+        finally:second.send_signal(signal.SIGKILL);second.wait()
+
+    def test_slots_are_reserved_for_trusted_callers_and_the_accept_loop_survives_failures(self):
+        active,lock={},threading.Lock()
+        for uid in range(1000,1000+server.MAX_CONNECTIONS-server.RESERVED_FOR_TRUSTED):self.assertTrue(server.claim_slot(active,lock,uid))
+        self.assertFalse(server.claim_slot(active,lock,5000),'an untrusted caller cannot take a reserved slot')
+        for uid in range(2000,2000+server.RESERVED_FOR_TRUSTED):self.assertTrue(server.claim_slot(active,lock,uid,trusted=True))
+        self.assertFalse(server.claim_slot(active,lock,3000,trusted=True),'the total is still bounded')
+        server.release_slot(active,lock,2000);self.assertTrue(server.claim_slot(active,lock,3000,trusted=True))
+        # a failure to start a worker thread drops that connection only
+        self.start();original=threading.Thread.start
+        calls=[]
+        def failing(thread):
+            if thread._target is not None and getattr(thread._target,'__name__','')=='worker' and not calls:calls.append(1);raise RuntimeError("can't start new thread")
+            return original(thread)
+        threading.Thread.start=failing
+        try:
+            first=raw(self.sock,b'{"op":"state"}\n');first.settimeout(2)
+            try:read_reply(first)
+            except OSError:pass
+            self.state_ok()
+        finally:threading.Thread.start=original
+        self.assertEqual(calls,[1])
+
     def test_broker_must_run_as_an_admin_and_not_as_an_agent(self):
         for extra,message in ((('--admins',str(ME+20)),'admin'),(('--agents',str(ME)),'agent')):
             argv_extra=list(extra)
@@ -200,6 +257,23 @@ class HardenedProfile(unittest.TestCase):
                 self.assertEqual(configuration_accepted(ir),exp['lean_accepted'])
                 self.assertTrue(exp['bypass'] is None or exp['bypass'] in json.dumps(verify(ir)))
 
+    def test_silence_is_not_hardening(self):
+        # T9-M1: an inventory that omits `hardening` must not let an unhardened or undeclared agent through a fresh collection.
+        import shutil
+        from extractors.compose import collect,sha
+        base=ROOT/'examples/compose-two-agent-hardened'
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp=Path(tmp);compose=json.loads((base/'clean.compose.json').read_text());runtime=json.loads((base/'clean.runtime.json').read_text())
+            for service in runtime['services'].values():service.pop('hardening')
+            (tmp/'silent.runtime.json').write_text(json.dumps(runtime))
+            for service in compose['services'].values():service.pop('security_opt',None);service.pop('cap_drop',None)
+            (tmp/'bare.compose.json').write_text(json.dumps(compose))
+            for label,c,r in (('declared but unreported',base/'clean.compose.json',tmp/'silent.runtime.json'),('undeclared and unreported',tmp/'bare.compose.json',tmp/'silent.runtime.json')):
+                with self.subTest(label):
+                    fresh=collect(c,r,sha(c))
+                    self.assertTrue(any('not-established' in e['reason'] for e in fresh['edges']))
+                    self.assertFalse(any('not-established' in e['reason'] for e in collect(c,r,sha(c),replay=True)['edges']),'replay of archived v1 inventories keeps its old rules')
+
     def test_legacy_corpus_is_untouched_and_does_not_require_hardening(self):
         # Archived evidence is bound to these bytes; the hardened profile is additive.
         legacy=json.loads((ROOT/'security_ir/fixtures/clean.json').read_text())
@@ -218,8 +292,8 @@ class HardenedProfile(unittest.TestCase):
         plain=normalize(compose,[row('agent-a')],'p',hardening=True)['agent-a'];self.assertEqual(plain['hardening'],{'no_new_privileges':False,'cap_drop':[]})
         seccomp=normalize(compose,[row('agent-a',['seccomp=unconfined'])],'p',hardening=True)['agent-a'];self.assertIn('unsupported_runtime_security',seccomp)
         self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',None,None,['SYS_ADMIN'])],'p',hardening=True)['agent-a'])
-        v1=normalize(compose,[row('agent-a')],'p');self.assertNotIn('hardening',v1['agent-a']);self.assertFalse(inventory_has_hardening(v1));self.assertTrue(inventory_has_hardening({'x':v2}))
-        self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',['no-new-privileges:true'])],'p')['agent-a'],'v1 normalization still treats any SecurityOpt as unsupported')
+        v1=normalize(compose,[row('agent-a')],'p',hardening=False);self.assertNotIn('hardening',v1['agent-a']);self.assertFalse(inventory_has_hardening(v1));self.assertTrue(inventory_has_hardening({'x':v2}))
+        self.assertIn('unsupported_runtime_security',normalize(compose,[row('agent-a',['no-new-privileges:true'])],'p',hardening=False)['agent-a'],'v1 normalization still treats any SecurityOpt as unsupported')
 
 class ReceiverDebris(Base):
     """T9.5 (review L3): a crash before link leaves .pending-* debris; the receiver reaps it under the DB lock."""
@@ -277,17 +351,34 @@ class ArchivedHardenedRuns(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):result=check(ROOT/'deployment/runs/tier9/containers-hardened')
         self.assertEqual(result['profile'],'hardened');self.assertEqual(set(result['cases']),{'clean','concurrent-cap1','crash-retry','halt-inflight','drift-uid'})
         self.assertFalse({'writable-sink-mount','trusted-role-uid-collision'}&set(result['cases']),'no bypass case is rerun live')
+    def test_earlier_generation_archives_still_replay(self):
+        # Evidence produced by source generation r2-v3 (before the review fixes) stays checkable through the pin vault.
+        from deployment.check_container_run import check as check_run
+        from deployment.check_remediated import check as check_demo
+        with contextlib.redirect_stdout(io.StringIO()):
+            check_run(ROOT/'deployment/runs/tier9/gen-r2-v3/containers-hardened');check_demo(ROOT/'deployment/runs/tier9/gen-r2-v3/demo-dev-clone/remediated')
     def test_demo_remediated_run_replays(self):
         from deployment.check_remediated import check
         with contextlib.redirect_stdout(io.StringIO()):result=check(ROOT/'deployment/runs/tier9/demo-dev-clone/remediated')
         self.assertEqual(set(result['cases']),{'writable-sink-mount','trusted-role-uid-collision'})
-    def test_a_tampered_agent_hardening_report_is_rejected(self):
-        import shutil
+    def test_an_unhardened_agent_whose_raw_report_agrees_with_everything_is_still_rejected(self):
+        # Rewrite the raw docker inspect, its hash and the derived runtime consistently, so only the hardening
+        # assertion (not the raw/derived consistency check) can reject the archive.
+        import shutil,hashlib
         from deployment.check_container_run import check
+        from tools.collect_deployment_docker import normalize
         with tempfile.TemporaryDirectory(dir=ROOT/'.git') as tmp:
             copy=Path(tmp)/'run';shutil.copytree(ROOT/'deployment/runs/tier9/containers-hardened',copy)
-            path=copy/'clean/runtime.json';value=json.loads(path.read_text());value['services']['agent-a']['hardening']['no_new_privileges']=False;path.write_text(json.dumps(value,sort_keys=True,indent=2)+'\n')
-            with self.assertRaises(AssertionError):check(copy)
+            scan_dir=copy/'clean';raw=scan_dir/'docker-inspect.raw.json';rows=json.loads(raw.read_text())
+            for row in rows:
+                if row['Config']['Labels']['com.docker.compose.service']=='agent-a':row['HostConfig']['SecurityOpt']=[]
+            raw.write_text(json.dumps(rows))
+            runtime=json.loads((scan_dir/'runtime.json').read_text());compose=json.loads((scan_dir/'compose.json').read_text())
+            runtime['capture']['raw_sha256']=hashlib.sha256(raw.read_bytes()).hexdigest()
+            runtime['services']=normalize(compose,rows,'cstack-r2-clean',True);(scan_dir/'runtime.json').write_text(json.dumps(runtime,sort_keys=True,indent=2)+'\n')
+            self.assertFalse(runtime['services']['agent-a']['hardening']['no_new_privileges'])
+            with self.assertRaises(AssertionError) as caught:check(copy)
+            self.assertIn('agent not hardened',str(caught.exception))
 
 if __name__=='__main__':
     unittest.main()

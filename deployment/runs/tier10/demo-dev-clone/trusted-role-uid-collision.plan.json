@@ -1,0 +1,26 @@
+{
+  "base_sha256": "9e7f4e8dad7bf011d0c61ca97610dba12ca07fb94d1fab40921c99c3eec8db6b",
+  "host_actions": [],
+  "human_diff": "--- declared.compose.json\n+++ proposed.compose.json\n@@ -20,7 +20,7 @@\n       \"security_opt\": [\n         \"no-new-privileges:true\"\n       ],\n-      \"user\": \"23700\",\n+      \"user\": \"23701\",\n       \"volumes\": [\n         {\n           \"bind\": {\n",
+  "ir_sha256": "c808c7871b3c16232ca52b5fa0e44b4f9802e0f75cd9e276af5eb6d0735d3ced",
+  "next_step": "Apply to a copy, review host actions, recreate only a safe own deployment, recollect and run fresh scan + kernel verify. Input files and runtime facts were not changed.",
+  "patch": [
+    {
+      "op": "replace",
+      "path": "/services/agent-a/user",
+      "value": "23701"
+    }
+  ],
+  "residuals": [
+    {
+      "path": "/observations",
+      "reason": "legacy snapshot has no fresh source realpaths, private-store custody or offline image observations; run a fresh scan"
+    },
+    {
+      "path": "/runtime/services/agent-a/uid",
+      "reason": "captured uid differs from the proposed configuration; recreate/recollect before verification"
+    }
+  ],
+  "scope": "Reference-profile proposal; no prospective CONDITIONAL verdict or runtime enforcement claim.",
+  "version": "0.1"
+}

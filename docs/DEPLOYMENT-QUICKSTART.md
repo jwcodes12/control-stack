@@ -133,7 +133,13 @@ To change `trusted_stack/*.py` or `tools/deployment_container_entry.py`:
    `tools/build_deployment_golden.py`) so their pins name the new code. The frozen legacy
    corpus (`examples/compose-two-agent`, `security_ir/fixtures`) is bound to archived
    evidence at generation `r2-v0` and does not change;
-4. `python3 tools/test_deployment_pins.py` and the archive replays must still pass.
+4. `python3 deployment/pins.py vault-templates`: the hardened templates embed the pins, so
+   their new digests are content-addressed in `deployment/pinned-templates/` (archived
+   remediation plans name a template only by digest);
+5. `python3 tools/test_deployment_pins.py` and the archive replays must still pass.
+
+A pin set recorded by an archive must belong to **one** generation (the evidence checkers
+reject a mixture), and the checkers refuse to run under `python -O`.
 
 Archive replays may use any vaulted generation. A **fresh** scan, collection, or live run
 requires the current tree, so evidence from an older generation never certifies new code.

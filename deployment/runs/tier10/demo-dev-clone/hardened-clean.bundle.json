@@ -1,0 +1,95 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "ir_sha256": "c7104b0e6454ef4a994512741f218424c174d9e832713e0476b0161d18d0afa0",
+  "kernel_checked_obligations": [
+    "direct protected-resource authority",
+    "nonzero UIDs",
+    "all agent/trusted UID separation",
+    "exact role counts",
+    "runtime match",
+    "exact sink/database writer sets",
+    "transitive bypass reachability and closure",
+    "no unknown/privileged/host-network authority",
+    "reused gate/one-use/budget contracts"
+  ],
+  "obligations": [
+    {
+      "detail": "two agents, one named broker and one named receiver required",
+      "premise": "supported-roles",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "distinct agent/trusted UIDs; only broker/receiver share trusted owner; trusted-role-uid-collision on failure",
+      "premise": "identity-separation",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:agent-a",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:agent-b",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:approver",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:broker",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:receiver",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "MATCH",
+      "premise": "runtime-snapshot:reviewer",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "exactly the receiver has the writable sink mount",
+      "premise": "useful-sink-path",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "broker and receiver must use the same pinned database",
+      "premise": "shared-database",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "snapshot exhausts actual effective authority, mounts, identities, processes and source/image correspondence; unproved",
+      "premise": "faithful-extraction",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "ProtocolRefinement.publication : sinkEffects = model.bank assumes full model-runtime correspondence, including actual protocol transitions, exact bytes, unit costs, clock, storage and no rollback; unproved",
+      "premise": "protocol-refinement",
+      "status": "CONDITIONAL"
+    },
+    {
+      "detail": "'certificate_0' depends on axioms: [propext, Quot.sound]\n'certificate_1' depends on axioms: [propext, Quot.sound]\n'certificate_2' depends on axioms: [propext, Quot.sound]\n'certificate_3' depends on axioms: [propext, Quot.sound]\n'certificate_4' depends on axioms: [propext, Quot.sound]\n'certificate_5' depends on axioms: [propext, Quot.sound]\n'certificate_6' depends on axioms: [propext, Quot.sound]\n'certificate_7' depends on axioms: [propext, Quot.sound]\n'certificate_8' depends on axioms: [propext, Quot.sound]\n'certificate_9' depends on axioms: [propext, Quot.sound]\n'certificate_10' depends on axioms: [propext, Quot.sound]\n'certificate_11' depends on axioms: [propext, Quot.sound]\n'certificate_12' depends on axioms: [propext, Quot.sound]\n'certificate_13' depends on axioms: [propext, Quot.sound]\n'certificate_14' depends on axioms: [propext, Quot.sound]\n'certificate_15' depends on axioms: [propext, Quot.sound]\n'certificate_16' depends on axioms: [propext, Quot.sound]\n'certificate_17' depends on axioms: [propext, Quot.sound]\n'certificate_18' depends on axioms: [propext, Quot.sound]\n'certificate_19' depends on axioms: [propext, Quot.sound]\n'certificate_20' depends on axioms: [propext, Quot.sound]\n'certificate_21' depends on axioms: [propext, Quot.sound]\n'certificate_22' depends on axioms: [propext, Quot.sound]\n'certificate_23' depends on axioms: [propext, Quot.sound]\n'certificate_24' depends on axioms: [propext, Quot.sound]\n'certificate_25' depends on axioms: [propext, Quot.sound]\n'certificate_26' depends on axioms: [propext, Quot.sound]\n'certificate_27' depends on axioms: [propext, Quot.sound]\n'certificate_28' depends on axioms: [propext, Quot.sound]\n'certificate_29' depends on axioms: [propext, Quot.sound]\n'certificate_30' depends on axioms: [propext, Quot.sound]\n'certificate_31' depends on axioms: [propext, Quot.sound]\n'certificate_32' depends on axioms: [propext, Quot.sound]\n'certificate_33' depends on axioms: [propext, Quot.sound]\n'certificate_34' depends on axioms: [propext, Quot.sound]\n'certificate_35' depends on axioms: [propext, Quot.sound]\n'certificate_36' depends on axioms: [propext, Quot.sound]\n'certificate_37' depends on axioms: [propext, Quot.sound]\n'certificate_38' depends on axioms: [propext, Quot.sound]\n'certificate_39' depends on axioms: [propext, Quot.sound]\n'certificate_40' depends on axioms: [propext, Quot.sound]\n'certificate_41' depends on axioms: [propext, Quot.sound]\n'certificate_42' depends on axioms: [propext, Quot.sound]\n'certificate_43' depends on axioms: [propext, Quot.sound]\n'certificate_44' depends on axioms: [propext, Quot.sound]\n'certificate_45' depends on axioms: [propext, Quot.sound]\n'certificate_46' depends on axioms: [propext, Quot.sound]\n'certificate_47' depends on axioms: [propext, Quot.sound]\n'certificate_48' depends on axioms: [propext, Quot.sound]\n'certificate_49' depends on axioms: [propext, Quot.sound]\n'certificate_50' depends on axioms: [propext, Quot.sound]\n",
+      "premise": "Lean-contract-instances",
+      "status": "PROVEN_IN_MODEL"
+    }
+  ],
+  "python_only_obligations": [],
+  "scope": "configuration/model candidate; skipped kernel check means UNASSURED. Lean rechecks all finite configuration obligations; faithful extraction and protocol refinement remain unproved",
+  "snapshot": {
+    "broker_sha256": "a0de397b884df87829797d030f272b4e65bcc3a107e1aa8c5143e3e418ab5939",
+    "budget": 2,
+    "compose_sha256": "55c797f85a4033f034f6aca269d4bc92d4bd25a10fa2b515da73ca5ee66957f5",
+    "database_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/db",
+    "receiver_sha256": "d4c2423d96d5a07754a20d06b1d772a8dd72342e275c534829264a3b141e410b",
+    "runtime_sha256": "b441e024669755fcb281cf413d70bb297c2d2283d94f7b4fbbdce28bb7f3b64c",
+    "sink_source": "/var/tmp/sol-deployment-slice-20261010/deployment-container-state/sink"
+  },
+  "verdict": "CONDITIONAL",
+  "version": 0
+}

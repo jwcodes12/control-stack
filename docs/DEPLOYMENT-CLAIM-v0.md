@@ -116,9 +116,10 @@ under `BrokerProtocolRefinement`: actual model transactions, caller bindings and
 reverse-admission-order publication sublist. This is a substantive unproved link;
 it permits admitted-but-unpublished records. It does not replace the older SC26
 full byte-publication equality with a claim that image inspection verifies protocol
-semantics. Concrete Tier 2 transcript replay did not pass its three-attempt limit;
-see deployment/TIER4-TRANSCRIPT-BLOCKED.md. The model witness package is independent
-of that blocked runtime replay, and remaining R2 tiers are still pending.
+semantics. A concrete replay of the archived Tier 2 clean transcript is kernel-checked in
+`deployment/TIER4-TRANSCRIPT.md` (the first three attempts, which failed on a tactic parsing
+error, are kept in `deployment/TIER4-TRANSCRIPT-BLOCKED.md`). It is one archived run, with
+the log's completeness as a premise.
 
 ## Trusted-path review dispositions (Tier 8)
 
@@ -182,12 +183,63 @@ premises that were previously unstated. They are now part of this claim:
   left alone). The debris of a crash is thus removed by the next delivery, not at crash time;
   the sink-side audit still reports any non-`.body` file, and none occurred in recorded runs.
 - **Limits found by the review of the T9 fixes** (`deployment/reviews/t9-hardening-review-opus.md`,
-  a model review of the author's own fixes; no independent human has seen them): evidence
-  from `r2-v0` ran a broker whose delegation could not be turned off, so for it the sink audit
-  (canonical `<id>.body` names, bytes equal to the release digest, zero delegation rows) is
-  the only evidence; the evidence checkers accept any vaulted generation per file and do not
-  pin one generation (run them without `python -O`); the receiver still publishes delegated
-  releases if a database has them (the broker refuses to start on one); the image scan hashes
-  only the listed source files, so a stray `.pyc` or extra module on the image path is not
-  seen; the pin vault is part of the TCB; two simultaneous broker starts can remove each
-  other's dead-socket check (no safety effect); `Principals` still accepts UID 0.
+  a model review of the author's own fixes; no independent human has seen them). Status after
+  Tier 10 (below): evidence from `r2-v0` still ran a broker whose delegation could not be turned
+  off, so for it the sink audit (canonical `<id>.body` names, bytes equal to the release digest,
+  zero delegation rows) remains the only evidence; the pin vault is part of the TCB. The other
+  limits found by that review are closed in Tier 10.
+
+## Tier 10: closing the open engineering items
+
+Source generation `r2-v6`. Each item has a regression test; none has had independent human review.
+
+- **`Principals` refuses UID 0** (review L5). UID 0 ignores every file permission the role
+  boundaries use, so it can no longer be a role. The root-run broker tests now run the broker and
+  the admin calls as a disposable non-root admin UID.
+- **The receiver refuses delegated releases by default** (`deliver_record(..., allow_delegation=False)`,
+  `deliver_cli --allow-delegation`). A database that holds a delegation grant or a delegated-executor
+  row is no longer delivered unless the trusted caller asks; the broker already refused to start on one.
+- **Evidence checkers bind one source generation and refuse `python -O`.** `pins.require_generation`
+  requires every recorded source digest to belong to the current tree or to one vaulted generation
+  (a mixture no deployment ran is rejected; a complete record must equal the generation's whole file
+  set). Every `check_deployment_*` script and the `deployment` package refuse to run under `-O`,
+  where `assert` disappears. The hardened remediation templates embed the source pins, so their
+  digests are vaulted too (`deployment/pinned-templates/`, `pins.py vault-templates`).
+- **The image scan inventories the whole `/slice` tree** and the interpreter start-up hooks
+  (`*.pth`, `sitecustomize.py`, `usercustomize.py`). `/slice` is first on `sys.path`, so a stray
+  `.pyc`, an extra module that shadows the standard library, a symlink, a group/other-writable file
+  or a file owned by a role UID makes the image UNKNOWN
+  (`image-slice-tree-differs-from-reference-UNKNOWN`). The first live attempt of the new check caught
+  documentation files that the image builder had shipped into the import tree
+  (`deployment/runs/tier10/attempt1-NOTE.txt`); the builder now adds only the reference files, root-owned.
+  The rest of the base image (the Python installation outside `/slice`) is still trusted, not inspected.
+- **HALT availability.** An admin's HALT request sets an in-process latch: from that moment the broker
+  starts no other mutating request, even while the database is too busy to record the HALT, and a HALT
+  the caller gave up on is retried in the background until it persists. Staging has a total byte quota
+  (64 MiB) so a stuck agent cannot fill the disk HALT's own write needs. Not fixed: a separate
+  receiver process still depends on SQLite's own lock scheduling, and one agent can exhaust the shared
+  staging quota for the other (availability, not safety).
+- **`cstack plan` accepts a fresh scan's own IR.** A scan's IR carries UNKNOWN reasons that replay rules
+  do not produce; the planner now reproduces the IR under replay rules or under fresh-scan rules and
+  requires one of them to match exactly.
+- **Two simultaneous broker starts** hold an exclusive `flock` on `<socket>.lock` for the broker's life
+  before probing the old socket, so neither can unlink the other's live socket.
+- **`publish_effect` / `--effect-root` stay outside the claim.** The scanner treats the flag as an
+  unknown launch argument (UNKNOWN); a test pins that, so the second file-effect path cannot appear in
+  a CONDITIONAL deployment. Putting it under the claim would need its own model, scanner and review.
+- **Transcript replay uses the recorded clock** instead of `now = 0`: the database's own
+  `releases.created` for the two releases, with every expiry after it; a mutant with a later clock is
+  rejected. That the recorded value is the broker's clock remains a premise.
+- **Live evidence on the final generation** (`deployment/runs/tier10/`): the five non-bypass hardened
+  cases and the demo run on `r2-v6` and pass the independent checkers. Bypass cases were not rerun
+  (defensive scope).
+- **Held-out round 2** (`deployment/heldout/tier10`): 34 cases sealed by a separate blind `codex exec`
+  author for the hardened profile before any scoring: 8 supported, 17 refuted, 9 unknown. Before any
+  fix, the instantiated static evaluation produced **one false CONDITIONAL out of 26 negatives**
+  (`agent-role-impersonation`: an agent whose `SLICE_ROLE` is `broker`; the fresh scan already marked
+  this UNKNOWN, but the extractor, which does not read environment values, accepted it). That is the
+  held-out figure. The extractor now checks `SLICE_ROLE`/`PYTHONPATH` under fresh rules and the
+  re-scored result (0 false acceptances, 0 of 8 supported rejected, 22 of 34 UNKNOWN) is **contaminated**
+  by that fix. The hand-written baseline caught 0 of the 26 negatives. The author is the same model
+  family as the original builder and a different one from the fixer; it is not an independent human.
+

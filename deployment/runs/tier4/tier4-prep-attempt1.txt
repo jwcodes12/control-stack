@@ -1,0 +1,97 @@
+.git/tier4-prep.lean:7:7: error: unexpected token 'prefix'; expected '_' or identifier
+.git/tier4-prep.lean:7:15: error: unexpected identifier; expected prec
+.git/tier4-prep.lean:13:12: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  d
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:20:6: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  d
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:20:36: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  d
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:20:69: error: unsolved goals
+x✝ : Sort u_1
+AvoidedPath : x✝
+d : IR
+h : Accepted d
+a : Node
+member : a ∈ d.nodes
+agent : a.agent = true
+initial : a.id ∈ reachable d a.id
+sink : d.sink ∉ reachable d a.id
+database : d.database ∉ reachable d a.id
+closed :
+  ∀ e ∈ d.edges, e.source ∈ reachable d a.id → e.target ≠ d.broker → e.target ≠ d.receiver → e.target ∈ reachable d a.id
+⊢ ¬sorry ∧ ¬sorry
+.git/tier4-prep.lean:28:33: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  d
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:29:4: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  larger
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:43:6: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  d
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:43:36: error: Function expected at
+  AvoidedPath
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  d
+
+Hint: The identifier `AvoidedPath` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+.git/tier4-prep.lean:43:69: error: unsolved goals
+x✝ : Sort u_1
+AvoidedPath : x✝
+d larger : IR
+subset : ∀ e ∈ d.edges, e ∈ larger.edges
+nodes : d.nodes = larger.nodes
+broker : d.broker = larger.broker
+receiver : d.receiver = larger.receiver
+sink : d.sink = larger.sink
+database : d.database = larger.database
+accepted : Accepted larger
+a : Node
+member : a ∈ d.nodes
+agent : a.agent = true
+⊢ ¬sorry ∧ ¬sorry
+List.Nodup.length_le_of_subset.{u_1} {α : Type u_1} {l₁ l₂ : List α} (h₁ : l₁.Nodup) (hsub : l₁ ⊆ l₂) :
+  l₁.length ≤ l₂.length
+.git/tier4-prep.lean:61:7: error(lean.unknownIdentifier): Unknown constant `List.length_le_of_subset`

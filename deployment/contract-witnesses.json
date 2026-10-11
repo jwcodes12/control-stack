@@ -1,0 +1,161 @@
+{
+  "scope": "Abstract model witnesses and named premise-falsifying controls; not container receipt certification. Concrete T4.4 remains BLOCKED.",
+  "contracts": [
+    {
+      "contract": "ControlStack.Deployment.Accepted",
+      "positive": [
+        "ControlStack.Deployment.clean_accepted"
+      ],
+      "negative": [
+        "ControlStack.Deployment.writable_mount_refutes",
+        "ControlStack.Deployment.unknown_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.exclusive_sink",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.sink_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.writable_mount_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.database_custody",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.database_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.database_bypass_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.runtime_exclusive",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.runtime_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.omitted_writer_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.agent_not_receiver_uid",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.identity_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.uid_collision_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.agent_call_legal",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.legal_call_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.uid_collision_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.protocol_safe",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.protocol_positive",
+        "ControlStack.Deployment.useful_acceptance"
+      ],
+      "negative": [
+        "ControlStack.Deployment.check_disabled_counterexample"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.one_use",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.one_use_positive",
+        "ControlStack.Deployment.useful_acceptance"
+      ],
+      "negative": [
+        "ControlStack.Deployment.nonce_disabled_counterexample"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.gate_contract",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.gate_positive",
+        "ControlStack.Deployment.useful_acceptance"
+      ],
+      "negative": [
+        "ControlStack.Deployment.check_disabled_counterexample"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.broker_contract",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.useful_broker_trace",
+        "ControlStack.Deployment.Witnesses.useful_broker_state"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.unguarded_release_refutes",
+        "ControlStack.Deployment.Witnesses.replay_refuted"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.deployment_safe",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.useful_sc26_deployment_count",
+        "ControlStack.Deployment.useful_acceptance"
+      ],
+      "negative": [
+        "ControlStack.Deployment.check_disabled_counterexample",
+        "ControlStack.Deployment.Witnesses.omitted_writer_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.deployment_broker_safe",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.useful_deployment_broker",
+        "ControlStack.Deployment.Witnesses.useful_broker_state"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.sink_duplicate_refutes",
+        "ControlStack.Deployment.Witnesses.unguarded_release_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.accepted_no_avoided_path",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.path_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.bypass_path_exists"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.accepted_path_safety_monotone",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.path_positive",
+        "ControlStack.Deployment.clean_accepted"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.bypass_path_exists"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.indexed_receipts_sound",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.single_checked",
+        "ControlStack.Deployment.Witnesses.indexed_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.indexed_fabricated_post_refutes"
+      ]
+    },
+    {
+      "contract": "ControlStack.Deployment.path_edge_subset",
+      "positive": [
+        "ControlStack.Deployment.Witnesses.path_positive"
+      ],
+      "negative": [
+        "ControlStack.Deployment.Witnesses.bypass_path_exists"
+      ]
+    }
+  ]
+}

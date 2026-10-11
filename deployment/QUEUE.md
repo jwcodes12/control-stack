@@ -50,7 +50,7 @@ T8.3 | DOING | .github/workflows/deployment-release.yml; live job always skipped
 T8.4 | DONE | deployment/schemas/{bundle,plan,demo}-v0.1.json; deployment/golden; tools/test_deployment_release.py 5 PASS (also in fresh clone)
 T8.5 | DONE | docs/DEPLOYMENT-QUICKSTART.md (quickstart, platforms/versions, exit codes, claim ladder, threat model, TCB, lifetime); delegation added to unsupported scope in the claim
 T8.6 | DONE | deployment/REVIEW-PACKET-R2.md; reproduction commands re-run PASS; trusted-path model review deployment/reviews/trusted-path-code-review-opus.md with dispositions
-T9.1 | TODO | Versioned trusted-source pins: archive replays and image pins check their own historical source hashes (git blobs), so trusted_stack can change without invalidating Tier 2-8 evidence. Prerequisite for T9.2-T9.5
+T9.1 | DONE | Versioned trusted-source pins: archive replays and image pins check their own historical source hashes (git blobs), so trusted_stack can change without invalidating Tier 2-8 evidence. Prerequisite for T9.2-T9.5
 T9.2 | TODO | R2 broker profile without delegate/revoke_delegation (or a flag the scanner records); sink audit stays as evidence (review M1)
 T9.3 | TODO | server.py: catch every exception per connection, bound nesting/frame size, total per-connection deadline, bootstrap only when the DB is absent, reject UID 0 and non-admin broker euid, HALT retry (review M2, L1, L2, L4-L6)
 T9.4 | TODO | Supported profile requires no-new-privileges and cap_drop ALL for agents; scanner inventories security.capability xattrs; absence UNKNOWN (review M3)
@@ -143,3 +143,5 @@ T8.2 DOING: `cstack demo --output DIR [--static-only]` (deployment/demo.py). Sta
 T8.4 DOING: deployment/schemas/{bundle,plan,demo}-v0.1.json; deployment/golden/ bundles, reports and plans; tools/test_deployment_release.py 5 PASS (golden equality, schema rejection of ASSURED/unknown status, CLI exit codes).
 
 Tier 8 trusted-path review: no finding violates the claim conclusion; M1-M3 stated in the claim with sink-audit and image-capability evidence; trusted code unchanged; hardening queued T9.1-T9.6 (grindable, not resource-gated).
+
+Tier 9 (Claude Opus 5.5, after Sol's usage limit): T9.1 done. deployment/pins.py keeps every trusted-source generation under deployment/pinned-sources/ (append-only, hash-checked bytes). Archive checkers and replays (collect(replay=True), scan replay, portable IR relabelling) accept vaulted generations; fresh scans still require the current tree. Probe: a one-line edit to controller.py left r2, remediated, attribution, evidence and every archived replay passing; only current-reference goldens/examples moved, as intended. tools/test_deployment_pins.py (6 tests) is in the release workflow.

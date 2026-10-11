@@ -19,6 +19,7 @@ jobs:
         run: |
           python3 tools/test_deployment_slice.py
           python3 tools/test_deployment_release.py
+          python3 tools/test_deployment_pins.py
           python3 tools/build_deployment_fixtures.py --check
       - name: Monotonicity (520 seeded strict additions)
         run: python3 tools/check_deployment_monotonicity.py

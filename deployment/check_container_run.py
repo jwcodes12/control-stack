@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from deployment.reconcile import reconcile
+from deployment.pins import require
 from tools.collect_deployment_docker import normalize
 from extractors.compose import collect,sha
 from security_ir.verifier import verify
@@ -16,7 +17,7 @@ def check(output):
     output=Path(output).resolve();pin=json.loads((output/'image-pin.json').read_text());result=json.loads((output/'result.json').read_text())
     assert pin['image']==result['image'] and pin['tag'].startswith('cstack-r2-')
     assert sha(output/'container-entry.py')==pin['entry_sha256']
-    for source,digest in pin['source_sha256'].items():assert sha(ROOT/source)==digest,('trusted source drift',source)
+    for source,digest in pin['source_sha256'].items():require(source,digest)
     assert set(result['cases'])=={'clean','writable-sink-mount','trusted-role-uid-collision','concurrent-cap1','crash-retry','halt-inflight','drift-uid'}
     for case,expected in result['cases'].items():
         dest=output/case;c=json.loads((dest/'compose.json').read_text())
@@ -31,7 +32,7 @@ def check(output):
             if (scan_dir/'fresh-inputs').exists():
                 from deployment.scan import replay_snapshot
                 ir=replay_snapshot(dest/'compose.json',scan_dir/'runtime.json',scan_dir/'fresh-inputs')
-            else:ir=collect(dest/'compose.json',scan_dir/'runtime.json',sha(dest/'compose.json'))
+            else:ir=collect(dest/'compose.json',scan_dir/'runtime.json',sha(dest/'compose.json'),replay=True)
             stored=json.loads((scan_dir/'ir.json').read_text())
             def portable(d):
                 d=json.loads(json.dumps(d))

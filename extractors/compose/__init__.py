@@ -28,22 +28,30 @@ def inventory_order(observed):
         if isinstance(items,list) and all(isinstance(item,str) for item in items):value[key]=sorted(items)
     return value
 
-def collect(compose, runtime, expected_sha256):
+def collect(compose, runtime, expected_sha256, replay=False):
+    """replay=True is for archived evidence only: a claim pin that equals a vaulted earlier generation of the broker/receiver
+    (deployment/pins.py) is accepted. A fresh collection (replay=False) requires the current trusted source."""
     compose, runtime = Path(compose), Path(runtime)
     if sha(compose) != expected_sha256:
         raise ValueError('Compose pin mismatch')
     # JSON only prevents YAML tags/implicit values and interpolation surprises.
     c, r = json.loads(compose.read_text()), json.loads(runtime.read_text())
     sources = []
-    def prov(path, kind):
-        p = {'source':str(path), 'sha256':sha(path), 'kind':kind}
+    def prov(path, kind, digest=None):
+        p = {'source':str(path), 'sha256':digest or sha(path), 'kind':kind}
         if not any(x['source'] == p['source'] for x in sources):
             sources.append(dict(p))
         return p
     cp, rp = prov(compose,'DECLARED'), prov(runtime,'RUNTIME_OBSERVED')
-    bp = prov(ROOT/'trusted_stack/controller.py','STATIC_INFERRED')
-    op = prov(ROOT/'trusted_stack/outbox_receiver.py','STATIC_INFERRED')
     claim = c.get('x-cstack', {})
+    def archived(rel, key):
+        # Only a replay may accept a vaulted earlier generation; the label stays the repo path.
+        pin = claim.get(key) if isinstance(claim, dict) else None
+        if replay and isinstance(pin, str):
+            from deployment.pins import vaulted_file
+            return pin if vaulted_file(rel, pin) else None
+    bp = prov(ROOT/'trusted_stack/controller.py','STATIC_INFERRED',archived('trusted_stack/controller.py','broker_sha256'))
+    op = prov(ROOT/'trusted_stack/outbox_receiver.py','STATIC_INFERRED',archived('trusted_stack/outbox_receiver.py','receiver_sha256'))
     sink = claim.get('sink_source', '/UNSPECIFIED-SINK')
     db = claim.get('database_source', '/UNSPECIFIED-DATABASE')
     channel = claim.get('channel_source', '/slice/channel')

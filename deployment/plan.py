@@ -1,5 +1,6 @@
 """Reviewable reference-profile remediation; never mutates input files or runtime facts."""
 import hashlib
+from deployment.pins import generations
 from deployment.scan import reference_policy
 from security_ir.verifier import verify
 import copy
@@ -50,6 +51,10 @@ def portable_observation_ir(ir,inputs):
     inputs=Path(inputs);root=Path(__file__).resolve().parents[1]
     files=[inputs/name for name in ('resolved.compose.json','resolved.runtime.json','host-observations.json')]+[root/'trusted_stack'/name for name in ('controller.py','outbox_receiver.py')]
     identities={(file.name,hashlib.sha256(file.read_bytes()).hexdigest()):file.name for file in files}
+    for name in ('controller.py','outbox_receiver.py'):
+        for generation in generations():
+            vaulted=generation/'trusted_stack'/(name+'.pysrc')
+            if vaulted.is_file():identities[(name,hashlib.sha256(vaulted.read_bytes()).hexdigest())]=name
     value=copy.deepcopy(ir)
     for provenance in value['sources']+[item['provenance'] for item in value['nodes']+value['edges']]:
         identity=(Path(provenance['source']).name,provenance['sha256'])

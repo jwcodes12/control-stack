@@ -110,3 +110,22 @@ A verdict expires on any change to mounts or aliases, UIDs or role mappings, cre
 inherited descriptors, image digests, network topology, runtime inventory, launcher,
 broker or receiver hashes, policy, budget, or storage/clock configuration. Re-collect and
 re-verify. No continuous drift monitoring is provided.
+
+## Changing trusted code (versioned pins)
+
+Archived runs record the SHA-256 of the broker, receiver and container entry they ran.
+Those digests stay checkable because every generation of the pinned files is kept in
+`deployment/pinned-sources/<generation>/` (append-only, `.pysrc` suffix; `deployment/pins.py`).
+A recorded digest is accepted only if the current file or a vaulted file **with that
+path** hashes to it; the vault is trusted by bytes, never by name.
+
+To change `trusted_stack/*.py` or `tools/deployment_container_entry.py`:
+
+1. edit the code;
+2. `python3 deployment/pins.py snapshot <new-generation>` (refuses an unchanged tree);
+3. regenerate the current-reference artifacts (`tools/build_deployment_fixtures.py`, golden
+   bundles/plans) so their pins name the new code;
+4. `python3 tools/test_deployment_pins.py` and the archive replays must still pass.
+
+Archive replays may use any vaulted generation. A **fresh** scan, collection, or live run
+requires the current tree, so evidence from an older generation never certifies new code.

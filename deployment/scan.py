@@ -12,11 +12,12 @@ import tempfile
 import uuid
 from pathlib import Path
 from deployment.normalize import normalize,canonical_profile
+from deployment.pins import ENTRY,current_sources,known_generation,vaulted_file
 from extractors.compose import collect,sha
 from security_ir.validator import validate
 
-def reference_policy():
-    tree=ast.parse((Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
+def reference_policy(entry=None):
+    tree=ast.parse((Path(entry) if entry else Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py').read_text())
     calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='execv']
     if len(calls)!=1 or len(calls[0].args)!=2 or not isinstance(calls[0].args[1],ast.List):return None
     values=calls[0].args[1].elts;result={}
@@ -106,10 +107,14 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
         else:
             if audit['setid_paths']:issues[name].append('image-setuid-setgid-binaries')
             if audit['entrypoint']!=['/usr/bin/python3','/slice/entry.py'] or audit['command']:issues[name].append('image-entrypoint-command-uninspected')
-            expected_sources={'slice/entry.py':sha(Path(__file__).resolve().parents[1]/'tools/deployment_container_entry.py'),**{'slice/trusted_stack/'+f.name:sha(f) for f in (Path(__file__).resolve().parents[1]/'trusted_stack').glob('*.py')}}
+            expected_sources=current_sources();policy_entry=None
+            if observed_snapshot is not None and audit.get('source_sha256')!=expected_sources and known_generation(audit.get('source_sha256')):
+                # Replay of archived evidence: the image carried an earlier vaulted generation, so compare against that
+                # generation (and read its entry's policy). A fresh scan never takes this branch.
+                expected_sources=audit['source_sha256'];policy_entry=vaulted_file(ENTRY,expected_sources['slice/entry.py'])
             if audit.get('source_sha256')!=expected_sources:issues[name].append('image-reference-source-correspondence-UNKNOWN')
             if not isinstance(s.get('user'),str) or not s['user'].isdecimal():issues[name].append('image-USER-not-explicitly-overridden')
-            policy=reference_policy() if audit.get('source_sha256')==expected_sources else None
+            policy=reference_policy(policy_entry) if audit.get('source_sha256')==expected_sources else None
             if 'principal_policy' in audit and audit['principal_policy']!=policy:issues[name].append('image-principal-policy-evidence-mismatch-UNKNOWN')
             role=s.get('x-cstack-role');policy_role='admin' if role in {'broker','receiver'} else role
             if not isinstance(policy,dict) or not isinstance(s.get('user'),str) or not s['user'].isdecimal() or int(s['user']) not in policy.get(policy_role,[]):issues[name].append('image-principal-policy-mismatch-UNKNOWN')
@@ -138,7 +143,7 @@ def scan(compose,runtime,expected_sha256,output,image_observer=inspect_image,obs
     facts_path=output/'host-observations.json'
     if observed_snapshot is None:facts_path.write_text(json.dumps(facts,sort_keys=True,separators=(',',':'))+'\n')
     else:assert json.loads(facts_path.read_text())==facts
-    ir=collect(cp,rp,sha(cp));ir['version']='0.1'
+    ir=collect(cp,rp,sha(cp),replay=observed_snapshot is not None);ir['version']='0.1'
     provenance={'source':str(facts_path),'sha256':sha(facts_path),'kind':'RUNTIME_OBSERVED'};ir['sources'].append(provenance)
     for service,reasons in issues.items():
         if reasons:

@@ -44,7 +44,9 @@ jobs:
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - run: lake exe cache get
-      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses
+      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement
+      - name: Full project Lean build (all root imports)
+        run: lake build
       - name: Python/Lean differential (fixtures + 250 seeded mutations)
         run: python3 tools/check_deployment_subset_differential.py
       - name: Contract witnesses and axiom report

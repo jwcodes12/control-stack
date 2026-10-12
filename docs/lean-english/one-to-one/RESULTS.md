@@ -1,4 +1,4 @@
-# G0 formal comparison results
+# **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly G0 formal))))))) comparison results
 
 **Scope:** 26 deployment-stack blocks only. These are gated formal comparisons, **not a compliant blind experiment**: semantic targets were frozen first, but Lean encodings were typed after original-source comparison, with prior implementation familiarity. See [METHOD.md](METHOD.md). Do not promote the English to independently verified on this basis.
 
@@ -34,6 +34,8 @@ The verdict is about the stated model formula, not world-assumption truth, the r
 | 26 | `omitted_tail_is_accepted` | EQUIVALENT | [26-omitted_tail_is_accepted.lean](26-omitted_tail_is_accepted.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 
 **Freshness notice (continuation draft PR #56):** Claim #23 (`runtime_trace`) has changed English and its G0 result is now **STALE**. The historical model-generated, non-strictly-blind comparison does not certify the revised block. G1–G7 (161 claims) have **never** been checked one-to-one. All writing and review to date are model-only; no independent human has reviewed the work.
+
+The corrected English for G0 blocks **1, 2, 3, 5, 12, 16, 20 and 23** is **STALE** against the originally gated comparison inputs. This is a freshness marking, not a new gate verdict. Those original comparisons were themselves not strictly blind. No independent human has reviewed any of this model-written and model-reviewed work; 161 G1–G7 claims have never received one-to-one comparison.
 
 ## Corrections to the English
 

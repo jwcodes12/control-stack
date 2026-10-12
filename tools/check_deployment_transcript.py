@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """T4.4 checker: generated module is current, kernel-checked with standard axioms only, and mutated transcripts do NOT check."""
 if not __debug__:raise SystemExit('cstack evidence checkers state their checks as assert; refusing to run under python -O')
+import concurrent.futures
 import copy
 import json
 import re
@@ -38,13 +39,20 @@ def main(negatives=True):
         def unchanged(e):return copy.deepcopy(e)
         expiry=max(int(x['request']['expires']) for x in events if 'expires' in x['request'])
         clock=recorded_clock();assert clock<expiry   # the recorded clock really is before every expiry
-        for label,mutate,now in (('release by an agent other than the approved one',swap_release_caller,clock),('second release of the same nonce accepted',accept_replay,clock),('review by a non-reviewer UID',wrong_reviewer,clock),
-                                 ('clock after the approvals and leases expired',unchanged,expiry+1)):
+        cases=(('release by an agent other than the approved one',swap_release_caller,clock),('second release of the same nonce accepted',accept_replay,clock),('review by a non-reviewer UID',wrong_reviewer,clock),
+               ('clock after the approvals and leases expired',unchanged,expiry+1))
+        def attempt(case):
+            label,mutate,now=case
             with tempfile.TemporaryDirectory(prefix='cstack-transcript-',dir=ROOT/'.git') as tmp:
                 path=Path(tmp)/'mutant.lean';path.write_text(generate(mutate(events),users,'Mutant',now=now))
                 result=lean(path)
-                text=result.stdout+result.stderr
-                assert result.returncode!=0 and ('proved that the proposition' in text or 'failed to synthesize' in text),('mutated transcript was certified or failed for an unrelated reason',label,text[:300])
-                rejected.append(label)
+            return label,result
+        # Each mutant is an independent Lean process, so they run concurrently (two at a time: the checks are CPU-bound).
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes=list(pool.map(attempt,cases))
+        for label,result in outcomes:
+            text=result.stdout+result.stderr
+            assert result.returncode!=0 and ('proved that the proposition' in text or 'failed to synthesize' in text),('mutated transcript was certified or failed for an unrelated reason',label,text[:300])
+            rejected.append(label)
     print('PASS: transcript module current; standard axioms only ('+str(len(axioms))+' reports);',len(rejected),'mutated transcripts rejected')
 if __name__=='__main__':main('--no-negatives' not in sys.argv)

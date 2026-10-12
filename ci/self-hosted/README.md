@@ -25,3 +25,8 @@ Only the repository's owner can open PRs (private repo). PR code from agents sti
 - Remove: `cd /opt/actions-runner && sudo -u ghrunner ./config.sh remove --token <removal token>`, delete `/opt/actions-runner`, `/var/lib/ghrunner`, the
   two `/etc/fstab` lines and `/opt/ci-shared`, then `sudo userdel ghrunner`.
 - Rebuild the shared Mathlib or bump the toolchain only together with `lean-toolchain` and the bind-mount source path.
+
+## Skip-if-unchanged (feedback only)
+`tools/ci_skip_unchanged.py` skips a Lean check when the bytes of its declared inputs are identical to the last run of that check that passed on this runner
+(digests in `/var/lib/ghrunner/check-cache`). A skip is printed as `SKIPPED ... NOT re-verified`. Only the fast tier uses it; the GitHub-hosted workflows always run
+everything. Force a full re-run with `workflow_dispatch` input `force`, or delete the cache directory. A cache entry is recorded only after a passing run.

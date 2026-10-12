@@ -22,6 +22,24 @@ def inventory():
     return {"claim_count": 187, "claims": rows}
 
 
+class ClaimSourceLocationTests(unittest.TestCase):
+    def test_g7_paths_resolve_under_controlstack(self):
+        path, source = trace.resolve_lean_source(
+            "Scenarios/SC27Chain.lean", trace.PARTS / "part-g7.md")
+        self.assertEqual(path, "ControlStack/Scenarios/SC27Chain.lean")
+        self.assertTrue(source.is_file())
+
+    def test_other_groups_do_not_silently_rebase(self):
+        with self.assertRaises(ValueError):
+            trace.resolve_lean_source(
+                "Scenarios/SC27Chain.lean", trace.PARTS / "part-g1.md")
+
+    def test_rejects_source_escape(self):
+        with self.assertRaises(ValueError):
+            trace.resolve_lean_source(
+                "../outside.lean", trace.PARTS / "part-g7.md")
+
+
 class DependencyInventoryNegativeControls(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

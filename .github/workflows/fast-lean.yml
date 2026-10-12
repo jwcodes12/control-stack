@@ -1,0 +1,106 @@
+name: fast-lean
+# FAST FEEDBACK ONLY. Runs on the self-hosted runner `oci-fast-1` (label `fast`), which keeps the read-only Mathlib build and a persistent
+# incremental Lean build cache, so a small change is checked in about a minute. It does NOT replace the GitHub-hosted workflows
+# (deployment-release, deployment-slice, ...), which stay the authoritative, clean-room gate.
+# Two runner processes (oci-fast-1, oci-fast-2) share the box, so up to two of these jobs run at once, each with its own incremental build cache.
+# The runner is an unprivileged user without sudo or docker; see ci/self-hosted/README.md. Jobs that need sudo or docker are not run here.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Re-run every check even if its inputs are unchanged since the last green run'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+env:
+  CI_CHECK_CACHE: /var/lib/ghrunner/check-cache
+  CI_FORCE: ${{ inputs.force && '1' || '0' }}
+jobs:
+  guards:
+    runs-on: [self-hosted, fast]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Generated artifacts and scenario/prereg guards are consistent
+        run: |
+          git fetch origin main
+          python3 tools/check_deployment_prereg.py --base origin/main
+          python3 tools/build_registry.py --check
+          python3 tools/build_statement_catalog.py --check
+          python3 tools/build_lean_english_overview.py --check
+          python3 tools/build_status.py --check
+          python3 tools/build_overview.py --check
+          python3 tools/check_scenarios.py --json > "$RUNNER_TEMP/scenario-lint.json"
+  python-suites:
+    runs-on: [self-hosted, fast]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Deployment Python suites (no sudo, no docker; skipped if no Python, JSON or data input changed)
+        run: >
+          python3 tools/ci_skip_unchanged.py --name python-suites --inputs '**/*.py' 'security_ir/**' 'extractors/**' 'examples/**' 'deployment/heldout/**'
+          'deployment/golden/**' 'deployment/schemas/**' 'deployment/pinned-*/**' 'deployment/*.json' 'scenarios/**/manifest.json'
+          -- bash -ec 'python3 tools/test_ci_skip_unchanged.py; for t in pins hardening release plan heldout slice remediated r2 attribution evidence runtime; do python3 tools/test_deployment_$t.py; done; python3 -m unittest discover -s trusted_stack -p "test_*.py"'
+  lean-transcript:
+    runs-on: [self-hosted, fast]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Link the read-only Mathlib build and this runner's persistent incremental build cache
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          echo "free disk: ${avail} MB"
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
+      - name: T4.4 transcript replay (generated module, axioms, falsifying mutants; skipped if its inputs are unchanged)
+        run: >
+          python3 tools/ci_skip_unchanged.py --name transcript --inputs 'ControlStack/**/*.lean' ControlStack.lean lakefile.lean lean-toolchain lake-manifest.json
+          tools/check_deployment_transcript.py tools/gen_deployment_transcript.py tools/ci_skip_unchanged.py
+          'deployment/runs/tier2/containers-final/events.json' 'deployment/runs/tier2/containers-final/clean/**'
+          -- bash -ec 'lake build; python3 tools/check_deployment_transcript.py'
+  lean-differential:
+    runs-on: [self-hosted, fast]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Link the read-only Mathlib build and this runner's persistent incremental build cache
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          echo "free disk: ${avail} MB"
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
+      - name: Python/Lean differential, batched fixture certificates, monotonicity (skipped if inputs unchanged)
+        run: >
+          python3 tools/ci_skip_unchanged.py --name differential --inputs 'ControlStack/**/*.lean' ControlStack.lean lakefile.lean lean-toolchain lake-manifest.json 'tools/*.py' 'deployment/**/*.py' 'security_ir/**' 'extractors/**' 'examples/**' 'trusted_stack/*.py' 'deployment/heldout/**' deployment/contract-witnesses.json 'deployment/pinned-*/**'
+          -- bash -ec 'lake build; python3 tools/check_deployment_subset_differential.py; python3 -m tools.check_deployment_fixture_batch; python3 tools/check_deployment_monotonicity.py'
+  lean-heldout:
+    runs-on: [self-hosted, fast]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Link the read-only Mathlib build and this runner's persistent incremental build cache
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          echo "free disk: ${avail} MB"
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
+      - name: Contract witnesses and both held-out rounds in the kernel (skipped if inputs unchanged)
+        run: >
+          python3 tools/ci_skip_unchanged.py --name heldout --inputs 'ControlStack/**/*.lean' ControlStack.lean lakefile.lean lean-toolchain lake-manifest.json 'tools/*.py' 'deployment/**/*.py' 'security_ir/**' 'extractors/**' 'examples/**' 'trusted_stack/*.py' 'deployment/heldout/**' deployment/contract-witnesses.json 'deployment/pinned-*/**'
+          -- bash -ec 'lake build; python3 tools/check_deployment_contract_witnesses.py; python3 tools/check_deployment_heldout.py --instantiate-known-code --output "$RUNNER_TEMP/heldout-static.json"; python3 tools/check_deployment_heldout.py --corpus deployment/heldout/tier10 --fresh-rules --instantiate-known-code --output "$RUNNER_TEMP/heldout-round2.json"'

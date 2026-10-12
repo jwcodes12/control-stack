@@ -32,6 +32,23 @@ def markdown_escape(value: object) -> str:
     return str(value).replace("|", "/").replace("\n", " ").strip()
 
 
+def resolve_lean_source(file_path: str, english_path: Path) -> tuple[str, Path]:
+    """Resolve the source convention declared by each English claim group.
+
+    G7 explicitly uses paths relative to ControlStack/. Other groups use
+    repository-root-relative paths. Never silently guess a different module.
+    """
+    relative = Path(file_path)
+    if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+        raise ValueError(f"unsafe Lean source path: {file_path}")
+    if english_path.stem == "part-g7" and relative.parts[0] in ("Core", "Scenarios"):
+        relative = Path("ControlStack") / relative
+    absolute = (ROOT / relative).resolve()
+    if not absolute.is_relative_to(ROOT.resolve()) or not absolute.is_file():
+        raise ValueError(f"invalid or missing Lean source file: {file_path}")
+    return relative.as_posix(), absolute
+
+
 def english_claims() -> list[dict]:
     results: list[dict] = []
     for path in sorted(PARTS.glob("part-g[0-7].md")):
@@ -47,10 +64,7 @@ def english_claims() -> list[dict]:
                 section = section[:heading.start()]
             raw = text[match.start():match.end()] + section
             says = re.search(r"(?m)^-\s+\*\*Says[^*]*\*\*\s*(.*)$", raw)
-            file_path = match.group("file")
-            absolute = ROOT / file_path
-            if not absolute.is_file() or not absolute.resolve().is_relative_to(ROOT):
-                raise ValueError(f"invalid or missing Lean source file: {file_path}")
+            file_path, absolute = resolve_lean_source(match.group("file"), path)
             src = absolute.read_bytes()
             line = int(match.group("line"))
             if not (1 <= line <= len(src.splitlines())):

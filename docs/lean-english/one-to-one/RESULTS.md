@@ -1,4 +1,4 @@
-# **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly **STALE** (formerly G0 formal))))))) comparison results
+# G0 formal comparison results
 
 **Scope:** 26 deployment-stack blocks only. These are gated formal comparisons, **not a compliant blind experiment**: semantic targets were frozen first, but Lean encodings were typed after original-source comparison, with prior implementation familiarity. See [METHOD.md](METHOD.md). Do not promote the English to independently verified on this basis.
 
@@ -6,26 +6,26 @@ The verdict is about the stated model formula, not world-assumption truth, the r
 
 | # | Claim | Verdict | Proof | Note |
 |---|---|---|---|---|
-| 1 | `Accepted` | ENGLISH_WEAKER | [01-Accepted.lean](01-Accepted.lean) | “Only if” permits distinct broker/receiver UIDs. Lean IdentityChecked uses iff and requires them equal. Gated distinctBroker countermodel. |
-| 2 | `exclusive_sink` | ENGLISH_WEAKER | [02-exclusive_sink.lean](02-exclusive_sink.lean) | Literal conclusion admits broker as sink writer. Gate proves weaker formula; a separate contextual gate proves equivalence under Accepted plus sink-edge hypotheses. Do not mistake the arbitrary-edge countermodel for an accepted deployment. |
-| 3 | `database_custody` | ENGLISH_STRONGER | [03-database_custody.lean](03-database_custody.lean) | Clean broker→database edge refutes receiver-only conclusion. Lean permits receiver OR broker. |
+| 1 | `Accepted` | **STALE** (formerly ENGLISH_WEAKER) | [01-Accepted.lean](01-Accepted.lean) | “Only if” permits distinct broker/receiver UIDs. Lean IdentityChecked uses iff and requires them equal. Gated distinctBroker countermodel. |
+| 2 | `exclusive_sink` | **STALE** (formerly ENGLISH_WEAKER) | [02-exclusive_sink.lean](02-exclusive_sink.lean) | Literal conclusion admits broker as sink writer. Gate proves weaker formula; a separate contextual gate proves equivalence under Accepted plus sink-edge hypotheses. Do not mistake the arbitrary-edge countermodel for an accepted deployment. |
+| 3 | `database_custody` | **STALE** (formerly ENGLISH_STRONGER) | [03-database_custody.lean](03-database_custody.lean) | Clean broker→database edge refutes receiver-only conclusion. Lean permits receiver OR broker. |
 | 4 | `runtime_exclusive` | EQUIVALENT | [04-runtime_exclusive.lean](04-runtime_exclusive.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
-| 5 | `agent_not_receiver_uid` | UNDECIDED | [05-agent_not_receiver_uid.lean](05-agent_not_receiver_uid.lean) | Says quantifies every node; Under restricts a to an agent. Literal reading is gated-false on the receiver itself. Agent-only reading matches Lean; input is internally inconsistent. |
+| 5 | `agent_not_receiver_uid` | **STALE** (formerly UNDECIDED) | [05-agent_not_receiver_uid.lean](05-agent_not_receiver_uid.lean) | Says quantifies every node; Under restricts a to an agent. Literal reading is gated-false on the receiver itself. Agent-only reading matches Lean; input is internally inconsistent. |
 | 6 | `agent_call_legal` | EQUIVALENT | [06-agent_call_legal.lean](06-agent_call_legal.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 7 | `protocol_safe` | EQUIVALENT | [07-protocol_safe.lean](07-protocol_safe.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 8 | `one_use` | EQUIVALENT | [08-one_use.lean](08-one_use.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 9 | `gate_contract` | EQUIVALENT | [09-gate_contract.lean](09-gate_contract.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 10 | `broker_contract` | EQUIVALENT | [10-broker_contract.lean](10-broker_contract.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 11 | `deployment_safe` | EQUIVALENT | [11-deployment_safe.lean](11-deployment_safe.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
-| 12 | `accepted_no_avoided_path` | ENGLISH_STRONGER | [12-accepted_no_avoided_path.lean](12-accepted_no_avoided_path.lean) | Accepted graph may include an agent→reviewer avoided path. Lean excludes paths to sink and database only. |
+| 12 | `accepted_no_avoided_path` | **STALE** (formerly ENGLISH_STRONGER) | [12-accepted_no_avoided_path.lean](12-accepted_no_avoided_path.lean) | Accepted graph may include an agent→reviewer avoided path. Lean excludes paths to sink and database only. |
 | 13 | `accepted_path_safety_monotone` | EQUIVALENT | [13-accepted_path_safety_monotone.lean](13-accepted_path_safety_monotone.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 14 | `path_edge_subset` | EQUIVALENT | [14-path_edge_subset.lean](14-path_edge_subset.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 15 | `requested_monotonicity_counterexample` | EQUIVALENT | [15-requested_monotonicity_counterexample.lean](15-requested_monotonicity_counterexample.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
-| 16 | `deployment_broker_safe` | ENGLISH_STRONGER | [16-deployment_broker_safe.lean](16-deployment_broker_safe.lean) | Useful cap-1 one-release model satisfies all premises and publishes one nonce. Lean concludes ≤ cap; strict < cap is false. |
+| 16 | `deployment_broker_safe` | **STALE** (formerly ENGLISH_STRONGER) | [16-deployment_broker_safe.lean](16-deployment_broker_safe.lean) | Useful cap-1 one-release model satisfies all premises and publishes one nonce. Lean concludes ≤ cap; strict < cap is false. |
 | 17 | `indexed_receipts_sound` | EQUIVALENT | [17-indexed_receipts_sound.lean](17-indexed_receipts_sound.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 18 | `transaction_preserves` | EQUIVALENT | [18-transaction_preserves.lean](18-transaction_preserves.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 19 | `transaction_coherent` | EQUIVALENT | [19-transaction_coherent.lean](19-transaction_coherent.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
-| 20 | `halted_absorbing` | EQUIVALENT | [20-halted_absorbing.lean](20-halted_absorbing.lean) | Entire-state identity exceeds the displayed theorem conclusion but is derivable from the complete Step relation and halted premise. Gated proof establishes equivalence on that domain. |
+| 20 | `halted_absorbing` | **STALE** (formerly EQUIVALENT) | [20-halted_absorbing.lean](20-halted_absorbing.lean) | Entire-state identity exceeds the displayed theorem conclusion but is derivable from the complete Step relation and halted premise. Gated proof establishes equivalence on that domain. |
 | 21 | `committed_nonce_unusable` | EQUIVALENT | [21-committed_nonce_unusable.lean](21-committed_nonce_unusable.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 22 | `trace_preserves` | EQUIVALENT | [22-trace_preserves.lean](22-trace_preserves.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 23 | `runtime_trace` | **STALE** (formerly UNDECIDED) | [23-runtime_trace.lean](23-runtime_trace.lean) | English Says changed to distinguish trace proposition from ten-step proof construction. Previous G0 comparison used the old English; no strictly blind gate-passing recheck of this changed block exists. |
@@ -35,7 +35,7 @@ The verdict is about the stated model formula, not world-assumption truth, the r
 
 **Freshness notice (continuation draft PR #56):** Claim #23 (`runtime_trace`) has changed English and its G0 result is now **STALE**. The historical model-generated, non-strictly-blind comparison does not certify the revised block. G1–G7 (161 claims) have **never** been checked one-to-one. All writing and review to date are model-only; no independent human has reviewed the work.
 
-The corrected English for G0 blocks **1, 2, 3, 5, 12, 16, 20 and 23** is **STALE** against the originally gated comparison inputs. This is a freshness marking, not a new gate verdict. Those original comparisons were themselves not strictly blind. No independent human has reviewed any of this model-written and model-reviewed work; 161 G1–G7 claims have never received one-to-one comparison.
+**Freshness correction:** Claims **1, 2, 3, 5, 12, 16, 20 and 23** had their English wording corrected after the historical G0 comparison inputs. Every old verdict is **STALE**; this does not constitute a new gate result. That historical check was model-written/model-reviewed and not strictly blind, and there has been **no independent human review**. G1–G7 (161 claims) have never been checked one-to-one.
 
 ## Corrections to the English
 

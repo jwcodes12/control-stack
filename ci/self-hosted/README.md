@@ -32,3 +32,4 @@ Only the repository's owner can open PRs (private repo). PR code from agents sti
 everything. Force a full re-run with `workflow_dispatch` input `force`, or delete the cache directory. A cache entry is recorded only after a passing run.
 
 (Measured on PR #58: a cold run with every check executing took 271 s wall; see the PR for the docs-only skip run.)
+(docs-only probe)

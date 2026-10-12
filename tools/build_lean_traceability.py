@@ -67,8 +67,14 @@ def english_claims() -> list[dict]:
             file_path, absolute = resolve_lean_source(match.group("file"), path)
             src = absolute.read_bytes()
             line = int(match.group("line"))
-            if not (1 <= line <= len(src.splitlines())):
+            source_lines = src.decode("utf-8").splitlines()
+            if not (1 <= line <= len(source_lines)):
                 raise ValueError(f"bad English source location: {file_path}:{line}")
+            declaration = match.group("lean").rsplit(".", 1)[-1]
+            if declaration not in source_lines[line - 1]:
+                raise ValueError(
+                    f"English declaration name not at recorded source line: "
+                    f"{match.group('lean')} -> {file_path}:{line}")
             results.append({
                 "ordinal": len(results)+1,
                 "english_source": path.relative_to(ROOT).as_posix(),

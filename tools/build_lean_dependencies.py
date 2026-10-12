@@ -15,6 +15,9 @@ ALLOWED = {"propext", "Quot.sound", "Classical.choice"}
 LEAN_PREFIX = r"""
 import Lean
 import ControlStack
+-- Recorded transcript claims are not imported by the general root module.
+-- Import the frozen module without altering its pinned proof source.
+import ControlStack.Deployment.TranscriptReplay
 open Lean Elab Command
 
 private def projectClosure (env : Environment) (root : Name) : Array Name × Bool := Id.run do

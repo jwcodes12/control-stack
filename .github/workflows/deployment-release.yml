@@ -181,6 +181,15 @@ jobs:
           # Use the pinned kernel runner so optional Lean tests do not silently skip.
           for test in tools/test_deployment_*.py; do
             echo "::group::$test"
+            # Modules that chown fixtures through passwordless sudo cannot run on the sudo-less self-hosted runner.
+            # Report that loudly (a SKIPPED module is not a pass); deployment-slice/fixtures runs them on a hosted runner.
+            if grep -q "'sudo'" "$test" && ! sudo -n true 2>/dev/null; then
+              echo "SKIPPED $test - needs passwordless sudo, unavailable here; NOT verified by this job (covered only by deployment-slice/fixtures on a hosted runner)"
+              echo "::warning::SKIPPED $test (needs passwordless sudo; not verified by this job)"
+              echo "- SKIPPED \`$test\` (needs passwordless sudo): NOT verified in this job" >> "$GITHUB_STEP_SUMMARY"
+              echo "::endgroup::"
+              continue
+            fi
             module="${test%.py}"
             module="${module//\//.}"
             python3 -m "$module"

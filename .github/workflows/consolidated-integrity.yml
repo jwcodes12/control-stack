@@ -4,6 +4,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   pull_request:
+  push:
+    branches: [audit/lean-reuse-187-20261011]
   workflow_dispatch:
 permissions:
   contents: read

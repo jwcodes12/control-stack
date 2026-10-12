@@ -7,6 +7,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
   pull_request:
+  push:
+    branches: [audit/lean-reuse-187-20261011]
   workflow_dispatch:
 permissions:
   contents: read
@@ -63,6 +65,25 @@ jobs:
         run: python3 tools/build_lean_dependencies.py --emit-bootstrap
       - name: Bootstrap 187-claim English/Lean traceability
         run: python3 tools/build_lean_traceability.py --emit-bootstrap
+      - name: Package environment-derived indexes for reproducible import
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-187-claim-indexes
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            docs/lean-english/DEPENDENCIES.json
+            docs/lean-english/DEPENDENCIES.md
+            docs/lean-english/TRACEABILITY.json
+            docs/lean-english/TRACEABILITY.md
+      - name: Record generated index SHA-256 digests and scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "source_commit=$GITHUB_SHA"
+          sha256sum docs/lean-english/{DEPENDENCIES,TRACEABILITY}.{json,md}
+          echo "**Generated files are model-written/model-reviewed, not independently human-reviewed.**" >> "$GITHUB_STEP_SUMMARY"
+          echo "Generated from Lean environment on commit $GITHUB_SHA; these are NOT English-fidelity or deployment-assurance certificates." >> "$GITHUB_STEP_SUMMARY"
       - name: Batched certificate negative controls (invalid Lean proof and nonstandard axiom)
         run: python3 -m tools.test_deployment_fixture_batch_negative
       - name: Python/Lean differential (fixtures + 250 seeded mutations)

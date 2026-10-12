@@ -58,7 +58,7 @@ def check_axiom_reports(output, n_items):
     missing or malformed per-fixture certificate.
     """
     reports = re.findall(
-        r"'([^']+)' (does not depend on any axioms|depends on axioms: \\[([^\\]]*)\\])",
+        r"'([^']+)' (does not depend on any axioms|depends on axioms: \[([^\]]*)\])",
         output,
     )
     found = Counter(name for name, _, _ in reports)
@@ -66,14 +66,14 @@ def check_axiom_reports(output, n_items):
     if found != required:
         raise ValueError(
             f"Missing, unexpected, or duplicated per-certificate axiom reports: "
-            f"required={required}, found={found}\\n{output}"
+            f"required={required}, found={found}\n{output}"
         )
     for name, _, axioms in reports:
         disallowed = {a.strip() for a in axioms.split(",") if a.strip()} - ALLOWED
         if disallowed:
-            raise ValueError(f"Disallowed axioms for {name}: {sorted(disallowed)}\\n{output}")
+            raise ValueError(f"Disallowed axioms for {name}: {sorted(disallowed)}\n{output}")
     if "sorryAx" in output:
-        raise ValueError("Unsafe sorryAx in batch Lean report:\\n" + output)
+        raise ValueError("Unsafe sorryAx in batch Lean report:\n" + output)
 
 
 def check_many_fixtures(items):

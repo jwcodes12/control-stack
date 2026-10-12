@@ -122,8 +122,20 @@ def dependencies() -> dict[int, dict]:
             raise ValueError("duplicate environment dependency ordinal")
         if not {"lean", "direct", "dependencies", "axioms", "axioms_standard"} <= row.keys():
             raise ValueError("missing environment dependency fields")
-        if row["axioms_standard"] != (set(row["axioms"]) <= STANDARD):
+        if not isinstance(row["lean"], str) or not row["lean"].startswith("ControlStack."):
+            raise ValueError("invalid elaborated Lean declaration name")
+        for field in ("direct", "dependencies", "axioms"):
+            values = row[field]
+            if (not isinstance(values, list) or
+                    any(not isinstance(x, str) for x in values) or
+                    values != sorted(set(values))):
+                raise ValueError(f"invalid/unsorted dependency field {field}")
+        if not set(row["direct"]) <= set(row["dependencies"]):
+            raise ValueError("missing direct declaration from transitive closure")
+        if not isinstance(row["axioms_standard"], bool) or row["axioms_standard"] != (set(row["axioms"]) <= STANDARD):
             raise ValueError("axiom verdict mismatch")
+        if not row["axioms_standard"]:
+            raise ValueError("nonstandard Lean axiom footprint in index")
         result[row["ordinal"]] = row
     if set(result) != set(range(1, 188)):
         raise ValueError("missing dependency rows")

@@ -27,6 +27,8 @@ jobs:
           # The handoff explicitly authorizes one NEW prereg; existing files stay frozen.
           # Its exact bytes must match the first addition commit and every input hash.
           python3 tools/check_deployment_prereg.py --base origin/main
+      - name: Dependency and traceability fail-closed negative controls
+        run: python3 -m unittest tools.test_lean_indexes_negative
       - name: Regenerated theorem registry and normalized catalog consistent
         run: |
           python3 tools/build_registry.py --check

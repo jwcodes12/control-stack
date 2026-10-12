@@ -98,6 +98,8 @@ def environment_rows(names: list[str]) -> dict[str, dict]:
                 if not isinstance(row.get(field), list):
                     raise ValueError(f"missing field {field} for {key}")
                 row[field] = sorted(set(row[field]))
+            if not set(row["direct"]) <= set(row["dependencies"]):
+                raise ValueError(f"incomplete project closure for {key}")
             rows[key] = row
     if set(rows) != set(distinct):
         raise ValueError(f"missing: {sorted(set(distinct)-set(rows))}")
@@ -112,6 +114,10 @@ def render() -> tuple[str, str]:
          "axioms_standard": set(resolved[name]["axioms"]) <= ALLOWED}
         for i, name in enumerate(names, 1)
     ]
+    unsupported = [(e["ordinal"], e["lean"], e["axioms"])
+                   for e in entries if not e["axioms_standard"]]
+    if unsupported:
+        raise ValueError(f"nonstandard Lean axioms in environment inventory: {unsupported}")
     machine = json.dumps({
         "method": "Lean Environment ConstantInfo transitive closure and collectAxioms",
         "claim_count": len(entries), "claims": entries

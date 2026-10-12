@@ -13,27 +13,52 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-negative-controls-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/egress.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED negative-controls - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install Linux test prerequisites
         run: sudo apt-get update && sudo apt-get install -y bubblewrap openssl strace
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Oracle regressions
         run: |
           /usr/bin/python3 egress/test_oracle.py
           /usr/bin/python3 egress/check_evidence.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Parser regression (explicit partial result)
         run: /usr/bin/python3 egress/suite.py --gateway-only --output egress/results/ci-parser.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Full isolated suite (capability failure fails this job)
         run: sudo /usr/bin/python3 egress/suite.py --output egress/results/ci-full.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Shared namespace is rejected
         run: sudo /usr/bin/python3 egress/suite.py --self-check-shared-net --output egress/results/ci-namespace-mutation.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Failed forbidden SYN is detected independently
         run: sudo /usr/bin/python3 egress/suite.py --self-check-packet-oracle --output egress/results/ci-packet-mutation.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Direct mirror traffic without gateway provenance is detected
         run: sudo /usr/bin/python3 egress/suite.py --self-check-direct-mirror --output egress/results/ci-mirror-mutation.json
+        if: steps.green.outputs.cache-hit != 'true'
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ steps.green.outputs.cache-hit != 'true' && (always()) }}
         with:
           name: egress-outcome-matrix
           path: egress/results/ci-*.json
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   lean-egress:
     runs-on: ubuntu-24.04
     timeout-minutes: 10

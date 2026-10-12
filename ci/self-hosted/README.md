@@ -33,3 +33,5 @@ everything. Force a full re-run with `workflow_dispatch` input `force`, or delet
 
 (Measured on PR #58: a cold run with every check executing took 271 s wall; see the PR for the docs-only skip run.)
 (docs-only probe)
+
+(docs-only probe for the hosted skip)

@@ -3,6 +3,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -44,8 +46,18 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-kernel-review-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/consolidated-integrity.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED kernel-review - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install exact pinned Lean toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -55,6 +67,7 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Kernel-check F6 and F8 candidate proof statements with no sorryAx
         shell: bash
         run: |
@@ -71,3 +84,13 @@ jobs:
             echo 'ERROR: unexpected unsafe proof axiom'
             exit 1
           fi
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

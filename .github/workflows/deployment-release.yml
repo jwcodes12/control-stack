@@ -6,6 +6,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -43,10 +45,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-full-build-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/deployment-release.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED full-build - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install pinned Lean
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -56,19 +68,41 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
+        if: steps.green.outputs.cache-hit != 'true'
       - run: lake exe cache get
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Full project Lean build (all root imports)
         run: lake build
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   kernel:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-kernel-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/deployment-release.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED kernel - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install pinned Lean
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -78,18 +112,26 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
+        if: steps.green.outputs.cache-hit != 'true'
       - run: lake exe cache get
+        if: steps.green.outputs.cache-hit != 'true'
       - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Python/Lean differential (fixtures + 250 seeded mutations)
         run: python3 tools/check_deployment_subset_differential.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Contract witnesses and axiom report
         run: python3 tools/check_deployment_contract_witnesses.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: T4.4 checked transcript replay (generated module, axioms, falsifying mutants)
         run: python3 tools/check_deployment_transcript.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Held-out sealed corpus in the kernel
         run: python3 tools/check_deployment_heldout.py --instantiate-known-code --output /tmp/heldout-static.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Held-out round 2 (hardened profile, post-fix; the pre-fix false CONDITIONAL is archived)
         run: python3 tools/check_deployment_heldout.py --corpus deployment/heldout/tier10 --fresh-rules --instantiate-known-code --output /tmp/heldout-round2.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Demo static stages; live stages must be reported SKIPPED, exit 3
         run: |
           set +e
@@ -106,6 +148,16 @@ jobs:
           PY
           cat /tmp/demo/DEMO.md >> "$GITHUB_STEP_SUMMARY"
           echo '**Live container stages: SKIPPED on GitHub runners (not a pass).**' >> "$GITHUB_STEP_SUMMARY"
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   live-containers:
     # Requires the supported host: offline rootfs at /var/tmp/sc01-vm-assets/build-root, passwordless sudo, Docker.
     # GitHub-hosted runners have Docker but not the pinned offline rootfs; this job is therefore always skipped here.

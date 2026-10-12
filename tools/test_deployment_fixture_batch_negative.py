@@ -75,12 +75,12 @@ def check_live_lean_controls():
             "'SliceBatch.nonstandard_report'",
             f"'{corrupted_name}'",
         )
-        standard_others = "\\n".join(
+        standard_others = "\n".join(
             f"'{name}' does not depend on any axioms"
             for name in expected if name != corrupted_name
         )
         must_reject(
-            lambda: check_axiom_reports(standard_others + "\\n" + substitute, 1),
+            lambda: check_axiom_reports(standard_others + "\n" + substitute, 1),
             "Lean-generated non-standard axiom with all 9 named reports present",
         )
 

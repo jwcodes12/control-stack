@@ -31,7 +31,11 @@ private def projectClosure (env : Environment) (root : Name) : Array Name × Boo
         if let some info := env.find? n then
           if n != root && "ControlStack.".isPrefixOf n.toString then
             output := output.push n
-          pending := info.getUsedConstantsAsSet.toList ++ pending
+          -- Non-project imported libraries cannot depend back on ControlStack.
+          -- Restrict project closure to project constants; collectAxioms below
+          -- separately computes the full axiom footprint through all imports.
+          pending := (info.getUsedConstantsAsSet.toList.filter
+            (fun child => "ControlStack.".isPrefixOf child.toString)) ++ pending
   return (output.qsort Name.lt, pending.isEmpty)
 
 run_cmd do

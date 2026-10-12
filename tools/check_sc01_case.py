@@ -52,9 +52,16 @@ def compile_all(m):
     """Compile every listed Lean file, in parallel where imports allow; a file starts after the listed files it imports."""
     build = ROOT / ".lake" / "build" / "lib" / "lean"
     files = [e["file"] for k in ("lean", "supporting_lean") for e in m.get(k, [])]
-    mods = {f[:-len(".lean")].replace("/", "."): f for f in files}
-    deps = {f: [mods[i] for i in re.findall(r"^import\s+(\S+)", (ROOT / f).read_text(), re.M) if i in mods] for f in files}
-    done = {f: threading.Event() for f in files}
+    deps = {}
+    todo = list(files)
+    while todo:  # also compile unlisted project modules the listed files import, so a clean checkout has their .olean
+        f = todo.pop()
+        if f in deps:
+            continue
+        imports = re.findall(r"^import\s+(\S+)", (ROOT / f).read_text(), re.M)
+        deps[f] = [i.replace(".", "/") + ".lean" for i in imports if (ROOT / (i.replace(".", "/") + ".lean")).is_file()]
+        todo.extend(deps[f])
+    done = {f: threading.Event() for f in deps}
     results = {}
 
     def run(f):
@@ -72,8 +79,19 @@ def compile_all(m):
         finally:
             done[f].set()
 
-    with ThreadPoolExecutor(max_workers=max(1, min(len(files), os.cpu_count() or 1))) as ex:
-        list(ex.map(run, files))
+    with ThreadPoolExecutor(max_workers=max(1, min(len(deps), os.cpu_count() or 1))) as ex:
+        order, seen = [], set()
+
+        def visit(f):  # submit dependencies first so no worker blocks on a task that cannot start
+            if f not in seen:
+                seen.add(f)
+                for d in deps[f]:
+                    visit(d)
+                order.append(f)
+
+        for f in deps:
+            visit(f)
+        list(ex.map(run, order))
     return results
 
 

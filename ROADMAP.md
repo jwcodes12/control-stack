@@ -1,5 +1,11 @@
 # ROADMAP: control-stack status (kept current; last updated 2026-10-11: deployment verifier at scoped R2 with Tiers 1-10 merged; all 28 scenarios CONDITIONAL with Lean models; preregistered single-host runtime evidence for 15 scenarios)
 
+## Draft PR #56 continuation after merged #55 — current work queue
+
+**Model-written/model-reviewed; no independent human review.** PR #55 was merged separately; the remaining proof-reuse, guard-necessity and English-traceability queue continues in **draft PR #56** (branch audit/lean-reuse-187-20261011). This supersedes the historical "none open" heading below; that heading records the earlier R2 handoff at PR #54, not current GitHub state.
+
+Partial formal work now includes GuardNecessity deletion models, a combined broker/provenance theorem and SC-16 refinement-transfer bridge alongside SC-25. Real environment dependency and 187-claim traceability outputs are **not yet generated/checked**; eight previously compared G0 blocks are marked **STALE**, and G1–G7 (161 claims) were never one-to-one checked. The most recent **fully green** check seen in the continuation was on the earlier commit 71593ff, not the draft PR's latest head. The local full sweep, per-claim axiom audit, live-OS correspondence and independent human review remain unverified. See docs/lean-english/PR55-HANDOFF.md, CORRECTNESS-AUDIT.md and RELEASE-LOG-DESIGN.md. Do not merge PR #56 until final-head green checks and owner review conditions are met.
+
 ## Deployment verifier and what is next — 2026-10-11 (all PRs merged, none open; source generation `r2-v7`)
 Full handoff: `deployment/HANDOFF-NEXT.md`. State: scoped R2 for the local-file two-agent slice, every release gate met **except independent human review (G1)**;
 verdicts never exceed CONDITIONAL. Read `END-STATE.md`, `docs/DEPLOYMENT-CLAIM-v0.md` (section "Tier 10"), `deployment/REVIEW-PACKET-R2.md`.

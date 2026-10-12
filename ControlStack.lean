@@ -1,10 +1,14 @@
 import ControlStack.Deployment.ComposedAssurance
 import ControlStack.Deployment.NamedContracts
 import ControlStack.Deployment.GuardNecessity
+import ControlStack.Deployment.GuardMinimality
+import ControlStack.Deployment.GuardMinimalityWitnesses
 import ControlStack.Deployment.ProvenanceWitnesses
 import ControlStack.Deployment.ReleaseLog
 import ControlStack.Deployment.ReleaseLogWitnesses
 import ControlStack.Scenarios.SC25RefinementReuse
+import ControlStack.Scenarios.GateReuse
+import ControlStack.Scenarios.RefinementReuse
 import ControlStack.Scenarios.SC16RefinementReuse
 import ControlStack.PolicyTamper
 import ControlStack.GateComposition

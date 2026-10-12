@@ -252,3 +252,68 @@ Every table row below corresponds to exactly one overview claim block; row count
 | SC-28 | **NOT direct instance** | One-step simulation requires `CInv s` and its preservation; the shared theorem does not carry invariants. |
 
 To reuse additional candidates safely, first prove a separately reviewed generic *invariant-preserving* transfer theorem and a per-scenario legal-trace side-condition theorem. **Do not** manufacture globally unconditional one-step hypotheses or rewrite pinned files. Existing wrappers are retained because pin/import/registry safety has not been established for their removal.
+
+
+## Addendum 2026-10-12: CANDIDATE rows re-examined with local Lean
+
+**Model-written/model-reviewed; no independent human review.** The earlier sections of this audit are unchanged and still describe the repository as it was. After them, the generic theorems the audit said were missing were proved and compiled locally (pinned toolchain; CI is the receipt of record): `Core/RunFixed.lean` (`foldl_fixed`, `foldl_field_fixed`, `foldl_rel_fixed`, `foldl_legal`) and `Core/RefinementTransferInv.lean` (`run_simulation_guarded`, the invariant- and legality-guarded form of `RefinementTransfer.run_simulation`). New bridge files `Scenarios/GateReuse.lean` and `Scenarios/RefinementReuse.lean` re-derive the pinned theorems from them.
+
+**What a bridge is.** For each row below, a theorem `<name>_via_gate` or `<name>_via_transfer` is stated with the *same* statement as the pinned theorem and proved from the shared lemma through the scenario's own `sys`/`spec` client or its pinned one-step `simulation` and invariant preservation. A `<name>_agree : @X_via_… = @X := rfl` theorem checks the two have the same type. **The pinned theorems and files are not changed or deleted**, so this shows the scenario-local `run_inv`/`halt_freezes`/`simulation_run` inductions are instances of the generic ones; it does not remove the duplicates (that would break pinned hashes).
+
+**Bridged (44 of the 70 CANDIDATE rows).**
+- `EgressGate.trace_safe`
+- `SC06.sc06_safe`
+- `SC06.halt_freezes`
+- `SC07Refinement.concrete_safe`
+- `SC08.sc08_safe`
+- `SC08.halt_freezes`
+- `SC09.sc09_safe`
+- `SC09.halt_freezes`
+- `SC10.sc10_safe`
+- `SC10.halt_freezes`
+- `SC12.sc12_safe`
+- `SC12.halt_freezes`
+- `SC14.sc14_safe`
+- `SC14.halt_freezes`
+- `SC15.sc15_safe`
+- `SC15.halt_freezes`
+- `SC16.sc16_safe`
+- `SC16.halt_freezes`
+- `SC16Refinement.concrete_safe`
+- `SC16Refinement.concrete_reviewed_content`
+- `SC17.sc17_safe`
+- `SC17.halt_freezes`
+- `SC18.sc18_safe`
+- `SC18.halt_freezes`
+- `SC18Refinement.concrete_safe`
+- `SC19.sc19_safe`
+- `SC19.halt_freezes`
+- `SC20.sc20_safe`
+- `SC20.halt_freezes`
+- `EvalIntegrity.sc21_safe`
+- `SC23.sc23_safe`
+- `SC23.halt_freezes`
+- `SC25.sc25_safe`
+- `SC25.halt_freezes`
+- `SC25Refinement.concrete_safe`
+- `SC25Refinement.concrete_content_safe`
+- `SC26.sc26_safe`
+- `SC26.halt_freezes`
+- `SC26Refinement.concrete_safe`
+- `SC27Chain.sc27_safe`
+- `SC27Chain.halt_freezes`
+- `SC28.sc28_safe`
+- `SC28.halt_freezes`
+- `SC28Refinement.concrete_safe`
+
+**Not bridged (26 rows), and why.**
+- `EgressGate.step_safe`: already the `step_inv` field of `GateClients.egressSpec`: the local theorem is the *source* of the client, so reuse already runs in that direction.
+- `SC05.forbidden_never_executes`: already proved directly by `Gate.Spec.trace_safe` (`(spec forbidden).trace_safe ...`); reclassify as DIRECT CORE.
+- `AuditDispatch.trace_safe`: its conclusion is `Inv ∧ audits prefix`, while the shared theorem's second component is the *effects* prefix; different statement, not bridged.
+- `AuditDispatch.app_cannot_effect`: already the `inert` field of `GateClients.dispatchNoAgentEffects`; source of the client, not a duplicate.
+- Liveness rows (`SC07Liveness.upload_completes`, `SC07Liveness.exfil_needs_windows`, `SC07Liveness.shared_quota_blocks`, `SC18Liveness.honest_release`, `SC18Liveness.progress_interleaved`, `SC18Liveness.silent_ticks_halt`, `SC18Liveness.Resume.resume_safe`, `SC18Liveness.Resume.resume_progress`, `SC26Liveness.honest_progress`, `SC26Liveness.progress_interleaved`, `SC26Liveness.Concrete.crash_tolerant_progress`, `SC26LossyLiveness.lossy_rounds`, `SC26LossyHalt.tagged_rounds`, `SC28Liveness.honest_steps_progress`, `SC28Liveness.progress_interleaved`, `SC28Liveness.global_cap_blocks_honest`): the common part is trace-monotonicity algebra only; each progress theorem depends on its scenario's schedule, enablement and fairness assumptions, so there is no common precise statement to bridge. Not forced.
+- `SC23IsolationV2.noninterference_authed`, `w1_impossible_v2`, `sc23v2_safe_authenticated`: not examined for a bridge in this pass. They sit on the authenticated-adversary wrapper (`specAuthed := authedSpec (raw E) claim (spec E)`), not on the plain `sys`/`spec` client the bridges use.
+- `SC27Refinement.concrete_ext_safe`, `concrete_tampered_never_anchored`: the one-step simulation needs the trace-wide `TraceInj` obligation and the `ExamInj` side condition, not a per-step invariant, so the guarded lemma does not apply.
+- `SC28Refinement.exclusive_placement_safe`: not examined in this pass.
+
+Counts after this addendum (rows, one per overview row; the table above is not edited): DIRECT CORE 17 and EXISTING LEMMA 75 unchanged; of the 70 CANDIDATE rows, 44 now have a compiled bridge, 2 (`SC05.forbidden_never_executes`, `AuditDispatch.app_cannot_effect`) are in fact already direct reuse, and 24 stay open for the reasons above. No theorem statement, English block or pinned file changed, so the 187-claim dependency and traceability indexes still pass `--check` unchanged.

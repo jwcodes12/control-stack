@@ -61,10 +61,10 @@ jobs:
       - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.GuardNecessity ControlStack.Deployment.ComposedAssurance ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse ControlStack.Scenarios.SC16RefinementReuse
       - name: Full project Lean build (all root imports)
         run: lake build
-      - name: Bootstrap Lean environment dependency inventory
-        run: python3 tools/build_lean_dependencies.py --emit-bootstrap
-      - name: Bootstrap 187-claim English/Lean traceability
-        run: python3 tools/build_lean_traceability.py --emit-bootstrap
+      - name: Check generated Lean dependency inventory at exact source HEAD
+        run: python3 tools/build_lean_dependencies.py --check
+      - name: Check generated English/Lean traceability at exact source HEAD
+        run: python3 tools/build_lean_traceability.py --check
       - name: Package environment-derived indexes for reproducible import
         uses: actions/upload-artifact@v4
         with:
@@ -95,7 +95,9 @@ jobs:
           # Use the pinned kernel runner so optional Lean tests do not silently skip.
           for test in tools/test_deployment_*.py; do
             echo "::group::$test"
-            python3 "$test"
+            module="${test%.py}"
+            module="${module//\//.}"
+            python3 -m "$module"
             echo "::endgroup::"
           done
           python3 -m unittest discover -s trusted_stack -p 'test_*.py'

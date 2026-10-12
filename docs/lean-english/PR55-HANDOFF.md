@@ -79,3 +79,11 @@ The GitHub Actions runs API last showed `71593ff` as the newest completed workfl
 5. Only after all software gates are genuinely green may PR #56 be marked ready for **independent human review**. It must remain **unmerged** until that review. Live Docker/offline-rootfs execution and English-to-Lean strictly blind checks remain separate unclosed obligations.
 
 No exact release-byte/destination proof, trusted Python/SQLite/OS implementation refinement, human review, or deployment assurance is asserted.
+
+## 2026-10-12: pinned CI artifact integration (follow-on to bootstrap)
+
+**All work model-written/model-reviewed, no independent human review. PR #56 stays DRAFT/UNMERGED.** The pinned `deployment-release` run at `58f66db16ab27b0172cdff39845df2dd8256dff8` completed the full Lean build and generated both indexes (187 rows each), plus completed the Python/Lean differential stage. GitHub Actions artifact `lean-187-claim-indexes` (run 38305198847; SHA `58f66db`) contained four outputs. Their exact file bytes were restored as Git blobs on this branch; `deployment-release` and `consolidated-integrity` now run `--check` against those committed bytes. This was a **generation** receipt, not a final-head green suite.
+
+The full sweep failed afterward at `tools/test_deployment_fixture_batch_negative.py` when launched as a filesystem path (`ModuleNotFoundError: No module named 'tools'`). The workflow now invokes every `tools.test_deployment_*` as a Python module. The next new SHA must pass the whole sweep; no result is asserted ahead of that run. Bootstrap emitters are no longer used by the CI pipeline. Future index changes must be generated on the pinned GitHub Actions runner, committed exactly, and checked again at final HEAD.
+
+The old handoff's requirement to manually import bootstrap logs has now been satisfied by the uploaded Actions artifact and GitHub blob restoration; that procedure is historical, not currently required. Strictly blind human-fidelity checks, actual deployment correspondence, offline-rootfs/container stages and independent human review remain outstanding. **Do not merge.**

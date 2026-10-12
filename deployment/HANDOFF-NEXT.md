@@ -82,3 +82,8 @@ The Lean differential test (`tools/test_deployment_lean.py`) takes about 12 minu
 ## 2026-10-12: generated-index continuation (draft PR #56)
 
 No new GitHub Actions runs are attached to post-71593ff branch commits; fresh exact-head verification is **OPEN**. Bootstrap generation, negative-control/unit sweep and CI --check wiring have been committed but **not run or certified**. Follow `docs/lean-english/PR55-HANDOFF.md` for GitHub Actions manual-dispatch and log-import instructions. Missing DEPENDENCIES/TRACEABILITY outputs are an intentional fail-closed software gate, not a pass. No independent human review; all changes remain model-written/model-reviewed. Preserve frozen files and do not merge PR #56.
+
+
+## 2026-10-12 — pinned 187-claim indexes committed
+
+The four `docs/lean-english/{DEPENDENCIES,TRACEABILITY}.{json,md}` files were generated in the pinned GitHub Actions kernel run 38305198847, with 187 rows each, and committed as Git blobs. Both workflows now run `--check`. Exact-final-commit green CI is **NOT YET RECEIVED**; previous job 38305198847 failed at the full test sweep because a Python module was executed by pathname instead of `python3 -m`, and the invocation is fixed for the next run. Keep PR #56 draft and unmerged. No independent human review: all changes model-written/model-reviewed.

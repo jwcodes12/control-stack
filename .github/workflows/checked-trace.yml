@@ -3,6 +3,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - 'ControlStack/Core/CheckedTrace.lean'
@@ -13,14 +15,32 @@ permissions:
   contents: read
 jobs:
   source-only-replay:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-source-only-replay-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/checked-trace.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED source-only-replay - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned Lean
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -30,14 +50,26 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Kernel-build proof and negative examples, report axioms
         run: |
           set -euo pipefail
-          lake exe cache get
+          if [ "$RUNNER_ENVIRONMENT" = github-hosted ]; then lake exe cache get; fi
           lake build ControlStack.Core.CheckedTrace
           lake env lean ControlStack/Core/CheckedTrace.lean 2>&1 | tee checked-trace-axioms.log
           if grep -Eq 'sorryAx|error:' checked-trace-axioms.log; then exit 1; fi
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Verify source registries
         run: |
           python3 tools/build_registry.py --check
           python3 tools/build_statement_catalog.py --check
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

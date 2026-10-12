@@ -1,5 +1,7 @@
 name: remaining-formal-families
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - 'reviews/family-strengthening/Remaining.lean'
@@ -14,18 +16,36 @@ permissions:
   contents: read
 jobs:
   lean-remainder:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-lean-remainder-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/remaining-formal-families.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED lean-remainder - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned Lean toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Kernel check F6 finite weighted histories and F8 concrete joint-budget transitions
         shell: bash
         run: |
           set -euo pipefail
           export PATH="$HOME/.elan/bin:$PATH"
-          lake exe cache get
+          if [ "$RUNNER_ENVIRONMENT" = github-hosted ]; then lake exe cache get; fi
           lake env lean reviews/family-strengthening/Remaining.lean | tee "$RUNNER_TEMP/remain-axioms.txt"
           lake env lean reviews/family-strengthening/EffectLifecycle.lean | tee "$RUNNER_TEMP/effect-lifecycle-axioms.txt"
           for claim in MonitorHistory.adaptive_miss_mass_le_budgets JointAdmission.budget_run JointAdmission.no_admissions_after_halt; do
@@ -39,12 +59,14 @@ jobs:
             echo "Found unexpected sorry proof axiom"
             exit 1
           fi
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Differential actual SQLite and filesystem trace vs Lean lifecycle
         shell: bash
         run: |
           set -euo pipefail
           export PATH="$HOME/.elan/bin:$PATH"
           python3 tools/joint_runtime_lean_difftest.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Kernel check nonce-scoped delegation and actual SQLite bounded differential
         shell: bash
         run: |
@@ -57,3 +79,13 @@ jobs:
             exit 1
           fi
           python3 tools/delegated_lean_difftest.py
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

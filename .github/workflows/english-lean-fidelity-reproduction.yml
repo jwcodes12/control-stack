@@ -20,17 +20,48 @@ jobs:
       - name: Reproduce authorized broker information channels
         run: PYTHONPATH=. python3 reviews/trusted-stack-shared-state-countermodel.py
   lean-witness:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-lean-witness-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/english-lean-fidelity-reproduction.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED lean-witness - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned elan toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Fetch Mathlib build artifacts
         run: PATH=$HOME/.elan/bin:$PATH lake exe cache get
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Build repository modules
         run: PATH=$HOME/.elan/bin:$PATH lake build ControlStack
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Print actual headline elaborated types and axioms
         run: PATH=$HOME/.elan/bin:$PATH lake env lean reviews/english-lean-fidelity-elaboration.lean
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Elaborate isolated principal fidelity witnesses
         run: PATH=$HOME/.elan/bin:$PATH lake env lean reviews/english-lean-fidelity-witnesses.lean
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

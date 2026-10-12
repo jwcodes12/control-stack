@@ -40,7 +40,7 @@ jobs:
           python3 tools/check_deployment_prereg.py
   full-build:
     # Every root import must build, but nothing else in `kernel` needs the whole project, so this runs in parallel with it.
-    runs-on: ubuntu-24.04
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
@@ -54,11 +54,19 @@ jobs:
       - name: Skipped, identical inputs already passed here
         if: steps.green.outputs.cache-hit == 'true'
         run: echo "SKIPPED full-build - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned Lean
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -68,9 +76,9 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - run: lake exe cache get
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Full project Lean build (all root imports)
         run: lake build
         if: steps.green.outputs.cache-hit != 'true'
@@ -84,7 +92,7 @@ jobs:
           path: .ci-green
           key: ${{ steps.green.outputs.cache-primary-key }}
   kernel:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
@@ -98,11 +106,19 @@ jobs:
       - name: Skipped, identical inputs already passed here
         if: steps.green.outputs.cache-hit == 'true'
         run: echo "SKIPPED kernel - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned Lean
         run: |
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -112,9 +128,9 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - run: lake exe cache get
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
         if: steps.green.outputs.cache-hit != 'true'
       - name: Python/Lean differential (fixtures + 250 seeded mutations)

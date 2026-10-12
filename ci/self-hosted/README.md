@@ -9,12 +9,13 @@ Only the repository's owner can open PRs (private repo). PR code from agents sti
 `ghrunner` can read. Jobs needing sudo or docker (live containers, the scanner test) are not run here.
 
 ## Layout
-- `/opt/actions-runner` (runner v2.338.0, checksum-verified against GitHub's published digest), service
-  `actions.runner.jwcodes12-control-stack.oci-fast-1.service`, limits in `…service.d/limits.conf`: nice 10, CPU 100%, memory 9 GB, no new privileges.
+- `/opt/actions-runner` and `/opt/actions-runner-2` (runner v2.338.0, checksum-verified against GitHub's published digest), services
+  `actions.runner.jwcodes12-control-stack.oci-fast-{1,2}.service`, limits in `…service.d/limits.conf`: nice 10, CPU 80% each, memory 6 GB each, no new privileges.
 - `/opt/ci-shared/lean-v4.34.0` and `/opt/ci-shared/packages`: read-only bind mounts (also in `/etc/fstab`) of the pinned Lean toolchain and the built Mathlib
   from the owner's home. The runner user cannot read the home directory itself.
 - `/opt/ci-shared/bin/python3` -> Linuxbrew Python 3.14 (the hosted gate uses 3.12; the suites pass on both).
-- `/var/lib/ghrunner/lake-build-cache`: persistent `.lake/build` for ControlStack so builds are incremental. Lake keys on content hashes, so stale
+- `/var/lib/ghrunner/lake-build-cache-oci-fast-N`: one persistent `.lake/build` per runner process (two runners, `oci-fast-1` and `-2`; separate
+  caches because two concurrent `lake build`s must not share one directory). Lake keys on content hashes, so stale
   entries from other branches are safe, but a hostile PR could poison it: delete it if in doubt.
 - Disk is the constraint (root volume near full). The workflow refuses to run with under 1.5 GB free.
 

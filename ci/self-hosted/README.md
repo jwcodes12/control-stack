@@ -48,3 +48,5 @@ Stay on hosted runners, and why:
 - `f4-datacenter-model / lean-and-ledger`: it runs test scripts that call `sudo -n chown` (found by CI, not by reading the YAML: the sudo is inside a Python file);
 - about 25 light non-Lean jobs: 10-30 s anywhere, moving them only loads this 2-core box.
 On this runner Python is 3.14, the hosted gate pins 3.12; a job that fails only here is a portability bug to fix, or to move back by restoring its hosted `runs-on`.
+
+(probe: a docs-only change to measure the PR check time on main)

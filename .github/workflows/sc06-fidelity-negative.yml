@@ -19,12 +19,16 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
+        id: inputs
+        run: >
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/sc06-fidelity-negative.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
       - name: Look up a previous green run on identical inputs
         id: green
         uses: actions/cache/restore@v4
         with:
           path: .ci-green
-          key: green-${{ github.workflow }}-lean-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/sc06-fidelity-negative.yml') }}
+          key: green-${{ github.workflow }}-lean-${{ steps.inputs.outputs.hash }}
       - name: Skipped, identical inputs already passed here
         if: steps.green.outputs.cache-hit == 'true'
         run: echo "SKIPPED lean - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"

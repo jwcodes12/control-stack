@@ -1,6 +1,8 @@
 name: sc10-refinement-kernel
 
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - 'ControlStack/Scenarios/SC10Refinement.lean'
@@ -15,19 +17,49 @@ permissions:
 
 jobs:
   lean:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-lean-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/sc10-refinement-kernel.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED lean - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: SC-10 restart negative witness (frozen harness)
         run: python3 -m unittest tools.test_sc10_restart_gap -v
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Install pinned Lean toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Kernel-check SC-10 event simulation and control
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
-          lake exe cache get
+          if [ "$RUNNER_ENVIRONMENT" = github-hosted ]; then lake exe cache get; fi
           lake build ControlStack.Scenarios.SC10Refinement ControlStack.Scenarios.SC10ReadUseGap
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

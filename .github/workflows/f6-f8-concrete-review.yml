@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   kernel-candidate:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +24,17 @@ jobs:
       - name: Skipped, identical inputs already passed here
         if: steps.green.outputs.cache-hit == 'true'
         run: echo "SKIPPED kernel-candidate - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned Lean toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Cache pinned Lean dependency builds
         uses: actions/cache@v4
         with:
@@ -36,11 +44,11 @@ jobs:
           key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
-        if: steps.green.outputs.cache-hit != 'true'
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Build candidates, verify no sorry and inspect axioms
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
-          lake exe cache get
+          if [ "$RUNNER_ENVIRONMENT" = github-hosted ]; then lake exe cache get; fi
           lake build ControlStack.GateComposition
           lake env lean reviews/family-strengthening/RuntimeGates.lean | tee /tmp/runtime-gates-axioms.log
           if grep -E 'sorryAx|\[.*sorry.*\]' /tmp/runtime-gates-axioms.log; then exit 1; fi

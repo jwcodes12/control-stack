@@ -35,3 +35,16 @@ everything. Force a full re-run with `workflow_dispatch` input `force`, or delet
 (docs-only probe)
 
 (docs-only probe for the hosted skip)
+
+## Which jobs run here, and the fallback switch
+20 Lean/heavy jobs across 19 workflows use `runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}`, so by default they run on this box.
+**If the box is down or misbehaving, flip them all back to GitHub-hosted runners with one setting** (no commit needed):
+`gh variable set CI_RUNNER --repo jwcodes12/control-stack --body '"ubuntu-24.04"'`; return to this box with `gh variable delete CI_RUNNER --repo jwcodes12/control-stack`.
+Steps that only set up a hosted machine (Python version, elan, Mathlib cache download) are conditional on `runner.environment == 'github-hosted'`;
+inline `lake exe cache get` / elan lines inside mixed steps are wrapped the same way. Real check steps run in both places.
+Stay on hosted runners, and why:
+- 8 jobs that need root, `apt` or Docker (the real-UID broker tests, a Postgres service container); the CI user deliberately has no sudo;
+- jobs that build their own separate Lake project, which fetches Mathlib itself: `fast-checks / lean-covert` and `scenario-a-repair / lean` (`ci/covert`), `english-lean-ledger / proof-claims-elaboration` (`ledger-check`);
+- `f4-datacenter-model / lean-and-ledger`: it runs test scripts that call `sudo -n chown` (found by CI, not by reading the YAML: the sudo is inside a Python file);
+- about 25 light non-Lean jobs: 10-30 s anywhere, moving them only loads this 2-core box.
+On this runner Python is 3.14, the hosted gate pins 3.12; a job that fails only here is a portability bug to fix, or to move back by restoring its hosted `runs-on`.

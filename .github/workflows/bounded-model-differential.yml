@@ -1,5 +1,7 @@
 name: bounded-model-differential
 on:
+  push:
+    branches: [main]
   pull_request:
     paths:
       - 'tools/bounded_model_diff.py'
@@ -16,27 +18,62 @@ permissions:
   contents: read
 jobs:
   model-differential:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
+        id: inputs
+        run: >
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/bounded-model-differential.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+      - name: Look up a previous green run on identical inputs
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-model-differential-${{ steps.inputs.outputs.hash }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED model-differential - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - name: Install pinned Lean toolchain
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Build exact model dependencies
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
-          lake exe cache get
+          if [ "$RUNNER_ENVIRONMENT" = github-hosted ]; then lake exe cache get; fi
           lake build ControlStack.Scenarios.SC06OneUse ControlStack.Scenarios.SC08Exec ControlStack.Scenarios.SC25Audit ControlStack.Scenarios.SC26Transaction
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Compare independent Python and Lean transition semantics
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           python3 tools/bounded_model_diff.py
           lake env lean reviews/statement-fidelity-2026-10-09/Counterexamples.lean
+        if: steps.green.outputs.cache-hit != 'true'
       - name: SC-26 full-state independently sampled differential
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           python3 scenarios/SC-26/harness/lean_difftest.py -n 200
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Check explicit theorem axioms
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
           lake env lean reviews/sc06-issuer-controls/Controls.lean
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

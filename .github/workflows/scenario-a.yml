@@ -13,32 +13,83 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
+        id: inputs
+        run: >
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/scenario-a.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-viability-${{ steps.inputs.outputs.hash }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED viability - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install namespace fixture prerequisite
         run: sudo apt-get update && sudo apt-get install -y bubblewrap openssl
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Concurrent ledger and evidence mutation controls
         run: |
           /usr/bin/python3 gateway/test_lifetime.py
           /usr/bin/python3 gateway/scenario/test_scenario.py
           /usr/bin/python3 gateway/test_gateway.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Full paired usefulness experiment (missing isolation fails)
         run: sudo /usr/bin/python3 gateway/scenario/run.py --output gateway/scenario/results/ci-full.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Verify actual completion, confidence and unresolved premises
         run: /usr/bin/python3 gateway/scenario/check_receipt.py gateway/scenario/results/ci-full.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Probe shared cache observations (no full-secret recovery claim)
         run: |
           sudo /usr/bin/python3 gateway/scenario/cache_probe.py --output gateway/scenario/results/ci-cache.json
           /usr/bin/python3 gateway/scenario/check_cache_receipt.py gateway/scenario/results/ci-cache.json
+        if: steps.green.outputs.cache-hit != 'true'
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: ${{ steps.green.outputs.cache-hit != 'true' && (always()) }}
         with:
           name: scenario-a-repair-evidence
           path: gateway/scenario/results/ci-*.json
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   lean:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
+        id: inputs
+        run: >
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/scenario-a.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-lean-${{ steps.inputs.outputs.hash }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED lean - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install pinned Lean tooling
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Check structural recovery theorem and standard axioms
         run: PATH=$HOME/.elan/bin:$PATH ci/covert/check.sh
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}

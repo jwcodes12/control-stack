@@ -27,6 +27,8 @@ import os
 import re
 import subprocess
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from fractions import Fraction
 from pathlib import Path
 
@@ -46,19 +48,60 @@ def fail(msg):
     sys.exit(1)
 
 
-def check_lean(m, key="lean"):
-    count = 0
+def compile_all(m):
+    """Compile every listed Lean file, in parallel where imports allow; a file starts after the listed files it imports."""
     build = ROOT / ".lake" / "build" / "lib" / "lean"
+    files = [e["file"] for k in ("lean", "supporting_lean") for e in m.get(k, [])]
+    deps = {}
+    todo = list(files)
+    while todo:  # also compile unlisted project modules the listed files import, so a clean checkout has their .olean
+        f = todo.pop()
+        if f in deps:
+            continue
+        imports = re.findall(r"^import\s+(\S+)", (ROOT / f).read_text(), re.M)
+        deps[f] = [i.replace(".", "/") + ".lean" for i in imports if (ROOT / (i.replace(".", "/") + ".lean")).is_file()]
+        todo.extend(deps[f])
+    done = {f: threading.Event() for f in deps}
+    results = {}
+
+    def run(f):
+        for d in deps[f]:
+            done[d].wait()
+        try:
+            if re.search(r"\b(sorry|admit|native_decide)\b|^\s*axiom\s", (ROOT / f).read_text(), re.M):
+                raise RuntimeError("forbidden keyword")
+            out = build / (f[:-len(".lean")] + ".olean")
+            out.parent.mkdir(parents=True, exist_ok=True)
+            results[f] = subprocess.run(["lake", "env", "lean", "-o", str(out), "-i", str(out.with_suffix(".ilean")), f],
+                                        cwd=ROOT, capture_output=True, text=True, env=LEAN_ENV, timeout=3600)
+        except BaseException as e:
+            results[f] = e
+        finally:
+            done[f].set()
+
+    with ThreadPoolExecutor(max_workers=max(1, min(len(deps), os.cpu_count() or 1))) as ex:
+        order, seen = [], set()
+
+        def visit(f):  # submit dependencies first so no worker blocks on a task that cannot start
+            if f not in seen:
+                seen.add(f)
+                for d in deps[f]:
+                    visit(d)
+                order.append(f)
+
+        for f in deps:
+            visit(f)
+        list(ex.map(run, order))
+    return results
+
+
+def check_lean(m, results, key="lean"):
+    count = 0
     for entry in m.get(key, []):
         f, ns, names = entry["file"], entry["namespace"], entry["theorems"]
-        src = (ROOT / f).read_text()
-        if re.search(r"\b(sorry|admit|native_decide)\b|^\s*axiom\s", src, re.M):
-            fail(f"{f}: forbidden keyword")
-        mod = f[:-len(".lean")]
-        out = build / (mod + ".olean")
-        out.parent.mkdir(parents=True, exist_ok=True)
-        r = subprocess.run(["lake", "env", "lean", "-o", str(out), "-i", str(out.with_suffix(".ilean")), f],
-                           cwd=ROOT, capture_output=True, text=True, env=LEAN_ENV, timeout=3600)
+        r = results[f]
+        if isinstance(r, BaseException):
+            fail(f"{f}: {r}")
         if r.returncode != 0 or "error" in r.stdout:
             fail(f"{f}: Lean errors\n{r.stdout[-3000:]}{r.stderr[-2000:]}")
         for n in names:
@@ -84,9 +127,10 @@ def main():
         return 0
 
     print("1. Lean (case chain)")
-    n_case = check_lean(m)
+    results = compile_all(m)
+    n_case = check_lean(m, results)
     print("   Lean (supporting results outside the SC-01 chain)")
-    n_supp = check_lean(m, "supporting_lean")
+    n_supp = check_lean(m, results, "supporting_lean")
 
     print("2. hashes")
     bad = [p for p, h in m["hashes"].items() if sha(p) != h]

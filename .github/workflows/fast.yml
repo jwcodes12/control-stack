@@ -9,18 +9,42 @@ on:
   workflow_dispatch:
 jobs:
   fast:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '["self-hosted","fast"]') }}
     steps:
       - uses: actions/checkout@v4
+      - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
+        id: inputs
+        run: >
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/fast.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+      - name: Look up a previous green run on identical inputs
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-fast-${{ steps.inputs.outputs.hash }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED fast - the same input hash passed before (${{ steps.green.outputs.cache-primary-key }})"
+      - name: Self-hosted - shared read-only Mathlib build and this runner's incremental build cache
+        if: runner.environment == 'self-hosted' && steps.green.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .lake "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME"
+          ln -sfn /opt/ci-shared/packages .lake/packages
+          ln -sfn "/var/lib/ghrunner/lake-build-cache-$RUNNER_NAME" .lake/build
+          avail=$(df --output=avail -BM / | tail -1 | tr -dc 0-9)
+          test "$avail" -ge 1500 || { echo "refusing to run: under 1.5 GB free on the runner disk"; exit 1; }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
+        if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - name: Banned tokens in proofs and ledger statements
         run: |
           ! grep -nE '\bsorry\b|\badmit\b|native_decide|implemented_by|@\[extern' proofs/*.lean ledger/*.lean ControlStack/*.lean ControlStack.lean
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Data hashes match the preregistrations
         run: |
           (cd data/linuxarena && sha256sum -c SHA256SUMS)
           (cd data/redwood-leaderboard && sha256sum -c SHA256SUMS)
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Re-run preregistered LinuxArena and LaStraj band analyses and compare
         run: |
           cd numerics
@@ -33,12 +57,25 @@ jobs:
           print("LinuxArena split certificate reproduced")
           PY
           python3 lastraj_bands.py > /dev/null && git diff --exit-code lastraj_roc_bands.json
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Replay policy fixture (decisions and documented bypasses)
         run: cd replay && python3 test_policy.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Gateway adversarial tests and red-team bound
         run: cd gateway && python3 test_gateway.py
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Assurance manifests are consistent (no category promotion)
         run: python3 assurance/check_manifests.py passed && git diff --stat assurance
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   auditgate-db:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -65,10 +102,34 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
+        id: inputs
+        run: >
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/fast.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-lean-covert-${{ steps.inputs.outputs.hash }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED lean-covert - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install elan
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Build and axiom-check the covert-channel theorems (mandatory)
         run: PATH=$HOME/.elan/bin:$PATH ci/covert/check.sh
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   lean-vcvio:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

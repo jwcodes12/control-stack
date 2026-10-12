@@ -79,6 +79,15 @@ def environment_rows(names: list[str]) -> dict[str, dict]:
     for name in distinct:
         if not name.startswith("ControlStack."):
             raise ValueError(f"not fully qualified: {name}")
+    # The recorded transcript is deliberately not a dependency of the default
+    # ControlStack target; import requires its separately compiled .olean.
+    # Build using the repository-pinned Lean toolchain, never a source grep.
+    build = subprocess.run(
+        ["lake", "build", "ControlStack.Deployment.TranscriptReplay"],
+        cwd=ROOT, text=True, capture_output=True)
+    if build.returncode:
+        raise RuntimeError("Pinned transcript module build failed:\n"
+                           + build.stdout[-16000:] + build.stderr[-16000:])
     script_text = LEAN_PREFIX.replace(
         "ROOT_NAMES", ", ".join(chr(96) + n for n in distinct))
     with tempfile.TemporaryDirectory(prefix="lean-dependencies-") as temp:

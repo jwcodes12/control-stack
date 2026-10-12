@@ -30,3 +30,5 @@ Only the repository's owner can open PRs (private repo). PR code from agents sti
 `tools/ci_skip_unchanged.py` skips a Lean check when the bytes of its declared inputs are identical to the last run of that check that passed on this runner
 (digests in `/var/lib/ghrunner/check-cache`). A skip is printed as `SKIPPED ... NOT re-verified`. Only the fast tier uses it; the GitHub-hosted workflows always run
 everything. Force a full re-run with `workflow_dispatch` input `force`, or delete the cache directory. A cache entry is recorded only after a passing run.
+
+(Measured on PR #58: a cold run with every check executing took 271 s wall; see the PR for the docs-only skip run.)

@@ -65,8 +65,24 @@ def check_live_lean_controls():
         report = lean(file)
         if "SliceBatch.introduced_untrusted" not in report:
             raise AssertionError("Lean did not expose injected axiom")
-        must_reject(lambda: check_axiom_reports(report, 1),
-                    "Lean-generated non-standard axiom")
+        # Preserve the exact expected report count and names so this control
+        # reaches the *axiom allowlist* check, not merely the missing-report gate.
+        expected = list(required_axiom_report_names(1))
+        corrupted_name = "SliceBatch.facts_0"
+        if corrupted_name not in expected:
+            raise AssertionError("batch fixture naming changed")
+        substitute = report.replace(
+            "'SliceBatch.nonstandard_report'",
+            f"'{corrupted_name}'",
+        )
+        standard_others = "\\n".join(
+            f"'{name}' does not depend on any axioms"
+            for name in expected if name != corrupted_name
+        )
+        must_reject(
+            lambda: check_axiom_reports(standard_others + "\\n" + substitute, 1),
+            "Lean-generated non-standard axiom with all 9 named reports present",
+        )
 
 
 def main():

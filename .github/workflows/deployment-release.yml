@@ -36,6 +36,29 @@ jobs:
           python3 tools/test_deployment_remediated.py
           python3 tools/test_deployment_attribution.py
           python3 tools/check_deployment_prereg.py
+  full-build:
+    # Every root import must build, but nothing else in `kernel` needs the whole project, so this runs in parallel with it.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Cache pinned Lean dependency builds
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages
+            .lake/build
+          key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
+      - run: lake exe cache get
+      - name: Full project Lean build (all root imports)
+        run: lake build
   kernel:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
@@ -57,8 +80,6 @@ jobs:
             lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
       - run: lake exe cache get
       - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
-      - name: Full project Lean build (all root imports)
-        run: lake build
       - name: Python/Lean differential (fixtures + 250 seeded mutations)
         run: python3 tools/check_deployment_subset_differential.py
       - name: Contract witnesses and axiom report

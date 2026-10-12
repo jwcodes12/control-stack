@@ -4,6 +4,7 @@ import ControlStack.Scenarios.SC07Refinement
 import ControlStack.Scenarios.SC18Refinement
 import ControlStack.Scenarios.SC28Refinement
 import ControlStack.Scenarios.SC26Refinement
+import ControlStack.Scenarios.SC27Refinement
 import ControlStack.Scenarios.SC16RefinementReuse
 import ControlStack.Scenarios.SC25RefinementReuse
 
@@ -210,6 +211,72 @@ theorem concrete_content_safe_agree :
     @concrete_content_safe_via_transfer = @concrete_content_safe := rfl
 end ControlStack.SC25Refinement
 
+namespace ControlStack.SC27Refinement
+open ControlStack.RefinementTransfer ControlStack.RefinementTransferInv
+open ControlStack.SC27Chain (chainHead)
+open ControlStack.SC27ExtensionOnly (Env)
+
+theorem traceInj_iff_traceGuard (E : Env) (s : CSt) (ops : List COp) :
+    TraceInj E s ops ↔
+      TraceGuard (stepC E false) (fun s o => o = COp.examine → ExamInj E s) s ops := by
+  induction ops generalizing s with
+  | nil => simp [TraceInj, TraceGuard]
+  | cons o ops ih => simp only [TraceInj, TraceGuard, ih]
+
+theorem simulation_run_via_transfer (E : Env) (s : CSt) (ops : List COp) (h : CInv E s)
+    (ht : TraceInj E s ops) :
+    α (runC E false s ops) = SC27ExtensionOnly.run E true (α s) (absTrace E s ops) := by
+  have htrace : ∀ (s : CSt) (ops : List COp),
+      absTrace E s ops = emitTrace (stepC E false) (opsOf E) s ops := by
+    intro s ops
+    induction ops generalizing s with
+    | nil => rfl
+    | cons o ops ih =>
+      change opsOf E s o ++ absTrace E (stepC E false s o) ops =
+        opsOf E s o ++ emitTrace (stepC E false) (opsOf E) (stepC E false s o) ops
+      rw [ih]
+  rw [htrace s ops]
+  exact run_simulation_traceguard (stepC E false) (SC27ExtensionOnly.step E true) α (opsOf E)
+    (CInv E) (fun s o => o = COp.examine → ExamInj E s)
+    (fun s o _ hi => cinv_step E false s o hi)
+    (fun s o hg hi => simulation E s o hi hg) s ops ((traceInj_iff_traceGuard E s ops).mp ht) h
+
+theorem simulation_run_agree : @simulation_run_via_transfer = @simulation_run := rfl
+
+theorem concrete_ext_safe_via_transfer (E : Env) (ops : List COp) (ht : TraceInj E cinit ops)
+    (hinj : Set.InjOn (chainHead E.H E.h0) {l | l ∈ (runC E false cinit ops).accepted ∨
+      ∃ a ∈ ancs (runC E false cinit ops).wlog, a.2 = l}) :
+    ∀ m ∈ (runC E false cinit ops).accepted,
+      (∃ a ∈ ancs (runC E false cinit ops).wlog, a.2 = m) ∧
+        ∃ l, (runC E false cinit ops).ghostLast = some l ∧ m <+: l := by
+  have e := simulation_run_via_transfer E cinit ops (cinv_init E) ht
+  rw [α_cinit] at e
+  have key := SC27ExtensionOnly.sc27_ext_safe E (absTrace E cinit ops)
+  rw [← e] at key
+  exact key hinj
+
+theorem concrete_ext_safe_agree : @concrete_ext_safe_via_transfer = @concrete_ext_safe := rfl
+
+theorem concrete_tampered_never_anchored_via_transfer (E : Env) (pre post : List COp) (ht : TraceInj E cinit (pre ++ post))
+    (l : List ℕ) (hl : ∃ a ∈ ancs (runC E false cinit pre).wlog, a.2 = l) :
+    ∀ a ∈ ancs (runC E false cinit (pre ++ post)).wlog, a ∈ ancs (runC E false cinit pre).wlog ∨ l <+: a.2 := by
+  rw [traceInj_append] at ht
+  have hc := cinv_run E false cinit pre (cinv_init E)
+  have e1 := simulation_run_via_transfer E cinit pre (cinv_init E) ht.1
+  rw [α_cinit] at e1
+  have hinv : SC27ExtensionOnly.Inv E (α (runC E false cinit pre)) := by
+    rw [e1]; exact SC27ExtensionOnly.run_inv E _ _ (SC27ExtensionOnly.inv_init E)
+  have e2 := simulation_run_via_transfer E _ post hc ht.2
+  rw [runC_append]
+  have key := SC27ExtensionOnly.tampered_never_anchored E (α (runC E false cinit pre)) hinv
+    (absTrace E (runC E false cinit pre) post) l hl
+  rw [← e2] at key
+  exact key
+
+theorem concrete_tampered_never_anchored_agree :
+    @concrete_tampered_never_anchored_via_transfer = @concrete_tampered_never_anchored := rfl
+end ControlStack.SC27Refinement
+
 #print axioms ControlStack.SC07Refinement.simulation_run_via_transfer
 #print axioms ControlStack.SC07Refinement.concrete_safe_via_transfer
 #print axioms ControlStack.SC18Refinement.simulation_run_via_transfer
@@ -223,4 +290,6 @@ end ControlStack.SC25Refinement
 #print axioms ControlStack.SC25Refinement.concrete_safe_via_transfer
 #print axioms ControlStack.SC25Refinement.concrete_content_safe_via_transfer
 #print axioms ControlStack.SC28Refinement.exclusive_placement_safe_via_gate
-
+#print axioms ControlStack.SC27Refinement.simulation_run_via_transfer
+#print axioms ControlStack.SC27Refinement.concrete_ext_safe_via_transfer
+#print axioms ControlStack.SC27Refinement.concrete_tampered_never_anchored_via_transfer

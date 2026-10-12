@@ -256,11 +256,11 @@ To reuse additional candidates safely, first prove a separately reviewed generic
 
 ## Addendum 2026-10-12: CANDIDATE rows re-examined with local Lean
 
-**Model-written/model-reviewed; no independent human review.** The earlier sections of this audit are unchanged and still describe the repository as it was. After them, the generic theorems the audit said were missing were proved and compiled locally (pinned toolchain; CI is the receipt of record): `Core/RunFixed.lean` (`foldl_fixed`, `foldl_field_fixed`, `foldl_rel_fixed`, `foldl_legal`) and `Core/RefinementTransferInv.lean` (`run_simulation_guarded`, the invariant- and legality-guarded form of `RefinementTransfer.run_simulation`). New bridge files `Scenarios/GateReuse.lean` and `Scenarios/RefinementReuse.lean` re-derive the pinned theorems from them.
+**Model-written/model-reviewed; no independent human review.** The earlier sections of this audit are unchanged and still describe the repository as it was. After them, the generic theorems the audit said were missing were proved and compiled locally (pinned toolchain; CI is the receipt of record): `Core/RunFixed.lean` (`foldl_fixed`, `foldl_field_fixed`, `foldl_rel_fixed`, `foldl_inv`, `foldl_legal`) and `Core/RefinementTransferInv.lean` (`run_simulation_guarded`, the invariant- and legality-guarded form of `RefinementTransfer.run_simulation`, and `run_simulation_traceguard` for a state-dependent guard checked along the trace, as SC-27's `TraceInj`). New bridge files `Scenarios/GateReuse.lean` and `Scenarios/RefinementReuse.lean` re-derive the pinned theorems from them.
 
 **What a bridge is.** For each row below, a theorem `<name>_via_gate` or `<name>_via_transfer` is stated with the *same* statement as the pinned theorem and proved from the shared lemma through the scenario's own `sys`/`spec` client or its pinned one-step `simulation` and invariant preservation. A `<name>_agree : @X_via_… = @X := rfl` theorem checks the two have the same type. **The pinned theorems and files are not changed or deleted**, so this shows the scenario-local `run_inv`/`halt_freezes`/`simulation_run` inductions are instances of the generic ones; it does not remove the duplicates (that would break pinned hashes).
 
-**Bridged (46 of the 70 CANDIDATE rows).**
+**Bridged (48 of the 70 CANDIDATE rows).**
 - `EgressGate.trace_safe`
 - `SC06.sc06_safe`
 - `SC06.halt_freezes`
@@ -306,15 +306,16 @@ To reuse additional candidates safely, first prove a separately reviewed generic
 - `SC28.halt_freezes`
 - `SC28Refinement.concrete_safe`
 - `SC28Refinement.exclusive_placement_safe`
+- `SC27Refinement.concrete_ext_safe`
+- `SC27Refinement.concrete_tampered_never_anchored`
 - `SC23IsolationV2.sc23v2_safe_authenticated`
 
-**Not bridged (24 rows), and why.**
+**Not bridged (22 rows), and why.**
 - `EgressGate.step_safe`: already the `step_inv` field of `GateClients.egressSpec`: the local theorem is the *source* of the client, so reuse already runs in that direction.
 - `SC05.forbidden_never_executes`: already proved directly by `Gate.Spec.trace_safe` (`(spec forbidden).trace_safe ...`); reclassify as DIRECT CORE.
 - `AuditDispatch.trace_safe`: its conclusion is `Inv ∧ audits prefix`, while the shared theorem's second component is the *effects* prefix; different statement, not bridged.
 - `AuditDispatch.app_cannot_effect`: already the `inert` field of `GateClients.dispatchNoAgentEffects`; source of the client, not a duplicate.
 - Liveness rows (`SC07Liveness.upload_completes`, `SC07Liveness.exfil_needs_windows`, `SC07Liveness.shared_quota_blocks`, `SC18Liveness.honest_release`, `SC18Liveness.progress_interleaved`, `SC18Liveness.silent_ticks_halt`, `SC18Liveness.Resume.resume_safe`, `SC18Liveness.Resume.resume_progress`, `SC26Liveness.honest_progress`, `SC26Liveness.progress_interleaved`, `SC26Liveness.Concrete.crash_tolerant_progress`, `SC26LossyLiveness.lossy_rounds`, `SC26LossyHalt.tagged_rounds`, `SC28Liveness.honest_steps_progress`, `SC28Liveness.progress_interleaved`, `SC28Liveness.global_cap_blocks_honest`): the common part is trace-monotonicity algebra only; each progress theorem depends on its scenario's schedule, enablement and fairness assumptions, so there is no common precise statement to bridge. Not forced.
 - `SC23IsolationV2.noninterference_authed`: a relation between two authenticated runs (`Rel`), not a gate-spec safety statement; `SC23IsolationV2.w1_impossible_v2`: a closed `decide` witness. Neither is an instance of the shared lemmas.
-- `SC27Refinement.concrete_ext_safe`, `concrete_tampered_never_anchored`: the one-step simulation needs the trace-wide `TraceInj` obligation and the `ExamInj` side condition, not a per-step invariant, so the guarded lemma does not apply.
 
-Counts after this addendum (rows, one per overview row; the table above is not edited): DIRECT CORE 17 and EXISTING LEMMA 75 unchanged; of the 70 CANDIDATE rows, 46 now have a compiled bridge; of the 24 not bridged, 3 (`SC05.forbidden_never_executes`, `AuditDispatch.app_cannot_effect`, `EgressGate.step_safe`) are already direct reuse or the source of their client, and the other 21 stay open for the reasons above (`AuditDispatch.trace_safe` differs in statement, 16 liveness rows are schedule/fairness-specific, 2 `SC23IsolationV2` rows are not gate-spec statements, 2 `SC27Refinement` rows need `TraceInj`). No theorem statement, English block or pinned file changed, so the 187-claim dependency and traceability indexes still pass `--check` unchanged.
+Counts after this addendum (rows, one per overview row; the table above is not edited): DIRECT CORE 17 and EXISTING LEMMA 75 unchanged; of the 70 CANDIDATE rows, 48 now have a compiled bridge; of the 22 not bridged, 3 (`SC05.forbidden_never_executes`, `AuditDispatch.app_cannot_effect`, `EgressGate.step_safe`) are already direct reuse or the source of their client, and the other 19 stay open for the reasons above (`AuditDispatch.trace_safe` differs in statement, 16 liveness rows are schedule/fairness-specific, 2 `SC23IsolationV2` rows are not gate-spec statements). No theorem statement, English block or pinned file changed, so the 187-claim dependency and traceability indexes still pass `--check` unchanged.

@@ -40,6 +40,36 @@ theorem run_simulation_guarded (cstep : C → O → C) (astep : B → A → B)
       _ = (emitTrace cstep emit s (o :: ops)).foldl astep
           (abstract s) := by simp [emitTrace, List.foldl_append]
 
+/-- A state-dependent guard `G` that must hold at every step of a particular trace. -/
+def TraceGuard (cstep : C → O → C) (G : C → O → Prop) : C → List O → Prop
+  | _, [] => True
+  | s, o :: ops => G s o ∧ TraceGuard cstep G (cstep s o) ops
+
+/-- Trace-guarded form: the side condition is not a per-operation predicate but a
+state-dependent condition checked along the given trace (as SC-27's `TraceInj`). -/
+theorem run_simulation_traceguard (cstep : C → O → C) (astep : B → A → B)
+    (abstract : C → B) (emit : C → O → List A) (I : C → Prop) (G : C → O → Prop)
+    (hpres : ∀ s o, G s o → I s → I (cstep s o))
+    (hstep : ∀ s o, G s o → I s → abstract (cstep s o) =
+      (emit s o).foldl astep (abstract s))
+    (s : C) (ops : List O) (ht : TraceGuard cstep G s ops) (hI : I s) :
+    abstract (ops.foldl cstep s) =
+      (emitTrace cstep emit s ops).foldl astep (abstract s) := by
+  induction ops generalizing s with
+  | nil => rfl
+  | cons o ops ih =>
+    obtain ⟨hg, ht'⟩ := ht
+    calc
+      abstract ((o :: ops).foldl cstep s) =
+          abstract (ops.foldl cstep (cstep s o)) := rfl
+      _ = (emitTrace cstep emit (cstep s o) ops).foldl astep
+          (abstract (cstep s o)) := ih (cstep s o) ht' (hpres s o hg hI)
+      _ = (emitTrace cstep emit (cstep s o) ops).foldl astep
+          ((emit s o).foldl astep (abstract s)) := by rw [hstep s o hg hI]
+      _ = (emitTrace cstep emit s (o :: ops)).foldl astep
+          (abstract s) := by simp [emitTrace, List.foldl_append]
+
 end ControlStack.RefinementTransferInv
 
 #print axioms ControlStack.RefinementTransferInv.run_simulation_guarded
+#print axioms ControlStack.RefinementTransferInv.run_simulation_traceguard

@@ -60,3 +60,22 @@ The two new --check targets cannot pass until the Lean environment outputs and t
 Complete tasks 4 and 5 from real Lean environment outputs, resolve any strict gate failures, inspect all applicable CI checks on the exact final SHA, execute the full local sweep, and update PR description with every unverified point. Mark ready for review **only after** those software gates are met. **Do not merge** without independent human review. Defer the human/resource-gated G1–G9 and researcher-friendly presentation; do not dispatch Sol or another agent.
 
 **All new and previously existing work discussed here is model-written and model-reviewed, with no independent human review.**
+
+
+## Continuation on 2026-10-12 — generated indexes remain blocked on Actions
+
+**MODEL-WRITTEN AND MODEL-REVIEWED. NO INDEPENDENT HUMAN REVIEW. DRAFT; DO NOT MERGE.**
+
+The branch now contains the Actions bootstrap emitter for both dependency and traceability indexes, a fail-closed validator for incomplete project closures/nonstandard axioms, negative parser controls, and requirements for CI to recompute both committed indexes against the elaborated Lean environment. The pinned deployment-release kernel job also schedules the complete `tools/test_deployment_*.py` and `trusted_stack/test_*.py` test sweep. **None of these new gates has a final-head PASS receipt.** Some host-only tests may explicitly SKIP; SKIP is not PASS.
+
+The GitHub Actions runs API last showed `71593ff` as the newest completed workflow set for this branch. Later GitHub-connector commits, including the continuation changes, did **not** produce new Actions runs. A temporary close/reopen of PR #56 also failed to create a run. PR #56 was restored to **open, draft, unmerged**. Do not infer a green receipt from the earlier commit.
+
+### Reproduction / bootstrap in approved GitHub Actions
+
+1. In GitHub Actions, manually dispatch `deployment-release` for branch `audit/lean-reuse-187-20261011` (the workflow has `workflow_dispatch`). Check that the run's `head_sha` exactly matches the intended source SHA and inspect the kernel job; failures in Lean compilation or earlier stages must be fixed before treating any output as complete.
+2. Download the **complete kernel job log** and run `python3 tools/import_lean_index_bootstrap.py /path/to/kernel-job.log`. This accepts only contiguous `CSDEPCHUNK` and `CSTRACECHUNK` messages, matching 187-row identities, permitted axiom footprints and no verified English claims. The importer is only transport; it does not certify proofs.
+3. Commit `docs/lean-english/{DEPENDENCIES,TRACEABILITY}.{json,md}` to this branch. Remove the temporary bootstrap log emitters and leave `--check` mandatory.
+4. Manually run `consolidated-integrity` and `deployment-release` at the **resulting exact commit** (plus any other required branch checks). Confirm Lean index regeneration matches checked-in bytes and review every negative-control, kernel and Python result. Green workflows on earlier commits do not satisfy this gate.
+5. Only after all software gates are genuinely green may PR #56 be marked ready for **independent human review**. It must remain **unmerged** until that review. Live Docker/offline-rootfs execution and English-to-Lean strictly blind checks remain separate unclosed obligations.
+
+No exact release-byte/destination proof, trusted Python/SQLite/OS implementation refinement, human review, or deployment assurance is asserted.

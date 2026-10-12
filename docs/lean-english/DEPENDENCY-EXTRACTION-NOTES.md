@@ -7,3 +7,8 @@ The new `tools/build_lean_dependencies.py` reads only claim **identifiers** from
 Reproduction (pinned toolchain): `lake exe cache get && lake build && python3 tools/build_lean_dependencies.py`; then `python3 tools/build_lean_dependencies.py --check`. The bootstrap `deployment-release` step emits escaped artifact chunks in its action logs so the generated JSON and Markdown can be committed and their exact contents checked in CI. Once generated artifacts are checked, remove the temporary bootstrap emitter and keep only the `--check` gate.
 
 **Not yet established:** the generated file contents, a successfully completed Lean environment extraction on this head, graph completeness, standard-axiom coverage, a green final CI receipt or any model-to-runtime claim. G1–G7 (161 claims) have never received a one-to-one English fidelity check. The task remains open until actual artifact generation and checks succeed.
+
+
+## Continuation (2026-10-12)
+
+The kernel workflow now prints both `CSDEPCHUNK` and `CSTRACECHUNK` records. Import **complete** GitHub Actions kernel job logs using `python3 tools/import_lean_index_bootstrap.py <kernel.log>`; only exact byte outputs generated in pinned Actions may be committed. This does not replace an exact-head `--check` run against committed artifacts. The consolidated-integrity kernel job now fails if those checked-in files are absent or stale. As of this handoff no new Actions run or generated artifact has been observed; no green receipt exists on the continuation head. All changes model-written/model-reviewed, no independent human review.

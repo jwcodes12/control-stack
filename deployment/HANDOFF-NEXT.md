@@ -77,3 +77,8 @@ The Lean differential test (`tools/test_deployment_lean.py`) takes about 12 minu
 - Checkers refuse `python -O`; `Principals` refuses UID 0; the receiver refuses delegated releases unless `allow_delegation`.
 - `consolidated-integrity.yml` fetches full history (the shallow fetch broke the prereg guard). SC-01 shared-cache probe in `scenario-a-repair` is a known flake.
 - Docker cleanup after any live run: only `postgres:16-alpine` remains. Never launch docker.sock/privileged/host-network fixtures.
+
+
+## 2026-10-12: generated-index continuation (draft PR #56)
+
+No new GitHub Actions runs are attached to post-71593ff branch commits; fresh exact-head verification is **OPEN**. Bootstrap generation, negative-control/unit sweep and CI --check wiring have been committed but **not run or certified**. Follow `docs/lean-english/PR55-HANDOFF.md` for GitHub Actions manual-dispatch and log-import instructions. Missing DEPENDENCIES/TRACEABILITY outputs are an intentional fail-closed software gate, not a pass. No independent human review; all changes remain model-written/model-reviewed. Preserve frozen files and do not merge PR #56.

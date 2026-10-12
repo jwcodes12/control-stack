@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Reproducible 187-claim English-to-Lean/manifest/axiom traceability index.
+"""Generate claim -> English, Lean source, manifest, evidence, and environment traceability.
 
-Source fingerprints are full SHA-256; dependency rows originate from Lean's
-elaborated Environment via build_lean_dependencies.py, not text grep.
-No gate result is promoted to independent or strictly blind verification.
+Fail closed if the elaborated Lean dependency inventory is absent/incomplete.
+A recorded kernel check is NOT a blind, independent English-fidelity result.
 """
 from __future__ import annotations
 
@@ -14,185 +13,237 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = ROOT / "docs" / "lean-english"
-CLAIM = re.compile(r"(?m)^### `([^`\n]+)`[^\n]*$")
-SOURCE = re.compile(r"`((?:ControlStack|proofs|ledger)/[^`\n]+\.lean):(\d+)`")
-SCENARIO = re.compile(r"SC-\d{2}|DEPLOY")
+PARTS = ROOT / "docs" / "lean-english"
+OUTPUT_MD = PARTS / "TRACEABILITY.md"
+OUTPUT_JSON = PARTS / "TRACEABILITY.json"
+
+HEAD = re.compile(
+    r"(?m)^### \x60(?P<lean>ControlStack\.[^\x60]+)\x60"
+    r"\s+—\s+\x60(?P<file>[^:\x60]+):(?P<line>\d+)\x60"
+)
+G0_RESULT = re.compile(
+    r"(?m)^\|\s*(?P<id>\d+)\s*\|\s*\x60(?P<name>[^\x60]+)\x60"
+    r"\s*\|\s*(?P<verdict>[^|]+)\|"
+)
+STANDARD = {"propext", "Quot.sound", "Classical.choice"}
 
 
-def parse_blocks() -> list[dict]:
-    claims = []
-    for part in sorted(DOCS.glob("part-g*.md")):
-        text = part.read_text()
-        headers = list(CLAIM.finditer(text))
-        for i, match in enumerate(headers):
-            name = match.group(1)
-            first = match.start()
-            end = headers[i + 1].start() if i + 1 < len(headers) else len(text)
-            # Stop before the next scenario header if the last claim in a section.
-            remainder = text[match.end():end]
-            heading = re.search(r"(?m)^## (?:Scenario )?(?:SC-\d{2}|DEPLOY)", remainder)
+def markdown_escape(value: object) -> str:
+    return str(value).replace("|", "/").replace("\n", " ").strip()
+
+
+def english_claims() -> list[dict]:
+    results: list[dict] = []
+    for path in sorted(PARTS.glob("part-g[0-7].md")):
+        text = path.read_text()
+        found = list(HEAD.finditer(text))
+        for j, match in enumerate(found):
+            # The full English block stops at the next claim or major section,
+            # whichever comes first. All content remains byte-for-byte derived.
+            end = found[j+1].start() if j+1 < len(found) else len(text)
+            section = text[match.end():end]
+            heading = re.search(r"(?m)^## (?!#)", section)
             if heading:
-                end = match.end() + heading.start()
-            preceding = list(re.finditer(r"(?m)^## [^\n]+", text[:first]))
-            scenario_match = SCENARIO.search(preceding[-1].group() if preceding else "")
-            scenario = scenario_match.group() if scenario_match else None
-            location = SOURCE.search(match.group())
-            if not location:
-                raise ValueError(f"{part.name}: missing Lean file:line for {name}")
-            path, line = location.group(1), int(location.group(2))
-            file = ROOT / path
-            if not file.is_file():
-                raise ValueError(f"missing source file for {name}: {path}")
-            source_lines = file.read_text().splitlines()
-            if not (1 <= line <= len(source_lines)):
-                raise ValueError(f"invalid source line {path}:{line}")
-            claims.append({
-                "ordinal": len(claims) + 1, "lean": name,
-                "scenario": scenario, "english_part": part.relative_to(ROOT).as_posix(),
-                "english_block": text[first:end].strip(),
-                "source": {"path": path, "line": line,
-                           "sha256": hashlib.sha256(file.read_bytes()).hexdigest()},
+                section = section[:heading.start()]
+            raw = text[match.start():match.end()] + section
+            says = re.search(r"(?m)^-\s+\*\*Says[^*]*\*\*\s*(.*)$", raw)
+            file_path = match.group("file")
+            absolute = ROOT / file_path
+            if not absolute.is_file() or not absolute.resolve().is_relative_to(ROOT):
+                raise ValueError(f"invalid or missing Lean source file: {file_path}")
+            src = absolute.read_bytes()
+            line = int(match.group("line"))
+            if not (1 <= line <= len(src.splitlines())):
+                raise ValueError(f"bad English source location: {file_path}:{line}")
+            results.append({
+                "ordinal": len(results)+1,
+                "english_source": path.relative_to(ROOT).as_posix(),
+                "english_block": raw.strip(),
+                "english_says": says.group(1).strip() if says else "",
+                "lean": match.group("lean"),
+                "lean_file": file_path,
+                "lean_line": line,
+                "lean_file_sha256": hashlib.sha256(src).hexdigest(),
+                "group": path.stem.removeprefix("part-").upper(),
             })
-    if len(claims) != 187:
-        raise ValueError(f"expected exactly 187 English claim blocks, got {len(claims)}")
-    return claims
+    if len(results) != 187:
+        raise ValueError(f"expected 187 English blocks; got {len(results)}")
+    return results
 
 
-def manifests() -> dict:
-    return {
-        path.parent.name: json.loads(path.read_text())
-        for path in sorted((ROOT / "scenarios").glob("SC-*/manifest.json"))
-    }
+def manifests() -> dict[str, list[dict]]:
+    known: dict[str, list[dict]] = {}
+    for path in sorted((ROOT / "scenarios").glob("SC-*/manifest.json")):
+        obj = json.loads(path.read_text())
+        if not isinstance(obj.get("theorems"), list):
+            raise ValueError(f"missing manifest theorem list in {path}")
+        for theorem in obj["theorems"]:
+            if not isinstance(theorem, dict):
+                raise ValueError(f"bad theorem manifest entry in {path}")
+            name = theorem.get("name")
+            if not name:
+                raise ValueError(f"unnamed manifest theorem in {path}")
+            known.setdefault(name, []).append({
+                "id": obj["id"], "manifest": path.relative_to(ROOT).as_posix(),
+                "scenario_status": obj["status"],
+                "theorem_recorded_status": theorem.get("recorded_status"),
+                "manifest_theorem_file": theorem.get("path"),
+                "manifest_theorem_sha256": theorem.get("sha256"),
+                "assumptions": obj.get("assumptions", []),
+                "evidence": obj.get("evidence", []),
+            })
+    return known
 
 
-def g0_verdicts() -> dict[str, dict]:
-    text = (DOCS / "one-to-one" / "RESULTS.md").read_text()
-    rows = {}
-    for line in text.splitlines():
-        match = re.match(r"^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)\|", line)
-        if match:
-            rows[match.group(2)] = {
-                "index": int(match.group(1)), "historical_verdict": match.group(3).strip(),
-                "source": "docs/lean-english/one-to-one/RESULTS.md",
+def g0_verdicts() -> dict[int, dict]:
+    results_file = PARTS / "one-to-one" / "RESULTS.md"
+    text = results_file.read_text()
+    found = {}
+    for match in G0_RESULT.finditer(text):
+        ordinal = int(match.group("id"))
+        found[ordinal] = {"name": match.group("name"),
+                          "verdict": match.group("verdict").strip(),
+                          "results_source": results_file.relative_to(ROOT).as_posix()}
+    if set(found) != set(range(1, 27)):
+        raise ValueError("G0 has missing/duplicate numbered comparison result rows")
+    return found
+
+
+def dependencies() -> dict[int, dict]:
+    path = PARTS / "DEPENDENCIES.json"
+    if not path.exists():
+        raise ValueError("DEPENDENCIES.json missing; generate from Lean environment first")
+    obj = json.loads(path.read_text())
+    if obj.get("claim_count") != 187 or len(obj.get("claims", [])) != 187:
+        raise ValueError("environment dependency inventory not 187 rows")
+    result = {}
+    for row in obj["claims"]:
+        if row["ordinal"] in result:
+            raise ValueError("duplicate environment dependency ordinal")
+        if not {"lean", "direct", "dependencies", "axioms", "axioms_standard"} <= row.keys():
+            raise ValueError("missing environment dependency fields")
+        if row["axioms_standard"] != (set(row["axioms"]) <= STANDARD):
+            raise ValueError("axiom verdict mismatch")
+        result[row["ordinal"]] = row
+    if set(result) != set(range(1, 188)):
+        raise ValueError("missing dependency rows")
+    return result
+
+
+def build() -> tuple[str, str]:
+    rows = english_claims()
+    index = manifests()
+    verdicts = g0_verdicts()
+    dep = dependencies()
+    for row in rows:
+        ordinal = row["ordinal"]
+        item = dep[ordinal]
+        if item["lean"] != row["lean"]:
+            raise ValueError(f"dependency identity mismatch on claim {ordinal}")
+        row["dependency_row"] = item
+        matches = index.get(row["lean"], [])
+        # Manifests can repeat a theorem across multiple scenarios. Retain all.
+        for m in matches:
+            if m["manifest_theorem_file"] == row["lean_file"]:
+                sha = m.get("manifest_theorem_sha256")
+                if sha and sha != row["lean_file_sha256"]:
+                    raise ValueError(f"manifest source SHA changed: {row['lean']}")
+        row["scenario_manifests"] = matches
+        if ordinal <= 26:
+            verdict = verdicts[ordinal]
+            if verdict["name"] != row["lean"].rsplit(".", 1)[-1]:
+                raise ValueError(f"G0 row mismatch: {ordinal}")
+            row["one_to_one"] = {
+                "status": "STALE" if "STALE" in verdict["verdict"].upper()
+                           else "G0 gate-checked verdict (NOT strictly blind)",
+                "original_verdict": verdict["verdict"],
+                "source": verdict["results_source"],
+                "independently_verified": False,
                 "strictly_blind": False,
-                "independent_review": False,
             }
-    return rows
-
-
-def render() -> tuple[str, str]:
-    claims = parse_blocks()
-    dependency_file = DOCS / "DEPENDENCIES.json"
-    if not dependency_file.exists():
-        raise RuntimeError(
-            "Lean environment dependencies are missing; run build_lean_dependencies.py "
-            "with the pinned Lean toolchain first. Do not generate a placeholder."
-        )
-    deps = json.loads(dependency_file.read_text())
-    dep_rows = deps.get("claims", [])
-    if len(dep_rows) != len(claims):
-        raise ValueError("Lean dependency index not aligned with 187 claims")
-    by_scenario, g0 = manifests(), g0_verdicts()
-    for claim, dep in zip(claims, dep_rows, strict=True):
-        if claim["ordinal"] != dep["ordinal"] or claim["lean"] != dep["lean"]:
-            raise ValueError(f"dependency row mismatch at {claim['ordinal']}")
-        m = by_scenario.get(claim["scenario"])
-        matching = [t for t in m.get("theorems", [])
-                    if t.get("name") == claim["lean"]] if m else []
-        matching_path = [t for t in matching
-                         if t.get("path") == claim["source"]["path"]]
-        if len(matching_path) > 1:
-            raise ValueError(f"ambiguous scenario manifest theorem: {claim['lean']}")
-        pinned = matching_path[0] if matching_path else None
-        claim["manifest"] = {
-            "path": f"scenarios/{claim['scenario']}/manifest.json" if m else None,
-            "scenario_status": m.get("status") if m else "NO_SCENARIO_MANIFEST",
-            "theorem_recorded_status": pinned.get("recorded_status") if pinned else "NOT_LISTED",
-            "manifest_sha256": pinned.get("sha256") if pinned else None,
-            "source_pin_matches": (
-                pinned.get("sha256") == claim["source"]["sha256"]
-                if pinned else None
-            ),
-        }
-        claim["premises"] = m.get("assumptions", []) if m else []
-        claim["evidence"] = m.get("evidence", []) if m else []
-        claim["dependencies"] = {
-            "direct": dep["direct"], "transitive_project": dep["dependencies"],
-            "axioms": dep["axioms"], "standard_axioms_only": dep["axioms_standard"],
-            "source": "docs/lean-english/DEPENDENCIES.json",
-        }
-        short = claim["lean"].rsplit(".", 1)[-1]
-        if claim["english_part"].endswith("part-g0.md"):
-            history = g0.get(short)
-            if history is None:
-                raise ValueError(f"no G0 verdict row for {claim['lean']}")
-            status = "STALE" if "STALE" in history["historical_verdict"] else "G0 gate-checked verdict (non-blind)"
-            claim["one_to_one"] = {"status": status, **history, "verified": False}
         else:
-            claim["one_to_one"] = {
-                "status": "not checked", "historical_verdict": None,
-                "strictly_blind": False, "independent_review": False, "verified": False,
+            row["one_to_one"] = {
+                "status": "not checked", "original_verdict": None,
+                "source": None, "independently_verified": False,
+                "strictly_blind": False,
             }
-    if sum(c["one_to_one"]["status"] == "not checked" for c in claims) != 161:
-        raise ValueError("G1–G7 count must be 161; do not promote an unchecked block")
-    machine = json.dumps({
-        "method": "English blocks plus full source SHA-256, pinned manifest, Lean environment dependency index",
+        row["verified"] = False  # No strictly-blind result is available.
+    payload = {
         "claim_count": 187,
+        "generated_by": "tools/build_lean_traceability.py",
+        "verification_policy": "No claim marked verified without gate-passing strictly-blind comparison",
         "independent_human_review": False,
-        "strict_blind_g0_verified": False,
-        "claims": claims,
-    }, indent=2, ensure_ascii=False) + "\n"
-    markdown = [
-        "# Claim-to-proof traceability — 187 English claims", "",
-        "**Model-written, model-reviewed; no independent human review.** "
-        "No claim is independently verified one-to-one: historical G0 verdicts are "
-        "non-strictly-blind, changed G0 verdicts are STALE and G1–G7 (161 claims) "
-        "have never been checked.", "",
-        "Generated by tools/build_lean_traceability.py, using the environment-backed "
-        "DEPENDENCIES.json. The accompanying JSON holds the **full English block**, "
-        "source file/line/SHA-256, recorded manifest status/assumptions/evidence, "
-        "Lean dependency and axiom arrays, and G0 freshness.", "",
-        "| # | Lean name | Source / SHA-256 prefix | Manifest | Assumptions | Evidence | Axioms | One-to-one |",
-        "|---|---|---|---|---:|---:|---|---|",
+        "claims": rows,
+    }
+    machine = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+    human = [
+        "# Claim-to-proof traceability (187 English headlines)", "",
+        "**Model-written and model-reviewed. No independent human review.**",
+        "**No English claim in this index is independently or strictly-blind verified.**",
+        "A historical G0 gate-checked verdict is not a blind verification;",
+        "the 161 G1–G7 claims have never been checked one-to-one.", "",
+        "The SHA-256 refers to the current source-file bytes, not a deployment artifact.",
+        "Manifest status and recorded kernel checks are historically scoped and do not",
+        "close environmental/runtime premises.", "",
+        "| # | Lean declaration | English | Source SHA-256 | Scenario status | Fidelity | Standard axioms |",
+        "|---|---|---|---|---|---|---|",
     ]
-    for c in claims:
-        src = c["source"]
-        ax = ", ".join(c["dependencies"]["axioms"]) or "(none)"
-        if not c["dependencies"]["standard_axioms_only"]:
-            ax += " **NONSTANDARD**"
-        loc = f"{src['path']}:{src['line']} ({src['sha256'][:12]})"
-        markdown.append(
-            f"| {c['ordinal']} | {c['lean']} | {loc} | "
-            f"{c['manifest']['scenario_status']} / "
-            f"{c['manifest']['theorem_recorded_status']} | "
-            f"{len(c['premises'])} | {len(c['evidence'])} | "
-            f"{ax} | {c['one_to_one']['status']} |"
-        )
-    markdown.extend(["", "**Interpretation:** a SHA-pinned Lean theorem and standard axiom "
-                     "footprint do not establish English equivalence, runtime "
-                     "faithfulness, complete authority extraction, or human review.", ""])
-    return machine, "\n".join(markdown)
+    for row in rows:
+        m = row["scenario_manifests"]
+        scopes = ", ".join(f"{x['id']}:{x['scenario_status']}" for x in m) or "no scenario theorem mapping"
+        human.append(
+            f"| {row['ordinal']} | {markdown_escape(row['lean'])} | "
+            f"{markdown_escape(row['english_source'])} | "
+            f"{row['lean_file_sha256'][:12]} | {markdown_escape(scopes)} | "
+            f"{markdown_escape(row['one_to_one']['status'])} | "
+            f"{'yes' if row['dependency_row']['axioms_standard'] else 'NO'} |")
+    for row in rows:
+        human.extend([
+            "", f"## {row['ordinal']}. {row['lean']}", "",
+            f"Lean: {row['lean_file']}:{row['lean_line']} "
+            f"(SHA-256 {row['lean_file_sha256']})", "",
+            f"One-to-one: {row['one_to_one']['status']} "
+            f"({row['one_to_one']['original_verdict'] or 'not checked'})", "",
+            "### Original English block", "",
+            row["english_block"], "", "### Scenario manifest premises and evidence", "",
+        ])
+        for scope in row["scenario_manifests"]:
+            human.append(f"- {scope['id']} ({scope['scenario_status']}); manifest: {scope['manifest']}")
+            human.append(f"  - theorem recorded status: {scope['theorem_recorded_status']}")
+            for assumption in scope["assumptions"]:
+                human.append(f"  - premise: {assumption.get('id', '?')} — "
+                             f"{markdown_escape(assumption.get('text', ''))}")
+            for evidence in scope["evidence"]:
+                human.append(f"  - evidence: {evidence.get('path', '?')} "
+                             f"(SHA-256 {evidence.get('sha256') or 'unbound'})")
+        if not row["scenario_manifests"]:
+            human.append("No matching named scenario theorem in the current manifest collection.")
+        item = row["dependency_row"]
+        human.extend([
+            "", "### Elaborated Lean environment", "",
+            f"- Direct project dependencies: {', '.join(item['direct']) or '(none)'}",
+            f"- Transitive project dependencies: {', '.join(item['dependencies']) or '(none)'}",
+            f"- Axioms: {', '.join(item['axioms']) or '(none)'}",
+            "",
+        ])
+    return machine, "\n".join(human)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true")
-    args = parser.parse_args()
-    machine, markdown = render()
-    outputs = {
-        DOCS / "TRACEABILITY.json": machine,
-        DOCS / "TRACEABILITY.md": markdown,
-    }
+    p = argparse.ArgumentParser()
+    p.add_argument("--check", action="store_true")
+    args = p.parse_args()
+    machine, human = build()
+    expected = {OUTPUT_JSON: machine, OUTPUT_MD: human}
     if args.check:
-        for path, content in outputs.items():
-            if not path.exists() or path.read_text() != content:
-                raise SystemExit(f"stale claim traceability artifact: {path}")
-        print("claim-to-proof traceability consistent: 187 claims")
+        for path, data in expected.items():
+            if not path.exists() or path.read_text() != data:
+                raise SystemExit(f"stale or absent traceability artifact: {path}")
+        print("traceability artifacts consistent: 187 claims")
     else:
-        for path, content in outputs.items():
-            path.write_text(content)
-        print("generated claim-to-proof traceability: 187 claims")
+        for path, data in expected.items():
+            path.write_text(data)
+        print("wrote 187-claim traceability artifacts")
 
 
 if __name__ == "__main__":

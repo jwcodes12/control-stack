@@ -1,3 +1,4 @@
+import ControlStack.Deployment.ComposedAssurance
 import ControlStack.Deployment.NamedContracts
 import ControlStack.Deployment.GuardNecessity
 import ControlStack.Deployment.ProvenanceWitnesses

@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "lean-english"
-CHUNK = re.compile(r"(CSDEPCHUNK|CSTRACECHUNK):(\\d{8}):([^\\r\\n]*)")
+CHUNK = re.compile(r"(CSDEPCHUNK|CSTRACECHUNK):(\d{8}):([^\r\n]*)")
 OUTPUTS = {
     "CSDEPCHUNK": ("DEPENDENCIES.json", "DEPENDENCIES.md"),
     "CSTRACECHUNK": ("TRACEABILITY.json", "TRACEABILITY.md"),

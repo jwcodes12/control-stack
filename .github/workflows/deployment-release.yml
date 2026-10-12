@@ -59,6 +59,8 @@ jobs:
       - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.GuardNecessity ControlStack.Deployment.ComposedAssurance ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse ControlStack.Scenarios.SC16RefinementReuse
       - name: Full project Lean build (all root imports)
         run: lake build
+      - name: Bootstrap Lean environment dependency inventory
+        run: python3 tools/build_lean_dependencies.py --emit-bootstrap
       - name: Batched certificate negative controls (invalid Lean proof and nonstandard axiom)
         run: python3 -m tools.test_deployment_fixture_batch_negative
       - name: Python/Lean differential (fixtures + 250 seeded mutations)

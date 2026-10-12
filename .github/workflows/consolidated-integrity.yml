@@ -29,6 +29,8 @@ jobs:
           # The handoff explicitly authorizes one NEW prereg; existing files stay frozen.
           # Its exact bytes must match the first addition commit and every input hash.
           python3 tools/check_deployment_prereg.py --base origin/main
+      - name: Dependency and traceability fail-closed negative controls
+        run: python3 -m unittest tools.test_lean_indexes_negative
       - name: Regenerated theorem registry and normalized catalog consistent
         run: |
           python3 tools/build_registry.py --check
@@ -49,7 +51,7 @@ jobs:
       - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
         id: inputs
         run: >
-          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/consolidated-integrity.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' 'docs/lean-english/*.md' lean-toolchain '.github/workflows/consolidated-integrity.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
       - name: Look up a previous green run on identical inputs (clean hosted runner)
         id: green
         uses: actions/cache/restore@v4
@@ -86,6 +88,10 @@ jobs:
           set -euo pipefail
           export PATH="$HOME/.elan/bin:$PATH"
           if [ "$RUNNER_ENVIRONMENT" = github-hosted ]; then lake exe cache get; fi
+          # Whole project (plus the frozen transcript module) must be built before the environment-derived indexes are checked.
+          lake build
+          python3 tools/build_lean_dependencies.py --check
+          python3 tools/build_lean_traceability.py --check
           lake build ControlStack.GateComposition ControlStack.Scenarios.SC25Audit ControlStack.Scenarios.SC26Transaction
           lake env lean reviews/family-strengthening/F6F8.lean | tee "$RUNNER_TEMP/f6f8-axioms.txt"
           lake env lean reviews/statement-fidelity-2026-10-09/Counterexamples.lean | tee "$RUNNER_TEMP/scope-axioms.txt"

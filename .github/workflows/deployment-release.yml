@@ -48,7 +48,7 @@ jobs:
       - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
         id: inputs
         run: >
-          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/deployment-release.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' 'docs/lean-english/*.md' lean-toolchain '.github/workflows/deployment-release.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
       - name: Look up a previous green run on identical inputs (clean hosted runner)
         id: green
         uses: actions/cache/restore@v4
@@ -86,6 +86,33 @@ jobs:
       - name: Full project Lean build (all root imports)
         run: lake build
         if: steps.green.outputs.cache-hit != 'true'
+      - name: Check generated Lean dependency inventory at exact source HEAD
+        run: python3 tools/build_lean_dependencies.py --check
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Check generated English/Lean traceability at exact source HEAD
+        run: python3 tools/build_lean_traceability.py --check
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Package environment-derived indexes for reproducible import
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-187-claim-indexes
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            docs/lean-english/DEPENDENCIES.json
+            docs/lean-english/DEPENDENCIES.md
+            docs/lean-english/TRACEABILITY.json
+            docs/lean-english/TRACEABILITY.md
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record generated index SHA-256 digests and scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "source_commit=$GITHUB_SHA"
+          sha256sum docs/lean-english/{DEPENDENCIES,TRACEABILITY}.{json,md}
+          echo "**Generated files are model-written/model-reviewed, not independently human-reviewed.**" >> "$GITHUB_STEP_SUMMARY"
+          echo "Generated from Lean environment on commit $GITHUB_SHA; these are NOT English-fidelity or deployment-assurance certificates." >> "$GITHUB_STEP_SUMMARY"
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Record this input hash as green
         if: steps.green.outputs.cache-hit != 'true'
         run: mkdir -p .ci-green && echo ok > .ci-green/ok
@@ -104,7 +131,7 @@ jobs:
       - name: Hash this job's inputs (tracked-file blob ids; milliseconds, unlike hashFiles over the workspace)
         id: inputs
         run: >
-          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' lean-toolchain '.github/workflows/deployment-release.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
+          echo "hash=$(git ls-files -s -- '*.lean' '*.py' '*.json' '*.toml' '*.sh' 'docs/lean-english/*.md' lean-toolchain '.github/workflows/deployment-release.yml' | sha256sum | cut -c1-40)" >> "$GITHUB_OUTPUT"
       - name: Look up a previous green run on identical inputs (clean hosted runner)
         id: green
         uses: actions/cache/restore@v4
@@ -139,10 +166,36 @@ jobs:
         if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
       - run: lake exe cache get
         if: ${{ runner.environment == 'github-hosted' && (steps.green.outputs.cache-hit != 'true') }}
-      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse
+      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.GuardNecessity ControlStack.Deployment.ComposedAssurance ControlStack.Deployment.ProvenanceWitnesses ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC25RefinementReuse ControlStack.Scenarios.SC16RefinementReuse
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Batched certificate negative controls (invalid Lean proof and nonstandard axiom)
+        run: python3 -m tools.test_deployment_fixture_batch_negative
         if: steps.green.outputs.cache-hit != 'true'
       - name: Python/Lean differential (fixtures + 250 seeded mutations)
         run: python3 tools/check_deployment_subset_differential.py
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Complete Python deployment and trusted-stack unittest sweep
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Use the pinned kernel runner so optional Lean tests do not silently skip.
+          for test in tools/test_deployment_*.py; do
+            echo "::group::$test"
+            # Modules that chown fixtures through passwordless sudo cannot run on the sudo-less self-hosted runner.
+            # Report that loudly (a SKIPPED module is not a pass); deployment-slice/fixtures runs them on a hosted runner.
+            if grep -q "'sudo'" "$test" && ! sudo -n true 2>/dev/null; then
+              echo "SKIPPED $test - needs passwordless sudo, unavailable here; NOT verified by this job (covered only by deployment-slice/fixtures on a hosted runner)"
+              echo "::warning::SKIPPED $test (needs passwordless sudo; not verified by this job)"
+              echo "- SKIPPED \`$test\` (needs passwordless sudo): NOT verified in this job" >> "$GITHUB_STEP_SUMMARY"
+              echo "::endgroup::"
+              continue
+            fi
+            module="${test%.py}"
+            module="${module//\//.}"
+            python3 -m "$module"
+            echo "::endgroup::"
+          done
+          python3 -m unittest discover -s trusted_stack -p 'test_*.py'
         if: steps.green.outputs.cache-hit != 'true'
       - name: Contract witnesses and axiom report
         run: python3 tools/check_deployment_contract_witnesses.py

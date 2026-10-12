@@ -9,6 +9,7 @@ if not __debug__:
     raise SystemExit("Refusing to run a certificate checker under python -O")
 import json
 import re
+from collections import Counter
 import subprocess
 import tempfile
 from pathlib import Path
@@ -39,6 +40,40 @@ def lean(path):
     if run.returncode:
         raise ValueError(run.stdout + run.stderr)
     return run.stdout + run.stderr
+
+
+def required_axiom_report_names(n_items):
+    """Every fixture has three uniquely named reports plus six shared contracts."""
+    return Counter(
+        [name for _ in range(n_items) for name in CONTRACTS]
+        + [f"SliceBatch.{kind}_{i}" for i in range(n_items)
+           for kind in ("facts", "contract_checked", "one_use_checked")]
+    )
+
+
+def check_axiom_reports(output, n_items):
+    """Reject missing, duplicated, substituted, or nonstandard axiom reports.
+
+    Counting reports alone is insufficient: a duplicated report could hide a
+    missing or malformed per-fixture certificate.
+    """
+    reports = re.findall(
+        r"'([^']+)' (does not depend on any axioms|depends on axioms: \[([^\]]*)\])",
+        output,
+    )
+    found = Counter(name for name, _, _ in reports)
+    required = required_axiom_report_names(n_items)
+    if found != required:
+        raise ValueError(
+            f"Missing, unexpected, or duplicated per-certificate axiom reports: "
+            f"required={required}, found={found}\n{output}"
+        )
+    for name, _, axioms in reports:
+        disallowed = {a.strip() for a in axioms.split(",") if a.strip()} - ALLOWED
+        if disallowed:
+            raise ValueError(f"Disallowed axioms for {name}: {sorted(disallowed)}\n{output}")
+    if "sorryAx" in output:
+        raise ValueError("Unsafe sorryAx in batch Lean report:\n" + output)
 
 
 def check_many_fixtures(items):
@@ -102,15 +137,7 @@ def check_many_fixtures(items):
             + "end SliceBatch\n" + "".join(reports)
         )
         axioms = lean(file)
-        groups = re.findall(r"depends on axioms: \[([^\]]*)\]", axioms)
-        n_empty = axioms.count("does not depend on any axioms")
-        required = 9 * len(items)
-        if len(groups) + n_empty != required:
-            raise ValueError(f"Expected {required} Lean axiom reports; got "
-                             f"{len(groups) + n_empty}:\n" + axioms)
-        if any({a.strip() for a in group.split(",") if a.strip()} - ALLOWED
-               for group in groups) or "sorryAx" in axioms:
-            raise ValueError("Disallowed axiom in Lean certificates:\n" + axioms)
+        check_axiom_reports(axioms, len(items))
         return accepted
 
 

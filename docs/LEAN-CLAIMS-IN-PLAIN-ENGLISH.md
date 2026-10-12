@@ -5,6 +5,8 @@ Generated overview of 187 headline Lean claims (the deployment verifier stack pl
 The blocks were written by Sonnet from the Lean source (not from the scenario descriptions) and are **not yet verified one-to-one against the Lean**; that check is the next step
 (`docs/lean-english/ONE-TO-ONE.md`). Treat every sentence as a claim to be checked, not as a result.
 
+**One-to-one freshness as of draft PR #56:** G0 had 26 historical gate-checked comparisons, but the exercise was not strictly blind; revised G0 blocks (including `runtime_trace` and the earlier `Accepted` correction) need a new blind evaluation. **G1–G7 (161 claims) have never been checked one-to-one.** This is model-written, model-reviewed work; no independent human review has occurred.
+
 **How to read the "Kind" column.** *general theorem*: a statement quantified over arbitrary instances. *finite computation*: checked by `decide` on one concrete case. *witness / non-vacuity example*: shows hypotheses can hold together. *negative control*: shows a weakened model fails. *refinement/bridge*: links a concrete machine to the abstract model. *definitional/trivial*: a projection or a restatement of a hypothesis.
 
 **What a Lean theorem can and cannot give you.** Every claim is about a *model* (a list of operations and a state machine, or a finite graph). The runtime link (the real code does what the model does), extraction faithfulness (the model lists every real authority edge), and the trusted base (kernel, Docker, SQLite, Python, the hash function) are premises, never conclusions of these theorems.
@@ -61,7 +63,7 @@ These are the translators' own judgement, to be confirmed or refuted in the veri
 | `TrustedBroker.halted_absorbing` | If a broker state is halted and one model step is taken, the result is still halted and the release counter has not changed. | general theorem |
 | `TrustedBroker.committed_nonce_unusable` | For any state `s` and any release `(r, a, l)`, after applying the release (the function `committed`), no request `r'` with the same nonce as `r` can satisfy the release guard `Allowed`, whatever approval, lease or clock value is offered. | general theorem |
 | `TrustedBroker.trace_preserves` | If a state `s` is Safe and `t` is reachable from `s` by any finite sequence of model steps, then `t` is Safe. | general theorem |
-| `Deployment.TranscriptReplay.runtime_trace` | There is a chain of ten broker model steps from the initial state with cap 2 to the specific state `s10`. | finite computation |
+| `Deployment.TranscriptReplay.runtime_trace` | The theorem asserts only that a broker-model trace connects the cap-2 initial state to `s10`. | finite computation |
 | `Deployment.TranscriptReplay.final_safe` | The final model state `s10` of the replayed transcript is Safe: spent (2) is at most cap (2); releases at most spent; consumed nonces distinct; every lease within budget. | finite computation |
 | `Deployment.TranscriptReplay.replay_was_not_allowed` | In the model state `s8` reached just after the first release (nonce 1), the request `q8` (which has the same fields as the first release's request, so the same nonce) fails the release guard, whatever clock value, approval record and lease are offered. | definitional/trivial |
 | `Deployment.TranscriptReplay.omitted_tail_is_accepted` | The replay checker also accepts the transcript with its last receipt (the second release) removed: the first nine receipts form a valid shorter chain. | negative control |

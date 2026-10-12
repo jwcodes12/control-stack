@@ -150,19 +150,22 @@ jobs:
         if: steps.green.outputs.cache-hit != 'true'
       - name: Demo static stages; live stages must be reported SKIPPED, exit 3
         run: |
+          # A per-job directory (the self-hosted runner's /tmp persists across jobs and `cstack demo` refuses an existing output directory).
+          demo="$RUNNER_TEMP/demo"
+          rm -rf "$demo"
           set +e
-          python3 tools/cstack.py demo --output /tmp/demo --static-only
+          python3 tools/cstack.py demo --output "$demo" --static-only
           code=$?
           set -e
           python3 - "$code" <<'PY'
-          import json, sys
-          s = json.load(open('/tmp/demo/demo.json'))
+          import json, os, sys
+          s = json.load(open(os.path.join(os.environ['RUNNER_TEMP'], 'demo', 'demo.json')))
           assert int(sys.argv[1]) == 3 and s['result'] == 'SKIPPED', (sys.argv[1], s['result'])
           static, live = s['stages'][:2], s['stages'][2:]
           assert all(x['status'] == 'PASS' for x in static), static
           assert all(x['status'] == 'SKIPPED' for x in live), live
           PY
-          cat /tmp/demo/DEMO.md >> "$GITHUB_STEP_SUMMARY"
+          cat "$demo/DEMO.md" >> "$GITHUB_STEP_SUMMARY"
           echo '**Live container stages: SKIPPED on GitHub runners (not a pass).**' >> "$GITHUB_STEP_SUMMARY"
         if: steps.green.outputs.cache-hit != 'true'
       - name: Record this input hash as green

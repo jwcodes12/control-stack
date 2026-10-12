@@ -5,6 +5,8 @@ Generated overview of {TOTAL} headline Lean claims (the deployment verifier stac
 The blocks were written by Sonnet from the Lean source (not from the scenario descriptions) and are **not yet verified one-to-one against the Lean**; that check is the next step
 (`docs/lean-english/ONE-TO-ONE.md`). Treat every sentence as a claim to be checked, not as a result.
 
+**One-to-one freshness as of draft PR #56:** G0 had 26 historical gate-checked comparisons, but the exercise was not strictly blind; revised G0 blocks (including `runtime_trace` and the earlier `Accepted` correction) need a new blind evaluation. **G1–G7 (161 claims) have never been checked one-to-one.** This is model-written, model-reviewed work; no independent human review has occurred.
+
 **How to read the "Kind" column.** *general theorem*: a statement quantified over arbitrary instances. *finite computation*: checked by `decide` on one concrete case. *witness / non-vacuity example*: shows hypotheses can hold together. *negative control*: shows a weakened model fails. *refinement/bridge*: links a concrete machine to the abstract model. *definitional/trivial*: a projection or a restatement of a hypothesis.
 
 **What a Lean theorem can and cannot give you.** Every claim is about a *model* (a list of operations and a state machine, or a finite graph). The runtime link (the real code does what the model does), extraction faithfulness (the model lists every real authority edge), and the trusted base (kernel, Docker, SQLite, Python, the hash function) are premises, never conclusions of these theorems.

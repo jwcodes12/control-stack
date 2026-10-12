@@ -28,10 +28,12 @@ The verdict is about the stated model formula, not world-assumption truth, the r
 | 20 | `halted_absorbing` | EQUIVALENT | [20-halted_absorbing.lean](20-halted_absorbing.lean) | Entire-state identity exceeds the displayed theorem conclusion but is derivable from the complete Step relation and halted premise. Gated proof establishes equivalence on that domain. |
 | 21 | `committed_nonce_unusable` | EQUIVALENT | [21-committed_nonce_unusable.lean](21-committed_nonce_unusable.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 22 | `trace_preserves` | EQUIVALENT | [22-trace_preserves.lean](22-trace_preserves.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
-| 23 | `runtime_trace` | UNDECIDED | [23-runtime_trace.lean](23-runtime_trace.lean) | Core trace proposition is gated; the full Says also specifies ten ordered steps. That extra ordering was not encoded in Back, so the entire block is not certified. Original theorem has no length output. |
+| 23 | `runtime_trace` | **STALE** (formerly UNDECIDED) | [23-runtime_trace.lean](23-runtime_trace.lean) | English Says changed to distinguish trace proposition from ten-step proof construction. Previous G0 comparison used the old English; no strictly blind gate-passing recheck of this changed block exists. |
 | 24 | `final_safe` | EQUIVALENT | [24-final_safe.lean](24-final_safe.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 25 | `replay_was_not_allowed` | EQUIVALENT | [25-replay_was_not_allowed.lean](25-replay_was_not_allowed.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
 | 26 | `omitted_tail_is_accepted` | EQUIVALENT | [26-omitted_tail_is_accepted.lean](26-omitted_tail_is_accepted.lean) | Gate-checked conclusion equivalence; original theorem application also type-checked with its hypotheses. |
+
+**Freshness notice (continuation draft PR #56):** Claim #23 (`runtime_trace`) has changed English and its G0 result is now **STALE**. The historical model-generated, non-strictly-blind comparison does not certify the revised block. G1–G7 (161 claims) have **never** been checked one-to-one. All writing and review to date are model-only; no independent human has reviewed the work.
 
 ## Corrections to the English
 

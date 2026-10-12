@@ -17,30 +17,30 @@ open ControlStack.Deployment
 open ControlStack.Deployment.Witnesses
 
 /-- Removing precisely one numbered condition (0..20), retaining the other 20. -/
-def AllowedExcept (omit : Nat) (R : TrustedBroker.Roles) (s : TrustedBroker.State)
+def AllowedExcept (skipGuard : Nat) (R : TrustedBroker.Roles) (s : TrustedBroker.State)
     (now : Nat) (r : TrustedBroker.Request) (a : TrustedBroker.Approval)
     (l : TrustedBroker.Lease) : Prop :=
-  (omit = 0 ∨ s.halted = false) ∧
-  (omit = 1 ∨ R.agent r.uid) ∧
-  (omit = 2 ∨ s.approvals r.nonce = some a) ∧
-  (omit = 3 ∨ a.used = false) ∧
-  (omit = 4 ∨ a.digest = r.digest) ∧
-  (omit = 5 ∨ a.destination = r.destination) ∧
-  (omit = 6 ∨ a.agent = r.uid) ∧
-  (omit = 7 ∨ a.lease = r.lease) ∧
-  (omit = 8 ∨ R.approver a.signer) ∧
-  (omit = 9 ∨ now < a.expires) ∧
-  (omit = 10 ∨ s.leases r.lease = some l) ∧
-  (omit = 11 ∨ l.agent = r.uid) ∧
-  (omit = 12 ∨ l.revoked = false) ∧
-  (omit = 13 ∨ now < l.expires) ∧
-  (omit = 14 ∨ 0 < r.cost) ∧
-  (omit = 15 ∨ l.used + r.cost ≤ l.budget) ∧
-  (omit = 16 ∨ s.spent + r.cost ≤ s.cap) ∧
-  (omit = 17 ∨ s.artifacts r.digest = true) ∧
-  (omit = 18 ∨ s.intact r.digest = true) ∧
-  (omit = 19 ∨ ∃ reviewer, s.reviews r.digest = some reviewer) ∧
-  (omit = 20 ∨ r.nonce ∉ s.consumed)
+  (skipGuard = 0 ∨ s.halted = false) ∧
+  (skipGuard = 1 ∨ R.agent r.uid) ∧
+  (skipGuard = 2 ∨ s.approvals r.nonce = some a) ∧
+  (skipGuard = 3 ∨ a.used = false) ∧
+  (skipGuard = 4 ∨ a.digest = r.digest) ∧
+  (skipGuard = 5 ∨ a.destination = r.destination) ∧
+  (skipGuard = 6 ∨ a.agent = r.uid) ∧
+  (skipGuard = 7 ∨ a.lease = r.lease) ∧
+  (skipGuard = 8 ∨ R.approver a.signer) ∧
+  (skipGuard = 9 ∨ now < a.expires) ∧
+  (skipGuard = 10 ∨ s.leases r.lease = some l) ∧
+  (skipGuard = 11 ∨ l.agent = r.uid) ∧
+  (skipGuard = 12 ∨ l.revoked = false) ∧
+  (skipGuard = 13 ∨ now < l.expires) ∧
+  (skipGuard = 14 ∨ 0 < r.cost) ∧
+  (skipGuard = 15 ∨ l.used + r.cost ≤ l.budget) ∧
+  (skipGuard = 16 ∨ s.spent + r.cost ≤ s.cap) ∧
+  (skipGuard = 17 ∨ s.artifacts r.digest = true) ∧
+  (skipGuard = 18 ∨ s.intact r.digest = true) ∧
+  (skipGuard = 19 ∨ ∃ reviewer, s.reviews r.digest = some reviewer) ∧
+  (skipGuard = 20 ∨ r.nonce ∉ s.consumed)
 
 private theorem s4_safe : TrustedBroker.Safe Witnesses.s4 :=
   TrustedBroker.trace_preserves Witnesses.R _ _

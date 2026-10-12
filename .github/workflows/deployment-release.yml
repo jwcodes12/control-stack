@@ -61,6 +61,8 @@ jobs:
         run: lake build
       - name: Bootstrap Lean environment dependency inventory
         run: python3 tools/build_lean_dependencies.py --emit-bootstrap
+      - name: Bootstrap 187-claim English/Lean traceability
+        run: python3 tools/build_lean_traceability.py --emit-bootstrap
       - name: Batched certificate negative controls (invalid Lean proof and nonstandard axiom)
         run: python3 -m tools.test_deployment_fixture_batch_negative
       - name: Python/Lean differential (fixtures + 250 seeded mutations)

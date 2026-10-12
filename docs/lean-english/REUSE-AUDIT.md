@@ -237,3 +237,18 @@ Every table row below corresponds to exactly one overview claim block; row count
 
 - **Read-only audit:** verified block count (187), registry/path/name matching (186 theorem rows + one definition), and the four repeated qualified claims by exact strings. This is **not** a Lean build or a verified semantic substitution, and it does not verify the correctness of existing English statements.
 - **Not verified:** `lake build`, updated theorem registry/catalog, deployment differential (~12 minutes), contract/transcript checkers, Docker/sudo/offline-rootfs container tests, Python unit tests, model-to-runtime correspondence, positive/negative provenance witnesses, Mathlib lemma equivalence, external repository lemma candidates, and independent human review. No source or test behavior changes warranted running release gates in this A-only audit. No dangerous fixtures were launched.
+
+## Post-merge refinement-transfer disposition (draft PR #56)
+
+**Model-written/model-reviewed; no independent human review.** Original scenario `manifest.json` theorem source pins remain byte-for-byte unchanged. This inventory classifies the six additional `simulation_run` candidates against the exact hypotheses required by `RefinementTransfer.run_simulation`:
+
+| Scenario | Classification | Reason / disposition |
+|---|---|---|
+| SC-07 | **NOT direct instance** | The one-step `simulation K hK s o h` requires `CInv s`, preserved only along the restricted trace; the generic theorem requires unconditional `∀ s o`. A plain bridge would silently strengthen the hypothesis. |
+| SC-16 | **BRIDGED** | `simulation R h s o` is unconditional for all states and operations. `SC16RefinementReuse.simulation_run_via_transfer` uses the generic theorem with an `absTrace = emitTrace` proof, retaining the pinned theorem unchanged; `simulation_run_agree` is proof-irrelevant equality. |
+| SC-18 | **NOT direct instance** | One-step simulation requires `CInv s`; reachable-state preservation is needed. No unconditional step simulation available. |
+| SC-26 | **NOT direct instance** | One-step simulation requires legal concrete operations and `CInv s`; the original `simulation_run` additionally concludes `CInv` for the final state, which the generic conclusion alone cannot establish. |
+| SC-27 | **NOT direct instance** | One-step simulation depends on `CInv E s` and the current `TraceInj` obligations; these are trace-wide and state-dependent. |
+| SC-28 | **NOT direct instance** | One-step simulation requires `CInv s` and its preservation; the shared theorem does not carry invariants. |
+
+To reuse additional candidates safely, first prove a separately reviewed generic *invariant-preserving* transfer theorem and a per-scenario legal-trace side-condition theorem. **Do not** manufacture globally unconditional one-step hypotheses or rewrite pinned files. Existing wrappers are retained because pin/import/registry safety has not been established for their removal.

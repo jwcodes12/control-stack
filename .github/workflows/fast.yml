@@ -65,10 +65,30 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Look up a previous green run on identical inputs (clean hosted runner)
+        id: green
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci-green
+          key: green-${{ github.workflow }}-lean-covert-${{ hashFiles('**/*.lean', '**/*.py', '**/*.json', '**/*.toml', '**/*.sh', 'lean-toolchain', '.github/workflows/fast.yml') }}
+      - name: Skipped, identical inputs already passed here
+        if: steps.green.outputs.cache-hit == 'true'
+        run: echo "SKIPPED lean-covert - the same input hash passed on a clean GitHub-hosted runner before (${{ steps.green.outputs.cache-primary-key }})"
       - name: Install elan
         run: curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+        if: steps.green.outputs.cache-hit != 'true'
       - name: Build and axiom-check the covert-channel theorems (mandatory)
         run: PATH=$HOME/.elan/bin:$PATH ci/covert/check.sh
+        if: steps.green.outputs.cache-hit != 'true'
+      - name: Record this input hash as green
+        if: steps.green.outputs.cache-hit != 'true'
+        run: mkdir -p .ci-green && echo ok > .ci-green/ok
+      - name: Save the green marker
+        if: steps.green.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci-green
+          key: ${{ steps.green.outputs.cache-primary-key }}
   lean-vcvio:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

@@ -29,6 +29,16 @@ theorem foldl_field_fixed {σ α β : Type} (step : σ → α → σ) (P : σ �
     obtain ⟨h1, h2⟩ := fixed s o hs
     rw [ih h2, h1]
 
+/-- An invariant preserved by every legal step holds along every all-legal run. -/
+theorem foldl_inv {σ α : Type} (step : σ → α → σ) (L : α → Prop) (I : σ → Prop)
+    (hpres : ∀ s o, L o → I s → I (step s o)) {s : σ} (hs : I s)
+    (ops : List α) (hops : ∀ o ∈ ops, L o) : I (ops.foldl step s) := by
+  induction ops generalizing s with
+  | nil => exact hs
+  | cons o ops ih =>
+    exact ih (hpres s o (hops o List.mem_cons_self) hs)
+      (fun x hx => hops x (List.mem_cons_of_mem o hx))
+
 /-- A reflexive, transitive relation `Q` that every legal step from a `P`-state respects
 (keeping `P`) relates the start of a run to its end. -/
 theorem foldl_rel_fixed {σ α : Type} (step : σ → α → σ) (L : α → Prop) (P : σ → Prop)
@@ -59,4 +69,5 @@ end ControlStack.Gate
 #print axioms ControlStack.Gate.foldl_fixed
 #print axioms ControlStack.Gate.foldl_field_fixed
 #print axioms ControlStack.Gate.foldl_legal
+#print axioms ControlStack.Gate.foldl_inv
 #print axioms ControlStack.Gate.foldl_rel_fixed

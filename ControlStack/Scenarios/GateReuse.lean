@@ -17,6 +17,7 @@ import ControlStack.Scenarios.SC25Audit
 import ControlStack.Scenarios.SC17Infra
 import ControlStack.Scenarios.SC14Runaway
 import ControlStack.Scenarios.SC18Logging
+import ControlStack.Scenarios.SC23IsolationV2
 import ControlStack.Scenarios.SC26Transaction
 import ControlStack.Scenarios.SC27Chain
 import ControlStack.Scenarios.SC28Budget
@@ -453,3 +454,28 @@ end ControlStack.SC28
 #print axioms ControlStack.SC28.sc28_safe_via_gate
 #print axioms ControlStack.SC28.halt_freezes_via_gate
 #print axioms ControlStack.SC26.halt_freezes_via_gate
+
+namespace ControlStack.SC23IsolationV2
+open ControlStack.Gate ControlStack.Authenticated
+
+theorem sc23v2_safe_authenticated_via_gate (E : Env) (U : List ℕ) (hU : ∀ u ∈ U, u ∉ E.users)
+    (ops : List (ℕ × Op)) :
+    ∀ x ∈ ((authed (raw E) claim).run init ops).executed, x.tool ∈ E.sensitive → x.tainted = true →
+      ∃ c n, c ∈ E.users ∧ c ∉ U ∧ (c, Op.confirm c n x.tool x.vals) ∈ ops := by
+  intro x hx hs ht
+  rw [authed_run, raw_run] at hx
+  have hinv : Inv E (run E full init (applied claim ops)) :=
+    ((spec E).trace_safe init (applied claim ops) (inv_init E)).1
+  obtain ⟨n, _, cf, hcf, _, htool, hvals, hby⟩ := hinv.exec x hx hs ht
+  rcases run_confs E (applied claim ops) init cf hcf with h | h
+  · simp [init] at h
+  · have hiss := claim_issued_by claim ops _ cf.by_ h rfl
+    rw [htool, hvals] at hiss
+    exact ⟨cf.by_, cf.n, hby, fun hu => hU _ hu hby, hiss⟩
+
+theorem sc23v2_safe_authenticated_agree :
+    @sc23v2_safe_authenticated_via_gate = @sc23v2_safe_authenticated := rfl
+end ControlStack.SC23IsolationV2
+
+#print axioms ControlStack.SC23IsolationV2.sc23v2_safe_authenticated_via_gate
+

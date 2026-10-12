@@ -1,3 +1,4 @@
+import ControlStack.Core.RunFixed
 import ControlStack.Core.RefinementTransferInv
 import ControlStack.Scenarios.SC07Refinement
 import ControlStack.Scenarios.SC18Refinement
@@ -108,6 +109,22 @@ theorem concrete_safe_via_transfer (G : ℕ) (ops : List COp) : SC28.Good G (α 
 
 theorem concrete_safe_agree : @concrete_safe_via_transfer = @concrete_safe := rfl
 
+open ControlStack.Gate in
+/-- The pinned proof's inner induction (`key`) is `Gate.foldl_inv`; the remainder is unchanged. -/
+theorem exclusive_placement_safe_via_gate (G : ℕ) (ops : List COp)
+    (hu : ∀ o ∈ ops, isUnplaced o = false) :
+    (runC G cinit ops).outside = [] ∧ realTotal (runC G cinit ops) ≤ G := by
+  have hout : (runC G cinit ops).outside = [] :=
+    (foldl_inv (stepC G) (fun o => isUnplaced o = false)
+      (fun s => (∀ q ∈ s.procs, q.cg ≠ none) ∧ s.outside = [])
+      (fun s o ho hi => step_placed G s o ho hi.1 hi.2) ⟨by simp [cinit], rfl⟩ ops hu).2
+  refine ⟨hout, ?_⟩
+  unfold realTotal
+  rw [hout]
+  simpa using (concrete_counters_safe G ops).1
+
+theorem exclusive_placement_safe_agree :
+    @exclusive_placement_safe_via_gate = @exclusive_placement_safe := rfl
 end ControlStack.SC28Refinement
 
 namespace ControlStack.SC26Refinement
@@ -205,3 +222,5 @@ end ControlStack.SC25Refinement
 #print axioms ControlStack.SC16Refinement.concrete_reviewed_content_via_transfer
 #print axioms ControlStack.SC25Refinement.concrete_safe_via_transfer
 #print axioms ControlStack.SC25Refinement.concrete_content_safe_via_transfer
+#print axioms ControlStack.SC28Refinement.exclusive_placement_safe_via_gate
+

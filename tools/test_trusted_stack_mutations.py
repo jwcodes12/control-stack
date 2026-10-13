@@ -30,9 +30,13 @@ def main():
         ("artifact-integrity", "controller.py", "hashlib.sha256(body[0]).hexdigest() != digest", "False"),
     ]
     if args.live:
-        mutations.append(("disconnect-kills-broker", "server.py",
-            '                    try:\n                        conn.sendall((json.dumps(response, sort_keys=True) + "\\n").encode())\n                    except OSError:\n                        # A caller can disconnect after a transaction commits.\n                        # Never kill the trusted service or undo that commit;\n                        # subsequent retry is rejected by the consumed nonce.\n                        pass',
-            '                    conn.sendall((json.dumps(response, sort_keys=True) + "\\n").encode())'))
+        # Since the threaded broker (T9) a failed send in handle() is already swallowed and a worker exception cannot end the
+        # process (worker() always releases its slot), so the earlier "remove the OSError handler" mutant is an EQUIVALENT mutant
+        # there. The failure mode that remains observable is a leaked connection slot: each caller UID may hold only
+        # PER_UID_CONNECTIONS, so a leak locks a UID out after that many connections, disconnects included.
+        mutations.append(("worker-leaks-slot", "server.py",
+            '        try:\n            with conn:\n                handle(controller, conn, uid, allow_delegation, effect_root, latch)\n        finally:\n            release_slot(active, lock, uid)',
+            '        try:\n            with conn:\n                handle(controller, conn, uid, allow_delegation, effect_root, latch)\n        finally:\n            pass'))
     for name, file, before, after in mutations:
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
@@ -58,7 +62,7 @@ def main():
                 raise RuntimeError(f"{name}: weakened implementation escaped the oracle")
             # A crash/import failure in the oracle is not a killed safety mutant.
             expected = ("AssertionError",) if file == "controller.py" else (
-                "ConnectionRefusedError", "FileNotFoundError")
+                "ConnectionRefusedError", "FileNotFoundError", "AssertionError", "DENIED")
             if not any(marker in result.stderr for marker in expected):
                 raise RuntimeError(f"{name}: unexpected failure: {result.stderr}")
             print(f"PASS: rejected {name} mutant")

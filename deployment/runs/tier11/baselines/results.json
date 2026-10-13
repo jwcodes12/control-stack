@@ -1,0 +1,1831 @@
+{
+  "corpora": {
+    "tier10": {
+      "cases": 34,
+      "hadolint": {
+        "applicable": false,
+        "dockerfiles_in_corpus": 0,
+        "note": "no case has a Dockerfile; Hadolint reads Dockerfiles only"
+      },
+      "kics_exit": 50,
+      "kics_files_scanned": 34,
+      "rows": [
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-minimal",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-receiver-channel",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-agent-a-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-agent-b-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-broker-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-receiver-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-reviewer-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-approver-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-sink-write",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-db-read",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-channel-write",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "reviewer-sink-write",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "approver-db-read",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-trusted-uid",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agents-shared-uid",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-role-impersonation",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-role-marker",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "missing-no-new-privileges",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "missing-cap-drop",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: no-new-privileges not set (OWASP #4)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "disabled-no-new-privileges",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "HIGH:No New Privileges Not Set",
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "REJECT",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: does not drop all capabilities (OWASP #3)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "partial-cap-drop",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: no-new-privileges not set (OWASP #4)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "hardening-scalar",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "HIGH:No New Privileges Not Set",
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "REJECT",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "noninternal-network",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "inventory-uid-mismatch",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "inventory-hardening-mismatch",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-command",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-entrypoint",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-build",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-healthcheck",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-restart",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-resources",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-tmpfs",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-labels",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-inventory-metadata",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        }
+      ],
+      "summary": {
+        "conftest_owasp": {
+          "caught": 26,
+          "negatives": 26,
+          "over_rejected": 8,
+          "safe": 8
+        },
+        "kics_any": {
+          "caught": 26,
+          "negatives": 26,
+          "over_rejected": 8,
+          "safe": 8
+        },
+        "kics_high": {
+          "caught": 2,
+          "negatives": 26,
+          "over_rejected": 0,
+          "safe": 8
+        },
+        "python_rules": {
+          "caught": 0,
+          "negatives": 26,
+          "over_rejected": 0,
+          "safe": 8
+        }
+      },
+      "trivy": {
+        "applicable": false,
+        "exit": 0,
+        "note": "no Compose scanner: 'Detected config files num=0; Supported files for scanner(s) not found'",
+        "result_targets": 0
+      }
+    },
+    "tier6": {
+      "cases": 25,
+      "hadolint": {
+        "applicable": false,
+        "dockerfiles_in_corpus": 0,
+        "note": "no case has a Dockerfile; Hadolint reads Dockerfiles only"
+      },
+      "kics_exit": 40,
+      "kics_files_scanned": 25,
+      "rows": [
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-minimal",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-receiver-channel",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-reader-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-private-selinux",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "SAFE_IN_SUPPORTED_MODEL",
+          "id": "supported-all-selinux-with-channel",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-a: runs as root (OWASP #2)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agent-root-identity",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [
+            "agent-a:root-user"
+          ],
+          "python_rules": "REJECT"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "agents-share-identity",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "reviewer-channel-writer",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "approver-output-writer",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "broker-output-writer",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "receiver-output-readonly",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "receiver-output-wrong-source",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "credential-environment",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [
+            "broker:credential-name"
+          ],
+          "python_rules": "REJECT"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "reviewer-role-ambiguity",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "network-not-internal",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "inventory-uid-contradiction",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "REFUTED_CONFIGURATION",
+          "id": "inventory-undeclared-writer",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-restart-policy",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-service-labels",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-deploy-resources",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-rootfs-readonly",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-tmpfs",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-network-object",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-environment-list",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        },
+        {
+          "conftest_findings": [
+            "agent-a: no memory limit (OWASP #7)",
+            "agent-a: root filesystem is writable (OWASP #8)",
+            "agent-b: no memory limit (OWASP #7)",
+            "agent-b: root filesystem is writable (OWASP #8)",
+            "approver: no memory limit (OWASP #7)",
+            "approver: root filesystem is writable (OWASP #8)",
+            "broker: no memory limit (OWASP #7)",
+            "broker: root filesystem is writable (OWASP #8)",
+            "receiver: no memory limit (OWASP #7)",
+            "receiver: root filesystem is writable (OWASP #8)",
+            "reviewer: no memory limit (OWASP #7)",
+            "reviewer: root filesystem is writable (OWASP #8)"
+          ],
+          "conftest_owasp": "REJECT",
+          "ground_truth": "UNKNOWN_CONFIGURATION",
+          "id": "unsupported-bind-propagation",
+          "kics_any": "REJECT",
+          "kics_findings": [
+            "INFO:Shared Volumes Between Containers",
+            "MEDIUM:Container Capabilities Unrestricted",
+            "MEDIUM:Healthcheck Not Set",
+            "MEDIUM:Security Opt Not Set"
+          ],
+          "kics_high": "ALLOW",
+          "python_findings": [],
+          "python_rules": "ALLOW"
+        }
+      ],
+      "summary": {
+        "conftest_owasp": {
+          "caught": 20,
+          "negatives": 20,
+          "over_rejected": 5,
+          "safe": 5
+        },
+        "kics_any": {
+          "caught": 20,
+          "negatives": 20,
+          "over_rejected": 5,
+          "safe": 5
+        },
+        "kics_high": {
+          "caught": 0,
+          "negatives": 20,
+          "over_rejected": 0,
+          "safe": 5
+        },
+        "python_rules": {
+          "caught": 2,
+          "negatives": 20,
+          "over_rejected": 0,
+          "safe": 5
+        }
+      },
+      "trivy": {
+        "applicable": false,
+        "exit": 0,
+        "note": "no Compose scanner: 'Detected config files num=0; Supported files for scanner(s) not found'",
+        "result_targets": 0
+      }
+    }
+  },
+  "tools": {
+    "conftest": {
+      "path": "/home/opc/tools/bin/conftest",
+      "sha256": "c0de4f72445c98e4cbffa7a6f87f94ce649636c40581169a9188359a8baff87e",
+      "version": "Conftest: 0.71.1"
+    },
+    "hadolint": {
+      "path": "/home/opc/tools/bin/hadolint",
+      "sha256": "f6198ef8090f404dbb771abfee086eb8c48ac177f30da7fd3510aca35b344b5d",
+      "version": "Haskell Dockerfile Linter 2.15.1"
+    },
+    "kics": {
+      "image_id": "sha256:3e5a268eb8adda2e5a483c9359ddfc4cd520ab856a7076dc0b1d8784a37e2602",
+      "version": "Keeping Infrastructure as Code Secure v2.1.20"
+    },
+    "trivy": {
+      "path": "/home/opc/tools/bin/trivy",
+      "sha256": "869e310e208f0f2e3e90e4f842cc6adaa2b2c046fecbaade481e6b23fcc8f2a9",
+      "version": "Version: 0.75.0"
+    }
+  }
+}

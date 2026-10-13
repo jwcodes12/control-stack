@@ -1,0 +1,95 @@
+name: Build combined source export
+on:
+  push:
+    branches:
+      - export/combined-source-20261013
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout export branch
+        uses: actions/checkout@v4
+
+      - name: Assemble tracked source files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import subprocess
+
+          output = Path("control-stack-all-code.txt")
+          excluded = {".github/workflows/export-combined-source.yml"}
+          source_suffixes = {
+              ".lean", ".py", ".pysrc", ".sh", ".bash", ".sql",
+              ".mjs", ".js", ".jsx", ".ts", ".tsx", ".rs", ".go",
+              ".java", ".c", ".cc", ".cpp", ".h", ".hpp", ".html",
+              ".css", ".scss", ".yml", ".yaml", ".toml",
+          }
+          special_basenames = {
+              "Makefile", "Dockerfile", "lean-toolchain",
+              "requirements.txt", "requirements-dev.txt", "Pipfile",
+              "Gemfile", "justfile", "package.json", "tsconfig.json",
+              "pyproject.toml", "setup.cfg", "tox.ini",
+          }
+          special_json = {
+              "security_ir/schema-v0.json",
+              "security_ir/schema-v0.1.json",
+              "stack/components.json",
+          }
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).decode().strip("\0").split("\0")
+          selected = sorted(
+              p for p in tracked
+              if p and p not in excluded and p != str(output)
+              and (
+                  Path(p).suffix.lower() in source_suffixes
+                  or Path(p).name in special_basenames
+                  or p in special_json
+                  or p.endswith(".schema.json")
+              )
+          )
+          source_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          total_bytes = 0
+          with output.open("w", encoding="utf-8", newline="\n") as combined:
+              combined.write("CONTROL-STACK — ALL TRACKED SOURCE CODE\n")
+              combined.write("Source: https://github.com/jwcodes12/control-stack\n")
+              combined.write("Branch: main (snapshot copied to export branch)\n")
+              combined.write(f"Snapshot commit: {source_commit} (export-workflow commit; code identical to main)\n")
+              combined.write(f"Generated: {datetime.now(timezone.utc).isoformat()}\n")
+              combined.write(f"Source files: {len(selected)}\n")
+              combined.write("Includes Lean, Python, pinned .pysrc, scripts, runtime source, and build/CI configuration.\n")
+              combined.write("Excludes documentation, datasets, generated results, and binary files.\n")
+              combined.write("Each section identifies the original repository file path.\n\n")
+              for p in selected:
+                  content = Path(p).read_text(encoding="utf-8", errors="replace")
+                  total_bytes += len(content.encode("utf-8"))
+                  combined.write("=" * 100 + "\n")
+                  combined.write(f"FILE: {p}\n")
+                  combined.write("=" * 100 + "\n\n")
+                  combined.write(content)
+                  if not content.endswith("\n"):
+                      combined.write("\n")
+                  combined.write("\n")
+          print(f"Exported {len(selected)} files ({total_bytes:,} source bytes) to {output} ({output.stat().st_size:,} bytes).")
+          PY
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: control-stack-all-code
+          path: control-stack-all-code.txt
+          retention-days: 30
+
+      - name: Publish text file to export branch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f control-stack-all-code.txt
+          git rm -f .github/workflows/export-combined-source.yml
+          git commit -m "Add single-file source snapshot from main"
+          git push origin HEAD:refs/heads/export/combined-source-20261013

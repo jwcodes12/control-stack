@@ -62,6 +62,13 @@ Earlier text in this handoff, in the PR #56 description and in `PR55-HANDOFF.md`
   Two true closed theorems are trivially equivalent, so compare conclusions under the same hypotheses. No badges yet; none on the new `Provenance`, `NamedContracts`, `RefinementTransfer` or `ComposedAssurance` statements.
 - The claim of record ("reviewed, exactly approved, once-consumed release") is stronger than what `deployment_broker_safe` concludes; the docs now say which theorem proves what.
 
+### Strictly blind one-to-one status (2026-10-13, Codex `gpt-6.1-sol`)
+- **160 of 183 deduplicated claims have a strictly blind result** (phase A hashed back-translations written from the English plus definition excerpts only; phase B compile, freeze, open originals, prove via the proofledger gate; every result independently re-gated). Verdicts: EQUIVALENT 151, ENGLISH_STRONGER 4, ENGLISH_WEAKER 3, UNDECIDED 2. Index: `docs/lean-english/one-to-one/BLIND-INDEX.md`; per-batch `blind-*/RESULTS.md`.
+- **Not yet run: batches `g7n1` (10 claims) and `g7n2` (13 claims)**, held back by the Codex 5h window (resets about 10:04 UTC). Run `tools/blind_batch_runner.py run --tag g7n1` then `verify`, then `tools/import_blind_batch.py`; keep usage under about 85%.
+- **Proposed English corrections are collected, not applied:** `docs/lean-english/one-to-one/ENGLISH-CORRECTIONS-FOR-OWNER.md` (9 substantive, about 64 wording-only; counts hand-tallied). Applying any of them makes the touched claim STALE again.
+- Caveats: model-written, model-reviewed, no independent human review. The phase A audit is a transcript check, not a sandbox; the real isolation is that originals are absent from the phase A directory. Orphaned-docstring caveat: see the batch RESULTS.
+- `docs/lean-english/TRACEABILITY.*` still marks claims as not independently verified (policy: no badge without human review); it was regenerated after the RESULTS.md annotations.
+
 ## 3. Needs a person or a resource (GATED)
 | ID | Needs |
 |---|---|

@@ -1,3 +1,45 @@
+# Research track handoff: Milestone 1 flagship (2026-10-13)
+
+Read first: [ROADMAP.md](ROADMAP.md) (revision 2), then the record
+[docs/records/budgeted-audit-vs-adaptive-attacker.md](docs/records/budgeted-audit-vs-adaptive-attacker.md).
+Branch `research/m1-flagship-20261013`, base `main` at `e7b4b25`. One pull request; **not to be merged without
+independent human review**.
+
+**What changed.**
+
+- `ControlStack/Families/F6/FlagBudget.lean` (new): potential bounds for `val`/`cval`; flag-triggered auditing with a
+  hard first-come budget: `flag_pre_bound`, `flag_exhaust_bound`, `flag_total_bound`.
+- `ControlStack/Families/F6/SplitAudit.lean` (new): one kernel for hidden random audits, flag audits and their split:
+  `split_hidden_bound`, `split_flag_bound`, `split_min_bound`, `split_product_pre`, `split_product_bound`; kernel
+  witnesses `exhaustion_witness`, `average_recall_witness`, `dependence_witness`; `hidden_one_step`, `split_example`.
+- `numerics/budgeted_audit.py`, `numerics/test_budgeted_audit.py`, `numerics/budgeted_audit/results.json` (new):
+  exact executable model, 12 consistency checks, frozen tables.
+- `docs/records/` (new) with the record; `tools/check_records.py` (new) validates its declaration references.
+- `.github/workflows/m1-budgeted-audit.yml` (new): record check, banned-token grep on the two modules, model checks.
+- `ROADMAP.md` rewritten as revision 2. `ControlStack.lean` imports the two modules. `registry/annotations.json`
+  gains eight entries; `THEOREM-REGISTRY.*` and `LEAN-STATEMENTS-NORMAL-FORM.md` regenerated.
+- No existing Lean file, frozen evidence, pinned artifact or `ControlStack/EgressGate.lean` was modified.
+
+**Verification report.** VERIFICATION_PLACEHOLDER
+
+**Not met, and what is needed to continue** (same list as ROADMAP section 4, M1).
+
+1. Truncation lemma (prefix event). Next step: M2 step 1.
+2. Imperfect reserved recall with visible flags. Needs `ReservedRecall`'s discount lemmas generalised from
+   `AOut Unit`; that edits an existing file, so it waits for M2's refactor decision.
+3. A usefulness quantity that distinguishes protocols. Needs a defer or block action: M2.
+4. Honest against attacker-induced false positives in the exhaustion premise. Open modelling question.
+5. Two papers read as abstracts only; two through an automated fetch. A person should spot-check the quotations in
+   the record's section 7 before they are cited elsewhere.
+6. External human review: the packet is the record's section 8. **No reviewer has been asked.** Model reviews
+   (three, summarised in ROADMAP section 3) are not a substitute.
+
+**Status words used here.** Completed: the files above exist. Verified: Lean-checked or test-checked as listed in
+the verification report. Empirically supported: nothing in this milestone. Speculative: the measurement recipe for ρ
+and the "constant-rate red teams understate risk" reading of the model values. Externally reviewed: nothing.
+
+---
+
 # SC-01 VM publication handoff — 2026-10-08
 
 John requested publication onto private GitHub main and a linkable status file.

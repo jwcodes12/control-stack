@@ -1,0 +1,50 @@
+name: m1-budgeted-audit
+# Research track, Milestone 1: the executable model agrees with the Lean closed forms on the instances tried, its
+# frozen results reproduce, and the record's declaration references resolve. Python only; the Lean statements are
+# compiled by fast-lean (full `lake build`). A pass here is executable-model agreement, not evidence about a deployment.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+on:
+  pull_request:
+    paths:
+      - 'numerics/budgeted_audit.py'
+      - 'numerics/test_budgeted_audit.py'
+      - 'numerics/budgeted_audit/**'
+      - 'docs/records/**'
+      - 'tools/check_records.py'
+      - 'THEOREM-REGISTRY.json'
+      - 'ControlStack/Families/F6/**'
+      - 'ControlStack/Core/Leakage.lean'
+      - 'ControlStack/AuditBudget.lean'
+      - '.github/workflows/m1-budgeted-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'numerics/budgeted_audit.py'
+      - 'numerics/test_budgeted_audit.py'
+      - 'numerics/budgeted_audit/**'
+      - 'docs/records/**'
+      - 'tools/check_records.py'
+      - 'THEOREM-REGISTRY.json'
+      - 'ControlStack/Families/F6/**'
+      - '.github/workflows/m1-budgeted-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-and-record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Record references resolve (declarations, definitions, lexical dependencies)
+        run: python3 tools/check_records.py
+      - name: No sorry, admit or native_decide in the M1 Lean modules
+        run: |
+          ! grep -nE '\bsorry\b|\badmit\b|native_decide|implemented_by|@\[extern' ControlStack/Families/F6/FlagBudget.lean ControlStack/Families/F6/SplitAudit.lean
+      - name: Executable model against the Lean closed forms; frozen results reproduce
+        run: python3 numerics/test_budgeted_audit.py

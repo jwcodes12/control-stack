@@ -5,6 +5,9 @@ name: second-linux-host-live
 # independent sink reconciliation run exactly as on the primary host. Evidence is uploaded as an artifact.
 on:
   workflow_dispatch:
+  push:
+    branches: ['audit/r2-v8-trusted-code-20261013']
+    paths: ['.github/workflows/second-linux-host-live.yml']
 permissions:
   contents: read
 jobs:

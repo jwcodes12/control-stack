@@ -5,6 +5,7 @@ Run on a runner with the pinned Lean toolchain and built deployment contracts.
 A fake invalid positive/negative certificate MUST fail Lean compilation.
 A non-standard axiom MUST be rejected by the named report parser.
 """
+import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -85,8 +86,19 @@ def check_live_lean_controls():
         )
 
 
+def lean_environment_ready():
+    """True only with `lake` on PATH and the deployment contracts built. Without them every Lean call fails, and a failed
+    compile would be indistinguishable from a correct rejection, so the live controls must not run (the parser controls still do)."""
+    built = ROOT / ".lake/build/lib/lean/ControlStack/Deployment/Contracts.olean"
+    return shutil.which("lake") is not None and built.exists()
+
+
 def main():
     check_parser_controls()
+    if not lean_environment_ready():
+        print("SKIP: live Lean negative controls need `lake` and a built ControlStack.Deployment.Contracts "
+              "(run in deployment-release, which builds them); only the report-parser controls ran")
+        return
     check_live_lean_controls()
     print("PASS: batched certificate negative controls (compiler + report parser)")
 

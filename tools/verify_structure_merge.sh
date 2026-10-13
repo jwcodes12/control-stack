@@ -5,7 +5,8 @@ cd "$(dirname "$0")/.."
 command -v lake >/dev/null || { echo 'Lean Lake is required' >&2; exit 2; }
 command -v python3 >/dev/null || { echo 'Python 3 is required' >&2; exit 2; }
 
-lake exe cache get
+# The self-hosted runner links a prebuilt read-only Mathlib build, so it has nothing to download (and its curl cannot fetch the cache).
+if [ "${RUNNER_ENVIRONMENT:-}" != self-hosted ]; then lake exe cache get; fi
 lake build ControlStack
 python3 tools/build_registry.py --check
 python3 tools/build_status.py --check

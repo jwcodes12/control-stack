@@ -1,0 +1,93 @@
+FAIL lean exit 1
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_1_claim_3b63e91149b5.lean:142:54: error: failed to synthesize
+  Decidable
+    ¬(((∀ e ∈ collision.edges, e.unknown = false) ∧
+          (∀ e ∈ collision.edges, e.authority = true → e.target = collision.sink → e.source = collision.receiver) ∧
+            (∀ e ∈ collision.edges,
+                e.authority = true →
+                  e.target = collision.database → e.source = collision.receiver ∨ e.source = collision.broker) ∧
+              (∀ n ∈ collision.nodes, n.privileged = false ∧ n.hostNetwork = false) ∧
+                (∀ r ∈ collision.nodes,
+                    r.id = collision.receiver → ∀ a ∈ collision.nodes, a.agent = true → a.uid ≠ r.uid) ∧
+                  (∃ e ∈ collision.edges,
+                      e.source = collision.receiver ∧ e.target = collision.sink ∧ e.authority = true) ∧
+                    ∀ n ∈ collision.nodes, 0 < n.uid) ∧
+        (collision.nodes.length = 6 ∧
+            (List.filter (fun n => n.agent) collision.nodes).length = 2 ∧
+              (List.filter (fun n => n.role == 1) collision.nodes).length = 1 ∧
+                (List.filter (fun n => n.role == 2) collision.nodes).length = 1 ∧
+                  (List.filter (fun n => n.role == 3) collision.nodes).length = 1 ∧
+                    (List.filter (fun n => n.role == 4) collision.nodes).length = 1 ∧
+                      ∀ n ∈ collision.nodes,
+                        (n.agent = true ↔ n.role = 0) ∧
+                          (n.id = collision.broker ↔ n.role = 1) ∧ (n.id = collision.receiver ↔ n.role = 2)) ∧
+          (∀ n ∈ collision.nodes,
+              ∀ m ∈ collision.nodes,
+                n ≠ m →
+                  (n.uid = m.uid ↔
+                    n.id = collision.broker ∧ m.id = collision.receiver ∨
+                      n.id = collision.receiver ∧ m.id = collision.broker)) ∧
+            (∀ n ∈ collision.nodes, n.runtimeMatch = true) ∧
+              ((∀ e ∈ collision.edges, e.target = collision.sink → e.source = collision.receiver ∧ e.write = true) ∧
+                  List.map Edge.source (List.filter (fun e => e.write && e.target == collision.sink) collision.edges) =
+                      [collision.receiver] ∧
+                    (∀ e ∈ collision.edges,
+                        e.target = collision.database → e.source = collision.broker ∨ e.source = collision.receiver) ∧
+                      have sources :=
+                        List.map Edge.source
+                          (List.filter (fun e => e.write && e.target == collision.database) collision.edges);
+                      sources = [collision.broker, collision.receiver] ∨
+                        sources = [collision.receiver, collision.broker]) ∧
+                ∀ a ∈ collision.nodes,
+                  a.agent = true →
+                    collision.sink ∉ reachable collision a.id ∧
+                      collision.database ∉ reachable collision a.id ∧
+                        ∀ e ∈ collision.edges,
+                          e.source ∈ reachable collision a.id →
+                            e.target ≠ collision.broker →
+                              e.target ≠ collision.receiver → e.target ∈ reachable collision a.id)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_1_claim_3b63e91149b5.lean:145:33: error: failed to synthesize
+  Decidable
+    (((∀ e ∈ clean.edges, e.unknown = false) ∧
+        (∀ e ∈ clean.edges, e.authority = true → e.target = clean.sink → e.source = clean.receiver) ∧
+          (∀ e ∈ clean.edges,
+              e.authority = true → e.target = clean.database → e.source = clean.receiver ∨ e.source = clean.broker) ∧
+            (∀ n ∈ clean.nodes, n.privileged = false ∧ n.hostNetwork = false) ∧
+              (∀ r ∈ clean.nodes, r.id = clean.receiver → ∀ a ∈ clean.nodes, a.agent = true → a.uid ≠ r.uid) ∧
+                (∃ e ∈ clean.edges, e.source = clean.receiver ∧ e.target = clean.sink ∧ e.authority = true) ∧
+                  ∀ n ∈ clean.nodes, 0 < n.uid) ∧
+      (clean.nodes.length = 6 ∧
+          (List.filter (fun n => n.agent) clean.nodes).length = 2 ∧
+            (List.filter (fun n => n.role == 1) clean.nodes).length = 1 ∧
+              (List.filter (fun n => n.role == 2) clean.nodes).length = 1 ∧
+                (List.filter (fun n => n.role == 3) clean.nodes).length = 1 ∧
+                  (List.filter (fun n => n.role == 4) clean.nodes).length = 1 ∧
+                    ∀ n ∈ clean.nodes,
+                      (n.agent = true ↔ n.role = 0) ∧
+                        (n.id = clean.broker ↔ n.role = 1) ∧ (n.id = clean.receiver ↔ n.role = 2)) ∧
+        (∀ n ∈ clean.nodes,
+            ∀ m ∈ clean.nodes,
+              n ≠ m →
+                (n.uid = m.uid ↔
+                  n.id = clean.broker ∧ m.id = clean.receiver ∨ n.id = clean.receiver ∧ m.id = clean.broker)) ∧
+          (∀ n ∈ clean.nodes, n.runtimeMatch = true) ∧
+            ((∀ e ∈ clean.edges, e.target = clean.sink → e.source = clean.receiver ∧ e.write = true) ∧
+                List.map Edge.source (List.filter (fun e => e.write && e.target == clean.sink) clean.edges) =
+                    [clean.receiver] ∧
+                  (∀ e ∈ clean.edges, e.target = clean.database → e.source = clean.broker ∨ e.source = clean.receiver) ∧
+                    have sources :=
+                      List.map Edge.source (List.filter (fun e => e.write && e.target == clean.database) clean.edges);
+                    sources = [clean.broker, clean.receiver] ∨ sources = [clean.receiver, clean.broker]) ∧
+              ∀ a ∈ clean.nodes,
+                a.agent = true →
+                  clean.sink ∉ reachable clean a.id ∧
+                    clean.database ∉ reachable clean a.id ∧
+                      ∀ e ∈ clean.edges,
+                        e.source ∈ reachable clean a.id →
+                          e.target ≠ clean.broker → e.target ≠ clean.receiver → e.target ∈ reachable clean a.id)
+
+Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
+'gate_3b63e91149b5' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+

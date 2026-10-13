@@ -1,0 +1,5 @@
+ControlStack/Deployment/Contracts.lean:114-116
+
+theorem exclusive_sink (d : IR) (h : Accepted d) (e : Edge)
+    (member : e ∈ d.edges) (authority : e.authority = true) (sink : e.target = d.sink) :
+    e.source = d.receiver := h.basic.2.1 e member authority sink

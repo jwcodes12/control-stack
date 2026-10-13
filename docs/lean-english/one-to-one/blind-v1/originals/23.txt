@@ -1,0 +1,7 @@
+ControlStack/Deployment/TranscriptReplay.lean:108-112
+
+theorem runtime_trace : TrustedBroker.Trace R (TrustedBroker.initial 2) s10 := by
+  have h := indexed_receipts_sound R table receipts 0 transcript_checked
+  rw [recorded_end] at h
+  exact h
+

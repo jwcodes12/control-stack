@@ -1,0 +1,7 @@
+ControlStack/TrustedBroker.lean:196-200
+
+theorem halted_absorbing (roles : Roles) (s t : State)
+    (halted : s.halted = true) (step : Step roles s t) :
+    t.halted = true ∧ t.releases = s.releases := by
+  cases step <;> simp_all [Allowed]
+

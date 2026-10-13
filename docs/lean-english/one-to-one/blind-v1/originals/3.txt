@@ -1,0 +1,5 @@
+ControlStack/Deployment/Contracts.lean:118-120
+
+theorem database_custody (d : IR) (h : Accepted d) (e : Edge)
+    (member : e ∈ d.edges) (authority : e.authority = true) (db : e.target = d.database) :
+    e.source = d.receiver ∨ e.source = d.broker := h.basic.2.2.1 e member authority db

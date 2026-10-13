@@ -1,0 +1,6 @@
+ControlStack/Deployment/Contracts.lean:134-137
+
+theorem agent_not_receiver_uid (d : IR) (h : Accepted d) (r a : Node)
+    (hr : r ∈ d.nodes) (rid : r.id = d.receiver) (ha : a ∈ d.nodes)
+    (agent : a.agent = true) : a.uid ≠ r.uid := h.basic.2.2.2.2.1 r hr rid a ha agent
+

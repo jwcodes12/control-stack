@@ -1,0 +1,14 @@
+You are Sol, doing the STRICTLY BLIND first step of an English-to-Lean one-to-one check for a Lean 4 verification project (a defensive security verifier for a two-agent deployment slice). The project owner (John) has authorized this run and is the one giving you this instruction directly.
+
+Working directory: this directory. You may read ONLY `./input/batch.md` and `./defs/*.lean`. You may write ONLY under `./back/`. Do not read or list anything outside this directory, do not use the network or git, and do not look for the original Lean theorems: they are deliberately not here. (`./defs/*.lean` are definition-only excerpts of the project's Lean files, with theorems removed and the declarations that define `Accepted` and its component checks redacted. They are NOT compilable on their own; there is no Lean toolchain here. Be careful with syntax and types; compilation errors will be repaired later by someone else and every repair will be logged and diffed against your hashed text.)
+
+Task. `input/batch.md` holds 8 plain-English statements (claims 1, 2, 3, 5, 12, 16, 20, 23). For each, write a Lean 4 statement that says EXACTLY what the English says: no more, no less. Read the fields "Says", "Under these hypotheses" and "Does NOT say" as the specification; the "Does NOT say" field lists over-readings your statement must not make.
+- Theorem claims: write `def Back_<short_name> : Prop := ...` as a closed proposition (universally quantify the arguments). Do not prove anything.
+- Claim 1 (`Accepted`) is a definition: write `def BackAccepted (d : IR) : Prop := ...` from the English description of its six groups of checks alone (the real definition has been redacted from the excerpt). Use only structures and functions that appear in `defs/`.
+- Claims that speak of "an accepted deployment" may use the real name `ControlStack.Deployment.Accepted d`, or your `BackAccepted`; state in a NOTE which you used.
+- If the English cannot be turned into one exact Lean statement (missing data, ambiguity, a notion with no counterpart in defs/), write your best-effort statement AND put `NOT_FORMALISABLE: <why>` or `AMBIGUOUS: <the readings>` in a `-- NOTE` block above it. Never guess silently.
+- Use the project's real names and namespaces as they appear in defs/ (e.g. `ControlStack.Deployment.IR`, `ControlStack.TrustedBroker.Step`). Put `import ControlStack.Deployment.Contracts` style imports at the top only if you need them; the later compile step will supply the environment.
+
+Files: one per claim, `back/<n>-<short_name>.lean` where n is the claim number in batch.md. When all eight are written, compute `sha256sum back/*.lean` and write `back/BACK-HASHES.json` as {"utc": "<now, ISO>", "files": {"<file>": "<sha256>", ...}}. Do not edit any back file after hashing.
+
+Final answer: for each claim, the file name and one or two sentences saying what you formalised and any ambiguity you recorded. Be plain about uncertainty.

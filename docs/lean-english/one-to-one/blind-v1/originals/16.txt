@@ -1,0 +1,13 @@
+ControlStack/Deployment/R2Contracts.lean:101-111
+
+theorem deployment_broker_safe (d : IR) (r : Node) (R : TrustedBroker.Roles)
+    (cap : Nat) (t : TrustedBroker.State) (actualEdges : List Edge)
+    (sinkNonces : List Nat) (h : Accepted d)
+    (extraction : ExtractionFaithful d r actualEdges)
+    (refinement : BrokerProtocolRefinement d R cap t sinkNonces) :
+    (∀ e ∈ actualEdges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧
+    ¬ R.agent r.uid ∧ sinkNonces.Nodup ∧ sinkNonces.length ≤ cap ∧
+    (∀ nonce ∈ sinkNonces, ∃ a, t.approvals nonce = some a ∧ a.used = true) := by
+  have safe := broker_contract R cap t refinement.transactions
+  have coherent := TrustedBroker.trace_coherent R _ _
+    (TrustedBroker.initial_coherent cap) refinement.transactions

@@ -1,0 +1,538 @@
+/bin/bash -lc pwd
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g '"'!docs/lean-english/**'"' -g '"'!ControlStack/**'"' -g '"'!'"\\.git/**'"
+
+---
+/bin/bash -lc 'cat docs/lean-english/sol-input/batch-g0-stale.md docs/lean-english/one-to-one/run_gate.py docs/lean-english/one-to-one/leangate_imports.py docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'ls docs/lean-english/one-to-one/blind-v1/back'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-v1/back/*.lean docs/lean-english/one-to-one/blind-v1/back/BACK-HASHES.json'
+
+---
+/bin/bash -lc 'ls -l AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md'
+
+---
+/bin/bash -lc 'cat /home/opc/AGENTS.md'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,subprocess,datetime
+out=Path('docs/lean-english/one-to-one/blind-v1')
+for d in ['typed','compile-fixes','compile-logs']: (out/d).mkdir(exist_ok=True)
+h=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+for p in sorted((out/'back').glob('*.lean')):
+ key='back/'+p.name
+ assert hashlib.sha256(p.read_bytes()).hexdigest()==h[key],p
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{p.stem}.as-written.txt').write_text(f'exit_code={r.returncode}\\n'+r.stdout+r.stderr)
+ print(p.name,r.returncode,(r.stdout+r.stderr)[:600],flush=True)
+(out/'PROGRESS.md').write_text('# Progress\\n\\nStarted 2026-10-13 03:32:11 UTC. Phase B only; originals not yet opened. Verified all eight Phase A hashes, compiled every back file as written; logs in compile-logs/.\\n')
+PY"
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g CLAUDE.md -g GEMINI.md -g '"'!docs/lean-english/**'"' -g '"'!'"\\.git/**'"
+
+---
+/bin/bash -lc 'ps -eo pid,etime,args'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,subprocess,difflib,datetime
+out=Path('docs/lean-english/one-to-one/blind-v1')
+header='import ControlStack.Deployment.Witnesses\\nimport ControlStack.Deployment.TranscriptReplay\\n\\n'
+records={}
+for p in sorted((out/'back').glob('*.lean')):
+ old=p.read_text(); new=header+old; target=out/'typed'/p.name; target.write_text(new)
+ diff=''.join(difflib.unified_diff(old.splitlines(True),new.splitlines(True),fromfile='back/'+p.name,tofile='typed/'+p.name))
+ (out/'compile-fixes'/f'{p.name.split(\"-\")[0]}.diff').write_text('Repair: Add the project import header named in the supplied gate driver; this resolves existing constants and changes no semantic content. The entire declaration body is unchanged.\\n\\n'+diff)
+ r=subprocess.run(['lake','env','lean',str(target)],capture_output=True,text=True,timeout=120)
+ (out/'compile-logs'/f'{p.stem}.typed.txt').write_text(f'exit_code={r.returncode}\\n'+r.stdout+r.stderr)
+ records['typed/'+p.name]={'sha256':hashlib.sha256(new.encode()).hexdigest(),'compile_exit_code':r.returncode,'blind_sha256':hashlib.sha256(old.encode()).hexdigest()}
+ print(p.name,r.returncode,(r.stdout+r.stderr)[:1500],flush=True)
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':records},indent=2)+'\\n')
+assert all(x['compile_exit_code']==0 for x in records.values())
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import difflib,hashlib,json
+base=Path('docs/lean-english/one-to-one'); out=base/'blind-v1'
+src=(base/'run_gate.py').read_text()
+new=src.replace('parents[3]','parents[4]').replace(\"OUT.glob('g0_*.statement.lean')\",\"OUT.glob('b1_*.statement.lean')\")
+(out/'run_gate_blind.py').write_text(new)
+(out/'run_gate_blind.diff').write_text('Relocation: parent index changes only to preserve the repository root after moving the driver one directory deeper; OUT now resolves to blind-v1. The input glob changes from g0_* to b1_*. Gate checks and receipt logic are unchanged.\\n\\n'+''.join(difflib.unified_diff(src.splitlines(True),new.splitlines(True),fromfile='run_gate.py',tofile='blind-v1/run_gate_blind.py')))
+for name in ['leangate_imports.py','leangate-imports.patch']: (out/name).write_bytes((base/name).read_bytes())
+(out/'GATE-PROVENANCE.json').write_text(json.dumps({'helper_source':'docs/lean-english/one-to-one/leangate_imports.py','helper_sha256':hashlib.sha256((out/'leangate_imports.py').read_bytes()).hexdigest(),'helper_byte_identical':(out/'leangate_imports.py').read_bytes()==(base/'leangate_imports.py').read_bytes(),'driver_changes':'repository-root index corrected for relocation; output directory follows new driver location; input glob b1_*','security_checks_unchanged':True},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-v1/typed/HASHES.json'
+
+---
+/bin/bash -lc "rg -n '"'^(def Accepted|structure Accepted|def BaseAccepted|def Role|def Identity|def Writer|def Bypass|theorem (exclusive_sink|database_custody|agent_not_receiver_uid|accepted_no_avoided_path|deployment_broker_safe|halted_absorbing|runtime_trace))'"' ControlStack"
+
+---
+/bin/bash -lc 'cat ControlStack/Deployment/Contracts.lean ControlStack/Deployment/R2Contracts.lean ControlStack/Deployment/Witnesses.lean ControlStack/Deployment/TranscriptReplay.lean'
+
+---
+/bin/bash -lc "sed -n '1,245p' ControlStack/TrustedBroker.lean"
+
+---
+/bin/bash -lc "sed -n '80,140p' ControlStack/Deployment/R2Contracts.lean"
+
+---
+/bin/bash -lc 'cat ControlStack/Deployment/Witnesses.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-v1')
+(out/'PROGRESS.md').write_text('# Progress\\n\\nStarted 2026-10-13 03:32:11 UTC. Verified all eight Phase A hashes. Compiled every back file as written (all fail for absent imports); added only trusted project import headers, kept declaration bodies unchanged, recorded eight repair diffs, and compiled all repaired files successfully. Typed hashes frozen at 03:33:48 UTC before original declarations were opened at 03:33:58 UTC.\\n\\nOriginal declarations now inspected. Seven theorem conclusions appear identical pointwise; definition has record-distinctness versus ID-distinctness mismatch. Proof and counterexample construction and gate runs are in progress. No verdict certified yet.\\n')
+# Gate statements carry exact frozen body with only namespace relocation so the supplied scan accepts it.
+# Pointwise conclusions are extracted by reducing the closed Back predicate at fixed parameters.
+configs={
+2:('exclusive_sink','d : IR, ∀ e : Edge, Accepted d → e ∈ d.edges → e.authority = true → e.target = d.sink →','fun d e => e.source = d.receiver'),
+}
+for n,name,ns,args,hyps,concl,wit,wp in [
+(2,'exclusive_sink','ControlStack.Deployment','(d : IR) (e : Edge)','Accepted d → e ∈ d.edges → e.authority = true → e.target = d.sink →','e.source = d.receiver','Accepted clean ∧ (⟨3,4,true,false,true⟩ : Edge) ∈ clean.edges ∧ (⟨3,4,true,false,true⟩ : Edge).authority = true ∧ (⟨3,4,true,false,true⟩ : Edge).target = clean.sink','by exact ⟨clean_accepted, by decide, rfl, rfl⟩'),
+(3,'database_custody','ControlStack.Deployment','(d : IR) (e : Edge)','Accepted d → e ∈ d.edges → e.authority = true → e.target = d.database →','e.source = d.receiver ∨ e.source = d.broker','Accepted clean ∧ (⟨2,5,true,false,true⟩ : Edge) ∈ clean.edges ∧ (⟨2,5,true,false,true⟩ : Edge).authority = true ∧ (⟨2,5,true,false,true⟩ : Edge).target = clean.database','by exact ⟨clean_accepted, by decide, rfl, rfl⟩'),
+(5,'agent_not_receiver_uid','ControlStack.Deployment','(d : IR) (r a : Node)','Accepted d → r ∈ d.nodes → r.id = d.receiver → a ∈ d.nodes → a.agent = true →','a.uid ≠ r.uid','Accepted clean ∧ Witnesses.receiverNode ∈ clean.nodes ∧ Witnesses.receiverNode.id = clean.receiver ∧ Witnesses.agentA ∈ clean.nodes ∧ Witnesses.agentA.agent = true','by exact ⟨clean_accepted, by decide, rfl, by decide, rfl⟩'),
+(12,'accepted_no_avoided_path','ControlStack.Deployment','(d : IR) (a : Node)','Accepted d → a ∈ d.nodes → a.agent = true →','¬ AvoidedPath d a.id d.sink ∧ ¬ AvoidedPath d a.id d.database','Accepted clean ∧ Witnesses.agentA ∈ clean.nodes ∧ Witnesses.agentA.agent = true','by exact ⟨clean_accepted, by decide, rfl⟩'),
+(16,'deployment_broker_safe','ControlStack.Deployment','(d : IR) (r : Node) (actualEdges : List Edge) (R : ControlStack.TrustedBroker.Roles) (cap : Nat) (t : ControlStack.TrustedBroker.State) (sinkNonces : List Nat)','Accepted d → ExtractionFaithful d r actualEdges → BrokerProtocolRefinement d R cap t sinkNonces →','(∀ e ∈ actualEdges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧ ¬ R.agent r.uid ∧ sinkNonces.Nodup ∧ sinkNonces.length ≤ cap ∧ (∀ nonce ∈ sinkNonces, ∃ a : ControlStack.TrustedBroker.Approval, t.approvals nonce = some a ∧ a.used = true)','Accepted clean ∧ ExtractionFaithful clean Witnesses.receiverNode clean.edges ∧ BrokerProtocolRefinement clean Witnesses.R 1 Witnesses.s5 [7]','by exact ⟨clean_accepted, Witnesses.extracted, Witnesses.refined⟩'),
+(20,'halted_absorbing','ControlStack.TrustedBroker','(roles : Roles) (s t : State)','s.halted = true → Step roles s t →','t.halted = true ∧ t.releases = s.releases','let s := { initial 1 with halted := true }; s.halted = true ∧ Step ControlStack.Deployment.Witnesses.R s s ∧ s.cap = 1','by exact ⟨rfl, .deny _, rfl⟩'),
+(23,'runtime_trace','ControlStack.Deployment.TranscriptReplay','','','ControlStack.TrustedBroker.Trace R (ControlStack.TrustedBroker.initial 2) s10','s10.cap = 2 ∧ s10.releases = 2','by exact ⟨final_counts.1, final_counts.2.2.1⟩')]:
+ body=(out/'back'/f'{n}-{name}.lean').read_text()
+ # Preserve the blind definition body exactly within the gate's required namespace.
+ body=body.replace('namespace '+ns,'namespace PL_b1_'+str(n)+'\\nopen '+ns).replace('end '+ns,'')
+ back='Back_'+name
+ statement=body+f'\\ndef OrigConclusion {args} : Prop := {concl}\\n\\ndef BackConclusion {args} : Prop := {concl}\\n\\n'
+ statement+=f'-- Shape records the blind quantifiers and hypotheses before comparing conclusions.\\ndef Shape : Prop := {back} ↔ '+(('∀ '+args+', '+hyps+'BackConclusion '+('d e' if n in [2,3] else 'd r a' if n==5 else 'd a' if n==12 else 'd r actualEdges R cap t sinkNonces' if n==16 else 'roles s t')) if n"'!=23 else '"'BackConclusion')+'\\n'
+ statement+=f'\\ndef Claim : Prop := Shape ∧ '+(('∀ '+args+', '+hyps+'(BackConclusion '+('d e' if n in [2,3] else 'd r a' if n==5 else 'd a' if n==12 else 'd r actualEdges R cap t sinkNonces' if n==16 else 'roles s t')+' ↔ OrigConclusion '+('d e' if n in [2,3] else 'd r a' if n==5 else 'd a' if n==12 else 'd r actualEdges R cap t sinkNonces' if n==16 else 'roles s t')+')') if n"'!=23 else '"'(BackConclusion ↔ OrigConclusion)')+'\\n'
+ statement+=f'\\ndef Witness : Prop := {wit}\\nend PL_b1_{n}\\n'
+ (out/f'b1_{n}.statement.lean').write_text(statement)
+ # Each original theorem's TYPE is checked separately, not used to prove the comparison.
+ bind={'2':'d h e he ha ht','3':'d h e he ha ht','5':'d h r a hr hid ha hag','12':'d h a ha hag','16':'d r R cap t actualEdges sinkNonces h he hr','20':'roles s t hs ht'}
+ intros={2:'d e h he ha ht',3:'d e h he ha ht',5:'d r a h hr hid ha hag',12:'d a h ha hag',16:'d r actualEdges R cap t sinkNonces h he hr',20:'roles s t hs ht'}
+ annotation=f'theorem original_type : '+(('∀ '+args+', '+hyps+'OrigConclusion '+('d e' if n in [2,3] else 'd r a' if n==5 else 'd a' if n==12 else 'd r actualEdges R cap t sinkNonces' if n==16 else 'roles s t')) if n"'!=23 else '"'OrigConclusion')+' := by\\n'
+ annotation+=('  intro '+intros[n]+'\\n  exact '+ns+'.'+name+' '+bind[str(n)]+'\\n') if n"'!=23 else '"'  exact '+ns+'.'+name+'\\n'
+ proof=annotation+'\\ntheorem claim : Claim := by\\n  constructor\\n  · exact Iff.rfl\\n  · '+(('intro '+intros[n]+'\\n    exact Iff.rfl') if n"'!=23 else '"'exact Iff.rfl')+f'\\n\\ntheorem witness : Witness := {wp}\\n'
+ (out/f'b1_{n}.proof.lean').write_text(proof)
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-v1/run_gate_blind.py'
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-v1/lemma-check.lean <<'EOF'
+import ControlStack.Deployment.Witnesses
+import ControlStack.Deployment.TranscriptReplay
+#check List.filter_congr
+#check List.filter_eq_filter
+#check List.mem_filter
+#check List.mem_map
+#check List.mem_eraseDups
+#check List.mem_append_left
+#check List.foldl_cons
+#check List.filterMap_some
+#check Bool.and_comm
+#check List.map_filter
+#check List.filter_filter
+#check List.length_map
+#check List.mem_of_mem_filter
+#check List.mem_cons_self
+#check List.mem_append
+#check Bool.eq_true_iff
+EOF
+lake env lean docs/lean-english/one-to-one/blind-v1/lemma-check.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-v1')
+for p in out.glob('b1_*.proof.lean'):
+ n=int(p.name.split('_')[1].split('.')[0]); ns='ControlStack.TrustedBroker' if n==20 else 'ControlStack.Deployment.TranscriptReplay' if n==23 else 'ControlStack.Deployment'
+ p.write_text('open '+ns+'\\n\\n'+p.read_text())
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-v1'); p=out/'back/1-accepted.lean'
+body=p.read_text().replace('namespace ControlStack.Deployment','namespace PL_b1_1\\nopen ControlStack.Deployment').replace('end ControlStack.Deployment','')
+stmt=body+'''
+def collision : IR := { clean with nodes := [
+  ⟨0,23701,true,false,false,0,true⟩, ⟨1,23702,true,false,false,0,true⟩,
+  ⟨2,23700,false,false,false,1,true⟩, ⟨3,23700,false,false,false,2,true⟩,
+  ⟨6,23703,false,false,false,3,true⟩, ⟨6,23703,false,false,false,4,true⟩] }
+
+def Claim : Prop := (∀ d, BackAccepted d → Accepted d) ∧
+  (Accepted collision ∧ ¬ BackAccepted collision)
+
+def Witness : Prop := BackAccepted clean ∧ Accepted clean
+end PL_b1_1
+'''
+(out/'b1_1.statement.lean').write_text(stmt)
+(out/'b1_1.proof.lean').write_text('''open ControlStack.Deployment
+
+lemma start_mem (d : IR) (start : Nat) : start ∈ reachable d start := by
+  unfold reachable
+  have keep : ∀ (xs : List Nat) (seen : List Nat), start ∈ seen →
+      start ∈ xs.foldl (fun seen _ =>
+        (seen ++ d.edges.filterMap (fun e =>
+          if e.source ∈ seen ∧ e.target ≠ d.broker ∧ e.target ≠ d.receiver
+          then some e.target else none)).eraseDups) seen := by
+    intro xs
+    induction xs with
+    | nil => intro seen h; exact h
+    | cons x xs ih =>
+      intro seen h
+      apply ih
+      exact List.mem_eraseDups.mpr (List.mem_append_left _ h)
+  exact keep _ _ (by simp)
+
+lemma stronger (d : IR) (h : BackAccepted d) : Accepted d := by
+  rcases h with ⟨basic, roles, identities, runtime, writers, bypass⟩
+  refine ⟨basic, ?_, ?_, runtime, ?_, ?_⟩
+  · rcases roles with ⟨size, agents, brokers, receivers, reviewers, approvers, facts⟩
+    have eqfilter : d.nodes.filter (fun n => n.agent) =
+        d.nodes.filter (fun n => n.role == 0) := by
+      apply List.filter_congr
+      intro n hn
+      have hiff := (facts n hn).1
+      cases ha : n.agent <;> simp_all
+    exact ⟨size, by simpa only [eqfilter] using agents,
+      brokers, receivers, reviewers, approvers, facts⟩
+  · intro a ha b hb ids
+    exact identities a ha b hb (fun eq => ids (congrArg Node.id eq))
+  · rcases writers with ⟨sink, sources, db, dbsources⟩
+    have sink' : (d.edges.filter (fun e => e.target == d.sink && e.write)).map
+        Edge.source = [d.receiver] := by
+      simpa only [Bool.and_comm] using sources
+    have dbsources' :
+        (d.edges.filter (fun e => e.target == d.database && e.write)).map Edge.source =
+          [d.broker, d.receiver] ∨
+        (d.edges.filter (fun e => e.target == d.database && e.write)).map Edge.source =
+          [d.receiver, d.broker] := by
+      simpa only [Bool.and_comm] using dbsources
+    have length : (d.edges.filter (fun e => e.target == d.database && e.write)).length = 2 := by
+      have mapped : ((d.edges.filter (fun e => e.target == d.database && e.write)).map Edge.source).length = 2 := by
+        rcases dbsources' with h | h <;> rw [h] <;> rfl
+      simpa only [List.length_map] using mapped
+    have present (uid : Nat) (hu : uid = d.broker ∨ uid = d.receiver) :
+        ∃ e ∈ d.edges, e.target = d.database ∧ e.write = true ∧ e.source = uid := by
+      have mem : uid ∈ (d.edges.filter (fun e => e.target == d.database && e.write)).map Edge.source := by
+        rcases dbsources' with h | h <;> rw [h] <;> rcases hu with rfl | rfl <;> simp
+      obtain ⟨e, he, source⟩ := List.mem_map.mp mem
+      have eh := List.mem_filter.mp he
+      have flags : e.target = d.database ∧ e.write = true := by simpa using eh.2
+      exact ⟨e, eh.1, flags.1, flags.2, source⟩
+    exact ⟨sink, db, sink', length, present _ (.inl rfl), present _ (.inr rfl)⟩
+  · intro a ha agent
+    obtain ⟨sink, db, closed⟩ := bypass a ha agent
+    exact ⟨start_mem d a.id, sink, db, closed⟩
+
+theorem claim : Claim := by
+  exact ⟨stronger, by decide, by decide⟩
+
+theorem witness : Witness := by
+  exact ⟨by decide, clean_accepted⟩
+''')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil
+out=Path('docs/lean-english/one-to-one/blind-v1'); archive=out/'attempts/first-gate'; archive.mkdir(parents=True,exist_ok=True)
+for pat in ['*.gate.txt','*.statement-check.txt','*.receipt.json']:
+ for p in out.glob(pat): shutil.copyfile(p,archive/p.name)
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-v1/run_gate_blind.py'
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-v1/gate_witnesses.py <<'PY'
+\"\"\"Gate Witness separately; retain the supplied deterministic gate unchanged.\"\"\"
+from pathlib import Path
+import importlib.util, hashlib, json, sys
+OUT = Path(__file__).resolve().parent
+sys.dont_write_bytecode = True
+spec = importlib.util.spec_from_file_location('blind_driver', OUT/'run_gate_blind.py')
+r = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(r)
+for p in sorted(OUT.glob('b1_*.statement.lean')):
+    cid = p.name.removesuffix('.statement.lean')
+    statement = p.read_text()
+    proof = p.with_name(cid+'.proof.lean').read_text()
+    ok, log = r.g.gate(cid, statement, proof, 'witness', [r.IMPORTS], timeout=120)
+    (OUT/(cid+'.witness-gate.txt')).write_text(log+'\\n')
+    (OUT/(cid+'.witness-receipt.json')).write_text(json.dumps({
+        'passed': ok, 'target': 'witness',
+        'statement_sha256': hashlib.sha256(statement.encode()).hexdigest(),
+        'proof_sha256': hashlib.sha256(proof.encode()).hexdigest(),
+        'gate_sha256': hashlib.sha256(Path(r.g.__file__).read_bytes()).hexdigest(),
+        'security_checks_unchanged': True,
+        'trusted_imports': 'ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'
+    }, indent=2)+'\\n')
+    print(cid, ok, log[:300], flush=True)
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-v1/b1_1.gate.txt'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-v1'); p=out/'b1_1.proof.lean'
+p.write_text(p.read_text().replace('⟨stronger, by decide, by decide⟩','⟨stronger, by decide, by unfold BackAccepted; decide⟩').replace('⟨by decide, clean_accepted⟩','⟨by unfold BackAccepted; decide, clean_accepted⟩'))
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,shutil,sys
+out=Path('docs/lean-english/one-to-one/blind-v1')
+archive=out/'attempts/definition-missing-decidable'; archive.mkdir(parents=True,exist_ok=True)
+for suffix in ['statement.lean','statement-check.txt','gate.txt','receipt.json']: shutil.copyfile(out/('b1_1.'+suffix),archive/('b1_1.'+suffix))
+p=(out/'b1_1.proof.lean').read_text().replace('⟨stronger, by decide, by unfold BackAccepted; decide⟩','⟨stronger, by decide, by decide⟩').replace('⟨by unfold BackAccepted; decide, clean_accepted⟩','⟨by decide, clean_accepted⟩')
+assert hashlib.sha256(p.encode()).hexdigest()==json.loads((archive/'b1_1.receipt.json').read_text())['proof_sha256']
+(archive/'b1_1.proof.lean').write_text(p)
+first=out/'attempts/first-gate'
+for r in first.glob('*.receipt.json'):
+ cid=r.name.removesuffix('.receipt.json'); stmt=(out/(cid+'.statement.lean')).read_text(); proof=(out/(cid+'.proof.lean')).read_text(); receipt=json.loads(r.read_text())
+ assert hashlib.sha256(stmt.encode()).hexdigest()==receipt['statement_sha256']
+ candidates=[proof,proof.split('\\n\\n',1)[1]]
+ matching=[p for p in candidates if hashlib.sha256(p.encode()).hexdigest()==receipt['proof_sha256']]
+ assert matching,cid
+ (first/(cid+'.statement.lean')).write_text(stmt); (first/(cid+'.proof.lean')).write_text(matching[0])
+sys.path.insert(0,str(out)); import run_gate_blind as r
+r.run('b1_1',(out/'b1_1.statement.lean').read_text(),(out/'b1_1.proof.lean').read_text())
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-v1/gate_witnesses.py'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-v1')
+orig={1:('ControlStack/Deployment/Contracts.lean',44,112),2:('ControlStack/Deployment/Contracts.lean',114,116),3:('ControlStack/Deployment/Contracts.lean',118,120),5:('ControlStack/Deployment/Contracts.lean',134,137),12:('ControlStack/Deployment/R2Contracts.lean',20,27),16:('ControlStack/Deployment/R2Contracts.lean',101,111),20:('ControlStack/TrustedBroker.lean',196,200),23:('ControlStack/Deployment/TranscriptReplay.lean',108,112)}
+(out/'originals').mkdir(exist_ok=True); records={}
+for n,(f,a,b) in orig.items():
+ p=Path(f); excerpt=''.join(p.read_text().splitlines(True)[a-1:b]); (out/'originals'/f'{n}.txt').write_text(f'{f}:{a}-{b}\\n\\n'+excerpt)
+ records[n]={'source':f,'start':a,'end':b,'source_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'excerpt_sha256':hashlib.sha256(excerpt.encode()).hexdigest()}
+(out/'originals/SOURCES.json').write_text(json.dumps({'typed_hashes_frozen_before_original_read':True,'first_original_read_utc':'2026-10-13T03:33:58Z','records':records},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-v1/b1_1.gate.txt'
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-v1/decidable-check.lean <<'EOF'
+import ControlStack.Deployment.Witnesses
+import ControlStack.Deployment.TranscriptReplay
+EOF
+python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-v1'); p=out/'decidable-check.lean'
+p.write_text(p.read_text()+(out/'b1_1.statement.lean').read_text()+'''\\nopen PL_b1_1 ControlStack.Deployment
+example : Decidable (BackAccepted clean) := by unfold BackAccepted; infer_instance
+example : ¬ BackAccepted collision := by
+  intro h
+  have ident := h.2.2.1
+  let a : Node := ⟨6,23703,false,false,false,3,true⟩
+  let b : Node := ⟨6,23703,false,false,false,4,true⟩
+  have bad := (ident a (by decide) b (by decide) (by decide)).mp (by rfl)
+  have impossible : ¬ ((a.id = collision.broker ∧ b.id = collision.receiver) ∨
+      (a.id = collision.receiver ∧ b.id = collision.broker)) := by decide
+  exact impossible bad
+''')
+PY
+lake env lean docs/lean-english/one-to-one/blind-v1/decidable-check.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil
+out=Path('docs/lean-english/one-to-one/blind-v1'); archive=out/'attempts/definition-large-decidable'; archive.mkdir(parents=True,exist_ok=True)
+for suffix in ['statement.lean','proof.lean','statement-check.txt','gate.txt','receipt.json','witness-gate.txt','witness-receipt.json']: shutil.copyfile(out/('b1_1.'+suffix),archive/('b1_1.'+suffix))
+p=out/'b1_1.proof.lean'; text=p.read_text()
+text=text.replace('theorem claim : Claim := by\\n  exact ⟨stronger, by decide, by unfold BackAccepted; decide⟩','''lemma collision_rejected : ¬ BackAccepted collision := by
+  intro h
+  have ident := h.2.2.1
+  let a : Node := ⟨6,23703,false,false,false,3,true⟩
+  let b : Node := ⟨6,23703,false,false,false,4,true⟩
+  have bad := (ident a (by decide) b (by decide) (by decide)).mp (by rfl)
+  have impossible : ¬ ((a.id = collision.broker ∧ b.id = collision.receiver) ∨
+      (a.id = collision.receiver ∧ b.id = collision.broker)) := by decide
+  exact impossible bad
+
+theorem claim : Claim := by
+  exact ⟨stronger, by decide, collision_rejected⟩''')
+text=text.replace('  exact ⟨by unfold BackAccepted; decide, clean_accepted⟩','''  constructor
+  · unfold BackAccepted
+    refine ⟨by decide, by decide, by decide, by decide, ?_, by decide⟩
+    exact ⟨by decide, by decide, by decide, by dsimp only; decide⟩
+  · exact clean_accepted''')
+p.write_text(text)
+import sys
+sys.path.insert(0,str(out)); import run_gate_blind as r
+r.run('b1_1',(out/'b1_1.statement.lean').read_text(),text)
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-v1/b1_16.statement.lean docs/lean-english/one-to-one/blind-v1/b1_20.proof.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import sys,json,hashlib
+out=Path('docs/lean-english/one-to-one/blind-v1'); sys.path.insert(0,str(out)); import run_gate_blind as r
+cid='b1_1'; statement=(out/(cid+'.statement.lean')).read_text(); proof=(out/(cid+'.proof.lean')).read_text()
+ok,log=r.g.gate(cid,statement,proof,'witness',[r.IMPORTS],timeout=120)
+(out/(cid+'.witness-gate.txt')).write_text(log+'\\n')
+(out/(cid+'.witness-receipt.json')).write_text(json.dumps({'passed':ok,'target':'witness','statement_sha256':hashlib.sha256(statement.encode()).hexdigest(),'proof_sha256':hashlib.sha256(proof.encode()).hexdigest(),'gate_sha256':hashlib.sha256(Path(r.g.__file__).read_bytes()).hexdigest(),'security_checks_unchanged':True,'trusted_imports':'ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'},indent=2)+'\\n')
+print(cid,ok,log)
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-v1/RESULTS.md <<'EOF'
+# Blind Phase B results
+
+Eight frozen Phase A files were checked against their original declarations. All eight failed standalone compilation because they omitted imports. Adding only the two project imports already named by the supplied gate driver made every file compile; no declaration body changed. The eight original hashes matched "'`back/BACK-HASHES.json`. Repaired hashes were frozen in `typed/HASHES.json` at **03:33:48 UTC**, before original declarations were first opened at **03:33:58 UTC** on 2026-10-13. Repairs and both compilation logs are retained.
+
+| Claim | Verdict | Gate receipt files | One-line note |
+| --- | --- | --- | --- |
+| 1 — `Accepted` | **ENGLISH_STRONGER** | [comparison](b1_1.receipt.json), [witness](b1_1.witness-receipt.json) | Back → Orig proved; an accepted reviewer/approver ID collision refutes Orig → Back. |
+| 2 — `exclusive_sink` | **EQUIVALENT** | [comparison](b1_2.receipt.json), [witness](b1_2.witness-receipt.json) | Same authority-edge conclusion under exactly the same hypotheses. |
+| 3 — `database_custody` | **EQUIVALENT** | [comparison](b1_3.receipt.json), [witness](b1_3.witness-receipt.json) | Same receiver-or-broker disjunction, including its ordering. |
+| 5 — `agent_not_receiver_uid` | **EQUIVALENT** | [comparison](b1_5.receipt.json), [witness](b1_5.witness-receipt.json) | Same inequality between the agent and receiver UID fields. |
+| 12 — `accepted_no_avoided_path` | **EQUIVALENT** | [comparison](b1_12.receipt.json), [witness](b1_12.witness-receipt.json) | Same two negated avoided-path propositions; zero-step paths are included. |
+| 16 — `deployment_broker_safe` | **EQUIVALENT** | [comparison](b1_16.receipt.json), [witness](b1_16.witness-receipt.json) | Same five conclusions with extraction and publication refinement as hypotheses. |
+| 20 — `halted_absorbing` | **EQUIVALENT** | [comparison](b1_20.receipt.json), [witness](b1_20.witness-receipt.json) | Same halted flag and release-count preservation for one step. |
+| 23 — `runtime_trace` | **EQUIVALENT** | [comparison](b1_23.receipt.json), [witness](b1_23.witness-receipt.json) | Identical concrete Trace proposition with cap 2 and endpoint `s10`. |
+
+## What the gate certified
+
+Each `b1_<n>.statement.lean` and `.proof.lean` is retained with statement-check logs, comparison gate logs, and separately gated witness logs. The helper is a byte-identical copy of the permitted `leangate_imports.py`; banned-token checks, kernel compilation, nonce-based axiom reports, and permitted axioms are unchanged. `GATE-PROVENANCE.json` records its hash. The copied driver changes its input glob to `b1_*`; relocation puts outputs in `blind-v1` and requires correcting the root parent index to keep `PL_LEAN_PROJ` at the repository root. `run_gate_blind.diff` records that path adjustment. No original declaration was edited.
+
+For theorem claims, `OrigConclusion` transcribes the original conclusion and `BackConclusion` transcribes the frozen blind conclusion with fixed parameters. The `Shape` conjunct is proved by definitional reflexivity, checking that the original blind predicate has exactly the displayed quantifiers, hypotheses and conclusion. The other conjunct states the pointwise `BackConclusion ↔ OrigConclusion` under those hypotheses and is also proved by definitional reflexivity. An `original_type` theorem checks the original declaration against the displayed original type. **Neither original theorem truth nor blind theorem truth is used to prove the pointwise equivalence.** Claim 23 has no hypotheses; its two propositions are the same Trace expression, so reflexivity applies directly. Concrete witnesses establish satisfiable hypotheses; claim 16'"'s witness has one published nonce, and claim 23's endpoint has two releases.
+
+For claim 1, the gated Claim states "'`(∀ d, BackAccepted d → Accepted d) ∧ (Accepted collision ∧ ¬ BackAccepted collision)`. This certifies the direction and a strict separating instance; it does not assert the false equivalence. `collision` keeps `clean`'"'s edges, agents, broker, receiver, and target IDs, but its reviewer and approver records are respectively:
+
+"'```text
+(id=6, uid=23703, agent=false, privileged=false, hostNetwork=false, role=3, runtimeMatch=true)
+(id=6, uid=23703, agent=false, privileged=false, hostNetwork=false, role=4, runtimeMatch=true)
+```
+
+All six original groups pass. The original identity check is guarded by `a.id ≠ b.id`, so it imposes nothing on this pair. The blind identity check is guarded by `a ≠ b`; the role difference makes the records unequal, and their equal UIDs violate its broker/receiver exception. This is a model counterexample, not evidence about a deployed system. The directional verdict concerns the frozen blind reading of “distinct nodes”; that English phrase itself admits an ID-based reading.
+
+The directional proof also checks that the changed agent-count filter agrees with the role-0 filter, that the blind writer-source lists imply the original writer checks, and that the omitted start-membership obligation follows from the definition of `reachable`. Those differences do not obstruct Back → Orig.
+
+## “Does NOT say” audit
+
+| Claim | Audit |
+| --- | --- |
+| 1 | (a) The implementation/kernel limitation is respected, but “edges … are not examined further” is too broad: mediation cuts off reachability, while all edges still undergo the unknown-edge check and applicable writer checks. (b) Missing edges remain invisible; an empty authority enumeration cannot supply real-world completeness. (c) The check fixes six **list entries** and role counts, not six distinct IDs. |
+| 2 | (a) Respected: no unconditional real-process guarantee. (b) Respected as statement scope: this conclusion filters on authority, although the stronger all-edge fact follows separately from `Accepted.writers`. (c) Respected: no content claim. |
+| 3 | (a)–(c) Respected: receiver/broker sources are allowed, the statement concerns IR edges, and it identifies neither the actual writer nor its content. |
+| 5 | (a) Respected: only UID fields are compared. (b) Respected: no broker/receiver UID separation is concluded. (c) Respected as statement scope: no agent-to-agent comparison appears here. `Accepted` separately constrains equal UIDs for nodes with different IDs. |
+| 12 | (a)–(c) Respected: the relation excludes steps landing on broker/receiver, includes only listed edges, and has no independent account of other channels. |
+| 16 | (a) Respected: the used approval record conclusion contains no signer, digest, destination or review predicate. (b) Respected: publication is assumed, not derived from runtime bytes. (c) Respected: the stated bound is the shared cap, not a per-agent lease-budget conclusion. |
+| 20 | (a)–(c) Respected as the scope of this theorem'"'s conclusion: only two fields are advertised, no liveness is asserted, and the admin-only halt rule belongs to the model. “Does NOT say” should not be read as saying no stronger fact could be derived by examining the transition constructors. |
+| 23 | (a)–(d) Respected: the statement is a concrete model Trace, not a runtime-authenticity, clock, completeness or sink-files theorem. The identity denial step imposes no denial-reason guard. |
+
+The over-reading audits inspect the supplied English and original Lean statements/definitions. They do not validate extraction, runtime logs, Python, the kernel, or deployment behavior.
+
+## Corrections to the English
+
+1. **Claim 1, identities — replace “distinct nodes” with:** “For any two entries in "'`d.nodes` whose **IDs differ**, their UID fields are equal if and only if their IDs are the broker and receiver IDs, in either order. Entries with the same ID are exempt from this identity check.” This removes the ambiguity that produced the strict blind reading.
+2. **Claim 1, role counts/topology — replace “There are exactly six nodes” with:** “The node list has length six, with two role-0 entries and one entry for each of roles 1–4; the stated flag and broker/receiver ID equivalences also hold. These checks do not require all six node IDs to be distinct.” Replace “fixes the topology to exactly six nodes” with “fixes the node-list length and role counts to this six-entry, two-agent slice.”
+3. **Claim 1, writers — replace the set/list wording with:** “Counting list entries, the sources of write edges into the sink form exactly the singleton list `[receiver]`. There are exactly two write-edge entries into the database, including a broker-source entry and a receiver-source entry; their list order is irrelevant.” This states multiplicity explicitly.
+4. **Claim 1, Does NOT say (a) — replace the mediation sentence with:** “The avoided-path computation stops when an edge would land on the broker or receiver. Listed edges still undergo the basic and applicable writer checks; the broker'"'s and receiver's actual forwarding behavior is outside this predicate.”
+5. **Claim 1, decidability note — replace “its decidability instance is by infer_instance” with:** “Each finite check group is decidable; the "'`Accepted` instance uses `decidable_of_iff` to assemble those checks into the structure predicate.”
+6. **Claim 12, avoided-path explanation — add:** “A zero-step path from the starting ID to itself also counts.” Without that sentence, “a chain of edges” could be read as requiring at least one edge.
+7. **Claim 5, operating-system gloss — clearer replacement:** “Every agent node'"'s UID field differs from the UID field of any listed receiver node; interpreting that as a fact about process identities requires faithful UID extraction.” The batch already supplies that world premise; this keeps it next to the claim.
+
+No part file or input batch was edited. Claims 2, 3, 16, 20 and 23 need no substantive replacement of their main sentences.
+
+## Ambiguities the blind formalisation exposed
+
+- **Record inequality versus ID inequality:** the consequential mismatch in claim 1. The original has no global ID-uniqueness check. Even its reviewer and approver may share an ID and UID in an accepted model instance.
+- **Sets versus lists:** original writer checks count duplicates. The blind form selected list multiplicity and made database source order irrelevant. Its implication to the original is gated; word “set” should be removed.
+- **What “exactly six nodes” counts:** list length and role counts need not mean six distinct service identities.
+- **Reachability includes its starting point:** the blind predicate omitted explicit start membership; the directional proof derives it from the fold's preservation of previously seen IDs. It is redundant, unlike the identity distinction.
+- **“Does NOT say” describes stated conclusions:** some stronger model facts follow from "'`Accepted` or transition constructors. These caveats are not proofs of logical independence from all hypotheses.
+- **Order and clock in claim 16:** publication is a reversed sublist of consumed nonces, indexed in admission order. It supplies neither authentic wall-clock ordering nor runtime completeness. The existing wording “in admission order” is appropriate.
+- **The blind theorems retain the real `Accepted` premise:** their seven equivalence verdicts compare theorems conditional on that original predicate. They do not repair, or silently inherit, claim 1'"'s reconstructed definition.
+
+Failed attempts are retained under "'`attempts/`. They are not verdict evidence. In particular, gate failures containing elaboration-generated `sorryAx` were rejected; final successful receipts permit only the standard allowed axioms. No `native_decide`, added axiom, or weakened security check was used.
+EOF'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-v1')
+notes=(out/'RESULTS.md').read_text().replace('Missing edges remain invisible; an empty authority enumeration cannot supply real-world completeness.','Missing edges remain invisible; unlisted real edges are not quantified by the predicate.')
+(out/'RESULTS.md').write_text(notes)
+checks=[]; gate_hash=hashlib.sha256((out/'leangate_imports.py').read_bytes()).hexdigest()
+for n in [1,2,3,5,12,16,20,23]:
+ cid=f'b1_{n}'; stmt=(out/(cid+'.statement.lean')).read_bytes(); proof=(out/(cid+'.proof.lean')).read_bytes()
+ for suffix,log in [('receipt.json','gate.txt'),('witness-receipt.json','witness-gate.txt')]:
+  r=json.loads((out/(cid+'.'+suffix)).read_text())
+  assert r['passed'] is True,(cid,suffix)
+  assert r['statement_sha256']==hashlib.sha256(stmt).hexdigest()
+  assert r['proof_sha256']==hashlib.sha256(proof).hexdigest()
+  assert r['gate_sha256']==gate_hash
+  assert (out/(cid+'.'+log)).read_text().startswith('PASS ')
+ checks.append({'claim':n,'claim_and_witness_passed':True,'frozen_statement_and_proof_hashes_match':True})
+blind=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+typed=json.loads((out/'typed/HASHES.json').read_text())['files']
+header=b'import ControlStack.Deployment.Witnesses\\nimport ControlStack.Deployment.TranscriptReplay\\n\\n'
+for rel,h in blind.items():
+ p=out/rel; assert hashlib.sha256(p.read_bytes()).hexdigest()==h
+ q=out/'typed'/p.name; assert q.read_bytes()==header+p.read_bytes()
+ assert hashlib.sha256(q.read_bytes()).hexdigest()==typed['typed/'+p.name]['sha256']
+assert (out/'leangate_imports.py').read_bytes()==(out.parent/'leangate_imports.py').read_bytes()
+# Check the restored attempt pairs against their historical receipts as well.
+for p in (out/'attempts').rglob('*.receipt.json'):
+ r=json.loads(p.read_text()); cid=p.name.removesuffix('.receipt.json')
+ assert hashlib.sha256((p.parent/(cid+'.statement.lean')).read_bytes()).hexdigest()==r['statement_sha256'],p
+ assert hashlib.sha256((p.parent/(cid+'.proof.lean')).read_bytes()).hexdigest()==r['proof_sha256'],p
+for p in (out/'attempts').rglob('*.witness-receipt.json'):
+ r=json.loads(p.read_text()); cid=p.name.removesuffix('.witness-receipt.json')
+ assert hashlib.sha256((p.parent/(cid+'.statement.lean')).read_bytes()).hexdigest()==r['statement_sha256'],p
+ assert hashlib.sha256((p.parent/(cid+'.proof.lean')).read_bytes()).hexdigest()==r['proof_sha256'],p
+now=datetime.datetime.now(datetime.timezone.utc); elapsed=(now-datetime.datetime(2026,10,13,3,32,11,tzinfo=datetime.timezone.utc)).total_seconds()
+(out/'FINAL-AUDIT.json').write_text(json.dumps({'utc':now.isoformat(),'elapsed_seconds':elapsed,'checks':checks,'all_back_hashes_match':True,'all_typed_hashes_match':True,'repairs_are_header_only':True,'gate_helper_byte_identical':True,'archived_attempt_hashes_match':True},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text(f'''# Progress
+
+**Complete.** All eight claims compiled after import-only repairs, compared with their originals, and assigned final gated verdicts. Claim 1 is ENGLISH_STRONGER; the other seven are EQUIVALENT. Eight comparison/counterexample gates and eight separate witness gates passed. RESULTS.md contains corrections and the per-claim over-reading audit.
+
+Started: 2026-10-13 03:32:11 UTC. Finished: {now.strftime('%Y-%m-%d %H:%M:%S UTC')}. Total elapsed: {elapsed/60:.1f} minutes.
+
+- Compilation, repair diffs, and hash freezing: 03:32:11–03:33:48 UTC, about 97 seconds. Every bare back file failed for absent imports; every repaired file compiled. No semantic repair was made.
+- First original-source read: 03:33:58 UTC, after the typed hash file existed. Source excerpts and hashes are in originals/.
+- Source comparison, directional proof, counterexample, theorem and witness gates: approximately six minutes after first source inspection. Final report and receipt/hash audit used the remaining time.
+- No old comparisons or other forbidden lean-english documents were read. No git command, download, ControlStack edit, or write outside blind-v1 was performed.
+
+Retained failures: the first comparison gate run exposed missing namespace opens in several comparison proof files, repaired only in those new supporting proofs. Claim 1's initial finite checks failed to synthesize Decidable for the entire blind predicate; unfolding alone also failed. The final counterexample uses an explicit identity contradiction, and its clean witness checks each group separately. Historical statements, proofs, logs and receipts are under attempts/ with matching hashes. These failures did not alter the frozen typed blind statements. Exploratory Lean files remain alongside the final supporting files; their failed examples are not verdict evidence.
+
+Gate integrity: the local helper is byte-identical to the supplied helper. Driver relocation requires parent index 4 rather than 3 to preserve the project root, and the glob is b1_*; all security checks remain intact. The supplied driver's historical receipt field gate_unmodified=false describes its existing imports-enabled wrapper; security_checks_unchanged=true and helper identity are separately recorded. No claim gate passed with sorryAx or a nonstandard axiom.
+
+Final verification: FINAL-AUDIT.json confirms all sixteen final receipts passed, match the final statement/proof/helper hashes, and have PASS logs; original and repaired blind hashes match; repair bodies are unchanged; historical attempt receipts match their preserved files.
+
+Remaining work: none within this batch. Not attempted or established: real-world extraction faithfulness, authenticated runtime history, Python/kernel correctness, deployment behavior, or a global node-ID uniqueness property. Those are outside this statement-comparison task. No EQUIVALENT verdict was assigned to claim 1; its reverse implication is refuted by the gated instance.
+''')
+print(json.dumps({'passed_claims':len(checks),'passed_receipts':16,'elapsed_minutes':round(elapsed/60,1),'attempt_hashes_verified':True},indent=2))
+PY"

@@ -1,0 +1,43 @@
+FAIL lean exit 1
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_20_claim_bc91b4d9d3a0.lean:15:20: warning: Variable name `roles` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _roles
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_20_claim_bc91b4d9d3a0.lean:17:20: warning: Variable name `roles` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _roles
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_20_claim_bc91b4d9d3a0.lean:29:57: error(lean.invalidField): Invalid field notation: Field projection operates on types of the form `C ...` where C is a constant. The expression
+  s
+has type `State` which does not have the necessary form.
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_20_claim_bc91b4d9d3a0.lean:29:106: error: Application type mismatch: The argument
+  roles
+has type
+  Roles
+but is expected to have type
+  ControlStack.TrustedBroker.Roles
+in the application
+  OrigConclusion roles
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_20_claim_bc91b4d9d3a0.lean:29:75: error: Function expected at
+  Step
+but this term has type
+  ?m.3
+
+Note: Expected a function because this term is being applied to the argument
+  roles
+
+Hint: The identifier `Step` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+/home/opc/projects/sol-g0-stale/docs/lean-english/one-to-one/blind-v1/gate-tmp/PLGate_b1_20_claim_bc91b4d9d3a0.lean:31:52: error: Application type mismatch: The argument
+  roles
+has type
+  Roles
+of sort `Sort u_1` but is expected to have type
+  ControlStack.TrustedBroker.Roles
+of sort `Type` in the application
+  ControlStack.TrustedBroker.halted_absorbing roles
+'gate_bc91b4d9d3a0' does not depend on any axioms
+

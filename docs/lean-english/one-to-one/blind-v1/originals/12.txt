@@ -1,0 +1,10 @@
+ControlStack/Deployment/R2Contracts.lean:20-27
+
+theorem accepted_no_avoided_path (d : IR) (h : Accepted d)
+    (a : Node) (member : a ∈ d.nodes) (agent : a.agent = true) :
+    ¬ AvoidedPath d a.id d.sink ∧ ¬ AvoidedPath d a.id d.database := by
+  obtain ⟨initial, sink, database, closed⟩ := h.bypass a member agent
+  exact ⟨fun p => sink (path_in_closed d a.id d.sink _ initial closed p),
+    fun p => database (path_in_closed d a.id d.database _ initial closed p)⟩
+
+theorem path_edge_subset (d larger : IR)

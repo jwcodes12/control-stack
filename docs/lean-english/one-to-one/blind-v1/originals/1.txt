@@ -1,0 +1,71 @@
+ControlStack/Deployment/Contracts.lean:44-112
+
+def BaseAccepted (d : IR) : Prop :=
+  (∀ e ∈ d.edges, e.unknown = false) ∧
+  (∀ e ∈ d.edges, e.authority = true → e.target = d.sink → e.source = d.receiver) ∧
+  (∀ e ∈ d.edges, e.authority = true → e.target = d.database → e.source = d.receiver ∨ e.source = d.broker) ∧
+  (∀ n ∈ d.nodes, n.privileged = false ∧ n.hostNetwork = false) ∧
+  (∀ r ∈ d.nodes, r.id = d.receiver → ∀ a ∈ d.nodes, a.agent = true → a.uid ≠ r.uid) ∧
+  (∃ e ∈ d.edges, e.source = d.receiver ∧ e.target = d.sink ∧ e.authority = true) ∧
+  (∀ n ∈ d.nodes, 0 < n.uid)
+
+instance (d : IR) : Decidable (BaseAccepted d) := by unfold BaseAccepted; infer_instance
+
+/-- Finite closure includes the start and every edge except trusted mediation.
+The explicit closure obligation below makes the bound independently checkable. -/
+def reachable (d : IR) (start : Nat) : List Nat :=
+  (List.range (d.nodes.length + d.edges.length + 4)).foldl (fun seen _ =>
+    (seen ++ d.edges.filterMap (fun e =>
+      if e.source ∈ seen ∧ e.target ≠ d.broker ∧ e.target ≠ d.receiver
+      then some e.target else none)).eraseDups) [start]
+
+def RoleChecked (d : IR) : Prop :=
+  d.nodes.length = 6 ∧
+  (d.nodes.filter (fun n => n.role == 0)).length = 2 ∧
+  (d.nodes.filter (fun n => n.role == 1)).length = 1 ∧
+  (d.nodes.filter (fun n => n.role == 2)).length = 1 ∧
+  (d.nodes.filter (fun n => n.role == 3)).length = 1 ∧
+  (d.nodes.filter (fun n => n.role == 4)).length = 1 ∧
+  (∀ n ∈ d.nodes, (n.agent = true ↔ n.role = 0) ∧
+    (n.id = d.broker ↔ n.role = 1) ∧ (n.id = d.receiver ↔ n.role = 2))
+
+def IdentityChecked (d : IR) : Prop :=
+  ∀ a ∈ d.nodes, ∀ b ∈ d.nodes, a.id ≠ b.id →
+    (a.uid = b.uid ↔ ((a.id = d.broker ∧ b.id = d.receiver) ∨
+                     (a.id = d.receiver ∧ b.id = d.broker)))
+
+def WritersChecked (d : IR) : Prop :=
+  (∀ e ∈ d.edges, e.target = d.sink → e.source = d.receiver ∧ e.write = true) ∧
+  (∀ e ∈ d.edges, e.target = d.database → e.source = d.broker ∨ e.source = d.receiver) ∧
+  ((d.edges.filter (fun e => e.target == d.sink && e.write)).map Edge.source = [d.receiver]) ∧
+  (d.edges.filter (fun e => e.target == d.database && e.write)).length = 2 ∧
+  (∃ e ∈ d.edges, e.target = d.database ∧ e.write = true ∧ e.source = d.broker) ∧
+  (∃ e ∈ d.edges, e.target = d.database ∧ e.write = true ∧ e.source = d.receiver)
+
+def NoBypass (d : IR) : Prop :=
+  ∀ a ∈ d.nodes, a.agent = true →
+    a.id ∈ reachable d a.id ∧ d.sink ∉ reachable d a.id ∧ d.database ∉ reachable d a.id ∧
+    (∀ e ∈ d.edges, e.source ∈ reachable d a.id →
+      e.target ≠ d.broker → e.target ≠ d.receiver → e.target ∈ reachable d a.id)
+
+instance (d : IR) : Decidable (RoleChecked d) := by unfold RoleChecked; infer_instance
+instance (d : IR) : Decidable (IdentityChecked d) := by unfold IdentityChecked; infer_instance
+instance (d : IR) : Decidable (WritersChecked d) := by unfold WritersChecked; infer_instance
+instance (d : IR) : Decidable (NoBypass d) := by unfold NoBypass; infer_instance
+
+/-- The kernel checks the same finite configuration obligations as Python.
+Runtime flags are input observations, not independent attestation. -/
+structure Accepted (d : IR) : Prop where
+  basic : BaseAccepted d
+  roles : RoleChecked d
+  identities : IdentityChecked d
+  runtime : ∀ n ∈ d.nodes, n.runtimeMatch = true
+  writers : WritersChecked d
+  bypass : NoBypass d
+
+instance (d : IR) : Decidable (Accepted d) :=
+  decidable_of_iff (BaseAccepted d ∧ RoleChecked d ∧ IdentityChecked d ∧
+    (∀ n ∈ d.nodes, n.runtimeMatch = true) ∧ WritersChecked d ∧ NoBypass d)
+    ⟨fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩,
+     fun h => ⟨h.basic, h.roles, h.identities, h.runtime, h.writers, h.bypass⟩⟩
+

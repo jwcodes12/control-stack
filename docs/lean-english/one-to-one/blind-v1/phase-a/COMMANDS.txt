@@ -1,0 +1,26 @@
+/bin/bash -lc 'cat ./input/batch.md ./defs/*.lean'
+
+---
+/bin/bash -lc 'mkdir -p ./back'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import datetime
+import json
+import subprocess
+
+result = subprocess.run(['bash', '-c', 'sha256sum back/*.lean'], check=True, capture_output=True, text=True)
+files = {}
+for line in result.stdout.splitlines():
+    digest, path = line.split(maxsplit=1)
+    files[path] = digest
+manifest = {
+    'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z'),
+    'files': files,
+}
+with open('back/BACK-HASHES.json', 'w', encoding='utf-8') as out:
+    json.dump(manifest, out, indent=2)
+    out.write('\\n')
+print(result.stdout, end='')
+print('Wrote back/BACK-HASHES.json at ' + manifest['utc'])
+PY"

@@ -203,7 +203,7 @@ close environmental/runtime premises.
 
 Lean: ControlStack/Deployment/Contracts.lean:99 (SHA-256 f31e9269d1d891bec0b41f5db363c8ceda378afffcaa9f9c68f54162b4ef4a2f)
 
-One-to-one: STALE (**STALE** (formerly ENGLISH_WEAKER))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **ENGLISH_STRONGER**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly ENGLISH_WEAKER))
 
 ### Original English block
 
@@ -236,7 +236,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/Deployment/Contracts.lean:114 (SHA-256 f31e9269d1d891bec0b41f5db363c8ceda378afffcaa9f9c68f54162b4ef4a2f)
 
-One-to-one: STALE (**STALE** (formerly ENGLISH_WEAKER))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly ENGLISH_WEAKER))
 
 ### Original English block
 
@@ -263,7 +263,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/Deployment/Contracts.lean:118 (SHA-256 f31e9269d1d891bec0b41f5db363c8ceda378afffcaa9f9c68f54162b4ef4a2f)
 
-One-to-one: STALE (**STALE** (formerly ENGLISH_STRONGER))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly ENGLISH_STRONGER))
 
 ### Original English block
 
@@ -317,7 +317,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/Deployment/Contracts.lean:134 (SHA-256 f31e9269d1d891bec0b41f5db363c8ceda378afffcaa9f9c68f54162b4ef4a2f)
 
-One-to-one: STALE (**STALE** (formerly UNDECIDED))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly UNDECIDED))
 
 ### Original English block
 
@@ -506,7 +506,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/Deployment/R2Contracts.lean:20 (SHA-256 6560cd57f5f21dea507088564edf5b8d33f5a951b68ae48f1bbed201a1ea7d77)
 
-One-to-one: STALE (**STALE** (formerly ENGLISH_STRONGER))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly ENGLISH_STRONGER))
 
 ### Original English block
 
@@ -614,7 +614,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/Deployment/R2Contracts.lean:101 (SHA-256 6560cd57f5f21dea507088564edf5b8d33f5a951b68ae48f1bbed201a1ea7d77)
 
-One-to-one: STALE (**STALE** (formerly ENGLISH_STRONGER))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly ENGLISH_STRONGER))
 
 ### Original English block
 
@@ -722,7 +722,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/TrustedBroker.lean:196 (SHA-256 728de615a5ecfd1f36985dc573a33ac8cb1dc5a8af5d9a2701dcee5fb9d11b56)
 
-One-to-one: STALE (**STALE** (formerly EQUIVALENT))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly EQUIVALENT))
 
 ### Original English block
 
@@ -803,7 +803,7 @@ No matching named scenario theorem in the current manifest collection.
 
 Lean: ControlStack/Deployment/TranscriptReplay.lean:108 (SHA-256 64a28e91662085ab26790d979c85b2ec63734eb800c408b217aee74c1c5b5071)
 
-One-to-one: STALE (**STALE** (formerly UNDECIDED))
+One-to-one: STALE (**STALE** (re-checked blind 2026-10-13: **EQUIVALENT**, see [blind-v1/RESULTS.md](blind-v1/RESULTS.md)) (formerly UNDECIDED))
 
 ### Original English block
 

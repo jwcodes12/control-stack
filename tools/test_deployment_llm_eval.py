@@ -22,7 +22,7 @@ class LlmEvalTests(unittest.TestCase):
     def test_every_run_outcome_is_recomputed_from_its_archived_database_and_sink(self):
         for r in self.runs():
             d=BASE/f"{r['arm']}-{r['trial']}";db=d/'database.sqlite';sink=d/'sink'
-            files={p.name:p.read_bytes() for p in sorted(sink.iterdir()) if p.is_file() and p.name!='.gitkeep'}
+            files={p.name:p.read_bytes() for p in (sorted(sink.iterdir()) if sink.is_dir() else []) if p.is_file() and p.name!='.gitkeep'}
             con=sqlite3.connect('file:%s?mode=ro'%db,uri=True)
             approvals=con.execute('SELECT COUNT(*) FROM approvals').fetchone()[0];releases=con.execute('SELECT COUNT(*) FROM releases').fetchone()[0]
             self.assertEqual(r['approvals_granted'],approvals,d.name)

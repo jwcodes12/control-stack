@@ -1,0 +1,9 @@
+Import-only typing repair. Meaning change: NO; all proposition bodies are byte-for-byte unchanged.
+--- back/1-safe_of_sound.lean
++++ typed/1-safe_of_sound.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC26Transaction
++
+ namespace ControlStack.SC26
+ 
+ -- The nonce and haltCheck flags are unrestricted by Sound.

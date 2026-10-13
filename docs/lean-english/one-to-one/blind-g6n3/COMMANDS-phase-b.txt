@@ -1,0 +1,833 @@
+/bin/bash -lc "pwd; rg --files -g AGENTS.md -g lakefile.lean -g lakefile.toml -g lean-toolchain -g '*.lean' docs/lean-english/one-to-one/blind-g6n3; cat docs/lean-english/sol-input/batch-g6n3.md; cat docs/lean-english/one-to-one/blind-g6n3/CLAIMS.txt; cat docs/lean-english/one-to-one/blind-g6n3/BACK-HASHES.json; cat docs/lean-english/one-to-one/run_gate.py; cat docs/lean-english/one-to-one/leangate_imports.py; cat docs/lean-english/one-to-one/leangate-imports.patch"
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g '"'!docs/lean-english/**'"' -g '"'!ControlStack/**'"' -g '"'!/.lake/**'"'; ls -la"
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g6n3/AGENTS.md /home/opc/projects/blind-work/g6n3/b/AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done; cat docs/lean-english/one-to-one/blind-g6n3/back/*.lean; cat docs/lean-english/one-to-one/blind-g6n3/back/BACK-HASHES.json'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+for d in ['compile-fixes','typed','compile-logs']: (p/d).mkdir(exist_ok=True)
+h=json.loads((p/'back/BACK-HASHES.json').read_text())['files']
+for f,v in h.items():
+ assert hashlib.sha256((p/f).read_bytes()).hexdigest()==v, f
+(p/'PROGRESS.md').write_text('# Phase B progress\\n\\nStarted '+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n\\nDone: read permitted inputs; verified all six frozen back hashes.\\n\\nNot done: compilation, freezing typed hashes, opening originals, pointwise proofs, witnesses, gates, English audit, regate. No originals opened yet.\\n')
+print('All six BACK-HASHES match.')
+PY"
+
+---
+/bin/bash -lc 'lake env lean docs/lean-english/one-to-one/blind-g6n3/back/1-progress_interleaved.lean'
+
+---
+/bin/bash -lc 'lake env lean docs/lean-english/one-to-one/blind-g6n3/back/2-crash_tolerant_progress.lean'
+
+---
+/bin/bash -lc 'lake env lean docs/lean-english/one-to-one/blind-g6n3/back/3-lossy_safe.lean'
+
+---
+/bin/bash -lc 'lake env lean docs/lean-english/one-to-one/blind-g6n3/back/4-lossy_rounds.lean'
+
+---
+/bin/bash -lc 'lake env lean docs/lean-english/one-to-one/blind-g6n3/back/5-lossy_halt_keys.lean'
+
+---
+/bin/bash -lc 'lake env lean docs/lean-english/one-to-one/blind-g6n3/back/6-tagged_rounds.lean'
+
+---
+/bin/bash -lc "ls -l .lake; cat lakefile.lean; rg --files -g CLAUDE.md -g GEMINI.md -g '"'!docs/lean-english/**'"'"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+h={}
+for f in sorted((p/'back').glob('*.lean')):
+ n=f.name.split('-')[0]
+ (p/'typed'/f.name).write_bytes(f.read_bytes())
+ h['typed/'+f.name]=hashlib.sha256(f.read_bytes()).hexdigest()
+ (p/'compile-fixes'/f'{n}.diff').write_text('# No repairs. Original back file compiled as written. Meaning unchanged.\\n')
+ (p/'compile-logs'/f'{n}.txt').write_text(f'"'$ lake env lean {f}'"\\nexit_code=0\\nstdout/stderr: empty\\n')
+(p/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':h},indent=2)+'\\n')
+(p/'PROGRESS.md').write_text('# Phase B progress\\n\\nAll six original back files compiled without repairs; hashes checked against BACK-HASHES. Typed copies and HASHES.json frozen before opening originals.\\n\\nDone: blind compilation and freezing.\\nNot done: comparisons, pointwise proofs, witnesses, gates, English audit, regate.\\n')
+print((p/'typed/HASHES.json').read_text())
+PY"
+
+---
+/bin/bash -lc "rg -n 'theorem (progress_interleaved|crash_tolerant_progress|lossy_safe|lossy_rounds|lossy_halt_keys|tagged_rounds)' ControlStack; rg -n '"'^(def |structure |inductive |theorem )'"' ControlStack/Scenarios/SC26Liveness.lean ControlStack/Scenarios/SC26LossyLiveness.lean ControlStack/Scenarios/SC26LossyHalt.lean"
+
+---
+/bin/bash -lc "sed -n '175,203p' ControlStack/Scenarios/SC26Liveness.lean; sed -n '485,513p' ControlStack/Scenarios/SC26Liveness.lean; sed -n '550,575p' ControlStack/Scenarios/SC26Liveness.lean; sed -n '45,90p' ControlStack/Scenarios/SC26LossyLiveness.lean; sed -n '164,175p' ControlStack/Scenarios/SC26LossyLiveness.lean; sed -n '325,363p' ControlStack/Scenarios/SC26LossyLiveness.lean; sed -n '395,405p' ControlStack/Scenarios/SC26LossyLiveness.lean; sed -n '80,119p' ControlStack/Scenarios/SC26LossyHalt.lean; sed -n '127,153p' ControlStack/Scenarios/SC26LossyHalt.lean; sed -n '267,312p' ControlStack/Scenarios/SC26LossyHalt.lean; sed -n '365,399p' ControlStack/Scenarios/SC26LossyHalt.lean; sed -n '420,445p' ControlStack/Scenarios/SC26LossyHalt.lean; rg -n '"'^(def |structure )'"' ControlStack/Scenarios/SC26.lean ControlStack/Scenarios/SC26Refinement.lean"
+
+---
+/bin/bash -lc "head -45 ControlStack/Scenarios/SC26Refinement.lean; sed -n '118,173p' ControlStack/Scenarios/SC26Refinement.lean; rg -n '(def step|structure Roles|def R0|def Good|def init|def Inv|theorem inv_init|\\.execute c)' ControlStack/Scenarios/SC26IdempotentGate.lean; rg --files ControlStack | rg 'SC26'"
+
+---
+/bin/bash -lc "rg -n '"'^(structure |def |theorem inv_init|theorem run_inv)'"' ControlStack/Scenarios/SC26Transaction.lean; sed -n '55,150p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '195,225p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '510,540p' ControlStack/Scenarios/SC26Refinement.lean; sed -n '210,235p' ControlStack/Scenarios/SC26Liveness.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n3'); src=p.parent/'run_gate.py'
+s=src.read_text()
+# Keep ROOT and helper lookup anchored at the helper's original location;
+# the relocation is part of changing OUT, not a change to gate behavior.
+s=s.replace('ROOT=Path(__file__).resolve().parents[3]\\nOUT=Path(__file__).resolve().parent', 'ROOT=Path(__file__).resolve().parents[3]\\nOUT=Path(__file__).resolve().parent\\nROOT=OUT.parents[3]')
+s=s.replace(\"'ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'\", \"'ControlStack.Scenarios.SC26Liveness ControlStack.Scenarios.SC26LossyLiveness ControlStack.Scenarios.SC26LossyHalt'\")
+s=s.replace(\"OUT/'leangate_imports.py'\", \"OUT.parent/'leangate_imports.py'\")
+s=s.replace(\"'g0_*.statement.lean'\", \"'bg6n3_*.statement.lean'\")
+(p/'run_gate_blind.py').write_text(s)
+(p/'runner-relocation.txt').write_text('run_gate.py copied. Changed output/root/helper path resolution solely for relocation into blind-g6n3, statement glob, and PL_IMPORTS. Gate implementation is loaded unchanged from ../leangate_imports.py. Banned-token and axiom checks unchanged. Witness checks are added separately by regate.py.\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+s=(p.parent/'run_gate.py').read_text().replace('parents[3]', 'parents[4]').replace(\"'ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'\", \"'ControlStack.Scenarios.SC26Liveness ControlStack.Scenarios.SC26LossyLiveness ControlStack.Scenarios.SC26LossyHalt'\").replace(\"'g0_*.statement.lean'\", \"'bg6n3_*.statement.lean'\")
+(p/'run_gate_blind.py').write_text(s)
+(p/'leangate_imports.py').write_bytes((p.parent/'leangate_imports.py').read_bytes())
+(p/'runner-relocation.txt').write_text('run_gate.py copied; ROOT parents[3] -> parents[4] is the required output-directory relocation adjustment. OUT resolves to blind-g6n3. Other changes: file glob and PL_IMPORTS only. Helper copied byte-for-byte. No gate functions or checks changed. Witness checks are separate in regate.py.\\n')
+PY"
+
+---
+/bin/bash -lc "sed -n '170,194p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '394,406p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '67,90p' ControlStack/Scenarios/SC26Refinement.lean"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n3/prepare.py <<'PY'
+from pathlib import Path
+P=Path(__file__).resolve().parent
+opens='open ControlStack.SC26 ControlStack.SC26Refinement ControlStack.SC26Liveness ControlStack.SC26Liveness.Concrete ControlStack.SC26LossyLiveness ControlStack.SC26LossyHalt\\n'
+def save(n,body,proof,witness):
+ cid=f'bg6n3_{n}'
+ f=next((P/'typed').glob(f'{n}-*.lean'))
+ frozen=f.read_text(); frozen=frozen[frozen.index('def Back_'):frozen.rindex('\\nend ')]
+ (P/f'{cid}.statement.lean').write_text(f'namespace PL_{cid}\\n'+opens+'\\n'+frozen+'\\n\\n'+body+f'\\nend PL_{cid}\\n')
+ (P/f'{cid}.proof.lean').write_text(opens+'\\n'+proof+'\\n\\n'+witness+'\\n')
+save(1,'''def BackAt (R : Roles) (cap : ℕ) (s : St) (k : ℕ) (r : Req)
+    (pre mid₁ mid₂ post : List Op) : Prop :=
+  let beforeExecute := run R cap full s pre
+  let final := run R cap full s
+    (pre ++ [.execute r.requester k] ++ mid₁ ++ [.deliver k] ++ mid₂ ++ [.arrive k] ++ post)
+  final.halted = true ∨ (k, r.tx) ∈ final.bank ∨
+    (k ∉ beforeExecute.reserved ∧ cap < beforeExecute.spent + r.tx.amount)
+
+def OrigAt (R : Roles) (cap : ℕ) (s : St) (c k : ℕ) (r : Req)
+    (a0 a1 a2 a3 : List Op) : Prop :=
+  let t := run R cap full s (a0 ++ .execute c k :: a1 ++ .deliver k :: a2 ++ .arrive k :: a3)
+  t.halted = true ∨ (k, r.tx) ∈ t.bank ∨
+    (k ∉ (run R cap full s a0).reserved ∧ cap < (run R cap full s a0).spent + r.tx.amount)
+
+def Claim : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (s : St) (c k : ℕ) (r : Req) (pre mid₁ mid₂ post : List Op),
+    Inv R cap s → reqOf s k = some r → Approved R s k r →
+    (∀ o ∈ pre ++ mid₁ ++ mid₂ ++ post, legal R o) →
+    (BackAt R cap s k r pre mid₁ mid₂ post ↔ OrigAt R cap s c k r pre mid₁ mid₂ post)
+
+def setup : List Op := [.request 1 wTx, .approve 2 0 wTx]
+def Witness : Prop :=
+  let s := run R0 10 full init setup
+  Inv R0 10 s ∧ reqOf s 0 = some ⟨0, 1, wTx⟩ ∧
+    Approved R0 s 0 ⟨0, 1, wTx⟩ ∧ (∀ o ∈ setup, legal R0 o) ∧
+    (∀ o ∈ ([] : List Op), legal R0 o) ∧
+    (0, wTx) ∈ (run R0 10 full s [.execute 88 0, .deliver 0, .arrive 0]).bank
+''','''theorem execute_identity (R : Roles) (cap : ℕ) (s : St) (c c' k : ℕ) :
+    step R cap full s (.execute c k) = step R cap full s (.execute c' k) := rfl
+
+theorem claim : Claim := by
+  intro R cap s c k r pre mid₁ mid₂ post _ _ _ _
+  unfold BackAt OrigAt
+  simp only [List.append_assoc, List.cons_append, List.nil_append,
+    SC26Refinement.run_append, SC26.run_cons]
+  rfl
+''','''theorem witness : Witness := by
+  have hl : ∀ o ∈ setup, legal R0 o := by simp [setup, legal]
+  refine ⟨run_inv R0 10 sound_full init setup hl (inv_init R0 10), by decide, ?_, hl, by simp, by decide⟩
+  exact ⟨2, by decide, by decide, by decide⟩
+''')
+save(2,'''def BackAt (R : Roles) (cap k : ℕ) (ops₀ pre mid post : List COp) : Prop :=
+  let start := runC R cap true cinit ops₀
+  let final := runC R cap true start (pre ++ [.recover] ++ mid ++ [.bankProcess k] ++ post)
+  (final.bank.map Prod.fst).count k = 1
+
+def OrigAt (R : Roles) (cap k : ℕ) (ops0 pre mid post : List COp) : Prop :=
+  k ∈ (runC R cap true (runC R cap true cinit ops0) (pre ++ .recover :: mid ++ .bankProcess k :: post)).bank.map Prod.fst ∧
+  ((runC R cap true (runC R cap true cinit ops0) (pre ++ .recover :: mid ++ .bankProcess k :: post)).bank.map Prod.fst).count k = 1
+
+def Claim : Prop :=
+  ∀ (R : Roles) (cap k : ℕ) (ops₀ pre mid post : List COp) (d : DRow),
+    (∀ o ∈ ops₀, legalC R o) → d ∈ (runC R cap true cinit ops₀).delivery → d.id = k →
+    (∀ o ∈ pre ++ mid ++ post, legalC R o) →
+    (runC R cap true (runC R cap true cinit ops₀) pre).halted = false →
+    (BackAt R cap k ops₀ pre mid post ↔ OrigAt R cap k ops₀ pre mid post)
+
+def setup : List COp := [.request 1 wTx, .approve 2 0 wTx, .execute 1 0, .deliver 0]
+def Witness : Prop :=
+  let s := runC R0 10 true cinit setup
+  (∀ o ∈ setup, legalC R0 o) ∧ ⟨0, wTx, false⟩ ∈ s.delivery ∧
+  (∀ o ∈ ([.crash] ++ [.crash] ++ [.crash] : List COp), legalC R0 o) ∧
+  (runC R0 10 true s [.crash]).halted = false ∧
+  ((runC R0 10 true s [.crash, .recover, .crash, .bankProcess 0, .crash]).bank.map Prod.fst).count 0 = 1
+''','''theorem claim : Claim := by
+  intro R cap k ops₀ pre mid post d _ _ _ _ _
+  unfold BackAt OrigAt
+  simp only [List.append_assoc, List.cons_append, List.nil_append]
+  constructor
+  · intro h
+    exact ⟨List.count_pos_iff.mp (by omega), h⟩
+  · exact And.right
+''','''theorem witness : Witness := by
+  refine ⟨?_, by decide, ?_, by decide, by decide⟩
+  · simp [setup, legalC]
+  · simp [legalC]
+''')
+save(3,'''def BackAt (R : Roles) (cap : ℕ) (ops : List LOp) : Prop :=
+  Good R cap (α (runL R cap true cinit ops))
+def OrigAt (R : Roles) (cap : ℕ) (ops : List LOp) : Prop :=
+  Good R cap (α (runL R cap true cinit ops))
+def Claim : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (ops : List LOp), (∀ o ∈ ops, legalL R o) →
+    (BackAt R cap ops ↔ OrigAt R cap ops)
+def trace : List LOp := setupOps ++ [.base .recover, .dup 0, .drop 0, .deliverAt 0]
+def Witness : Prop :=
+  (∀ o ∈ trace, legalL R0 o) ∧
+  (runL R0 10 true cinit trace).bank = [(0, wTx)] ∧
+  (runL R0 10 true cinit trace).spent = 10
+''','''theorem claim : Claim := by
+  intro R cap ops _
+  exact Iff.rfl
+''','''theorem witness : Witness := by
+  refine ⟨?_, by decide, by decide⟩
+  simp [trace, setupOps, legalL, legalC]
+''')
+save(5,'''def BackAt (R : Roles) (cap : ℕ) (s : CSt) (ops : List LOp) (k : ℕ) : Prop :=
+  k ∈ (runLH R cap true s ops).bank.map Prod.fst →
+    k ∈ s.bank.map Prod.fst ∨ k ∈ s.wire.map Prod.fst
+
+def OrigAt (R : Roles) (cap : ℕ) (s : CSt) (ops : List LOp) (k : ℕ) : Prop :=
+  k ∈ (runL R cap true s ops).bank.map Prod.fst →
+    k ∈ s.bank.map Prod.fst ∨ k ∈ s.wire.map Prod.fst
+
+def Claim : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (s : CSt) (ops : List LOp) (k : ℕ),
+    s.halted = true → (∀ o ∈ ops, legalL R o) →
+    (BackAt R cap s ops k ↔ OrigAt R cap s ops k)
+
+def start : CSt := { strandedState with wire := [(0, wTx)] }
+def trace : List LOp := [.dup 0, .drop 0, .base .crash, .base .recover, .deliverAt 0]
+def Witness : Prop :=
+  start.halted = true ∧ start.bank = [] ∧ 0 ∈ start.wire.map Prod.fst ∧
+  (∀ o ∈ trace, legalL R0 o) ∧
+  (runLH R0 10 true start trace).bank = [(0, wTx)]
+''','''theorem runners (R : Roles) (cap : ℕ) (s : CSt) (ops : List LOp) :
+    runLH R cap true s ops = runL R cap true s ops := by
+  have hs : stepLH R cap true = stepL R cap true := by
+    funext s o
+    cases o <;> rfl
+  simp only [runLH, runL, hs]
+
+theorem claim : Claim := by
+  intro R cap s ops k _ _
+  unfold BackAt OrigAt
+  rw [runners]
+''','''theorem witness : Witness := by
+  refine ⟨rfl, rfl, by decide, ?_, by decide⟩
+  simp [trace, legalL, legalC]
+''')
+PY
+python3 docs/lean-english/one-to-one/blind-g6n3/prepare.py"
+
+---
+/bin/bash -lc "cat >> docs/lean-english/one-to-one/blind-g6n3/prepare.py <<'PY'
+rounddefs='''def BackLegal (R : Roles) (rounds : List (List LOp × List LOp)) : Prop :=
+  ∀ o ∈ (rounds.map roundOps).flatten, legalL R o
+def OrigLegal (R : Roles) (rounds : List (List LOp × List LOp)) : Prop :=
+  ∀ r ∈ rounds, ∀ o ∈ r.1 ++ r.2, legalL R o
+'''
+roundproof='''theorem legal_rounds (R : Roles) (rounds : List (List LOp × List LOp)) :
+    BackLegal R rounds ↔ OrigLegal R rounds := by
+  unfold BackLegal OrigLegal
+  constructor
+  · intro h r hr o ho
+    apply h o
+    apply List.mem_flatten.mpr
+    refine ⟨roundOps r, List.mem_map.mpr ⟨r, hr, rfl⟩, ?_⟩
+    simp only [roundOps, List.mem_append, List.mem_cons] at *
+    rcases ho with ho | ho
+    · exact Or.inl ho
+    · exact Or.inr (Or.inr ho)
+  · intro h o ho
+    obtain ⟨l, hl, ho⟩ := List.mem_flatten.mp ho
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.mp hl
+    simp only [roundOps, List.mem_append, List.mem_cons] at ho
+    rcases ho with ho | ho | ho
+    · exact h r hr o (List.mem_append_left _ ho)
+    · subst o; trivial
+    · exact h r hr o (List.mem_append_right _ ho)
+'''
+save(4,rounddefs+'''def BackFair (k : ℕ) (rounds : List (List LOp × List LOp)) : Prop :=
+  ∃ r ∈ rounds, Delivers k r
+def OrigFair (k : ℕ) (rounds : List (List LOp × List LOp)) : Prop :=
+  ∃ j, ∃ hj : j < rounds.length, Delivers k rounds[j]
+
+def BackAt (R : Roles) (cap k : ℕ) (ops₀ : List LOp)
+    (rounds : List (List LOp × List LOp)) (post : List LOp) : Prop :=
+  let start := runL R cap true cinit ops₀
+  let final := runL R cap true start (rounds.map roundOps).flatten
+  k ∈ final.bank.map Prod.fst ∧ ((runL R cap true final post).bank.map Prod.fst).count k = 1
+
+def OrigAt (R : Roles) (cap k : ℕ) (ops0 : List LOp)
+    (rounds : List (List LOp × List LOp)) (post : List LOp) : Prop :=
+  k ∈ (runL R cap true (runL R cap true cinit ops0) (rounds.map roundOps).flatten).bank.map Prod.fst ∧
+    ((runL R cap true (runL R cap true cinit ops0) ((rounds.map roundOps).flatten ++ post)).bank.map Prod.fst).count k = 1
+
+def Claim : Prop :=
+  (∀ R rounds, BackLegal R rounds ↔ OrigLegal R rounds) ∧
+  (∀ k rounds, BackFair k rounds ↔ OrigFair k rounds) ∧
+  (∀ (R : Roles) (cap k : ℕ) (ops₀ : List LOp) (d : DRow)
+      (rounds : List (List LOp × List LOp)) (post : List LOp),
+    (∀ o ∈ ops₀, legalL R o) → d ∈ (runL R cap true cinit ops₀).delivery → d.id = k →
+    BackLegal R rounds → (∀ o ∈ post, legalL R o) → BackFair k rounds →
+    (runL R cap true (runL R cap true cinit ops₀) (rounds.map roundOps).flatten).halted = false →
+    (BackAt R cap k ops₀ rounds post ↔ OrigAt R cap k ops₀ rounds post))
+
+def rounds : List (List LOp × List LOp) := [([], [.base (.bankProcess 0)])]
+def Witness : Prop :=
+  (∀ o ∈ setupOps, legalL R0 o) ∧
+  ⟨0, wTx, false⟩ ∈ (runL R0 10 true cinit setupOps).delivery ∧
+  BackLegal R0 rounds ∧ BackFair 0 rounds ∧
+  (runL R0 10 true (runL R0 10 true cinit setupOps) (rounds.map roundOps).flatten).halted = false ∧
+  (∀ o ∈ ([.dup 0, .deliverAt 0] : List LOp), legalL R0 o) ∧
+  BackAt R0 10 0 setupOps rounds [.dup 0, .deliverAt 0]
+''',roundproof+'''
+theorem fair_rounds (k : ℕ) (rounds : List (List LOp × List LOp)) :
+    BackFair k rounds ↔ OrigFair k rounds := by
+  constructor
+  · rintro ⟨r, hr, hd⟩
+    obtain ⟨j, hj, he⟩ := List.getElem_of_mem hr
+    exact ⟨j, hj, he.symm ▸ hd⟩
+  · rintro ⟨j, hj, hd⟩
+    exact ⟨rounds[j], List.getElem_mem hj, hd⟩
+
+theorem claim : Claim := by
+  refine ⟨legal_rounds, fair_rounds, ?_⟩
+  intro R cap k ops₀ d rounds post _ _ _ _ _ _ _
+  unfold BackAt OrigAt
+  rw [runL_append]
+''','''theorem witness : Witness := by
+  refine ⟨?_, by decide, ?_, ?_, by decide, ?_, ?_⟩
+  · simp [setupOps, legalL, legalC]
+  · simp [BackLegal, rounds, roundOps, legalL, legalC]
+  · refine ⟨([], [.base (.bankProcess 0)]), by simp [rounds], [], [], rfl, ?_⟩
+    simp [DropFree]
+  · simp [legalL]
+  · constructor <;> decide
+''')
+save(6,rounddefs+'''def BackFair (R : Roles) (cap k : ℕ) (start : TSt)
+    (rounds : List (List LOp × List LOp)) : Prop :=
+  ∃ (before : List (List LOp × List LOp)) (r : List LOp × List LOp)
+    (after : List (List LOp × List LOp)),
+    rounds = before ++ r :: after ∧
+      DeliversT R cap k (runT R cap start (before.map roundOps).flatten) r
+
+def OrigFair (R : Roles) (cap k : ℕ) (start : TSt)
+    (rounds : List (List LOp × List LOp)) : Prop :=
+  ∃ j, ∃ hj : j < rounds.length,
+    DeliversT R cap k (runT R cap start ((rounds.take j).map roundOps).flatten) rounds[j]
+
+def BackAt (R : Roles) (cap k : ℕ) (ops₀ : List LOp)
+    (rounds : List (List LOp × List LOp)) (post : List LOp) : Prop :=
+  let start := runT R cap tinit ops₀
+  let final := runT R cap start (rounds.map roundOps).flatten
+  k ∈ final.c.bank.map Prod.fst ∧ ((runT R cap final post).c.bank.map Prod.fst).count k = 1
+
+def OrigAt (R : Roles) (cap k : ℕ) (ops0 : List LOp)
+    (rounds : List (List LOp × List LOp)) (post : List LOp) : Prop :=
+  k ∈ (runT R cap (runT R cap tinit ops0) (rounds.map roundOps).flatten).c.bank.map Prod.fst ∧
+    ((runT R cap (runT R cap tinit ops0) ((rounds.map roundOps).flatten ++ post)).c.bank.map Prod.fst).count k = 1
+
+def Claim : Prop :=
+  (∀ R rounds, BackLegal R rounds ↔ OrigLegal R rounds) ∧
+  (∀ R cap k start rounds, BackFair R cap k start rounds ↔ OrigFair R cap k start rounds) ∧
+  (∀ (R : Roles) (cap k : ℕ) (ops₀ : List LOp)
+      (rounds : List (List LOp × List LOp)) (post : List LOp),
+    (∀ o ∈ ops₀, legalL R o) → BackLegal R rounds →
+    (∀ o ∈ post, legalL R o) → BackFair R cap k (runT R cap tinit ops₀) rounds →
+    (BackAt R cap k ops₀ rounds post ↔ OrigAt R cap k ops₀ rounds post))
+
+def Witness : Prop :=
+  (∀ o ∈ setupOps, legalL R0 o) ∧ BackLegal R0 [pcRound] ∧
+  BackFair R0 10 0 (runT R0 10 tinit setupOps) [pcRound] ∧
+  (∀ o ∈ ([.dup 0, .deliverAt 0] : List LOp), legalL R0 o) ∧
+  BackAt R0 10 0 setupOps [pcRound] [.dup 0, .deliverAt 0]
+''',roundproof+'''
+theorem fair_rounds (R : Roles) (cap k : ℕ) (start : TSt)
+    (rounds : List (List LOp × List LOp)) :
+    BackFair R cap k start rounds ↔ OrigFair R cap k start rounds := by
+  constructor
+  · rintro ⟨before, r, after, hs, hd⟩
+    subst rounds
+    refine ⟨before.length, by simp, ?_⟩
+    simpa using hd
+  · rintro ⟨j, hj, hd⟩
+    refine ⟨rounds.take j, rounds[j], rounds.drop (j + 1), ?_, hd⟩
+    rw [← List.drop_eq_getElem_cons hj, List.take_append_drop]
+
+theorem claim : Claim := by
+  refine ⟨legal_rounds, fair_rounds, ?_⟩
+  intro R cap k ops₀ rounds post _ _ _ _
+  unfold BackAt OrigAt
+  rw [runT_append]
+''','''theorem witness : Witness := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · simp [setupOps, legalL, legalC]
+  · simp [BackLegal, pcRound, roundOps, legalL, legalC]
+  · refine ⟨[], pcRound, [], rfl, ?_⟩
+    have hs : runT R0 10 tinit setupOps = tLogged := by decide
+    simpa [hs, runT] using per_copy_weaker.2.1
+  · simp [legalL]
+  · constructor <;> decide
+''')
+PY
+python3 docs/lean-english/one-to-one/blind-g6n3/prepare.py
+python3 docs/lean-english/one-to-one/blind-g6n3/run_gate_blind.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n3/regate.py <<'PY'
+\"\"\"Recheck all six saved pointwise comparisons and all six non-vacuity witnesses.
+
+Run from the repository root. Only persisted receipts are rewritten. The runner
+configures the unchanged deterministic gate, project root, and trusted imports.
+\"\"\"
+from pathlib import Path
+import sys
+sys.dont_write_bytecode = True
+import importlib.util
+import hashlib
+import json
+import os
+from concurrent.futures import ThreadPoolExecutor
+
+OUT = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('blind_runner', OUT / 'run_gate_blind.py')
+runner = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(runner)
+g = runner.g
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+def recheck(n):
+    cid = f'bg6n3_{n}'
+    paths = [OUT / f'{cid}.statement.lean', OUT / f'{cid}.proof.lean']
+    try:
+        statement, proof = [p.read_text() for p in paths]
+        statement_ok, statement_log = g.check_statement(cid, statement, [runner.IMPORTS])
+        results = []
+        for target in ['claim', 'witness']:
+            if statement_ok:
+                passed, log = g.gate(cid, statement, proof, target, [runner.IMPORTS], timeout=120)
+            else:
+                passed, log = False, 'Statement check failed; target not gated.\\n' + statement_log
+            receipt = {
+                'cid': cid, 'target': target, 'passed': passed,
+                'statement_check_passed': statement_ok,
+                'statement_check_log': statement_log, 'gate_log': log,
+                'statement_sha256': sha(statement.encode()), 'proof_sha256': sha(proof.encode()),
+                'gate_sha256': sha(Path(g.__file__).read_bytes()),
+                'PL_IMPORTS': os.environ['PL_IMPORTS'], 'PL_LEAN_PROJ': str(g.PROJ),
+                'security_checks_unchanged': True, 'gate_helper_byte_identical':
+                    Path(g.__file__).read_bytes() == (OUT.parent / 'leangate_imports.py').read_bytes(),
+            }
+            suffix = '.receipt.json' if target == 'claim' else '.witness.receipt.json'
+            (OUT / (cid + suffix)).write_text(json.dumps(receipt, indent=2) + '\\n')
+            print(f'{cid} {target}: {\"PASS\" if passed else \"FAIL\"}\\n{log[:400]}', flush=True)
+            results.append(passed)
+        return all(results)
+    except Exception as exc:
+        for target in ['claim', 'witness']:
+            suffix = '.receipt.json' if target == 'claim' else '.witness.receipt.json'
+            (OUT / (cid + suffix)).write_text(json.dumps({
+                'cid': cid, 'target': target, 'passed': False, 'error': str(exc)
+            }, indent=2) + '\\n')
+        print(f'{cid}: FAIL {exc}', flush=True)
+        return False
+
+if __name__ == '__main__':
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        results = list(executor.map(recheck, range(1, 7)))
+    sys.exit(0 if all(results) else 1)
+PY"
+
+---
+/bin/bash -lc "cat docs/lean-english/one-to-one/blind-g6n3/bg6n3_1.gate.txt; python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+f=p/'prepare.py'
+s=f.read_text().replace('SC26Refinement.run_append, SC26.run_cons', 'ControlStack.SC26Refinement.run_append, ControlStack.SC26.run_cons')
+f.write_text(s)
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g6n3/prepare.py; python3 docs/lean-english/one-to-one/blind-g6n3/regate.py'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g6n3/bg6n3_6.gate.txt; cat docs/lean-english/one-to-one/blind-g6n3/bg6n3_1.receipt.json'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n3/prepare.py')
+s=p.read_text().replace('simpa [hs, runT] using per_copy_weaker.2.1', 'change DeliversT R0 10 0 (runT R0 10 tinit setupOps) pcRound\\n    rw [hs]\\n    exact per_copy_weaker.2.1')
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "sed -n '430,452p' ControlStack/Scenarios/SC26LossyLiveness.lean; sed -n '308,330p' ControlStack/Scenarios/SC26LossyLiveness.lean; cat docs/lean-english/one-to-one/blind-g6n3/bg6n3_6.statement.lean"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g6n3/prepare.py; python3 docs/lean-english/one-to-one/blind-g6n3/regate.py'
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n3/audit-fairness.lean <<'LEAN'
+import ControlStack.Scenarios.SC26LossyHalt
+open ControlStack.SC26 ControlStack.SC26Refinement ControlStack.SC26LossyLiveness ControlStack.SC26LossyHalt
+namespace BlindAudit
+
+def ackOps : List LOp := setupOps ++ [.base .recover, .base (.bankProcess 0), .base (.ack 0)]
+def ackStart : TSt := runT R0 10 tinit ackOps
+def oldRound : List LOp × List LOp := ([], [.base (.bankProcess 0)])
+
+theorem old_fair : Delivers 0 oldRound := by
+  refine ⟨[], [], rfl, ?_⟩
+  simp [DropFree]
+
+theorem no_batch : batch R0 10 ackStart (.base .recover) = [] := by decide
+
+theorem not_new_fair : ¬ DeliversT R0 10 0 ackStart oldRound := by
+  unfold DeliversT
+  change ¬ ∃ e ∈ batch R0 10 ackStart (.base .recover), e.2.1 = 0 ∧ _
+  rw [no_batch]
+  simp
+
+theorem legal_ack : ∀ o ∈ ackOps, legalL R0 o := by
+  simp [ackOps, setupOps, legalL, legalC]
+
+theorem not_halted : ackStart.c.halted = false := by decide
+end BlindAudit
+LEAN
+lake env lean docs/lean-english/one-to-one/blind-g6n3/audit-fairness.lean"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n3/strengthen.py <<'PY'
+\"\"\"Link pointwise outcomes mechanically to the frozen Back and original signatures.\"\"\"
+from pathlib import Path
+import hashlib,json,re
+P=Path(__file__).resolve().parent
+root=P.parents[3]
+items=[('progress_interleaved','SC26Liveness'),('crash_tolerant_progress','SC26Liveness'),('lossy_safe','SC26LossyLiveness'),('lossy_rounds','SC26LossyLiveness'),('lossy_halt_keys','SC26LossyHalt'),('tagged_rounds','SC26LossyHalt')]
+excerpts=[]
+for n,(name,mod) in enumerate(items,1):
+ cid=f'bg6n3_{n}'
+ src=(root/f'ControlStack/Scenarios/{mod}.lean').read_text()
+ a=src.index('theorem '+name+' '); b=src.index(' := by',a)
+ header=src[a:b]
+ excerpts.append(header+' := [proof omitted]\\n')
+ binders,conclusion=header[len('theorem '+name+' '):].rsplit(' :\\n',1)
+ original=f'def OriginalSignature : Prop :=\\n  ∀ {binders},\\n{conclusion}\\n'
+ frozen=next((P/'typed').glob(f'{n}-*.lean')).read_text()
+ frozen=frozen[frozen.index('def Back_'):frozen.rindex('\\nend ')]
+ backbody=frozen.split(': Prop :=',1)[1]
+ if n==1:
+  backnorm=backbody[:backbody.index('    let beforeExecute')]+ '    BackAt R cap s k r pre mid₁ mid₂ post\\n'
+  orignorm=f'∀ {binders}, OrigAt R cap s c k r a0 a1 a2 a3'
+ elif n==2:
+  backnorm=backbody[:backbody.index('    let final')]+ '    BackAt R cap k ops₀ pre mid post\\n'
+  orignorm=f'∀ {binders}, OrigAt R cap k ops0 pre mid post'
+ elif n==3:
+  backnorm=backbody[:backbody.index('    Good')]+ '    BackAt R cap ops\\n'
+  orignorm=f'∀ {binders}, OrigAt R cap ops'
+ elif n==5:
+  backnorm=backbody[:backbody.index('    ∀ k ∈')]+ '    ∀ k, BackAt R cap s ops k\\n'
+  binders5=binders[:binders.index(' (hx :')]
+  orignorm=f'∀ {binders5}, OrigAt R cap s ops x'
+ else:
+  mode='L' if n==4 else 'T'
+  state='runL R cap true cinit ops₀' if n==4 else 'runT R cap tinit ops₀'
+  fin='runL R cap true start (rounds.map roundOps).flatten' if n==4 else 'runT R cap start (rounds.map roundOps).flatten'
+  keys='final.bank.map Prod.fst' if n==4 else 'final.c.bank.map Prod.fst'
+  cont='((runL R cap true final post).bank.map Prod.fst).count k = 1' if n==4 else '((runT R cap final post).c.bank.map Prod.fst).count k = 1'
+  outcome=f'''def BackOutcome (R : Roles) (cap k : ℕ) (ops₀ : List LOp)
+    (rounds : List (List LOp × List LOp)) : Prop :=
+  let start := {state}
+  let final := {fin}
+  k ∈ {keys} ∧ ∀ post : List LOp, (∀ o ∈ post, legalL R o) → {cont}
+'''
+  if n==4:
+   backnorm=backbody[:backbody.index('    k ∈ final.bank')]+ '    BackOutcome R cap k ops₀ rounds\\n'
+  else:
+   backnorm=backbody[:backbody.index('    let final')]+ '    BackOutcome R cap k ops₀ rounds\\n'
+  orignorm=f'∀ {binders}, OrigAt R cap k ops0 rounds post'
+ additions=original+f'\\ndef BackShape : Prop := Back_{name} ↔\\n{backnorm}\\ndef OriginalShape : Prop := OriginalSignature ↔\\n  {orignorm}\\n'
+ if n in [4,6]:
+  additions=outcome+'\\n'+additions+'''\\ndef Projection : Prop := ∀ R cap k ops₀ rounds,
+  BackOutcome R cap k ops₀ rounds ↔
+    ∀ post, (∀ o ∈ post, legalL R o) → BackAt R cap k ops₀ rounds post
+'''
+  newclaim='def Claim : Prop := Pointwise ∧ BackShape ∧ OriginalShape ∧ Projection\\n'
+  proofextra='''theorem projection : Projection := by
+  intro R cap k ops₀ rounds
+  constructor
+  · rintro ⟨hm, hc⟩ post hp
+    exact ⟨hm, hc post hp⟩
+  · intro h
+    exact ⟨(h [] (by simp)).1, fun post hp => (h post hp).2⟩
+
+theorem claim : Claim := ⟨pointwise, Iff.rfl, Iff.rfl, projection⟩
+'''
+ else:
+  newclaim='def Claim : Prop := Pointwise ∧ BackShape ∧ OriginalShape\\n'
+  proofextra='theorem claim : Claim := ⟨pointwise, Iff.rfl, Iff.rfl⟩\\n'
+ f=P/f'{cid}.statement.lean'; s=f.read_text().replace('def Claim : Prop :=','def Pointwise : Prop :=')
+ s=s.replace(f'\\nend PL_{cid}', '\\n'+additions+'\\n'+newclaim+f'\\nend PL_{cid}')
+ f.write_text(s)
+ f=P/f'{cid}.proof.lean'; s=f.read_text().replace('theorem claim : Claim :=', 'theorem pointwise : Pointwise :=')
+ f.write_text(s+'\\n'+proofextra)
+(P/'original-signatures.txt').write_text('\\n'.join(excerpts))
+PY
+python3 docs/lean-english/one-to-one/blind-g6n3/strengthen.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n3/augment-audit.py <<'PY'
+from pathlib import Path
+P=Path(__file__).resolve().parent
+f=P/'bg6n3_6.statement.lean'
+s=f.read_text().replace('def Witness : Prop :=','def Nonvacuity : Prop :=')
+extra='''def ackOps : List LOp := setupOps ++ [.base .recover, .base (.bankProcess 0), .base (.ack 0)]
+def ackStart : TSt := runT R0 10 tinit ackOps
+def oldRound : List LOp × List LOp := ([], [.base (.bankProcess 0)])
+def FairnessAudit : Prop :=
+  ¬ Delivers 0 pcRound ∧
+  (∀ o ∈ ackOps, legalL R0 o) ∧ ackStart.c.halted = false ∧
+  Delivers 0 oldRound ∧ ¬ DeliversT R0 10 0 ackStart oldRound
+
+def Witness : Prop := Nonvacuity ∧ FairnessAudit
+'''
+s=s.replace('\\nend PL_bg6n3_6', '\\n'+extra+'\\nend PL_bg6n3_6')
+f.write_text(s)
+f=P/'bg6n3_6.proof.lean'; s=f.read_text().replace('theorem witness : Witness :=','theorem nonvacuity : Nonvacuity :=')
+s+='''
+theorem fairness_audit : FairnessAudit := by
+  refine ⟨per_copy_weaker.1, ?_, by decide, ?_, ?_⟩
+  · simp [ackOps, setupOps, legalL, legalC]
+  · refine ⟨[], [], rfl, ?_⟩
+    simp [DropFree]
+  · have hb : batch R0 10 ackStart (.base .recover) = [] := by decide
+    unfold DeliversT
+    change ¬ ∃ e ∈ batch R0 10 ackStart (.base .recover), e.2.1 = 0 ∧ _
+    rw [hb]
+    simp
+
+theorem witness : Witness := ⟨nonvacuity, fairness_audit⟩
+'''
+f.write_text(s)
+(P/'audit-fairness.lean').unlink(missing_ok=True)
+PY
+python3 docs/lean-english/one-to-one/blind-g6n3/augment-audit.py
+python3 docs/lean-english/one-to-one/blind-g6n3/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+for f in sorted(p.glob('*.receipt.json')):
+ r=json.loads(f.read_text())
+ print(f.name,r['passed'],r.get('gate_log','')[:700])
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime,shutil
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+files=sorted(p.glob('bg6n3_*.statement.lean'))+sorted(p.glob('bg6n3_*.proof.lean'))
+(p/'STATEMENT-PROOF-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{f.name:hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2)+'\\n')
+# Remove the preliminary runner's stale logs; receipts carry final, full gate logs.
+for pat in ['*.gate.txt','*.statement-check.txt']:
+ for f in p.glob(pat): f.unlink()
+# Clean-state replay: no receipts, cache or temporary gate directory remains.
+for f in p.glob('*.receipt.json'): f.unlink()
+for d in ['gate-tmp','__pycache__']:
+ if (p/d).exists(): shutil.rmtree(p/d)
+snapshot={str(f.relative_to(p)):hashlib.sha256(f.read_bytes()).hexdigest() for f in p.rglob('*') if f.is_file()}
+(p/'clean-replay-before.json').write_text(json.dumps(snapshot,indent=2)+'\\n')
+(p/'PROGRESS.md').write_text('# Phase B progress\\n\\nDone: all six back files compiled unchanged and frozen before originals were opened; all six pointwise comparisons and all six witnesses passed the unchanged deterministic gate; structural links to frozen Back definitions and copied original signatures also passed. The claim 6 witness additionally certifies a counterexample to the English’s strict-weakening assertion.\\n\\nIn progress: final clean-state regate with all receipts and gate scratch/cache removed, final receipt/hash validation, RESULTS.md.\\n\\nNo undecided claims. No source edits, git commands, downloads, or external comparison results.\\n')
+print('Saved final statement/proof hashes; removed receipts and transient gate state for clean replay.')
+PY
+python3 docs/lean-english/one-to-one/blind-g6n3/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import datetime
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+print(datetime.datetime.now(datetime.timezone.utc).isoformat())
+print('statement files:',len(list(p.glob('bg6n3_*.statement.lean'))))
+print('proof files:',len(list(p.glob('bg6n3_*.proof.lean'))))
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+sha=lambda f:hashlib.sha256(f.read_bytes()).hexdigest()
+manifest=json.loads((p/'STATEMENT-PROOF-HASHES.json').read_text())['files']
+for f,h in manifest.items(): assert sha(p/f)==h, f
+frozen=json.loads((p/'back/BACK-HASHES.json').read_text())['files']
+for f,h in frozen.items(): assert sha(p/f)==h, f
+for f,h in json.loads((p/'typed/HASHES.json').read_text())['files'].items(): assert sha(p/f)==h, f
+receipts=[]
+for n in range(1,7):
+ for target,suffix in [('claim','.receipt.json'),('witness','.witness.receipt.json')]:
+  f=p/f'bg6n3_{n}{suffix}'; r=json.loads(f.read_text())
+  assert r['passed'] and r['statement_check_passed'] and r['target']==target
+  assert r['statement_sha256']==sha(p/f'bg6n3_{n}.statement.lean')
+  assert r['proof_sha256']==sha(p/f'bg6n3_{n}.proof.lean')
+  assert r['gate_helper_byte_identical'] and r['gate_sha256']==sha(p.parent/'leangate_imports.py')
+  receipts.append(f.name)
+snapshot=json.loads((p/'clean-replay-before.json').read_text())
+changed=[f for f,h in snapshot.items() if not (p/f).is_file() or sha(p/f)"'!=h]
+# PROGRESS was deliberately updated by the prelaunch preparation command.
+assert changed==['"'PROGRESS.md'],changed
+added=[str(f.relative_to(p)) for f in p.rglob('*') if f.is_file() and str(f.relative_to(p)) not in snapshot]
+assert set(added)==set(receipts+['clean-replay-before.json']),added
+assert not list((p/'gate-tmp').glob('*'))
+(p/'clean-replay-check.json').write_text(json.dumps({'passed':True,'exit_code':0,'claim_checks_passed':6,'witness_checks_passed':6,'statement_checks_passed':6,'receipts_removed_before_launch':True,'gate_temp_and_python_cache_removed_before_launch':True,'only_persisted_gate_outputs':receipts,'prelaunch_progress_update_excluded':True,'saved_proofs_and_statements_unchanged':True,'back_and_typed_hashes_unchanged':True,'gate_helper_sha256':sha(p/'leangate_imports.py')},indent=2)+'\\n')
+print('Clean replay exit 0: all 12 targets PASS; statement/proof/back/typed hashes match; only receipts persisted by regate.')
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n3/RESULTS.md <<'MD'
+# Blind g6n3 — Phase B results
+
+All six frozen Back statements are **EQUIVALENT** to their original theorem statements in the required pointwise sense. Every comparison and every non-vacuity witness passed the deterministic gate, including the final clean-state replay. These verdicts concern the principal theorem encoded by each Back file; they do **not** certify every auxiliary assertion in the English. In particular, claim 6's assertion that its fairness predicate is “strictly weaker” is incorrect as a general implication claim.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+| 1 — "'`progress_interleaved` | EQUIVALENT | [Claim PASS](bg6n3_1.receipt.json), [Witness PASS](bg6n3_1.witness.receipt.json) | Executer identity is ignored by `step`; the requester chosen by Back loses no generality. |
+| 2 — `Concrete.crash_tolerant_progress` | EQUIVALENT | [Claim PASS](bg6n3_2.receipt.json), [Witness PASS](bg6n3_2.witness.receipt.json) | Count = 1 entails membership; the original'"'s extra membership conjunct adds no strength. |
+| 3 — "'`lossy_safe` | EQUIVALENT | [Claim PASS](bg6n3_3.receipt.json), [Witness PASS](bg6n3_3.witness.receipt.json) | Identical pointwise `Good` proposition, with the same legality and fixed configuration. |
+| 4 — `lossy_rounds` | EQUIVALENT | [Claim PASS](bg6n3_4.receipt.json), [Witness PASS](bg6n3_4.witness.receipt.json) | Round membership/index fairness and the legality formulations coincide; continuation execution equals concatenation. |
+| 5 — `lossy_halt_keys` | EQUIVALENT | [Claim PASS](bg6n3_5.receipt.json), [Witness PASS](bg6n3_5.witness.receipt.json) | `runLH ... true` equals `runL ... true` on all states and operation lists. |
+| 6 — `tagged_rounds` | EQUIVALENT | [Claim PASS](bg6n3_6.receipt.json), [Witness PASS](bg6n3_6.witness.receipt.json) | Splitting at a round and indexing it coincide, including its starting state. The auxiliary strict-weakening assertion needs correction. |
+
+## Evidence and method
+
+All six original Back files compiled as written, without any repair. Their bytes matched [back/BACK-HASHES.json](back/BACK-HASHES.json). Identical copies and [typed/HASHES.json](typed/HASHES.json) were saved at **2026-10-13 05:40:45 UTC, before opening any original declaration**. Each [compile-fixes](compile-fixes) record is explicitly a no-op, and [compile-logs](compile-logs) records the successful original compilation.
+
+Each statement file embeds its frozen Back definition and a universalized copy of the original declaration'"'s signature. "'`BackShape` and `OriginalShape` are proved by definitional equality, mechanically connecting those signatures to the extracted outcomes. `Pointwise` compares those outcomes under shared hypotheses. For claims 4 and 6, `Projection` additionally proves that Back'"'s membership plus universally quantified continuation count is precisely its family of pointwise conclusions for all legal continuations. The original theorem also universally quantifies its continuation parameter. Named delivery rows versus existentially supplied rows are handled by unpacking/packing the same row; neither outcome depends on which witness of the row hypothesis is supplied.
+
+The comparison proofs do not call any of the six original target theorems. They use transition equality, list and count facts, and list decomposition. Thus equivalence does not arise from asserting that two closed true theorems imply each other. Some comparisons hold even without their stated hypotheses because the pointwise expressions are equal; this is a structural fact rather than an appeal to their truth.
+
+The source signatures are saved in [original-signatures.txt](original-signatures.txt). Final statements and proofs are frozen in [STATEMENT-PROOF-HASHES.json](STATEMENT-PROOF-HASHES.json).
+
+[run_gate_blind.py](run_gate_blind.py) is the supplied runner relocated into this output directory. Its only configuration changes are directory resolution, the claim glob, and "'`PL_IMPORTS`. The extra directory level requires `ROOT` to use `parents[4]` instead of `parents[3]`; the relocation is recorded in [runner-relocation.txt](runner-relocation.txt). The gate helper is copied byte-for-byte from the permitted `leangate_imports.py`. Its banned-token checks, nonce assembly, kernel compilation, and axiom whitelist are unchanged. Trusted imports are:
+
+```text
+ControlStack.Scenarios.SC26Liveness
+ControlStack.Scenarios.SC26LossyLiveness
+ControlStack.Scenarios.SC26LossyHalt
+```
+
+`PL_LEAN_PROJ` is the repository root. Each receipt records the statement, proof and gate hashes, imports, project path, statement check and target-specific axiom report. All reported axioms belong to the gate'"'s permitted set "'`propext`, `Classical.choice`, `Quot.sound`. Unused-binder warnings in copied signatures are harmless; they do not bypass any gate check.
+
+[regate.py](regate.py) reads the saved files and independently gates `claim` and `witness` for every id `bg6n3_1` through `bg6n3_6`. It does not use existing receipts or regenerate statements/proofs. A failed statement check, failed target check, missing file or other exception causes a failing receipt and a nonzero process exit. Run from the repository root:
+
+```sh
+python3 docs/lean-english/one-to-one/blind-g6n3/regate.py
+```
+
+The final replay began with all receipts, gate temporary files and Python cache removed. It exited **0** and recreated all twelve passing receipts. The saved Back, typed, statement and proof hashes remained unchanged. The replay'"'s only persisted outputs were receipts; [clean-replay-check.json](clean-replay-check.json) records this check. Temporary gate files were removed by the unchanged helper.
+
+## Pointwise comparisons and hostile reading
+
+**Claim 1.** With the same "'`R`, cap, invariant starting state, request, approval and four legal adversary lists, Back fixes the honest execute caller to `r.requester`, while Orig quantifies any caller `c`. The execute transition matches `.execute _ id`, so both produce the same state even for a caller distinct from the requester. Singleton appends and cons notation describe the same trace. The three disjuncts therefore coincide pointwise. The witness has a genuine independently approved request, a positive amount and cap, and successful payment using caller 88. All three “Does NOT say” qualifications are respected: halt and cap exhaustion remain possible exits; no temporal bound appears; the conclusion does not assert a count.
+
+**Claim 2.** Fix a legal reachable prefix, a delivery row with id `k`, legal interleavings and the same not-halted-before-recover hypothesis. The traces coincide. Back says `count k = 1`; Orig says membership and `count k = 1`. Back → Orig uses positivity of that count to prove membership; Orig → Back takes the count conjunct. Neither direction uses a progress theorem. The witness includes crashes before recovery, between recovery and bank processing, and afterward, with an actual delivery intent and final count one. All three “Does NOT say” qualifications are respected. The schedule is assumed, later halt is allowed, and payload equality/authorization are absent from this conclusion. The concrete wire persists across crashes in this machine.
+
+**Claim 3.** For each fixed legal lossy trace, both outcomes are literally `Good R cap (α (runL R cap true cinit ops))`. The witness performs a positive-value authorized setup, recovery, duplication, drop and indexed delivery, ending with one payment and spent amount 10. The “Does NOT say” qualifications are respected: idempotent processing and halt-respecting recovery are fixed configuration choices, and the statement provides no loss-tolerant liveness guarantee. `Good` also includes correspondence to an existing reserved request; spelling that out would make the English fuller.
+
+**Claim 4.** The same legal reachable prefix supplies a row with id `k`. Legality over flattened `roundOps` is equivalent to legality over each round'"'s two lists because the inserted recovery is automatically legal. A member satisfying "'`Delivers` is equivalent to a valid list index satisfying it. For every legal continuation, running the window and then the continuation equals running their concatenation. These equivalences preserve the final-window not-halted hypothesis. The witness uses one genuinely delivering round and a continuation that duplicates and processes an existing message again, retaining count one. All three “Does NOT say” qualifications are respected: there is no independent numerical loss bound, all-drop windows need not progress, and not halted at the window end is assumed. The English should explicitly allow an arbitrary suffix after the designated bank processing.
+
+**Claim 5.** Back uses the configurable runner `runLH` with recovery flag true; Orig uses `runL` with dedup true. Their single-step functions agree in every operation case, so the complete runs agree for arbitrary starting states, without reachability or invariant assumptions. For the same halted state, legal continuation and queried key, bank-key membership and the allowed origins coincide. The witness starts halted with an empty ledger and a positive-value message in flight, then duplicates, drops, crashes, attempts recovery and delivers it. Thus a key really can land after halt. All “Does NOT say” qualifications are respected: the result excludes keys outside the old ledger/wire union, does not freeze the ledger, does not require a halt to occur within the trace, and uses halt-respecting recovery.
+
+**Claim 6.** Legality is translated as in claim 4. Back'"'s "'`before ++ r :: after` split corresponds to Orig'"'s index "'`j`, with `before = take j`; the same tagged starting state is passed to `DeliversT`. The final outcomes coincide for every legal continuation by `runT_append`, and no additional halt hypothesis is inserted. The non-vacuity witness reaches the logged state legally, performs `pcRound` (transmit, recover, drop the earlier copy, indexed delivery of the newer copy), and retains exactly one payment after another duplication and delivery. The three “Does NOT say” qualifications are respected when interpreted as denying unconditional scheduling, retransmission and authorization/payload conclusions. However, the auxiliary claim of strict weakening is false as a general comparison of predicates; the separately gated witness includes the reverse counterexample described below.
+
+## Corrections to the English
+
+**Claim 6 — replace the strict-weakening sentence.**
+
+> The per-copy premise allows some delivery traces with earlier drops that the drop-free `Delivers` premise excludes; `per_copy_weaker` supplies one such example. The two raw predicates are not ordered by implication: `Delivers` can hold even when the intent is already acknowledged and this recovery emits no new tagged copy.
+
+This is a substantive correction. `per_copy_weaker` proves an example of `DeliversT ∧ ¬ Delivers`, not a universal implication. Our gated `FairnessAudit`, included in claim 6'"'s **Witness**, proves the other separation in a legal reachable, unhalted state. Start with "'`setupOps`, then recover, process key 0 and acknowledge row 0. Choose the round `([], [bankProcess 0])`. Its syntactic `Delivers` premise holds. The intent is acknowledged, so recovery'"'s batch is empty and "'`DeliversT` fails. The state still satisfies the delivery-row and not-halted requirements relevant to claim 4. Therefore this issue cannot be dismissed as an unreachable or halted-state artifact. The principal `tagged_rounds` theorem and its Back translation remain equivalent.
+
+**Claim 4 — replace the delivering-round description to make the suffix explicit.**
+
+> A round consists of a pre-list, `recover`, and a post-list. At least one round'"'s post-list has the form "'`nd ++ [bankProcess k] ++ rest`, where `nd` contains no drop operation and `rest` is an arbitrary legal suffix.
+
+**Claim 1 — clarify the executer identity.**
+
+> The designated honest step is `execute c k` for any caller identity `c`; this model'"'s execute transition ignores that identity. It does not require "'`c` to be the requester.
+
+**Claim 3 — optionally spell out all of `Good`.**
+
+> Every bank entry corresponds to an existing reserved request with exactly the same payload and an exact approval by a non-requester approver; bank keys are unique and the total is within the cap.
+
+**Claim 6 — clarify how new tags and duplicates differ.**
+
+> A new transmission produced by `transmit` or `recover` receives a fresh tag. Network duplication preserves the tag, and a drop removes one occurrence. Per-copy delivery requires an occurrence with the chosen tag to remain available at the indexed bank-processing step.
+
+No English input or part file was edited; these replacements are proposals confined to this report.
+
+## Ambiguities exposed
+
+1. **“Strictly weaker” needs an implication domain.** A syntactic round predicate and a state-dependent fresh-copy predicate are not automatically comparable. Both separations are witnessed here; additional restrictions would be needed for an implication theorem.
+2. **“Delivers” does not identify a new physical retransmission.** It describes a drop-free prefix and a bank-processing operation. A key may already have been paid or the recovery may emit nothing. Claim 6 explicitly requires a fresh recovery-batch copy, while claim 4 does not.
+3. **“Before being dropped” means before all occurrences of the tag are lost.** A duplicated occurrence may survive even after another occurrence with the same tag is dropped. Tags name transmission lineages, not distinct identifiers for every network duplicate.
+4. **“Honest execute” adds no caller check.** Claim 1'"'s theorem quantifies the caller freely, and the transition ignores it. The English should not imply requester-only execution.
+5. **“After any legal continuation” is universal quantification.** Orig exposes the continuation as a theorem parameter; Back quantifies it inside the conclusion. The gated projection and append identities establish the same pointwise family, including the empty continuation.
+6. **“Exactly once” concerns the final ledger's key count.** Claims 2, 4 and 6 do not assert exactly one transmission, bank-processing attempt, acknowledgment or invocation. Claims 2 and 6 also do not state payload equality in their own conclusions.
+
+No claim is unfinished or UNDECIDED. The English's auxiliary strict-weakening assertion is corrected rather than hidden by the six principal-theorem equivalence verdicts.
+MD
+python3 - <<'PY'
+from pathlib import Path
+import datetime,json
+p=Path('docs/lean-english/one-to-one/blind-g6n3')
+now=datetime.datetime.now(datetime.timezone.utc)
+freeze=datetime.datetime.fromisoformat(json.loads((p/'typed/HASHES.json').read_text())['utc'])
+elapsed=now-freeze
+(p/'PROGRESS.md').write_text(f'''# Phase B progress
+
+Done: 6/6 original Back compilations, no repairs; original Back hashes verified; identical typed copies and hashes frozen before original declarations were opened; 6/6 pointwise comparisons; structural links to frozen Back definitions and copied original signatures; 6/6 separately gated non-vacuity witnesses; hostile English audit; proposed corrections; final clean-state regate and receipt/hash validation; RESULTS.md and all supporting files.
+
+Verdicts: all six principal Back/original statements EQUIVALENT. All six comparison targets and all six witness targets passed the unchanged deterministic gate. Claim 6's separately gated witness also proves that the auxiliary strict-weakening assertion is not a general predicate implication.
+
+Not done: none within the requested scope. No UNDECIDED or unfinished claim.
+
+Time: typed freeze {freeze.isoformat()}; completed {now.isoformat()}; elapsed after blind compilation/freeze {elapsed}. The short initial read/compilation interval precedes that freeze timestamp.
+
+Verification: "'`python3 docs/lean-english/one-to-one/blind-g6n3/regate.py` ran from the repository root with prior receipts, gate scratch and Python cache removed; exit 0; 6 statement checks, 6 claims and 6 witnesses passed. It persisted only receipts. All Back, typed, statement and proof hashes match their saved manifests. Gate helper matches the permitted original byte-for-byte. The only runner path adjustment beyond imports/glob is the extra directory level in ROOT resolution, documented in runner-relocation.txt.
+
+What could not be certified: the full auxiliary English assertion “strictly weaker” cannot be certified as written; a counterexample was instead certified and replacement wording provided. These theorem equivalence receipts do not prove unconditional real-network fairness, elapsed-time guarantees or the behavior of an external deployed implementation. Such claims are outside the supplied theorem statements.
+
+No project source was edited. No git command or download was run. Existing comparison results and other English material were not used. All authored outputs are inside blind-g6n3.
+'"''')
+print('RESULTS.md and final PROGRESS.md written.')
+PY"

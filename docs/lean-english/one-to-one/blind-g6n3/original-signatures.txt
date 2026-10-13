@@ -1,0 +1,41 @@
+theorem progress_interleaved (R : Roles) (cap : ℕ) (s : St) (h : Inv R cap s) (c k : ℕ) (r : Req)
+    (hr : reqOf s k = some r) (happ : Approved R s k r) (a0 a1 a2 a3 : List Op)
+    (hleg : ∀ o ∈ a0 ++ a1 ++ a2 ++ a3, legal R o) :
+    let t := run R cap full s (a0 ++ .execute c k :: a1 ++ .deliver k :: a2 ++ .arrive k :: a3)
+    t.halted = true ∨ (k, r.tx) ∈ t.bank ∨
+      (k ∉ (run R cap full s a0).reserved ∧ cap < (run R cap full s a0).spent + r.tx.amount) := [proof omitted]
+
+theorem crash_tolerant_progress (R : Roles) (cap : ℕ) (ops0 : List COp) (hops0 : ∀ o ∈ ops0, legalC R o)
+    (k : ℕ) (d : DRow) (hd : d ∈ (runC R cap true cinit ops0).delivery) (hk : d.id = k)
+    (pre mid post : List COp) (hleg : ∀ o ∈ pre ++ mid ++ post, legalC R o)
+    (hh : (runC R cap true (runC R cap true cinit ops0) pre).halted = false) :
+    k ∈ (runC R cap true (runC R cap true cinit ops0) (pre ++ .recover :: mid ++ .bankProcess k :: post)).bank.map
+        Prod.fst ∧
+      ((runC R cap true (runC R cap true cinit ops0) (pre ++ .recover :: mid ++ .bankProcess k :: post)).bank.map
+        Prod.fst).count k = 1 := [proof omitted]
+
+theorem lossy_safe (R : Roles) (cap : ℕ) (ops : List LOp) (hops : ∀ o ∈ ops, legalL R o) :
+    Good R cap (α (runL R cap true cinit ops)) := [proof omitted]
+
+theorem lossy_rounds (R : Roles) (cap : ℕ) (ops0 : List LOp) (hops0 : ∀ o ∈ ops0, legalL R o)
+    (k : ℕ) (d : DRow) (hd : d ∈ (runL R cap true cinit ops0).delivery) (hk : d.id = k)
+    (rounds : List (List LOp × List LOp)) (post : List LOp)
+    (hleg : ∀ r ∈ rounds, ∀ o ∈ r.1 ++ r.2, legalL R o) (hpost : ∀ o ∈ post, legalL R o)
+    (hfair : ∃ j, ∃ hj : j < rounds.length, Delivers k rounds[j])
+    (hh : (runL R cap true (runL R cap true cinit ops0) (rounds.map roundOps).flatten).halted = false) :
+    k ∈ (runL R cap true (runL R cap true cinit ops0) (rounds.map roundOps).flatten).bank.map Prod.fst ∧
+      ((runL R cap true (runL R cap true cinit ops0) ((rounds.map roundOps).flatten ++ post)).bank.map
+        Prod.fst).count k = 1 := [proof omitted]
+
+theorem lossy_halt_keys (R : Roles) (cap : ℕ) (s : CSt) (ops : List LOp) (hops : ∀ o ∈ ops, legalL R o)
+    (hh : s.halted = true) (x : ℕ) (hx : x ∈ (runL R cap true s ops).bank.map Prod.fst) :
+    x ∈ s.bank.map Prod.fst ∨ x ∈ s.wire.map Prod.fst := [proof omitted]
+
+theorem tagged_rounds (R : Roles) (cap : ℕ) (ops0 : List LOp) (hops0 : ∀ o ∈ ops0, legalL R o) (k : ℕ)
+    (rounds : List (List LOp × List LOp)) (post : List LOp)
+    (hleg : ∀ r ∈ rounds, ∀ o ∈ r.1 ++ r.2, legalL R o) (hpost : ∀ o ∈ post, legalL R o)
+    (hfair : ∃ j, ∃ hj : j < rounds.length,
+      DeliversT R cap k (runT R cap (runT R cap tinit ops0) ((rounds.take j).map roundOps).flatten) rounds[j]) :
+    k ∈ (runT R cap (runT R cap tinit ops0) (rounds.map roundOps).flatten).c.bank.map Prod.fst ∧
+      ((runT R cap (runT R cap tinit ops0) ((rounds.map roundOps).flatten ++ post)).c.bank.map Prod.fst).count k
+        = 1 := [proof omitted]

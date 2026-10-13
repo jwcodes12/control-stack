@@ -1,0 +1,9 @@
+Import-only typing repair. Meaning change: NO; all proposition bodies are byte-for-byte unchanged.
+--- back/9-sc26_consent_from_honest_script.lean
++++ typed/9-sc26_consent_from_honest_script.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Core.AuthenticatedAdv
++
+ namespace ControlStack.AuthenticatedAdv
+ 
+ open ControlStack.SC26 ControlStack.SC26Authenticated

@@ -1,0 +1,608 @@
+/bin/bash -lc "pwd; rg --files -g 'AGENTS.md' -g 'lakefile.*' -g 'lean-toolchain' -g 'pyproject.toml' -g '*proofledger*' -g '"'!docs/lean-english/**'"' -g '"'!ControlStack/**'"'"
+
+---
+/bin/bash -lc 'cat docs/lean-english/sol-input/batch-g6n2.md; cat docs/lean-english/one-to-one/blind-g6n2/CLAIMS.txt; cat docs/lean-english/one-to-one/blind-g6n2/BACK-HASHES.json; cat docs/lean-english/one-to-one/run_gate.py; cat docs/lean-english/one-to-one/leangate_imports.py; cat docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'rg --files docs/lean-english/one-to-one/blind-g6n2; cat docs/lean-english/one-to-one/blind-g6n2/back/*.lean; cat lakefile.lean'
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g6n2/AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done; command -v lake'
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g CLAUDE.md -g GEMINI.md -g '"'!docs/lean-english/**'"'; rg --files ControlStack -g '*SC26*' -g '*AuthenticatedAdv*'; cat docs/lean-english/one-to-one/blind-g6n2/back/BACK-HASHES.json"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess, hashlib, json, concurrent.futures, time
+out=Path('docs/lean-english/one-to-one/blind-g6n2')
+(out/'compile-fixes').mkdir(exist_ok=True)
+(out/'typed').mkdir(exist_ok=True)
+(out/'compile-logs').mkdir(exist_ok=True)
+files=sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+def check(p):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{p.name.split(\"-\")[0]}.as-written.txt').write_text(r.stdout+r.stderr)
+ return p.name,r.returncode,(r.stdout+r.stderr)[:1000]
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+ for result in pool.map(check,files):print(result)
+PY"
+
+---
+/bin/bash -lc "ps -eo pid,etime,args | rg 'lean|lake|python3'"
+
+---
+/bin/bash -lc "python3 -u - <<'PY'
+from pathlib import Path
+import subprocess, hashlib, json, concurrent.futures, difflib, datetime
+out=Path('docs/lean-english/one-to-one/blind-g6n2')
+expected=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+modules={**{i:'ControlStack.Scenarios.SC26Transaction' for i in range(1,5)},5:'ControlStack.Scenarios.SC26Refinement',6:'ControlStack.Scenarios.SC26Refinement',7:'ControlStack.Scenarios.SC26Authenticated',8:'ControlStack.Scenarios.SC26Authenticated',9:'ControlStack.Core.AuthenticatedAdv',10:'ControlStack.Scenarios.SC26Liveness'}
+files=sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+for p in files:
+ assert hashlib.sha256(p.read_bytes()).hexdigest()==expected['back/'+p.name]
+ n=int(p.name.split('-')[0]); orig=p.read_text(); new='import '+modules[n]+'\\n\\n'+orig
+ (out/'typed'/p.name).write_text(new)
+ (out/'compile-fixes'/f'{n}.diff').write_text('Import-only typing repair. Meaning change: NO; all proposition bodies are byte-for-byte unchanged.\\n'+''.join(difflib.unified_diff(orig.splitlines(True),new.splitlines(True),fromfile='back/'+p.name,tofile='typed/'+p.name)))
+def check(p):
+ r=subprocess.run(['lake','env','lean',str(out/'typed'/p.name)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{p.name.split(\"-\")[0]}.typed.txt').write_text(r.stdout+r.stderr)
+ return p.name,r.returncode,r.stdout+r.stderr
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+ results=list(pool.map(check,files))
+for r in results: print(r)
+if all(r[1]==0 for r in results):
+ hashes={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'originals_not_yet_opened':True,'back_hashes_verified':True,'files':{'typed/'+p.name:hashlib.sha256((out/'typed'/p.name).read_bytes()).hexdigest() for p in files}}
+ (out/'typed/HASHES.json').write_text(json.dumps(hashes,indent=2)+'\\n')
+ print('All typed hashes frozen BEFORE opening originals.')
+PY"
+
+---
+/bin/bash -lc "rg -n 'theorem (safe_of_sound|sc26_safe_disjoint|sc26_once|halt_freezes|concrete_safe|concrete_halt|sc26_safe_authenticated|forged_approval_pays_without_auth|sc26_consent_from_honest_script|honest_progress)|def (Good|Sound|Inv|claim|AdvTrace|forged|R0|tx1|Approved)' ControlStack; cat ControlStack/Scenarios/SC26Transaction.lean"
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC26Refinement.lean; cat ControlStack/Scenarios/SC26Authenticated.lean; cat ControlStack/Core/AuthenticatedAdv.lean; cat ControlStack/Scenarios/SC26Liveness.lean'
+
+---
+/bin/bash -lc "sed -n '40,215p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '403,445p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '526,547p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '465,482p' ControlStack/Scenarios/SC26Refinement.lean; sed -n '509,540p' ControlStack/Scenarios/SC26Refinement.lean; sed -n '1,112p' ControlStack/Scenarios/SC26Authenticated.lean; sed -n '15,109p' ControlStack/Core/AuthenticatedAdv.lean; sed -n '151,177p' ControlStack/Scenarios/SC26Liveness.lean"
+
+---
+/bin/bash -lc "sed -n '109,158p' ControlStack/Core/AuthenticatedAdv.lean; sed -n '540,557p' ControlStack/Scenarios/SC26Refinement.lean; sed -n '607,649p' ControlStack/Scenarios/SC26Transaction.lean; sed -n '25,110p' ControlStack/Scenarios/SC26Refinement.lean"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py <<'PY'
+from pathlib import Path
+import re, hashlib, json, difflib
+OUT=Path(__file__).resolve().parent
+HELPER=OUT.parent
+src=(HELPER/'run_gate.py').read_text()
+# Relocation changes only path configuration, the input glob, and trusted module imports.
+src=src.replace('parents[3]', 'parents[4]').replace(\"'ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'\", \"'ControlStack.Scenarios.SC26Transaction ControlStack.Scenarios.SC26Refinement ControlStack.Scenarios.SC26Authenticated ControlStack.Core.AuthenticatedAdv ControlStack.Scenarios.SC26Liveness'\").replace(\"'g0_*.statement.lean'\", \"'bg6n2_*.statement.lean'\")
+(OUT/'run_gate_blind.py').write_text(src)
+(OUT/'run-gate-config.diff').write_text(''.join(difflib.unified_diff((HELPER/'run_gate.py').read_text().splitlines(True),src.splitlines(True),fromfile='run_gate.py',tofile='blind-g6n2/run_gate_blind.py')))
+(OUT/'leangate_imports.py').write_bytes((HELPER/'leangate_imports.py').read_bytes())
+common='open ControlStack.SC26\\n'
+auth='open ControlStack.SC26Authenticated ControlStack.Authenticated ControlStack.Gate\\n'
+ref='open ControlStack.SC26Refinement\\n'
+hon='def honestOps : List Op := [.request 1 tx1, .approve 2 0 tx1, .execute 1 0, .deliver 0, .arrive 0]\\n'
+chon='def honestCOps : List COp := [.request 1 tx1, .approve 2 0 tx1, .execute 1 0, .deliver 0, .transmit 0, .bankProcess 0]\\n'
+at={1:'def BackAt (R : Roles) (cap : ℕ) (s : St) : Prop := Good R cap s\\n',
+2:'''def BackAt (R : Roles) (s : St) : Prop :=
+  ∀ e ∈ s.bank, ∃ (r : Req) (a : ℕ),
+    reqOf s e.1 = some r ∧ r.tx = e.2 ∧ (e.1, a, e.2) ∈ s.approvals ∧
+    a ∈ R.approvers ∧ a ∉ R.agents ∧ a ≠ r.requester
+''',
+3:'def BackAt (s : St) : Prop := s.reserved.Nodup\\n',
+4:'''def BackAt (s t : St) : Prop :=
+  (∀ m : ℕ × Tx, m ∈ t.net ↔ m ∈ s.net) ∧
+  (∀ e ∈ t.bank, e ∈ s.bank ∨ e ∈ s.net)
+''',
+5:'def BackAt (R : Roles) (cap : ℕ) (s : CSt) : Prop := Good R cap (α s)\\n',
+6:'''def BackAt (s t : CSt) : Prop :=
+  t.wire = s.wire ∧ (∀ e ∈ t.bank, e ∈ s.bank ∨ e ∈ s.wire)
+''',
+7:'''def BackAt (R : Roles) (cap : ℕ) (U : List ℕ) (ops : List (ℕ × Op)) (s : St) : Prop :=
+  Good R cap s ∧ ∀ e ∈ s.bank, ∃ a : ℕ,
+    a ∈ R.approvers ∧ a ∉ U ∧ (a, Op.approve a e.1 e.2) ∈ ops
+''',
+8:'''def BackAt (b : List (ℕ × Tx)) (ops : List (ℕ × Op)) (guarded : List (ℕ × Tx)) : Prop :=
+  (0, tx1) ∈ b ∧ (∀ io ∈ ops, io.1 ∉ R0.approvers) ∧ guarded = []
+''',
+9:'''def BackAt (R : Roles) (cap : ℕ) (hon : List (ℕ × Op)) (s : St) : Prop :=
+  Good R cap s ∧ ∀ e ∈ s.bank, ∃ a : ℕ,
+    a ∈ R.approvers ∧ (a, Op.approve a e.1 e.2) ∈ hon
+''',
+10:'''def BackAt (R : Roles) (cap : ℕ) (s : St) (k : ℕ) (r : Req) (caller : ℕ) : Prop :=
+  (k, r.tx) ∈ (run R cap full s [Op.execute caller k, Op.deliver k, Op.arrive k]).bank
+'''}
+orig={n:at[n].replace('BackAt','OrigAt') for n in at}
+orig[4]='''def OrigAt (s t : St) : Prop :=
+  t.net = s.net ∧ (∀ e ∈ t.bank, e ∈ s.bank ∨ e ∈ s.net)
+'''
+orig[8]='''def OrigAt (b : List (ℕ × Tx)) (ops : List (ℕ × Op)) (guarded : List (ℕ × Tx)) : Prop :=
+  b = [(0, tx1)] ∧ (¬ ∃ a ∈ R0.approvers, (a, Op.approve a 0 tx1) ∈ ops) ∧ guarded = []
+'''
+params={1:'∀ (R : Roles) (cap : ℕ) (C : Checks) (ops : List Op), Sound C → (∀ o ∈ ops, legal R o) →',
+2:'∀ (R : Roles) (cap : ℕ) (ops : List Op), (∀ a ∈ R.approvers, a ∉ R.agents) → (∀ o ∈ ops, legal R o) →',
+3:'∀ (R : Roles) (cap : ℕ) (ops : List Op),',
+4:'∀ (R : Roles) (cap : ℕ) (s : St) (ops : List Op), s.halted = true → (∀ o ∈ ops, legal R o) →',
+5:'∀ (R : Roles) (cap : ℕ) (ops : List COp), (∀ o ∈ ops, legalC R o) →',
+6:'∀ (R : Roles) (cap : ℕ) (s : CSt) (ops : List COp), s.halted = true → (∀ o ∈ ops, legalC R o) →',
+7:'∀ (R : Roles) (cap : ℕ) (U : List ℕ) (ops : List (ℕ × Op)), (∀ a ∈ R.approvers, a ∉ U) → BankHyp R ops →',
+9:'∀ (R : Roles) (cap : ℕ) (U : List ℕ) (hon ops : List (ℕ × Op)), AdvTrace U hon ops → (∀ a ∈ R.approvers, a ∉ U) → R.gate ∉ U → BankHyp R hon →',
+10:'∀ (R : Roles) (cap : ℕ) (s : St) (k : ℕ) (r : Req) (caller : ℕ), Inv R cap s → s.halted = false → reqOf s k = some r → Approved R s k r → k ∉ s.reserved → s.spent + r.tx.amount ≤ cap →'}
+args={1:'R cap (run R cap C init ops)',2:'R (run R cap full init ops)',3:'(run R cap full init ops)',4:'s (run R cap full s ops)',5:'R cap (runC R cap true cinit ops)',6:'s (runC R cap true s ops)',7:'R cap U ops ((authed (raw R cap) ControlStack.SC26Authenticated.claim).run init ops)',9:'R cap hon ((authed (raw R cap) ControlStack.SC26Authenticated.claim).run init ops)',10:'R cap s k r caller'}
+point={1:'∀ (R : Roles) (cap : ℕ) (s : St), BackAt R cap s ↔ OrigAt R cap s',2:'∀ (R : Roles) (s : St), BackAt R s ↔ OrigAt R s',3:'∀ (s : St), BackAt s ↔ OrigAt s',5:'∀ (R : Roles) (cap : ℕ) (s : CSt), BackAt R cap s ↔ OrigAt R cap s',6:'∀ (s t : CSt), BackAt s t ↔ OrigAt s t',7:'∀ (R : Roles) (cap : ℕ) (U : List ℕ) (ops : List (ℕ × Op)) (s : St), BackAt R cap U ops s ↔ OrigAt R cap U ops s',9:'∀ (R : Roles) (cap : ℕ) (hon : List (ℕ × Op)) (s : St), BackAt R cap hon s ↔ OrigAt R cap hon s',10:'∀ (R : Roles) (cap : ℕ) (s : St) (k : ℕ) (r : Req) (caller : ℕ), BackAt R cap s k r caller ↔ OrigAt R cap s k r caller'}
+hyp='''def BankHyp (R : Roles) (ops : List (ℕ × Op)) : Prop :=
+  ∀ io ∈ ops, match io.2 with
+  | .bankCall _ _ _ => io.1 ≠ R.gate
+  | _ => True
+def OrigBankHyp (R : Roles) (ops : List (ℕ × Op)) : Prop :=
+  ∀ io ∈ ops, ∀ c k tx, io.2 = .bankCall c k tx → io.1 ≠ R.gate
+def HypAgreement : Prop := ∀ (R : Roles) (U : List ℕ) (ops : List (ℕ × Op)),
+  ((∀ a ∈ R.approvers, a ∉ U) ↔ (∀ u ∈ U, u ∉ R.approvers)) ∧
+  (BankHyp R ops ↔ OrigBankHyp R ops)
+'''
+hproof='''theorem hypotheses_agree : HypAgreement := by
+  intro R U ops
+  constructor
+  · constructor
+    · intro h u hu ha; exact h u ha hu
+    · intro h a ha hu; exact h a hu ha
+  · constructor
+    · intro h io hio c k tx heq
+      have hi := h io hio
+      rw [heq] at hi
+      exact hi
+    · intro h io hio
+      cases ho : io.2 with
+      | bankCall c k tx => exact h io hio c k tx ho
+      | _ => trivial
+'''
+sig={1:'by\\n  intro R cap C ops hC hops\\n  exact safe_of_sound R cap hC ops hops',2:'by\\n  intro R cap ops hd hl\\n  exact sc26_safe_disjoint R cap hd ops hl',3:'by\\n  intro R cap ops\\n  exact sc26_once R cap ops',4:'by\\n  intro R cap s ops hh hl\\n  exact ControlStack.SC26.halt_freezes R cap s ops hl hh',5:'by\\n  intro R cap ops hl\\n  exact concrete_safe R cap ops hl',6:'by\\n  intro R cap s ops hh hl\\n  exact concrete_halt R cap s ops hl hh',7:'by\\n  intro R cap U ops hu hg\\n  exact sc26_safe_authenticated R cap U ops hu hg',8:'forged_approval_pays_without_auth',9:'by\\n  intro R cap U hon ops ha hu hg hh\\n  exact sc26_consent_from_honest_script R cap U hon ops ha hu hg hh',10:'by\\n  intro R cap s k r c hi hh hr ha hk hc\\n  exact honest_progress R cap s hi c k r hh hr ha hk hc'}
+# Nonempty, successful executions, with each claim's actual hypotheses satisfied.
+witness={1:'''Sound full ∧ (∀ o ∈ honestOps, legal R0 o) ∧
+  (run R0 20 full init honestOps).bank = [(0, tx1)]''',2:'''(∀ a ∈ R0.approvers, a ∉ R0.agents) ∧ (∀ o ∈ honestOps, legal R0 o) ∧
+  (run R0 20 full init honestOps).bank = [(0, tx1)]''',3:'''(run R0 20 full init honestOps).reserved = [0] ∧
+  (run R0 20 full init honestOps).spent = 10 ∧
+  (run R0 20 full init honestOps).bank = [(0, tx1)]''',4:'''haltedStart.halted = true ∧ (∀ o ∈ [Op.arrive 0], legal R0 o) ∧
+  haltedStart.bank = [] ∧ haltedStart.net = [(0, tx1)] ∧
+  (run R0 20 full haltedStart [.arrive 0]).bank = [(0, tx1)]''',5:'''(∀ o ∈ honestCOps, legalC R0 o) ∧
+  (runC R0 20 true cinit honestCOps).bank = [(0, tx1)]''',6:'''haltedCStart.halted = true ∧ (∀ o ∈ [COp.bankProcess 0], legalC R0 o) ∧
+  haltedCStart.bank = [] ∧ haltedCStart.wire = [(0, tx1)] ∧
+  (runC R0 20 true haltedCStart [.bankProcess 0]).bank = [(0, tx1)]''',7:'''(∀ a ∈ R0.approvers, a ∉ ([1] : List ℕ)) ∧ BankHyp R0 honestTrace ∧
+  ((authed (raw R0 20) ControlStack.SC26Authenticated.claim).run init honestTrace).bank = [(0, tx1)]''',8:'''forged.length = 5 ∧ R0.agents = [1] ∧ R0.approvers = [2] ∧
+  tx1.amount = 10 ∧
+  ((raw R0 20).run init (forged.map Prod.snd)).bank = [(0, tx1)] ∧
+  ((authed (raw R0 20) ControlStack.SC26Authenticated.claim).run init forged).bank = []''',9:'''AdvTrace [1] honScript honestTrace ∧ (∀ a ∈ R0.approvers, a ∉ ([1] : List ℕ)) ∧
+  R0.gate ∉ ([1] : List ℕ) ∧ BankHyp R0 honScript ∧
+  ((authed (raw R0 20) ControlStack.SC26Authenticated.claim).run init honestTrace).bank = [(0, tx1)]''',10:'''Inv R0 20 ready ∧ ready.halted = false ∧ reqOf ready 0 = some ⟨0, 1, tx1⟩ ∧
+  Approved R0 ready 0 ⟨0, 1, tx1⟩ ∧ 0 ∉ ready.reserved ∧ ready.spent + tx1.amount ≤ 20 ∧
+  (0, tx1) ∈ (run R0 20 full ready [.execute 1 0, .deliver 0, .arrive 0]).bank'''}
+for p in sorted((OUT/'typed').glob('*.lean')):
+ n=int(p.name.split('-')[0]); cid=f'bg6n2_{n}'
+ text=p.read_text(); ns=re.search(r'"'^namespace (.+)$'"',text,re.M).group(1)
+ body=text.split('namespace '+ns+'\\n',1)[1].rsplit('end '+ns,1)[0]
+ body=re.sub(r'def Back_\\w+ : Prop', 'def Back : Prop', body)
+ opens=common + (ref if n in [5,6] else '') + (auth if n in [7,8,9] else '') + ('open ControlStack.AuthenticatedAdv\\n' if n in [7,9] else '') + ('open ControlStack.SC26Liveness\\n' if n==10 else '')
+ statement=f'namespace PL_{cid}\\n'+opens+body+'\\n'+at[n]+orig[n]
+ if n in [7,9]:statement+=hyp
+ if n"'!=8:
+  backenv=params[n]+'"'\\n    BackAt '+args[n]
+  origenv=(params[n].replace('(∀ a ∈ R.approvers, a ∉ U)','(∀ u ∈ U, u ∉ R.approvers)').replace('BankHyp','OrigBankHyp'))+'\\n    OrigAt '+args[n]
+ else:
+  backenv='BackAt ((raw R0 20).run init (forged.map Prod.snd)).bank forged\\n    ((authed (raw R0 20) ControlStack.SC26Authenticated.claim).run init forged).bank'
+  origenv='OrigAt ((authed (raw R0 20) (fun _ => none)).run init forged).bank forged\\n    ((authed (raw R0 20) ControlStack.SC26Authenticated.claim).run init forged).bank'
+ statement+='def BackEnvelope : Prop := '+backenv+'\\ndef OrigEnvelope : Prop := '+origenv+'\\n'
+ if n in point:
+  statement+='def Claim : Prop := (Back ↔ BackEnvelope) ∧ ('+point[n]+')'+(' ∧ HypAgreement' if n in [7,9] else '')+'\\n'
+  proof='theorem original_signature : OrigEnvelope := '+sig[n]+'\\n'
+  if n in [7,9]:proof+=hproof
+  proof+='theorem claim : Claim := by\\n  refine ⟨Iff.rfl, '+('⟨?_, hypotheses_agree⟩' if n in [7,9] else '?_')+'⟩\\n  '+{1:'intro R cap s',2:'intro R s',3:'intro s',5:'intro R cap s',6:'intro s t',7:'intro R cap U ops s',9:'intro R cap hon s',10:'intro R cap s k r caller'}[n]+'\\n  exact Iff.rfl\\n'
+ elif n==4:
+  statement+='''def Claim : Prop := (Back ↔ BackEnvelope) ∧
+  (∀ (s t : St), OrigAt s t → BackAt s t) ∧
+  (∃ (s t : St), s.halted = true ∧ BackAt s t ∧ ¬ OrigAt s t)
+'''
+  proof='''theorem original_signature : OrigEnvelope := '''+sig[n]+'''
+theorem claim : Claim := by
+  refine ⟨Iff.rfl, ?_, ?_⟩
+  · intro s t h
+    exact ⟨fun m => by rw [h.1], h.2⟩
+  · exact ⟨{ init with halted := true, net := [(0, tx1)] },
+      { init with halted := true, net := [(0, tx1), (0, tx1)] },
+      by decide, by simp [BackAt, init], by decide⟩
+'''
+ else:
+  statement+='''def Claim : Prop := (Back ↔ BackEnvelope) ∧
+  (∀ (b : List (ℕ × Tx)) (guarded : List (ℕ × Tx)),
+    OrigAt b forged guarded → BackAt b forged guarded) ∧
+  (∃ (b : List (ℕ × Tx)) (guarded : List (ℕ × Tx)),
+    BackAt b forged guarded ∧ ¬ OrigAt b forged guarded) ∧
+  (∃ (ops : List (ℕ × Op)),
+    OrigAt [(0, tx1)] ops [] ∧ ¬ BackAt [(0, tx1)] ops [])
+'''
+  proof='''theorem original_signature : OrigEnvelope := forged_approval_pays_without_auth
+theorem raw_none_same (R : Roles) (cap : ℕ) (s : St) (ops : List (ℕ × Op)) :
+    (authed (raw R cap) (fun _ => none)).run s ops = (raw R cap).run s (ops.map Prod.snd) := by
+  induction ops generalizing s with
+  | nil => rfl
+  | cons io ops ih =>
+    change (authed (raw R cap) (fun _ => none)).run ((raw R cap).step s io.2) ops =
+      (raw R cap).run ((raw R cap).step s io.2) (ops.map Prod.snd)
+    exact ih _
+theorem original_to_back : OrigEnvelope → Back := by
+  intro h
+  change OrigAt _ _ _ at h
+  unfold Back
+  rw [← raw_none_same]
+  exact ⟨by rw [h.1]; simp, by decide, h.2.2⟩
+theorem claim : Claim := by
+  refine ⟨Iff.rfl, ?_, ?_, ?_⟩
+  · intro b guarded h
+    exact ⟨by rw [h.1]; simp, by decide, h.2.2⟩
+  · exact ⟨[(0, tx1), (0, tx1)], [], by decide, by decide⟩
+  · exact ⟨[(2, Op.deliver 0)], by decide, by decide⟩
+'''
+ if n in [1,2,3]: statement+=hon
+ if n==4: statement+='def haltedStart : St := { init with halted := true, net := [(0, tx1)] }\\n'
+ if n==5: statement+=chon
+ if n==6:statement+='def haltedCStart : CSt := { cinit with halted := true, wire := [(0, tx1)] }\\n'
+ if n==10:statement+='def ready : St := ⟨1, [⟨0, 1, tx1⟩], [(0, 2, tx1)], [], 0, false, [], []⟩\\n'
+ statement+='def Witness : Prop := '+witness[n]+'\\nend PL_'+cid+'\\n'
+ if n==1: proof+='theorem witness : Witness := ⟨sound_full, by decide, by decide⟩\\n'
+ elif n==9:proof+='''theorem witness : Witness := by
+  refine ⟨?_, by decide, by decide, by decide, by decide⟩
+  refine ⟨advScript, by decide, ?_⟩
+  exact .right _ (.left _ (.right _ (.right _ (.right _ .nil))))
+'''
+ elif n==10:proof+='''theorem witness : Witness := by
+  refine ⟨?_, by decide, by decide, ?_, by decide, by decide, by decide⟩
+  · constructor <;> simp [ready, reqOf, Approved, amt, tx1, R0]
+  · exact ⟨2, by decide, by decide, by decide⟩
+'''
+ else:proof+='theorem witness : Witness := by decide\\n'
+ (OUT/(cid+'.statement.lean')).write_text(statement)
+ (OUT/(cid+'.proof.lean')).write_text(proof)
+print('Wrote 10 statement/proof pairs and relocated unchanged security gate.')
+PY
+python3 docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n2/regate.py <<'PY'
+\"\"\"From repository root: python3 docs/lean-english/one-to-one/blind-g6n2/regate.py.
+Rechecks all ten saved claims and witnesses; only JSON receipts are rewritten.
+Temporary Lean check files are created and removed by the unchanged gate.
+\"\"\"
+from pathlib import Path
+import concurrent.futures
+import hashlib
+import importlib.util
+import json
+import os
+import sys
+
+sys.dont_write_bytecode = True
+OUT = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('run_gate_blind', OUT / 'run_gate_blind.py')
+runner = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(runner)
+g = runner.g
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+def check(cid):
+    sp = OUT / (cid + '.statement.lean')
+    pp = OUT / (cid + '.proof.lean')
+    if not sp.is_file() or not pp.is_file():
+        statement, proof = '', ''
+        statement_ok, statement_log = False, 'Missing saved statement or proof file'
+    else:
+        statement, proof = sp.read_text(), pp.read_text()
+        statement_ok, statement_log = g.check_statement(cid, statement, [runner.IMPORTS])
+    results = []
+    for target in ('claim', 'witness'):
+        if statement_ok:
+            passed, log = g.gate(cid, statement, proof, target, [runner.IMPORTS], timeout=120)
+        else:
+            passed, log = False, statement_log
+        receipt = {
+            'cid': cid, 'target': target, 'passed': passed,
+            'statement_check_passed': statement_ok,
+            'statement_check_log': statement_log, 'gate_log': log,
+            'statement_sha256': sha(statement.encode()),
+            'proof_sha256': sha(proof.encode()),
+            'gate_sha256': sha(Path(g.__file__).read_bytes()),
+            'run_gate_blind_sha256': sha((OUT / 'run_gate_blind.py').read_bytes()),
+            'security_checks_unchanged': True,
+            'imports_option_local_only': True,
+            'PL_IMPORTS': os.environ['PL_IMPORTS'],
+            'PL_LEAN_PROJ': os.environ['PL_LEAN_PROJ'],
+            'trusted_header': runner.IMPORTS,
+        }
+        suffix = '.receipt.json' if target == 'claim' else '.witness.receipt.json'
+        (OUT / (cid + suffix)).write_text(json.dumps(receipt, indent=2) + '\\n')
+        print(cid, target, 'PASS' if passed else 'FAIL', log[:1500] if not passed else '', flush=True)
+        results.append(passed)
+    return all(results)
+
+def main():
+    expected = {f'bg6n2_{n}' for n in range(1, 11)}
+    found = {p.name.removesuffix('.statement.lean') for p in OUT.glob('bg6n2_*.statement.lean')}
+    if found "'!= expected:
+        print('"'Saved statement set mismatch:', sorted(expected - found), sorted(found - expected), flush=True)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(pool.map(check, sorted(expected, key=lambda cid: int(cid.rsplit('_', 1)[1]))))
+    return 0 if found == expected and all(results) else 1
+
+if __name__ == '__main__':
+    raise SystemExit(main())
+PY
+python3 -u docs/lean-english/one-to-one/blind-g6n2/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py')
+s=p.read_text()
+s=s.replace(\"if n==1: proof+='theorem witness : Witness := ⟨sound_full, by decide, by decide⟩\\\\n'\", \"if n==1: proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  exact ⟨sound_full, by simp [honestOps, legal], by decide⟩\\\\n'\")
+s=s.replace(\"elif n==9:proof+='''theorem witness : Witness := by\\n  refine ⟨?_, by decide, by decide, by decide, by decide⟩\", \"elif n==9:proof+='''theorem witness : Witness := by\\n  unfold Witness\\n  refine ⟨?_, by simp [R0], by simp [R0], by simp [BankHyp, honScript], by decide⟩\")
+s=s.replace(\"elif n==10:proof+='''theorem witness : Witness := by\\n  refine\", \"elif n==10:proof+='''theorem witness : Witness := by\\n  unfold Witness\\n  refine\")
+s=s.replace(\"else:proof+='theorem witness : Witness := by decide\\\\n'\", \"\"\"elif n==2:proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  exact ⟨by simp [R0], by simp [honestOps, legal], by decide⟩\\\\n'
+ elif n==4:proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  exact ⟨rfl, by simp [legal], rfl, rfl, by decide⟩\\\\n'
+ elif n==5:proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  exact ⟨by simp [honestCOps, legalC], by decide⟩\\\\n'
+ elif n==6:proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  exact ⟨rfl, by simp [legalC], rfl, rfl, by decide⟩\\\\n'
+ elif n==7:proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  exact ⟨by simp [R0], by simp [BankHyp, honestTrace], by decide⟩\\\\n'
+ else:proof+='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  decide\\\\n'
+ proof=opens+proof\"\"\")
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g6n2')
+archive=out/'gate-attempts'/'1';archive.mkdir(parents=True,exist_ok=True)
+for p in out.glob('*.receipt.json'): (archive/p.name).write_bytes(p.read_bytes())
+PY
+python3 docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py
+python3 -u docs/lean-english/one-to-one/blind-g6n2/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py');s=p.read_text()
+s=s.replace('by decide, by simp [BackAt, init], by decide⟩','by decide, by simp [BackAt, init], by simp [OrigAt, init]⟩')
+s=s.replace('⟨[(0, tx1), (0, tx1)], [], by decide, by decide⟩','⟨[(0, tx1), (0, tx1)], [], by simp [BackAt, forged, R0], by simp [OrigAt]⟩')
+s=s.replace('⟨[(2, Op.deliver 0)], by decide, by decide⟩','⟨[(2, Op.deliver 0)], by simp [OrigAt, R0], by simp [BackAt, R0]⟩')
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py');s=p.read_text()
+s=s.replace(\"def Claim : Prop := (Back ↔ BackEnvelope) ∧\\n  (∀ (s t : St), OrigAt s t → BackAt s t)\",\"def Claim : Prop := (Back ↔ BackEnvelope) ∧\\n  (OrigEnvelope → Back) ∧\\n  (∀ (s t : St), OrigAt s t → BackAt s t)\")
+s=s.replace(\"  refine ⟨Iff.rfl, ?_, ?_⟩\\n  · intro s t h\", \"  refine ⟨Iff.rfl, ?_, ?_, ?_⟩\\n  · intro h R cap s ops hh hl\\n    obtain ⟨he, hb⟩ := h R cap s ops hh hl\\n    exact ⟨fun m => by rw [he], hb⟩\\n  · intro s t h\")
+s=s.replace(\"def Claim : Prop := (Back ↔ BackEnvelope) ∧\\n  (∀ (b : List\", \"def Claim : Prop := (Back ↔ BackEnvelope) ∧\\n  (OrigEnvelope → Back) ∧\\n  (∀ (b : List\")
+s=s.replace(\"  refine ⟨Iff.rfl, ?_, ?_, ?_⟩\\n  · intro b guarded h\", \"  refine ⟨Iff.rfl, original_to_back, ?_, ?_, ?_⟩\\n  · intro b guarded h\")
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g6n2');archive=out/'gate-attempts'/'2';archive.mkdir(parents=True,exist_ok=True)
+for p in out.glob('*.receipt.json'): (archive/p.name).write_bytes(p.read_bytes())
+PY
+python3 docs/lean-english/one-to-one/blind-g6n2/build_artifacts.py
+python3 -u - <<'PY'
+import importlib.util, sys
+from pathlib import Path
+sys.dont_write_bytecode=True
+p=Path('docs/lean-english/one-to-one/blind-g6n2/regate.py')
+s=importlib.util.spec_from_file_location('regate',p); m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+for n in [4,8]:
+ assert m.check('bg6n2_'+str(n))
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g6n2')
+archive=out/'gate-attempts'/'before-clean-regate';archive.mkdir(parents=True,exist_ok=True)
+for p in out.glob('*.receipt.json'):
+ data=json.loads(p.read_text());assert data['passed'],p
+ assert data['statement_sha256']==hashlib.sha256((out/(data['cid']+'.statement.lean')).read_bytes()).hexdigest()
+ assert data['proof_sha256']==hashlib.sha256((out/(data['cid']+'.proof.lean')).read_bytes()).hexdigest()
+ (archive/p.name).write_bytes(p.read_bytes());p.unlink()
+(out/'gate-tmp').rmdir()
+files=[*out.glob('*.statement.lean'),*out.glob('*.proof.lean')]
+(out/'PROOF-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}},indent=2)+'\\n')
+modules=['ControlStack/Scenarios/SC26Transaction.lean','ControlStack/Scenarios/SC26Refinement.lean','ControlStack/Scenarios/SC26Authenticated.lean','ControlStack/Core/AuthenticatedAdv.lean','ControlStack/Scenarios/SC26Liveness.lean']
+(out/'ORIGINAL-SOURCE-HASHES.json').write_text(json.dumps({p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in modules},indent=2)+'\\n')
+assert (out/'leangate_imports.py').read_bytes()==(out.parent/'leangate_imports.py').read_bytes()
+print('All 20 prior receipts passed and matched saved files. Receipts removed; scratch directory removed. Proof hashes frozen. Gate helper is byte-identical.')
+PY
+python3 -u docs/lean-english/one-to-one/blind-g6n2/regate.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g6n2/RESULTS.md <<'EOF'
+# Blind g6n2 Phase B results
+
+Eight claims have certified pointwise equivalence. Claims 4 and 8 are **UNDECIDED** for the requested same-run equivalence: their original-to-back implications and conclusion-shape diagnostics passed, but no reverse implication for the stated runs was certified. Their diagnostic counterexamples are explicitly not counterexamples to the deployed machines.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+| 1 — "'`safe_of_sound` | EQUIVALENT | [claim](bg6n2_1.receipt.json), [witness](bg6n2_1.witness.receipt.json) | Identical `Good` conclusion for every symbolic state; five `Sound` flags, legal trace, initial state match. |
+| 2 — `sc26_safe_disjoint` | EQUIVALENT | [claim](bg6n2_2.receipt.json), [witness](bg6n2_2.witness.receipt.json) | Identical per-entry request, exact approval, role exclusion and requester inequality. |
+| 3 — `sc26_once` | EQUIVALENT | [claim](bg6n2_3.receipt.json), [witness](bg6n2_3.witness.receipt.json) | Identical reservation-list `Nodup`; no legality premise was introduced. |
+| 4 — `halt_freezes` | UNDECIDED | [direction/diagnostics](bg6n2_4.receipt.json), [witness](bg6n2_4.witness.receipt.json) | Original list equality implies Back set equality. Converse conclusion predicates differ; no same-run converse certificate. |
+| 5 — `concrete_safe` | EQUIVALENT | [claim](bg6n2_5.receipt.json), [witness](bg6n2_5.witness.receipt.json) | Identical `Good` of abstraction `α`; legal concrete trace and fixed recovery flag `true` match. |
+| 6 — `concrete_halt` | EQUIVALENT | [claim](bg6n2_6.receipt.json), [witness](bg6n2_6.witness.receipt.json) | Identical wire list equality and initial-bank/initial-wire membership bound. |
+| 7 — `sc26_safe_authenticated` | EQUIVALENT | [claim](bg6n2_7.receipt.json), [witness](bg6n2_7.witness.receipt.json) | Identical `Good` and self-issued approval provenance; both hypothesis rewritings certified. |
+| 8 — `forged_approval_pays_without_auth` | UNDECIDED | [direction/diagnostics](bg6n2_8.receipt.json), [witness](bg6n2_8.witness.receipt.json) | Original singleton equality vs Back membership; original excludes one exact approval, Back excludes every approver-issued operation. Fixed-trace converse not certified. |
+| 9 — `sc26_consent_from_honest_script` | EQUIVALENT | [claim](bg6n2_9.receipt.json), [witness](bg6n2_9.witness.receipt.json) | Identical honest-script approval provenance and `AdvTrace`; hypothesis rewritings certified. |
+| 10 — `honest_progress` | EQUIVALENT | [claim](bg6n2_10.receipt.json), [witness](bg6n2_10.witness.receipt.json) | Identical membership after consecutive execute/deliver/arrive; all six state premises retained. |
+
+## Method and certification boundary
+
+Only the authorized input batch, `CLAIMS.txt`, back files/manifest and three gate helpers were read under `docs/lean-english/`. No previous comparison was read. No git command was run; no download or source edit was performed. Every write was inside this result directory.
+
+All ten back files were compiled **as written** first; each failed for missing imports. Each typed repair adds exactly one project-module import and a blank line. No proposition body was edited. The repairs and their no-meaning-change explanations are in [compile-fixes](compile-fixes/); initial and repaired compiler output is in [compile-logs](compile-logs/). Every Phase A hash matched `back/BACK-HASHES.json`. All repaired files compiled, and [typed/HASHES.json](typed/HASHES.json) was written before the first original source was opened. That manifest records this boundary. [ORIGINAL-SOURCE-HASHES.json](ORIGINAL-SOURCE-HASHES.json) identifies the five original modules subsequently examined.
+
+Each saved statement contains `Back`, transcribed from the frozen typed proposition body, plus `BackEnvelope`, `BackAt`, `OrigEnvelope`, and `OrigAt`. Each certificate proves `Back ↔ BackEnvelope`. Each proof file also typechecks `original_signature : OrigEnvelope` against the named original declaration, with its actual binder order. For the eight EQUIVALENT verdicts, the comparison is `BackAt ↔ OrigAt` on arbitrary symbolic observations, by definitional identity. These proofs do not use `original_signature` or the original safety/progress theorem as a reason that both sides are true. Claims 7 and 9 separately prove equivalence of the differently oriented disjointness hypotheses and of the pattern-match vs quantified bank-call hypotheses. Consequently the hypotheses also agree.
+
+For claim 4, the certificate proves `OrigEnvelope → Back`, and, more strongly, `OrigAt s t → BackAt s t` for arbitrary observations. A halted symbolic `s` with `net = [(0, tx1)]` and symbolic `t` with `net = [(0, tx1), (0, tx1)]`, both with empty banks, satisfy the Back conclusion and fail the original conclusion. This diagnoses loss of list multiplicity in the English/back formulation. **It does not assert `t = run R cap full s ops` for any legal continuation.** Thus it does not certify DIFFERENT or a strict ENGLISH_WEAKER verdict under the actual run hypotheses. A reverse proof obtained solely by invoking `halt_freezes` would disregard the requested protection against manufacturing equivalence from two true propositions; none is supplied.
+
+For claim 8, a structural induction proves that authentication with a constantly absent claim is the raw run on issuer-erased operations. The certificate uses this to prove `OrigEnvelope → Back`. It also compares the conclusion predicates on explicit symbolic observations: a duplicated bank list with the fixed `forged` script satisfies Back and fails Orig; an otherwise singleton/empty-bank observation with script `[(2, deliver 0)]` satisfies Orig'"'s lack of the particular self-issued approval but fails Back's absence of all approver-issued operations. **Neither diagnostic substitutes a different actual run or trace into the fixed-trace theorem.** On the actual five-element "'`forged` trace, both assertions hold, as the evaluated facts in the proof/witness show. Turning that fact alone into an iff would be precisely the closed-true-theorem shortcut the instructions prohibit. The requested equivalence therefore remains uncertified.
+
+Every `Witness` is substantive: claims 1–3 and 5 use a legal positive-amount payment; claims 4 and 6 start halted with an unpaid in-flight message and show it landing; claim 7 uses a genuine authenticated approver; claim 8 exercises the five-operation forgery; claim 9 uses a nonempty honest approval and a genuine order-preserving adversary interleaving; claim 10 supplies an approved, unreserved, invariant-satisfying request with cap headroom and shows payment.
+
+[run_gate_blind.py](run_gate_blind.py) is the supplied runner relocated here. Its only configuration changes are the root path correction required by the extra directory level, the statement glob, and `PL_IMPORTS`; [run-gate-config.diff](run-gate-config.diff) records them. The gate helper [leangate_imports.py](leangate_imports.py) is byte-identical to the authorized helper. No banned-token or axiom check was changed. Claim and Witness have separate nonce-bearing axiom reports and separate receipts. Initial failed proof attempts are retained in [gate-attempts](gate-attempts/); their failures were ordinary namespace/decidability issues in Phase B proofs, not edits to the frozen back statements.
+
+[regate.py](regate.py) rechecks all ten saved statements, gates `claim` and `witness` separately, rewrites only their JSON receipts, and exits nonzero on any failure or missing/extra statement. It uses the exact imports/project/scratch paths of `run_gate_blind.py`, creates fresh temporary Lean check files through the unchanged gate, and needs no existing receipt or scratch directory. Run from the repository root:
+
+```sh
+python3 docs/lean-english/one-to-one/blind-g6n2/regate.py
+```
+
+[PROOF-HASHES.json](PROOF-HASHES.json) freezes the final twenty statement/proof files. The clean-state re-gate removed current receipts and the empty scratch directory before regenerating receipts from those files. Its result is recorded in [PROGRESS.md](PROGRESS.md).
+
+## Corrections to the English
+
+These are proposed replacements only; the input batch and part files were not edited.
+
+**Claim 4 — replace the main sentence:** “For any starting state `s` with `s.halted = true`, after any legal continuation under the deployed checks, the entire ordered message list `net` is exactly equal to `s.net`, including multiplicities. Every final bank entry belongs to `s.bank` or `s.net`. Previously transmitted messages may still be recorded in the bank.” This matches the original list equality rather than only its set-valued consequence. Remove the suggestion that an authentic admin halt is a formal hypothesis of this theorem: the theorem assumes the flag, without requiring a history that explains it.
+
+**Claim 8 — replace the main sentence:** “For the specified five-operation trace, the run with identity checking disabled has bank list exactly `[(0, tx1)]`; the trace contains no `approve a 0 tx1` issued by that same `a` for any `a` in the approvers list; and the identity-checked run has an empty bank.” Add separately, if desired: “In this particular trace every issuer is agent 1, so no approver issues any operation.” The latter is an additional true fact about the trace, stronger than the provenance conjunct in the original declaration. Membership alone omits the original'"'s exact singleton-bank conclusion.
+
+**Claim 6 — tighten the unsent-intent qualification:** “After halt, no new entry absent from both the initial bank and the initial wire can appear in the bank. Recovery and transmit cannot add to the wire.” This avoids suggesting that an arbitrary starting state's logged-intent row proves the corresponding entry was not already paid or transmitted through another row.
+
+**Claim 10 — make the main sentence carry its listed premise:** “In an invariant-satisfying, non-halted state, take an unreserved request with an exact approval from a non-requester approver and enough remaining cap. Consecutive execute, deliver and arrive steps put its request payload in the bank.” Keep the existing note that the original proof does not use unreservedness; deleting that premise would formulate a separate stronger theorem rather than transcribe this declaration.
+
+## Ambiguities exposed
+
+1. **Collection precision (claims 4 and 8).** “Set unchanged” erases list order and multiplicity. “Bank holds the entry” expresses membership, not an exact singleton list. Both are safe consequences of the originals but insufficient for a structural one-to-one transcription.
+2. **Scope of the negation in claim 8.** “No approver issued anything” quantifies over every operation. The original quantifies over one exact self-issued approval of key 0 and "'`tx1`. These agree on the chosen script but have different general conclusion predicates.
+3. **Assumed flag vs authenticated history (claim 4).** An arbitrary halted starting state need not be reachable or have been halted by an actual admin. The discussion of admin authenticity is correspondence context, not an extra theorem premise.
+4. **Single reservation vs other forms of one-use (claim 3).** The literal conclusion is only `reserved.Nodup`. “Charged at most once” describes the accompanying execute transition, which appends a reservation and increments spending together; the declaration does not separately quantify over charge events. Approvals persist, request ids distinguish equal business payloads, and receiver uniqueness belongs to the safety theorem.
+5. **Concrete vs abstract in-flight meaning (claims 5 and 6).** The abstraction maps durable delivery-intent rows to abstract `net`, whereas concrete `wire` records physical transmissions. “Stronger than abstract halt” is meaningful through that abstraction/invariant context, not as an unqualified comparison of arbitrary unrelated states.
+6. **Untrusted set vs constrained adversary (claims 7 and 9).** Claim 7 only assumes `U` is disjoint from approvers; the arbitrary trace need not be issued from `U`. Claim 9 adds `AdvTrace`, which really does confine the adversary script'"'s issuers to "'`U`. The English preserves this distinction.
+7. **Unused premise vs absent premise (claim 10).** The unused unreservedness hypothesis is still in both statements. No-interference, no timing guarantee, and membership rather than uniqueness are also preserved.
+
+### “Does NOT say” audit
+
+| Claim | Audit |
+|---|---|
+| 1 | Respected: only `Good` drops nonce/halt requirements; no general redundancy or halt guarantee is inferred. |
+| 2 | Respected: exclusion is between identity lists, not humans or trustworthiness; role disjointness is assumed. |
+| 3 | Respected: reservation uniqueness neither consumes approval records nor identifies equal business payloads nor guarantees bank delivery uniqueness. |
+| 4 | Respected for post-halt arrivals, absence of promptness and absence of cancellation semantics. The formal assumption is the halted flag alone; set/list precision needs the correction above. The witness actually pays after halt. |
+| 5 | Respected: machine safety does not establish Python correspondence, SQLite/OS premises or liveness. |
+| 6 | Respected for messages already on the wire and absence of future transmissions. Tighten the unsent-intent sentence as above because arbitrary starting states can already have relevant bank/wire entries. The witness actually pays after halt. |
+| 7 | Respected: no confinement to `U`, coercion guarantee, or extra requester guarantee is introduced. Hypothesis equivalences were proved, not assumed. |
+| 8 | Respected: all assertions concern the one fixed trace, not general security of the guard. The positive and negative computations are witnessed. The exact strength of its two changed conjuncts needs clarification. |
+| 9 | Respected: honest-script membership is the meaning of consent here; informed consent, freedom from manipulation, and further ordering guarantees are absent. |
+| 10 | Respected: the three steps are consecutive; the conclusion is membership; promptness, existence of approval/headroom and resistance to interference are not asserted. |
+EOF'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,re
+out=Path('docs/lean-english/one-to-one/blind-g6n2')
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+for manifest,base in [(out/'back/BACK-HASHES.json',out),(out/'typed/HASHES.json',out),(out/'PROOF-HASHES.json',out)]:
+ for name,h in json.loads(manifest.read_text())['files'].items():assert sha(base/name)==h,(manifest,name)
+receipts=[]
+for n in range(1,11):
+ for target,suffix in [('claim','.receipt.json'),('witness','.witness.receipt.json')]:
+  p=out/(f'bg6n2_{n}'+suffix);r=json.loads(p.read_text())
+  assert r['passed'] and r['statement_check_passed'] and r['target']==target,p
+  assert r['statement_sha256']==sha(out/(f'bg6n2_{n}.statement.lean'))
+  assert r['proof_sha256']==sha(out/(f'bg6n2_{n}.proof.lean'))
+  assert r['gate_sha256']==sha(out/'leangate_imports.py')
+  assert r['run_gate_blind_sha256']==sha(out/'run_gate_blind.py')
+  assert r['PL_LEAN_PROJ']==str(Path.cwd())
+  assert 'PASS '+target in r['gate_log']
+  receipts.append({'file':p.name,'target':target,'passed':True,'gate_log':r['gate_log']})
+assert (out/'leangate_imports.py').read_bytes()==(out.parent/'leangate_imports.py').read_bytes()
+for name,h in json.loads((out/'ORIGINAL-SOURCE-HASHES.json').read_text()).items():assert sha(Path(name))==h
+broken=[]
+for dest in re.findall(r'\\]\\((["'^)]+)'"\\)',(out/'RESULTS.md').read_text()):
+ if not (out/dest).exists():broken.append(dest)
+assert not broken,broken
+assert not list((out/'gate-tmp').iterdir())
+now=datetime.datetime.now(datetime.timezone.utc)
+first=datetime.datetime.fromtimestamp(min(p.stat().st_mtime for p in (out/'compile-logs').glob('*.as-written.txt')),datetime.timezone.utc)
+freeze=json.loads((out/'typed/HASHES.json').read_text())['utc']
+progress=f'''# Phase B progress
+
+Done: all ten claims audited; all ten Phase A hashes verified; all ten back files compiled as written; ten import-only repairs recorded; all typed files compiled and hashed before originals were opened; eight pointwise equivalence verdicts certified; two conservative UNDECIDED verdicts documented with certified directions and conclusion-predicate diagnostics; ten substantive non-vacuity witnesses certified; English corrections and over-reading audits written; reproducible re-gater saved.
+
+Not done: claim 4's Back-to-Orig implication for the actual halted run, and claim 8's Back-to-Orig implication for the actual fixed trace. Neither has a certified iff. The semantic diagnostic counterexamples concern symbolic observations and do not establish counterexamples to actual deployed traces. No strict ENGLISH_WEAKER, ENGLISH_STRONGER or DIFFERENT verdict is asserted from those diagnostics. The truth of two complete theorems was not used to manufacture equivalence.
+
+Time: earliest retained as-written compiler log {first.isoformat()}; typed-hash freeze {freeze}; final validation {now.isoformat()}. Recorded execution window since the earliest compiler log: {(now-first).total_seconds():.1f} seconds (excludes initial setup/read time).
+
+Verification: "'`python3 docs/lean-english/one-to-one/blind-g6n2/regate.py` ran from the repository root after removing all twenty current receipts and the empty gate scratch directory. Exit code **0**. All **10 claim gates and 10 separately targeted Witness gates PASS**. The gate helper is byte-identical to the authorized original. Final validation matched every current receipt to the saved statement/proof bytes, checked all back/typed/final proof hashes and original source hashes, checked report links, and found no residual temporary Lean check file.
+
+What I could not do: certify a non-shortcut same-run reverse implication for claims 4 and 8. No operational, liveness, informed-consent, real-runtime correspondence or identity-authenticity claim outside the given Lean declarations was established. Those limits are documented in RESULTS.md, with replacement English where needed.
+
+Constraints: no original source edited; no git run; no download; all output writes confined to this directory. Initial failed gate receipts remain under gate-attempts; final verdicts use only the top-level passing receipts.
+'"'''
+(out/'PROGRESS.md').write_text(progress)
+(out/'FINAL-VALIDATION.json').write_text(json.dumps({'utc':now.isoformat(),'clean_state_regate_exit_code':0,'claim_gates_passed':10,'witness_gates_passed':10,'back_hashes_match':True,'typed_hashes_match':True,'proof_hashes_match':True,'original_source_hashes_match':True,'gate_helper_byte_identical':True,'receipt_hashes_match':True,'report_links_valid':True,'no_residual_check_files':True,'receipts':receipts},indent=2)+'\\n')
+print('Final integrity and link validation PASS. All 20 deterministic gate checks PASS.')
+print('Recorded execution seconds:',round((now-first).total_seconds(),1))
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,re
+out=Path('docs/lean-english/one-to-one/blind-g6n2')
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+for manifest in [out/'back/BACK-HASHES.json',out/'typed/HASHES.json',out/'PROOF-HASHES.json']:
+ for name,h in json.loads(manifest.read_text())['files'].items():assert sha(out/name)==h,(manifest,name)
+receipts=[]
+for n in range(1,11):
+ for target,suffix in [('claim','.receipt.json'),('witness','.witness.receipt.json')]:
+  p=out/(f'bg6n2_{n}'+suffix);r=json.loads(p.read_text())
+  assert r['passed'] and r['statement_check_passed'] and r['target']==target,p
+  assert r['statement_sha256']==sha(out/(f'bg6n2_{n}.statement.lean'))
+  assert r['proof_sha256']==sha(out/(f'bg6n2_{n}.proof.lean'))
+  assert r['gate_sha256']==sha(out/'leangate_imports.py')
+  assert r['run_gate_blind_sha256']==sha(out/'run_gate_blind.py')
+  assert r['PL_LEAN_PROJ']==str(Path.cwd())
+  assert 'PASS '+target in r['gate_log']
+  receipts.append({'file':p.name,'target':target,'passed':True,'gate_log':r['gate_log']})
+assert (out/'leangate_imports.py').read_bytes()==(out.parent/'leangate_imports.py').read_bytes()
+for name,h in json.loads((out/'ORIGINAL-SOURCE-HASHES.json').read_text()).items():assert sha(Path(name))==h
+assert not list((out/'gate-tmp').iterdir())
+now=datetime.datetime.now(datetime.timezone.utc)
+first=datetime.datetime.fromtimestamp(min(p.stat().st_mtime for p in (out/'compile-logs').glob('*.as-written.txt')),datetime.timezone.utc)
+freeze=json.loads((out/'typed/HASHES.json').read_text())['utc']
+progress=f'''# Phase B progress
+
+Done: all ten claims audited; all ten Phase A hashes verified; all ten back files compiled as written; ten import-only repairs recorded; all typed files compiled and hashed before originals were opened; eight pointwise equivalence verdicts certified; two conservative UNDECIDED verdicts documented with certified directions and conclusion-predicate diagnostics; ten substantive non-vacuity witnesses certified; English corrections and over-reading audits written; reproducible re-gater saved.
+
+Not done: claim 4's Back-to-Orig implication for the actual halted run, and claim 8's Back-to-Orig implication for the actual fixed trace. Neither has a certified iff. The semantic diagnostic counterexamples concern symbolic observations and do not establish counterexamples to actual deployed traces. No strict ENGLISH_WEAKER, ENGLISH_STRONGER or DIFFERENT verdict is asserted from those diagnostics. The truth of two complete theorems was not used to manufacture equivalence.
+
+Time: earliest retained as-written compiler log {first.isoformat()}; typed-hash freeze {freeze}; final validation {now.isoformat()}. Recorded execution window since the earliest compiler log: {(now-first).total_seconds():.1f} seconds (excludes initial setup/read time).
+
+Verification: "'`python3 docs/lean-english/one-to-one/blind-g6n2/regate.py` ran from the repository root after removing all twenty current receipts and the empty gate scratch directory. Exit code **0**. All **10 claim gates and 10 separately targeted Witness gates PASS**. The gate helper is byte-identical to the authorized original. Final validation matched every current receipt to the saved statement/proof bytes, checked all back/typed/final proof hashes and original source hashes, checked report links, and found no residual temporary Lean check file.
+
+What I could not do: certify a non-shortcut same-run reverse implication for claims 4 and 8. No operational, liveness, informed-consent, real-runtime correspondence or identity-authenticity claim outside the given Lean declarations was established. Those limits are documented in RESULTS.md, with replacement English where needed.
+
+Constraints: no original source edited; no git run; no download; all output writes confined to this directory. Initial failed gate receipts remain under gate-attempts; final verdicts use only the top-level passing receipts.
+'"'''
+(out/'PROGRESS.md').write_text(progress)
+for dest in re.findall(r'\\]\\((["'^)]+)'"\\)',(out/'RESULTS.md').read_text()):assert (out/dest).exists(),dest
+(out/'FINAL-VALIDATION.json').write_text(json.dumps({'utc':now.isoformat(),'clean_state_regate_exit_code':0,'claim_gates_passed':10,'witness_gates_passed':10,'back_hashes_match':True,'typed_hashes_match':True,'proof_hashes_match':True,'original_source_hashes_match':True,'gate_helper_byte_identical':True,'receipt_hashes_match':True,'report_links_valid':True,'no_residual_check_files':True,'receipts':receipts},indent=2)+'\\n')
+print('Final integrity and link validation PASS. All 20 deterministic gate checks PASS.')
+print('Recorded execution seconds:',round((now-first).total_seconds(),1))
+PY"

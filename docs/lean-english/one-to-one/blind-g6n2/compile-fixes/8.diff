@@ -1,0 +1,9 @@
+Import-only typing repair. Meaning change: NO; all proposition bodies are byte-for-byte unchanged.
+--- back/8-forged_approval_pays_without_auth.lean
++++ typed/8-forged_approval_pays_without_auth.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC26Authenticated
++
+ namespace ControlStack.SC26Authenticated
+ 
+ open ControlStack.SC26 ControlStack.Authenticated ControlStack.Gate

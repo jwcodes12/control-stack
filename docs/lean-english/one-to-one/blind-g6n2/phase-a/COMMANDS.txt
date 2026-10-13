@@ -1,0 +1,188 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\nFILE %s\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc "mkdir -p ./back
+python3 - <<'PY'
+from pathlib import Path
+
+claims = {
+'1-safe_of_sound.lean': '''namespace ControlStack.SC26
+
+-- The nonce and haltCheck flags are unrestricted by Sound.
+def Back_safe_of_sound : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (C : Checks) (ops : List Op),
+    Sound C →
+    (∀ o ∈ ops, legal R o) →
+    Good R cap (run R cap C init ops)
+
+end ControlStack.SC26
+''',
+'2-sc26_safe_disjoint.lean': '''namespace ControlStack.SC26
+
+def Back_sc26_safe_disjoint : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (ops : List Op),
+    (∀ a ∈ R.approvers, a ∉ R.agents) →
+    (∀ o ∈ ops, legal R o) →
+    let s := run R cap full init ops
+    ∀ e ∈ s.bank,
+      ∃ (r : Req) (a : ℕ),
+        reqOf s e.1 = some r ∧
+        r.tx = e.2 ∧
+        (e.1, a, e.2) ∈ s.approvals ∧
+        a ∈ R.approvers ∧
+        a ∉ R.agents ∧
+        a ≠ r.requester
+
+end ControlStack.SC26
+''',
+'3-sc26_once.lean': '''namespace ControlStack.SC26
+
+def Back_sc26_once : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (ops : List Op),
+    (run R cap full init ops).reserved.Nodup
+
+end ControlStack.SC26
+''',
+'4-halt_freezes.lean': '''namespace ControlStack.SC26
+
+-- \"Set of messages\" is expressed by membership equivalence, without
+-- asserting equality of the ordering or multiplicities in the net lists.
+def Back_halt_freezes : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (s : St) (ops : List Op),
+    s.halted = true →
+    (∀ o ∈ ops, legal R o) →
+    let t := run R cap full s ops
+    (∀ m : ℕ × Tx, m ∈ t.net ↔ m ∈ s.net) ∧
+    (∀ e ∈ t.bank, e ∈ s.bank ∨ e ∈ s.net)
+
+end ControlStack.SC26
+''',
+'5-concrete_safe.lean': '''namespace ControlStack.SC26Refinement
+
+open ControlStack.SC26
+
+def Back_concrete_safe : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (ops : List COp),
+    (∀ o ∈ ops, legalC R o) →
+    Good R cap (α (runC R cap true cinit ops))
+
+end ControlStack.SC26Refinement
+''',
+'6-concrete_halt.lean': '''namespace ControlStack.SC26Refinement
+
+open ControlStack.SC26
+
+def Back_concrete_halt : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (s : CSt) (ops : List COp),
+    s.halted = true →
+    (∀ o ∈ ops, legalC R o) →
+    let t := runC R cap true s ops
+    t.wire = s.wire ∧
+    (∀ e ∈ t.bank, e ∈ s.bank ∨ e ∈ s.wire)
+
+end ControlStack.SC26Refinement
+''',
+'7-sc26_safe_authenticated.lean': '''namespace ControlStack.SC26Authenticated
+
+open ControlStack.SC26 ControlStack.Authenticated ControlStack.Gate
+
+def Back_sc26_safe_authenticated : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (U : List ℕ) (ops : List (ℕ × Op)),
+    (∀ a ∈ R.approvers, a ∉ U) →
+    (∀ io ∈ ops,
+      match io.2 with
+      | .bankCall _ _ _ => io.1 ≠ R.gate
+      | _ => True) →
+    let s := (authed (raw R cap) claim).run init ops
+    Good R cap s ∧
+    (∀ e ∈ s.bank,
+      ∃ a : ℕ,
+        a ∈ R.approvers ∧
+        a ∉ U ∧
+        (a, Op.approve a e.1 e.2) ∈ ops)
+
+end ControlStack.SC26Authenticated
+''',
+'8-forged_approval_pays_without_auth.lean': '''namespace ControlStack.SC26Authenticated
+
+open ControlStack.SC26 ControlStack.Authenticated ControlStack.Gate
+
+-- forged fixes all five issuers to 1; R0 fixes the roles to 1, 2, 3, 9.
+def Back_forged_approval_pays_without_auth : Prop :=
+  (0, tx1) ∈ ((raw R0 20).run init (forged.map Prod.snd)).bank ∧
+  (∀ io ∈ forged, io.1 ∉ R0.approvers) ∧
+  ((authed (raw R0 20) claim).run init forged).bank = []
+
+end ControlStack.SC26Authenticated
+''',
+'9-sc26_consent_from_honest_script.lean': '''namespace ControlStack.AuthenticatedAdv
+
+open ControlStack.SC26 ControlStack.SC26Authenticated
+open ControlStack.Authenticated ControlStack.Gate
+
+def Back_sc26_consent_from_honest_script : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (U : List ℕ)
+    (hon ops : List (ℕ × Op)),
+    AdvTrace U hon ops →
+    (∀ a ∈ R.approvers, a ∉ U) →
+    R.gate ∉ U →
+    (∀ io ∈ hon,
+      match io.2 with
+      | .bankCall _ _ _ => io.1 ≠ R.gate
+      | _ => True) →
+    let s := (authed (raw R cap) claim).run init ops
+    Good R cap s ∧
+    (∀ e ∈ s.bank,
+      ∃ a : ℕ,
+        a ∈ R.approvers ∧
+        (a, Op.approve a e.1 e.2) ∈ hon)
+
+end ControlStack.AuthenticatedAdv
+''',
+'10-honest_progress.lean': '''namespace ControlStack.SC26Liveness
+
+open ControlStack.SC26
+
+def Back_honest_progress : Prop :=
+  ∀ (R : Roles) (cap : ℕ) (s : St) (k : ℕ) (r : Req) (caller : ℕ),
+    Inv R cap s →
+    s.halted = false →
+    reqOf s k = some r →
+    Approved R s k r →
+    k ∉ s.reserved →
+    s.spent + r.tx.amount ≤ cap →
+    (k, r.tx) ∈
+      (run R cap full s
+        [Op.execute caller k, Op.deliver k, Op.arrive k]).bank
+
+end ControlStack.SC26Liveness
+''',
+}
+for filename, content in claims.items():
+    Path('back', filename).write_text(content)
+print('Wrote 10 claim files under back/.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import json
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+result = subprocess.run('sha256sum back/*.lean', shell=True, check=True, capture_output=True, text=True)
+files = {}
+for line in result.stdout.splitlines():
+    digest, filename = line.split(maxsplit=1)
+    files[filename] = digest
+manifest = {
+    'utc': datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z'),
+    'files': files,
+}
+Path('back/BACK-HASHES.json').write_text(json.dumps(manifest, indent=2) + '\\n')
+print(result.stdout, end='')
+print('Wrote back/BACK-HASHES.json at ' + manifest['utc'])
+PY"

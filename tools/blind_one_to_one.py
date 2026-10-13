@@ -119,6 +119,8 @@ def phase_a(claims, out):
     files, seen = [], set()
     for c in claims:
         f = ROOT / blocks[c][1]
+        if not f.exists():  # some headers give the path relative to ControlStack/
+            f = ROOT / "ControlStack" / blocks[c][1]
         if f not in seen:
             seen.add(f)
             files.append(f)

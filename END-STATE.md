@@ -120,12 +120,12 @@ Docker daemon exposed (`deployment/runs/tier9/attempt1-*`).
 | ID | Needs |
 |---|---|
 | G1 | Independent human review of statements, scanner semantics, enforcement and evidence handling (R3). Start with `deployment/REVIEW-PACKET-R2.md`. |
-| G2 | ControlArena / inspect_ai with real LLM agents: package installs, API budget, owner approval; attack arms also need cyber-permissive access. |
-| G3 | OPA/Conftest, trivy, hadolint baselines: installs. |
-| G4 | Kubernetes extractor on a real cluster: images or a cluster. |
+| G2 | **Partly done (2026-10-13, Tier 11):** a real LLM agent (tool-less `claude -p`, the model never touches the host) ran against the live hardened deployment: honest arm 3/3 delivered and independently verified; pressured arm 0/3 delivered, no effect without approval, **but the agents declined to try a bypass, so the boundary was not tested against an attempt** (`deployment/runs/tier11/llm-agent-eval/README.md`). Not done: ControlArena / inspect_ai itself (not installed), a larger sample, and attack arms (cyber-permissive access). |
+| G3 | **Done as a measurement (2026-10-13, Tier 11):** Conftest/OPA with OWASP-derived Rego, KICS (public Compose rules) and the hand-written Python rules on both sealed held-out corpora; Trivy has no Compose scanner and Hadolint has no Dockerfile to read (not applicable). Strict baselines reject every negative and every supported case; lenient ones reject almost no negative (`deployment/runs/tier11/baselines/README.md`). The Rego is model-written; the corpora are model-authored. |
+| G4 | **Not done, and not a run:** there is no Kubernetes extractor in the repo (only `extractors/compose`), so this needs a new component and a design; a real cluster means privileged node containers or VMs on a box that hosts other services. |
 | G5 | Host Landlock: kernel boot-parameter change (owner decision). |
 | G6 | TPM/HSM key custody, GPU residue, multi-host: hardware. |
-| G7 | HTTP sink with a real external destination: egress approval. |
+| G7 | **Not done, and not a run:** there is no HTTP receiver (the only effect is a local file), so this needs new trusted receiver code (a new source generation and live re-run) and a destination that is not a third party. |
 | G8 | Windows, macOS, WASI backends. |
 | G9 | Merge, tag, publish, outreach: owner. |
 | T7.2/T7.3-original | New attack policies and the four-arm evaluation: cyber-permissive access. |

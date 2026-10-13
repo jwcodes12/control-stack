@@ -239,6 +239,10 @@ Source generation `r2-v7` (`r2-v6` was the first Tier 10 generation; the review'
   receipt to a literal-loopback destination with an `Idempotency-Key`. It is at-least-once on the wire and exactly-once only at a
   destination that honours the key. Evidence: `deployment/runs/tier11/http-relay/`. HTTP sinks remain an unsupported feature of
   the scanner (UNKNOWN authority edges).
+- **Kubernetes: static extractor only (2026-10-13).** `extractors/kubernetes/` maps a restricted Pod + default-deny NetworkPolicy
+  manifest onto the Compose profile and inherits its UNKNOWN-edge rule for anything outside it. No cluster was run and there is no
+  runtime collector, so a Kubernetes deployment is still outside the claim; the extractor is a step toward it, tested by a
+  differential against the Compose reference and single-fault mutants (`tools/test_kubernetes_extractor.py`).
 - **Transcript replay uses the recorded clock** instead of `now = 0`: the database's own
   `releases.created` for the two releases, with every expiry after it; a mutant with a later clock is
   rejected. That the recorded value is the broker's clock remains a premise.

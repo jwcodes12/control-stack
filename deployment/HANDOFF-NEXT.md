@@ -69,6 +69,15 @@ Earlier text in this handoff, in the PR #56 description and in `PR55-HANDOFF.md`
 - Caveats: model-written, model-reviewed, no independent human review. The phase A audit is a transcript check, not a sandbox; the real isolation is that originals are absent from the phase A directory. Orphaned-docstring caveat: see the batch RESULTS.
 - `docs/lean-english/TRACEABILITY.*` still marks claims as not independently verified (policy: no badge without human review); it was regenerated after the RESULTS.md annotations.
 
+### CI receipts for `audit/r2-v8-trusted-code-20261013` (stacked on `audit/release-event-log-20261012`; no PR)
+- Head **a190ecf** (all 47 workflow_dispatch-able workflows dispatched, marker caches on the branch cleared so kernel steps really ran; step conclusions read, not just the rollup): **43 success, 4 not green**:
+  - `f4-datacenter-model` fails: `tools.cstack check --fast` runs `test_deployment_fixture_batch_negative`, which needs `lake` and a built `.lake`, absent on its hosted runner. **Fails identically on `main` (462c9c7), so not from this branch**; fix is to give that workflow Lean or exclude the test from `--fast`. Not fixed.
+  - `structure-merge-readonly-acceptance` fails twice on this branch and once on `main`: `lake exe cache get` on the self-hosted runner fails every download with curl exit 35 (OpenSSL "unregistered scheme"). Runner environment problem, **not from this branch**; not fixed.
+  - `fast-checks` (incl. `lean-vcvio`, rebuilt from scratch ~55 min), `deployment-release`, `consolidated-integrity`, `deployment-slice`, `trusted-*`, `broker-transition-oracle`, `agent-linux-confinement` passed.
+  - `live-containers` and the linux-boundary jobs are skipped in CI by design (need a privileged host); live evidence is the committed run under `deployment/runs/tier11/`. The scanner test needs sudo and runs only in the hosted `fixtures` job.
+- Commits after a190ecf are documentation only. Earlier fix `f9d74fd` (sink `.gitkeep`, regenerated TRACEABILITY) was verified with real `deployment-release` and `consolidated-integrity` kernel runs.
+- Marker-cache gotcha: a "green" marker keyed on the input hash makes a rerun skip the kernel; delete `green-*` caches for the ref (`gh api -X DELETE repos/.../actions/caches/<id>`) to force it, then read the step list (the "Skipped, identical inputs" step must itself be `skipped`).
+
 ## 3. Needs a person or a resource (GATED)
 | ID | Needs |
 |---|---|

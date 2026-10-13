@@ -1,0 +1,5 @@
+ControlStack/Scenarios/SC23IsolationV2.lean:272
+
+theorem noninterference_authed (E : Env) (ops ops' : List (ℕ × Op))
+    (h : List.Forall₂ (fun io io' => io.1 = io'.1 ∧ SameExceptContent io.2 io'.2) ops ops') :
+    Rel ((authed (raw E) claim).run init ops) ((authed (raw E) claim).run init ops') 

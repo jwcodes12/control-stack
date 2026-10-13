@@ -1,0 +1,6 @@
+ControlStack/Families/F6/MonitorCollusion.lean:118
+
+theorem collusion_uniform (Ph Pr : V → ℝ) (hh : IsDist Ph) (hr : IsDist Pr) (δ : V → Bool → ℝ)
+    (hδ : ∀ v, IsDist (δ v)) :
+    ∑ φ, (1 / 2 : ℝ) * ∑ v, (if φ then Pr v else Ph v) * ∑ a, δ v a * (if a = φ then 1 else 0)
+      ≤ (1 + tv Pr Ph) / 2 

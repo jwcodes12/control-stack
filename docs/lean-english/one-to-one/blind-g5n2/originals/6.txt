@@ -1,0 +1,5 @@
+ControlStack/Scenarios/SC23IsolationV2.lean:374
+
+theorem sc23v2_safe_authenticated (E : Env) (U : List ℕ) (hU : ∀ u ∈ U, u ∉ E.users) (ops : List (ℕ × Op)) :
+    ∀ x ∈ ((authed (raw E) claim).run init ops).executed, x.tool ∈ E.sensitive → x.tainted = true →
+      ∃ c n, c ∈ E.users ∧ c ∉ U ∧ (c, Op.confirm c n x.tool x.vals) ∈ ops 

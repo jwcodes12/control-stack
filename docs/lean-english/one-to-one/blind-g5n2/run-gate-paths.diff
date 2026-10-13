@@ -1,0 +1,23 @@
+--- run_gate.py
++++ blind-g5n2/run_gate_blind.py
+@@ -1,11 +1,11 @@
+ """Invoke the unchanged proofledger gate with trusted project imports as header dependencies."""
+ from pathlib import Path
+ import importlib.util, os, json, hashlib
+-ROOT=Path(__file__).resolve().parents[3]
++ROOT=Path(__file__).resolve().parents[4]
+ OUT=Path(__file__).resolve().parent
+ os.environ['PL_LEAN_PROJ']=str(ROOT)
+ os.environ['PL_GATE_DIR']=str(OUT/'gate-tmp')
+-os.environ['PL_IMPORTS']='ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'
++os.environ['PL_IMPORTS']='ControlStack.Scenarios.SC23Isolation ControlStack.Scenarios.SC23IsolationV2 ControlStack.Scenarios.AuthInstancesB ControlStack.Families.F6.MonitorCollusion'
+ spec=importlib.util.spec_from_file_location('leangate',OUT/'leangate_imports.py')
+ g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+ IMPORTS=''
+@@ -21,5 +21,5 @@
+  print(cid,ok,log[:240],flush=True)
+  return ok
+ if __name__=='__main__':
+- for p in sorted(OUT.glob('g0_*.statement.lean')):
++ for p in sorted(OUT.glob('bg5n2_*.statement.lean')):
+   run(p.name.removesuffix('.statement.lean'),p.read_text(),p.with_name(p.name.replace('.statement.lean','.proof.lean')).read_text())

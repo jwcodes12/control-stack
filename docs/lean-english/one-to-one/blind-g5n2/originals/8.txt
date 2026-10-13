@@ -1,0 +1,5 @@
+ControlStack/Scenarios/AuthInstancesB.lean:145
+
+theorem forged23_acts_without_auth :
+    (authRun (SC23.step P0 full) (fun _ => none) SC23.init forged23).executed = [⟨5, [66], true, some 7⟩] ∧
+    (authRun (SC23.step P0 full) claim23 SC23.init forged23).executed = [] 

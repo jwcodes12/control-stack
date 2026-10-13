@@ -1,0 +1,6 @@
+ControlStack/Scenarios/AuthInstancesB.lean:132
+
+theorem sc23_safe_authenticated (P : Policy) (U : List ℕ) (ops : List (ℕ × SC23.Op)) (hU : ∀ u ∈ U, u ∉ P.users) :
+    Good P (authRun (SC23.step P full) claim23 SC23.init ops) ∧
+    (∀ cf ∈ (authRun (SC23.step P full) claim23 SC23.init ops).confs, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .confirm c cf.n cf.tool cf.vals ∧ c = cf.by_ ∧ c ∈ P.users)) 

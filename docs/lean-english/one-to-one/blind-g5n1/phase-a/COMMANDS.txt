@@ -1,0 +1,10 @@
+/bin/bash -lc 'cat ./input/batch.md ./defs/*.lean'
+
+---
+/bin/bash -lc 'mkdir -p ./back'
+
+---
+/bin/bash -lc 'sha256sum back/*.lean'
+
+---
+/bin/bash -lc 'date -u +%Y-%m-%dT%H:%M:%SZ'

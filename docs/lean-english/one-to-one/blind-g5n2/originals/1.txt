@@ -1,0 +1,4 @@
+ControlStack/Scenarios/SC23Isolation.lean:235
+
+theorem noninterference (E : Env) (ops ops' : List Op) (h : List.Forall₂ SameExceptContent ops ops') :
+    Rel (run E full init ops) (run E full init ops') 

@@ -1,0 +1,261 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\nFILE %s\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc "printf '%s\\n' ./defs/*.lean"
+
+---
+/bin/bash -lc 'cat ./defs/Families__F6__MonitorCollusion_defs.lean ./defs/Core__Leakage_defs.lean ./defs/CovertChannel_defs.lean'
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__AuthInstancesB_defs.lean ./defs/Core__Gate_defs.lean ./defs/Core__Authenticated_defs.lean ./defs/Core__AuthenticatedLog_defs.lean'
+
+---
+/bin/bash -lc "mkdir -p ./back
+python3 - <<'PY'
+from pathlib import Path
+files = {
+'1-noninterference.lean': '''import ControlStack.Scenarios.SC23Isolation
+
+namespace ControlStack.SC23Isolation
+
+-- Environmental isolation and authentic user input are external interpretations
+-- of this model; the proposition compares precisely the four fields of Rel.
+def Back_noninterference : Prop :=
+  ∀ (E : Env) (ops ops' : List Op),
+    List.Forall₂ SameExceptContent ops ops' →
+      Rel (run E full init ops) (run E full init ops')
+
+end ControlStack.SC23Isolation
+''',
+'2-w1_impossible.lean': '''import ControlStack.Scenarios.SC23Isolation
+
+namespace ControlStack.SC23Isolation
+
+-- NOTE
+-- AMBIGUOUS: The English trace does not specify the act operation's nonce.
+-- This concrete trace uses nonce 0. There is no confirmation, and the derived
+-- argument is untainted, so this nonce does not affect the stated execution.
+def Back_w1_impossible : Prop :=
+  let injected : List Op := [.toolResult 66, .derive, .act 5 [1] 0]
+  let clean : List Op := [.toolResult 0, .derive, .act 5 [1] 0]
+  let s := run E0 full init injected
+  s.executed = (run E0 full init clean).executed ∧
+    s.executed = [⟨5, [41], false, none⟩]
+
+end ControlStack.SC23Isolation
+''',
+'3-sc23_isolated_safe.lean': '''import ControlStack.Scenarios.SC23Isolation
+
+namespace ControlStack.SC23Isolation
+
+-- ActOk requires a matching recorded nonce, tool, exact values, and user caller.
+-- It imposes neither confirmation uniqueness across actions nor a condition
+-- on untainted actions or non-sensitive tools.
+def Back_sc23_isolated_safe : Prop :=
+  ∀ (E : Env) (ops : List Op),
+    let s := run E full init ops
+    ∀ x ∈ s.executed, ActOk E s x
+
+end ControlStack.SC23Isolation
+''',
+'4-noninterference_authed.lean': '''import ControlStack.Scenarios.SC23IsolationV2
+
+namespace ControlStack.SC23IsolationV2
+
+open ControlStack.Authenticated ControlStack.Gate
+
+-- Authentication is supplied by authed and claim; the per-position relation
+-- preserves issuers as well as every operation field except tool-result content.
+def Back_noninterference_authed : Prop :=
+  ∀ (E : Env) (ops ops' : List (ℕ × Op)),
+    List.Forall₂
+      (fun io io' => io.1 = io'.1 ∧ SameExceptContent io.2 io'.2)
+      ops ops' →
+      Rel ((authed (raw E) claim).run init ops)
+        ((authed (raw E) claim).run init ops')
+
+end ControlStack.SC23IsolationV2
+''',
+'5-w1_impossible_v2.lean': '''import ControlStack.Scenarios.SC23IsolationV2
+
+namespace ControlStack.SC23IsolationV2
+
+-- NOTE
+-- AMBIGUOUS: The English trace does not specify the act operation's nonce.
+-- This concrete trace uses nonce 0. There is no confirmation, and the derived
+-- argument is untainted, so this nonce does not affect the stated execution.
+def Back_w1_impossible_v2 : Prop :=
+  let injected : List Op := [.toolResult 66, .derive, .act 5 [1] 0]
+  let clean : List Op := [.toolResult 0, .derive, .act 5 [1] 0]
+  let s := run E0 full init injected
+  s.executed = (run E0 full init clean).executed ∧
+    s.executed = [⟨5, [0], false, none⟩]
+
+end ControlStack.SC23IsolationV2
+''',
+'6-sc23v2_safe_authenticated.lean': '''import ControlStack.Scenarios.SC23IsolationV2
+
+namespace ControlStack.SC23IsolationV2
+
+open ControlStack.Authenticated ControlStack.Gate
+
+-- The conclusion extracts an actual issued confirmation with the exact tool
+-- and values. It asserts neither trace order nor single use of its nonce.
+def Back_sc23v2_safe_authenticated : Prop :=
+  ∀ (E : Env) (U : List ℕ),
+    (∀ u ∈ U, u ∉ E.users) →
+      ∀ (ops : List (ℕ × Op)),
+        let s := (authed (raw E) claim).run init ops
+        ∀ x ∈ s.executed, x.tool ∈ E.sensitive → x.tainted = true →
+          ∃ (c n : ℕ), c ∈ E.users ∧ c ∉ U ∧
+            (c, Op.confirm c n x.tool x.vals) ∈ ops
+
+end ControlStack.SC23IsolationV2
+''',
+'7-sc23_safe_authenticated.lean': '''import ControlStack.Scenarios.AuthInstancesB
+
+namespace ControlStack.AuthInstances
+
+open ControlStack.AuthenticatedLog
+
+-- Good includes exact user confirmation for provenance-tainted sensitive
+-- actions and no repeated recorded action-confirmation nonce.
+def Back_sc23_safe_authenticated : Prop :=
+  ∀ (P : SC23.Policy) (U : List ℕ),
+    (∀ u ∈ U, u ∉ P.users) →
+      ∀ (ops : List (ℕ × SC23.Op)),
+        let s := authRun (SC23.step P SC23.full) claim23 SC23.init ops
+        SC23.Good P s ∧
+          ∀ cf ∈ s.confs,
+            ∃ c : ℕ, c ∈ P.users ∧ c ∉ U ∧ c = cf.by_ ∧
+              (c, SC23.Op.confirm c cf.n cf.tool cf.vals) ∈ ops
+
+end ControlStack.AuthInstances
+''',
+'8-forged23_acts_without_auth.lean': '''import ControlStack.Scenarios.AuthInstancesB
+
+namespace ControlStack.AuthInstances
+
+open ControlStack.AuthenticatedLog
+
+-- The all-none claim function disables identity checks for this negative control.
+def Back_forged23_acts_without_auth : Prop :=
+  (authRun (SC23.step SC23.P0 SC23.full)
+      (fun (_ : SC23.Op) => none) SC23.init forged23).executed =
+      [⟨5, [66], true, some 7⟩] ∧
+    (authRun (SC23.step SC23.P0 SC23.full)
+      claim23 SC23.init forged23).executed = []
+
+end ControlStack.AuthInstances
+''',
+'9-pass_transfer.lean': '''import ControlStack.Families.F6.MonitorCollusion
+
+namespace ControlStack.MonitorCollusion
+
+open ControlStack.Covert
+
+def Back_pass_transfer : Prop :=
+  ∀ (V : Type) [Fintype V] (P Q β : V → ℝ),
+    IsDist P → IsDist Q →
+      (∀ v, 0 ≤ β v ∧ β v ≤ 1) →
+        |passRate P β - passRate Q β| ≤ tv P Q
+
+end ControlStack.MonitorCollusion
+''',
+'10-collusion_uniform.lean': '''import ControlStack.Families.F6.MonitorCollusion
+
+namespace ControlStack.MonitorCollusion
+
+open ControlStack.Covert
+
+-- P is the real-attack law, Q is the honeypot law; true means pass and
+-- false means flag. The division by 2 fixes the phase prior to be uniform.
+def Back_collusion_uniform : Prop :=
+  ∀ (V : Type) [Fintype V] (P Q : V → ℝ) (monitor : V → Bool → ℝ),
+    IsDist P → IsDist Q →
+      (∀ v, IsDist (monitor v)) →
+        (passRate P (fun v => monitor v true) +
+          passRate Q (fun v => monitor v false)) / 2 ≤
+            (1 + tv P Q) / 2
+
+end ControlStack.MonitorCollusion
+''',
+'11-canon_channel.lean': '''import ControlStack.Families.F6.MonitorCollusion
+
+namespace ControlStack.MonitorCollusion
+
+open ControlStack.Covert
+
+-- NOTE
+-- NOT_FORMALISABLE: No information measure is defined in the excerpts for
+-- the phrase \"log base 2 of K bits\". The statement below is the explicit
+-- K / number-of-messages bound on exact decoding success.
+-- AMBIGUOUS: The English does not require finitely many views or specify
+-- the treatment of shared randomness. The available successProb uses finite
+-- views and a finite shared seed, independent of the uniform message. Those
+-- are the conventions below; a deterministic codebook uses a one-point seed.
+def Back_canon_channel : Prop :=
+  ∀ (Ω M V : Type) [Fintype Ω] [Fintype M] [Fintype V] [Nonempty M]
+    (K : ℕ) (canon : V → Fin K) (ρ : Ω → ℝ)
+    (enc : Ω → M → V → ℝ) (dec : Ω → Fin K → M → ℝ),
+    IsDist ρ →
+      (∀ ω m, IsDist (enc ω m)) →
+        (∀ ω k, IsDist (dec ω k)) →
+          successProb ρ enc (fun ω v m => dec ω (canon v) m) ≤
+            (K : ℝ) / (Fintype.card M : ℝ)
+
+end ControlStack.MonitorCollusion
+''',
+'12-phase_learning.lean': '''import ControlStack.Families.F6.MonitorCollusion
+
+namespace ControlStack.MonitorCollusion
+
+open Finset ControlStack.Covert ControlStack.Leakage
+
+-- NOTE
+-- AMBIGUOUS: The English does not state that the hidden-state and visible-output
+-- alphabets are finite. The provided val and Dominated definitions require
+-- finite alphabets, so the statement below uses that scope.
+-- Bool represents the two phases. Each val holds its phase constant throughout
+-- the m rounds; guess sees only the visible transcript. No kernel normalization
+-- or upper bound on its total mass is assumed.
+def Back_phase_learning : Prop :=
+  ∀ (Y O : Type) [Fintype Y] [Fintype O]
+    (K : Bool → List (Y × O) → Y × O → ℝ)
+    (c : List O → O → ℝ) (L : ℝ)
+    (guess : List O → Bool → ℝ) (m : ℕ),
+    (∀ φ h z, 0 ≤ K φ h z) →
+      (∀ φ, Dominated (K φ) c) →
+        0 ≤ L →
+          (∀ g, (∑ o, c g o) ≤ L) →
+            (∀ t, IsDist (guess t)) →
+              (val (K false) (fun t => guess t false) m [] +
+                val (K true) (fun t => guess t true) m []) / 2 ≤
+                  L "'^ m / 2
+
+end ControlStack.MonitorCollusion
+'"'''
+}
+for name, content in files.items():
+    with (Path('back') / name).open('x', encoding='utf-8') as f:
+        f.write(content)
+print(f'Wrote {len(files)} claim files under back/.')
+PY"
+
+---
+/bin/bash -lc 'sha256sum back/*.lean'
+
+---
+/bin/bash -lc "date -u '+%Y-%m-%dT%H:%M:%SZ'"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+content = \"{\\n  \\\"utc\\\": \\\"2026-10-13T05:11:52Z\\\",\\n  \\\"files\\\": {\\n    \\\"back/1-noninterference.lean\\\": \\\"6f947429560c062d17b7af06e5174612139b1a5c6e28d808ce2c2b73cf738792\\\",\\n    \\\"back/10-collusion_uniform.lean\\\": \\\"080938fa60cf01d2a9d70638c27303c7dcdc03a78ff2bc7385ebc7c24d69189e\\\",\\n    \\\"back/11-canon_channel.lean\\\": \\\"924d55cff7216477c7f72e516c0d76685b8cf04e6f069a37a4215bee4ab429f7\\\",\\n    \\\"back/12-phase_learning.lean\\\": \\\"4efe4a9b8dd7a1d2a06ba3e9176720ca87cc36c8740776d22d306040c0bfb6ce\\\",\\n    \\\"back/2-w1_impossible.lean\\\": \\\"5d4760771040c8712e4dc06636a25002c0aed82bcf4878cf67eab03094b51223\\\",\\n    \\\"back/3-sc23_isolated_safe.lean\\\": \\\"9b3b017597aed03b484d49d89ddfed40222be459216f9b08e422ce9247d03470\\\",\\n    \\\"back/4-noninterference_authed.lean\\\": \\\"304d61b8dbaae4a1b3b77bfb806f7e5f3d6613320fcd736e972e6c6b1e563765\\\",\\n    \\\"back/5-w1_impossible_v2.lean\\\": \\\"f11b1037ec3fb81be959328fd7f8c0e5f69e0b243af69b2376dcf66ebaaa2af9\\\",\\n    \\\"back/6-sc23v2_safe_authenticated.lean\\\": \\\"7a626c46faf15cab3d190c3d29450624ecbe3be5c15383e5855c4974e7f7d561\\\",\\n    \\\"back/7-sc23_safe_authenticated.lean\\\": \\\"2a49d2c6de927174cf6f20af5320e213776df7c0a21a62dfa9949823c58a0b6e\\\",\\n    \\\"back/8-forged23_acts_without_auth.lean\\\": \\\"2001131b46f0619f93849e0ac22d7b9ac3d1fcc329ebd02c82e2515cb7f6e3c7\\\",\\n    \\\"back/9-pass_transfer.lean\\\": \\\"8a74e1b5df5830f1841430acd4e93bddb17dd8c913b78bf0eab6eb5f2ae126e7\\\"\\n  }\\n}\\n\"
+with Path('back/BACK-HASHES.json').open('x', encoding='utf-8') as f:
+    f.write(content)
+print('Wrote back/BACK-HASHES.json; claim files are now frozen.')
+PY"

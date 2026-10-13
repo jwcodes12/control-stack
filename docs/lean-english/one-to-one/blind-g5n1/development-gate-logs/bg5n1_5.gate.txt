@@ -1,0 +1,38 @@
+FAIL lean exit 1
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:17:15: warning: Variable name `k` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _k
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:20:15: warning: Variable name `k` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _k
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:39:45: error: Function expected at
+  AOut
+but this term has type
+  ?m.1
+
+Note: Expected a function because this term is being applied to the argument
+  Unit
+
+Hint: The identifier `AOut` is unknown, and Lean's `autoImplicit` option causes an unknown identifier to be treated as an implicitly bound variable with an unknown type. However, the unknown type cannot be a function, and a function is what Lean expects here. This is often the result of a typo or a missing `import` or `open` statement.
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:45:10: error: unsolved goals
+⊢ ∀ (N B k : ℕ) (σ : List (ControlStack.Leakage.AOut Unit) → Bool → ℝ),
+    HBack N B k σ → (BackAt N B k σ ↔ OrigAt N B k σ)
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:46:10: error: No goals to be solved
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:43:68: warning: This simp argument is unused:
+  true_implies
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Back_sc21_adaptive, HBack, BackAt, and_imp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:53:36: error(lean.unknownIdentifier): Unknown identifier `IsDist`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_5_claim_084ea9f422f5.lean:52:29: error: unsolved goals
+⊢ ∀ (g : List (ControlStack.Leakage.AOut Unit)), ControlStack.Covert.IsDist (wSigma g)
+'gate_084ea9f422f5' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+

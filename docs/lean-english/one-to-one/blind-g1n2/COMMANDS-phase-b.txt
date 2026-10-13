@@ -1,0 +1,1079 @@
+/bin/bash -lc "pwd; rg --files -g AGENTS.md -g '*.lean' -g 'lakefile*' -g 'lean-toolchain' -g 'BACK-HASHES.json' -g 'CLAIMS.txt' -g 'run_gate.py' -g 'leangate_imports.py' -g 'leangate-imports.patch' -g 'batch-g1n2.md' ."
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g1n2/AGENTS.md; do if [ -f "$p" ]; then cat "$p"; fi; done
+rg --files --hidden -g AGENTS.md -g '"'"'!docs/lean-english/**'"' -g '"'!.git/**'"' .
+cat docs/lean-english/sol-input/batch-g1n2.md docs/lean-english/one-to-one/blind-g1n2/CLAIMS.txt docs/lean-english/one-to-one/blind-g1n2/back/BACK-HASHES.json
+cat docs/lean-english/one-to-one/blind-g1n2/back/*.lean"
+
+---
+/bin/bash -lc 'for p in AGENTS.md CLAUDE.md GEMINI.md; do if [ -f "$p" ]; then cat "$p"; fi; done
+cat docs/lean-english/one-to-one/run_gate.py docs/lean-english/one-to-one/leangate_imports.py docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess,concurrent.futures,hashlib,json,datetime
+b=Path('docs/lean-english/one-to-one/blind-g1n2'); (b/'compile-logs').mkdir(exist_ok=True)
+manifest=json.loads((b/'back/BACK-HASHES.json').read_text())['files']
+for name,h in manifest.items():
+ assert hashlib.sha256((b/name).read_bytes()).hexdigest()==h,name
+
+def compile(p):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ (b/'compile-logs'/f'{p.name}.log').write_text(r.stdout+r.stderr)
+ return p.name,r.returncode,r.stdout+r.stderr
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:
+ for name,code,out in ex.map(compile, sorted((b/'back').glob('*.lean'))):
+  print(name,code,out)
+PY"
+
+---
+/bin/bash -lc "find docs/lean-english/one-to-one/blind-g1n2/compile-logs -maxdepth 1 -type f -printf '%f\\n'"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g1n2/compile-logs/*.log'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import datetime
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+(b/'PROGRESS.md').write_text('# Phase B progress\\n\\nStarted UTC: '+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n\\nDone: verified all ten Phase A SHA-256 hashes against BACK-HASHES.json; read only the permitted English and gate helpers.\\n\\nIn progress: compile all ten back files verbatim. Original declarations have not been opened.\\n\\nNot done: freeze typed hashes, pointwise comparison, deterministic claim and witness gates, clean regate, final report.\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,shutil
+b=Path('docs/lean-english/one-to-one/blind-g1n2'); (b/'typed').mkdir(exist_ok=True); (b/'compile-fixes').mkdir(exist_ok=True)
+files={}
+for p in sorted((b/'back').glob('*.lean')):
+ dest=b/'typed'/p.name; shutil.copyfile(p,dest)
+ files['typed/'+p.name]=hashlib.sha256(dest.read_bytes()).hexdigest()
+ (b/'compile-fixes'/f'{p.name.split(\"-\")[0]}.diff').write_text('# No repairs: back file compiled verbatim with lake env lean.\\n# Meaning change: none. Typed file is byte-for-byte identical to back file.\\n')
+(b/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'originals_opened':False,'files':files},indent=2)+'\\n')
+(b/'PROGRESS.md').write_text('# Phase B progress\\n\\nDone: all ten back files compiled verbatim (exit 0, no output); Phase A hashes verified; typed copies frozen in typed/HASHES.json before reading originals; no repairs.\\n\\nIn progress: original declaration comparison.\\n\\nNot done: deterministic claim and witness gates, clean regate, final report.\\n')
+print((b/'typed/HASHES.json').read_text())
+PY"
+
+---
+/bin/bash -lc "rg -n 'theorem (sc01_case|core_bound|covert_bound_lifetime|sc02_accumulated|rekey_epoch|log_channel|canonical_seq|windows_needed|sc07_mixed|sc07_fixed_budget)\\b' ControlStack
+cat ControlStack/SafetyCaseSC01.lean ControlStack/GatewayCore.lean ControlStack/CovertChannel.lean ControlStack/Families/F2/ChannelInstances.lean ControlStack/Scenarios/SC07Exfil.lean"
+
+---
+/bin/bash -lc "sed -n '260,305p' ControlStack/GatewayCore.lean
+sed -n '125,153p' ControlStack/CovertChannel.lean
+sed -n '1,205p' ControlStack/Families/F2/ChannelInstances.lean
+sed -n '1,240p' ControlStack/Families/F6/ReservedRecall.lean
+sed -n '1,130p' ControlStack/Leakage.lean
+sed -n '1,90p' ControlStack/SideChannel.lean
+sed -n '1,100p' ControlStack/ScenarioARepair.lean"
+
+---
+/bin/bash -lc "sed -n '20,58p' ControlStack/CovertChannel.lean
+sed -n '38,90p' ControlStack/Core/Leakage.lean
+rg -n 'def (Dominated|recallK|coin|AOut)|theorem recallK|recall_instance|IsDist|variable' ControlStack/Families/F6/ReservedRecall.lean ControlStack/Families/F6/ReservedAudit.lean ControlStack/Core/Leakage.lean | tail -55
+sed -n '455,535p' ControlStack/Families/F6/ReservedRecall.lean
+cat lakefile.lean"
+
+---
+/bin/bash -lc "rg -n 'push|def (val|Dominated|recallSucc|memN)|abbrev AOut' ControlStack/GatewayModel.lean ControlStack/Core/Leakage.lean ControlStack/Families/F6/ReservedRecall.lean
+sed -n '100,125p' ControlStack/Core/Leakage.lean
+sed -n '146,158p' ControlStack/Core/Leakage.lean
+sed -n '390,424p' ControlStack/Families/F6/ReservedRecall.lean
+sed -n '1,90p' ControlStack/LifetimeLedger.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil,difflib
+base=Path('docs/lean-english/one-to-one'); b=base/'blind-g1n2'
+src=(base/'run_gate.py').read_text(); dst=src.replace('ROOT=Path(__file__).resolve().parents[3]','ROOT=Path(__file__).resolve().parents[4]').replace(\"os.environ['PL_IMPORTS']='ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'\", \"os.environ['PL_IMPORTS']='ControlStack.SafetyCaseSC01 ControlStack.GatewayCore ControlStack.CovertChannel ControlStack.Families.F2.ChannelInstances ControlStack.Scenarios.SC07Exfil ControlStack.Families.F6.ReservedRecall'\").replace(\"OUT.glob('g0_*.statement.lean')\", \"OUT.glob('bg1n2_*.statement.lean')\")
+(b/'run_gate_blind.py').write_text(dst)
+shutil.copyfile(base/'leangate_imports.py',b/'leangate_imports.py')
+(b/'run_gate_blind.diff').write_text(''.join(difflib.unified_diff(src.splitlines(True),dst.splitlines(True),fromfile='run_gate.py',tofile='blind-g1n2/run_gate_blind.py')))
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n2/build_comparisons.py <<'PY'
+from pathlib import Path
+b=Path(__file__).resolve().parent
+common='''open scoped BigOperators
+open Classical
+open ControlStack.Covert ControlStack.Leakage
+'''
+delta='''noncomputable def delta {A : Type} [Fintype A] [DecidableEq A] (a : A) : A → ℝ :=
+  fun x => if x = a then 1 else 0
+'''
+deltaproof='''lemma delta_dist {A : Type} [Fintype A] [DecidableEq A] (a : A) : IsDist (delta a) := by
+  constructor
+  · intro x; unfold delta; split_ifs <;> norm_num
+  · simp [delta]
+'''
+def save(n,params,args,bh,oh,bc,oc,w,proof,wproof,strong=False,extra=''):
+ p=next((b/'typed').glob(f'{n}-*.lean')); raw=p.read_text(); ns=raw.split('namespace ')[1].splitlines()[0]
+ body=raw.split('def Back_',1)[1]; body='def FrozenBack'+body[body.index(' : Prop :='):]; body=body.rsplit('\\nend ',1)[0]
+ header=f'{common}open {ns}\\nnamespace PL_bg1n2_{n}\\n\\n'
+ defs=f'{body}\\n\\n{delta}\\n{extra}\\n'
+ for name,value in [('BackHyp',bh),('OrigHyp',oh),('BackConclusion',bc),('OrigConclusion',oc)]:
+  defs+=f'def {name} {params} : Prop :=\\n  {value}\\n\\n'
+ defs+=f'def BackAt {params} : Prop := BackHyp {args} → BackConclusion {args}\\n\\n'
+ defs+=f'def OrigAt {params} : Prop := OrigHyp {args} → OrigConclusion {args}\\n\\n'
+ if strong:
+  claim=f'∀ {params}, (OrigHyp {args} → BackHyp {args}) ∧ (BackAt {args} → OrigAt {args}) ∧ (BackConclusion {args} ↔ OrigConclusion {args})'
+ else:
+  claim=f'∀ {params}, (BackHyp {args} ↔ OrigHyp {args}) ∧ (BackConclusion {args} ↔ OrigConclusion {args})'
+ defs+=f'def Claim : Prop :=\\n  {claim}\\n\\ndef Witness : Prop :=\\n  {w}\\n\\nend PL_bg1n2_{n}\\n'
+ (b/f'bg1n2_{n}.statement.lean').write_text(header+defs)
+ (b/f'bg1n2_{n}.proof.lean').write_text('theorem claim : Claim := by\\n'+proof+'\\n')
+ (b/f'bg1n2_{n}.witness.proof.lean').write_text(deltaproof+'\\ntheorem witness : Witness := by\\n'+wproof+'\\n')
+# 2
+params='''(C L : ℕ) (Ω M R : Type) (S : Fin C → Type)
+    [Fintype Ω] [Fintype M] [Nonempty M] [Fintype R]
+    [∀ c, Fintype (S c)] [Fintype (Ev C R)]
+    (slots : Fin C → ℕ) (valid : (c : Fin C) → R → Option (S c))
+    (rho : Ω → ℝ) (enc : Ω → M → (Fin L → Ev C R) → ℝ)
+    (dec : Ω → View S slots → M → ℝ)'''
+args='C L Ω M R S slots valid rho enc dec'
+h='IsDist rho ∧ (∀ omega m, IsDist (enc omega m)) ∧ (∀ omega v, IsDist (dec omega v))'
+bc='''successProb rho
+    (fun omega m => ControlStack.GatewayModel.push
+      (fun tr : Fin L → Ev C R => finalView (runG valid (init (S := S) (slots := slots)) (List.ofFn tr)))
+      (enc omega m)) dec ≤
+    (viewSpace slots (fun c => Fintype.card (S c)) : ℝ) / (Fintype.card M : ℝ)'''
+oc='''(∑ omega, rho omega * ((Fintype.card M : ℝ)⁻¹ * ∑ m, ∑ tr, enc omega m tr *
+    dec omega (finalView (runG valid (init (S := S) (slots := slots)) (List.ofFn tr))) m)) ≤
+    (viewSpace slots (fun c => Fintype.card (S c)) : ℝ) / (Fintype.card M : ℝ)'''
+w='''∃ (inst : Fintype (Ev 1 Unit)),
+    letI := inst
+    ∃ (rho : Unit → ℝ) (enc : Unit → Fin 2 → (Fin 1 → Ev 1 Unit) → ℝ)
+      (dec : Unit → View (fun _ : Fin 1 => Bool) (fun _ => 1) → Fin 2 → ℝ),
+      BackHyp 1 1 Unit (Fin 2) Unit (fun _ => Bool) (fun _ => 1)
+        (fun _ _ => some false) rho enc dec'''
+proof='''  classical
+  intro C L Ω M R S _ _ _ _ _ _ slots valid rho enc dec
+  refine ⟨Iff.rfl, ?_⟩
+  unfold BackConclusion OrigConclusion successProb ControlStack.GatewayModel.push
+  simp_rw [Finset.sum_mul]
+  have hp : ∀ omega m,
+      (∑ v, (∑ tr, if finalView (runG valid (init (S := S) (slots := slots)) (List.ofFn tr)) = v
+        then enc omega m tr else 0) * dec omega v m) =
+      ∑ tr, enc omega m tr * dec omega (finalView (runG valid (init (S := S) (slots := slots)) (List.ofFn tr))) m := by
+    intro omega m
+    simp_rw [Finset.sum_mul]
+    rw [Finset.sum_comm]
+    apply Finset.sum_congr rfl
+    intro tr _
+    simp
+  simp_rw [hp]'''
+wproof='''  classical
+  let inst : Fintype (Ev 1 Unit) := ⟨{.send none (), .send (some 0) (), .other, .close}, by
+    intro e
+    cases e with
+    | send c r =>
+      cases r
+      cases c with
+      | none => simp
+      | some c => have hc : c = 0 := Subsingleton.elim _ _; subst c; simp
+    | other => simp
+    | close => simp⟩
+  refine ⟨inst, ?_⟩
+  letI := inst
+  refine ⟨delta (), (fun _ _ => delta (fun _ => Ev.close)), (fun _ _ => delta 0), ?_⟩
+  exact ⟨delta_dist (), fun _ _ => delta_dist _, fun _ _ => delta_dist _⟩'''
+save(2,params,args,h,h,bc,oc,w,proof,wproof)
+# 3
+params='''(E : ℕ) (Ω M : Type) (V : Fin E → Type)
+    [Fintype Ω] [Fintype M] [Nonempty M] [∀ e, Fintype (V e)]
+    (rho : Ω → ℝ) (enc : Ω → M → ((e : Fin E) → V e) → ℝ)
+    (dec : Ω → ((e : Fin E) → V e) → M → ℝ)'''
+args='E Ω M V rho enc dec'; bc='successProb rho enc dec ≤ (∏ e : Fin E, (Fintype.card (V e) : ℝ)) / (Fintype.card M : ℝ)'
+w='''∃ (rho : Unit → ℝ) (enc : Unit → Fin 4 → (Fin 2 → Fin 2) → ℝ)
+    (dec : Unit → (Fin 2 → Fin 2) → Fin 4 → ℝ),
+    BackHyp 2 Unit (Fin 4) (fun _ => Fin 2) rho enc dec'''
+save(3,params,args,h,h,bc,bc,w,'  intros; exact ⟨Iff.rfl, Iff.rfl⟩','''  refine ⟨delta (), (fun _ _ => delta (fun _ => 0)), (fun _ _ => delta 0), ?_⟩
+  exact ⟨delta_dist (), fun _ _ => delta_dist _, fun _ _ => delta_dist _⟩''')
+# 4
+params='''(k E : ℕ) (Ω Y O : Type) [Fintype Ω] [Fintype Y] [Fintype O]
+    (rho : Ω → ℝ) (K : Ω → Fin (2 "'^ k) → List (Y × O) → Y × O → ℝ)
+    (dec : Ω → List O → Fin (2 ''^ k) → ℝ) (c : List O → O → ℝ) (L : ℕ → ℝ)'"'''
+args='k E Ω Y O rho K dec c L'
+h='''IsDist rho ∧ (∀ omega g, IsDist (dec omega g)) ∧
+    (∀ omega m h z, 0 ≤ K omega m h z) ∧ (∀ g o, 0 ≤ c g o) ∧
+    (∀ i, 0 ≤ L i) ∧ (∀ omega m, Dominated (K omega m) c) ∧
+    (∀ g, (∑ o, c g o) ≤ L g.length)'''
+bc='''(∑ omega, rho omega * ((Fintype.card (Fin (2 "'^ k)) : ℝ)⁻¹ *
+    ∑ m, val (K omega m) (fun g => dec omega g m) E [])) ≤
+    (∏ e : Fin E, L e.val) / (2 : ℝ) ''^ k'"'''
+oc='''(∑ omega, rho omega * (((2 : ℝ) "'^ k)⁻¹ *
+    ∑ m, val (K omega m) (fun g => dec omega g m) E [])) ≤
+    (∏ e ∈ Finset.range E, L e) / (2 : ℝ) ''^ k'"'''
+w='''∃ (rho : Unit → ℝ) (K : Unit → Fin 4 → List (Unit × Bool) → Unit × Bool → ℝ)
+    (dec : Unit → List Bool → Fin 4 → ℝ),
+    BackHyp 2 2 Unit Unit Bool rho K dec (fun _ _ => 1) (fun _ => 2)'''
+save(4,params,args,h,h,bc,oc,w,'''  intro k E Ω Y O _ _ _ rho K dec c L
+  refine ⟨Iff.rfl, ?_⟩
+  simp only [BackConclusion, OrigConclusion, Fintype.card_fin, Nat.cast_pow, Nat.cast_ofNat]
+  rw [Fin.prod_univ_eq_prod_range]''','''  refine ⟨delta (), (fun _ _ _ _ => 1 / 2), (fun _ _ => delta 0), ?_⟩
+  refine ⟨delta_dist (), fun _ _ => delta_dist _, ?_, ?_, ?_, ?_, ?_⟩
+  · intros; norm_num
+  · intros; norm_num
+  · intros; norm_num
+  · intros; intro h o; simp; norm_num
+  · intro g; simp''')
+# 5
+params='''(n a E : ℕ) (Ω M Y O : Type)
+    [Fintype Ω] [Fintype M] [Nonempty M] [Fintype Y] [Fintype O]
+    (rho : Ω → ℝ) (K : Ω → M → List (Y × O) → Y × O → ℝ)
+    (dec : Ω → List O → M → ℝ) (c : List O → O → ℝ) (L : ℝ)'''
+args='n a E Ω M Y O rho K dec c L'
+base='''a + E ≤ n ∧ IsDist rho ∧ (∀ omega g, IsDist (dec omega g)) ∧
+    (∀ omega m h z, 0 ≤ K omega m h z) ∧ (∀ g o, 0 ≤ c g o) ∧
+    0 ≤ L ∧ (∀ omega m, Dominated (K omega m) c) ∧\\n    '''
+bh=base+'''(∀ g, a ≤ g.length → g.length < a + E → (∑ o, c g o) ≤ L) ∧
+    (∀ g, (g.length < a ∨ a + E ≤ g.length) → (∑ o, c g o) ≤ 1)'''
+oh=base+'''(∀ g, (a ≤ g.length ∧ g.length < a + E) → (∑ o, c g o) ≤ L) ∧
+    (∀ g, ¬(a ≤ g.length ∧ g.length < a + E) → (∑ o, c g o) ≤ 1)'''
+bc='''(∑ omega, rho omega * ((Fintype.card M : ℝ)⁻¹ *
+    ∑ m, val (K omega m) (fun g => dec omega g m) n [])) ≤ L "'^ E / (Fintype.card M : ℝ)'"'''
+w='''∃ (rho : Unit → ℝ) (K : Unit → Fin 4 → List (Unit × Bool) → Unit × Bool → ℝ)
+    (dec : Unit → List Bool → Fin 4 → ℝ),
+    BackHyp 3 1 1 Unit (Fin 4) Unit Bool rho K dec (fun _ _ => 1 / 2) 1'''
+save(5,params,args,bh,oh,bc,bc,w,'''  intros
+  constructor
+  · simp only [BackHyp, OrigHyp, not_and_or, not_le, not_lt, and_imp]
+  · exact Iff.rfl''','''  refine ⟨delta (), (fun _ _ _ _ => 1 / 2), (fun _ _ => delta 0), ?_⟩
+  refine ⟨by norm_num, delta_dist (), fun _ _ => delta_dist _, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intros; norm_num
+  · intros; norm_num
+  · norm_num
+  · intros; intro h o; simp
+  · intros; simp
+  · intros; simp''')
+# 6,7
+for n in [6,7]:
+ if n==6:
+  ints='Kt Q f m'; alphabet='(Fin Kt × (Fin f → Fin Q))'; bound='(Kt : ℝ) "'^ m * (Q : ℝ) ''^ (f * m)'"'
+  values='2 2 1 2'; wat='(Fin 2 × (Fin 1 → Fin 2))'; mass='1 / 4'
+ else:
+  ints='Kc m'; alphabet='Fin Kc'; bound='(Kc : ℝ) "'^ m'"'
+  values='2 2'; wat='Fin 2'; mass='1 / 2'
+ params=f'''({ints} : ℕ) (Ω M Y : Type) [Fintype Ω] [Fintype M] [Nonempty M] [Fintype Y]
+    (rho : Ω → ℝ) (K : Ω → M → List (Y × {alphabet}) → Y × {alphabet} → ℝ)
+    (dec : Ω → List {alphabet} → M → ℝ)'''
+ args=f'{ints} Ω M Y rho K dec'
+ base='''IsDist rho ∧ (∀ omega g, IsDist (dec omega g)) ∧ (∀ omega secret h z, 0 ≤ K omega secret h z) ∧\\n    '''
+ bh=base+'(∀ omega secret h, (∑ y, ∑ o, K omega secret h (y, o)) ≤ 1)'
+ oh=base+'(∀ omega secret h, (∑ z, K omega secret h z) ≤ 1)'
+ bc=f'''(∑ omega, rho omega * ((Fintype.card M : ℝ)⁻¹ *
+    ∑ secret, val (K omega secret) (fun g => dec omega g secret) m [])) ≤
+    {bound} / (Fintype.card M : ℝ)'''
+ w=f'''∃ (rho : Unit → ℝ) (K : Unit → Fin 4 → List (Unit × {wat}) → Unit × {wat} → ℝ)
+    (dec : Unit → List {wat} → Fin 4 → ℝ),
+    BackHyp {values} Unit (Fin 4) Unit rho K dec'''
+ save(n,params,args,bh,oh,bc,bc,w,'''  intros
+  constructor
+  · simp only [BackHyp, OrigHyp, Fintype.sum_prod_type]
+  · exact Iff.rfl''',f'''  refine ⟨delta (), (fun _ _ _ _ => {mass}), (fun _ _ => delta 0), ?_⟩
+  refine ⟨delta_dist (), fun _ _ => delta_dist _, ?_, ?_⟩
+  · intros; norm_num
+  · intros; norm_num [Finset.sum_const, Fintype.card_prod, Fintype.card_fun]''')
+# 8
+params='(S q : ℕ) (b : List ℕ)';args='S q b';h='0 < q ∧ (∀ x ∈ b, x ≤ q) ∧ S ≤ b.sum';bc='ceilDiv S q ≤ traffic b'
+save(8,params,args,h,h,bc,bc,'BackHyp 3 2 [2, 0, 1] ∧ ceilDiv 3 2 = 2 ∧ traffic [2, 0, 1] = 2',
+'  intros; exact ⟨Iff.rfl, Iff.rfl⟩','  norm_num [BackHyp, ceilDiv, traffic]')
+# 9
+params='''(P : Type) [Fintype P] (S q : ℕ) (pr : ℝ)
+    (plans : P → List ℕ) (w : P → ℝ) (c : ℕ → ℝ)''';args='P S q pr plans w c'
+bh='''0 < q ∧ 0 ≤ pr ∧ pr ≤ 1 ∧ (∀ i, pr ≤ c i) ∧ (∀ i, c i ≤ 1) ∧ IsDist w'''
+oh='''0 < q ∧ 0 ≤ pr ∧ pr ≤ 1 ∧ (∀ i, pr ≤ c i ∧ c i ≤ 1) ∧ (∀ p, 0 ≤ w p) ∧ (∑ p, w p) = 1'''
+bc='''(∑ p, if S ≤ (capped q (plans p)).sum
+    then w p * survive c (capped q (plans p)) 0 else 0) ≤ (1 - pr) "'^ ceilDiv S q'"'''
+oc='''(∑ p, w p * (if S ≤ (capped q (plans p)).sum
+    then survive c (capped q (plans p)) 0 else 0)) ≤ (1 - pr) "'^ ceilDiv S q'"'''
+w='''BackHyp Bool 3 2 (1 / 2) (fun _ => [2, 0, 1]) (fun _ => 1 / 2) (fun _ => 1 / 2) ∧
+    (capped 2 [2, 0, 1]).sum = 3 ∧ survive (fun _ => (1 / 2 : ℝ)) (capped 2 [2, 0, 1]) 0 = 1 / 4'''
+save(9,params,args,bh,oh,bc,oc,w,'''  intros
+  constructor
+  · simp only [BackHyp, OrigHyp, IsDist, forall_and]
+    tauto
+  · simp only [BackConclusion, OrigConclusion, mul_ite, mul_zero]''','  norm_num [BackHyp, IsDist, Fintype.sum_bool, capped, survive]')
+# 10
+params='''(N B S q : ℕ) (r : ℝ) (Y : Type) [Fintype Y]
+    (sigma : List (AOut Unit) → Bool → ℝ)
+    (K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ)'''
+args='N B S q r Y sigma K'
+base='''B ≤ N ∧ 0 ≤ r ∧ r ≤ 1 ∧\\n    '''
+tail='''(∀ sched ∈ ControlStack.AuditBudget.randomSchedules N B, ∀ h z, 0 ≤ K sched h z) ∧
+    (∀ sched ∈ ControlStack.AuditBudget.randomSchedules N B, ∀ h, SUM ≤ 1) ∧
+    (∀ sched ∈ ControlStack.AuditBudget.randomSchedules N B, ∀ h a,
+      (∑ y, K sched h (y, (a, (), false))) ≤ sigma (h.map Prod.snd) a *
+      (if memN sched (h.map Prod.snd).length ∧ a = true then 1 - r else 1))'''
+bh=base+'(∀ g a, 0 ≤ sigma g a) ∧ (∀ g, (∑ a, sigma g a) ≤ 1) ∧\\n    '+tail.replace('SUM','(∑ y, ∑ o, K sched h (y, o))')
+oh=base+'(∀ g, IsDist (sigma g)) ∧\\n    '+tail.replace('SUM','(∑ z, K sched h z)')
+bc='''(∑ sched : Finset (Fin N), ControlStack.ReservedAudit.pU N B sched *
+    val (K sched) (ControlStack.ReservedRecall.recallSucc (N := N) (ceilDiv S q)) N []) ≤
+    ControlStack.ReservedRecall.hypMiss N B (ceilDiv S q) r'''
+extra='''noncomputable def sigmaSub : List (AOut Unit) → Bool → ℝ := fun _ _ => 1 / 4
+noncomputable def testK (sigma : List (AOut Unit) → Bool → ℝ) :
+    Finset (Fin 2) → List (Unit × AOut Unit) → Unit × AOut Unit → ℝ :=
+  fun sched h z => if z.2.2.2 = false then
+    sigma (h.map Prod.snd) z.2.1 *
+      (if memN sched (h.map Prod.snd).length ∧ z.2.1 = true then 1 / 2 else 1)
+    else 0
+'''
+w='''BackHyp 2 1 1 1 (1 / 2) Unit sigmaSub (testK sigmaSub) ∧
+    ¬ OrigHyp 2 1 1 1 (1 / 2) Unit sigmaSub (testK sigmaSub) ∧
+    0 < sigmaSub [] true ∧ (∑ a, sigmaSub [] a) = 1 / 2'''
+proof='''  intro N B S q r Y _ sigma K
+  have hd : OrigHyp N B S q r Y sigma K → BackHyp N B S q r Y sigma K := by
+    rintro ⟨hB, hr0, hr1, hs, hk0, hk1, hrec⟩
+    refine ⟨hB, hr0, hr1, fun g a => (hs g).1 a, fun g => (hs g).2.le, hk0, ?_, hrec⟩
+    simpa only [Fintype.sum_prod_type] using hk1
+  refine ⟨hd, ?_, Iff.rfl⟩
+  intro hb ho
+  exact hb (hd ho)'''
+wproof='''  have hb : BackHyp 2 1 1 1 (1 / 2) Unit sigmaSub (testK sigmaSub) := by
+    refine ⟨by norm_num, by norm_num, by norm_num, ?_, ?_, ?_, ?_, ?_⟩
+    · intros; norm_num [sigmaSub]
+    · intros; norm_num [sigmaSub, Fintype.sum_bool]
+    · intro sched hs h z
+      unfold testK sigmaSub
+      split_ifs <;> norm_num
+    · intro sched hs h
+      simp only [testK, sigmaSub, Fintype.sum_prod_type, Fintype.sum_bool, Fintype.univ_unit, Finset.sum_singleton]
+      by_cases hm : memN sched (List.map Prod.snd h).length <;> norm_num [hm]
+    · intro sched hs h a
+      simp only [testK, sigmaSub, Fintype.univ_unit, Finset.sum_singleton]
+      norm_num
+  refine ⟨hb, ?_, by norm_num [sigmaSub], by norm_num [sigmaSub, Fintype.sum_bool]⟩
+  intro ho
+  have hs := ho.2.2.2.1 []
+  have he := hs.2
+  norm_num [sigmaSub, Fintype.sum_bool] at he'''
+save(10,params,args,bh,oh,bc,bc,w,proof,wproof,True,extra)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/build_comparisons.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n2/regate.py <<'PY'
+\"\"\"From the repository root: re-gate saved claims and witnesses, writing receipts only.\"\"\"
+from pathlib import Path
+import sys
+sys.dont_write_bytecode = True
+import importlib.util, json, hashlib, datetime
+
+OUT = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('run_gate_blind', OUT / 'run_gate_blind.py')
+r = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(r)
+g = r.g
+
+
+def sha(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def receipt(cid, target, statement, proof, statement_ok, statement_log, passed, log):
+    tag = cid if target == 'claim' else cid + '.witness'
+    (OUT / (tag + '.statement-check.txt')).write_text(statement_log + '\\n')
+    (OUT / (tag + '.gate.txt')).write_text(log + '\\n')
+    data = {
+        'passed': passed, 'target': target, 'statement_passed': statement_ok,
+        'statement_sha256': sha(statement), 'proof_sha256': sha(proof),
+        'gate_sha256': hashlib.sha256(Path(g.__file__).read_bytes()).hexdigest(),
+        'trusted_header': g.import_header(), 'project': str(g.PROJ),
+        'gate_unmodified': False, 'security_checks_unchanged': True,
+        'imports_option_local_only': True,
+        'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    (OUT / (tag + '.receipt.json')).write_text(json.dumps(data, indent=2) + '\\n')
+    print(tag, passed, log.splitlines()[0] if log else '', flush=True)
+
+
+def main():
+    all_ok = True
+    for n in range(1, 11):
+        cid = f'bg1n2_{n}'
+        p = OUT / (cid + '.statement.lean')
+        for target, suffix in [('claim', '.proof.lean'), ('witness', '.witness.proof.lean')]:
+            q = OUT / (cid + suffix)
+            statement = p.read_text() if p.exists() else ''
+            proof = q.read_text() if q.exists() else ''
+            if not p.exists() or not q.exists():
+                ok, slog, passed, log = False, 'Missing saved statement/proof', False, 'FAIL missing saved statement/proof'
+            else:
+                ok, slog = g.check_statement(cid, statement, [r.IMPORTS])
+                if ok:
+                    passed, log = g.gate(cid, statement, proof, target, [r.IMPORTS], timeout=120)
+                else:
+                    passed, log = False, 'FAIL statement check\\n' + slog
+            receipt(cid, target, statement, proof, ok, slog, passed, log)
+            all_ok = all_ok and passed
+    return 0 if all_ok else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/regate.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n2/build_claim1.py <<'PY'
+from pathlib import Path
+b=Path(__file__).resolve().parent
+raw=(b/'typed/1-sc01_case.lean').read_text(); frozen=raw[raw.index('def Back_sc01_case'):raw.rindex('\\nend ')].replace('def Back_sc01_case','def FrozenBack',1)
+src=Path('ControlStack/SafetyCaseSC01.lean').read_text(); orig=src.split('theorem sc01_case :',1)[1].split(' := by',1)[0]
+stmt='''open scoped BigOperators
+open Classical
+open ControlStack.Covert ControlStack.SideChannel ControlStack.ScenarioARepair
+  ControlStack.ScenarioAUsefulness ControlStack.LifetimeLedger ControlStack.GatewayCore
+namespace PL_bg1n2_1
+
+'''+frozen+'\\n\\ndef Original : Prop :=\\n'+orig+'''
+
+noncomputable def delta {A : Type} [Fintype A] [DecidableEq A] (a : A) : A → ℝ :=
+  fun x => if x = a then 1 else 0
+
+def SideHyp (Ω S O : Type) [Fintype Ω] [Fintype S] [Fintype O]
+    (rho : Ω → ℝ) (W : S → O → ℝ)
+    (enc : Ω → Fin (2 "'^ 32) → Transcript × S → ℝ)
+    (dec : Ω → Transcript × O → Fin (2 ''^ 32) → ℝ) (c : O → ℝ) : Prop :=
+  IsDist rho ∧ (∀ omega m, IsDist (enc omega m)) ∧
+  (∀ omega y, IsDist (dec omega y)) ∧ (∀ o, 0 ≤ c o) ∧
+  (∀ s o, W s o ≤ c o) ∧ (∑ o, c o) ≤ (65536 : ℝ) / 59049
+
+def OrigSideHyp (Ω S O : Type) [Fintype Ω] [Fintype S] [Fintype O]
+    (rho : Ω → ℝ) (W : S → O → ℝ)
+    (enc : Ω → Fin (2 ''^ 32) → Transcript × S → ℝ)
+    (dec : Ω → Transcript × O → Fin (2 ''^ 32) → ℝ) (c : O → ℝ) : Prop :=
+  (∀ s o, W s o ≤ c o) ∧ (∀ o, 0 ≤ c o) ∧ (∑ o, c o) ≤ (65536 : ℝ) / 59049 ∧
+  IsDist rho ∧ (∀ omega m, IsDist (enc omega m)) ∧ (∀ omega y, IsDist (dec omega y))
+
+def LedgerHyp (L : Type) [DecidableEq L] (tr : List (ControlStack.LifetimeLedger.Ev L)) : Prop :=
+  (∀ e ∈ tr, ¬ e.isRestore) ∧ (∀ ell k, ControlStack.LifetimeLedger.Ev.charge ell k ∈ tr → k = 9)
+
+def OrigLedgerHyp (L : Type) [DecidableEq L] (tr : List (ControlStack.LifetimeLedger.Ev L)) : Prop :=
+  (∀ e ∈ tr, ¬ e.isRestore) ∧ (∀ e ∈ tr, ∀ ell k, e = .charge ell k → k = 9)
+
+def Claim : Prop :=
+  (∀ (Ω S O : Type) [Fintype Ω] [Fintype S] [Fintype O]
+      (rho : Ω → ℝ) (W : S → O → ℝ)
+      (enc : Ω → Fin (2 ''^ 32) → Transcript × S → ℝ)
+      (dec : Ω → Transcript × O → Fin (2 ''^ 32) → ℝ) (c : O → ℝ),
+    (SideHyp Ω S O rho W enc dec c ↔ OrigSideHyp Ω S O rho W enc dec c) ∧
+    ((sideSuccess rho W enc dec ≤ (1 : ℝ) / 2 ''^ 16) ↔
+     (sideSuccess rho W enc dec ≤ (1 : ℝ) / 2 ''^ 16))) ∧
+  (∀ p : ℝ, ((0 ≤ p ∧ p ≤ (9 : ℝ) / 10) ↔ (0 ≤ p ∧ p ≤ (9 : ℝ) / 10)) ∧
+    ((passProb p ≤ (1 : ℝ) / 80) ↔ (passProb p ≤ (1 : ℝ) / 80))) ∧
+  (((tail 64 ((93382 : ℝ) / 100000) ≤ (1 : ℝ) / 80 ∧ (9 : ℝ) / 10 ≤ 93382 / 100000) ∧
+      (viewSpace (C := 1) (fun _ => 1) (fun _ => 8) = 9 ∧ Fintype.card Transcript = 9 ''^ 5)) ↔
+   ((tail 64 ((93382 : ℝ) / 100000) ≤ (1 : ℝ) / 80 ∧ (9 : ℝ) / 10 ≤ 93382 / 100000) ∧
+      (viewSpace (C := 1) (fun _ => 1) (fun _ => 8) = 9 ∧ Fintype.card Transcript = 9 ''^ 5))) ∧
+  (∀ (L : Type) [DecidableEq L] (tr : List (ControlStack.LifetimeLedger.Ev L)),
+    (LedgerHyp L tr ↔ OrigLedgerHyp L tr) ∧
+    (∀ ell : L,
+      ((((run (2 ''^ 16) (some (fun _ : L => 1), []) tr).2).filter (fun a => a.1 = ell)).length ≤ 5 ↔
+       (((run (2 ''^ 16) (some (fun _ : L => 1), []) tr).2).filter (fun a => a.1 = ell)).length ≤ 5))) ∧
+  (FrozenBack ↔ Original)
+
+def Witness : Prop :=
+  (∃ (rho : Unit → ℝ) (enc : Unit → Fin (2 ''^ 32) → Transcript × Unit → ℝ)
+      (dec : Unit → Transcript × Unit → Fin (2 ''^ 32) → ℝ),
+    SideHyp Unit Unit Unit rho (fun _ _ => 1) enc dec (fun _ => 1)) ∧
+  (0 ≤ (9 : ℝ) / 10 ∧ (9 : ℝ) / 10 ≤ (9 : ℝ) / 10) ∧
+  LedgerHyp Unit (List.replicate 5 (.charge () 9)) ∧
+  (((run (2 ''^ 16) (some (fun _ : Unit => 1), []) (List.replicate 5 (.charge () 9))).2)
+    .filter (fun a => a.1 = ())).length = 5
+
+end PL_bg1n2_1
+'"'''
+proof='''lemma ledger_hyp (L : Type) [DecidableEq L] (tr : List (ControlStack.LifetimeLedger.Ev L)) :
+    LedgerHyp L tr ↔ OrigLedgerHyp L tr := by
+  constructor
+  · rintro ⟨hr, hc⟩
+    refine ⟨hr, ?_⟩
+    intro e he ell k hk
+    subst e
+    exact hc ell k he
+  · rintro ⟨hr, hc⟩
+    exact ⟨hr, fun ell k hk => hc _ hk ell k rfl⟩
+
+theorem claim : Claim := by
+  refine ⟨?_, ?_, Iff.rfl, ?_, ?_⟩
+  · intros
+    constructor
+    · unfold SideHyp OrigSideHyp
+      tauto
+    · exact Iff.rfl
+  · intro p; exact ⟨Iff.rfl, Iff.rfl⟩
+  · intro L _ tr
+    exact ⟨ledger_hyp L tr, fun ell => Iff.rfl⟩
+  · constructor
+    · rintro ⟨hs, hg, ha, hv, hl⟩
+      refine ⟨?_, hg, ha, hv, ?_⟩
+      · intro Ω S O _ _ _ rho W c hc hc0 hmass enc dec hr he hd
+        exact hs Ω S O rho W enc dec c hr he hd hc0 hc hmass
+      · intro L _ tr hr hc ell
+        exact hl L tr hr (fun ell k hk => hc _ hk ell k rfl) ell
+    · rintro ⟨hs, hg, ha, hv, hl⟩
+      refine ⟨?_, hg, ha, hv, ?_⟩
+      · intro Ω S O _ _ _ rho W enc dec c hr he hd hc0 hc hmass
+        exact hs rho W c hc hc0 hmass enc dec hr he hd
+      · intro L _ tr hr hc ell
+        apply hl tr hr _ ell
+        intro e he ell k hk
+        subst e
+        exact hc ell k he
+'''
+wproof='''lemma delta_dist {A : Type} [Fintype A] [DecidableEq A] (a : A) : IsDist (delta a) := by
+  constructor
+  · intro x; unfold delta; split_ifs <;> norm_num
+  · simp [delta]
+
+theorem witness : Witness := by
+  refine ⟨?_, by norm_num, ?_, ?_⟩
+  · refine ⟨delta (), (fun _ _ => delta ((fun _ => none), ())), (fun _ _ => delta 0), ?_⟩
+    refine ⟨delta_dist (), fun _ _ => delta_dist _, fun _ _ => delta_dist _, ?_, ?_, ?_⟩
+    · intros; norm_num
+    · intros; norm_num
+    · norm_num
+  · constructor
+    · intro e he
+      have he' : e = ControlStack.LifetimeLedger.Ev.charge () 9 := by simpa using he
+      rw [he']; simp [ControlStack.LifetimeLedger.Ev.isRestore]
+    · intro ell k hk
+      have he : ControlStack.LifetimeLedger.Ev.charge ell k = .charge () 9 := by simpa using hk
+      cases he; rfl
+  · norm_num [List.replicate, ControlStack.LifetimeLedger.run, ControlStack.LifetimeLedger.step,
+      Function.update]
+'''
+(b/'bg1n2_1.statement.lean').write_text(stmt);(b/'bg1n2_1.proof.lean').write_text(proof);(b/'bg1n2_1.witness.proof.lean').write_text(wproof)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/build_claim1.py"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_2.gate.txt docs/lean-english/one-to-one/blind-g1n2/bg1n2_3.gate.txt docs/lean-english/one-to-one/blind-g1n2/bg1n2_5.gate.txt docs/lean-english/one-to-one/blind-g1n2/bg1n2_6.gate.txt
+cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_4.gate.txt'
+
+---
+/bin/bash -lc "nl -ba docs/lean-english/one-to-one/blind-g1n2/bg1n2_2.proof.lean
+python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+for p in b.glob('bg1n2_*.statement.lean'):
+ s=p.read_text().replace('open Classical\\n','')
+ name=p.name.split('.')[0]
+ s=s.replace('namespace PL_'+name+'\\n','namespace PL_'+name+'\\n\\nnoncomputable local instance (p : Prop) : Decidable p := Classical.propDecidable p\\n',1)
+ p.write_text(s)
+for p in b.glob('bg1n2_*.proof.lean'):
+ s=p.read_text().replace('theorem claim : Claim := by\\n','theorem claim : Claim := by\\n  unfold Claim\\n')
+ p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_7.statement-check.txt docs/lean-english/one-to-one/blind-g1n2/bg1n2_8.witness.gate.txt docs/lean-english/one-to-one/blind-g1n2/bg1n2_9.witness.gate.txt
+python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+p=b/'bg1n2_7.statement.lean';s=p.read_text().replace('List Fin Kc','List (Fin Kc)').replace('List Fin 2','List (Fin 2)');p.write_text(s)
+p=b/'bg1n2_2.proof.lean';s=p.read_text().replace('  simp_rw [Finset.sum_mul]\\n  have hp','  have hp');p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+for p in b.glob('bg1n2_*.witness.proof.lean'):
+ s=p.read_text().replace('theorem witness : Witness := by\\n','theorem witness : Witness := by\\n  unfold Witness\\n')
+ p.write_text(s)
+PY
+cat > docs/lean-english/one-to-one/blind-g1n2/check_saved.py <<'PY'
+from pathlib import Path
+import sys
+sys.dont_write_bytecode=True
+import importlib.util,concurrent.futures
+b=Path(__file__).resolve().parent
+spec=importlib.util.spec_from_file_location('regate',b/'regate.py');r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
+
+def check(n):
+ cid=f'bg1n2_{n}';statement=(b/(cid+'.statement.lean')).read_text()
+ ok,slog=r.g.check_statement(cid,statement,[r.r.IMPORTS])
+ for target,suffix in [('claim','.proof.lean'),('witness','.witness.proof.lean')]:
+  proof=(b/(cid+suffix)).read_text()
+  passed,log=r.g.gate(cid,statement,proof,target,[r.r.IMPORTS],timeout=120) if ok else (False,'FAIL statement check\\n'+slog)
+  r.receipt(cid,target,statement,proof,ok,slog,passed,log)
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:
+ list(ex.map(check,[int(n) for n in sys.argv[1:]] or range(1,11)))
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+for n in range(1,11):
+ p=b/f'bg1n2_{n}.gate.txt'
+ if p.exists() and p.read_text().startswith('FAIL'):
+  print(n,p.read_text()[-3500:])
+PY"
+
+---
+/bin/bash -lc "cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_10.witness.gate.txt
+python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+p=b/'bg1n2_1.statement.lean';s=p.read_text().replace('))).2)\\n    .filter','))).2.filter');p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+p=b/'bg1n2_10.witness.proof.lean';s=p.read_text().replace('by_cases hm : memN sched (List.map Prod.snd h).length','by_cases hm : memN sched h.length');p.write_text(s)
+p=b/'bg1n2_4.statement.lean';s=p.read_text();old='    BackHyp 2 2 Unit Unit Bool rho K dec (fun _ _ => 1) (fun _ => 2)'
+new='''    BackHyp 2 2 Unit Unit Bool rho K dec (fun _ _ => 1) (fun _ => 2)) ∧
+  (BackHyp 1 1 Unit Unit Unit (fun _ => 1) (fun _ _ _ _ => 4)
+    (fun _ _ => delta 0) (fun _ _ => 4) (fun _ => 4) ∧
+   (∑ omega : Unit, (1 : ℝ) * ((Fintype.card (Fin 2) : ℝ)⁻¹ *
+     ∑ m : Fin 2, val (fun (_ : List (Unit × Unit)) _ => (4 : ℝ))
+       (fun (_ : List Unit) => delta (0 : Fin 2) m) 1 [])) = 2)'''
+s=s.replace('def Witness : Prop :=\\n  ∃','def Witness : Prop :=\\n  (∃').replace(old,new);p.write_text(s)
+p=b/'bg1n2_4.witness.proof.lean';s=p.read_text();main=s.split('theorem witness : Witness := by\\n',1)[1].removeprefix('  unfold Witness\\n');s=s.split('theorem witness : Witness := by\\n')[0]+'''theorem witness : Witness := by
+  unfold Witness
+  constructor
+  ·
+'''+''.join('  '+line+'\\n' for line in main.splitlines())+'''  · constructor
+    · refine ⟨?_, fun _ _ => delta_dist _, ?_, ?_, ?_, ?_, ?_⟩
+      · constructor <;> simp
+      · intros; norm_num
+      · intros; norm_num
+      · intros; norm_num
+      · intros; intro h o; simp
+      · intro g; simp
+    · norm_num [val, delta, Fin.sum_univ_two]
+''';p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py 1 4 10"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n2/add_shapes.py <<'PY'
+from pathlib import Path
+b=Path(__file__).resolve().parent
+source={2:('ControlStack/GatewayCore.lean','core_bound','{C : ℕ} {R : Type} {S : Fin C → Type} {slots : Fin C → ℕ}'),3:('ControlStack/CovertChannel.lean','covert_bound_lifetime',''),4:('ControlStack/Families/F2/ChannelInstances.lean','sc02_accumulated','{Ω Y O : Type} [Fintype Ω] [Fintype Y] [Fintype O]'),5:('ControlStack/Families/F2/ChannelInstances.lean','rekey_epoch','{Ω Y O : Type} [Fintype Ω] [Fintype Y] [Fintype O]'),6:('ControlStack/Families/F2/ChannelInstances.lean','log_channel',''),7:('ControlStack/Families/F2/ChannelInstances.lean','canonical_seq',''),8:('ControlStack/Scenarios/SC07Exfil.lean','windows_needed',''),9:('ControlStack/Scenarios/SC07Exfil.lean','sc07_mixed',''),10:('ControlStack/Scenarios/SC07Exfil.lean','sc07_fixed_budget','')}
+for n,(path,name,ambient) in source.items():
+ src=Path(path).read_text();sig=src.split('theorem '+name,1)[1].split(':=',1)[0].strip()
+ depth=0
+ for i,c in enumerate(sig):
+  if c in '([{':depth+=1
+  elif c in ')]}':depth-=1
+  elif c==':' and depth==0:break
+ params,concl=sig[:i].strip(),sig[i+1:].strip()
+ original=f'def Original : Prop :=\\n  ∀ {ambient} {params},\\n    {concl}\\n\\n'
+ p=b/f'bg1n2_{n}.statement.lean';s=p.read_text().replace('open scoped BigOperators','open scoped BigOperators\\nopen ControlStack Finset',1)
+ pars=s.split('def BackAt ',1)[1].split(' : Prop :=',1)[0]
+ args=s.split('def BackAt ',1)[1].split(' : Prop := BackHyp ',1)[1].split(' → ',1)[0]
+ s=s.replace('def Claim : Prop :=','def PointwiseClaim : Prop :=',1)
+ end=f'end PL_bg1n2_{n}'
+ s=s.replace(end, original+f'def BackSchema : Prop := ∀ {pars}, BackAt {args}\\n\\ndef OrigSchema : Prop := ∀ {pars}, OrigAt {args}\\n\\ndef Claim : Prop :=\\n  (FrozenBack ↔ BackSchema) ∧ (Original ↔ OrigSchema) ∧ PointwiseClaim\\n\\n'+end)
+ p.write_text(s)
+ p=b/f'bg1n2_{n}.proof.lean';s=p.read_text().replace('theorem claim : Claim := by\\n  unfold Claim','theorem pointwise : PointwiseClaim := by\\n  unfold PointwiseClaim',1)
+ s+='''
+lemma back_shape : FrozenBack ↔ BackSchema := by
+  classical
+  simp only [FrozenBack, BackSchema, BackAt, BackHyp, BackConclusion, and_imp]
+
+lemma original_shape : Original ↔ OrigSchema := by
+  classical
+  simp only [Original, OrigSchema, OrigAt, OrigHyp, OrigConclusion, and_imp]
+  aesop
+
+theorem claim : Claim := ⟨back_shape, original_shape, pointwise⟩
+'''
+ p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/add_shapes.py
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py 2 3 4 5 6 7 8 9 10"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_1.statement-check.txt
+tail -20 docs/lean-english/one-to-one/blind-g1n2/bg1n2_1.statement.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g1n2/bg1n2_1.statement.lean');s=p.read_text().replace('  (((run (2 "'^ 16) (some (fun _ : Unit => 1), []) (List.replicate 5 (.charge () 9))).2.filter'"','  ((run (2 "'^ 16) (some (fun _ : Unit => 1), []) (List.replicate 5 (.charge () 9))).2.filter'"');p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py 1"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_2.statement-check.txt
+tail -80 docs/lean-english/one-to-one/blind-g1n2/bg1n2_2.statement.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import ast,re
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+text=(b/'add_shapes.py').read_text();srcdict=ast.literal_eval(text.split('source=',1)[1].split('\\nfor n,',1)[0])
+for n,(path,name,ambient) in srcdict.items():
+ chunk=Path(path).read_text().split('theorem '+name,1)[1];depth=0
+ for i,c in enumerate(chunk):
+  if c in '([{':depth+=1
+  elif c in ')]}':depth-=1
+  elif chunk[i:i+2]==':=' and depth==0:break
+ sig=chunk[:i].strip();depth=0
+ for i,c in enumerate(sig):
+  if c in '([{':depth+=1
+  elif c in ')]}':depth-=1
+  elif c==':' and depth==0:break
+ params,concl=sig[:i].strip(),sig[i+1:].strip()
+ original=f'def Original : Prop :=\\n  ∀ {ambient} {params},\\n    {concl}\\n\\n'
+ p=b/f'bg1n2_{n}.statement.lean';s=p.read_text();s=re.sub(r'def Original : Prop :=.*?(?=def BackSchema)',lambda m:original,s,flags=re.S);p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "ls docs/lean-english/one-to-one/blind-g1n2/gate-tmp
+ps -eo pid,etime,args | rg 'lean.*PLGate|check_saved|regate.py'"
+
+---
+/bin/bash -lc 'tail -35 docs/lean-english/one-to-one/blind-g1n2/bg1n2_3.gate.txt
+tail -35 docs/lean-english/one-to-one/blind-g1n2/bg1n2_4.gate.txt'
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n2/fix_shapes.py <<'PY'
+from pathlib import Path
+b=Path(__file__).resolve().parent
+# Ordered per-instance parameters, exactly as in the immutable back files.
+items={
+2:('C L Ω M R S _ _ _ _ _ _ slots valid rho enc dec','C L Ω M R S slots valid rho enc dec','hr he hd'),
+3:('E Ω M V _ _ _ _ rho enc dec','E Ω M V rho enc dec','hr he hd'),
+4:('k E Ω Y O _ _ _ rho K dec c L','k E Ω Y O rho K dec c L','hr hd hk hc hL hdom hmass'),
+5:('n a E Ω M Y O _ _ _ _ _ rho K dec c L','n a E Ω M Y O rho K dec c L','hE hr hd hk hc hL hdom hin hout'),
+6:('Kt Q f m Ω M Y _ _ _ _ rho K dec','Kt Q f m Ω M Y rho K dec','hr hd hk0 hk1'),
+7:('Kc m Ω M Y _ _ _ _ rho K dec','Kc m Ω M Y rho K dec','hr hd hk0 hk1'),
+8:('S q b','S q b','hq hb hS'),
+9:('P _ S q pr plans w c','P S q pr plans w c','hq hpr0 hpr1 hc0 hc1 hw'),
+10:('N B S q r Y _ sigma K','N B S q r Y sigma K','hB hr0 hr1 hs0 hs1 hk0 hk1 hrec')}
+orig={
+2:('''    intro C L Ω M R S _ _ _ _ _ _ slots valid rho enc dec
+    rintro ⟨hr, he, hd⟩
+    exact hf valid L rho enc dec hr he hd''','''    intro C R S slots Ω M _ _ _ _ _ _ _ valid L rho enc dec hr he hd
+    exact hf C L Ω M R S slots valid rho enc dec ⟨hr, he, hd⟩'''),
+3:('''    intro E Ω M V _ _ _ _ rho enc dec
+    rintro ⟨hr, he, hd⟩
+    exact hf V rho enc dec hr he hd''','''    intro Ω M _ _ _ E V _ _ rho enc dec hr he hd
+    exact hf E Ω M V rho enc dec ⟨hr, he, hd⟩'''),
+4:('''    intro k E Ω Y O _ _ _ rho K dec c L
+    rintro ⟨hr, hd, hk, hc, hL, hdom, hmass⟩
+    exact hf k E rho K c L dec hr hk hdom hc hL hmass hd''','''    intro Ω Y O _ _ _ k E rho K c L dec hr hk hdom hc hL hmass hd
+    exact hf k E Ω Y O rho K dec c L ⟨hr, hd, hk, hc, hL, hdom, hmass⟩'''),
+5:('''    intro n a E Ω M Y O _ _ _ _ _ rho K dec c L
+    rintro ⟨hE, hr, hd, hk, hc, hL, hdom, hin, hout⟩
+    exact hf n a E hE L hL rho K c dec hr hk hdom hc hin hout hd''','''    intro Ω Y O _ _ _ M _ _ n a E hE L hL rho K c dec hr hk hdom hc hin hout hd
+    exact hf n a E Ω M Y O rho K dec c L ⟨hE, hr, hd, hk, hc, hL, hdom, hin, hout⟩'''),
+6:('''    intro Kt Q f m Ω M Y _ _ _ _ rho K dec
+    rintro ⟨hr, hd, hk0, hk1⟩
+    exact hf Kt f Q m rho K dec hr hk0 hk1 hd''','''    intro Ω M Y _ _ _ _ Kt f Q m rho K dec hr hk0 hk1 hd
+    exact hf Kt Q f m Ω M Y rho K dec ⟨hr, hd, hk0, hk1⟩'''),
+7:('''    intro Kc m Ω M Y _ _ _ _ rho K dec
+    rintro ⟨hr, hd, hk0, hk1⟩
+    exact hf Kc m rho K dec hr hk0 hk1 hd''','''    intro Ω M Y _ _ _ _ Kc m rho K dec hr hk0 hk1 hd
+    exact hf Kc m Ω M Y rho K dec ⟨hr, hd, hk0, hk1⟩'''),
+8:('''    intro S q b
+    rintro ⟨hq, hb, hS⟩
+    exact hf S q hq b hb hS''','''    intro S q hq b hb hS
+    exact hf S q b ⟨hq, hb, hS⟩'''),
+9:('''    intro P _ S q pr plans w c
+    rintro ⟨hq, hpr0, hpr1, hc, hw0, hw1⟩
+    exact hf S q hq c pr hc hpr0 hpr1 w hw0 hw1 plans''','''    intro P _ S q hq c pr hc hpr0 hpr1 w hw0 hw1 plans
+    exact hf P S q pr plans w c ⟨hq, hpr0, hpr1, hc, hw0, hw1⟩'''),
+10:('''    intro N B S q r Y _ sigma K
+    rintro ⟨hB, hr0, hr1, hs, hk0, hk1, hrec⟩
+    exact hf S q B hB r hr0 hr1 K sigma hs hk0 hk1 hrec''','''    intro N Y _ S q B hB r hr0 hr1 K sigma hs hk0 hk1 hrec
+    exact hf N B S q r Y sigma K ⟨hB, hr0, hr1, hs, hk0, hk1, hrec⟩''')}
+for n,(params,args,hyps) in items.items():
+ hs=hyps.split();pat=', '.join(hs);hargs=' '.join(hs)
+ shape=f'''lemma back_shape : FrozenBack ↔ BackSchema := by
+  constructor
+  · intro hf
+    intro {params}
+    rintro ⟨{pat}⟩
+    exact hf {args} {hargs}
+  · intro hf
+    intro {params} {hargs}
+    exact hf {args} ⟨{pat}⟩
+
+lemma original_shape : Original ↔ OrigSchema := by
+  classical
+  constructor
+  · intro hf
+{orig[n][0]}
+  · intro hf
+{orig[n][1]}
+
+theorem claim : Claim := ⟨back_shape, original_shape, pointwise⟩
+'''
+ p=b/f'bg1n2_{n}.proof.lean';s=p.read_text().split('lemma back_shape',1)[0]+shape;p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/fix_shapes.py
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py 2 3 4 5 6 7 8 9 10"
+
+---
+/bin/bash -lc 'tail -30 docs/lean-english/one-to-one/blind-g1n2/bg1n2_4.witness.gate.txt
+cat docs/lean-english/one-to-one/blind-g1n2/bg1n2_4.witness.proof.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+p=b/'bg1n2_4.witness.proof.lean';s=p.read_text().replace('[val, delta,','[ControlStack.Leakage.val, delta,');p.write_text(s)
+p=b/'bg1n2_10.statement.lean';s=p.read_text().replace('noncomputable def testK','noncomputable def sigmaNorm : List (AOut Unit) → Bool → ℝ := fun _ _ => 1 / 2\\nnoncomputable def testK',1).replace('0 < sigmaSub [] true ∧ (∑ a, sigmaSub [] a) = 1 / 2','0 < sigmaSub [] true ∧ (∑ a, sigmaSub [] a) = 1 / 2 ∧\\n    OrigHyp 2 1 1 1 (1 / 2) Unit sigmaNorm (testK sigmaNorm)');p.write_text(s)
+p=b/'bg1n2_10.witness.proof.lean';s=p.read_text().replace('  refine ⟨hb, ?_, by norm_num [sigmaSub], by norm_num [sigmaSub, Fintype.sum_bool]⟩','''  have hn : OrigHyp 2 1 1 1 (1 / 2) Unit sigmaNorm (testK sigmaNorm) := by
+    refine ⟨by norm_num, by norm_num, by norm_num, ?_, ?_, ?_, ?_⟩
+    · intros; norm_num [sigmaNorm, IsDist, Fintype.sum_bool]
+    · intro sched hs h z
+      unfold testK sigmaNorm
+      split_ifs <;> norm_num
+    · intro sched hs h
+      simp only [testK, sigmaNorm, Fintype.sum_prod_type, Fintype.sum_bool, Fintype.univ_unit, Finset.sum_singleton]
+      by_cases hm : memN sched h.length <;> norm_num [hm]
+    · intro sched hs h a
+      simp only [testK, sigmaNorm, Fintype.univ_unit, Finset.sum_singleton]
+      norm_num
+  refine ⟨hb, ?_, by norm_num [sigmaSub], by norm_num [sigmaSub, Fintype.sum_bool], hn⟩''');p.write_text(s)
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py 4 10'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,re
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+paths=['ControlStack/SafetyCaseSC01.lean','ControlStack/GatewayCore.lean','ControlStack/CovertChannel.lean','ControlStack/Families/F2/ChannelInstances.lean','ControlStack/Scenarios/SC07Exfil.lean']
+(b/'SOURCE-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}},indent=2)+'\\n')
+base=b.parent
+assert (b/'leangate_imports.py').read_bytes()==(base/'leangate_imports.py').read_bytes()
+for name,sha in json.loads((b/'typed/HASHES.json').read_text())['files'].items():
+ assert hashlib.sha256((b/name).read_bytes()).hexdigest()==sha
+print('All immutable typed hashes and the unchanged gate helper verified.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+for n in range(2,10):
+ p=b/f'bg1n2_{n}.statement.lean';s=p.read_text();params=s.split('def BackAt ',1)[1].split(' : Prop :=',1)[0];args=s.split(' : Prop := BackHyp ',1)[1].split(' →',1)[0]
+ s=s.replace('def PointwiseClaim : Prop :=','def ComponentwiseClaim : Prop :=',1)
+ s=s.replace('def Claim : Prop :=',f'def PointwiseClaim : Prop :=\\n  ComponentwiseClaim ∧ ∀ {params}, BackAt {args} ↔ OrigAt {args}\\n\\ndef Claim : Prop :=',1);p.write_text(s)
+ p=b/f'bg1n2_{n}.proof.lean';s=p.read_text().replace('theorem pointwise : PointwiseClaim := by\\n  unfold PointwiseClaim','theorem componentwise : ComponentwiseClaim := by\\n  unfold ComponentwiseClaim',1)
+ # Recover names for introduction, including instance positions, from the first shape proof.
+ intros=s.split('lemma back_shape',1)[1].split('    intro ',2)[2].splitlines()[0]
+ lemma=f'''theorem pointwise : PointwiseClaim := by
+  refine ⟨componentwise, ?_⟩
+  intro {intros}
+  obtain ⟨hh, hc⟩ := componentwise {args}
+  exact ⟨fun hb ho => hc.mp (hb (hh.mpr ho)), fun ho hb => hc.mpr (ho (hh.mp hb))⟩
+
+'''
+ s=s.replace('theorem claim : Claim :=',lemma+'theorem claim : Claim :=',1);p.write_text(s)
+n=10
+p=b/f'bg1n2_{n}.statement.lean';s=p.read_text().replace('(FrozenBack ↔ BackSchema) ∧ (Original ↔ OrigSchema) ∧ PointwiseClaim','(FrozenBack ↔ BackSchema) ∧ (Original ↔ OrigSchema) ∧ PointwiseClaim ∧ (FrozenBack → Original)');p.write_text(s)
+p=b/f'bg1n2_{n}.proof.lean';s=p.read_text().replace('theorem claim : Claim := ⟨back_shape, original_shape, pointwise⟩','''theorem back_to_original : FrozenBack → Original := by
+  intro hb
+  apply original_shape.mpr
+  intro N B S q r Y _ sigma K
+  exact (pointwise N B S q r Y sigma K).2.1 ((back_shape.mp hb) N B S q r Y sigma K)
+
+theorem claim : Claim := ⟨back_shape, original_shape, pointwise, back_to_original⟩''');p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py"
+
+---
+/bin/bash -lc "tail -10 docs/lean-english/one-to-one/blind-g1n2/bg1n2_2.proof.lean
+python3 - <<'PY'
+from pathlib import Path
+import json
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+for n in range(1,11):
+ for k in ['', '.witness']:
+  p=b/f'bg1n2_{n}{k}.receipt.json'
+  if p.exists():
+   v=json.loads(p.read_text())
+   print(n,k or 'claim',v['passed'])
+PY"
+
+---
+/bin/bash -lc "tail -15 docs/lean-english/one-to-one/blind-g1n2/bg1n2_2.gate.txt
+python3 - <<'PY'
+from pathlib import Path
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+for n in range(2,10):
+ p=b/f'bg1n2_{n}.proof.lean';s=p.read_text()
+ params=s.split('lemma back_shape',1)[1].split('    intro ',2)[2].splitlines()[0]
+ # Extract forward introduction (without proof hypotheses) rather than reverse introduction.
+ params=s.split('lemma back_shape',1)[1].split('    intro ',1)[1].splitlines()[0]
+ start=s.index('theorem pointwise : PointwiseClaim')
+ a=s[:start];z=s[start:]
+ lines=z.splitlines();idx=next(i for i,l in enumerate(lines) if l.startswith('  intro '));lines[idx]='  intro '+params
+ p.write_text(a+'\\n'.join(lines)+'\\n')
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/check_saved.py 2 3 4 5 6 7 8 9"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,shutil
+b=Path('docs/lean-english/one-to-one/blind-g1n2')
+files={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(b.glob('bg1n2_*.lean'))}
+(b/'COMPARISON-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':files},indent=2)+'\\n')
+for p in b.glob('*.receipt.json'):p.unlink()
+for p in b.glob('*.gate.txt'):p.unlink()
+for p in b.glob('*.statement-check.txt'):p.unlink()
+if (b/'gate-tmp').exists():shutil.rmtree(b/'gate-tmp')
+for name in ['build_comparisons.py','build_claim1.py','add_shapes.py','fix_shapes.py']:(b/name).unlink()
+(b/'PROGRESS.md').write_text('# Phase B progress\\n\\nDone: all ten back files compiled verbatim and hashes frozen before originals; all comparisons and witnesses passed the unchanged deterministic gate during development; hostile English reading and replacement sentences prepared.\\n\\nIn progress: clean re-gate from the repository root after deleting all receipts and gate temporary state.\\n\\nNot done: final receipt audit and RESULTS.md.\\n\\nNo skipped claims. No typing or syntax repairs needed.\\n')
+PY
+python3 docs/lean-english/one-to-one/blind-g1n2/regate.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n2/RESULTS.md <<'EOF'
+# Blind g1n2 Phase B results
+
+The frozen back statements match the original specifications for claims 1–9. Claim 10 has the same conclusion on a strictly larger hypothesis domain: its traffic certificate is a sub-distribution, whereas the original requires a distribution.
+
+These are specification comparisons. EQUIVALENT requires equality of hypothesis domains and pointwise equivalence of conclusions; it does not follow from two closed statements being true. ENGLISH_STRONGER here means the same conclusion is asserted for more instances. The directional proof specializes Back to Orig, and the witness establishes strict domain inclusion. This does not assert that the original theorem and surrounding mathematics cannot independently prove the generalized bound.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+| 1 "'`sc01_case` | EQUIVALENT | [claim](bg1n2_1.receipt.json), [witness](bg1n2_1.witness.receipt.json) | All five conjuncts preserved. Reordered side premises and charge-membership/event-equality premises are equivalent. |
+| 2 `core_bound` | EQUIVALENT | [claim](bg1n2_2.receipt.json), [witness](bg1n2_2.witness.receipt.json) | Pushing the trace law to final views gives exactly the original direct trace sum. Transition prose needs a before-close qualifier. |
+| 3 `covert_bound_lifetime` | EQUIVALENT | [claim](bg1n2_3.receipt.json), [witness](bg1n2_3.witness.receipt.json) | Same tuple observation, distributions, and product/counting conclusion. |
+| 4 `sc02_accumulated` | EQUIVALENT | [claim](bg1n2_4.receipt.json), [witness](bg1n2_4.witness.receipt.json) | Fin-indexed product equals range product; cardinality casts agree. Witness also proves admissible weighted success can equal 2. |
+| 5 `rekey_epoch` | EQUIVALENT | [claim](bg1n2_5.receipt.json), [witness](bg1n2_5.witness.receipt.json) | Curried in-window premises and the disjunctive outside-window condition match the original conjunction/negation. |
+| 6 `log_channel` | EQUIVALENT | [claim](bg1n2_6.receipt.json), [witness](bg1n2_6.witness.receipt.json) | Nested hidden/output sums equal the product-type sum. Parameter order is accounted for. |
+| 7 `canonical_seq` | EQUIVALENT | [claim](bg1n2_7.receipt.json), [witness](bg1n2_7.witness.receipt.json) | Same sub-probability premises and fixed-length alphabet bound. The English wrongly excludes the one-shot instance. |
+| 8 `windows_needed` | EQUIVALENT | [claim](bg1n2_8.receipt.json), [witness](bg1n2_8.witness.receipt.json) | Identical quota, total, and positive-quota premises and traffic-count conclusion. |
+| 9 `sc07_mixed` | EQUIVALENT | [claim](bg1n2_9.receipt.json), [witness](bg1n2_9.witness.receipt.json) | IsDist expands to positivity plus sum 1; the paired catch premises and placement of multiplication inside the conditional agree. |
+| 10 `sc07_fixed_budget` | ENGLISH_STRONGER | [claim](bg1n2_10.receipt.json), [witness](bg1n2_10.witness.receipt.json) | Back permits traffic-certificate row mass ≤ 1; Orig requires mass = 1. Same payoff and bound. Strict witness uses N=2, B=1, r=1/2, and sigma(g,a)=1/4, with row mass 1/2. A normalized original instance is also witnessed. |
+
+Each claim has a saved statement, claim proof, and separate witness proof. The statement-check and gate transcripts are beside its JSON receipts. Claims 2–9 explicitly prove `BackAt ↔ OrigAt` for every common parameter instance, together with hypothesis-domain equivalence and conclusion equivalence. Their gate also proves that these schemas reconstruct the entire frozen Back and copied original type. Claim 1 checks the components pointwise and assembles the full structural equivalence. Claim 10 gates `BackAt → OrigAt`, domain inclusion, conclusion identity, and specialization of the entire frozen Back to the original type. No comparison proof invokes the original theorem as a way to make both sides true.
+
+All ten originals are theorem claims, so there is no definition claim requiring a separate definition-level iff.
+
+## Corrections to the English
+
+**Claim 2, transition description.** Replace the unqualified blanking sentence with: “Before the first close, a rejected payload, unknown channel, side action, or slot overflow blanks the episode. The first close freezes the delivered view; every later event leaves that snapshot unchanged. If no close occurs, the final view is delivered at the end of the trace.” The back statement uses `runG` and therefore already follows these transitions. This prose defect does not change the back/original verdict.
+
+**Claim 3, independence wording.** Replace “the secret is uniform and independent of the seed and of the receiver'"'s inputs” with: “The success expression averages over a uniform secret independently of the shared seed. The decoder receives the seed and the view tuple; that tuple may depend on the secret.” Independence from the receiver's actual observed tuple would be an extra and generally false condition.
+
+**Claims 4–5, probability and kernel wording.** Replace the normalization explanation with: “Only non-negativity and certificate domination are required of the sender's kernel; its rows need not have mass at most one. The theorem bounds the stated weighted exact-recovery expression. When the kernel rows are probability or sub-probability laws, that expression has the corresponding probability interpretation.” For claim 4 the separately gated witness satisfies the actual premises with k=1, E=1, singleton hidden/visible alphabets, K=4, c=4, and L=4; a decoder always guessing zero yields weighted success 2. Thus saying only that the kernel ‘may lose mass’ misses that it may also gain mass.
+
+**Claim 5, persistent state and the other rounds.** Replace the categorical cache claim with: “The bound includes all n rounds provided the same secret-independent certificate has mass at most one outside the window. Persistent hidden state violates this premise only when its effect on visible outputs prevents such a certificate; hidden correlation by itself does not force a violation.” Replace “whatever happens in the other rounds” with “for any other-round kernels satisfying the outside-window domination and mass premises.” A mass-one certificate rules out distinct certain visible outputs for two secrets; it should not be described as forbidding every possible conditional or partial disclosure in a sub-probability model.
+
+**Claim 6, free-text qualification.** Replace “if a free-text field exists the bound is void” with: “A visible field outside the stated finite record alphabet must be counted or certified separately. A field large enough to carry the entire secret can permit exact recovery with probability one.” The neighboring theorem is a full-secret-capacity example, not a claim about every field described as free text.
+
+**Claim 7, Does NOT say (b).** Replace it with: “The bound is for any fixed number m of items, including m=1. It does not cover unbounded or observation-dependent sequence lengths without modeling those observations.” Replace the bit-capacity gloss in (c) with: “The formal conclusion concerns exact recovery. For Kc ≥ 1, the number of possible fixed-length visible sequences is Kc"'^m, whose log2 cardinality is m log2 Kc.”
+
+**Claim 10, missing normalization and traffic-law interpretation.** Replace the traffic-law premise with: “There is a schedule-independent certificate sigma on traffic decisions at each visible history g, with non-negative entries and sum_a sigma(g,a)=1. For every size-B audit schedule and every full history, the non-caught marginal for action a is bounded by sigma(g,a) times 1-r when that action sends traffic in an audited window, and by sigma(g,a) otherwise.” The original requires equality to one, not merely an upper bound. Its `hrec` constrains the non-caught marginal; it does not separately assert that sigma equals the complete action marginal of K, including caught branches.
+
+No replacement is needed for the formal conclusion of claims 1, 8, or 9.
+
+## Ambiguities exposed
+
+The verdicts measure the frozen back translations against the original Lean declarations. They do not certify every sentence of surrounding English. In particular, claims 2, 4, 5, and 7 can have an EQUIVALENT back statement while retaining prose defects listed above.
+
+The original declarations of claims 2 and 3 additionally quantify decidable-equality instances for their finite observation alphabets. Classical instances eliminate this typing difference in the gated schema proofs. It adds no security or probability premise. All back files compiled without repairs.
+
+The “Does NOT say” boundaries were checked claim by claim:
+
+| Claim | Hostile reading of the exclusions |
+|---|---|
+| 1 | (a)–(c) respected: no deployment observation closure, one-lineage restriction, empirical completion result, VM usefulness, or composition of the five separate facts is derived. The explicit warning that W need not be a probability kernel is accurate. |
+| 2 | (a)–(c) respected: one final gateway view, no Python refinement proof, and an exact-recovery counting bound. The before/after-close defect is in the positive description. |
+| 3 | (a)–(c) respected: no real lifetime/side-channel completeness or small ledger cap is established; the encoder is a joint tuple law. The independence wording needs the correction above. |
+| 4 | (a)–(c) respected: certificates are premises, the payoff is exact recovery only, and extra observation channels are excluded. The word probability needs normalization. Domination is over every full hidden history, not just an average history. |
+| 5 | (b)–(c) respected. (a) correctly makes deployment re-keying conditional, but the claim that any secret-carrying cache necessarily violates the premise is too broad. The statement imposes certificate domination, not an explicit hidden-state independence predicate. |
+| 6 | (b)–(c) respected: fixed m rounds, lost mass not a visible absence symbol, no timing/error channels. (a) has the free-text overgeneralization corrected above. |
+| 7 | (a) respected. (b) incorrectly excludes m=1. (c) is a counting interpretation for Kc ≥ 1, not a separate Lean theorem about meaning or information measures; Kc=0 is allowed by the formal statement. |
+| 8 | (a)–(c) respected: abstract counts and a quota hypothesis; no clock, enforcement, or incompressibility result. |
+| 9 | (a)–(c) respected: the event is success of the whole capped plan with no catch, with its product survival model. It does not silently replace this by prefix completion, prove the truncation bridge, or address a hidden fixed budget or additional channels. |
+| 10 | (a)–(c) respected: exactly N windows, at least ceilDiv S q traffic windows and no catch; no quota/byte bridge, deployment schedule secrecy, or deployment recall proof. There is no positive-q hypothesis in this theorem. The certificate normalization is missing from the English. |
+
+Non-vacuity witnesses use positive round counts, finite nonempty alphabets and secret spaces with multiple secrets where applicable. The SC-01 witness also realizes five ledger admissions. The SC-07 witnesses use positive quota and nontrivial recall/survival values. Claim 10 witnesses both the extra sub-distribution domain and a normalized original domain.
+
+## Reproduction and integrity
+
+Run from the repository root:
+
+```bash
+python3 docs/lean-english/one-to-one/blind-g1n2/regate.py
+```
+
+`regate.py` rechecks every saved statement and separately gates every claim and witness through the deterministic gate; any failure makes its exit status nonzero. It does not regenerate or rewrite statement/proof sources. Its persistent outputs are the JSON receipts and their text transcripts; the gate creates and removes temporary Lean check files.
+
+`leangate_imports.py` is a byte-for-byte copy of the permitted helper: banned-token patterns, nonce assembly, output checks, and allowed axioms are unchanged. `run_gate_blind.diff` records the runner relocation and new imports/glob. The relocated runner requires `parents[4]` rather than `parents[3]` to resolve the repository root because this output directory is one level deeper. No gate security check was changed.
+
+`typed/HASHES.json` was written at 2026-10-13T05:13:16.436475+00:00 before opening any original declaration. Every typed file is byte-for-byte identical to its verified Phase A back file. Per-claim compile logs and no-repair records are in `compile-logs/` and `compile-fixes/`. `COMPARISON-HASHES.json` freezes the saved comparison and witness sources; `SOURCE-HASHES.json` records the original source files read.
+
+Only the allowed English input, claim list, back files/hash manifest, and gate helpers were read under `docs/lean-english/`. No earlier comparison results were used. No git command, download, ControlStack edit, or write outside this output directory was performed.
+EOF'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,re,datetime
+b=Path('docs/lean-english/one-to-one/blind-g1n2'); helpers=b.parent
+assert (b/'leangate_imports.py').read_bytes()==(helpers/'leangate_imports.py').read_bytes()
+for manifest in ['back/BACK-HASHES.json','typed/HASHES.json','COMPARISON-HASHES.json']:
+ for name,h in json.loads((b/manifest).read_text())['files'].items():
+  assert hashlib.sha256((b/name).read_bytes()).hexdigest()==h,(manifest,name)
+for name,h in json.loads((b/'SOURCE-HASHES.json').read_text())['files'].items():
+ assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==h,name
+checks={}
+for n in range(1,11):
+ typed=next((b/'typed').glob(f'{n}-*.lean')).read_text()
+ frozen=typed[typed.index('def Back_'):typed.rindex('\\nend ')].replace('def Back_'+typed.split('def Back_',1)[1].split(' : Prop',1)[0],'def FrozenBack',1).strip()
+ statement=(b/f'bg1n2_{n}.statement.lean').read_text()
+ assert frozen in statement,('FrozenBack fidelity',n)
+ for k,suffix in [('claim','.proof.lean'),('witness','.witness.proof.lean')]:
+  tag=f'bg1n2_{n}'+('' if k=='claim' else '.witness')
+  r=json.loads((b/(tag+'.receipt.json')).read_text())
+  assert r['passed'] and r['statement_passed'],tag
+  assert r['target']==k
+  assert r['statement_sha256']==hashlib.sha256(statement.encode()).hexdigest(),tag
+  assert r['proof_sha256']==hashlib.sha256((b/(f'bg1n2_{n}'+suffix)).read_bytes()).hexdigest(),tag
+  assert r['gate_sha256']==hashlib.sha256((b/'leangate_imports.py').read_bytes()).hexdigest()
+  checks[tag]='PASS'
+assert not list((b/'gate-tmp').glob('*'))
+now=datetime.datetime.now(datetime.timezone.utc);frozen=datetime.datetime.fromisoformat(json.loads((b/'typed/HASHES.json').read_text())['utc']); elapsed=(now-frozen).total_seconds()
+(b/'FINAL-AUDIT.json').write_text(json.dumps({'utc':now.isoformat(),'gate_helper_matches_permitted_source':True,'immutable_hashes_match':True,'frozen_back_bodies_match_typed_files':True,'receipt_source_hashes_match':True,'clean_regate_exit_code':0,'checks':checks},indent=2)+'\\n')
+(b/'PROGRESS.md').write_text(f'''# Phase B progress
+
+Done: 10/10 back files compiled as written; Phase A SHA-256 hashes verified; 10 identical typed copies and no-repair diffs saved before reading originals. 10/10 specification comparisons completed. 10/10 claim gates and 10/10 separate witness gates passed. The complete clean re-gate ran from the repository root with no prior receipts or gate temporary state and exited 0. Final receipt hashes, frozen back bodies, typed/back hashes, original source hashes, and unchanged gate-helper bytes were checked. RESULTS.md includes per-claim exclusion reviews, replacement sentences, and ambiguities.
+
+Not done: nothing required by Phase B remains. No UNDECIDED, NOT_FORMALISABLE, failed final gate, or unfinished claim.
+
+Time: typed statements frozen at {frozen.isoformat()}; final audit at {now.isoformat()}. Elapsed from typed freeze through final audit: {elapsed/60:.1f} minutes, plus the initial reading and verbatim compilation before the freeze.
+
+What could not be done: no deployment observations, kernel normalization, re-keying independence, gateway implementation refinement, or quota-to-audit event bridge were established by this statement comparison. These are outside the authorized Phase B scope and are not reported as theorem consequences. No mathematical claim is made that the original theorem cannot be generalized beyond its normalized traffic-certificate domain.
+
+All outputs are confined to this directory. ControlStack was not edited. No git command or download was run.
+
+Reproduce receipts: "'`python3 docs/lean-english/one-to-one/blind-g1n2/regate.py` from the repository root. This rewrites receipts/transcripts, leaves saved statement/proof files untouched, and exits nonzero on any gate failure.
+'"''')
+print('FINAL AUDIT: 20/20 deterministic gates passed; all source and receipt hashes match; no gate temp files remain.')
+print('Completed UTC:',now.isoformat())
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g1n2/RESULTS.md')
+s=p.read_text().replace('Each claim has a saved statement, claim proof, and separate witness proof.', 'The clean re-gate exited 0: all 10 claim gates and all 10 separately run witness gates passed. Final audit completed at 2026-10-13T05:36:30.854543+00:00; receipt/source hashes and the unchanged gate helper were verified in "'`FINAL-AUDIT.json`.'"\\n\\nEach claim has a saved statement, claim proof, and separate witness proof.',1)
+p.write_text(s)
+PY"

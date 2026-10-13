@@ -1,0 +1,6 @@
+ControlStack/Scenarios/SC23IsolationV2.lean:442
+
+theorem w1_impossible_v2 :
+    (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed =
+      (run E0 full init [.toolResult 0, .derive, .act 5 [1] 0]).executed ∧
+    (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed = [⟨5, [0], false, none⟩] 

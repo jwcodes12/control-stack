@@ -1,0 +1,74 @@
+FAIL lean exit 1
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:29:15: warning: Variable name `k` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _k
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:38:15: warning: Variable name `k` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _k
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:46:133: warning: Variable name `σ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _σ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:48:133: warning: Variable name `σ` is not explicitly referenced.
+
+Hint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:
+  [apply] _σ
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:77:240: error: unsolved goals
+N B k : ℕ
+r : ℝ
+Y : Type
+inst : Fintype Y
+K : Finset (Fin N) → List (Y × AOut Unit) → Y × AOut Unit → ℝ
+σ : List (AOut Unit) → Bool → ℝ
+h : HBack N B k r Y K σ
+⊢ ∑ S ∈ randomSchedules N B, (↑(N.choose B))⁻¹ * val (K S) (recallSucc k) N [] ≤ hypMiss N B k r ↔
+    ∑ S ∈ Finset.univ ∩ randomSchedules N B, (↑(N.choose B))⁻¹ * val (K S) (recallSucc k) N [] ≤ hypMiss N B k r
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:82:54: warning: This simp argument is unused:
+  Finset.inter_univ
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [ite_mul, zero_mul, Finset.sum_ite_mem]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:86:2: error: unsolved goals
+case left
+⊢ 2⁻¹ ≤ 1 ∧ ∀ S ∈ randomSchedules 2 1, {x | x.2.1 = true ∧ x.2.2.2 = true}.card ≤ 1
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:86:42: warning: This simp argument is unused:
+  Fintype.sum_prod_type
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [HOrig, cKernel, cSigma, IsDist, Fintype.sum_bool]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:86:65: warning: This simp argument is unused:
+  Fintype.sum_bool
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [HOrig, cKernel, cSigma, IsDist, Fintype.sum_prod_type]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:92:75: warning: This simp argument is unused:
+  true_implies
+
+Hint: Omit it from the simp argument list.
+  [apply] simp only [Back_sc21_adaptive_recall, HBack, BackAt, and_imp]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/home/opc/projects/blind-work/g5n1/b/docs/lean-english/one-to-one/blind-g5n1/gate-tmp/PLGate_bg5n1_7_claim_726c86aab5e2.lean:99:15: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+S : Finset (Fin 2)
+hS : S ∈ randomSchedules 2 1
+h : List (Unit × AOut Unit)
+⊢ 1 / 4 ≤ if memN S h.length then 1 / 4 else 1 / 2
+'gate_726c86aab5e2' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+

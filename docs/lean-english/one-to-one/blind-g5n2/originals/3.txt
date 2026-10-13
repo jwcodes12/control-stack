@@ -1,0 +1,6 @@
+ControlStack/Scenarios/SC23Isolation.lean:314
+
+theorem sc23_isolated_safe (E : Env) (ops : List Op) : ∀ x ∈ (run E full init ops).executed, ActOk E (run E full init ops) x :=
+  (run_inv E init ops (inv_init E)).exec
+
+theorem step_halted (E : Env) (s : St) (o : Op) (hh : s.halted = true) : step E full s o = s 

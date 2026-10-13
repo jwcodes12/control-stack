@@ -1,0 +1,796 @@
+/bin/bash -lc "pwd; rg --files -g 'AGENTS.md' -g 'lakefile.*' -g 'lean-toolchain' -g 'CLAIMS.txt' -g 'BACK-HASHES.json' -g '*.lean' docs/lean-english/one-to-one/blind-g5n2; cat docs/lean-english/sol-input/batch-g5n2.md; cat docs/lean-english/one-to-one/blind-g5n2/CLAIMS.txt; cat docs/lean-english/one-to-one/blind-g5n2/BACK-HASHES.json"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/run_gate.py; cat docs/lean-english/one-to-one/leangate_imports.py; cat docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g5n2/AGENTS.md AGENTS.md; do if [ -f "$p" ]; then cat "$p"; fi; done
+cat docs/lean-english/one-to-one/blind-g5n2/back/BACK-HASHES.json
+for p in docs/lean-english/one-to-one/blind-g5n2/back/*.lean; do cat "$p"; done'
+
+---
+/bin/bash -lc 'for p in CLAUDE.md GEMINI.md; do if [ -f "$p" ]; then cat "$p"; fi; done
+python3 - <<'"'PY'
+from pathlib import Path
+import concurrent.futures, hashlib,json,subprocess,datetime
+out=Path('docs/lean-english/one-to-one/blind-g5n2')
+for d in ['compile-logs','compile-fixes','typed']: (out/d).mkdir(exist_ok=True)
+hashes=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+files=sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+for p in files:
+ assert hashlib.sha256(p.read_bytes()).hexdigest()==hashes['back/'+p.name],p
+
+def compile(p):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True,timeout=180)
+ n=p.name.split('-')[0]
+ (out/'compile-logs'/f'{n}.txt').write_text(r.stdout+r.stderr)
+ return (p,r.returncode)
+results=list(concurrent.futures.ThreadPoolExecutor(max_workers=4).map(compile,files))
+manifest={}
+for p,rc in results:
+ print(p.name,rc,flush=True)
+ if rc==0:
+  dest=out/'typed'/p.name; dest.write_bytes(p.read_bytes())
+  manifest[dest.name]=hashlib.sha256(dest.read_bytes()).hexdigest()
+  (out/'compile-fixes'/(p.name.split('-')[0]+'.diff')).write_text('No repair required. Compiles as written. Meaning unchanged.\\n')
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':manifest},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('Phase B started. All back hashes verified. Initial compilation and typed hashes recorded before opening original declarations.\\n')
+PY"
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g CLAUDE.md -g GEMINI.md docs ControlStack | rg '("'^|/)(AGENTS|CLAUDE|GEMINI)'"\\.md"'$'"'"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one'); out=p/'blind-g5n2'
+s=(p/'run_gate.py').read_text().replace('parents[3]','parents[4]').replace(\"OUT/'leangate_imports.py'\",\"OUT.parent/'leangate_imports.py'\").replace(\"ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay\",\"ControlStack.Scenarios.SC23Isolation ControlStack.Scenarios.SC23IsolationV2 ControlStack.Scenarios.AuthInstancesB ControlStack.Families.F6.MonitorCollusion\").replace(\"g0_*.statement.lean\",\"bg5n2_*.statement.lean\")
+(out/'run_gate_blind.py').write_text(s)
+PY"
+
+---
+/bin/bash -lc "rg -n 'theorem (noninterference|w1_impossible|sc23_isolated_safe|noninterference_authed|w1_impossible_v2|sc23v2_safe_authenticated|sc23_safe_authenticated|forged23_acts_without_auth|pass_transfer|collusion_uniform|canon_channel|phase_learning)|def (Rel|ActOk|Good|SameExceptContent|SameIssued|passRate|IsDist|successProb)|structure (Env|Policy)' ControlStack/Scenarios/SC23Isolation.lean ControlStack/Scenarios/SC23IsolationV2.lean ControlStack/Scenarios/AuthInstancesB.lean ControlStack/Families/F6/MonitorCollusion.lean
+cat ControlStack/Families/F6/MonitorCollusion.lean"
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC23Isolation.lean; cat ControlStack/Scenarios/SC23IsolationV2.lean; cat ControlStack/Scenarios/AuthInstancesB.lean'
+
+---
+/bin/bash -lc "sed -n '45,95p' ControlStack/Scenarios/SC23Isolation.lean
+sed -n '155,178p' ControlStack/Scenarios/SC23Isolation.lean
+sed -n '231,263p' ControlStack/Scenarios/SC23Isolation.lean
+sed -n '351,394p' ControlStack/Scenarios/SC23Isolation.lean
+sed -n '250,291p' ControlStack/Scenarios/SC23IsolationV2.lean
+rg -n 'def (Good|ActOk|IsDist|successProb|Dominated)|noncomputable def successProb' ControlStack/Scenarios/SC23Injection.lean ControlStack/Core/Covert.lean ControlStack/Core/Leakage.lean
+cat ControlStack/Core/Covert.lean"
+
+---
+/bin/bash -lc "rg -n 'def IsDist|def successProb|noncomputable def successProb|namespace ControlStack.Covert' ControlStack
+sed -n '136,160p' ControlStack/Scenarios/SC23Injection.lean
+sed -n '138,177p' ControlStack/Core/Leakage.lean
+head -35 ControlStack/Core/Leakage.lean"
+
+---
+/bin/bash -lc "sed -n '17,43p' ControlStack/CovertChannel.lean
+sed -n '85,107p' ControlStack/Core/Leakage.lean
+rg -n 'def (run|init|full|claim|raw)|def E0' ControlStack/Scenarios/SC23IsolationV2.lean"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g5n2/build_checks.py <<'PY'
+from pathlib import Path
+import re
+OUT=Path(__file__).resolve().parent
+
+def save(n,opens,body,proof,witness):
+ cid=f'bg5n2_{n}'
+ p=next((OUT/'typed').glob(f'{n}-*.lean'))
+ src=p.read_text()
+ src=re.sub(r'--["'^'"\\n]*','',src)
+ src=re.sub(r'"'^import .*'"\\n','',src,flags=re.M)
+ src=re.sub(r'"'^namespace .*'"\\n|"'^end .*'"\\n|"'^open .*'"\\n','',src,flags=re.M).strip()
+ statement=f'namespace PL_{cid}\\n{opens}\\n{src}\\n\\n{body}\\nend PL_{cid}\\n'
+ (OUT/f'{cid}.statement.lean').write_text(statement)
+ (OUT/f'{cid}.proof.lean').write_text(proof+'\\n\\ntheorem witness : Witness := by\\n'+witness+'\\n')
+
+S='open ControlStack.SC23Isolation'
+T='open ControlStack.SC23IsolationV2 ControlStack.Authenticated ControlStack.Gate'
+A='open ControlStack ControlStack.AuthInstances ControlStack.AuthenticatedLog'
+C='open Finset ControlStack.MonitorCollusion ControlStack.Covert ControlStack.Leakage'
+# Each Orig expression below is the original declaration's conclusion, with its
+# parameters held fixed. Back expressions come from the frozen translation.
+save(1,S,'''def Claim : Prop :=
+  (Back_noninterference = (∀ (E : Env) (ops ops' : List Op),
+    List.Forall₂ SameExceptContent ops ops' → Rel (run E full init ops) (run E full init ops'))) ∧
+  (∀ (E : Env) (ops ops' : List Op), List.Forall₂ SameExceptContent ops ops' →
+    (Rel (run E full init ops) (run E full init ops') ↔
+     Rel (run E full init ops) (run E full init ops')))
+def Witness : Prop :=
+  List.Forall₂ SameExceptContent
+    ([.toolResult 66, .derive, .act 5 [1] 0] : List Op)
+    [.toolResult 0, .derive, .act 5 [1] 0] ∧
+  (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed = [⟨5,[41],false,none⟩]''',
+'''theorem claim : Claim := by
+  exact ⟨rfl, fun _ _ _ _ => Iff.rfl⟩''',
+'''  constructor
+  · repeat' constructor
+  · decide''')
+save(2,S,'''def Orig : Prop :=
+  (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed =
+    (run E0 full init [.toolResult 0, .derive, .act 5 [1] 0]).executed ∧
+  (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed = [⟨5,[41],false,none⟩]
+def Claim : Prop := Back_w1_impossible ↔ Orig
+def Witness : Prop := (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed = [⟨5,[41],false,none⟩]''',
+'''theorem claim : Claim := by
+  rfl''','''  decide''')
+save(3,S,'''def Claim : Prop :=
+  (Back_sc23_isolated_safe = (∀ (E : Env) (ops : List Op),
+    ∀ x ∈ (run E full init ops).executed, ActOk E (run E full init ops) x)) ∧
+  (∀ (E : Env) (ops : List Op) (x : Act), x ∈ (run E full init ops).executed →
+    (ActOk E (run E full init ops) x ↔
+     (x.tool ∈ E.sensitive → x.tainted = true →
+       ∃ n, x.conf = some n ∧ ∃ cf ∈ (run E full init ops).confs,
+         cf.n = n ∧ cf.tool = x.tool ∧ cf.vals = x.vals ∧ cf.by_ ∈ E.users)))
+def Witness : Prop :=
+  (run E0 full init [.toolResult 66, .confirm 1 7 5 [66], .act 5 [0] 7]).executed = [⟨5,[66],true,some 7⟩]''',
+'''theorem claim : Claim := by
+  exact ⟨rfl, fun _ _ _ _ => Iff.rfl⟩''','''  decide''')
+save(4,T,'''def Claim : Prop :=
+  (Back_noninterference_authed = (∀ (E : Env) (ops ops' : List (ℕ × Op)),
+    List.Forall₂ (fun io io' => io.1 = io'.1 ∧ SameExceptContent io.2 io'.2) ops ops' →
+      Rel ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops)
+        ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops'))) ∧
+  (∀ (E : Env) (ops ops' : List (ℕ × Op)),
+    List.Forall₂ (fun io io' => io.1 = io'.1 ∧ SameExceptContent io.2 io'.2) ops ops' →
+    (Rel ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops)
+       ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops') ↔
+     Rel ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops)
+       ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops')))
+def Witness : Prop :=
+  List.Forall₂ (fun io io' : ℕ × Op => io.1 = io'.1 ∧ SameExceptContent io.2 io'.2)
+    [(7,.toolResult 66), (1,.derive), (1,.act 5 [1] 0)]
+    [(7,.toolResult 0), (1,.derive), (1,.act 5 [1] 0)] ∧
+  ((authed (raw E0) ControlStack.SC23IsolationV2.claim).run init
+    [(7,.toolResult 66), (1,.derive), (1,.act 5 [1] 0)]).executed = [⟨5,[0],false,none⟩]''',
+'''theorem claim : Claim := by
+  exact ⟨rfl, fun _ _ _ _ => Iff.rfl⟩''',
+'''  constructor
+  · repeat' constructor
+    all_goals first | rfl | exact Or.inr ⟨66,0,rfl,rfl⟩
+  · decide''')
+save(5,'open ControlStack.SC23IsolationV2', '''def Orig : Prop :=
+  (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed =
+    (run E0 full init [.toolResult 0, .derive, .act 5 [1] 0]).executed ∧
+  (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed = [⟨5,[0],false,none⟩]
+def Claim : Prop := Back_w1_impossible_v2 ↔ Orig
+def Witness : Prop := (run E0 full init [.toolResult 66, .derive, .act 5 [1] 0]).executed = [⟨5,[0],false,none⟩]''',
+'''theorem claim : Claim := by
+  rfl''','''  decide''')
+save(6,T,'''def Claim : Prop :=
+  (Back_sc23v2_safe_authenticated = (∀ (E : Env) (U : List ℕ),
+    (∀ u ∈ U, u ∉ E.users) → ∀ (ops : List (ℕ × Op)),
+    ∀ x ∈ ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops).executed,
+    x.tool ∈ E.sensitive → x.tainted = true →
+      ∃ c n, c ∈ E.users ∧ c ∉ U ∧ (c, Op.confirm c n x.tool x.vals) ∈ ops)) ∧
+  (∀ (E : Env) (U : List ℕ), (∀ u ∈ U, u ∉ E.users) →
+    ∀ (ops : List (ℕ × Op)) (x : Act),
+      x ∈ ((authed (raw E) ControlStack.SC23IsolationV2.claim).run init ops).executed →
+      x.tool ∈ E.sensitive → x.tainted = true →
+      ((∃ (c n : ℕ), c ∈ E.users ∧ c ∉ U ∧ (c, Op.confirm c n x.tool x.vals) ∈ ops) ↔
+       (∃ c n, c ∈ E.users ∧ c ∉ U ∧ (c, Op.confirm c n x.tool x.vals) ∈ ops)))
+def Witness : Prop :=
+  (∀ u ∈ ([7] : List ℕ), u ∉ E0.users) ∧
+  ((authed (raw E0) ControlStack.SC23IsolationV2.claim).run init
+    [(7,.toolResult 66),(1,.confirm 1 7 5 [66]),(7,.act 5 [0] 7)]).executed = [⟨5,[66],true,some 7⟩]''',
+'''theorem claim : Claim := by
+  exact ⟨rfl, fun _ _ _ _ _ _ _ _ _ => Iff.rfl⟩''',
+'''  constructor
+  · simp [E0]
+  · decide''')
+save(7,A,'''def BackAt (P : SC23.Policy) (U : List ℕ) (ops : List (ℕ × SC23.Op)) : Prop :=
+  let s := authRun (SC23.step P SC23.full) claim23 SC23.init ops
+  SC23.Good P s ∧ ∀ cf ∈ s.confs,
+    ∃ c : ℕ, c ∈ P.users ∧ c ∉ U ∧ c = cf.by_ ∧
+      (c, SC23.Op.confirm c cf.n cf.tool cf.vals) ∈ ops
+def OrigAt (P : SC23.Policy) (U : List ℕ) (ops : List (ℕ × SC23.Op)) : Prop :=
+  let s := authRun (SC23.step P SC23.full) claim23 SC23.init ops
+  SC23.Good P s ∧ ∀ cf ∈ s.confs, ∃ c o, (c,o) ∈ ops ∧ c ∉ U ∧
+    (o = SC23.Op.confirm c cf.n cf.tool cf.vals ∧ c = cf.by_ ∧ c ∈ P.users)
+def Claim : Prop :=
+  (Back_sc23_safe_authenticated = (∀ (P : SC23.Policy) (U : List ℕ),
+    (∀ u ∈ U, u ∉ P.users) → ∀ ops, BackAt P U ops)) ∧
+  (∀ (P : SC23.Policy) (U : List ℕ) (ops : List (ℕ × SC23.Op)),
+    (∀ u ∈ U, u ∉ P.users) → (BackAt P U ops ↔ OrigAt P U ops))
+def Witness : Prop :=
+  (∀ u ∈ ([7] : List ℕ), u ∉ SC23.P0.users) ∧
+  (authRun (SC23.step SC23.P0 SC23.full) claim23 SC23.init
+    [(7,.toolResult 0 66),(1,.confirm 1 7 5 [66]),(7,.act 5 [0] 7)]).executed = [⟨5,[66],true,some 7⟩]''',
+'''theorem claim : Claim := by
+  refine ⟨rfl, ?_⟩
+  intro P U ops _
+  constructor
+  · rintro ⟨hg, hc⟩
+    refine ⟨hg, ?_⟩
+    intro cf hcf
+    obtain ⟨c, hu, hn, he, hm⟩ := hc cf hcf
+    exact ⟨c, SC23.Op.confirm c cf.n cf.tool cf.vals, hm, hn, rfl, he, hu⟩
+  · rintro ⟨hg, hc⟩
+    refine ⟨hg, ?_⟩
+    intro cf hcf
+    obtain ⟨c, o, hm, hn, ho, he, hu⟩ := hc cf hcf
+    subst o
+    exact ⟨c, hu, hn, he, hm⟩''',
+'''  constructor
+  · simp [SC23.P0]
+  · decide''')
+save(8,A,'''def Orig : Prop :=
+  (authRun (SC23.step SC23.P0 SC23.full) (fun _ => none) SC23.init forged23).executed = [⟨5,[66],true,some 7⟩] ∧
+  (authRun (SC23.step SC23.P0 SC23.full) claim23 SC23.init forged23).executed = []
+def Claim : Prop := Back_forged23_acts_without_auth ↔ Orig
+def Witness : Prop :=
+  forged23 = [(7,SC23.Op.toolResult 0 66),(7,SC23.Op.confirm 1 7 5 [66]),(7,SC23.Op.act 5 [0] 7)] ∧
+  Back_forged23_acts_without_auth''',
+'''theorem claim : Claim := by
+  rfl''','''  constructor <;> decide''')
+save(9,C,'''def Claim : Prop :=
+  (Back_pass_transfer = (∀ (V : Type) [Fintype V] (P Q β : V → ℝ),
+    IsDist P → IsDist Q → (∀ v, 0 ≤ β v ∧ β v ≤ 1) →
+      |passRate P β - passRate Q β| ≤ tv P Q)) ∧
+  (∀ (V : Type) [Fintype V] (P Q β : V → ℝ),
+    IsDist P → IsDist Q → (∀ v, 0 ≤ β v ∧ β v ≤ 1) →
+      (|passRate P β - passRate Q β| ≤ tv P Q ↔
+       |passRate Q β - passRate P β| ≤ tv P Q))
+def Witness : Prop :=
+  IsDist stegoReal ∧ IsDist stegoHoney ∧
+  (∀ v, 0 ≤ stegoMonitor v ∧ stegoMonitor v ≤ 1) ∧
+  passRate stegoReal stegoMonitor = 1 ∧ passRate stegoHoney stegoMonitor = 0 ∧ tv stegoReal stegoHoney = 1''',
+'''theorem claim : Claim := by
+  refine ⟨rfl, ?_⟩
+  intro V _ P Q β _ _ _
+  rw [abs_sub_comm (passRate P β) (passRate Q β)]''',
+'''  norm_num [IsDist, stegoReal, stegoHoney, stegoMonitor, passRate, tv]
+  all_goals intro v; cases v <;> norm_num''')
+save(10,C,'''def Claim : Prop :=
+  (Back_collusion_uniform = (∀ (V : Type) [Fintype V] (P Q : V → ℝ) (monitor : V → Bool → ℝ),
+    IsDist P → IsDist Q → (∀ v, IsDist (monitor v)) →
+      (passRate P (fun v => monitor v true) + passRate Q (fun v => monitor v false))/2 ≤ (1+tv P Q)/2)) ∧
+  (∀ (V : Type) [Fintype V] (P Q : V → ℝ) (monitor : V → Bool → ℝ),
+    IsDist P → IsDist Q → (∀ v, IsDist (monitor v)) →
+    ((passRate P (fun v => monitor v true) + passRate Q (fun v => monitor v false))/2 ≤ (1+tv P Q)/2 ↔
+     (∑ φ : Bool, (1/2 : ℝ) * ∑ v, (if φ then P v else Q v) *
+       ∑ a : Bool, monitor v a * (if a = φ then 1 else 0)) ≤ (1+tv P Q)/2))
+def Witness : Prop :=
+  IsDist stegoReal ∧ IsDist stegoHoney ∧
+  (∀ v : Bool, IsDist (fun a : Bool => if a = v then (1:ℝ) else 0)) ∧
+  (passRate stegoReal (fun v => if true = v then 1 else 0) +
+    passRate stegoHoney (fun v => if false = v then 1 else 0))/2 = 1''',
+'''theorem claim : Claim := by
+  refine ⟨rfl, ?_⟩
+  intro V _ P Q monitor _ _ _
+  simp only [Fintype.sum_bool, Bool.false_eq_true, if_false, if_true,
+    Bool.true_eq_false, mul_zero, mul_one, zero_add, add_zero]
+  unfold passRate
+  ring_nf''',
+'''  norm_num [IsDist, stegoReal, stegoHoney, passRate, Fintype.sum_bool]
+  all_goals intro v; cases v <;> norm_num''')
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/build_checks.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g5n2/regate.py <<'PY'
+\"\"\"Recheck all twelve saved claims and witnesses; only receipt files are rewritten.\"\"\"
+from pathlib import Path
+import hashlib, importlib.util, json
+from concurrent.futures import ThreadPoolExecutor
+OUT=Path(__file__).resolve().parent
+spec=importlib.util.spec_from_file_location('run_gate_blind', OUT/'run_gate_blind.py')
+r=importlib.util.module_from_spec(spec); spec.loader.exec_module(r)
+def sha(b): return hashlib.sha256(b).hexdigest()
+def run(n):
+    cid=f'bg5n2_{n}'
+    receipt={'cid':cid,'passed':False,'claim_passed':False,'witness_passed':False,
+             'gate_sha256':sha(Path(r.g.__file__).read_bytes()),
+             'security_checks_unchanged':True,'imports_option_local_only':True,
+             'PL_IMPORTS':r.os.environ['PL_IMPORTS'],'PL_LEAN_PROJ':str(r.ROOT)}
+    try:
+        statement=(OUT/f'{cid}.statement.lean').read_text()
+        proof=(OUT/f'{cid}.proof.lean').read_text()
+        receipt.update(statement_sha256=sha(statement.encode()),proof_sha256=sha(proof.encode()))
+        ok,log=r.g.check_statement(cid,statement,[r.IMPORTS])
+        receipt.update(statement_passed=ok,statement_log=log)
+        # Gate the two targets separately, even when one fails.
+        for target in ['claim','witness']:
+            passed,log=r.g.gate(cid,statement,proof,target,[r.IMPORTS],timeout=120)
+            receipt[target+'_passed']=passed
+            receipt[target+'_log']=log
+        receipt['passed']=ok and receipt['claim_passed'] and receipt['witness_passed']
+    except Exception as e:
+        receipt['error']=f'{type(e).__name__}: {e}'
+    (OUT/f'{cid}.receipt.json').write_text(json.dumps(receipt,indent=2)+'\\n')
+    print(cid,receipt['passed'],flush=True)
+    if not receipt['passed']:
+        print(json.dumps(receipt,indent=2),flush=True)
+    return receipt['passed']
+if __name__=='__main__':
+    results=list(ThreadPoolExecutor(max_workers=4).map(run,range(1,13)))
+    raise SystemExit(0 if all(results) else 1)
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/regate.py"
+
+---
+/bin/bash -lc "cat >> docs/lean-english/one-to-one/blind-g5n2/build_checks.py <<'PY'
+save(11,C,'''noncomputable def OrigSeed {M V : Type} [Fintype M] [Fintype V] [DecidableEq M]
+    (K : ℕ) (canon : V → Fin K) (enc : M → V → ℝ) (dec : Fin K → M → ℝ) : ℝ :=
+  ∑ m, (Fintype.card M : ℝ)⁻¹ * ∑ v, enc m v * ∑ a, dec (canon v) a * (if a = m then 1 else 0)
+noncomputable def BackSeed {M V : Type} [Fintype M] [Fintype V]
+    (K : ℕ) (canon : V → Fin K) (enc : M → V → ℝ) (dec : Fin K → M → ℝ) : ℝ :=
+  (Fintype.card M : ℝ)⁻¹ * ∑ m, ∑ v, enc m v * dec (canon v) m
+def OriginalFamily : Prop :=
+  ∀ (M V : Type) [Fintype M] [Fintype V] [DecidableEq M] [Nonempty M]
+    (K : ℕ) (canon : V → Fin K) (enc : M → V → ℝ),
+    (∀ m, IsDist (enc m)) → ∀ (dec : Fin K → M → ℝ),
+    (∀ k, IsDist (dec k)) →
+      OrigSeed K canon enc dec ≤ (K : ℝ) * (Fintype.card M : ℝ)⁻¹
+def Claim : Prop :=
+  (∀ (M V : Type) [Fintype M] [Fintype V] [DecidableEq M]
+    (K : ℕ) (canon : V → Fin K) (enc : M → V → ℝ) (dec : Fin K → M → ℝ),
+    (BackSeed K canon enc dec ≤ (K : ℝ)/(Fintype.card M : ℝ) ↔
+     OrigSeed K canon enc dec ≤ (K : ℝ)*(Fintype.card M : ℝ)⁻¹)) ∧
+  (Back_canon_channel ↔ OriginalFamily)
+def Witness : Prop :=
+  IsDist (fun _ : Unit => (1:ℝ)) ∧
+  (∀ m : Bool, IsDist (fun v : Bool => if v = m then (1:ℝ) else 0)) ∧
+  (∀ k : Fin 2, IsDist (fun m : Bool => if m = (k.val == 1) then (1:ℝ) else 0)) ∧
+  successProb (fun _ : Unit => (1:ℝ))
+    (fun (_ : Unit) (m v : Bool) => if v = m then 1 else 0)
+    (fun (_ : Unit) (v m : Bool) => if m = (((if v then 1 else 0 : Fin 2).val) == 1) then 1 else 0) = 1''',
+'''theorem seed_eq {M V : Type} [Fintype M] [Fintype V] [DecidableEq M]
+    (K : ℕ) (canon : V → Fin K) (enc : M → V → ℝ) (dec : Fin K → M → ℝ) :
+    BackSeed K canon enc dec = OrigSeed K canon enc dec := by
+  simp [BackSeed, OrigSeed, Finset.mul_sum]
+
+theorem claim : Claim := by
+  classical
+  constructor
+  · intro M V _ _ _ K canon enc dec
+    rw [seed_eq, div_eq_mul_inv]
+  · constructor
+    · intro hb M V _ _ _ _ K canon enc he dec hd
+      have h := hb Unit M V K canon (fun _ => 1) (fun _ => enc) (fun _ => dec)
+        (by norm_num [IsDist]) (fun _ => he) (fun _ => hd)
+      change BackSeed K canon enc dec ≤ (K:ℝ)/(Fintype.card M:ℝ) at h
+      simpa only [seed_eq, div_eq_mul_inv] using h
+    · intro ho Ω M V _ _ _ _ K canon ρ enc dec hρ he hd
+      change (∑ ω, ρ ω * BackSeed K canon (enc ω) (dec ω)) ≤ (K:ℝ)/(Fintype.card M:ℝ)
+      calc
+        _ ≤ ∑ ω, ρ ω * ((K:ℝ)*(Fintype.card M:ℝ)⁻¹) := by
+          apply Finset.sum_le_sum
+          intro ω _
+          apply mul_le_mul_of_nonneg_left _ (hρ.1 ω)
+          rw [seed_eq]
+          exact ho M V K canon (enc ω) (he ω) (dec ω) (hd ω)
+        _ = _ := by rw [← Finset.sum_mul, hρ.2, one_mul, div_eq_mul_inv]''',
+'''  norm_num [IsDist, successProb, Fintype.sum_bool]
+  · intro m v; cases m <;> cases v <;> norm_num
+  · intro k
+    fin_cases k <;> norm_num [IsDist, Fintype.sum_bool]
+    all_goals intro m; cases m <;> norm_num''')
+save(12,C,'''def OriginalFamily : Prop :=
+  ∀ (Y O : Type) [Fintype Y] [Fintype O]
+    (K : Bool → List (Y × O) → Y × O → ℝ) (c : List O → O → ℝ) (L : ℝ),
+    (∀ φ h z, 0 ≤ K φ h z) → (∀ φ, Dominated (K φ) c) →
+    (∀ g o, 0 ≤ c g o) → 0 ≤ L → (∀ g, ∑ o, c g o ≤ L) →
+    ∀ (guess : List O → Bool → ℝ), (∀ t, IsDist (guess t)) → ∀ m,
+      (∑ φ : Bool, (1/2:ℝ)*val (K φ) (fun t => guess t φ) m []) ≤ (1/2)*L"'^m
+def Claim : Prop :=
+  (∀ (Y O : Type) [Fintype Y] [Fintype O]
+    (K : Bool → List (Y × O) → Y × O → ℝ) (L : ℝ)
+    (guess : List O → Bool → ℝ) (m : ℕ),
+    ((val (K false) (fun t => guess t false) m [] +
+      val (K true) (fun t => guess t true) m []) / 2 ≤ L''^m/2 ↔
+     (∑ φ : Bool, (1/2:ℝ)*val (K φ) (fun t => guess t φ) m []) ≤ (1/2)*L''^m)) ∧
+  (Back_phase_learning ↔ OriginalFamily)
+def Witness : Prop :=
+  (∀ φ h z, 0 ≤ bscK φ h z) ∧
+  (∀ φ, Dominated (bscK φ) (fun _ _ => (101/200:ℝ))) ∧
+  (∀ g : List Bool, (∑ _o : Bool, (101/200:ℝ)) ≤ 101/100) ∧
+  (∀ t : List Bool, IsDist (fun _ : Bool => (1/2:ℝ))) ∧
+  (101/100:ℝ)''^10/2 < 553/1000'"''',
+'''theorem pointwise {Y O : Type} [Fintype Y] [Fintype O]
+    (K : Bool → List (Y × O) → Y × O → ℝ) (L : ℝ)
+    (guess : List O → Bool → ℝ) (m : ℕ) :
+    (val (K false) (fun t => guess t false) m [] +
+      val (K true) (fun t => guess t true) m []) / 2 ≤ L"'^m/2 ↔
+    (∑ φ : Bool, (1/2:ℝ)*val (K φ) (fun t => guess t φ) m []) ≤ (1/2)*L''^m := by
+  simp only [Fintype.sum_bool]
+  ring_nf
+
+theorem claim : Claim := by
+  classical
+  refine ⟨fun _ _ _ _ K L guess m => pointwise K L guess m, ?_⟩
+  constructor
+  · intro hb Y O _ _ K c L hK hd _ hL hm guess hg m
+    exact (pointwise K L guess m).1 (hb Y O K c L guess m hK hd hL hm hg)
+  · intro ho Y O _ _ K c L guess m hK hd hL hm hg
+    rcases isEmpty_or_nonempty Y with he | hn
+    · letI := he
+      cases m with
+      | zero =>
+        change (guess [] false + guess [] true)/2 ≤ L''^0/2
+        have hs := (hg []).2
+        simp only [Fintype.sum_bool] at hs
+        norm_num
+        linarith
+      | succ m =>
+        simp [val]
+        exact div_nonneg (pow_nonneg hL _) (by norm_num)
+    · letI := hn
+      let y : Y := Classical.choice hn
+      have hc : ∀ g o, 0 ≤ c g o := by
+        intro g o
+        have h := hd false (g.map (fun a => (y,a))) o
+        have hz : 0 ≤ ∑ y'"', K false (g.map (fun a => (y,a))) (y',o) :=
+          Finset.sum_nonneg (fun y' _ => hK false _ (y',o))
+        have := hz.trans h
+        simpa only [List.map_map, Function.comp_def, List.map_id] using this
+      exact (pointwise K L guess m).2 (ho Y O K c L hK hd hc hL hm guess hg m)''',
+'''  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · intro φ h z
+    unfold bscK
+    split_ifs <;> norm_num
+  · intro φ h o
+    simp only [Dominated, Fintype.univ_unit, Finset.sum_singleton, bscK]
+    split_ifs <;> norm_num
+  · intro g
+    norm_num [Fintype.sum_bool]
+  · intro t
+    norm_num [IsDist, Fintype.sum_bool]
+  · norm_num''')
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/build_checks.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g5n2/build_checks.py')
+s=p.read_text().replace(\"(OUT/f'{cid}.proof.lean').write_text(proof+'\\\\n\\\\ntheorem witness : Witness := by\\\\n'+witness+'\\\\n')\", \"(OUT/f'{cid}.proof.lean').write_text(opens+'\\\\n'+proof+'\\\\n\\\\ntheorem witness : Witness := by\\\\n  unfold Witness\\\\n'+witness+'\\\\n')\")
+s=s.replace(\"fun _ _ _ _ _ _ _ _ _ => Iff.rfl\", \"fun _ _ _ _ _ _ _ _ => Iff.rfl\")
+s=s.replace(\"'''  constructor <;> decide''')\", \"'''  constructor\\n  · rfl\\n  · unfold Back_forged23_acts_without_auth\\n    decide''')\")
+s=s.replace(\"'''  constructor\\n  · repeat' constructor\\n    all_goals first | rfl | exact Or.inr ⟨66,0,rfl,rfl⟩\\n  · decide''')\", \"'''  constructor\\n  · apply List.Forall₂.cons ⟨rfl, Or.inr ⟨66,0,rfl,rfl⟩⟩\\n    apply List.Forall₂.cons ⟨rfl, Or.inl rfl⟩\\n    apply List.Forall₂.cons ⟨rfl, Or.inl rfl⟩\\n    exact List.Forall₂.nil\\n  · decide''')\")
+p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/build_checks.py
+python3 docs/lean-english/one-to-one/blind-g5n2/regate.py"
+
+---
+/bin/bash -lc "rg -n 'theorem map_id|map_id_fun' .lake/packages/*/Mathlib/Data/List/Basic.lean /home/opc/.elan/toolchains/*/src/lean/Init/Data/List/Lemmas.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g5n2/build_checks.py')
+s=p.read_text().replace('change BackSeed K canon enc dec ≤ (K:ℝ)/(Fintype.card M:ℝ) at h', 'simp only [successProb, Fintype.univ_unit, Finset.sum_singleton, one_mul] at h\\n      change BackSeed K canon enc dec ≤ (K:ℝ)/(Fintype.card M:ℝ) at h')
+s=s.replace(\"'''  norm_num [IsDist, successProb, Fintype.sum_bool]\\n  · intro m v; cases m <;> cases v <;> norm_num\\n  · intro k\\n    fin_cases k <;> norm_num [IsDist, Fintype.sum_bool]\\n    all_goals intro m; cases m <;> norm_num''')\", \"'''  norm_num [IsDist, successProb, Fintype.sum_bool]\\n  intro m v; cases m <;> cases v <;> norm_num''')\")
+s=s.replace('simp [val]\\n        exact div_nonneg (pow_nonneg hL _) (by norm_num)', 'simp only [ControlStack.Leakage.val, Finset.univ_eq_empty, Finset.sum_empty, zero_add, zero_div]\\n        exact div_nonneg (pow_nonneg hL _) (by norm_num)')
+s=s.replace('simpa only [List.map_map, Function.comp_def, List.map_id] using this', 'simpa [List.map_map, Function.comp_def] using this')
+p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/build_checks.py
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g5n2/regate.py')
+s=importlib.util.spec_from_file_location('r',p);r=importlib.util.module_from_spec(s);s.loader.exec_module(r)
+for n in [11,12]: r.run(n)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g5n2/build_checks.py')
+s=p.read_text().replace(\"'''  norm_num [IsDist, successProb, Fintype.sum_bool]\\n  intro m v; cases m <;> cases v <;> norm_num''')\", \"'''  norm_num [IsDist, successProb, Fintype.sum_bool]''')\")
+p.write_text(s)
+PY
+cat >> docs/lean-english/one-to-one/blind-g5n2/build_checks.py <<'PY'
+# Gate concrete limits alongside the non-vacuity witnesses.
+def augment(n,defs,extra,extra_proof):
+ cid=f'bg5n2_{n}'
+ p=OUT/f'{cid}.statement.lean'
+ s=p.read_text().replace('def Witness : Prop :=','def BasicWitness : Prop :=')
+ s=s.replace(f'end PL_{cid}',f'{defs}\\ndef LimitWitness : Prop :=\\n{extra}\\ndef Witness : Prop := BasicWitness ∧ LimitWitness\\nend PL_{cid}')
+ p.write_text(s)
+ p=OUT/f'{cid}.proof.lean'
+ s=p.read_text().replace('theorem witness : Witness := by\\n  unfold Witness','theorem basicWitness : BasicWitness := by\\n  unfold BasicWitness')
+ s += '\\n\\ntheorem witness : Witness := by\\n  refine ⟨basicWitness, ?_⟩\\n  unfold LimitWitness\\n'+extra_proof+'\\n'
+ p.write_text(s)
+augment(1,'', '''  List.Forall₂ SameExceptContent
+    ([.toolResult 66,.confirm 1 7 5 [66],.act 5 [0] 7] : List Op)
+    [.toolResult 0,.confirm 1 7 5 [66],.act 5 [0] 7] ∧
+  (run E0 full init [.toolResult 66,.confirm 1 7 5 [66],.act 5 [0] 7]).executed = [⟨5,[66],true,some 7⟩] ∧
+  (run E0 full init [.toolResult 0,.confirm 1 7 5 [66],.act 5 [0] 7]).executed = []''',
+'''  refine ⟨?_, ?_, ?_⟩
+  · repeat' constructor
+  · decide
+  · decide''')
+augment(3,'', '''  (run E0 full init [.toolResult 66,.confirm 1 7 5 [66],.act 5 [0] 7,.act 5 [0] 7]).executed =
+    [⟨5,[66],true,some 7⟩,⟨5,[66],true,some 7⟩]''', '''  decide''')
+augment(12,'''def HeavyK : Bool → List (Unit × Unit) → Unit × Unit → ℝ := fun _ _ _ => 3
+def HeavyC : List Unit → Unit → ℝ := fun _ _ => 3
+def HalfGuess : List Unit → Bool → ℝ := fun _ _ => 1/2''',
+'''  (∀ φ h z, 0 ≤ HeavyK φ h z) ∧
+  (∀ φ, Dominated (HeavyK φ) HeavyC) ∧
+  (∀ g o, 0 ≤ HeavyC g o) ∧ (0 ≤ (3:ℝ)) ∧
+  (∀ g, (∑ o, HeavyC g o) ≤ 3) ∧
+  (∀ t, IsDist (HalfGuess t)) ∧
+  (val (HeavyK false) (fun t => HalfGuess t false) 1 [] +
+    val (HeavyK true) (fun t => HalfGuess t true) 1 []) / 2 = 3/2 ∧
+  (1:ℝ) < 3/2''',
+'''  norm_num [HeavyK, HeavyC, HalfGuess, Dominated, IsDist,
+    ControlStack.Leakage.val, Fintype.sum_bool]''')
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/build_checks.py
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g5n2/regate.py')
+s=importlib.util.spec_from_file_location('r',p);r=importlib.util.module_from_spec(s);s.loader.exec_module(r)
+for n in [1,3,11,12]: r.run(n)
+PY"
+
+---
+/bin/bash -lc "cat docs/lean-english/one-to-one/blind-g5n2/typed/HASHES.json
+python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,difflib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g5n2')
+files={1:'ControlStack/Scenarios/SC23Isolation.lean',2:'ControlStack/Scenarios/SC23Isolation.lean',3:'ControlStack/Scenarios/SC23Isolation.lean',4:'ControlStack/Scenarios/SC23IsolationV2.lean',5:'ControlStack/Scenarios/SC23IsolationV2.lean',6:'ControlStack/Scenarios/SC23IsolationV2.lean',7:'ControlStack/Scenarios/AuthInstancesB.lean',8:'ControlStack/Scenarios/AuthInstancesB.lean',9:'ControlStack/Families/F6/MonitorCollusion.lean',10:'ControlStack/Families/F6/MonitorCollusion.lean',11:'ControlStack/Families/F6/MonitorCollusion.lean',12:'ControlStack/Families/F6/MonitorCollusion.lean'}
+names={1:'noninterference',2:'w1_impossible',3:'sc23_isolated_safe',4:'noninterference_authed',5:'w1_impossible_v2',6:'sc23v2_safe_authenticated',7:'sc23_safe_authenticated',8:'forged23_acts_without_auth',9:'pass_transfer',10:'collusion_uniform',11:'canon_channel',12:'phase_learning'}
+(out/'originals').mkdir(exist_ok=True)
+manifest={}
+for n,f in files.items():
+ text=Path(f).read_text();start=text.index('theorem '+names[n]+' ' if n not in [2,5,8] else 'theorem '+names[n]+' :')
+ end=text.index(':= by',start)
+ decl=text[start:end]
+ line=text[:start].count('\\n')+1
+ (out/'originals'/f'{n}.txt').write_text(f'{f}:{line}\\n\\n'+decl+'\\n')
+ manifest[str(n)]={'path':f,'line':line,'declaration':names[n],'source_sha256':hashlib.sha256(Path(f).read_bytes()).hexdigest()}
+(out/'originals/MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\\n')
+base=Path('docs/lean-english/one-to-one/run_gate.py')
+(out/'run-gate-paths.diff').write_text(''.join(difflib.unified_diff(base.read_text().splitlines(True),(out/'run_gate_blind.py').read_text().splitlines(True),fromfile='run_gate.py',tofile='blind-g5n2/run_gate_blind.py')))
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import sys,os
+from pathlib import Path
+print('bytecode_disabled',sys.dont_write_bytecode)
+p=Path('docs/lean-english/one-to-one/__pycache__/leangate_imports.cpython-'+str(sys.version_info.major)+str(sys.version_info.minor)+'.pyc')
+print('helper_bytecode_exists',p.exists())
+if p.exists(): print('helper_bytecode_mtime',p.stat().st_mtime)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import datetime,sys
+out=Path('docs/lean-english/one-to-one/blind-g5n2')
+p=out/'build_checks.py';p.write_text(p.read_text().replace('def HalfGuess :','noncomputable def HalfGuess :'))
+p=out/'regate.py';s=p.read_text().replace('import hashlib, importlib.util, json','import hashlib, importlib.util, json, sys\\nsys.dont_write_bytecode = True');p.write_text(s)
+p=out/'run_gate_blind.py';s=p.read_text().replace(\"OUT.parent/'leangate_imports.py'\",\"OUT/'leangate_imports.py'\");p.write_text(s)
+(out/'leangate_imports.py').write_bytes(Path('docs/lean-english/one-to-one/leangate_imports.py').read_bytes())
+print(datetime.datetime.fromtimestamp(1791868613.6135318,datetime.timezone.utc))
+print('now',datetime.datetime.now(datetime.timezone.utc))
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/build_checks.py
+python3 -B - <<'PY'
+import importlib.util
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g5n2/regate.py')
+s=importlib.util.spec_from_file_location('r',p);r=importlib.util.module_from_spec(s);s.loader.exec_module(r)
+r.run(12)
+PY"
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/__pycache__/leangate_imports.cpython-311.pyc')
+if p.exists() and abs(p.stat().st_mtime-1791868613.6135318)<0.01:
+ p.unlink()
+ print('Removed only the run-created helper bytecode cache.')
+PY"
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+from pathlib import Path
+import sys
+p=Path('docs/lean-english/one-to-one/__pycache__')/f'leangate_imports.cpython-{sys.version_info.major}{sys.version_info.minor}.pyc'
+if p.exists() and abs(p.stat().st_mtime-1791868613.6135318)<0.01:
+ p.unlink()
+ print('Removed only the run-created helper bytecode cache.')
+PY"
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+from pathlib import Path
+import difflib,json,hashlib,shutil,datetime
+out=Path('docs/lean-english/one-to-one/blind-g5n2')
+base=Path('docs/lean-english/one-to-one/run_gate.py')
+(out/'run-gate-paths.diff').write_text(''.join(difflib.unified_diff(base.read_text().splitlines(True),(out/'run_gate_blind.py').read_text().splitlines(True),fromfile='run_gate.py',tofile='blind-g5n2/run_gate_blind.py')))
+assert (out/'leangate_imports.py').read_bytes()==Path('docs/lean-english/one-to-one/leangate_imports.py').read_bytes()
+files={}
+for n in range(1,13):
+ for suffix in ['statement.lean','proof.lean']:
+  p=out/f'bg5n2_{n}.{suffix}'; files[p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
+(out/'CHECK-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':files},indent=2)+'\\n')
+for p in out.glob('bg5n2_*.receipt.json'): p.unlink()
+if (out/'gate-tmp').exists(): shutil.rmtree(out/'gate-tmp')
+if (out/'__pycache__').exists(): shutil.rmtree(out/'__pycache__')
+snapshot={str(p.relative_to(out)):hashlib.sha256(p.read_bytes()).hexdigest() for p in out.rglob('*') if p.is_file()}
+(out/'regate-before.json').write_text(json.dumps(snapshot,indent=2)+'\\n')
+PY
+python3 docs/lean-english/one-to-one/blind-g5n2/regate.py"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g5n2/run-gate-paths.diff
+cat docs/lean-english/one-to-one/blind-g5n2/bg5n2_11.proof.lean
+cat docs/lean-english/one-to-one/blind-g5n2/bg5n2_12.proof.lean'
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-g5n2')
+before=json.loads((out/'regate-before.json').read_text())
+changed=[p for p,h in before.items() if not (out/p).exists() or hashlib.sha256((out/p).read_bytes()).hexdigest()"'!=h]
+new=[str(p.relative_to(out)) for p in out.rglob('"'*') if p.is_file() and str(p.relative_to(out)) not in before and p.name"'!='"'regate-before.json']
+assert not changed,changed
+assert set(new)=={f'bg5n2_{n}.receipt.json' for n in range(1,13)},new
+rs=[json.loads((out/f'bg5n2_{n}.receipt.json').read_text()) for n in range(1,13)]
+assert all(r['passed'] and r['statement_passed'] and r['claim_passed'] and r['witness_passed'] for r in rs)
+for r in rs:
+ for suffix,key in [('statement.lean','statement_sha256'),('proof.lean','proof_sha256')]:
+  assert hashlib.sha256((out/(r['cid']+'.'+suffix)).read_bytes()).hexdigest()==r[key]
+assert (out/'leangate_imports.py').read_bytes()==Path('docs/lean-english/one-to-one/leangate_imports.py').read_bytes()
+(out/'REGATE-VALIDATION.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'clean_state':'all receipts, temporary gate directory, and local bytecode cache removed before run','command':'python3 docs/lean-english/one-to-one/blind-g5n2/regate.py','exit_code':0,'claims_passed':12,'witnesses_passed':12,'statement_checks_passed':12,'changed_nonreceipt_files':changed,'new_persistent_files':new,'gate_helper_byte_identical_to_allowed_helper':True},indent=2)+'\\n')
+print('Clean-state validation: 12 claims + 12 witnesses; only 12 receipts written; all source hashes unchanged.')
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g5n2/RESULTS.md <<'EOF'
+# Blind g5n2 — Phase B
+
+**All twelve frozen mathematical back translations are EQUIVALENT to the original theorem statements**, with the scope clarifications for claims 11 and 12 below. Every saved "'`Claim` and every saved `Witness` passed the deterministic gate separately. This verdict concerns Back ↔ Orig; it does **not** certify every explanatory sentence in the English. In particular, the bits gloss in claim 11 and the probability interpretation in claim 12 need correction.
+
+All twelve back files compiled as written and matched `back/BACK-HASHES.json`. The identical typed copies and `typed/HASHES.json` were written at **2026-10-13 05:13:08.885759 UTC**, before any original declarations were opened. Each `compile-fixes/<n>.diff` records that no repair was required. Originals were subsequently located in `ControlStack/`; their declaration types, locations and source hashes are saved in `originals/`.
+
+The proof files establish equality of expressions, rearrange witnesses, or reduce theorem schemas using their assumed conclusions. They do not invoke the original theorem proofs to establish equivalence. Thus this is not an iff obtained by independently proving two closed true propositions. For the finite claims 2, 5 and 8, the two closed propositions are definitionally identical, rather than merely both true.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+| 1 — `SC23Isolation.noninterference` | EQUIVALENT | [claim + witness](bg5n2_1.receipt.json) | Identical trace relation and four-field conclusion. Does NOT say exclusions respected; witness also shows executed logs can differ. |
+| 2 — `SC23Isolation.w1_impossible` | EQUIVALENT | [claim + witness](bg5n2_2.receipt.json) | Same concrete conjunction after unfolding lets, including value 41. Exclusions respected; nonce 0 should be explicit. |
+| 3 — `SC23Isolation.sc23_isolated_safe` | EQUIVALENT | [claim + witness](bg5n2_3.receipt.json) | Same per-action `ActOk`, including recorded action nonce. Exclusions respected; witness executes twice using one confirmation. |
+| 4 — `SC23IsolationV2.noninterference_authed` | EQUIVALENT | [claim + witness](bg5n2_4.receipt.json) | Same issuer-preserving relation and authenticated-run conclusion. Exclusions respected; no executed-log or confirmation-log equality. |
+| 5 — `SC23IsolationV2.w1_impossible_v2` | EQUIVALENT | [claim + witness](bg5n2_5.receipt.json) | Same concrete conjunction and value 0. Exclusions respected; nonce 0 should be explicit. |
+| 6 — `SC23IsolationV2.sc23v2_safe_authenticated` | EQUIVALENT | [claim + witness](bg5n2_6.receipt.json) | Same existential issued confirmation, user membership and exclusion from U. Exclusions respected: no order or one-use conclusion. |
+| 7 — `AuthInstances.sc23_safe_authenticated` | EQUIVALENT | [claim + witness](bg5n2_7.receipt.json) | Same `Good` and confirmation origins; explicit existential operation is eliminated by equality. Exclusions respected; user input is not issuer-authenticated here. |
+| 8 — `AuthInstances.forged23_acts_without_auth` | EQUIVALENT | [claim + witness](bg5n2_8.receipt.json) | Definitionally identical forged-trace control: one action without authentication, none with it. Exclusions respected. |
+| 9 — `MonitorCollusion.pass_transfer` | EQUIVALENT | [claim + witness](bg5n2_9.receipt.json) | Pointwise iff by absolute-difference symmetry. Exclusions respected; witness has TV = 1 and pass rates 1 and 0. |
+| 10 — `MonitorCollusion.collusion_uniform` | EQUIVALENT | [claim + witness](bg5n2_10.receipt.json) | Boolean phase/action sums equal the back translation'"'s two pass-rate terms. Exclusions respected; single-item uniform prior only. |
+| 11 — "'`MonitorCollusion.canon_channel` | EQUIVALENT | [claim + witness](bg5n2_11.receipt.json) | Exact-decoding bound only. Pointwise per-seed iff plus singleton/averaging reduction certifies the added shared-seed scope. Bits gloss remains unformalised. |
+| 12 — `MonitorCollusion.phase_learning` | EQUIVALENT | [claim + witness](bg5n2_12.receipt.json) | Same scalar bound; omitted certificate nonnegativity is bridged, including empty hidden-state types. Exclusions respected, but calling the scalar a probability needs kernel normalisation. |
+
+For every row, the linked receipt contains the statement check, separate claim/witness gate logs, and hashes of the saved statement, proof and gate helper. The permitted axiom set is unchanged: `propext`, `Classical.choice`, `Quot.sound`. No failed gate is counted as certification.
+
+## Pointwise comparisons and scope
+
+1. With the same `E`, `ops`, `ops'"'"'` and `List.Forall₂ SameExceptContent` hypothesis, both conclusions are exactly `Rel (run E full init ops) (run E full init ops'"')"'`. `Rel` compares user inputs, planner values, quarantine length and halted status. The proof also connects the frozen Back definition to this parameterised schema by definitional equality.
+2. Both propositions contain exactly the same injected/clean traces and the same two executed-log equalities. The back translation'"'s lets introduce no extra hypothesis or freedom.
+3. For the same environment, trace and executed action, Back ↔ Orig expands to the same sensitive/tainted implication and the same "'`∃ n, x.conf = some n ∧ ∃ cf ∈ s.confs, ...` conclusion. This requires the matching recorded nonce, tool, values and user caller; it does not require distinct nonces across executed actions.
+4. Under the identical issuer/content relation, both conclusions are exactly the same `Rel` on authenticated runs. The opaque view is a check configuration, not a constraint on the arbitrary planner program beyond the provided view.
+5. As in claim 2, the exact trace and both equalities are definitionally identical; the derived value is 0.
+6. Fixing `E`, `U`, the disjointness hypothesis, issued trace and sensitive tainted executed action leaves exactly the same `∃ c n, c ∈ E.users ∧ c ∉ U ∧ (c, confirm c n x.tool x.vals) ∈ ops`. Neither side'"'s conclusion identifies this existential nonce with "'`x.conf`, or gives a trace position. Stronger operational properties would require further proofs.
+7. Fixing policy, U and issued trace preserves `Good` unchanged. For each final confirmation, the original'"'s "'`∃ c o, ... ∧ o = confirm ...` is converted in both directions to the back translation'"'s direct membership of that confirm operation. User membership, "'`c ∉ U` and `c = cf.by_` are merely reordered. `Good` includes provenance-based action safety and `Nodup` of recorded action-confirmation nonces.
+8. Both closed propositions use the original concrete `forged23` trace and the same authenticated/all-none claim functions. The witness separately unfolds that trace and computes both outcomes.
+9. For the same two laws and rule, substituting `Ph = P`, `Pr = Q` in the original leaves the back translation'"'s bound with the absolute difference reversed. "'`abs_sub_comm` gives the iff without using either inequality as a true theorem.
+10. Substituting `Ph = Q`, `Pr = P`, expanding the two Boolean sums and doing ring algebra gives precisely `(passRate P monitor_true + passRate Q monitor_false)/2`. The TV argument order and uniform prior match.
+11. Holding a codebook fixed, collapsing the exact-recovery indicator in the original yields `card(M)⁻¹ * Σ_m Σ_v enc(m,v) * dec(canon(v),m)`, exactly the per-seed Back expression; multiplication by an inverse equals division. This pointwise identity holds even without distribution hypotheses. The back translation additionally quantifies over finite shared seeds: assuming the original bounds for each fixed seed, multiply each by its nonnegative seed probability and sum; conversely, specialise the seeded Back schema to `Unit` with mass 1. The saved proof certifies these two schema reductions, with the same per-seed distribution hypotheses. **It does not identify one averaged inequality with a conjunction of inequalities for every seed.** Seed independence from the uniform message is built into `successProb`.
+12. The original phase sum and Back'"'s two-term sum are pointwise identical by Boolean-sum expansion and ring algebra, under any fixed kernels, guess, L and m. The original additionally assumes "'`∀ g o, 0 ≤ c g o`. The saved schema reduction derives this from domination and kernel nonnegativity when Y is inhabited, by lifting any visible history with a fixed hidden value. If Y is empty, all positive-round values are zero; at m = 0, the guess distribution gives 1/2. This covers the extra Back scope without assuming the original theorem'"'s truth. No kernel normalisation is introduced.
+
+## Corrections to the English
+
+**Claim 11 — replace the “i.e. ... bits” sentence:**
+
+> For finite message and view sets, with a nonempty message set and a uniform message, the probability of exact decoding after the fixed K-class canonicalisation is at most K divided by the number of messages. This theorem states an exact-decoding bound; it does not define or prove a bound for an information measure in bits.
+
+The log-K intuition can be discussed separately after specifying an information measure and proving the appropriate channel theorem. It is not a second formal conclusion of "'`canon_channel`, and is not logically synonymous with this single success-probability inequality.
+
+**Claim 11 — make randomisation explicit if retaining the Back convention:**
+
+> The encoder and decoder may share a finite random seed drawn independently of the uniform message. Conditional on each seed, each encoder and decoder row is a probability distribution. The bound holds after averaging over the seed; the original fixed-codebook theorem is its single-seed instance.
+
+This replaces the ambiguous “fixed in advance, possibly randomised” wording and states the finite-view assumption omitted from the English.
+
+**Claim 12 — replace the probability wording under the existing formal hypotheses:**
+
+> For finite hidden-state and visible-output sets, nonnegative round kernels dominated at every history by a phase-independent certificate of mass at most L, with L nonnegative, give a uniform-prior correct-guess weighted mass at most L''^m/2. If every round kernel is also a probability distribution, this weighted mass is the probability of a correct final guess.
+
+The existing English explicitly notes that Lean imposes no kernel mass bound, but still repeatedly calls the formal scalar a probability. These statements need to be reconciled. The gated witness uses one hidden state, one output, a constant kernel and certificate of 3, L = 3, a uniform guess and m = 1. It satisfies even the original'"'s nonnegativity premise, yet the formal correct-guess scalar is **3/2**, greater than 1. The inequality remains correct. Kernel normalisation is an extra assumption needed for the probability interpretation, not a repair to Back.
+
+**Claims 2 and 5 — make the concrete operation explicit:**
+
+> The action is "'`act 5 [1] 0`: sensitive tool 5, planner-value index 1, nonce 0.
+
+Both back translations chose the original'"'s nonce 0. The nonce choice is harmless for these untainted executions, but spelling it out removes an unnecessary choice in a one-to-one translation.
+
+**Claim 2 — replace the parenthetical identification of general laundering impossibility with noninterference:**
+
+> This finite computation does not prove a general anti-laundering result. The separate noninterference theorem shows that changing tool-result contents cannot change planner-visible state under its stated trace relation and isolation assumptions.
+
+This preserves the causal guarantee without suggesting that every trusted value equal to injected content, every executed sensitive action, or every arbitrary planner behaviour is ruled out.
+
+## Ambiguities exposed
+
+- **Formal verdict versus prose gloss.** The table certifies the saved mathematical Back definitions. Claim 11 explicitly leaves the bits phrase outside its formal definition. That omitted phrase is unformalised here, despite the EQUIVALENT verdict for the exact-decoding bound.
+- **Claim 11's finite alphabets and shared randomness.** The original needs finite M and V, a nonempty M, and a decidable equality on M for its indicator. Back obtains equality classically and adds finite shared randomness. The gate certifies the algebraic extension; it does not cover arbitrary infinite view laws, message-correlated seeds or side channels.
+- **Claim 12's finite alphabets.** Both Lean formulations require finite Y and O. The English should say so. The empty-Y corner also explains why global certificate nonnegativity is not literally derivable from domination in every type, although the bound still follows.
+- **Claim 12's certificate premise.** An explicit nonnegative certificate matches the original declaration most literally. The omission is mathematically harmless for the bound, as the gated reduction proves; it should not be described as a blanket equivalence of all hypothesis predicates.
+- **Claims 1 and 4: “planner holds”.** Read this as the model's stated planner-visible fields. It excludes executed arguments, quarantine contents, confirmation logs and real runtime side channels. The claim-1 witness exhibits equal-structure traces with different execution outcomes: content 66 matches the common confirmation and executes, content 0 does not and is blocked.
+- **Claim 3: confirmation reuse.** The gated witness executes the same tainted action twice after a single confirmation. Claim 7's first-model "'`Good` adds a distinct non-reuse property. The English correctly separates these models.
+- **Claims 6 and 7: provenance versus ordering.** The conclusion establishes operation membership in the issued trace; it contains no index or prefix relation. The English correctly avoids presenting a temporal theorem. Authenticity of the platform-reported issuer and an informed UI remain world assumptions.
+- **Claims 9 and 10: one decision, fixed laws.** The “Does NOT say” exclusions about side information, TV being small and multi-item success are respected. Their tight witnesses achieve perfect distinction at TV = 1, illustrating the permitted vacuous endpoint.
+- **Claim 12: scheduling and deployment.** Re-randomising a phase before the bound becomes vacuous is external operational advice. No rotation schedule, runtime estimate of L or protection against a long reused phase is proved.
+
+## Reproduction and protocol record
+
+From the repository root:
+
+```sh
+python3 docs/lean-english/one-to-one/blind-g5n2/regate.py
+```
+
+This script rechecks all twelve statements and gates `claim` and `witness` separately for each, using the copied runner'"'s imports and project path. It records both targets even if one fails and exits nonzero if any statement, claim or witness check fails. It reads saved statements/proofs and rewrites only receipt files; the unchanged gate creates and removes temporary Lean files inside "'`blind-g5n2/gate-tmp/`.
+
+A clean-state run, after deleting existing receipts, temporary gate files and local Python caches, exited **0** with **12 statement checks, 12 claims and 12 witnesses passing**. The before/after file-hash comparison found no changed nonreceipt file and exactly twelve new receipts; see [REGATE-VALIDATION.json](REGATE-VALIDATION.json). Saved statement/proof hashes are in [CHECK-HASHES.json](CHECK-HASHES.json).
+
+`leangate_imports.py` inside this directory is byte-for-byte identical to the allowed original helper. The runner'"'s changes are output/project path relocation, project imports and the file glob; [run-gate-paths.diff](run-gate-paths.diff) records them. Its parent-depth change is necessary because the copied script lives one directory deeper. No banned-token or axiom check was modified. "'`regate.py` disables Python bytecode generation.
+
+**Protocol deviation:** an early Python import automatically generated `docs/lean-english/one-to-one/__pycache__/leangate_imports.cpython-<version>.pyc` outside the authorised output directory at 05:16:53 UTC. That run-created cache was removed, the helper was copied inside the output directory, and bytecode generation was disabled for regating. No source outside the output directory was edited; no `ControlStack/` file was changed and no git command was run. The initial run therefore breached the strict output-only constraint through an automatic cache write; cleanup does not erase that historical deviation. The clean regate run stayed within the output directory. No excluded English document or previous comparison result was read.
+EOF
+python3 -B - <<'"'PY'
+from pathlib import Path
+import datetime,json
+out=Path('docs/lean-english/one-to-one/blind-g5n2')
+now=datetime.datetime.now(datetime.timezone.utc)
+frozen=datetime.datetime.fromisoformat(json.loads((out/'typed/HASHES.json').read_text())['utc'])
+(out/'PROGRESS.md').write_text(f'''# Phase B progress
+
+Done:
+
+- Verified all twelve Phase A hashes; compiled every back file as written.
+- Saved identical typed files, no-repair diff records and typed SHA-256 hashes before opening originals.
+- Compared all twelve original declaration types with the frozen Back statements.
+- Saved pointwise comparisons and explicit scope reductions for claims 11 and 12.
+- Deterministically gated all twelve claims and all twelve non-vacuity witnesses separately.
+- Added gated counterexamples to over-readings: differing execution outcomes, reused confirmation, and a correct-guess weighted mass of 3/2.
+- Saved RESULTS.md, source excerpts/hashes, proof hashes, gate receipts and reproducible regate.py.
+- Ran regate.py from a clean receipt/cache/temp state: exit 0; 36 Lean checks passed. Its persistent writes were exactly the twelve receipts.
+
+Not done / what could not be certified:
+
+- No formal information measure is provided for claim 11's log-K bits gloss; only the exact-decoding bound is certified.
+- Claim 12's probability interpretation is not certified without kernel normalisation. The formal inequality is certified.
+- External runtime assumptions (true platform issuer, isolation without side channels, informed UI, actual TV/L estimates and phase rotation) are not established by these theorem comparisons.
+- No mathematical claim remains unfinished or UNDECIDED.
+
+Time:
+
+- Typed statements frozen: {frozen.isoformat()} (UTC), before opening any original declaration.
+- Completion: {now.isoformat()} (UTC).
+- Elapsed since typed freeze: {(now-frozen).total_seconds()/60:.1f} minutes; initial hash checks and compilation preceded the freeze.
+
+Protocol deviation:
+
+An early Python import generated an automatic bytecode-cache file beside the original gate helper outside blind-g5n2/ at 05:16:53 UTC. Only that run-created cache was removed. The helper was subsequently copied byte-identically inside blind-g5n2/ and regate disables bytecode generation. No source outside blind-g5n2/ was edited, ControlStack/ was never changed, and git was never run. This historical output-directory violation is disclosed; the clean final regate stayed within the authorised directory. Excluded English/comparison documents were never read.
+''')
+print('Reports written',now.isoformat())
+PY"

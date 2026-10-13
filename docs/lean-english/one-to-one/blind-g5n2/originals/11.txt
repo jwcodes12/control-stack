@@ -1,0 +1,6 @@
+ControlStack/Families/F6/MonitorCollusion.lean:140
+
+theorem canon_channel {M : Type} [Fintype M] [DecidableEq M] [Nonempty M] (K : ℕ) (κ : V → Fin K)
+    (enc : M → V → ℝ) (henc : ∀ m, IsDist (enc m)) (dec : Fin K → M → ℝ) (hdec : ∀ k, IsDist (dec k)) :
+    ∑ m, (Fintype.card M : ℝ)⁻¹ * ∑ v, enc m v * ∑ a, dec (κ v) a * (if a = m then 1 else 0)
+      ≤ (K : ℝ) * (Fintype.card M : ℝ)⁻¹ 

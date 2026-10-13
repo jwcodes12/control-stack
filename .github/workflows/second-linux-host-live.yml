@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     branches: ['audit/r2-v8-trusted-code-20261013']
-    paths: ['.github/workflows/second-linux-host-live.yml']
+    paths: ['.github/workflows/second-linux-host-live.yml']  # attempt 2
 permissions:
   contents: read
 jobs:
@@ -43,7 +43,13 @@ jobs:
           sudo mkdir -p /var/tmp/sc01-vm-assets/build-root
           docker export rootfs-build | sudo tar -x -C /var/tmp/sc01-vm-assets/build-root
           docker rm rootfs-build
-          test -x /var/tmp/sc01-vm-assets/build-root/usr/bin/python3
+          R=/var/tmp/sc01-vm-assets/build-root
+          test -x $R/usr/bin/python3
+          # The scanner refuses an image that carries setuid/setgid binaries or Python start-up hooks (attempt 1 with the stock image was UNASSURED
+          # for exactly these two reasons). The reference rootfs of the primary host has neither; remove both classes here.
+          sudo find $R -xdev -type f -perm /6000 -exec chmod a-s {} +
+          sudo find $R -xdev \( -name '*.pth' -o -name 'sitecustomize*' -o -name 'usercustomize*' \) -exec rm -rf {} +
+          echo "setid files left: $(sudo find $R -xdev -type f -perm /6000 | wc -l); hooks left: $(sudo find $R -xdev \( -name '*.pth' -o -name 'sitecustomize*' -o -name 'usercustomize*' \) | wc -l)"
       - name: Hardened safe cases (image build, fresh scan, Lean kernel, live containers, independent reconciliation)
         run: |
           python3 tools/build_deployment_container_image.py --output "$RUNNER_TEMP/build1" --tag cstack-r2-v8:offline

@@ -75,6 +75,9 @@ Earlier text in this handoff, in the PR #56 description and in `PR55-HANDOFF.md`
 - Marker-cache gotcha: a "green" marker keyed on the input hash makes a rerun skip the kernel; delete `green-*` caches for the ref (`gh api -X DELETE repos/.../actions/caches/<id>`) to force it, then read the step list.
 - Local note: three tests (`test_cert_ledger`, `test_portfolio_ledger`, `test_trust_root`) fail in this clone only because `.lake/build` lacks `ControlStack.Core.Cert.olean`; they pass in CI.
 
+### Flexibility test (2026-10-13)
+`docs/FLEXIBILITY-TEST.md` (one agent session, numbers measured except where marked est.): trusted monitoring with a finite audit budget (SC-90) went from `new_scenario.py` spec to a compiling file in about 6.5 minutes and 437 non-comment Lean lines (`docs/flexibility-test/SC90TrustedMonitorAudit.lean`, standard axioms only, no `sorry`; deliberately kept out of the library: no Python mirror, scenario bundle or prereg). Verdict: deterministic gate-shaped protocols are well served; probabilistic protocols (threshold defer, resampling, trusted editing, new untrusted-monitoring variants) are not, and the gate framework (`Gate.System`, lists) and the probability framework (`ProbComp`, `Finset (Fin N)`) do not compose in Lean, so no declaration yields P(harmful effect reaches the ledger) <= f(recall, budget, N). Practitioners are not served. Ranked missing abstractions: stochastic gate plus bridge lemma; protocol combinators (`withAuditBudget`, `withDefer`, `withEdit`, `withResample`); parameters and extra state in the generator; a shared append-only-log invariant kit; state-dependent `legal` premises.
+
 ## 3. Needs a person or a resource (GATED)
 | ID | Needs |
 |---|---|

@@ -87,7 +87,7 @@ Earlier text in this handoff, in the PR #56 description and in `PR55-HANDOFF.md`
 | G4 | **Not done, not a run:** no Kubernetes extractor exists in the repo (only `extractors/compose`); a real cluster means privileged node containers or VMs on a box that hosts other services. |
 | G5 | Host Landlock (kernel boot parameter). `tools/test_confined_effect_broker.py` and `run_deployment_boundary.py` have never run here; CI `linux-boundary` is skipped. |
 | G6 | TPM/HSM key custody, GPU residue, multi-host. |
-| G7 | **Not done, not a run:** there is no HTTP receiver (the only effect is a local file); it needs new trusted receiver code (a new generation and live re-run) and a destination that is not a third party. |
+| G7 | **Done as an outbox relay outside the claim (2026-10-13):** `tools/http_relay.py` + `tools/http_sink.py` + `tools/test_http_relay.py` (9 tests); demo on archived live evidence in `deployment/runs/tier11/http-relay/`. Not built: an in-slice HTTP receiver (needs a new generation, scanner-modelled network topology, live re-run), TLS/auth, any third-party endpoint. |
 | G8 | Windows, macOS, WASI backends (one tested host: OL 9.8 aarch64, Docker 29.8). |
 | G9 | Tag, publish, outreach (owner). |
 | T7.2/T7.3 | New attack policies and the four-arm evaluation (cyber-permissive tier). |

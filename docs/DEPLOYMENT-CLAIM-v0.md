@@ -234,6 +234,11 @@ Source generation `r2-v7` (`r2-v6` was the first Tier 10 generation; the review'
 - **`publish_effect` / `--effect-root` stay outside the claim.** The scanner treats the flag as an
   unknown launch argument (UNKNOWN); a test pins that, so the second file-effect path cannot appear in
   a CONDITIONAL deployment. Putting it under the claim would need its own model, scanner and review.
+- **HTTP delivery is an outbox relay outside the claim (2026-10-13).** `tools/http_relay.py` is not in the pinned slice. It reads
+  the broker database read-only, requires the whole release log to verify, and POSTs only sink files that have a publication
+  receipt to a literal-loopback destination with an `Idempotency-Key`. It is at-least-once on the wire and exactly-once only at a
+  destination that honours the key. Evidence: `deployment/runs/tier11/http-relay/`. HTTP sinks remain an unsupported feature of
+  the scanner (UNKNOWN authority edges).
 - **Transcript replay uses the recorded clock** instead of `now = 0`: the database's own
   `releases.created` for the two releases, with every expiry after it; a mutant with a later clock is
   rejected. That the recorded value is the broker's clock remains a premise.

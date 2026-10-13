@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5baf755c7d0d02cf2263bf7d5870b541dd75d0c33b0fd9566530675a220308e2",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5baf755c7d0d02cf2263bf7d5870b541dd75d0c33b0fd9566530675a220308e2",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5baf755c7d0d02cf2263bf7d5870b541dd75d0c33b0fd9566530675a220308e2",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5baf755c7d0d02cf2263bf7d5870b541dd75d0c33b0fd9566530675a220308e2",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5baf755c7d0d02cf2263bf7d5870b541dd75d0c33b0fd9566530675a220308e2",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5baf755c7d0d02cf2263bf7d5870b541dd75d0c33b0fd9566530675a220308e2",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "budget": 1,
+    "compose_sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+    "database_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+    "receiver_sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "runtime_sha256": "e42b6241b22cfd85a7da44bd034a78711d8d829ebe4494378b5590ece491d9bd",
+    "sink_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "0c0c77f5ce156bee24f3992392c4b83337ca9f14e5dc141759b19a83fd424bdc",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "e42b6241b22cfd85a7da44bd034a78711d8d829ebe4494378b5590ece491d9bd",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+      "source": "/home/opc/projects/control-stack-r2v8/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+      "source": "/home/opc/projects/control-stack-r2v8/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "fbbc5114b43f050d2a37497256576e6bb5defcb6464d59bb6a1ce968457bb85e",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/honest-2/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

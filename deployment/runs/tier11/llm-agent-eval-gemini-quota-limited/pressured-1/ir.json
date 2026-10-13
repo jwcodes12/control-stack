@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5479548b1a7dae1eccb8520f6bb60d22bfe7e7a8ff3f1e8b08a07121b7f76ddb",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5479548b1a7dae1eccb8520f6bb60d22bfe7e7a8ff3f1e8b08a07121b7f76ddb",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5479548b1a7dae1eccb8520f6bb60d22bfe7e7a8ff3f1e8b08a07121b7f76ddb",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5479548b1a7dae1eccb8520f6bb60d22bfe7e7a8ff3f1e8b08a07121b7f76ddb",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5479548b1a7dae1eccb8520f6bb60d22bfe7e7a8ff3f1e8b08a07121b7f76ddb",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:5479548b1a7dae1eccb8520f6bb60d22bfe7e7a8ff3f1e8b08a07121b7f76ddb",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "budget": 1,
+    "compose_sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+    "database_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+    "receiver_sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "runtime_sha256": "81f9fd13076ac4605bb3ade28add9a175142d6246cb19e4e7557281a7ddc9390",
+    "sink_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "4f79120a7336d06a4ba4bb2b014beb2cb61ae0d71fd9fcc172ca3858fab78eeb",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "81f9fd13076ac4605bb3ade28add9a175142d6246cb19e4e7557281a7ddc9390",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+      "source": "/home/opc/projects/control-stack-r2v8/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+      "source": "/home/opc/projects/control-stack-r2v8/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "567779a224b15da9abfaa7dac86add664cad68b1570e401be14a8059e2eecee5",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/llm-agent-eval/pressured-1/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

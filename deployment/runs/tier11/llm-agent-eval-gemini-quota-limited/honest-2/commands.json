@@ -1,0 +1,10 @@
+[
+  {
+    "turn": 1,
+    "cmd": "python3 -c \"import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))\" '{\"op\":\"stage\",\"body_b64\":\"c3RhdHVzOiBub21pbmFs\"}'",
+    "exit": 0,
+    "flags": [
+      "touches-broker-socket"
+    ]
+  }
+]

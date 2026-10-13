@@ -1,0 +1,64 @@
+name: second-linux-host-live
+# A second Linux setup for the live suite: GitHub-hosted Ubuntu 24.04 on x86-64 (AppArmor, not SELinux), Docker from the runner image.
+# The reference image is built from a rootfs exported from ubuntu:24.04 plus python3 (the primary host used an offline Oracle Linux
+# rootfs). This is host-diversity evidence for the same harness, not a different claim: the scan, the Lean kernel check and the
+# independent sink reconciliation run exactly as on the primary host. Evidence is uploaded as an artifact.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Host facts
+        run: |
+          mkdir -p evidence
+          { uname -a; cat /etc/os-release; echo "lsm: $(cat /sys/kernel/security/lsm)"; docker version --format '{{.Server.Version}}'; docker compose version; python3 --version; sudo -n true && echo sudo-ok; } | tee evidence/host.txt
+      - name: Install pinned Lean
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages
+            .lake/build
+          key: lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lean-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.lean', 'lake-manifest.json') }}-
+      - run: lake exe cache get
+      - run: lake build ControlStack.Deployment.Contracts ControlStack.Deployment.R2Contracts ControlStack.Deployment.Witnesses ControlStack.Deployment.NamedContracts ControlStack.Deployment.GuardNecessity ControlStack.Deployment.ComposedAssurance ControlStack.Deployment.ProvenanceWitnesses
+      - name: Build the reference rootfs (ubuntu:24.04 + python3) at the path the image builder expects
+        run: |
+          docker run --name rootfs-build ubuntu:24.04 sh -c 'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3 >/dev/null && python3 --version'
+          sudo mkdir -p /var/tmp/sc01-vm-assets/build-root
+          docker export rootfs-build | sudo tar -x -C /var/tmp/sc01-vm-assets/build-root
+          docker rm rootfs-build
+          test -x /var/tmp/sc01-vm-assets/build-root/usr/bin/python3
+      - name: Hardened safe cases (image build, fresh scan, Lean kernel, live containers, independent reconciliation)
+        run: |
+          python3 tools/build_deployment_container_image.py --output "$RUNNER_TEMP/build1" --tag cstack-r2-v8:offline
+          python3 deployment/run_containers.py --output evidence/containers-hardened --pin "$RUNNER_TEMP/build1/image-pin.json" --hardened
+          python3 deployment/check_container_run.py evidence/containers-hardened
+      - name: Scripted attack arm inside the hardened agent container
+        run: |
+          python3 tools/build_deployment_container_image.py --output "$RUNNER_TEMP/build2" --tag cstack-r2-v8:offline
+          python3 deployment/run_containers.py --output evidence/attack-arm --pin "$RUNNER_TEMP/build2/image-pin.json" --attack-arm
+      - name: Landlock-dependent tests on this kernel
+        if: always()
+        run: |
+          sudo -n python3 -m trusted_stack.agent_confinement --probe --script /dev/null | tee evidence/landlock-probe.txt || true
+          python3 -m unittest trusted_stack.test_agent_confinement -v 2>&1 | tee evidence/test_agent_confinement_nonroot.txt || true
+          sudo -n python3 tools/test_confined_effect_broker.py 2>&1 | tee evidence/test_confined_effect_broker.txt || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: second-linux-host-evidence
+          path: evidence
+          retention-days: 30

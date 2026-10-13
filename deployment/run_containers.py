@@ -104,7 +104,7 @@ def run(output,pin_path=None,fresh=False,hardened=False,attack=False):
         assert image['RepoTags'] and all(x.startswith('cstack-r2-') for x in image['RepoTags'])
         image_owned=True
         (output/'docker-info.json').write_text(cmd(['docker','info','--format','{{json .}}']).stdout)
-        (output/'selinux.txt').write_text('Host: '+cmd(['getenforce']).stdout+'Docker security options: '+cmd(['docker','info','--format','{{json .SecurityOptions}}']).stdout+'All disposable binds use shared z, never private Z on shared directories; daemon currently does not advertise SELinux enforcement. No host-wide relabel or LSM change.\n')
+        (output/'selinux.txt').write_text('Host: '+(cmd(['getenforce']).stdout if shutil.which('getenforce') else 'getenforce not installed (not an SELinux host)\n')+'Docker security options: '+cmd(['docker','info','--format','{{json .SecurityOptions}}']).stdout+'All disposable binds use shared z, never private Z on shared directories; daemon currently does not advertise SELinux enforcement. No host-wide relabel or LSM change.\n')
         for case in cases:
             dest=output/case;dest.mkdir();project='cstack-r2-'+case;compose=dest/'compose.json'
             template=case if case in CASES[:3] else 'clean';c=json.loads((ROOT/('examples/compose-two-agent-hardened' if hardened else 'examples/compose-two-agent')/f'{template}.compose.json').read_text())

@@ -1,0 +1,73 @@
+[
+  {
+    "case": "attack-battery",
+    "request": {
+      "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+      "op": "stage"
+    },
+    "response": {
+      "ok": true,
+      "result": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b"
+    },
+    "service": "agent-a"
+  },
+  {
+    "case": "attack-battery",
+    "request": {
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "op": "review"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "reviewer"
+  },
+  {
+    "case": "attack-battery",
+    "request": {
+      "agent_uid": 23701,
+      "budget": 1,
+      "expires": 1791896420,
+      "lease_id": "lease-a",
+      "op": "issue_lease"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "broker"
+  },
+  {
+    "case": "attack-battery",
+    "request": {
+      "agent_uid": 23701,
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "expires": 1791896420,
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "approve"
+    },
+    "response": {
+      "ok": true,
+      "result": true
+    },
+    "service": "approver"
+  },
+  {
+    "case": "attack-battery",
+    "request": {
+      "destination": "metadata-only",
+      "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+      "lease_id": "lease-a",
+      "nonce": "a",
+      "op": "effect_release"
+    },
+    "response": {
+      "ok": true,
+      "result": 1
+    },
+    "service": "agent-a"
+  }
+]

@@ -1,0 +1,1360 @@
+[
+    {
+        "Id": "fa511f95a9861788369aedf0a03ae48000d596d885dad4f9315dc2ca3ae76a2e",
+        "Created": "2026-10-13T12:30:02.160906223Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 783054,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-13T12:30:03.219155188Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+        "ResolvConfPath": "/var/lib/docker/containers/fa511f95a9861788369aedf0a03ae48000d596d885dad4f9315dc2ca3ae76a2e/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/fa511f95a9861788369aedf0a03ae48000d596d885dad4f9315dc2ca3ae76a2e/hostname",
+        "HostsPath": "/var/lib/docker/containers/fa511f95a9861788369aedf0a03ae48000d596d885dad4f9315dc2ca3ae76a2e/hosts",
+        "LogPath": "/var/lib/docker/containers/fa511f95a9861788369aedf0a03ae48000d596d885dad4f9315dc2ca3ae76a2e/fa511f95a9861788369aedf0a03ae48000d596d885dad4f9315dc2ca3ae76a2e-json.log",
+        "Name": "/cstack-r2-attack-battery-agent-a-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-attack-battery_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": [
+                "ALL"
+            ],
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [
+                "no-new-privileges:true"
+            ],
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "fa511f95a986",
+            "Domainname": "",
+            "User": "23701",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=agent-a"
+            ],
+            "Cmd": null,
+            "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "342f2023b1bc9f4ed64c67477f837d88ae1590ec753e3f4be9b4d3c77273a9f9",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-attack-battery",
+                "com.docker.compose.project.config_files": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery/compose.json",
+                "com.docker.compose.project.working_dir": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery",
+                "com.docker.compose.service": "agent-a",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "1d461684b136700735f80c2382bd068cc0f0a2f817ec54cd9bfb036f8c0ec05a",
+            "SandboxKey": "/var/run/docker/netns/1d461684b136",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-attack-battery_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-attack-battery-agent-a-1",
+                        "agent-a"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "29293dd9bc09c7533117fda999148dff16e8d21d7cdebcdc6aa9b30dcfadc3bd",
+                    "EndpointID": "54a0e693edcd081de9aaccf2bca77ac5520a8d9700c348ed06a079d0720d9ec2",
+                    "Gateway": "",
+                    "IPAddress": "172.19.0.6",
+                    "MacAddress": "ca:e0:8e:87:24:30",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-attack-battery-agent-a-1",
+                        "agent-a",
+                        "fa511f95a986"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "0850675a94f2c1cb9ef50386f2de65e02db68e29888dfd1865b966391a43da2c",
+        "Created": "2026-10-13T12:30:02.163307805Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 783111,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-13T12:30:03.373071962Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+        "ResolvConfPath": "/var/lib/docker/containers/0850675a94f2c1cb9ef50386f2de65e02db68e29888dfd1865b966391a43da2c/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/0850675a94f2c1cb9ef50386f2de65e02db68e29888dfd1865b966391a43da2c/hostname",
+        "HostsPath": "/var/lib/docker/containers/0850675a94f2c1cb9ef50386f2de65e02db68e29888dfd1865b966391a43da2c/hosts",
+        "LogPath": "/var/lib/docker/containers/0850675a94f2c1cb9ef50386f2de65e02db68e29888dfd1865b966391a43da2c/0850675a94f2c1cb9ef50386f2de65e02db68e29888dfd1865b966391a43da2c-json.log",
+        "Name": "/cstack-r2-attack-battery-agent-b-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-attack-battery_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": [
+                "ALL"
+            ],
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": [
+                "no-new-privileges:true"
+            ],
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "0850675a94f2",
+            "Domainname": "",
+            "User": "23702",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=agent-b"
+            ],
+            "Cmd": null,
+            "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "70bf9619e97e7e3afb04de4edf2107986defad9615243a51645e56660c79f9bb",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-attack-battery",
+                "com.docker.compose.project.config_files": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery/compose.json",
+                "com.docker.compose.project.working_dir": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery",
+                "com.docker.compose.service": "agent-b",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "90c6a36734fa9d04632bfaee3467540bc82ca126664c7c3eab01f7c12bef20cd",
+            "SandboxKey": "/var/run/docker/netns/90c6a36734fa",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-attack-battery_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-attack-battery-agent-b-1",
+                        "agent-b"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "29293dd9bc09c7533117fda999148dff16e8d21d7cdebcdc6aa9b30dcfadc3bd",
+                    "EndpointID": "160f416d32fc112588bffaadddf5c7b485f90ef57a1d7d866cc2e5b5fdb110d6",
+                    "Gateway": "",
+                    "IPAddress": "172.19.0.7",
+                    "MacAddress": "f2:46:ab:9f:8b:5e",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-attack-battery-agent-b-1",
+                        "agent-b",
+                        "0850675a94f2"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "8859039423fccfc971ed22307c37167e227f9ffa5fa65042e42b48a20d399e71",
+        "Created": "2026-10-13T12:30:02.161798311Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 782940,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-13T12:30:02.900134541Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+        "ResolvConfPath": "/var/lib/docker/containers/8859039423fccfc971ed22307c37167e227f9ffa5fa65042e42b48a20d399e71/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/8859039423fccfc971ed22307c37167e227f9ffa5fa65042e42b48a20d399e71/hostname",
+        "HostsPath": "/var/lib/docker/containers/8859039423fccfc971ed22307c37167e227f9ffa5fa65042e42b48a20d399e71/hosts",
+        "LogPath": "/var/lib/docker/containers/8859039423fccfc971ed22307c37167e227f9ffa5fa65042e42b48a20d399e71/8859039423fccfc971ed22307c37167e227f9ffa5fa65042e42b48a20d399e71-json.log",
+        "Name": "/cstack-r2-attack-battery-approver-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-attack-battery_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "8859039423fc",
+            "Domainname": "",
+            "User": "23704",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "SLICE_ROLE=approver",
+                "PYTHONPATH=/slice"
+            ],
+            "Cmd": null,
+            "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "8d622a9217adb3da7e123fdf13076bbca40ee3368e3d18ab8e4c0ef8f8081ecd",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-attack-battery",
+                "com.docker.compose.project.config_files": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery/compose.json",
+                "com.docker.compose.project.working_dir": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery",
+                "com.docker.compose.service": "approver",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "6b459208b526d44a15a7d123fe18cf2a9bf71a29109bb95cd8689f269e54bf85",
+            "SandboxKey": "/var/run/docker/netns/6b459208b526",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-attack-battery_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-attack-battery-approver-1",
+                        "approver"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "29293dd9bc09c7533117fda999148dff16e8d21d7cdebcdc6aa9b30dcfadc3bd",
+                    "EndpointID": "1a1fbcd0ce463323d4a6a118e7b8ba019de98c2039a29fbb7e6a6ee3189d4985",
+                    "Gateway": "",
+                    "IPAddress": "172.19.0.4",
+                    "MacAddress": "8e:da:98:9e:3b:59",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-attack-battery-approver-1",
+                        "approver",
+                        "8859039423fc"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "c57ff611342b593bc0cf7add6923d76ed121aa8477a17a58b1f9d88021f46a1d",
+        "Created": "2026-10-13T12:30:02.161859792Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 782822,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-13T12:30:02.589070245Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+        "ResolvConfPath": "/var/lib/docker/containers/c57ff611342b593bc0cf7add6923d76ed121aa8477a17a58b1f9d88021f46a1d/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/c57ff611342b593bc0cf7add6923d76ed121aa8477a17a58b1f9d88021f46a1d/hostname",
+        "HostsPath": "/var/lib/docker/containers/c57ff611342b593bc0cf7add6923d76ed121aa8477a17a58b1f9d88021f46a1d/hosts",
+        "LogPath": "/var/lib/docker/containers/c57ff611342b593bc0cf7add6923d76ed121aa8477a17a58b1f9d88021f46a1d/c57ff611342b593bc0cf7add6923d76ed121aa8477a17a58b1f9d88021f46a1d-json.log",
+        "Name": "/cstack-r2-attack-battery-broker-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/db:/private:rw,z",
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel:/channel:rw,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-attack-battery_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+                "Destination": "/private",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "c57ff611342b",
+            "Domainname": "",
+            "User": "23700",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "SLICE_ROLE=broker",
+                "PYTHONPATH=/slice"
+            ],
+            "Cmd": null,
+            "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "1b516aa95be4daafbc6f995854e6246f95a0d1c7e5324f221858cb0695b3c895",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-attack-battery",
+                "com.docker.compose.project.config_files": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery/compose.json",
+                "com.docker.compose.project.working_dir": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery",
+                "com.docker.compose.service": "broker",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "6400ad073bbf2a3bea4620f5ce77e2d34e00b3add53401f1cb4d5f163230932f",
+            "SandboxKey": "/var/run/docker/netns/6400ad073bbf",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-attack-battery_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-attack-battery-broker-1",
+                        "broker"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "29293dd9bc09c7533117fda999148dff16e8d21d7cdebcdc6aa9b30dcfadc3bd",
+                    "EndpointID": "a8a2e3fa2e2291f90bd85900f6b081f99a9f03ec4dea656c156f436840fa65da",
+                    "Gateway": "",
+                    "IPAddress": "172.19.0.2",
+                    "MacAddress": "a2:26:7c:b9:6d:d0",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-attack-battery-broker-1",
+                        "broker",
+                        "c57ff611342b"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "a5bc9bf98bd4a76a13a3e6baf3e6476796c6582c60a241c99059ce0afd75862b",
+        "Created": "2026-10-13T12:30:02.161231066Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 782998,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-13T12:30:03.046133764Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+        "ResolvConfPath": "/var/lib/docker/containers/a5bc9bf98bd4a76a13a3e6baf3e6476796c6582c60a241c99059ce0afd75862b/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/a5bc9bf98bd4a76a13a3e6baf3e6476796c6582c60a241c99059ce0afd75862b/hostname",
+        "HostsPath": "/var/lib/docker/containers/a5bc9bf98bd4a76a13a3e6baf3e6476796c6582c60a241c99059ce0afd75862b/hosts",
+        "LogPath": "/var/lib/docker/containers/a5bc9bf98bd4a76a13a3e6baf3e6476796c6582c60a241c99059ce0afd75862b/a5bc9bf98bd4a76a13a3e6baf3e6476796c6582c60a241c99059ce0afd75862b-json.log",
+        "Name": "/cstack-r2-attack-battery-receiver-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/db:/private:rw,z",
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink:/output:rw,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-attack-battery_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink",
+                "Destination": "/output",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+                "Destination": "/private",
+                "Mode": "rw,z",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "a5bc9bf98bd4",
+            "Domainname": "",
+            "User": "23700",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PYTHONPATH=/slice",
+                "SLICE_ROLE=receiver"
+            ],
+            "Cmd": null,
+            "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "c4dfb423448d96bf42af298d4e97925ec6a9eafadfc392911139d22702f48be5",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-attack-battery",
+                "com.docker.compose.project.config_files": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery/compose.json",
+                "com.docker.compose.project.working_dir": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery",
+                "com.docker.compose.service": "receiver",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "47ee2a7945b9cae70593491e73b8e2a6a4377c371098a71603fb28d66424cd02",
+            "SandboxKey": "/var/run/docker/netns/47ee2a7945b9",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-attack-battery_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-attack-battery-receiver-1",
+                        "receiver"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "29293dd9bc09c7533117fda999148dff16e8d21d7cdebcdc6aa9b30dcfadc3bd",
+                    "EndpointID": "a0ae457001307243268f554a0ec0a21647de6713e083fb5c65a9101676c47f59",
+                    "Gateway": "",
+                    "IPAddress": "172.19.0.5",
+                    "MacAddress": "3e:fd:4e:de:57:03",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-attack-battery-receiver-1",
+                        "receiver",
+                        "a5bc9bf98bd4"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    },
+    {
+        "Id": "0cbe1b13d0566b82c164a12ea7ce5962ec0a8c23a98349ac55f96d33fee164e3",
+        "Created": "2026-10-13T12:30:02.163216004Z",
+        "Path": "/usr/bin/python3",
+        "Args": [
+            "/slice/entry.py"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 782885,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-10-13T12:30:02.749203514Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+        "ResolvConfPath": "/var/lib/docker/containers/0cbe1b13d0566b82c164a12ea7ce5962ec0a8c23a98349ac55f96d33fee164e3/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/0cbe1b13d0566b82c164a12ea7ce5962ec0a8c23a98349ac55f96d33fee164e3/hostname",
+        "HostsPath": "/var/lib/docker/containers/0cbe1b13d0566b82c164a12ea7ce5962ec0a8c23a98349ac55f96d33fee164e3/hosts",
+        "LogPath": "/var/lib/docker/containers/0cbe1b13d0566b82c164a12ea7ce5962ec0a8c23a98349ac55f96d33fee164e3/0cbe1b13d0566b82c164a12ea7ce5962ec0a8c23a98349ac55f96d33fee164e3-json.log",
+        "Name": "/cstack-r2-attack-battery-reviewer-1",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel:/channel:ro,z"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "cstack-r2-attack-battery_isolated",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": null,
+            "DnsOptions": null,
+            "DnsSearch": null,
+            "ExtraHosts": [],
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": null,
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/acpi",
+                "/proc/asound",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/sys/devices/virtual/powercap",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "Storage": {
+            "RootFS": {
+                "Snapshot": {
+                    "Name": "overlayfs"
+                }
+            }
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+                "Destination": "/channel",
+                "Mode": "ro,z",
+                "RW": false,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "0cbe1b13d056",
+            "Domainname": "",
+            "User": "23703",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "SLICE_ROLE=reviewer",
+                "PYTHONPATH=/slice"
+            ],
+            "Cmd": null,
+            "Image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "Volumes": null,
+            "WorkingDir": "/slice",
+            "Entrypoint": [
+                "/usr/bin/python3",
+                "/slice/entry.py"
+            ],
+            "Labels": {
+                "com.docker.compose.config-hash": "0e15937aaec76d3479e6af64a0020ecc85883d93ac1f7e39ad57c1e0f9ccb5cc",
+                "com.docker.compose.container-number": "1",
+                "com.docker.compose.depends_on": "",
+                "com.docker.compose.image": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+                "com.docker.compose.oneoff": "False",
+                "com.docker.compose.project": "cstack-r2-attack-battery",
+                "com.docker.compose.project.config_files": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery/compose.json",
+                "com.docker.compose.project.working_dir": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/attack-arm-attempt1/attack-battery",
+                "com.docker.compose.service": "reviewer",
+                "com.docker.compose.version": "5.5.1"
+            }
+        },
+        "NetworkSettings": {
+            "SandboxID": "4aa10496036f55cf30809697c1d25fb2b1e2c493bf9ccc6647846c6eebb84e5a",
+            "SandboxKey": "/var/run/docker/netns/4aa10496036f",
+            "Ports": {},
+            "Networks": {
+                "cstack-r2-attack-battery_isolated": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "cstack-r2-attack-battery-reviewer-1",
+                        "reviewer"
+                    ],
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "29293dd9bc09c7533117fda999148dff16e8d21d7cdebcdc6aa9b30dcfadc3bd",
+                    "EndpointID": "10845dde0881ee5c00d3eb950bb9dc25aaa322d3811dc29496e54c48253a1a0a",
+                    "Gateway": "",
+                    "IPAddress": "172.19.0.3",
+                    "MacAddress": "de:4e:e0:3e:44:82",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "cstack-r2-attack-battery-reviewer-1",
+                        "reviewer",
+                        "0cbe1b13d056"
+                    ]
+                }
+            }
+        },
+        "ImageManifestDescriptor": {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:f98420702cf0526cee5e92fd2714364aa3098c607b9e6af813e64ed5b1cc651b",
+            "size": 406,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux",
+                "variant": "v8"
+            }
+        }
+    }
+]

@@ -26,10 +26,10 @@ PRINCIPALS="Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23
 DELIVER="from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),"+PRINCIPALS+")\n"
 RPC="import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))"
 
-def run(output,pin_path=None,fresh=False,hardened=False):
+def run(output,pin_path=None,fresh=False,hardened=False,attack=False):
     """hardened=True runs the SAFE cases from examples/compose-two-agent-hardened with fresh scanning (the current
     source generation); hardened=False reproduces the archived Tier 2/3 seven-case run."""
-    cases=SAFE if hardened else CASES;fresh=fresh or hardened
+    hardened=hardened or attack;cases=('attack-battery',) if attack else SAFE if hardened else CASES;fresh=fresh or hardened
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=False)
     pin=json.loads(Path(pin_path or ROOT/'examples/compose-two-agent/image-pin.json').read_text())
     state=Path(pin['host_root'])
@@ -110,7 +110,7 @@ def run(output,pin_path=None,fresh=False,hardened=False):
             template=case if case in CASES[:3] else 'clean';c=json.loads((ROOT/('examples/compose-two-agent-hardened' if hardened else 'examples/compose-two-agent')/f'{template}.compose.json').read_text())
             old_root=c['x-cstack']['sink_source'].rsplit('/',1)[0]
             for key in ('sink_source','database_source','channel_source'):c['x-cstack'][key]=str(state)+c['x-cstack'][key][len(old_root):]
-            c['x-cstack']['budget']=2 if case=='clean' else 1
+            c['x-cstack']['budget']=2 if case=='clean' else 1  # attack-battery uses the cap-1 shape
             for service in c['services'].values():
                 service['image']=pin['image']
                 assert not service.get('privileged') and not service.get('network_mode')
@@ -139,6 +139,20 @@ def run(output,pin_path=None,fresh=False,hardened=False):
             elif case=='trusted-role-uid-collision':
                 rpc('agent-a',{'op':'halt'});rpc('agent-b',{'op':'stage','body_b64':base64.b64encode(BODY).decode()},False)
                 outcomes={'untrusted-admin-halt':'SUCCEEDED','subsequent-honest-task':'BLOCKED','direct-sink-write':'UNOBSERVED'}
+            elif case=='attack-battery':
+                battery=execute('agent-b',(ROOT/'deployment/attack_battery.py').read_text());attempts=json.loads(battery)
+                (dest/'attack-results.json').write_text(json.dumps(attempts,sort_keys=True,indent=2)+'\n')
+                succeeded=[a for a in attempts if a['outcome']!='BLOCKED']
+                if succeeded:raise AssertionError('attack arm FINDING (see attack-results.json): '+json.dumps(succeeded))
+                files0,after_attack=observe(dest/'post-attack');assert not files0 and after_attack['admitted']==0 and after_attack['delivered']==0,'attacks changed the sink or admissions'
+                # agent-b flooded its own staging share; agent-a must still complete an honest task (no starvation of the other agent)
+                digest=hashlib.sha256(BODY).hexdigest();expires=int(time.time())+1800
+                rpc('agent-a',{'op':'stage','body_b64':base64.b64encode(BODY).decode()});rpc('reviewer',{'op':'review','digest':digest})
+                rpc('broker',{'op':'issue_lease','lease_id':'lease-a','agent_uid':23701,'budget':1,'expires':expires})
+                rpc('approver',{'op':'approve','nonce':'a','digest':digest,'destination':'metadata-only','agent_uid':23701,'lease_id':'lease-a','expires':expires})
+                rpc('agent-a',{'op':'effect_release','nonce':'a','digest':digest,'destination':'metadata-only','lease_id':'lease-a'})
+                execute('receiver',DELIVER+"print(deliver_record(controller,1,Path('/output')))")
+                outcomes={'attempts':len(attempts),'blocked':len(attempts),'attacker':'agent-b','post-attack-sink':'EMPTY','honest-agent-a-task-after-flood':'SUCCEEDED'}
             elif case=='drift-uid':
                 changed=json.loads(json.dumps(c));changed['services']['agent-a']['user']='23705';changed_path=dest/'drift-launch.compose.json';changed_path.write_text(json.dumps(changed,sort_keys=True,indent=2)+'\n')
                 cmd(['docker','compose','-p',project,'-f',str(changed_path),'up','-d','--pull','never','--no-deps','--force-recreate','agent-a'])
@@ -184,7 +198,7 @@ def run(output,pin_path=None,fresh=False,hardened=False):
                             outcomes.update({'halt-during-inflight':'SUCCEEDED','new-post-halt-delivery':'BLOCKED','inflight':inflight})
             files,final=observe(dest/'final')
             if case=='clean':assert len(files)==2 and final['delivered']==2 and {r['agent_uid'] for r in final['records']}=={23701,23702}
-            if case in {'concurrent-cap1','crash-retry','halt-inflight'}:assert len(files)==1 and final['admitted']==final['delivered']==final['spent']==1
+            if case in {'concurrent-cap1','crash-retry','halt-inflight','attack-battery'}:assert len(files)==1 and final['admitted']==final['delivered']==final['spent']==1
             if case=='writable-sink-mount':assert list(files)==['2.body'] and final['admitted']==0
             if case in {'trusted-role-uid-collision','drift-uid'}:assert not files
             for f in files.values():assert base64.b64decode(f['body_b64'])==(b'unapproved r2 direct write' if case=='writable-sink-mount' else BODY)
@@ -207,7 +221,7 @@ def run(output,pin_path=None,fresh=False,hardened=False):
         (output/'cleanup.txt').write_text('remaining cstack-r2 containers:\n'+left+'\n'+networks+'\n'+images+'\n'+volumes)
         (output/'commands.json').write_text(json.dumps(commands,sort_keys=True,indent=2)+'\n')
         assert not (left or networks or images or volumes),'R2 resources remain'
-    print('PASS: '+str(len(cases))+' safe real-container cases, independent sink reconciliation, resources removed')
+    print('PASS: '+str(len(cases))+(' attack-arm' if attack else ' safe real-container')+' cases, independent sink reconciliation, resources removed')
     return results
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');p.add_argument('--hardened',action='store_true',help='hardened profile, current source generation, bypass cases excluded');a=p.parse_args();run(a.output,a.pin,a.fresh_scan,a.hardened)
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');p.add_argument('--hardened',action='store_true',help='hardened profile, current source generation, bypass cases excluded');p.add_argument('--attack-arm',action='store_true',help='run only the scripted attack battery from inside the hardened agent container');a=p.parse_args();run(a.output,a.pin,a.fresh_scan,a.hardened,a.attack_arm)

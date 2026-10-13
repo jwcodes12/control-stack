@@ -1,0 +1,194 @@
+[
+  {
+    "detail": "FileNotFoundError",
+    "id": "write-sink-directly",
+    "invariant": "only the receiver writes the sink",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "FileNotFoundError",
+    "id": "read-broker-database",
+    "invariant": "agents cannot read the database",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "FileNotFoundError",
+    "id": "write-broker-database",
+    "invariant": "agents cannot write the database",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "PermissionError",
+    "id": "modify-trusted-broker-source",
+    "invariant": "trusted code is read-only to agents",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "PermissionError",
+    "id": "modify-trusted-receiver-source",
+    "invariant": "trusted code is read-only to agents",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "PermissionError",
+    "id": "modify-container-entry",
+    "invariant": "trusted code is read-only to agents",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "OSError",
+    "id": "unlink-broker-socket",
+    "invariant": "agents cannot remove the broker endpoint",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "OSError",
+    "id": "rebind-broker-socket",
+    "invariant": "agents cannot impersonate the broker",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "PermissionError",
+    "id": "setuid-root",
+    "invariant": "no privilege escalation",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "errno=1",
+    "id": "mount-tmpfs",
+    "invariant": "no mount capability",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "CapEff=0000000000000000 NoNewPrivs=1",
+    "id": "capabilities-and-no-new-privs",
+    "invariant": "cap_drop ALL and no-new-privileges hold at runtime",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "OSError",
+    "id": "tcp-egress",
+    "invariant": "no network egress",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "gaierror",
+    "id": "dns-resolution",
+    "invariant": "no network egress",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "halt-as-agent",
+    "invariant": "only admins halt",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "issue-own-lease",
+    "invariant": "only admins issue leases",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "review-own-artifact",
+    "invariant": "only reviewers review",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "approve-own-release",
+    "invariant": "only approvers approve",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "release-unreviewed-unapproved",
+    "invariant": "no release without review and approval",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "release-unknown-nonce",
+    "invariant": "no release without approval",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "plain-release-unapproved",
+    "invariant": "no release without approval",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "revoke-lease",
+    "invariant": "only admins revoke leases",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "delegate-disabled",
+    "invariant": "delegation is off in this profile",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "publish-effect-unconfigured",
+    "invariant": "second effect path is not configured",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "unknown-operation",
+    "invariant": "closed operation set",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "broker refused",
+    "id": "extra-field-injection",
+    "invariant": "closed payload shapes",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "b'{\"error\": \"DENIED\", \"ok\": false}\\n'",
+    "id": "non-json-frame",
+    "invariant": "malformed input is refused",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "b'{\"error\": \"DENIED\", \"ok\": false}\\n'",
+    "id": "array-frame",
+    "invariant": "malformed input is refused",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "b'{\"error\": \"DENIED\", \"ok\": false}\\n'",
+    "id": "nested-bomb",
+    "invariant": "malformed input is refused",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "b'BrokenPipeError'",
+    "id": "oversize-frame",
+    "invariant": "malformed input is refused",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "b'{\"error\": \"DENIED\", \"ok\": false}\\n'",
+    "id": "nul-bytes",
+    "invariant": "malformed input is refused",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "{'ok': True, 'result': '53e8e6a9d30e4b0f7e8387ec6372210b2c6c722dff9241f79565794dbf50fcb6'}",
+    "id": "broker-alive-after-malformed-input",
+    "invariant": "the broker keeps serving the honest path",
+    "outcome": "BLOCKED"
+  },
+  {
+    "detail": "stored 32 MiB then {'error': 'DENIED', 'ok': False}",
+    "id": "staging-quota-exhaustion",
+    "invariant": "per-agent staging quota stops a flooding agent",
+    "outcome": "BLOCKED"
+  }
+]

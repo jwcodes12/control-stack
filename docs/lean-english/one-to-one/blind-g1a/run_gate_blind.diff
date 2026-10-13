@@ -1,0 +1,22 @@
+--- run_gate.py
++++ blind-g1a/run_gate_blind.py
+@@ -2,10 +2,10 @@
+ from pathlib import Path
+ import importlib.util, os, json, hashlib
+ ROOT=Path(__file__).resolve().parents[3]
+-OUT=Path(__file__).resolve().parent
++OUT=ROOT/'docs/lean-english/one-to-one/blind-g1a'
+ os.environ['PL_LEAN_PROJ']=str(ROOT)
+ os.environ['PL_GATE_DIR']=str(OUT/'gate-tmp')
+-os.environ['PL_IMPORTS']='ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'
++os.environ['PL_IMPORTS']='Mathlib.Tactic ControlStack.EgressGate ControlStack.Scenarios.SC05Signal ControlStack.Scenarios.SC06Artifacts ControlStack.Scenarios.SC07Liveness ControlStack.Scenarios.SC07Refinement'
+ spec=importlib.util.spec_from_file_location('leangate',OUT/'leangate_imports.py')
+ g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+ IMPORTS=''
+@@ -21,5 +21,5 @@
+  print(cid,ok,log[:240],flush=True)
+  return ok
+ if __name__=='__main__':
+- for p in sorted(OUT.glob('g0_*.statement.lean')):
++ for p in sorted(OUT.glob('bg1a_*.statement.lean')):
+   run(p.name.removesuffix('.statement.lean'),p.read_text(),p.with_name(p.name.replace('.statement.lean','.proof.lean')).read_text())

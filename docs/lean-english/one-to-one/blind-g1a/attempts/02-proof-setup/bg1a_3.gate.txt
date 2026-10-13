@@ -1,0 +1,14 @@
+FAIL lean exit 1
+/home/opc/projects/sol-g1a-b/docs/lean-english/one-to-one/blind-g1a/gate-tmp/PLGate_bg1a_3_claim_1857a5e4f131.lean:62:6: error: Tactic `simp` failed with a nested error:
+maximum recursion depth has been reached
+use `set_option maxRecDepth <num>` to increase limit
+use `set_option diagnostics true` to get diagnostic information
+/home/opc/projects/sol-g1a-b/docs/lean-english/one-to-one/blind-g1a/gate-tmp/PLGate_bg1a_3_claim_1857a5e4f131.lean:106:6: warning: `push_neg` has been deprecated. Prefer using `push Not` instead.
+If you'd rather continue using `push_neg` in your project, you can implement it as follows:
+```
+open Lean.Parser.Tactic in
+macro "push_neg" cfg:optConfig loc:(location)? : tactic =>
+  `(tactic| push $cfg:optConfig Not $[$loc]?)
+```
+'gate_1857a5e4f131' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+

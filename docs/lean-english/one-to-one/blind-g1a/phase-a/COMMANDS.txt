@@ -1,0 +1,10 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\n--- %s ---\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc 'mkdir -p ./back'
+
+---
+/bin/bash -lc 'sha256sum back/*.lean'

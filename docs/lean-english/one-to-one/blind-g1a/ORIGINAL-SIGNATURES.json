@@ -1,0 +1,69 @@
+{
+  "captured_utc": "2026-10-13T04:00:59.477660+00:00",
+  "after_typed_hash_manifest": true,
+  "declarations": [
+    {
+      "claim": 1,
+      "path": "ControlStack/EgressGate.lean",
+      "line": 100,
+      "sha256": "b491ec0accf6be75e7355667012b173760c5278b7180a31f4c4990ffad9f2af6",
+      "signature": "theorem step_safe (p : Policy) (s : State) (a : Action)\n    (h : Invariant p s) : Invariant p (step p s a)"
+    },
+    {
+      "claim": 2,
+      "path": "ControlStack/EgressGate.lean",
+      "line": 126,
+      "sha256": "b491ec0accf6be75e7355667012b173760c5278b7180a31f4c4990ffad9f2af6",
+      "signature": "theorem trace_safe (p : Policy) (s : State) (actions : List Action)\n    (h : Invariant p s) : Invariant p (run p s actions)"
+    },
+    {
+      "claim": 3,
+      "path": "ControlStack/Scenarios/SC05Signal.lean",
+      "line": 33,
+      "sha256": "e55cedec25a7469246ae72128103828da0a1e1fb01ddec2805aab07515e0a806",
+      "signature": "theorem cap_does_not_prevent :\n    \u2203 (enc : Bool \u2192 Fin 65536 \u2192 \u211d) (dec : Fin 65536 \u2192 Bool \u2192 \u211d),\n      (\u2200 m, IsDist (enc m)) \u2227 (\u2200 v, IsDist (dec v)) \u2227 successView id enc dec = 1"
+    },
+    {
+      "claim": 4,
+      "path": "ControlStack/Scenarios/SC05Signal.lean",
+      "line": 40,
+      "sha256": "e55cedec25a7469246ae72128103828da0a1e1fb01ddec2805aab07515e0a806",
+      "signature": "theorem zero_dependence_is_blind {\u03a9 M V : Type} [Fintype \u03a9] [Fintype M] [Fintype V]\n    (\u03c1 : \u03a9 \u2192 \u211d) (e : \u03a9 \u2192 V \u2192 \u211d) (dec : \u03a9 \u2192 V \u2192 M \u2192 \u211d)\n    (h\u03c1 : IsDist \u03c1) (he : \u2200 \u03c9, IsDist (e \u03c9)) (hdec : \u2200 \u03c9 v, IsDist (dec \u03c9 v)) :\n    successProb \u03c1 (fun \u03c9 _ => e \u03c9) dec = (Fintype.card M : \u211d)\u207b\u00b9"
+    },
+    {
+      "claim": 5,
+      "path": "ControlStack/Scenarios/SC05Signal.lean",
+      "line": 89,
+      "sha256": "e55cedec25a7469246ae72128103828da0a1e1fb01ddec2805aab07515e0a806",
+      "signature": "theorem forbidden_never_executes (forbidden : List \u2115) (ops : List Op) :\n    \u2200 a \u2208 (sys forbidden).run [] ops, a \u2209 forbidden"
+    },
+    {
+      "claim": 6,
+      "path": "ControlStack/Scenarios/SC06Artifacts.lean",
+      "line": 242,
+      "sha256": "f3e880bf3b4b5a797c14a3034e12a2a6a3a3202f0ea851038e42058a433740ec",
+      "signature": "theorem sc06_safe (P : Policy) (ops : List Op) : Good P (run P full init ops)"
+    },
+    {
+      "claim": 7,
+      "path": "ControlStack/Scenarios/SC06Artifacts.lean",
+      "line": 258,
+      "sha256": "f3e880bf3b4b5a797c14a3034e12a2a6a3a3202f0ea851038e42058a433740ec",
+      "signature": "theorem halt_freezes (P : Policy) (s : St) (ops : List Op) (hh : s.halted = true) : run P full s ops = s"
+    },
+    {
+      "claim": 8,
+      "path": "ControlStack/Scenarios/SC07Liveness.lean",
+      "line": 169,
+      "sha256": "a8fb0358a48695f59620df015c48960ed9107181b7ecbe4ed4f550513bb1dc90",
+      "signature": "theorem sc07_safe (E : Env) (ops : List Op) :\n    (\u2200 e \u2208 (run E full init ops).log, e.dest \u2208 E.allow) \u2227 \u2200 w, wsum (run E full init ops) w \u2264 E.q"
+    },
+    {
+      "claim": 9,
+      "path": "ControlStack/Scenarios/SC07Refinement.lean",
+      "line": 272,
+      "sha256": "7c3f3b0e0e70abaf4bdfd514014f86624495b6aa6b59b1ab1052dc010c85eca0",
+      "signature": "theorem concrete_safe (K : CCfg) (hK : K.quotaRule = true) (ops : List COp) :\n    (\u2200 r \u2208 (runC K cinit ops).fwd, (r.ip, r.port) \u2208 K.allow) \u2227\n      \u2200 w, payloadIn (runC K cinit ops).fwd w \u2264 K.Q - 1"
+    }
+  ]
+}

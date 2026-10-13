@@ -15,3 +15,13 @@ What was done and how to trust it:
 - **Gate:** proofledger's deterministic gate with only the import-header option changed (`leangate_imports.py` differs from the proofledger original only by `import_header`/`PL_IMPORTS`); banned-token and axiom checks unchanged. The orchestrator re-ran all 8 comparison and 8 witness gates: all pass, statement and proof hashes identical to Sol's receipts.
 - **Caveats:** one model, one run per claim; Sol's equivalence statements are its own transcriptions of the original conclusion (`OrigConclusion`) checked against the original declaration's type by an `original_type` theorem, so the weak point is the back-translation, not the transcription; the excerpt tool, not a person, chose what Sol could see; the English corrections it proposes (`RESULTS.md`, 7 items, mostly about "distinct nodes", list multiplicity, mediated edges and zero-step paths) were **not applied** to the part files, so these blocks remain as written until the owner decides. No badges were added.
 - **Not covered:** claims 4, 6-11, 13-15, 17-19, 21-22, 24-26 of G0 (their old verdicts stand as non-blind) and G1-G7 (161 claims, never checked).
+
+## Addendum: a second batch with the reusable pipeline (blind-g1a)
+`tools/blind_one_to_one.py` generalises the isolation. Batch g1a (9 gate-style G1 claims: `EgressGate.step_safe`/`trace_safe`, `SC05.cap_does_not_prevent`/`zero_dependence_is_blind`/`forbidden_never_executes`,
+`SC06.sc06_safe`/`halt_freezes`, `SC07Liveness.sc07_safe`, `SC07Refinement.concrete_safe`) was run the same way: **9/9 EQUIVALENT**, all 18 gate checks passed and were
+re-run independently with identical receipts. Details, hashes and ordering evidence: `../blind-g1a/` (`RESULTS.md`, `phase-a/README.md`). Two English passages need correcting (claim 4 wrongly excludes
+uniform-bit coordination; claim 9 should say denied or halted packets do not increase `consumed`); proposals only, not applied. For the simple gate claims the blind statement coincides with the
+original, so the equivalence is `Iff.rfl`; claim 3 needed a 109-line bridge between probabilistic and deterministic codes.
+
+Caveat on blind-v1's Phase A excerpts: they were produced by the first version of the excerpt script, which left a few orphaned docstrings of removed theorems of OTHER claims in `TranscriptReplay_defs.lean`;
+none described the eight claims under test (checked by name). The g1a excerpts use the fixed script.

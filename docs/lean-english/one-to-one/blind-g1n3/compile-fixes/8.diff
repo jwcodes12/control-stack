@@ -1,0 +1,20 @@
+# Meaning change: NO. Add required project import. Escape reserved binder prefix; alpha-equivalent.
+--- back/8-concrete_halt_freezes.lean
++++ typed/8-concrete_halt_freezes.lean
+@@ -1,10 +1,12 @@
++import ControlStack.Scenarios.SC07Refinement
++
+ namespace ControlStack.SC07Refinement
+ 
+ def Back_concrete_halt_freezes : Prop :=
+-  ∀ (K : CCfg) (prefix continuation : List COp),
++  ∀ (K : CCfg) («prefix» continuation : List COp),
+     K.quotaRule = true →
+-    (runC K cinit prefix).halted = true →
+-    (runC K cinit (prefix ++ continuation)).fwd =
+-      (runC K cinit prefix).fwd
++    (runC K cinit «prefix»).halted = true →
++    (runC K cinit («prefix» ++ continuation)).fwd =
++      (runC K cinit «prefix»).fwd
+ 
+ end ControlStack.SC07Refinement

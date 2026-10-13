@@ -1,0 +1,3 @@
+theorem upload_completes (E : Env) (s : St) (d : ℕ) (chunks : List ℕ) (hh : s.halted = false) (hd : d ∈ E.allow)
+    (hq : s.used + chunks.sum ≤ E.q) :
+    (run E full s (chunks.map (fun n => .send d n))).log = s.log ++ chunks.map (fun n => ⟨d, n, s.window⟩)

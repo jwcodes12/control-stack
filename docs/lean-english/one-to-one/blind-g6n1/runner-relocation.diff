@@ -1,0 +1,25 @@
+--- ../run_gate.py
++++ run_gate_blind.py
+@@ -1,12 +1,12 @@
+ """Invoke the unchanged proofledger gate with trusted project imports as header dependencies."""
+ from pathlib import Path
+ import importlib.util, os, json, hashlib
+-ROOT=Path(__file__).resolve().parents[3]
++ROOT=(Path(__file__).resolve().parent.parent/'run_gate.py').resolve().parents[3]
+ OUT=Path(__file__).resolve().parent
+ os.environ['PL_LEAN_PROJ']=str(ROOT)
+ os.environ['PL_GATE_DIR']=str(OUT/'gate-tmp')
+-os.environ['PL_IMPORTS']='ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'
+-spec=importlib.util.spec_from_file_location('leangate',OUT/'leangate_imports.py')
++os.environ['PL_IMPORTS']='ControlStack.Scenarios.SC25Audit ControlStack.Scenarios.SC25Content ControlStack.Scenarios.AuthInstancesA ControlStack.Scenarios.SC25Refinement ControlStack.Scenarios.SC26Transaction'
++spec=importlib.util.spec_from_file_location('leangate',OUT.parent/'leangate_imports.py')
+ g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+ IMPORTS=''
+ def run(cid, statement, proof):
+@@ -21,5 +21,5 @@
+  print(cid,ok,log[:240],flush=True)
+  return ok
+ if __name__=='__main__':
+- for p in sorted(OUT.glob('g0_*.statement.lean')):
++ for p in sorted(OUT.glob('bg6n1_*.statement.lean')):
+   run(p.name.removesuffix('.statement.lean'),p.read_text(),p.with_name(p.name.replace('.statement.lean','.proof.lean')).read_text())

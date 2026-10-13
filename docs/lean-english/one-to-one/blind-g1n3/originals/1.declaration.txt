@@ -1,0 +1,2 @@
+theorem expected_leak_le (q : ℕ) (c : ℕ → ℝ) (pr : ℝ) (hc : ∀ i, pr ≤ c i ∧ c i ≤ 1) (hpr : 0 < pr) (b : List ℕ) :
+    expLeak c (capped q b) 0 ≤ q / pr

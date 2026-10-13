@@ -1,0 +1,9 @@
+# Meaning change: NO. Add the project import required to resolve existing symbols.
+--- back/3-datacenter_example.lean
++++ typed/3-datacenter_example.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC07Exfil
++
+ namespace ControlStack.SC07Exfil
+ 
+ def Back_datacenter_example : Prop :=

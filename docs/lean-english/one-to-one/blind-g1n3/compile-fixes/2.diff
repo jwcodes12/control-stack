@@ -1,0 +1,9 @@
+# Meaning change: NO. Add the project import required to resolve existing symbols.
+--- back/2-observable_schedule_exfil.lean
++++ typed/2-observable_schedule_exfil.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC07Exfil
++
+ namespace ControlStack.SC07Exfil
+ 
+ def Back_observable_schedule_exfil : Prop :=

@@ -1,0 +1,52 @@
+Claim 1: ControlStack/Scenarios/SC25Audit.lean:314
+theorem sc25_safe (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (ops : List Op) :
+    Good R h cls (run R h cls full init ops)
+
+Claim 2: ControlStack/Scenarios/SC25Audit.lean:345
+theorem expired_never_executes (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (ops : List Op) (id : ℕ)
+    (hx : id ∈ s.expired) (hn : id ∉ s.executed.map Exec.id) :
+    id ∉ (run R h cls full s ops).executed.map Exec.id
+
+Claim 3: ControlStack/Scenarios/SC25Audit.lean:363
+theorem halt_freezes (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (s : St) (ops : List Op) (hh : s.halted = true) :
+    (run R h cls full s ops).executed = s.executed
+
+Claim 4: ControlStack/Scenarios/SC25Content.lean:146
+theorem sc25_content_safe (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (ops : List Op)
+    (hinj : Set.InjOn h {c | ∃ it ∈ (run R h cls full init ops).queue, it.content = c}) :
+    ∀ e ∈ (run R h cls full init ops).executed,
+      ∃ x ∈ (grun R h cls ops).2, x.1 = e.id ∧ x.2.1 = e.content ∧ x.2.2.1 = true ∧ x.2.2.2 ∈ R.auditors
+
+Claim 5: ControlStack/Scenarios/SC25Content.lean:165
+theorem digest_only_executes_unaudited :
+    let ops : List Op := [.submit 1 0 7 false, .audit 2 0 true, .amend 1 0 50, .check 0, .fire 0]
+    (run R0 (fun _ => 0) cls0 full init ops).executed.map Exec.content = [50] ∧
+      (grun R0 (fun _ => 0) cls0 ops).2 = [(0, 7, true, 2)]
+
+Claim 6: ControlStack/Scenarios/AuthInstancesA.lean:112
+theorem sc25_safe_authenticated (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (U : List ℕ) (ops : List (ℕ × SC25.Op))
+    (hUv : ∀ u ∈ U, u ∉ R.auditors) (hUa : ∀ u ∈ U, u ∉ R.approvers) :
+    Good R h cls (authRun (SC25.step R h cls full) claim25 SC25.init ops) ∧
+    (∀ v ∈ (authRun (SC25.step R h cls full) claim25 SC25.init ops).verdicts, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .audit c v.id v.pass ∧ v.by_ = some c ∧ c ∈ R.auditors)) ∧
+    (∀ ap ∈ (authRun (SC25.step R h cls full) claim25 SC25.init ops).approvals, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .approve c ap.id ∧ c = ap.approver ∧ c ∈ R.approvers))
+
+Claim 7: ControlStack/Scenarios/AuthInstancesA.lean:130
+theorem forged25_executes_without_auth :
+    ((authRun (SC25.step R0 id cls0 full) (fun _ => none) SC25.init forged25).executed.map Exec.id) = [0] ∧
+    (authRun (SC25.step R0 id cls0 full) claim25 SC25.init forged25).executed = []
+
+Claim 8: ControlStack/Scenarios/SC25Refinement.lean:365
+theorem concrete_safe (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (ops : List COp) :
+    Good R h cls (α (runC R h cls false cinit ops))
+
+Claim 9: ControlStack/Scenarios/SC25Refinement.lean:439
+theorem concrete_content_safe (R : Roles) (h : ℕ → ℕ) (cls : ℕ → Bool) (ops : List COp)
+    (hinj : Set.InjOn h {c | ∃ it ∈ (runC R h cls false cinit ops).items, it.content = c}) :
+    ∀ e ∈ (runC R h cls false cinit ops).effects, ∃ a ∈ (runC R h cls false cinit ops).auditLog,
+      a.id = e.id ∧ a.content = e.content ∧ a.pass = true ∧ a.by_ ∈ R.auditors
+
+Claim 10: ControlStack/Scenarios/SC26Transaction.lean:426
+theorem sc26_safe (R : Roles) (cap : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal R o) :
+    Good R cap (run R cap full init ops)

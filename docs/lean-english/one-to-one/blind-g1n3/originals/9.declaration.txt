@@ -1,0 +1,2 @@
+theorem sink_within_quota (K : CCfg) (hK : K.quotaRule = true) (ops : List COp) (w sinkBytes tol : ℕ)
+    (hsink : sinkBytes ≤ payloadIn (runC K cinit ops).fwd w) : sinkBytes ≤ K.Q - 1 ∧ sinkBytes ≤ K.Q + tol

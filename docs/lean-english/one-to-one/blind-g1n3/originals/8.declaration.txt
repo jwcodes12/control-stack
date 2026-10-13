@@ -1,0 +1,2 @@
+theorem concrete_halt_freezes (K : CCfg) (hK : K.quotaRule = true) (pre post : List COp)
+    (hh : (runC K cinit pre).halted = true) : (runC K cinit (pre ++ post)).fwd = (runC K cinit pre).fwd

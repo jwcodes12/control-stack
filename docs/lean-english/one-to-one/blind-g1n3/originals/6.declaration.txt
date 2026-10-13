@@ -1,0 +1,3 @@
+theorem shared_quota_blocks :
+    (run E0 full init [.send 10 6, .send 10 4]).log = [⟨10, 6, 0⟩] ∧
+    (run E0 full init [.send 10 6, .tick, .send 10 4]).log = [⟨10, 6, 0⟩, ⟨10, 4, 1⟩]

@@ -1,0 +1,9 @@
+# Meaning change: NO. Add the project import required to resolve existing symbols.
+--- back/5-exfil_needs_windows.lean
++++ typed/5-exfil_needs_windows.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC07Liveness
++
+ namespace ControlStack.SC07Liveness
+ 
+ def Back_exfil_needs_windows : Prop :=

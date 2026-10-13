@@ -1,0 +1,9 @@
+# Meaning change: NO. Add the project import required to resolve existing symbols.
+--- back/6-shared_quota_blocks.lean
++++ typed/6-shared_quota_blocks.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC07Liveness
++
+ namespace ControlStack.SC07Liveness
+ 
+ def Back_shared_quota_blocks : Prop :=

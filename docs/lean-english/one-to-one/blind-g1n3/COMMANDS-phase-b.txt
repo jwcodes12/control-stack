@@ -1,0 +1,398 @@
+/bin/bash -lc 'pwd; rg --files -g AGENTS.md -g lakefile.lean -g lakefile.toml -g lean-toolchain; ls docs/lean-english/one-to-one/blind-g1n3; cat docs/lean-english/sol-input/batch-g1n3.md; cat docs/lean-english/one-to-one/blind-g1n3/CLAIMS.txt'
+
+---
+/bin/bash -lc 'find .. -name AGENTS.md -print; cat docs/lean-english/one-to-one/blind-g1n3/back/*.lean; cat docs/lean-english/one-to-one/blind-g1n3/back/BACK-HASHES.json; cat docs/lean-english/one-to-one/run_gate.py; cat docs/lean-english/one-to-one/leangate_imports.py; cat docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g1n3/AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done
+rg --files ControlStack | rg '"'SC07(Exfil|Liveness|Refinement)'; cat lakefile.lean; ls -la docs/lean-english/one-to-one/blind-g1n3/back"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess,hashlib,json,difflib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g1n3')
+for d in ['compile-fixes','typed','compile-logs']: (out/d).mkdir(exist_ok=True)
+hashes=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+for f in sorted((out/'back').glob('*.lean')):
+ assert hashlib.sha256(f.read_bytes()).hexdigest()==hashes['back/'+f.name], f
+ results=[]
+ r=subprocess.run(['lake','env','lean',str(f)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{f.name}.raw.txt').write_text(r.stdout+r.stderr)
+ module='SC07Exfil' if int(f.name.split('-')[0])<=3 else 'SC07Liveness' if int(f.name.split('-')[0])<=6 else 'SC07Refinement'
+ src=f.read_text(); typed='import ControlStack.'+module+'\\n\\n'+src
+ target=out/'typed'/f.name;target.write_text(typed)
+ (out/'compile-fixes'/f'{f.name.split(\"-\")[0]}.diff').write_text('# Meaning change: NO. Add the project import required to resolve existing symbols.\\n'+''.join(difflib.unified_diff(src.splitlines(True),typed.splitlines(True),fromfile='back/'+f.name,tofile='typed/'+f.name)))
+ r2=subprocess.run(['lake','env','lean',str(target)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{f.name}.typed.txt').write_text(r2.stdout+r2.stderr)
+ print(f.name,'raw',r.returncode,'typed',r2.returncode,r2.stdout+r2.stderr,flush=True)
+ if r2.returncode: raise SystemExit(1)
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'stage':'All typed files compiled and frozen before opening original source declarations','files':{str(f.relative_to(out)):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted((out/'typed').glob('*.lean'))}},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('Done: all nine raw back files compiled (missing-import failures recorded); all nine minimally repaired files compiled; original back hashes verified; typed hashes frozen before opening any original declaration.\\nNot done: original comparisons, gates, report, clean re-gate.\\n')
+PY"
+
+---
+/bin/bash -lc 'for f in AGENTS.md CLAUDE.md GEMINI.md; do if test -f "$f"; then cat "$f"; fi; done'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess,hashlib,json,difflib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g1n3')
+hashes=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+for f in sorted((out/'back').glob('*.lean')):
+ assert hashlib.sha256(f.read_bytes()).hexdigest()==hashes['back/'+f.name]
+ r=subprocess.run(['lake','env','lean',str(f)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{f.name}.raw.txt').write_text(r.stdout+r.stderr)
+ module='SC07Exfil' if int(f.name.split('-')[0])<=3 else 'SC07Liveness' if int(f.name.split('-')[0])<=6 else 'SC07Refinement'
+ src=f.read_text(); typed='import ControlStack.Scenarios.'+module+'\\n\\n'+src
+ target=out/'typed'/f.name;target.write_text(typed)
+ (out/'compile-fixes'/f'{f.name.split(\"-\")[0]}.diff').write_text('# Meaning change: NO. Add the project import required to resolve existing symbols.\\n'+''.join(difflib.unified_diff(src.splitlines(True),typed.splitlines(True),fromfile='back/'+f.name,tofile='typed/'+f.name)))
+ r2=subprocess.run(['lake','env','lean',str(target)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{f.name}.typed.txt').write_text(r2.stdout+r2.stderr)
+ print(f.name,'raw',r.returncode,'typed',r2.returncode,r2.stdout+r2.stderr,flush=True)
+ if r2.returncode: raise SystemExit(1)
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'stage':'All typed files compiled and frozen before opening original source declarations','files':{str(f.relative_to(out)):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted((out/'typed').glob('*.lean'))}},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('Done: all nine raw back files compiled (missing-import failures recorded); all nine minimally repaired files compiled; original back hashes verified; typed hashes frozen before opening any original declaration.\\nNot done: original comparisons, gates, report, clean re-gate.\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess,hashlib,json,difflib,datetime,re
+out=Path('docs/lean-english/one-to-one/blind-g1n3')
+for n in [8,9]:
+ f=next((out/'back').glob(f'{n}-*.lean'));src=f.read_text()
+ r=subprocess.run(['lake','env','lean',str(f)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{f.name}.raw.txt').write_text(r.stdout+r.stderr)
+ typed='import ControlStack.Scenarios.SC07Refinement\\n\\n'+(re.sub(r'\\bprefix\\b','«prefix»',src) if n==8 else src)
+ target=out/'typed'/f.name;target.write_text(typed)
+ (out/'compile-fixes'/f'{n}.diff').write_text('# Meaning change: NO. Add required project import.'+(' Escape reserved binder prefix; alpha-equivalent.' if n==8 else '')+'\\n'+''.join(difflib.unified_diff(src.splitlines(True),typed.splitlines(True),fromfile='back/'+f.name,tofile='typed/'+f.name)))
+ r=subprocess.run(['lake','env','lean',str(target)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{f.name}.typed.txt').write_text(r.stdout+r.stderr)
+ print(n,r.returncode,r.stdout+r.stderr,flush=True)
+ assert r.returncode==0
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'stage':'All nine typed files compiled and frozen before opening original declarations','files':{str(f.relative_to(out)):hashlib.sha256(f.read_bytes()).hexdigest() for f in sorted((out/'typed').glob('*.lean'))}},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('Done: raw compile attempts and minimal repairs for all nine; repaired files compile; back hashes verified; typed hashes frozen before originals.\\nNot done: comparisons, gates, final report, clean re-gate.\\n')
+PY"
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC07Exfil.lean; cat ControlStack/Scenarios/SC07Liveness.lean; cat ControlStack/Scenarios/SC07Refinement.lean'
+
+---
+/bin/bash -lc "rg -n -A 22 -B 3 'theorem (upload_completes|exfil_needs_windows|shared_quota_blocks)|def (upload|E0)' ControlStack/Scenarios/SC07Liveness.lean; rg -n 'theorem (expected_leak_le|observable_schedule_exfil|datacenter_example|concrete_wire_lt|concrete_halt_freezes|sink_within_quota)' ControlStack/Scenarios/SC07{Exfil,Refinement}.lean; cat docs/lean-english/one-to-one/blind-g1n3/typed/HASHES.json"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g1n3');base=out.parent
+src=(base/'run_gate.py').read_text()
+src=src.replace('OUT=Path(__file__).resolve().parent','OUT=Path(__file__).resolve().parent; ROOT=OUT.parents[3]')
+src=src.replace(\"os.environ['PL_IMPORTS']='ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'\", \"os.environ['PL_IMPORTS']='ControlStack.Scenarios.SC07Exfil ControlStack.Scenarios.SC07Liveness ControlStack.Scenarios.SC07Refinement'\")
+src=src.replace(\"OUT.glob('g0_*.statement.lean')\",\"OUT.glob('bg1n3_*.statement.lean')\")
+(out/'run_gate_blind.py').write_text(src)
+(out/'leangate_imports.py').write_bytes((base/'leangate_imports.py').read_bytes())
+(out/'originals').mkdir(exist_ok=True)
+modules=['SC07Exfil','SC07Liveness','SC07Refinement']
+names=['expected_leak_le','observable_schedule_exfil','datacenter_example','upload_completes','exfil_needs_windows','shared_quota_blocks','concrete_wire_lt','concrete_halt_freezes','sink_within_quota']
+record={}
+for n,name in enumerate(names,1):
+ mod=modules[(n-1)//3];p=Path('ControlStack/Scenarios')/(mod+'.lean');src=p.read_text();lines=src.splitlines(True)
+ start=next(i for i,l in enumerate(lines) if l.startswith('theorem '+name+' ' ) or l.startswith('theorem '+name+' :'))
+ end=start
+ while ':= ' not in lines[end] and not lines[end].rstrip().endswith(':='): end+=1
+ decl=''.join(lines[start:end+1]).split(':=')[0].rstrip()+'\\n'
+ (out/'originals'/f'{n}.declaration.txt').write_text(decl)
+ record[str(n)]={'name':'ControlStack.'+mod+'.'+name,'source':str(p),'line':start+1,'source_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'declaration_sha256':hashlib.sha256(decl.encode()).hexdigest()}
+(out/'originals/MANIFEST.json').write_text(json.dumps({'opened_after_typed_freeze':True,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'declarations':record},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n3/build_comparisons.py <<'PY'
+from pathlib import Path
+import json,hashlib
+OUT=Path(__file__).resolve().parent
+for f,h in json.loads((OUT/'typed/HASHES.json').read_text())['files'].items():
+ assert hashlib.sha256((OUT/f).read_bytes()).hexdigest()==h
+specs={
+1:dict(module='SC07Exfil',params='(q : ℕ) (pr : ℝ) (c : ℕ → ℝ) (b : List ℕ)',quant='∀ (q : ℕ) (pr : ℝ) (c : ℕ → ℝ) (b : List ℕ), 0 < pr → (∀ i, pr ≤ c i ∧ c i ≤ 1) →',args='q pr c b',back='expLeak c (capped q b) 0 ≤ (q : ℝ) / pr',orig='expLeak c (capped q b) 0 ≤ q / pr',intro='q pr c b hpr hc',original='expected_leak_le q c pr hc hpr b',witness='(0 < (1 / 2 : ℝ)) ∧ (∀ i : ℕ, (1 / 2 : ℝ) ≤ (fun _ : ℕ => (1 / 2 : ℝ)) i ∧ (fun _ : ℕ => (1 / 2 : ℝ)) i ≤ 1) ∧ (capped 8 [8, 8]).sum = 16 ∧ expLeak (fun _ => (1 / 2 : ℝ)) (capped 8 [8, 8]) 0 = 12',wp='by norm_num [capped, expLeak]'),
+2:dict(module='SC07Exfil',params='(q : ℕ)',quant='∀ q : ℕ, 0 < q →',args='q',back='let b : List ℕ := [0, q, 0, q]\\n  let c : ℕ → ℝ := fun i => if i = 0 ∨ i = 2 then 1 else 0\\n  b.sum = 2 * q ∧ survive c b 0 = 1',orig='let c : ℕ → ℝ := fun i => if i = 0 ∨ i = 2 then 1 else 0\\n  (capped q [0, q, 0, q]).sum = 2 * q ∧ survive c (capped q [0, q, 0, q]) 0 = 1',intro='q hq',original='observable_schedule_exfil q hq',point='simp [BackAt, OriginalAt, capped]',witness='0 < (1 : ℕ) ∧ ([0, 1, 0, 1] : List ℕ).sum = 2 ∧ survive (fun i => if i = 0 ∨ i = 2 then 1 else 0) [0, 1, 0, 1] 0 = 1',wp='by norm_num [survive]'),
+3:dict(module='SC07Exfil',params='(b : List ℕ) (c : ℕ → ℝ)',quant='∀ (b : List ℕ) (c : ℕ → ℝ), 800000000000 ≤ (capped 8000000000 b).sum → (∀ i, (5 / 100 : ℝ) ≤ c i ∧ c i ≤ 1) →',args='b c',back='ceilDiv 800000000000 8000000000 = 100 ∧ survive c (capped 8000000000 b) 0 ≤ (6 / 1000 : ℝ)',orig='ceilDiv 800000000000 8000000000 = 100 ∧ survive c (capped 8000000000 b) 0 ≤ (0.006 : ℝ)',intro='b c hS hc',original='datacenter_example c (by simpa using hc) b hS',point='norm_num [BackAt, OriginalAt]',witness='0 < (8000000000 : ℕ) ∧ (∀ i : ℕ, (5 / 100 : ℝ) ≤ (fun _ : ℕ => (1 : ℝ)) i ∧ (fun _ : ℕ => (1 : ℝ)) i ≤ 1) ∧ (capped 8000000000 (List.replicate 100 8000000000)).sum = 800000000000',wp='by norm_num [capped, List.sum_replicate]'),
+4:dict(module='SC07Liveness',params='(E : Env) (s : St) (d : ℕ) (chunks : List ℕ)',quant='∀ (E : Env) (s : St) (d : ℕ) (chunks : List ℕ), s.halted = false → d ∈ E.allow → s.used + chunks.sum ≤ E.q →',args='E s d chunks',back='(run E full s (chunks.map (fun n => Op.send d n))).log = s.log ++ chunks.map (fun n => (⟨d, n, s.window⟩ : Fwd))',orig='(run E full s (chunks.map (fun n => .send d n))).log = s.log ++ chunks.map (fun n => ⟨d, n, s.window⟩)',intro='E s d chunks hh hd hq',original='upload_completes E s d chunks hh hd hq',witness='init.halted = false ∧ 10 ∈ E0.allow ∧ init.used + ([5, 3] : List ℕ).sum ≤ E0.q ∧ (run E0 full init [.send 10 5, .send 10 3]).log = [⟨10, 5, 0⟩, ⟨10, 3, 0⟩]',wp='by decide'),
+5:dict(module='SC07Liveness',params='(E : Env) (ops : List Op) (S : ℕ)',quant='∀ (E : Env) (ops : List Op) (S : ℕ), 0 < E.q → S ≤ total (run E full init ops) →',args='E ops S',back='ControlStack.SC07Exfil.ceilDiv S E.q ≤ (run E full init ops).window + 1',orig='ControlStack.SC07Exfil.ceilDiv S E.q ≤ (run E full init ops).window + 1',intro='E ops S hq hS',original='exfil_needs_windows E hq S ops hS',witness='0 < E0.q ∧ total (run E0 full init [.send 10 8, .tick, .send 10 8]) = 16 ∧ (run E0 full init [.send 10 8, .tick, .send 10 8]).window + 1 = 2 ∧ ControlStack.SC07Exfil.ceilDiv 16 E0.q = 2',wp='by decide'),
+6:dict(module='SC07Liveness',params='',quant='',args='',back='(run E0 full init [Op.send 10 6, Op.send 10 4]).log = [⟨10, 6, 0⟩] ∧ (run E0 full init [Op.send 10 6, Op.tick, Op.send 10 4]).log = [⟨10, 6, 0⟩, ⟨10, 4, 1⟩]',orig='(run E0 full init [.send 10 6, .send 10 4]).log = [⟨10, 6, 0⟩] ∧ (run E0 full init [.send 10 6, .tick, .send 10 4]).log = [⟨10, 6, 0⟩, ⟨10, 4, 1⟩]',intro='',original='shared_quota_blocks',witness='E0.allow = [10] ∧ E0.q = 8 ∧ BackAt',wp='by decide'),
+7:dict(module='SC07Refinement',params='(K : CCfg) (ops : List COp) (w : ℕ)',quant='∀ (K : CCfg) (ops : List COp) (w : ℕ), K.quotaRule = true → 0 < K.Q →',args='K ops w',back='wireIn (runC K cinit ops).fwd w < K.Q',orig='wireIn (runC K cinit ops).fwd w < K.Q',intro='K ops w hK hQ',original='concrete_wire_lt K hK hQ ops w',witness='(K0 true).quotaRule = true ∧ 0 < (K0 true).Q ∧ wireIn (runC (K0 true) cinit [.pkt 1 8080 4 1, .resetQuota, .pkt 1 8080 4 1]).fwd 0 = 5 ∧ wireIn (runC (K0 true) cinit [.pkt 1 8080 4 1, .resetQuota, .pkt 1 8080 4 1]).fwd 1 = 5',wp='by decide'),
+8:dict(module='SC07Refinement',params='(K : CCfg) (pre post : List COp)',quant='∀ (K : CCfg) (pre post : List COp), K.quotaRule = true → (runC K cinit pre).halted = true →',args='K pre post',back='(runC K cinit (pre ++ post)).fwd = (runC K cinit pre).fwd',orig='(runC K cinit (pre ++ post)).fwd = (runC K cinit pre).fwd',intro='K pre post hK hh',original='concrete_halt_freezes K hK pre post hh',witness='(K0 true).quotaRule = true ∧ (runC (K0 true) cinit [.pkt 1 8080 2 1, .halt]).halted = true ∧ (runC (K0 true) cinit [.pkt 1 8080 2 1, .halt]).fwd = [⟨1, 8080, 2, 3, 0⟩] ∧ (runC (K0 true) cinit [.pkt 1 8080 2 1, .halt, .resetQuota, .pkt 1 8080 2 1]).fwd = [⟨1, 8080, 2, 3, 0⟩]',wp='by decide'),
+9:dict(module='SC07Refinement',params='(K : CCfg) (ops : List COp) (w sink tolerance : ℕ)',quant='∀ (K : CCfg) (ops : List COp) (w sink tolerance : ℕ), K.quotaRule = true → sink ≤ payloadIn (runC K cinit ops).fwd w →',args='K ops w sink tolerance',back='sink ≤ K.Q - 1 ∧ sink ≤ K.Q + tolerance',orig='sink ≤ K.Q - 1 ∧ sink ≤ K.Q + tolerance',intro='K ops w sink tolerance hK hsink',original='sink_within_quota K hK ops w sink tolerance hsink',witness='(K0 true).quotaRule = true ∧ 0 < (4 : ℕ) ∧ 4 ≤ payloadIn (runC (K0 true) cinit [.pkt 1 8080 4 1]).fwd 0 ∧ 4 ≤ (K0 true).Q - 1 ∧ 4 ≤ (K0 true).Q + 1500',wp='by decide')}
+for n,s in specs.items():
+ cid=f'bg1n3_{n}'
+ typed=next((OUT/'typed').glob(f'{n}-*.lean')).read_text()
+ frozen=typed[typed.index('def Back_'):typed.rindex('\\nend ')].strip()
+ frozen=frozen.replace(frozen.split()[1],'FrozenBack',1)
+ if n==8: frozen=frozen.replace('«prefix»','pre').replace('continuation','post')
+ at=s['args'];quant=s['quant'];space=' ' if at else ''
+ stmt=f\"namespace PL_{cid}\\nopen ControlStack.{s['module']}\\n\\n{frozen}\\n\\ndef BackAt {s['params']} : Prop :=\\n  {s['back']}\\n\\ndef OriginalAt {s['params']} : Prop :=\\n  {s['orig']}\\n\\ndef Claim : Prop :=\\n  (FrozenBack ↔ {quant} BackAt{space}{at}) ∧\\n  ({quant} (BackAt{space}{at} ↔ OriginalAt{space}{at}))\\n\\ndef Witness : Prop :=\\n  {s['witness']}\\n\\nend PL_{cid}\\n\"
+ (OUT/f'{cid}.statement.lean').write_text(stmt)
+ if n==3:
+  reconstruction='''  refine ⟨?_, ?_⟩
+  · constructor
+    · intro h b c hS hc
+      exact ⟨h.1, h.2 b c hS hc⟩
+    · intro h
+      refine ⟨by norm_num [ceilDiv], ?_⟩
+      intro b c hS hc
+      exact (h b c hS hc).2
+  · intro b c hS hc
+    norm_num [BackAt, OriginalAt]'''
+ else:
+  reconstruction='  refine ⟨Iff.rfl, ?_⟩\\n'+('  intro '+s['intro']+'\\n' if s['intro'] else '')+'  '+s.get('point','rfl')
+ proof=f\"open ControlStack.{s['module']}\\n\\ntheorem original_signature : {quant} OriginalAt{space}{at} := by\\n\"+('  intro '+s['intro']+'\\n' if s['intro'] else '')+f\"  exact {s['original']}\\n\\ntheorem claim : Claim := by\\n{reconstruction}\\n\\ntheorem witness : Witness := {s['wp']}\\n\"
+ (OUT/f'{cid}.proof.lean').write_text(proof)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n3/build_comparisons.py
+python3 docs/lean-english/one-to-one/blind-g1n3/run_gate_blind.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n3/regate.py <<'PY'
+\"\"\"Recheck every saved comparison and non-vacuity witness; only receipts persist.\"\"\"
+from pathlib import Path
+import sys
+sys.dont_write_bytecode = True
+import importlib.util, json, hashlib, datetime
+OUT = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('run_gate_blind', OUT / 'run_gate_blind.py')
+runner = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(runner)
+g = runner.g
+
+def sha(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+def main():
+    all_ok = True
+    for n in range(1, 10):
+        cid = f'bg1n3_{n}'
+        try:
+            statement = (OUT / f'{cid}.statement.lean').read_text()
+            proof = (OUT / f'{cid}.proof.lean').read_text()
+            stmt_ok, stmt_log = g.check_statement(cid, statement, [runner.IMPORTS])
+        except Exception as exc:
+            statement = proof = ''
+            stmt_ok, stmt_log = False, f'{type(exc).__name__}: {exc}'
+        for target in ['claim', 'witness']:
+            if stmt_ok:
+                try:
+                    ok, log = g.gate(cid, statement, proof, target, [runner.IMPORTS], timeout=120)
+                except Exception as exc:
+                    ok, log = False, f'{type(exc).__name__}: {exc}'
+            else:
+                ok, log = False, 'Statement check failed: ' + stmt_log
+            receipt = {
+                'cid': cid, 'target': target, 'passed': ok,
+                'statement_passed': stmt_ok, 'statement_log': stmt_log, 'log': log,
+                'statement_sha256': sha(statement), 'proof_sha256': sha(proof),
+                'gate_sha256': hashlib.sha256(Path(g.__file__).read_bytes()).hexdigest(),
+                'trusted_header': runner.IMPORTS,
+                'PL_IMPORTS': __import__('os').environ['PL_IMPORTS'],
+                'PL_LEAN_PROJ': str(g.PROJ),
+                'gate_unmodified': False, 'security_checks_unchanged': True,
+                'imports_option_local_only': True,
+                'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }
+            filename = f'{cid}.receipt.json' if target == 'claim' else f'{cid}.witness.receipt.json'
+            (OUT / filename).write_text(json.dumps(receipt, indent=2) + '\\n')
+            print(cid, target, 'PASS' if ok else 'FAIL', log[:200], flush=True)
+            all_ok = all_ok and ok
+    return 0 if all_ok else 1
+
+if __name__ == '__main__':
+    raise SystemExit(main())
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g1n3/bg1n3_3.gate.txt; cat docs/lean-english/one-to-one/blind-g1n3/bg1n3_2.gate.txt'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g1n3/build_comparisons.py')
+s=p.read_text().replace(\"wp='by norm_num [capped, expLeak]'\", \"wp='by norm_num [Witness, capped, expLeak]'\").replace(\"wp='by norm_num [survive]'\", \"wp='by norm_num [Witness, survive]'\").replace(\"wp='by norm_num [capped, List.sum_replicate]'\", \"wp='by norm_num [Witness, capped, List.sum_replicate]'\").replace(\"wp='by decide'\", \"wp='by unfold Witness; decide'\")
+s=s.replace(\"original='datacenter_example c (by simpa using hc) b hS'\", \"original='datacenter_example c (by norm_num at hc ⊢; exact hc) b hS'\")
+s=s.replace(\"witness='E0.allow = [10] ∧ E0.q = 8 ∧ BackAt',wp='by unfold Witness; decide'\", \"witness='E0.allow = [10] ∧ E0.q = 8 ∧ BackAt',wp='by unfold Witness BackAt; decide'\")
+p.write_text(s)
+PY
+python3 docs/lean-english/one-to-one/blind-g1n3/build_comparisons.py
+python3 docs/lean-english/one-to-one/blind-g1n3/run_gate_blind.py"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g1n3/bg1n3_3.statement.lean; cat docs/lean-english/one-to-one/blind-g1n3/bg1n3_3.proof.lean; cat docs/lean-english/one-to-one/blind-g1n3/bg1n3_8.statement.lean; python3 docs/lean-english/one-to-one/blind-g1n3/regate.py'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,difflib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g1n3');base=out.parent
+assert (out/'leangate_imports.py').read_bytes()==(base/'leangate_imports.py').read_bytes()
+(out/'gate-runner.diff').write_text(''.join(difflib.unified_diff((base/'run_gate.py').read_text().splitlines(True),(out/'run_gate_blind.py').read_text().splitlines(True),fromfile='run_gate.py',tofile='blind-g1n3/run_gate_blind.py')))
+files=sorted(out.glob('bg1n3_*.statement.lean'))+sorted(out.glob('bg1n3_*.proof.lean'))+[out/'run_gate_blind.py',out/'regate.py',out/'leangate_imports.py']
+(out/'SAVED-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{str(f.relative_to(out)):hashlib.sha256(f.read_bytes()).hexdigest() for f in files}},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,shutil,subprocess,datetime,time
+out=Path('docs/lean-english/one-to-one/blind-g1n3')
+for f in out.glob('*.receipt.json'): f.unlink()
+for d in ['gate-tmp','__pycache__']:
+ if (out/d).exists(): shutil.rmtree(out/d)
+def stable():
+ return {str(f.relative_to(out)):hashlib.sha256(f.read_bytes()).hexdigest() for f in out.rglob('*') if f.is_file() and not f.name.endswith('.receipt.json') and 'gate-tmp' not in f.parts}
+before=stable();start=time.monotonic();utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+p=subprocess.Popen(['python3',str(out/'regate.py')],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+log=''
+for line in p.stdout:
+ log+=line
+ if 'PASS' in line or 'FAIL' in line: print(line.rstrip(),flush=True)
+rc=p.wait();after=stable()
+receipts=sorted(out.glob('*.receipt.json'));passed=all(json.loads(f.read_text())['passed'] for f in receipts)
+record={'start_utc':utc,'end_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'elapsed_seconds':round(time.monotonic()-start,3),'command':'python3 docs/lean-english/one-to-one/blind-g1n3/regate.py','exit_code':rc,'clean_start':'All receipts, gate-tmp and Python cache removed before the run','receipt_count':len(receipts),'all_receipts_passed':passed,'only_receipts_persistently_changed':before==after,'nonreceipt_changes':sorted(k for k in before.keys()|after.keys() if before.get(k)"'!=after.get(k)),'"'log':log}
+(out/'REGATE-VALIDATION.json').write_text(json.dumps(record,indent=2)+'\\n')
+assert rc==0 and len(receipts)==18 and passed and before==after,record
+print('CLEAN REGATE VALIDATED: 18 PASS; saved files unchanged',flush=True)
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g1n3/RESULTS.md <<'EOF'
+# Blind g1n3 — Phase B results
+
+All nine back translations are **EQUIVALENT** to the original statements, pointwise under matching hypotheses. All nine comparison gates and all nine separate witness gates passed. These are statements about the specified models; they do not certify a deployed gateway or a probabilistic correspondence to real audits.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+| 1 — "'`ControlStack.SC07Exfil.expected_leak_le` | EQUIVALENT | [claim](bg1n3_1.receipt.json), [witness](bg1n3_1.witness.receipt.json) | Identical conclusions and hypotheses; only binder order differs. |
+| 2 — `ControlStack.SC07Exfil.observable_schedule_exfil` | EQUIVALENT | [claim](bg1n3_2.receipt.json), [witness](bg1n3_2.witness.receipt.json) | Capping `[0,q,0,q]` at q leaves the list unchanged. |
+| 3 — `ControlStack.SC07Exfil.datacenter_example` | EQUIVALENT | [claim](bg1n3_3.receipt.json), [witness](bg1n3_3.witness.receipt.json) | Exact fraction/decimal agreement; the independent ceiling fact can move outside the plan hypotheses. |
+| 4 — `ControlStack.SC07Liveness.upload_completes` | EQUIVALENT | [claim](bg1n3_4.receipt.json), [witness](bg1n3_4.witness.receipt.json) | Same arbitrary starting state and ordered log extension. |
+| 5 — `ControlStack.SC07Liveness.exfil_needs_windows` | EQUIVALENT | [claim](bg1n3_5.receipt.json), [witness](bg1n3_5.witness.receipt.json) | Same bound on windows opened, including the initial window. |
+| 6 — `ControlStack.SC07Liveness.shared_quota_blocks` | EQUIVALENT | [claim](bg1n3_6.receipt.json), [witness](bg1n3_6.witness.receipt.json) | The two concrete log equalities are definitionally identical. |
+| 7 — `ControlStack.SC07Refinement.concrete_wire_lt` | EQUIVALENT | [claim](bg1n3_7.receipt.json), [witness](bg1n3_7.witness.receipt.json) | Same initial state, quota-rule premise, positive Q, and strict wire bound. |
+| 8 — `ControlStack.SC07Refinement.concrete_halt_freezes` | EQUIVALENT | [claim](bg1n3_8.receipt.json), [witness](bg1n3_8.witness.receipt.json) | Same prefix/continuation statement; the forwarded list freezes. |
+| 9 — `ControlStack.SC07Refinement.sink_within_quota` | EQUIVALENT | [claim](bg1n3_9.receipt.json), [witness](bg1n3_9.witness.receipt.json) | Same conditional pair of bounds, including natural-number subtraction when Q = 0. |
+
+## Evidence and comparison method
+
+Every raw back file was submitted to `lake env lean` unchanged. Each needed its project import; claim 8 additionally required escaping the reserved binder `prefix` as `«prefix»`. These repairs change no meaning. The nine diffs are in [compile-fixes](compile-fixes/), the compiler output in [compile-logs](compile-logs/), and the successful repaired files in [typed](typed/). All back SHA-256 values matched `back/BACK-HASHES.json`. [typed/HASHES.json](typed/HASHES.json) was written after all nine repaired files compiled and before any original declaration was opened.
+
+The original declaration headers, source locations, and source hashes are saved in [originals](originals/). The comparison statements and proofs are `bg1n3_<n>.statement.lean` and `bg1n3_<n>.proof.lean`. Each statement embeds the frozen repaired back body as `FrozenBack`, factors out its pointwise conclusion as `BackAt`, and spells out the original conclusion as `OriginalAt`. Each `Claim` proves both the faithful reconstruction of the back statement and `BackAt ↔ OriginalAt` under the same hypotheses. The supporting `original_signature` in each proof file type-checks `OriginalAt` against the named original theorem.
+
+For claims 1, 4–9, the pointwise iff is proved by reflexivity. Claim 6 has no variable inputs: its concrete conjunction is definitionally the same on both sides, and the proof is reflexivity rather than an inference from two closed true theorems. Claim 2 simplifies the capped list. Claim 3 normalizes exact real literals, and its reconstruction proves the independent ceiling equality arithmetically before placing it outside the quantifier. None of these comparison iffs is obtained merely by invoking the truth of both original and back theorems.
+
+The gate embedding changes the back declaration'"'s name and replaces its enclosing namespace with an "'`open` inside the required `PL_bg1n3_<n>` namespace. Claim 8'"'s bound variable names become "'`pre` and `post` in that embedding: even escaped `prefix` would match the gate'"'s unchanged raw-token ban. This is alpha-renaming only; the hashed typed file remains untouched. [build_comparisons.py](build_comparisons.py) checks the frozen typed hashes before producing the comparison files.
+
+[run_gate_blind.py](run_gate_blind.py) is the supplied runner with only its output-directory assignment, statement glob, and "'`PL_IMPORTS` changed; [gate-runner.diff](gate-runner.diff) records these edits. The output-directory assignment also restores the repository ROOT after moving the script one directory deeper. The copied [leangate_imports.py](leangate_imports.py) is byte-for-byte identical to the permitted helper. Its banned-token checks, nonce checks, and allowed-axiom set remain unchanged. All observed axiom reports are subsets of `propext`, `Classical.choice`, and `Quot.sound`.
+
+Run from the repository root:
+
+```sh
+python3 docs/lean-english/one-to-one/blind-g1n3/regate.py
+```
+
+[regate.py](regate.py) checks all nine statements and gates `claim` and `witness` separately for each. It preserves the saved statement/proof files, rewrites only receipts as persistent outputs, and exits nonzero if any check fails or an expected file is absent. [REGATE-VALIDATION.json](REGATE-VALIDATION.json) records a successful clean run after deleting receipts, temporary gate files, and Python caches: 18 passing receipts, exit code 0, and no persistent nonreceipt changes. [SAVED-HASHES.json](SAVED-HASHES.json) records the final statement, proof, and helper hashes. Receipts contain the statement/proof/helper hashes and the gate output.
+
+## Hostile reading, claim by claim
+
+1. **Expected leakage.** The hypotheses and conclusion agree exactly. The witness has q = 8, pr = 1/2, two full windows, and expected leakage 12 bits. “Does NOT say” (a)–(c) are respected: the conclusion is an expected value, real audit independence and stopping behavior are modelling assumptions, and the recursion counts the catching window'"'s bits. Zero-count windows have survival multiplier 1, so timing or zero-size covert encodings are outside this bit-count model. Calling every "'`c i` an actual unconditional catch probability is ambiguous when the window carries zero bits; see the replacement below.
+
+2. **Observable schedule.** The back'"'s uncapped plan is the original's capped plan because all four entries already lie between 0 and q. The witness uses q = 1 and checks two bits with survival 1. “Does NOT say” (a)–(b) are respected. This is an evasion example in a schedule with zero catch probability on traffic windows; it does not refute the bound under a positive uniform catch lower bound. Known scheduling is illustrated by one selected plan, rather than a formal attacker-information structure.
+
+3. **Datacenter example.** "'`5/100 = 0.05` and `6/1000 = 0.006` are exact real equalities. The ceiling fact is constant and is proved independently when reconstructing the back'"'s outer conjunction. The witness has 100 full quota windows and catch parameter 1 at every index, satisfying the actual large-target premise. “Does NOT say” (a)–(b) are respected: there is no empirical recall claim or lower bound on information needed to reconstruct an artifact. Item (c) points outside the supplied English to a caveat rather than stating it. The formal conclusion uses survival of the entire capped plan, including any traffic after its first attainment of S; that caveat should be written directly.
+
+4. **Upload completion.** The back and original quantify over every starting state, including unreachable states, and have exactly the same halted, allowlist, and remaining-quota premises. The witness forwards chunks 5 and 3 in window 0. “Does NOT say” (a)–(c) are respected: the operation list contains only the upload's sends, there is no runtime byte-exactness result, and an oversized upload is outside the hypotheses.
+
+5. **Windows needed.** The formula is identical after reordering binders. The witness forwards 16 bits through q = 8 using two windows. “Does NOT say” (a)–(b) are respected: arbitrary traces may tick freely, and the result says nothing about catching. A further distinction matters for the advertised bridge: the right side counts windows opened, including empty windows; it is not the "'`traffic` count in `SC07Exfil.windows_needed`. This theorem alone supplies neither a traffic-bearing-window count nor an independently audited time model.
+
+6. **Shared quota.** Both fixed log equalities are identical after constructor elaboration. The witness also checks allowlist `[10]` and quota 8. “Does NOT say” (a)–(c) are respected. The model has no job identifier: “another job” and “honest” describe the interpretation of the two sends, not additional state or proven isolation properties.
+
+7. **Strict wire bound.** The original has exactly the reconstructed formal premises `quotaRule = true` and `0 < Q`, with runs starting at `cinit`; there are no additional correspondence hypotheses in its type. The witness forwards 5 wire bytes in each of two windows with Q = 10. “Does NOT say” (a)–(b) are respected: the bound is per window, reset operations are permitted, and the kernel'"'s behavior is not proved. The back author's recorded uncertainty about unspecified correspondence assumptions therefore hides no missing formal premise, but the English should identify its model explicitly.
+
+8. **HALT.** The binder repair and gate alpha-renaming preserve the formula. The witness has a nonempty forwarded prefix, then HALT, then a quota reset and another packet; its forwarded list remains unchanged. “Does NOT say” (a)–(b) are respected. Only the forwarded list freezes: for example, reset and dropped-packet bookkeeping can still change other fields after HALT.
+
+9. **Sink bound.** The premises and both conclusions agree exactly. The witness delivers a positive count of 4 under Q = 10 and tolerance 1500. “Does NOT say” (a)–(c) are respected: the selected window is essential, delivery is not guaranteed, and the bound follows from "'`concrete_safe` plus `hsink`. No positivity assumption on Q is missing: natural subtraction saturates at zero, and the formula remains meaningful at Q = 0. The wording “not provable in Lean” is too broad; the gateway model alone does not establish the physical sink correspondence. A separate delivery model could formalize and prove such a relation.
+
+## Corrections to the English
+
+No mathematical conclusion requires correction. The following replacement sentences remove ambiguous interpretations without changing the matched claims.
+
+- **Claim 1, catch probabilities:** “For every index i, choose a catch parameter c i between pr and 1, with pr > 0. The recursion applies that parameter only when the quota-capped window carries positive traffic; zero-count windows contribute no catch factor.”
+- **Claim 2, interpretation of the negative control:** “This fixed plan evades the chosen observable schedule because its traffic windows have catch probability zero; the positive uniform catch-lower-bound premise of the exfiltration bound is unavailable.”
+- **Claim 3, replace the external caveat reference:** “This bounds survival through every traffic-bearing window of the entire capped plan. If the plan continues after first reaching S, this is a whole-plan survival statement, rather than a direct statement about survival only until first completion.”
+- **Claim 5, bridge interpretation:** “At least ceil(S/q) windows have been opened, counting the initial window and allowing empty windows. Ticks may occur freely in the trace; this count alone establishes no elapsed-time bound, traffic-window count, or audit-probability bound.”
+- **Claim 7, model assumptions:** “In the concrete `runC` model starting at `cinit`, with natural payload and header lengths, `quotaRule = true` and Q > 0 suffice for the strict per-window wire bound. Relating this model to a deployed gateway requires separate correspondence assumptions.”
+- **Claim 9, sink premise:** “Assume the measured sink count is at most the forwarded payload bytes attributed to the chosen window w. This correspondence is an input premise; the gateway model does not establish TCP delivery or measurement behavior. Under that premise the count is at most Q − 1, and at most Q plus any natural tolerance.”
+
+## Ambiguities exposed
+
+- **Catch parameter versus actual catch event:** a positive `c i` coexists with a zero-bit window that is never caught because the recursion skips the catch factor for that window. Independence is part of the probabilistic interpretation of the recursion, not a theorem about real events.
+- **Whole-plan survival versus first completion:** a bound on the former is not, by itself, a bound on the latter for a longer plan. Claim 3'"'s current cross-reference leaves this distinction unstated in the supplied English.
+- **Opened windows versus traffic-bearing windows:** claim 5 counts ticks plus one; the exfiltration model counts positive traffic entries. A claimed bridge between those counts needs additional modelling work.
+- **Unspecified correspondence assumptions:** claim 7's formal theorem has just the two stated configuration premises. Deployment assumptions should be kept explicit in the prose instead of being hidden behind another theorem's name.
+- **Sink scope and formalizability:** no-duplicate delivery alone does not align a whole-run sink count with one chosen window. "'`hsink` must refer to compatible counters and windows. It is assumed here, rather than inherently beyond formal proof.
+- **Job labels and frozen state:** claim 6'"'s jobs are explanatory labels; claim 8 freezes forwarding only. Neither theorem establishes a richer concurrency or complete-state guarantee.
+EOF
+python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-g1n3')
+for manifest in ['typed/HASHES.json','SAVED-HASHES.json']:
+ for f,h in json.loads((out/manifest).read_text())['files'].items():
+  assert hashlib.sha256((out/f).read_bytes()).hexdigest()==h,f
+for item in json.loads((out/'originals/MANIFEST.json').read_text())['declarations'].values():
+ assert hashlib.sha256(Path(item['source']).read_bytes()).hexdigest()==item['source_sha256']
+receipts=list(out.glob('*.receipt.json'))
+assert len(receipts)==18 and all(json.loads(f.read_text())['passed'] for f in receipts)
+validation=json.loads((out/'REGATE-VALIDATION.json').read_text())
+assert validation['exit_code']==0 and validation['only_receipts_persistently_changed']
+now=datetime.datetime.now(datetime.timezone.utc)
+first=min(f.stat().st_mtime for f in (out/'compile-logs').glob('*.raw.txt'))
+freeze=json.loads((out/'typed/HASHES.json').read_text())['utc']
+(out/'PROGRESS.md').write_text(f'''# Phase B progress — complete
+
+Done:
+- Verified all nine Phase A back hashes.
+- Submitted all nine back files unchanged to the compiler; saved raw errors.
+- Applied and recorded nine meaning-preserving import repairs and the claim 8 reserved-binder escape.
+- Compiled all repaired files and froze typed SHA-256 values before opening originals.
+- Saved original declaration headers, locations and source hashes; compared all nine claims pointwise.
+- Gated all nine comparison proofs and all nine witnesses separately: 18 PASS.
+- Implemented regate.py with failure exit status and receipts-only persistent writes.
+- Validated a clean re-gate after deleting receipts, temporary files and Python caches: exit 0, 18 PASS, saved files unchanged.
+- Wrote RESULTS.md with all verdicts, hostile readings, replacement sentences, and ambiguities.
+- Rechecked typed/saved hashes and original-source hashes at completion.
+
+Not done: none of the requested Phase B work remains. No unfinished or UNDECIDED claims.
+
+Time (UTC):
+- Earliest retained raw compile log: {datetime.datetime.fromtimestamp(first,datetime.timezone.utc).isoformat()}.
+- All typed files frozen before original inspection: {freeze}.
+- Completion: {now.isoformat()}.
+- Elapsed since earliest retained raw compile log: {(now.timestamp()-first)/60:.1f} minutes; this excludes initial setup and the overwritten first draft import attempt.
+- Clean re-gate: {validation['elapsed_seconds']} seconds.
+
+What could not be done: no requested formal comparison was blocked. Real audit independence, physical sink correspondence, wall-clock scheduling, runtime configuration and HALT latency are outside these statements; no deployment verification was attempted or asserted.
+
+Resolved development failures: the first import path omitted Scenarios; corrected before original inspection. Initial gate attempts required unfolding Witness for finite checks and normalizing the claim 3 probability literal; the final saved proofs pass every gate. Claim 9 emits only unused-binder warnings.
+
+Scope: all task-authored outputs are under blind-g1n3/. No ControlStack source edits, git commands, downloads, or reading of other lean-english material occurred. The input batch, authorized CLAIMS.txt/back files, and the three authorized gate helpers were the only pre-existing lean-english inputs used.
+''')
+print('FINAL AUDIT: 9 EQUIVALENT; 18 PASS; frozen hashes and originals unchanged')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g1n3/RESULTS.md')
+s=p.read_text().replace('The witness delivers a positive count of 4 under Q = 10 and tolerance 1500.', 'The witness instantiates the assumed sink count at a positive 4 under Q = 10 and tolerance 1500.')
+p.write_text(s)
+PY"

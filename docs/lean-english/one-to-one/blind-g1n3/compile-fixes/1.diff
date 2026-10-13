@@ -1,0 +1,9 @@
+# Meaning change: NO. Add the project import required to resolve existing symbols.
+--- back/1-expected_leak_le.lean
++++ typed/1-expected_leak_le.lean
+@@ -1,3 +1,5 @@
++import ControlStack.Scenarios.SC07Exfil
++
+ namespace ControlStack.SC07Exfil
+ 
+ def Back_expected_leak_le : Prop :=

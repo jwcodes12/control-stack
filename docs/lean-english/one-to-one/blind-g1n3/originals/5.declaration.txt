@@ -1,0 +1,2 @@
+theorem exfil_needs_windows (E : Env) (hq : 0 < E.q) (S : ℕ) (ops : List Op) (hS : S ≤ total (run E full init ops)) :
+    SC07Exfil.ceilDiv S E.q ≤ (run E full init ops).window + 1

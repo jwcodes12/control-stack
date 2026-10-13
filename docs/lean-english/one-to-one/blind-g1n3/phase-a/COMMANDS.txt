@@ -1,0 +1,131 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\nFILE: %s\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+
+out = Path('back')
+out.mkdir(exist_ok=True)
+files = {
+'1-expected_leak_le.lean': '''namespace ControlStack.SC07Exfil
+
+def Back_expected_leak_le : Prop :=
+  ∀ (q : ℕ) (pr : ℝ) (c : ℕ → ℝ) (b : List ℕ),
+    0 < pr →
+    (∀ i : ℕ, pr ≤ c i ∧ c i ≤ 1) →
+    expLeak c (capped q b) 0 ≤ (q : ℝ) / pr
+
+end ControlStack.SC07Exfil
+''',
+'2-observable_schedule_exfil.lean': '''namespace ControlStack.SC07Exfil
+
+def Back_observable_schedule_exfil : Prop :=
+  ∀ q : ℕ, 0 < q →
+    let b : List ℕ := [0, q, 0, q]
+    let c : ℕ → ℝ := fun i => if i = 0 ∨ i = 2 then 1 else 0
+    b.sum = 2 * q ∧ survive c b 0 = 1
+
+end ControlStack.SC07Exfil
+''',
+'3-datacenter_example.lean': '''namespace ControlStack.SC07Exfil
+
+def Back_datacenter_example : Prop :=
+  ceilDiv 800000000000 8000000000 = 100 ∧
+    ∀ (b : List ℕ) (c : ℕ → ℝ),
+      800000000000 ≤ (capped 8000000000 b).sum →
+      (∀ i : ℕ, (5 / 100 : ℝ) ≤ c i ∧ c i ≤ 1) →
+      survive c (capped 8000000000 b) 0 ≤ (6 / 1000 : ℝ)
+
+end ControlStack.SC07Exfil
+''',
+'4-upload_completes.lean': '''namespace ControlStack.SC07Liveness
+
+def Back_upload_completes : Prop :=
+  ∀ (E : Env) (s : St) (d : ℕ) (chunks : List ℕ),
+    s.halted = false →
+    d ∈ E.allow →
+    s.used + chunks.sum ≤ E.q →
+    (run E full s (chunks.map (fun n => Op.send d n))).log =
+      s.log ++ chunks.map (fun n => (⟨d, n, s.window⟩ : Fwd))
+
+end ControlStack.SC07Liveness
+''',
+'5-exfil_needs_windows.lean': '''namespace ControlStack.SC07Liveness
+
+def Back_exfil_needs_windows : Prop :=
+  ∀ (E : Env) (ops : List Op) (S : ℕ),
+    0 < E.q →
+    S ≤ total (run E full init ops) →
+    ControlStack.SC07Exfil.ceilDiv S E.q ≤
+      (run E full init ops).window + 1
+
+end ControlStack.SC07Liveness
+''',
+'6-shared_quota_blocks.lean': '''namespace ControlStack.SC07Liveness
+
+def Back_shared_quota_blocks : Prop :=
+  (run E0 full init [Op.send 10 6, Op.send 10 4]).log =
+      [⟨10, 6, 0⟩] ∧
+  (run E0 full init [Op.send 10 6, Op.tick, Op.send 10 4]).log =
+      [⟨10, 6, 0⟩, ⟨10, 4, 1⟩]
+
+end ControlStack.SC07Liveness
+''',
+'7-concrete_wire_lt.lean': '''namespace ControlStack.SC07Refinement
+
+-- NOTE
+-- AMBIGUOUS: The English refers to the \"same model-correspondence assumptions
+-- as concrete_safe\", but those assumptions are not specified in the permitted
+-- excerpts. Best effort: the concrete model's runs start at cinit, and the only
+-- configuration hypotheses below are quotaRule = true and 0 < Q. Additional
+-- formal correspondence hypotheses, if intended, cannot be reconstructed here.
+def Back_concrete_wire_lt : Prop :=
+  ∀ (K : CCfg) (ops : List COp) (w : ℕ),
+    K.quotaRule = true →
+    0 < K.Q →
+    wireIn (runC K cinit ops).fwd w < K.Q
+
+end ControlStack.SC07Refinement
+''',
+'8-concrete_halt_freezes.lean': '''namespace ControlStack.SC07Refinement
+
+def Back_concrete_halt_freezes : Prop :=
+  ∀ (K : CCfg) (prefix continuation : List COp),
+    K.quotaRule = true →
+    (runC K cinit prefix).halted = true →
+    (runC K cinit (prefix ++ continuation)).fwd =
+      (runC K cinit prefix).fwd
+
+end ControlStack.SC07Refinement
+''',
+'9-sink_within_quota.lean': '''namespace ControlStack.SC07Refinement
+
+def Back_sink_within_quota : Prop :=
+  ∀ (K : CCfg) (ops : List COp) (w sink tolerance : ℕ),
+    K.quotaRule = true →
+    sink ≤ payloadIn (runC K cinit ops).fwd w →
+    sink ≤ K.Q - 1 ∧ sink ≤ K.Q + tolerance
+
+end ControlStack.SC07Refinement
+''',
+}
+for name, content in files.items():
+    (out / name).write_text(content, encoding='utf-8')
+print('Wrote nine proposition files under back/.')
+PY"
+
+---
+/bin/bash -lc "set -o pipefail
+sha256sum back/*.lean | python3 -c 'import sys, json; from datetime import datetime, timezone; hashes = {}; lines = sys.stdin.read().splitlines();
+for line in lines:
+    digest, name = line.split(maxsplit=1)
+    hashes[name] = digest
+    print(line)
+manifest = {\"utc\": datetime.now(timezone.utc).isoformat(timespec=\"seconds\").replace(\"+00:00\", \"Z\"), \"files\": hashes}
+with open(\"back/BACK-HASHES.json\", \"w\", encoding=\"utf-8\") as output:
+    json.dump(manifest, output, indent=2)
+    output.write(\"\\n\")
+print(\"Wrote back/BACK-HASHES.json at \" + manifest[\"utc\"])'"

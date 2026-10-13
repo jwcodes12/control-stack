@@ -1,0 +1,4 @@
+theorem sc20_safe_authenticated (E : Env) (U : List ℕ) (ops : List (ℕ × SC20.Op)) (hU : ∀ u ∈ U, u ∉ E.reviewers) :
+    Good E (authRun (SC20.step E full) claim20 SC20.init ops) ∧
+    (∀ p ∈ (authRun (SC20.step E full) claim20 SC20.init ops).promoted, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .promote c p.1 ∧ c = p.2.1 ∧ c ∈ E.reviewers))

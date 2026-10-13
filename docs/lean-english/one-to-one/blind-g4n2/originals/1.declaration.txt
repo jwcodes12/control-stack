@@ -1,0 +1,3 @@
+theorem concrete_safe (T : ℕ) (ops : List COp) :
+    (∀ r ∈ (runC real T cinit ops).released, Resume.RelOk T (α T (runC real T cinit ops)) r) ∧
+      ((runC real T cinit ops).released.map SC18.Rel.id).Nodup

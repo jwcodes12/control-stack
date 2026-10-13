@@ -1,0 +1,4 @@
+theorem concrete_durable (T : ℕ) (ops : List COp) :
+    ∀ r ∈ (runC real T cinit ops).released,
+      r.id ∈ ((runC real T cinit ops).ackd.map Prod.fst).take r.llen ∧ r.id ∈ (runC real T cinit ops).sinkLog ∧
+        r.clock ≤ r.lastAck + T

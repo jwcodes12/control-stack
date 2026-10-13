@@ -1,0 +1,7 @@
+theorem sc19_safe_authenticated (E : Env) (U : List ℕ) (ops : List (ℕ × SC19.Op))
+    (hUa : ∀ u ∈ U, u ∉ E.approvers) (hUv : ∀ u ∈ U, u ∉ E.verifiers) :
+    Good E (authRun (SC19.step E full) claim19 SC19.init ops) ∧
+    (∀ a ∈ (authRun (SC19.step E full) claim19 SC19.init ops).approvals, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .approve c a.1 ∧ c = a.2.1 ∧ c ∈ E.approvers)) ∧
+    (∀ i ∈ (authRun (SC19.step E full) claim19 SC19.init ops).verified, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .verify c i ∧ c ∈ E.verifiers))

@@ -1,0 +1,3 @@
+theorem forged19_destroys_without_auth :
+    (authRun (SC19.step E0 full) (fun _ => none) SC19.init forged19).destroyed = [⟨0, 1, 7, 1, 5, 0⟩] ∧
+    (authRun (SC19.step E0 full) claim19 SC19.init forged19).destroyed = []

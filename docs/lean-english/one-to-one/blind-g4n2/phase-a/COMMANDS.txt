@@ -1,0 +1,52 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\nFILE %s\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc "printf '%s\\n' ./defs/*.lean"
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__AuthInstancesA_defs.lean ./defs/Scenarios__AuthInstancesB_defs.lean'
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__SC18Refinement_defs.lean ./defs/Scenarios__SC19_defs.lean ./defs/Scenarios__SC20_defs.lean'
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__SC18Logging_defs.lean ./defs/Scenarios__SC18Liveness_defs.lean'
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__SC19Prod_defs.lean ./defs/Scenarios__SC20Data_defs.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+files = {\"1-concrete_safe.lean\":\"namespace ControlStack.SC18Refinement\\n\\n-- Under α, the abstract logged list is the proxy's record-acknowledgement list.\\n-- r.lastAck records the last record-ack clock at release, excluding pings.\\ndef Back_concrete_safe : Prop :=\\n  ∀ (T : ℕ) (ops : List COp),\\n    let s := α T (runC real T cinit ops)\\n    (∀ r ∈ s.released,\\n      r.id ∈ s.logged.take r.llen ∧ r.clock ≤ r.lastAck + T) ∧\\n    (s.released.map ControlStack.SC18.Rel.id).Nodup\\n\\nend ControlStack.SC18Refinement\\n\",\"2-concrete_durable.lean\":\"namespace ControlStack.SC18Refinement\\n\\ndef Back_concrete_durable : Prop :=\\n  ∀ (T : ℕ) (ops : List COp),\\n    let s := runC real T cinit ops\\n    ∀ r ∈ s.released,\\n      r.id ∈ (s.ackd.map Prod.fst).take r.llen ∧\\n      r.id ∈ s.sinkLog ∧\\n      r.clock ≤ r.lastAck + T\\n\\nend ControlStack.SC18Refinement\\n\",\"3-sc19_safe.lean\":\"namespace ControlStack.SC19\\n\\n-- Good uses DestroyOk: actual count, matching target/version snapshot,\\n-- a recorded verified index, an independent listed approver, and unique ids.\\n-- In this run, only a verifier-listed caller can add a verified index.\\ndef Back_sc19_safe : Prop :=\\n  ∀ (E : Env) (ops : List Op),\\n    Good E (run E full init ops)\\n\\nend ControlStack.SC19\\n\",\"4-sc19_halt_freezes.lean\":\"namespace ControlStack.SC19\\n\\ndef Back_sc19_halt_freezes : Prop :=\\n  ∀ (E : Env) (s : St) (ops : List Op),\\n    s.halted = true →\\n    run E full s ops = s\\n\\nend ControlStack.SC19\\n\",\"5-sc19_safe_authenticated.lean\":\"namespace ControlStack.AuthInstances\\n\\n-- U is the adversary's issuer set, represented by a predicate on principal ids.\\ndef Back_sc19_safe_authenticated : Prop :=\\n  ∀ (E : ControlStack.SC19.Env) (U : ℕ → Prop)\\n      (ops : List (ℕ × ControlStack.SC19.Op)),\\n    (∀ c : ℕ, U c → c ∉ E.approvers) →\\n    (∀ c : ℕ, U c → c ∉ E.verifiers) →\\n    let s := ControlStack.AuthenticatedLog.authRun\\n      (ControlStack.SC19.step E ControlStack.SC19.full)\\n      claim19 ControlStack.SC19.init ops\\n    ControlStack.SC19.Good E s ∧\\n    (∀ a ∈ s.approvals,\\n      (a.2.1, ControlStack.SC19.Op.approve a.2.1 a.1) ∈ ops ∧\\n      a.2.1 ∈ E.approvers ∧ ¬ U a.2.1) ∧\\n    (∀ i ∈ s.verified,\\n      ∃ c : ℕ,\\n        (c, ControlStack.SC19.Op.verify c i) ∈ ops ∧\\n        c ∈ E.verifiers ∧ ¬ U c)\\n\\nend ControlStack.AuthInstances\\n\",\"6-forged19_destroys_without_auth.lean\":\"namespace ControlStack.AuthInstances\\n\\ndef Back_forged19_destroys_without_auth : Prop :=\\n  (ControlStack.AuthenticatedLog.authRun\\n    (ControlStack.SC19.step ControlStack.SC19.E0 ControlStack.SC19.full)\\n    (fun _ => none) ControlStack.SC19.init forged19).destroyed =\\n      ([⟨0, 1, 7, 1, 5, 0⟩] : List ControlStack.SC19.Destroy) ∧\\n  (ControlStack.AuthenticatedLog.authRun\\n    (ControlStack.SC19.step ControlStack.SC19.E0 ControlStack.SC19.full)\\n    claim19 ControlStack.SC19.init forged19).destroyed = []\\n\\nend ControlStack.AuthInstances\\n\",\"7-sc20_safe.lean\":\"namespace ControlStack.SC20\\n\\n-- Good admits only registered digests or digests in listed-reviewer promotions.\\ndef Back_sc20_safe : Prop :=\\n  ∀ (E : Env) (ops : List Op),\\n    Good E (run E full init ops)\\n\\nend ControlStack.SC20\\n\",\"8-sc20_halt_freezes.lean\":\"namespace ControlStack.SC20\\n\\ndef Back_sc20_halt_freezes : Prop :=\\n  ∀ (E : Env) (s : St) (ops : List Op),\\n    s.halted = true →\\n    run E full s ops = s\\n\\nend ControlStack.SC20\\n\",\"9-sc20_safe_authenticated.lean\":\"namespace ControlStack.AuthInstances\\n\\n-- U is the adversary's issuer set, represented by a predicate on principal ids.\\ndef Back_sc20_safe_authenticated : Prop :=\\n  ∀ (E : ControlStack.SC20.Env) (U : ℕ → Prop)\\n      (ops : List (ℕ × ControlStack.SC20.Op)),\\n    (∀ c : ℕ, U c → c ∉ E.reviewers) →\\n    let s := ControlStack.AuthenticatedLog.authRun\\n      (ControlStack.SC20.step E ControlStack.SC20.full)\\n      claim20 ControlStack.SC20.init ops\\n    ControlStack.SC20.Good E s ∧\\n    (∀ p ∈ s.promoted,\\n      (p.2.1, ControlStack.SC20.Op.promote p.2.1 p.1) ∈ ops ∧\\n      p.2.1 ∈ E.reviewers ∧ ¬ U p.2.1)\\n\\nend ControlStack.AuthInstances\\n\",\"10-forged20_trains_without_auth.lean\":\"namespace ControlStack.AuthInstances\\n\\ndef Back_forged20_trains_without_auth : Prop :=\\n  (ControlStack.AuthenticatedLog.authRun\\n    (ControlStack.SC20.step ControlStack.SC20.E0 ControlStack.SC20.full)\\n    (fun _ => none) ControlStack.SC20.init forged20).trained = [[(1, 66)]] ∧\\n  (ControlStack.AuthenticatedLog.authRun\\n    (ControlStack.SC20.step ControlStack.SC20.E0 ControlStack.SC20.full)\\n    claim20 ControlStack.SC20.init forged20).trained = []\\n\\nend ControlStack.AuthInstances\\n\"}
+back = Path('back')
+back.mkdir(exist_ok=True)
+for name, content in files.items():
+    (back / name).write_text(content, encoding='utf-8')
+print(f'Wrote {len(files)} Lean proposition files under back/.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import datetime
+import json
+import subprocess
+from pathlib import Path
+result = subprocess.run('sha256sum back/*.lean', shell=True, check=True, text=True, capture_output=True)
+print(result.stdout, end='')
+files = {}
+for line in result.stdout.splitlines():
+    digest, filename = line.split(maxsplit=1)
+    files[filename] = digest
+if len(files) "'!= 10:
+    raise RuntimeError(f'"'Expected 10 Lean files, got {len(files)}')
+manifest = {
+    'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z'),
+    'files': files,
+}
+Path('back/BACK-HASHES.json').write_text(json.dumps(manifest, indent=2) + '\\n', encoding='utf-8')
+print('Wrote back/BACK-HASHES.json at ' + manifest['utc'])
+PY"

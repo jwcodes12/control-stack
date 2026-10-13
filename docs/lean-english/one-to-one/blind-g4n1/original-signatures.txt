@@ -1,0 +1,46 @@
+Claim 1: ControlStack/Scenarios/SC18Logging.lean:219
+theorem sc18_safe (admins : List ℕ) (trusted T : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal admins trusted o) :
+    Good T (run admins trusted T full (init trusted) ops) :=
+
+Claim 2: ControlStack/Scenarios/SC18Logging.lean:225
+theorem config_untampered (admins : List ℕ) (trusted T : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal admins trusted o) :
+    (run admins trusted T full (init trusted) ops).cfg = trusted :=
+
+Claim 3: ControlStack/Scenarios/SC18Logging.lean:240
+theorem halt_freezes (admins : List ℕ) (trusted T : ℕ) (s : St) (ops : List Op) (hh : s.halted = true) :
+    (run admins trusted T full s ops).released = s.released := by
+
+Claim 4: ControlStack/Scenarios/AuthInstancesB.lean:212
+theorem sc18_safe_authenticated (admins : List ℕ) (trusted T : ℕ) (U : List ℕ) (ops : List (ℕ × SC18.Op))
+    (hU : ∀ u ∈ U, u ∉ admins) (htrusted : ∀ io ∈ ops, io.1 ∉ U → SC18.legal admins trusted io.2) :
+    Good T (authRun (SC18.step admins trusted T full) claim18 (SC18.init trusted) ops) := by
+
+Claim 5: ControlStack/Scenarios/AuthInstancesB.lean:228
+theorem forged18_redirects_without_auth :
+    (authRun (SC18.step [9] 0 5 full) (fun _ => none) (SC18.init 0) forged18).cfg = 66 ∧
+    (authRun (SC18.step [9] 0 5 full) claim18 (SC18.init 0) forged18).cfg = 0 := by
+
+Claim 6: ControlStack/Scenarios/SC18Liveness.lean:128
+theorem honest_release (s : St) (i : ℕ) (hh : s.halted = false) (hu : s.sinkUp = true) :
+    i ∈ (run admins trusted T full s [.request i, .logWrite i, .release i]).released.map Rel.id := by
+
+Claim 7: ControlStack/Scenarios/SC18Liveness.lean:142
+theorem progress_interleaved (s : St) (i : ℕ) (a0 a1 a2 a3 : List Op) :
+    let t := run admins trusted T full s (a0 ++ .request i :: a1 ++ .logWrite i :: a2 ++ .release i :: a3)
+    i ∈ t.released.map Rel.id ∨ t.halted = true ∨
+      (run admins trusted T full (step admins trusted T full (run admins trusted T full s a0) (.request i)) a1).sinkUp
+        = false := by
+
+Claim 8: ControlStack/Scenarios/SC18Liveness.lean:192
+theorem silent_ticks_halt (s : St) (n : ℕ) (hinv : s.halted = false → s.clock ≤ s.lastAck + T)
+    (hn : s.lastAck + T < s.clock + n) :
+    (run admins trusted T full s (List.replicate n .tick)).halted = true := by
+
+Claim 9: ControlStack/Scenarios/SC18Liveness.lean:338
+theorem resume_safe (admins : List ℕ) (T : ℕ) (ops : List Op) :
+    (∀ r ∈ (run admins T init ops).released, RelOk T (run admins T init ops) r) ∧
+      ((run admins T init ops).released.map SC18.Rel.id).Nodup :=
+
+Claim 10: ControlStack/Scenarios/SC18Liveness.lean:351
+theorem resume_progress (admins : List ℕ) (T : ℕ) (s : St) (i : ℕ) (hh : s.halted = false) (hu : s.sinkUp = true)
+    (hr : i ∈ s.reqs) : i ∈ (run admins T s [.logWrite i, .release i]).released.map SC18.Rel.id := by

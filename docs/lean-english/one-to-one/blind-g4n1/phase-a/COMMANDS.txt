@@ -1,0 +1,158 @@
+/bin/bash -lc 'cat input/batch.md defs/*.lean'
+
+---
+/bin/bash -lc "rg -n -A 32 -B 8 'claim18|forged18|def Honest|def Non|def Advers|section SC18' defs/*.lean"
+
+---
+/bin/bash -lc 'cat input/batch.md'
+
+---
+/bin/bash -lc 'cat defs/Scenarios__SC18Logging_defs.lean defs/Scenarios__SC18Liveness_defs.lean defs/Scenarios__AuthInstancesB_defs.lean defs/Core__AuthenticatedLog_defs.lean'
+
+---
+/bin/bash -lc 'mkdir -p back'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+
+files = {
+'1-sc18_safe.lean': '''namespace ControlStack.SC18
+
+-- The saved log length identifies the trusted-log prefix at each release.
+def Back_sc18_safe : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (ops : List Op),
+    (∀ o ∈ ops, legal admins trusted o) →
+    Good T (run admins trusted T full (init trusted) ops)
+
+end ControlStack.SC18
+''',
+'2-config_untampered.lean': '''namespace ControlStack.SC18
+
+def Back_config_untampered : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (ops : List Op),
+    (∀ o ∈ ops, legal admins trusted o) →
+    (run admins trusted T full (init trusted) ops).cfg = trusted
+
+end ControlStack.SC18
+''',
+'3-halt_freezes.lean': '''namespace ControlStack.SC18
+
+-- NOTE:
+-- The conclusion concerns only released-list equality. The English aside
+-- about the clock continuing to change while halted conflicts with step:
+-- under full, a tick in a halted state leaves the state unchanged.
+def Back_halt_freezes : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (s : St) (ops : List Op),
+    s.halted = true →
+    (run admins trusted T full s ops).released = s.released
+
+end ControlStack.SC18
+''',
+'4-sc18_safe_authenticated.lean': '''namespace ControlStack.AuthInstances
+
+-- NOTE:
+-- U is represented by its membership predicate. As stipulated in the English,
+-- the first component of each operation pair is interpreted as its true issuer.
+-- NOT_FORMALISABLE: The excerpts have no independent ground-truth issuer or
+-- predicate relating platform-reported identity to ground truth. This statement
+-- captures the modelled conclusion under that external authenticity assumption;
+-- it cannot express or establish the platform's fidelity to real issuers.
+def Back_sc18_safe_authenticated : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (U : ℕ → Prop)
+    (ops : List (ℕ × ControlStack.SC18.Op)),
+    (∀ a : ℕ, U a → a ∉ admins) →
+    (∀ io ∈ ops, ¬ U io.1 → ControlStack.SC18.legal admins trusted io.2) →
+    ControlStack.SC18.Good T
+      (ControlStack.AuthenticatedLog.authRun
+        (ControlStack.SC18.step admins trusted T ControlStack.SC18.full)
+        claim18 (ControlStack.SC18.init trusted) ops)
+
+end ControlStack.AuthInstances
+''',
+'5-forged18_redirects_without_auth.lean': '''namespace ControlStack.AuthInstances
+
+def Back_forged18_redirects_without_auth : Prop :=
+  (ControlStack.AuthenticatedLog.authRun
+    (ControlStack.SC18.step [9] 0 5 ControlStack.SC18.full)
+    (fun (_ : ControlStack.SC18.Op) => (none : Option ℕ))
+    (ControlStack.SC18.init 0) forged18).cfg = 66 ∧
+  (ControlStack.AuthenticatedLog.authRun
+    (ControlStack.SC18.step [9] 0 5 ControlStack.SC18.full)
+    claim18 (ControlStack.SC18.init 0) forged18).cfg = 0
+
+end ControlStack.AuthInstances
+''',
+'6-honest_release.lean': '''namespace ControlStack.SC18Liveness
+
+def Back_honest_release : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (s : ControlStack.SC18.St) (i : ℕ),
+    s.halted = false → s.sinkUp = true →
+    i ∈ (ControlStack.SC18.run admins trusted T ControlStack.SC18.full s
+      [.request i, .logWrite i, .release i]).released.map ControlStack.SC18.Rel.id
+
+end ControlStack.SC18Liveness
+''',
+'7-progress_interleaved.lean': '''namespace ControlStack.SC18Liveness
+
+def Back_progress_interleaved : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (s : ControlStack.SC18.St) (i : ℕ)
+    (a0 a1 a2 a3 : List ControlStack.SC18.Op),
+    let beforeLog := ControlStack.SC18.run admins trusted T ControlStack.SC18.full s
+      (a0 ++ [.request i] ++ a1)
+    let final := ControlStack.SC18.run admins trusted T ControlStack.SC18.full s
+      (a0 ++ [.request i] ++ a1 ++ [.logWrite i] ++ a2 ++ [.release i] ++ a3)
+    i ∈ final.released.map ControlStack.SC18.Rel.id ∨
+      final.halted = true ∨ beforeLog.sinkUp = false
+
+end ControlStack.SC18Liveness
+''',
+'8-silent_ticks_halt.lean': '''namespace ControlStack.SC18Liveness
+
+def Back_silent_ticks_halt : Prop :=
+  ∀ (admins : List ℕ) (trusted T : ℕ) (s : ControlStack.SC18.St) (n : ℕ),
+    (s.halted = false → s.clock ≤ s.lastAck + T) →
+    s.lastAck + T < s.clock + n →
+    (ControlStack.SC18.run admins trusted T ControlStack.SC18.full s
+      (List.replicate n ControlStack.SC18.Op.tick)).halted = true
+
+end ControlStack.SC18Liveness
+''',
+'9-resume_safe.lean': '''namespace ControlStack.SC18Liveness.Resume
+
+def Back_resume_safe : Prop :=
+  ∀ (admins : List ℕ) (T : ℕ) (ops : List Op),
+    let final := run admins T init ops
+    (∀ r ∈ final.released, RelOk T final r) ∧
+      (final.released.map ControlStack.SC18.Rel.id).Nodup
+
+end ControlStack.SC18Liveness.Resume
+''',
+'10-resume_progress.lean': '''namespace ControlStack.SC18Liveness.Resume
+
+def Back_resume_progress : Prop :=
+  ∀ (admins : List ℕ) (T : ℕ) (s : St) (i : ℕ),
+    s.halted = false → s.sinkUp = true → i ∈ s.reqs →
+    i ∈ (run admins T s [.logWrite i, .release i]).released.map ControlStack.SC18.Rel.id
+
+end ControlStack.SC18Liveness.Resume
+''',
+}
+
+for name, content in files.items():
+    Path('back', name).write_text(content, encoding='utf-8')
+print('Wrote all 10 closed proposition declarations under back/.')
+PY"
+
+---
+/bin/bash -lc 'sha256sum back/*.lean'
+
+---
+/bin/bash -lc 'date -u +%Y-%m-%dT%H:%M:%SZ'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+Path('back/BACK-HASHES.json').write_text(\"{\\n  \\\"utc\\\": \\\"2026-10-13T04:44:27Z\\\",\\n  \\\"files\\\": {\\n    \\\"back/1-sc18_safe.lean\\\": \\\"91fd56bd019e7b224dca67698d8020d5030b9fa87813e926685a4103dc20a2a8\\\",\\n    \\\"back/10-resume_progress.lean\\\": \\\"d00f1cde3c68c65a518ce88e3095f2033d38ee45e71a1503878745b24a844c6b\\\",\\n    \\\"back/2-config_untampered.lean\\\": \\\"c754dfcab824f9382056679654af60dbe98e77847ba9cf9b2bce481c376f99dd\\\",\\n    \\\"back/3-halt_freezes.lean\\\": \\\"eed10d1cbbbdb176e04a1dd9822d5f0e46c3454c15976e36a1c5ebf4abae0f15\\\",\\n    \\\"back/4-sc18_safe_authenticated.lean\\\": \\\"7f9ceddf49f1d13387275f3f26a588a1f0ae33a01dcfbf406b52d9629defd0b0\\\",\\n    \\\"back/5-forged18_redirects_without_auth.lean\\\": \\\"dde5118c94975aba06e8e8f4474f52ad7bd38c3ab8384000c23a235c9276379f\\\",\\n    \\\"back/6-honest_release.lean\\\": \\\"9f0b3b83000442d9cab31725fd58c26a651740f930399d49ae8eb704a9a1004a\\\",\\n    \\\"back/7-progress_interleaved.lean\\\": \\\"743953c8df1d0b479075787ea6ef04eea57f07bbd792cdbf2d92ed40fc5e5a22\\\",\\n    \\\"back/8-silent_ticks_halt.lean\\\": \\\"3e711c23971d984ace715958037b9c518217ece1f622126fa05f68d3c4d15605\\\",\\n    \\\"back/9-resume_safe.lean\\\": \\\"239eba133c1bae60df1c258ee3fac4577958b37216ca97af09785533f54b3714\\\"\\n  }\\n}\\n\", encoding='utf-8')
+print('Wrote back/BACK-HASHES.json; Lean files remain unchanged.')
+PY"

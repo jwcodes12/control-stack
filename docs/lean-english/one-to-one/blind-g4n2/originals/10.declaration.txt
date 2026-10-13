@@ -1,0 +1,3 @@
+theorem forged20_trains_without_auth :
+    (authRun (SC20.step E0 full) (fun _ => none) SC20.init forged20).trained = [[(1, 66)]] ∧
+    (authRun (SC20.step E0 full) claim20 SC20.init forged20).trained = []

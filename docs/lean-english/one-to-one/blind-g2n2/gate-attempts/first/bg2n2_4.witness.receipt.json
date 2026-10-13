@@ -1,0 +1,17 @@
+{
+  "cid": "bg2n2_4",
+  "target": "witness",
+  "passed": false,
+  "statement_passed": true,
+  "statement_sha256": "60d8766004c2eca4e4cbce545aa54231e55ea89f5bc4c314c07206147df0cee3",
+  "proof_sha256": "32293ca8161da12cb04c3d1bb7ff1420b703dc91f66aeffb5df806694a891078",
+  "gate_sha256": "8bcaba822fe25a5b7ffe7493980033960d1b262995d2f9060f21f4c58e0e7e84",
+  "gate_source_sha256": "8bcaba822fe25a5b7ffe7493980033960d1b262995d2f9060f21f4c58e0e7e84",
+  "PL_IMPORTS": "ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay ControlStack.Scenarios.SC12Persistence ControlStack.Scenarios.AuthInstancesB ControlStack.AuditDispatch ControlStack.Scenarios.SC14Runaway",
+  "PL_LEAN_PROJ": "/home/opc/projects/blind-work/g2n2/b",
+  "trusted_header": "",
+  "security_checks_unchanged": true,
+  "imports_option_local_only": true,
+  "statement_log": "",
+  "gate_log": "FAIL lean exit 1\n/home/opc/projects/blind-work/g2n2/b/docs/lean-english/one-to-one/blind-g2n2/gate-tmp/PLGate_bg2n2_4_witness_0b65507d2aae.lean:50:4: error: failed to synthesize\n  Decidable\n    (OrigAt\n        { active := [5], ended := [],\n          live :=\n            [{ id := 5, sess := 5, origin := 5, job := false, reg := true },\n              { id := 6, sess := 5, origin := 5, job := true, reg := true }],\n          fired := [], halted := false }\n        (let __src := SC12.init;\n        { active := __src.active, ended := __src.ended, live := __src.live, fired := __src.fired, halted := true }) \u2227\n      \u00acBackAt\n          { active := [5], ended := [],\n            live :=\n              [{ id := 5, sess := 5, origin := 5, job := false, reg := true },\n                { id := 6, sess := 5, origin := 5, job := true, reg := true }],\n            fired := [], halted := false }\n          (let __src := SC12.init;\n          { active := __src.active, ended := __src.ended, live := __src.live, fired := __src.fired, halted := true }))\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\n/home/opc/projects/blind-work/g2n2/b/docs/lean-english/one-to-one/blind-g2n2/gate-tmp/PLGate_bg2n2_4_witness_0b65507d2aae.lean:53:2: error: failed to synthesize\n  Decidable Witness\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\n'gate_0b65507d2aae' depends on axioms: [propext, sorryAx, Quot.sound]\n"
+}

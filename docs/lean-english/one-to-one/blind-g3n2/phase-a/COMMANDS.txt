@@ -1,0 +1,192 @@
+/bin/bash -lc 'cat input/batch.md'
+
+---
+/bin/bash -lc 'cat defs/*.lean'
+
+---
+/bin/bash -lc "rg -n '"'^namespace|''^def |''^abbrev |''^structure |''^inductive '"' defs/*.lean"
+
+---
+/bin/bash -lc 'cat defs/Scenarios__SC17Infra_defs.lean defs/Scenarios__SC17Drift_defs.lean'
+
+---
+/bin/bash -lc 'cat defs/Scenarios__SC16Deploy_defs.lean defs/Scenarios__SC16Refinement_defs.lean defs/Scenarios__SC16Disjoint_defs.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+
+files = {
+'1-forged16_deploys_without_auth.lean': '''import ControlStack.Scenarios.AuthInstancesA
+
+namespace ControlStack.AuthInstances
+
+open ControlStack.AuthenticatedLog
+
+-- The fixed forged trace, with claim checking disabled versus enabled.
+def Back_forged16_deploys_without_auth : Prop :=
+  (authRun (SC16.step SC16.R0 (fun x => x) SC16.full)
+    (fun _ => none) SC16.init forged16).deployed =
+      [⟨0, 5, 7⟩] ∧
+  (authRun (SC16.step SC16.R0 (fun x => x) SC16.full)
+    claim16 SC16.init forged16).deployed = []
+
+end ControlStack.AuthInstances
+''',
+'2-concrete_safe.lean': '''import ControlStack.Scenarios.SC16Refinement
+
+namespace ControlStack.SC16Refinement
+
+-- Deploy by the approved digest; the conclusion is the abstract Good predicate.
+def Back_concrete_safe : Prop :=
+  ∀ (R : SC16.Roles) (h : ℕ → ℕ) (ops : List COp),
+    SC16.Good R h (α (runC R h false cinit ops))
+
+end ControlStack.SC16Refinement
+''',
+'3-concrete_reviewed_content.lean': '''import ControlStack.Scenarios.SC16Refinement
+
+namespace ControlStack.SC16Refinement
+
+-- Injectivity is restricted to deployed contents and reviewed contents
+-- in the abstracted final state, rather than to all natural numbers.
+def Back_concrete_reviewed_content : Prop :=
+  ∀ (R : SC16.Roles) (h : ℕ → ℕ) (ops : List COp),
+    let s := α (runC R h false cinit ops)
+    let contents := s.deployed.map SC16.Dep.content ++
+      s.reviews.map SC16.Review.content
+    (∀ x ∈ contents, ∀ y ∈ contents, h x = h y → x = y) →
+      ∀ e ∈ s.deployed,
+        ∃ rv ∈ s.reviews,
+          e.content = rv.content ∧
+          rv.reviewer ∈ R.reviewers ∧ rv.reviewer ≠ rv.stager
+
+end ControlStack.SC16Refinement
+''',
+'4-sc17_safe.lean': '''import ControlStack.Scenarios.SC17Infra
+
+namespace ControlStack.SC17
+
+-- Good constrains recorded applies and their ids, not intervening live states.
+def Back_sc17_safe : Prop :=
+  ∀ (E : Env) (g0 : List G) (ops : List Op),
+    Good E (run E full (init g0) ops)
+
+end ControlStack.SC17
+''',
+'5-reconcile_restores.lean': '''import ControlStack.Scenarios.SC17Infra
+
+namespace ControlStack.SC17
+
+-- A single reconcile step from any state that is not halted.
+def Back_reconcile_restores : Prop :=
+  ∀ (E : Env) (s : St),
+    s.halted = false →
+      (step E full s Op.reconcile).live =
+        (step E full s Op.reconcile).desired
+
+end ControlStack.SC17
+''',
+'6-halt_freezes.lean': '''import ControlStack.Scenarios.SC17Infra
+
+namespace ControlStack.SC17
+
+-- Only the applied log is asserted to remain unchanged after halt.
+def Back_halt_freezes : Prop :=
+  ∀ (E : Env) (s : St) (ops : List Op),
+    s.halted = true → (run E full s ops).applied = s.applied
+
+end ControlStack.SC17
+''',
+'7-drift_bounded.lean': '''import ControlStack.Scenarios.SC17Drift
+
+namespace ControlStack.SC17Drift
+
+-- Filter the live list by nonmembership in desired; repeated entries count.
+def Back_drift_bounded : Prop :=
+  ∀ (d W : ℕ) (desired : List ℕ) (ops : List Op),
+    0 < W →
+      let s := run d W true (init desired) ops
+      (s.live.filter (fun g => decide (g ∉ s.desired))).length ≤ d * W
+
+end ControlStack.SC17Drift
+''',
+'8-drift_lifetime.lean': '''import ControlStack.Scenarios.SC17Drift
+
+namespace ControlStack.SC17Drift
+
+-- The age bound concerns birth times in the ghost drift record.
+def Back_drift_lifetime : Prop :=
+  ∀ (d W : ℕ) (desired : List ℕ) (ops : List Op),
+    0 < W →
+      let s := run d W true (init desired) ops
+      ∀ p ∈ s.drift, s.clock - p.2 < W
+
+end ControlStack.SC17Drift
+''',
+'9-sc17_safe_authenticated.lean': '''import ControlStack.Scenarios.AuthInstancesA
+
+namespace ControlStack.AuthInstances
+
+open ControlStack.AuthenticatedLog
+
+-- U is the adversary set. Provenance is membership in the issuer-labelled
+-- input trace; no timing or competence property is added.
+def Back_sc17_safe_authenticated : Prop :=
+  ∀ (E : SC17.Env) (U : Set ℕ) (g0 : List SC17.G)
+    (ops : List (ℕ × SC17.Op)),
+    (∀ c ∈ U, c ∉ E.reviewers) →
+      let s := authRun (SC17.step E SC17.full) claim17 (SC17.init g0) ops
+      SC17.Good E s ∧
+      (∀ a ∈ s.approvals,
+        (a.reviewer, SC17.Op.approve a.reviewer a.id) ∈ ops ∧
+        a.reviewer ∈ E.reviewers ∧ a.reviewer ∉ U) ∧
+      (∀ p ∈ s.props,
+        (p.author, SC17.Op.propose p.author p.id p.diff) ∈ ops ∨
+        (p.author, SC17.Op.amend p.author p.id p.diff) ∈ ops)
+
+end ControlStack.AuthInstances
+''',
+'10-forged17_applies_without_auth.lean': '''import ControlStack.Scenarios.AuthInstancesA
+
+namespace ControlStack.AuthInstances
+
+open ControlStack.AuthenticatedLog
+
+-- The unauthenticated outcome is about live; the authenticated one is
+-- about applied, as specified by the English statement.
+def Back_forged17_applies_without_auth : Prop :=
+  (authRun (SC17.step SC17.E0 SC17.full)
+    (fun _ => none) (SC17.init []) forged17).live = [(1, 1, 1)] ∧
+  (authRun (SC17.step SC17.E0 SC17.full)
+    claim17 (SC17.init []) forged17).applied = []
+
+end ControlStack.AuthInstances
+''',
+}
+back = Path('back')
+back.mkdir(exist_ok=True)
+for name, content in files.items():
+    (back / name).write_text(content)
+print('Wrote 10 Lean proposition files under back/.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import subprocess
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+result = subprocess.run(['bash', '-c', 'sha256sum back/*.lean'], check=True, capture_output=True, text=True)
+files = {}
+for line in result.stdout.splitlines():
+    digest, filename = line.split(maxsplit=1)
+    files[filename] = digest
+if len(files) "'!= 10:
+    raise RuntimeError('"'Expected exactly ten Lean files for this batch')
+utc = datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
+Path('back/BACK-HASHES.json').write_text(json.dumps({'utc': utc, 'files': files}, indent=2) + '\\n')
+print(result.stdout, end='')
+print('Wrote back/BACK-HASHES.json at ' + utc)
+PY"

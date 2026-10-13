@@ -1,0 +1,36 @@
+Original declaration signatures, read only after typed/HASHES.json was written.
+
+Claim 1: ControlStack/Scenarios/SC12Persistence.lean, line 264
+theorem no_fire_after_end (admins : List ℕ) (s : St) (ops : List Op) (h : Inv s) (sess : ℕ) (hs : sess ∈ s.ended) :
+    (run admins full s ops).fired.filter (fun f => f.2.1 = sess) = s.fired.filter (fun f => f.2.1 = sess)
+
+Claim 2: ControlStack/Scenarios/SC12Persistence.lean, line 279
+theorem halt_freezes (admins : List ℕ) (s : St) (ops : List Op) (hh : s.halted = true) : run admins full s ops = s
+
+Claim 3: ControlStack/Scenarios/AuthInstancesB.lean, line 172
+theorem sc12_safe_authenticated (admins : List ℕ) (U : List ℕ) (ops : List (ℕ × SC12.Op))
+    (hU : ∀ u ∈ U, u ∉ admins) :
+    Good (authRun (SC12.step admins full) claim12 SC12.init ops) ∧
+    (∀ e ∈ (authRun (SC12.step admins full) claim12 SC12.init ops).live, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .start c e.origin ∧ c ∈ admins))
+
+Claim 4: ControlStack/Scenarios/AuthInstancesB.lean, line 188
+theorem forged12_spawns_without_auth :
+    (authRun (SC12.step [9] full) (fun _ => none) SC12.init forged12).live.length = 2 ∧
+    (authRun (SC12.step [9] full) claim12 SC12.init forged12).live = []
+
+Claim 5: ControlStack/AuditDispatch.lean, line 82
+theorem trace_safe (s : St) (ops : List Op) (h : Inv s) :
+    Inv (run s ops) ∧ s.audits <+: (run s ops).audits
+
+Claim 6: ControlStack/AuditDispatch.lean, line 91
+theorem app_cannot_effect (s : St) (o : Op) (happ : ∀ id, o ≠ .dispatch id) : (step s o).effects = s.effects
+
+Claim 7: ControlStack/Scenarios/SC14Runaway.lean, line 215
+theorem sc14_safe (E : Env) (exp : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal o) :
+    Good E (run E full (init exp) ops)
+
+Claim 8: ControlStack/Scenarios/SC14Runaway.lean, line 229
+theorem halt_freezes (E : Env) (s : St) (ops : List Op) (hh : s.halted = true) :
+    (run E full s ops).usage = s.usage
+

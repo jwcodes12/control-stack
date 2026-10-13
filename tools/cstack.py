@@ -182,8 +182,9 @@ def check_steps(full=False, root=ROOT):
         ("test_check_scenarios", [py, "-m", "unittest", "tools.test_check_scenarios"], {0}),
     ]
     for t in sorted((root / "tools").glob("test_*.py")):
-        if t.name in ("test_check_scenarios.py", "test_trusted_stack_broker.py"):
-            continue  # the former runs as a module above; the latter needs root (CI runs it)
+        if t.name in ("test_check_scenarios.py", "test_trusted_stack_broker.py", "test_polyglot_broker.py",
+                      "test_confined_effect_broker.py"):
+            continue  # the first runs as a module above; the others need root on Linux and run in their own sudo workflows
         steps.append((t.stem, [py, f"tools/{t.name}"], {0}))
     if full:
         steps.append(("lake build ControlStack", ["lake", "build", "ControlStack"], {0}))

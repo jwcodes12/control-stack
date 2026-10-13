@@ -1,403 +1,254 @@
-# ROADMAP: control-stack status (kept current; last updated 2026-10-11: deployment verifier at scoped R2 with Tiers 1-10 merged; all 28 scenarios CONDITIONAL with Lean models; preregistered single-host runtime evidence for 15 scenarios)
+# ROADMAP: control-stack, research refocus (2026-10-13)
 
-## Deployment verifier and what is next — 2026-10-11 (all PRs merged, none open; source generation `r2-v7`)
-Full handoff: `deployment/HANDOFF-NEXT.md`. State: scoped R2 for the local-file two-agent slice, every release gate met **except independent human review (G1)**;
-verdicts never exceed CONDITIONAL. Read `END-STATE.md`, `docs/DEPLOYMENT-CLAIM-v0.md` (section "Tier 10"), `deployment/REVIEW-PACKET-R2.md`.
+Canonical status. Base commit of this revision: `main` at `462c9c7`. The chronological journal that this file replaces is
+archived unchanged in [docs/ROADMAP-HISTORY.md](docs/ROADMAP-HISTORY.md). Everything in this repository is
+**model-written and model-reviewed; no independent human review has happened** (G1 below).
 
-Order of work (owner's decision):
-1. **Done:** merge every open PR (#45-#54).
-2. **Paused (stopped by owner after the G0 pass; see `docs/lean-english/SOL-HANDOFF.md`):** one-to-one check of the plain-English statements of 187 headline Lean claims (`docs/LEAN-CLAIMS-IN-PLAIN-ENGLISH.md`, `docs/lean-english/`;
-   Sol with the proofledger gate). The 26 deployment-stack claims are checked (19 equivalent, 2 weaker, 3 stronger, 2 undecided; 5 of 6 planted wrong
-   statements caught). 161 scenario claims not yet reached; a strictly blind pass is still owed.
-3. **Next: reuse audit, then simplify the Lean** (do the audit BEFORE resuming the English check: reuse existing lemmas/cores instead of reinventing; scope to be confirmed): integrate the proved provenance invariant (`docs/lean-english/one-to-one/ProvenanceDraft.lean`) and reword the
-   headline claim to what is proved; named fields for `Allowed` and `Accepted`; state the three repeated patterns (gate invariant, authenticated adversary, refinement
-   transfer) once; remove duplicated helpers; apply the English corrections; decide T4.2 (literal monotonicity is false, keep the safety-only theorem); check reuse of lemmas
-   already in `alignment-contrib/lean/StabilityDebate`, `control-tree`, `proofledger`.
-4. **Then: human- and resource-gated work** (below).
-5. **Then: researcher-friendly presentation** (`docs/PLAN-RESEARCHER-FRIENDLY.md`): pattern pages, glossary, premise view, claim cards, counterexample gallery, reading paths, demos, review kit.
+## Status at a glance
 
-Needs John (deployment verifier): G1 independent human review; G2 real LLM agents (ControlArena/inspect_ai, API budget; attack arms need a cyber-permissive tier); G3 OPA/trivy/hadolint
-baselines; G4 Kubernetes extractor; G5 host Landlock (kernel boot parameter); G6 TPM/HSM, GPU residue, multi-host; G7 HTTP sink with egress; G8 Windows/macOS/WASI; G9 tag, publish, outreach;
-human-written held-out sets; F6/F8 gates (monitor recall calibration, live OS correspondence, native-VM usefulness, outside expert review).
-
-## Scenario completion and first end-to-end evidence: 2026-10-09 (branch `claude/sc26-joint`)
-
-**Headline.** All 28 scenarios now have kernel-checked Lean models, and all 28 are **CONDITIONAL** (they were 3 conditional and 25 draft). Six preregistered single-host runtime runs PASS. **No scenario is deployment-assured.** Independent human review (done-criterion 5) is open for every scenario. The mathematics is classical, and no novelty is claimed.
-
-**Best-supported case: SC-26** (no irreversible payment without an exact, independent, one-use approval). Recheck it with `python3 tools/check_sc26_case.py`; both runs recheck as CONDITIONAL.
-- **Model.** `sc26_safe`, `safe_of_sound` and `halt_freezes` (in-flight semantics), plus 14 witnesses.
-- **Refinement.** A concrete event machine forward-simulates the model (`SC26Refinement`).
-- **Authentication.** `Core/Authenticated` and `AuthenticatedAdv` reduce credential separation to one premise: the issuer is authentic.
-- **Two preregistered runs:**
-  - run-1 (v2) and run-2 (v3, extended): attacks A1–A17 and controls 7/7, each firing its specific finding;
-  - usefulness 64/64 with 16 crash injections;
-  - a 200-case Lean difftest.
-- **LLM evals:** `scenarios/SC-26/llm_eval/` and `scenarios/SC-26/llm_approver/`.
-- **Also:** liveness (`SC26Liveness`) and anti-rollback (`RollbackInstances`).
-- **Status against the done-criteria:** (1)–(4) and (6) are met within single-host scope. (5) is open.
-
-**Runtime evidence** (all PASS, preregistered, single host; benign workloads unless noted). In addition to the runs listed below, these scenarios each have a run-1:
-- SC-12, SC-14, SC-15, SC-16, SC-17, SC-19, SC-20, SC-21 (a 20,000-trial simulation that matches the proved bounds), SC-23, SC-25 and SC-27;
-- anti-rollback (monotonic anchor);
-- SC-26 LLM-in-the-loop control eval: honest 16/16, red team 0/16;
-- SC-26 consent-quality eval: the LLM approver was not deceived (0 of 100 non-PO requests approved) in an easy purchase-order-matching task. Each row names the scenario, the preregistration and the hypotheses.
-
-| Scenario | Prereg | Hypotheses |
+| Milestone | Status | Gate |
 |---|---|---|
-| SC-26 | `PREREG-SC26-TXGATE-v2` | H1–H5 |
-| SC-26 | `PREREG-SC26-TXGATE-v3` | H1–H5, extended |
-| SC-28 | `PREREG-SC28-CGMETER-v1` | cgroup v2 meter and process-tree HALT; benign workloads |
-| SC-07 | `PREREG-SC07-EGRESSQ-v1` | namespace + nftables quota, allowlist and HALT; benign workloads |
-| SC-18 | `PREREG-SC18-LOGPROXY-v1` | log-before-release, fail-closed watchdog |
-| DC-1 single-host rehearsal | `PREREG-DC1R-SINGLEHOST-v1` | fencing sink; partition and token-leak controls fired |
+| M1 flagship demonstration: budgeted auditing against an adaptive attacker | **not started**; reuse base identified (section 2) | all six M1 outputs checked, no `sorry`, standard axioms only |
+| M2 extension beyond the initial pair (defer-to-trusted, then the deterministic gate bridge) | planned | reuse without silently strengthening assumptions |
+| M3 discovery and accessibility | planned; `docs/PLAN-RESEARCHER-FRIENDLY.md` is the design | a reader finds, instantiates and challenges one result without reverse-engineering |
+| M4 theory or experimental extension | planned; three ranked candidates in section 4 | answers a concrete question with an explicit evidence story |
+| Deployment verifier track | **separated**, scoped R2, frozen except review-gated PRs | G1 human review, then G9 publish (owner) |
 
-**New theory.**
-- **F6:**
-  - reserved hidden audit under arbitrary false positives;
-  - adaptive imperfect recall, giving a hypergeometric closed form;
-  - damage bounds: expected harm before halt-on-catch, ≤ D·(N−B)/(B+1) at r=1;
-  - monitor collusion: honeypot recall transfers up to TV, and canonicalisation bounds stego.
-- **F3:** distributed HALT with fencing tokens. The post-HALT window is ≤ n·ρ·(L+ε) whatever the delivery, and 0 after t0+ε.
-- **F2:** channel instances: SC-02 accumulation and re-keying, the SC-04 log channel, a GPU time-slicing model.
-- **F8:**
-  - `Core/Compose` (product gates, shared halt, admissible bridges);
-  - `Core/Cert` (typed assumption ledger with premise kinds; SC-26 damage cap discharged by `sc26_safe`);
-  - `CertBest`.
-- **SC-07 exfiltration:** ≥ ⌈S/q⌉ windows are needed, so P(complete before catch) ≤ (1−pr)^⌈S/q⌉.
+Owner decisions that this plan assumes but that have not been confirmed are listed in section 6. Change them there,
+not by silently redefining a milestone.
 
-**Tooling.**
-- `tools/check_sc26_case.py`: independent rechecker. It verifies each run against its pinned-commit harness.
-- `tools/cert_ledger.py`: the Lean ledger, checked against manifests.
-- `tools/portfolio_ledger.py`: generates `ASSURANCE-LEDGER.md`, 29 normalised premises ranked by leverage.
-- `tools/stackmap.py`: generates `STACK-MAP.md` and `stack/components.json`, a lab tech-stack map (researcher → GPU datacenter).
-- `tools/new_scenario.py`: scaffold generator.
-- Docs: `docs/RESEARCHER-WORKFLOW.md`, `docs/LAB-DEPLOYMENT-MAPPING.md`.
-- Prereg drafts that need hardware or accounts: GPU-1, DC-1 (multi-host), CLOUD-1.
+## 1. Mission and scope
 
-**Reviews.** All are AI reviews; none is the independent human review.
-- Gemini 3.1 Pro (foreign family): SC-26 model, SC-26 evidence package, new core files.
-- Opus 5.5 (same family): SC-26 model and prereg, and `REVIEW-PACKET-2026-10-09.md`, a statement-fidelity packet for a human reviewer.
-- Every finding has a written disposition under `reviews/`.
+Build a reusable, machine-checked library for reasoning about AI control protocols, starting with monitoring,
+auditing and adaptive attacks. The product is useful formal reasoning with accessible explanations: a researcher
+should be able to take one checked result, see exactly what it guarantees and under which assumptions, see where it
+breaks, and know what evidence would be needed to apply it. Simulations and reference implementations connect the
+mathematics to experiments; they do not validate the threat model.
 
-**Highest-leverage open premises**, from `ASSURANCE-LEDGER.md`:
-- **Credential separation:** 19 scenarios; reduced to issuer authenticity in Lean; tested on one host for SC-26.
-- **Honest usefulness:** 18 scenarios; scripted clients plus one small-LLM evaluation.
-- **Complete observation:** SC-01/02/04/05/07/24; untested, and refuted on the SC-01 host.
-- **Exclusive effect path:** 11 scenarios.
+Out of scope for this roadmap: verification of arbitrary Linux, Docker, Kubernetes, GPU or datacenter deployments.
+The existing deployment verifier (`deployment/`, `trusted_stack/`, `extractors/`) is preserved as a scoped application
+(section 5) and its assurance claims are not expanded here. "Mathlib for AI control" is a long-term aspiration, not a
+completion criterion for anything below.
 
-These, plus independent human review, are what stand between CONDITIONAL and any stronger status.
+## 2. Repository assessment (what the milestones build on)
 
+Grounded in the flexibility test of 2026-10-13 ([docs/FLEXIBILITY-TEST.md](docs/FLEXIBILITY-TEST.md), one agent
+session, not a review) plus a direct reading of the declarations named here.
 
-**Added later the same day.**
-- **Refinements:** SC-16 and SC-25 (concrete event machine → model), joining SC-26.
-- **Liveness counterparts:** SC-07, SC-18 and SC-28.
-- **Anchoring:** SC-27 extension-only anchoring, a model fix found by its runtime test.
-- **Joint model:** `LabStack` (payments, deploys and compute: shared HALT and one global budget).
-- **Rollback:** `Core/AntiRollback` and its instances.
-- **Observation by design:** `F2/TimedRelease`, which addresses observation completeness for gate-routed observations.
-- **Datacenter layer:** `F2/GPUResidue` and `F1/FabricIsolation`.
-- **Tooling:** generated scenario pages (`tools/build_results.py`).
+**Reusable now (all compile with standard axioms, no `sorry`):**
 
-## Primitive completion sprint — 2026-10-09 (F1–F8)
+- `ControlStack/AuditBudget.lean`: `random_survival_le_pow` (a k-step attack survives a uniform B-of-N hidden audit
+  schedule with probability C(N-k,B)/C(N,B) ≤ ((N-B)/N)^k), `observable_schedule_nogo` (an observable schedule is
+  avoidable), `budget_example` (N=100, B=10, k=5, exact binomials).
+- `ControlStack/Families/F6/ReservedAudit.lean`: `reserved_adaptive` (the same bound uniform over every attacker whose
+  attack bit has law σ(visible history); the attacker sees its own actions and every catch flag; the kernel's hidden part,
+  including false-positive flags and flag-triggered audits, is arbitrary); `reserved_policy_bound` (the concrete
+  reserved-plus-first-come-flag policy); `flag_audits_le`, `reserved_total_le` (audits ≤ Bh + Bf for every flag
+  pattern, a resource-cost statement); witnesses `observable_reserved_nogo`, `observable_and_exhausted` (N=4: known
+  schedule plus flag budget exhausted by false positives leaves a 2-step attack unaudited), `recall_zero_vacuous`.
+- `ControlStack/Families/F6/ReservedRecall.lean`: `adaptive_recall_bound` (imperfect recall r: P(≥ k attacks, never
+  caught) ≤ `hypMiss N Bh k r`, uniform over the same adaptive class), `adaptive_recall_two_term`, `recall_instance_bound`.
+- `ControlStack/DeferMono.lean`: `defer_mono` (lower bounds on audit recall, halt hazard and trusted-service catch rate
+  give an upper bound on the operational catastrophe probability via the `catV` recursion), on top of
+  `ControlStack/DeferGame.lean` (VCVio).
+- `ControlStack/Core/Gate.lean` (`Gate.System`, `Gate.Spec`, `trace_safe`) and the deterministic scenario
+  `docs/flexibility-test/SC90TrustedMonitorAudit.lean` (trusted monitoring with a finite audit budget as an admission
+  rule: `sc90_safe`, `harmful_effect_is_a_miss`, `exhausted_blocks`, seven necessity witnesses). Kept outside the Lake
+  build on purpose.
+- Records tooling: `tools/build_registry.py` (declaration registry; adversary class for 75 of ~2237 declarations),
+  `tools/build_lean_english_overview.py`, `docs/lean-english/` (plain-English statements, dependency extraction). The
+  traceability builder and the one-to-one blind checks live on the pause branch `audit/r2-v8-trusted-code-20261013`.
 
-**Execution handoff:** detailed authorized-host/VM steps and exact evidence go/no-go gates are in [VM-HANDOFF.md](VM-HANDOFF.md). The source and CI completion record is [completed.md](completed.md).
+**Duplication:** SC-26 and SC-90 re-derive the append-only-log kit (key uniqueness, append monotonicity, "injects into a
+capped list") and reprove the trace induction and absorbing halt instead of using `Spec.trace_safe` and `withHalt`
+(flexibility test, section 3, items 5-8). Not blocking for M1; input to M2 refactoring.
 
-**Status:** All eight families have at least partial model-level results, NOT eight deployable primitives. The new `trusted_stack/` repository-only reference service implements a **single narrow action**: atomic authorization and append of a SQLite release record. It has no external harmful-effect adapter, no kernel-enforced universal interception and no side-channel secrecy guarantee. Its tests and CI are linked in the root `COMPLETED.md`. `LEAN-STATEMENTS-NORMAL-FORM.md` contains all **865** indexed source signatures (not kernel-elaborated normal forms).
+**Models that differ and must not be conflated:** the round model (`Fin N`, kernels `K S h z`, real-valued sums) used
+by `AuditBudget`/F6; the VCVio operational games (`ProbComp`, `Hist X Z`) used by `DeferGame`/`Refinement`; the
+deterministic list-trace gate (`Gate.System`) used by the 28 scenarios; and the `ledger/` project (`catV` linked by
+textual copy, separate Lake project). No declaration connects the gate model to either probabilistic model.
 
-### Open steps, prioritized with precise acceptance gates
+**Advertised conclusions that exceed the formal statements:** SC-90's `harmful_effect_is_a_miss` is "every effect is
+Cleared"; the `harm` bit is never read, so the sentence is a labelling. `AuditBudget` is stated for a fixed attack set
+and adaptivity is argued in prose; the adaptive statements are the F6 ones. The deployment verifier's verdicts never
+exceed CONDITIONAL and rest on unproved faithful extraction and protocol refinement (`docs/DEPLOYMENT-CLAIM-v0.md`).
 
-| Priority | Families | Current code/model | Remaining step | Acceptance evidence | Requires real host or external input? |
-|---|---|---|---|---|---|
-| P0 | F1/F3 universal action gate | `Gate` model, tested sandbox/egress slices, `trusted_stack` check-before-SQLite-record | Trusted pre-effect adapter for process, network, filesystem, privileged tools and irreversible effects; prove every actual effect passes it; handle async operations, cancellation and crash | Captured syscall/effect audit and adversarial bypass tests on an isolated target; concrete refinement argument + trusted HALT delivered or justified failure mode | **YES** isolated host/deployment, separate OS trust |
-| P0 | F2 observation and useful SC-01 | Lean finite-view/side-channel theorem, historical single-host refutation, VM tests | Native accelerated pinned guest port, verify 0.25-second 64-lifetime usefulness; measure ALL receiver-visible channels or certify a sound universal side-kernel mass | Fresh independent frozen-protocol receipt with useful baseline+mediated completion and independent side-channel/correspondence report | **YES** isolated/native host; channel probes need explicit preregistration |
-| P0 | F4 artifact provenance | Lean gate + SQLite SHA-256 record and distinct review | Bind reviewed content to actual deployment bytes; independent signer/attester, evidence log root, key trust, controlled fetch; content semantics | Mutated/digest-collision/bypass tests with external effect adapter; signed attested committed artifact provenance | **YES** trusted identity/key/effect platform |
-| P0 | F5 leases and budgets | Lean shared-lease model + transactional fixed one-unit release cap | Trusted resource meter for CPU, time, network, API tokens etc.; anti-rollback anchor; per-process/fork/global composition | Crash/restart/rollback/double-spend/race tests against actual meter and trusted clock | **YES** durable trusted backing, actual resource source |
-| P1 | F7 approval | Lean exact payload/nonce model + distinct OS trusted approver UID and consumed nonce | Cryptographic signer/key custody, nonce durability under rollback and real delegated approval, semantic review | Replay/forgery/expiry/compromised-signer negative controls, independent trust-root checks | **YES** trusted principal/keys/hosting |
-| P1 | F6 imperfect monitoring and audit budgets | UM/TM Lean results; `AuditBudget` combinatorial hidden fixed schedule; runnable exact rational reference policy | Positive worst-case theorem with false-positive cost, imperfect recall and content-adaptive attackers, hidden test schedule and side leakage all represented; operational auditor | Precise Lean result incl. quantifier ordering, sound non-vacuous held-out coverage certificate and honest usefulness | **PARTLY** theory can be done offline; external score data required to validate applicable bound |
-| P1 | F8 multi-gate/multi-agent composition | `GateComposition.shared_invariants`, confusion counterexample, one SQLite transaction covering review+approval+shared caps | Unified causal semantics for all gate clients and deputies; strengthen composition to actual external effects, global quotas, concurrency, crash and policy mutation | A single checked/refined joint transition interface with counterexamples, live adversarial multi-agent tests | **PARTLY**, later requires real host |
-| P1 | Independent theorem goal/spec review | Lean kernel compilation, source-level audit and complete normalized catalog | Independent researcher verifies elaborated statement/quantifier intent, Bad definition, trusted hypotheses and runtime scope; classify **821 UNKNOWN** source declarations only when meaningfully relevant | Source/commit-bound independent signed critique or reproducible review, no self-review promotion | **YES** genuinely independent expert |
-| P2 | Scenario portfolio | 28 folders (3 conditional, 25 draft) and structure validator | Convert draft scenarios to falsifiable negative tests/usefulness baselines; start SC-08/09/25, then SC-16/26/28; tie each to all six scope axes | Reproducible honest task, negative controls, proof target and real evidence per scenario | **PARTLY**, some scenario tests require isolated host |
+**Best starting point for M1:** `ReservedAudit.lean` already contains both protocols of the flagship pair in one
+semantics, and `ReservedRecall.lean` the imperfect-recall version. The flagship is therefore mostly composition,
+examples, a negative control and a record, not new mathematics.
 
-### Repository-only work that can continue without deployment
+## 3. Milestones
 
-1. Exhaustively source-check and red-team the important 821 unclassified theorem *entries* before any composition; most are helper lemmas rather than new safety properties. Run selected #print and #print axioms under pinned Lean.
-2. Build a **minimal trusted external-effect adapter** for SC-08/SC-25 inside a disposable machine; before execution, require concrete proof of exclusive mediation. A test-only SQLite release record is insufficient.
-3. Formalize the actual reference service's joint state transition (trusted review, approval, nonce, lease cap, revocation, halt) in Lean and prove an observational refinement for the state machine, including races/restart under explicit storage assumptions.
-4. Prove a genuinely useful **F6 false-positive-aware audit allocation theorem** with imperfections, and a joint content-adaptive/side-leak bound. Avoid claiming an ideal fixed schedule covers the general attack model.
-5. Regenerate the entire theorem catalog after any Lean-source changes; source-normalized signatures are for first-pass review, not normalized kernel expressions.
-6. Keep the set of real operational hypotheses, negative results, and owner/expert decisions visible; never promote missing evidence to DEPLOYMENT_ASSURED.
+### Milestone 1: the flagship demonstration (not started)
 
-**Non-negotiable:** no existing receipt/preregistration is rewritten; an x86 guest port or amended deadline is a new environment/contract, not evidence that the 0.25-second ARM64 TCG failure disappeared.
+**Question.** What can a limited-budget auditing protocol guarantee against an attacker who adapts to what it can
+observe, and which guarantees fail when the audit schedule leaks, the monitor's recall drops, or the flag budget is
+exhausted by false positives?
 
+**Decision it informs.** Whether to spend an audit budget on a hidden random schedule, on monitor-flag-triggered
+audits, or on a split, when the attacker is adaptive and the monitor is imperfect.
 
+**The two protocols** (both in `ReservedAudit.lean`, same round model):
 
-## SC-01 statement review and runtime-candidate audit (2026-10-08)
+- P1, hidden random auditing: a uniformly random reserved set S of Bh rounds, drawn before round 1 and never revealed.
+- P2, monitor-assisted auditing: a first-come flag-triggered budget Bf; a flagged round is audited while fewer than Bf
+  earlier rounds were flagged. False positives consume the budget.
+- The concrete policy combines them (Bh reserved plus Bf flag-triggered, `reserved_policy_bound`), so the comparison
+  is P1 against P2 and against the split.
 
-Read-only verification [Actions #37880911299](https://github.com/jwcodes12/control-stack/actions/runs/37880911299) successfully validated 20,719 independently specified bounded Python gateway traces, three fail-closed AST receiver-field checks, ordinary gateway/ledger test replay and VM host-capability inspection. The finite-state checks **do not** establish universal Lean-to-OS refinement or full receiver-observation coverage. They detect modeled transition mismatches and obvious source-level receiver-field regressions.
+**Event order per round i = 1..N.** Attacker chooses the attack bit a_i with law σ(visible history), where the visible
+history is its own earlier bits and every earlier catch flag. The monitor emits a flag (arbitrary, may be adversarial).
+The round is audited if i ∈ S, or if flagged and the flag budget is not exhausted. A reserved audit of an attack round
+catches with probability at least r; catch is an absorbing halt. Otherwise the action is released.
 
-**Prospective native acceleration:** a privileged x86 runner reported KVM API version 12 in [read-only host check #37881180806](https://github.com/jwcodes12/control-stack/actions/runs/37881180806). A paused image-free x86 QEMU [reported KVM enabled in #37881258339](https://github.com/jwcodes12/control-stack/actions/runs/37881258339). This is a potential **x86 guest port**, not acceleration of the current aarch64 images and not a new usefulness trial. [Port/acceptance plan](reviews/assurance-priorities/host-port-readiness.md).
+**Budget model.** Hard caps Bh and Bf on counts of audited rounds (`reserved_total_le`), not an expectation.
 
-**Usefulness has not recovered:** archived QEMU TCG 0.25-second SC-01 receipts remain 0/64 completed lifetimes in both conditions, with 640 sender and 640 receiver invocations timed out across conditions. The GitHub-hosted ARM64 runner had no `/dev/kvm`; x86_64 was not usable for the pinned ARM64 guests and the unprivileged KVM probe returned `PermissionError`. No new guest pair was provisioned and no live side-channel/usefulness experiment was run. A permitted native ARM64 KVM host, or an independently preregistered amended protocol, is still required before rerunning usefulness. Even a passing usefulness result would leave full receiver-observation correspondence open.
+**Safety objective.** P(at least k attack rounds are released and the attacker is never caught), uniformly over the
+adaptive class above. The one-harmful-release event is the case k = 1.
 
-**Statement-review boundary:** a documented adversarial second pass enumerates quantifiers, load-bearing assumptions and unproved runtime refinements for SC-01, leakage, HALT, gating, leases and composition. It is **not independent external review** and grants no assurance promotion. See [detailed audit](reviews/assurance-priorities/theorem-statement-and-runtime-audit.md).
+**Cost quantity.** Audits spent, at most Bh + Bf for every flag pattern. This is a resource cost, not task
+usefulness; usefulness is unmodelled in this repository (flexibility test, item 7) and M1 says so rather than
+substituting a proxy.
 
+**Outputs** (acceptance is all six, checked):
 
-## Independently rebuilt original A/B/C integration (2026-10-08)
+1. Two concrete models stated side by side with a shared parameter record (N, k, Bh, Bf, r) and the shared success
+   event, reusing the existing declarations rather than restating them.
+2. The bound: `reserved_adaptive` / `adaptive_recall_bound` applied to P1 and to the split policy, and the explicit
+   statement that P2 alone has no attacker-independent bound (its guarantee is entirely the monitor's conditional
+   recall against the adaptive attacker). Informative regime shown: the bound is near-vacuous at k = 1 (it is 1 − Bh/N)
+   and informative when the attacker needs k ≳ (N/Bh)·ln(1/ε) released steps; a short table of (N, Bh, k) values.
+3. Reuse record: what was reused by name and what remained protocol-specific (the flag bookkeeping lemmas).
+4. Negative controls, Lean-checked: schedule leakage (`observable_schedule_nogo`), false-positive exhaustion
+   (`observable_and_exhausted` generalised to a stated family if feasible), recall zero (`recall_zero_vacuous`), and one
+   new witness that average monitor recall does not give the conditional recall the bound needs (a two-type attacker
+   with the same average recall and a different bound).
+5. Executable example: a Python exhaustive enumeration for small N (≤ 12) of the exact miss probability for P1, P2 and
+   the split against a greedy adaptive attacker, compared with the closed form; plus the N = 100 instance. States
+   what an experiment would measure (per-round recall on attack rounds at the deployed threshold, false-positive rate,
+   leakage of S), which parameter each measurement informs (r, Bf consumption, the hidden-schedule premise), the
+   assumptions needed to connect them (recall measured on the same attack distribution and history as the bound's
+   conditional premise; a point estimate is not a worst-case r), and what the evidence cannot establish (the attacker's
+   class, side channels outside the model).
+6. Result record in the existing records format (`docs/lean-english/` pattern, registry entry via
+   `tools/build_registry.py`): plain-English statement and exact declaration, assumptions with the seven-point
+   assumption audit (role, why needed, kind, how to challenge, whether a measurement matches the quantifiers,
+   plausibility, what changes when weakened), event order, provenance (hypergeometric survival: established;
+   adaptive-attacker uniformity and false-positive exhaustion: new formalisation of known reasoning; novelty of the
+   split-policy comparison: unassessed), dependencies, worked example, counterexample, decision informed,
+   verification status, review needs.
 
-The three original branches A, B, C passed separate pinned-root Lean builds and their source-branch scenario checkers (A 8/B 7/C 7 Python tests). B's 28 original claim files compiled independently. Original C `THEOREM-REGISTRY.md` was stale; the merged generator repaired this without altering C. The merged work branch now contains 865 source-indexed declarations, 34 new conservative source-scope annotations and 821 still unreviewed `UNKNOWN` adversary classifications. The expanded HALT delivery model compiled with standard-only axioms; scheduler fairness and concrete HALT implementation remain outside the proof. See [comparison](reviews/structure-merge/comparison.md) and [scope audit](reviews/structure-merge/theorem-scope-audit.md).
+**Dependencies.** `AuditBudget.lean`, `F6/ReservedAudit.lean`, `F6/ReservedRecall.lean`, `Core/Leakage.lean`,
+`Witnesses/Necessity.lean`; local Lean toolchain (`~/.elan`, Lean 4.34, built Mathlib).
 
-## Candidate hardening follow-up (structure-merge-20261008-gpt6-finish)
+**Risks.** (a) The cost quantity is weaker than what a protocol designer wants; recorded, not hidden. (b) The
+adaptive class excludes attackers who see the monitor's score or the audit queue; a leakage-aware class is M4
+candidate 1. (c) The "average recall is not conditional recall" witness needs a small new model; if it does not fit the
+round model, it is recorded as an informal argument, not a theorem. (d) Nothing in M1 bridges to the deterministic
+gate; see M2.
 
-The original work branch has continued evolving. This separate candidate preserves its existing validated-source inventory while expanding **all 28 scenario manifests** to cover named per-premise usefulness status and six explicit scope-assumption axes: threat coverage, runtime correspondence, environment, lifetime/composition, usefulness and independent review. Missing axes and an unsupported self-asserted `SUPPORTED` scope status are rejected by the static checker. This is schema-level diligence only and must not be presented as new Lean or runtime validation.
+**Explicitly excluded in M1:** task usefulness, trusted editing, resampling, suspicion-score thresholds, side channels
+outside the visible history, the gate-to-probability bridge, any ControlArena or inspect_ai adapter.
 
-SC-01's original shared-cache and frozen VM usefulness refutations remain recorded. Other case usefulness statuses are `NOT_RUN` unless separately grounded. All new preregistration drafts/templates are in [prereg/](prereg/); historical root `PREREG-*.md` files remain frozen. The independent [validation addendum](reviews/structure-merge/hardening-validation.md) records what was and was not executed in this environment.
+### Milestone 2: extension beyond the initial pair (planned)
 
-## Canonical structure-merge status
+Two steps, in order.
 
-This is the **single status entry point**. The source-derived scenario index is [scenarios/INDEX.md](scenarios/INDEX.md), and the source-derived theorem registry is [THEOREM-REGISTRY.md](THEOREM-REGISTRY.md). Their status fields are not deployment assurance. The independent comparison is [reviews/structure-merge/comparison.md](reviews/structure-merge/comparison.md).
+1. **Defer-to-trusted as the third protocol.** Connect `defer_mono` (`DeferMono.lean`, VCVio game) to the M1 parameter
+   record: same recall premise r, same absorbing catch, the defer branch only after budget exhaustion. Evaluate which M1
+   definitions carry over (recall, budget, success event) and which do not (the VCVio history type versus `Fin N`
+   rounds; `catV` is a recursion, not a closed form). Acceptance: either a compatible restatement with the
+   connecting obligations listed, or an explicit obstruction record.
+2. **The deterministic gate bridge.** The flexibility test's top-ranked gap: no declaration turns SC-90's "every
+   harmful effect is a monitor miss or an audit miss" plus the M1 probability bound into
+   P(harmful effect reaches the ledger) ≤ f(r, Bh, Bf, N). First output is the precise obstruction (round index versus
+   request id; flag-triggered versus hidden budgets; state-independent `legal`), then the smallest bridge lemma that
+   closes it, if one exists. A bridge that assumes the conclusion is not accepted.
 
-### Structure integration (work branch; build acceptance PASS, operational assurance pending)
+Refactor on the evidence from both steps: the shared log kit and `trace_safe_legal` from the flexibility test, only
+where two protocols actually needed them. Acceptance: reuse works without strengthening assumptions or erasing
+protocol differences.
 
-**Conditional shutdown theory extension:** `ControlStack/HaltLiveness.lean` passed pinned Lean 4.34.0 on [CI #37877045361](https://github.com/jwcodes12/control-stack/actions/runs/37877045361), with four standard-only axiom reports. The trusted HALT-delivery premise remains an unverified scheduler/runtime obligation, so this is **not liveness assurance for a deployed agent**.
+### Milestone 3: discovery and accessibility (planned)
 
-[CI #37870787641](https://github.com/jwcodes12/control-stack/actions/runs/37870787641) passed pinned Lean compilation, 28/28 scenario claim elaborations, 8 printed standard-only axiom reports, 18 mutation tests, 4 certifier tests and generated-index checks. Original SC-01 case steps 1–4 passed; phase 5 correctly identified a frozen receipt's host-bound OpenSSL mismatch. This is **not** an independent applicability or deployment validation.
+Execute `docs/PLAN-RESEARCHER-FRIENDLY.md` in this order: the M1 record as the first claim card; a
+protocol-to-declarations index (the flexibility test's table, section 2, as a maintained file); pattern pages for the
+gate invariant, the round model and the VCVio game; one end-to-end tutorial that instantiates the M1 bound at a
+reader's own parameters. Then name the next limited set of formalisations. Acceptance: a reader finds a relevant
+result, identifies its assumptions and instantiates it without reading unrelated modules. Record whether this has
+actually been tested with a reader; until then it is untested.
 
-- SC-01, SC-03 and SC-13 have named proof references and remain **conditional**, not deployment assured; SC-27 remains **draft** because audit-dispatch integrity does not prove independently attested evidence.
-- 28 scenario folders exist: **3 conditional, 25 draft**. A scenario folder is not a tested safety case.
-- Reviewed main proof definitions now live under `ControlStack/Core/`, `ControlStack/Families/` and `ControlStack/Witnesses/`, with old imports preserved. C contributes policy-tamper and shared-state gate candidate proofs.
-- The theorem registry is a lexical source inventory (865 declarations after CI regeneration), not a Lean-kernel result for the merged branch. Unknown adversary/premise mappings are kept unknown; no artificial novelty claims.
-- **Build/integration acceptance passed** in CI #37870787641. Remaining before operational approval: independent model-to-runtime correspondence review, complete threat observability/provenance, negative trials, and a separately approved viable SC-01 protocol. The historical OpenSSL receipt remains frozen and cannot be replayed as a new host's valid receipt.
-- C's four active-bundle observations were reconciled conservatively: SC-01's frozen VM usefulness gate and single-host side-channel gate failed; SC-03 proves only a narrow immediate-peer model; SC-13 assumes exclusive trusted dispatch; SC-27 still lacks independently rooted attestation.
+### Milestone 4: theory or experimental extension (planned)
 
-The older time-stamped results below are **historical**, not a new successful verification of this work branch.
+Chosen from the backlog in section 4 after M1 and M2 report what was actually hard. New mathematics is desirable, not
+guaranteed; each candidate carries an explicit counterexample to look for first.
 
+## 4. Research backlog (three, ranked)
 
-What is done, what is in flight, and what is left. Per-result detail (assumptions, scope, review history) is in
-[STACK.md](STACK.md); this file is the one-page plan.
+1. **Leakage-aware auditing.** Question: how fast does the hidden-schedule bound degrade as the attacker learns bits
+   about S (timing, queue position, monitor score)? Candidate result: with at most ℓ bits of leakage about S the
+   survival bound degrades by a factor ≤ 2^ℓ, using the maximal-leakage tools in `Core/Leakage.lean`. Assumptions: the
+   leakage channel is the only extra observation; S still uniform a priori. Existing dependencies: `reserved_adaptive`,
+   `Core/Leakage.lean`, `LeakWitness`. Possible counterexample: `observable_schedule_nogo` is the ℓ = log₂ C(N,Bh)
+   endpoint; a one-bit leak that reveals whether round 1 is reserved may already let a k-step attack avoid more than a
+   factor of 2. Relevance: real audit queues leak. Novelty: unassessed; maximal-leakage bounds are classical, the
+   application to audit schedules may not be.
+2. **Dependence-sensitive composition of trusted and untrusted monitoring.** Question: when can the trusted-monitoring
+   audit bound and the untrusted-monitoring collusion bound (`ComposeGame.lean`, the τ factor) be multiplied?
+   Candidate result: an explicit conditional-independence premise under which the product holds, and a two-monitor
+   witness with shared blind spots (`F6/MonitorEnsemble.blind_spot_escape`) where it fails. Relevance: protocol
+   stacks are routinely scored as if independent. Novelty: composition of existing results, unassessed.
+3. **Damage before intervention with a usefulness cost.** Question: if catch is not absorbing and each released attack
+   step does bounded damage (`F6/DamageBound.damage_bound`), what is the expected cumulative harm under P1 versus the
+   split, and what is the cost in audits and deferrals? Candidate result: a closed-form expected-damage bound and a
+   safety/cost frontier for the two policies. Assumptions: bounded per-step damage, defer only at exhaustion.
+   Possible counterexample: an attacker who front-loads damage so that the per-step bound is tight makes the frontier
+   trivial. Relevance: the first usefulness-flavoured quantity in the repository. Novelty: Games for AI Control
+   (2409.07985) has safety/usefulness frontiers; this would be a new formalisation unless it goes beyond them.
 
-Status legend:
-- ✅ **verified**: a frozen ledger statement whose proof passed the Lean gate (standard axioms only), after a red team
-  by two foreign model families and an orchestrator fidelity audit;
-- ✅ **proved**: a VCVio-level file checked with `lake env lean` and `#print axioms` (not ledger-gated);
-- 🔄 in progress;
-- ⏳ planned;
-- 🔒 blocked on a decision by John.
+## 5. Classification of existing work
 
-## Status at a glance — 2026-10-08 (evening)
-
-- **SC-01 (selected scenario).** Theory complete for a bounded interface, including stateful side channels with
-  feedback (`Leakage`).
-  - Single host: usefulness 320/320, but the side certificate is REFUTED (checker exit 3).
-  - QEMU pair ([VM status](gateway/vm/STATUS.md)):
-    - Link race fixed: QEMU `socket,connect=` never retries; the listener now starts first and the pair is required
-      to be ESTABLISHED. Config `56a4dfa1` is unchanged; 8/8 health; 10/10 controls.
-    - The frozen usefulness gate FAILED (0/64 in both conditions): all 640 agent runs exceeded the 0.25 s deadline
-      under TCG emulation.
-  - 🔒 Owner decision: a preregistered deadline amendment, or hardware isolation. Either way the probability bound
-    stays a separate obligation (`gateway/vm/BOUND.md`).
-- **Primitives.** Every family F1–F8 now has at least a proved model: shared `Gate`, F4 artefact, F7 approval,
-  F5 leases, absorbing halt. F4, F5 and F7 have no runtime implementation. See
-  [PRIMITIVES-AND-SCENARIOS.md](PRIMITIVES-AND-SCENARIOS.md).
-- **Review status.**
-  - The new Lean (Leakage, Necessity, Gate, GateClients, Lease, LeakWitness) is proved, with standard axioms only.
-  - Adversarially reviewed by Gemini 3.1 Pro and Opus 5.5 (same family as the author). All substantive findings are
-    fixed or documented: [disposition](reviews/adversarial-2026-10-08/disposition.md).
-  - NOT ledger-verified. The proofledger foreign-family red team plus Lean `Witness` is the recommended next gate,
-    for statements rather than proofs.
-- **Next.** Work that needs no testing is planned in [STRUCTURE-PLAN.md](STRUCTURE-PLAN.md): scenario folders, a
-  generic case checker, a theorem registry, adversary classes and gap-closing theory.
-  1. Owner: SC-01 deadline or hardware.
-  2. Proofledger red team of the headline statements, with Sol/Astra and Gemini as foreign families.
-  3. Runtime F4/F7 implementations with correspondence tests.
-  4. Wave 1 on BashArena (SC-08/09/13/25).
-  5. Open F6 theory: a positive policy under false positives, imperfect auditors, adaptive coverage, collusion plus
-     side channel.
-  6. Human expert review (🔒).
-
-## SC-03 egress update (2026-10-08)
-
-Implemented test-only launcher/gateway/adapter, actual namespace validator, host packet and syscall observers,
-pinned dependency install/compile/test, 62 passing full-suite controls, three successful mutation checks,
-nine oracle regressions, and six standalone Lean theorem checks (the original full `lake build ControlStack` passed).
-See `egress/README.md`, `egress/results/summary.json`, `egress/FIDELITY.md` and `assurance/egress-boundary-v1.json`.
-Reachability only; CONDITIONAL; no production deployment. Auditgate untouched.
-Astra and approved Opus 5.5 reviews produced oracle fixes. Next: all-destination process attribution in a
-isolated disposable outer topology; the egress GitHub workflow now passes.
-The authorized follow-up after 09:30:31 UTC fixed IPv6 trace/fragment observer bugs and
-refreshed full/mutation receipts. A bounded loopback-only outer-namespace experiment passed:
-eight initial TCP/UDP transmissions, two independently traced sender PIDs, zero drops,
-missing-trace mutation detected. General attribution remains unresolved; next is integrating
-the gateway/sandbox into that isolated topology. See `reviews/egress-follow-up-2026-10-08.md`.
-No rate-limit error occurred; account reset time remains unavailable. Private branch `egress-r10-controls` is published (2026-10-08). [Egress CI](https://github.com/jwcodes12/control-stack/actions/runs/37784398180) passed on `b30177e`: 62/62 controls, three mutations, zero packet drops and six Lean theorem checks. Git pushes and CI are authorized; direct messages to people still require approval.
-
-## Circle effort (2026-10-08)
-
-Consultation: `reviews/circle-consult-2026-10-08/`. Astra (gpt-6-astra, xhigh) and Fable (claude-fable-5-1) reviewed
-adversarially. Both said not to build a general certificate calculus now, because its combinators are classical. The
-value they see is conditional accounting, refutation and experiment design. Remaining work across all primitives and
-scenarios: [PRIMITIVES-AND-SCENARIOS.md](PRIMITIVES-AND-SCENARIOS.md). Witness scopes:
-[NECESSITY.md](NECESSITY.md).
-
-| item | what it gives | status |
-|---|---|---|
-| `Leakage.lean` | one leakage-transfer principle: an adversary informed through dominated, history-dependent kernels is worth ≤ mass(c) blind adversaries. Instances: `covert_seq`/`covert_side_bound`/`sc01_adaptive_target` (side channels with state and feedback; replaces `dom_pi`'s independence premise); `audit_leak_bound`/`audit_leak_prod` (leakage-sensitive adaptive auditing; catch flags are free, `cval_live`); `audit_adaptive_hidden` (adaptive attackers gain nothing against a hidden random schedule, formalising AuditBudget's remark) | ✅ proved; after review: support-restricted `audit_leak_bound` (hypotheses only on size-B schedules), `covert_seq_seed` (seed-dependent certificates), corrected `survInd` prose. Informative only near "no side channel" at the SC-01 design point (~0.15 bits over 5 episodes) |
-| `Necessity.lean` | witnesses: seed-correlated secret (strict for \|M\| ≥ 2, bridged to `successProb`), correlated lifetimes break the gate (9/10 vs 1/80), marginal side certificates do not compose; plus a policy comparison (first-come auditing under false positives, 7/8 vs 3/4) and one illustration (shared score), labelled as such | ✅ proved |
-| `LeakWitness.lean` | a REAL leak for `audit_leak_bound`: BSC(ε) leak of the schedule, every hypothesis discharged, survival ≤ 1 − ε (attainment = 1 − ε by hand only) | ✅ proved |
-| `tools/check_sc01_case.py` | proof / binding / evidence / applicability reported separately; exit 3 when a hypothesis is refuted; invokes the cache-receipt verifier; manifest assumptions carry provenance, testability, refuting lemma and experiment, and scoped witnesses | ✅ verdict HYPOTHESIS_REFUTED (exit 3) |
-| `Gate.lean`, `GateClients.lean` | shared reference-monitor interface (F1/F3): `Spec.trace_safe`, `NoAgentEffects`, `withHalt` (absorbing shutdown for any gate; the spec lifts). Clients: AuditDispatch, AuditGate and EgressGate (existing gates; their step lemmas are reused) plus two new primitives: F4 content-addressed artefact gate (`deployed_is_reviewed` under collision resistance; `collision_breaks`) and F7 exact-payload approval (`approval_safe`: approved, unexpired, no replay; `replay_without_nonce`). After review: injectivity only on contents in the run; actor separation (`agent_cannot_approve`, `agent_cannot_review`); `replay_if_nonces_lost` (nonce durability is a premise) | ✅ proved (models only; no runtime for F4/F7) |
-| adversarial review | Gemini 3.1 Pro + Opus 5.5 on all new Lean: no unsound proof; 3 + 13 model/definition/prose defects. [Disposition](reviews/adversarial-2026-10-08/disposition.md) | ✅ fixed or documented |
-| `Lease.lean` | F5 as a gate client: `lease_safe` (per-lease spend over all forked workers ≤ budget, global cap, work only under unexpired issued leases), `work_count_le` (each unit costs ≥ 1, so units ≤ budget), `revoke_absorbing`, `revoked_worker_stays_stopped` (forks only to fresh workers), `agent_cannot_issue`, `fork_without_lease_accounting` (necessity) | ✅ proved (model; durability across restarts holds by definition) |
-| `tools/ctrlcert.py` | researcher CLI: `channel`, `probe`, `audit`, `hazard`, `samples`, `diagnose`. Each number comes with its theorem, premises and refuting measurement; `--lean` emits a compiled instantiation. `diagnose` classifies LASR BigCodeBench as MARGIN and LinuxArena as PROTOCOL | ✅ tests pass; emitted Lean compiles |
-
-## Lean track (2026-10-08)
-
-See [LEAN-TRACK.md](LEAN-TRACK.md): side channels, usefulness gate, lifetime ledger, gateway core, SC-01 case
-checker, coverage composition, multi-step attacks, audit budget.
-
-## Current priorities after Astra/Opus xhigh consultation (2026-10-08)
-
-See [review disposition](reviews/roadmap-consult-2026-10-08/synthesis.md). The
-selected scenario is bounded exact-message recovery through finite machine
-channels. Monitor-based bad-action safety is a separate optional second scenario.
-
-| Order | Remaining milestone | Acceptance criterion |
-|---|---|---|
-| 1 | Complete the selected scenario contract and usefulness viability gate | Fix actual honest task, baseline/completion target, episode/lifetime horizon, receiver lineage and complete observation inventory; measure actual task success under the channel budget. |
-| 2 — VM config passes; frozen usefulness gate fails | Enforce lifetime accounting and establish the VM observation boundary | [VM status](gateway/vm/STATUS.md): link-bound config check and 10 controls pass on H; the verified VM replay completes 0/64 lifetimes in both conditions at the unchanged 0.25-second deadline. Step 4 blocked, step 5 pending; case CONDITIONAL. Next: usable hardware virtualization/separate hosts or an owner-decided preregistered protocol amendment. Shared host/cache/timing and complete observations remain unresolved. |
-| 3 | Targeted gateway/model correspondence | Validate schema/cardinality, blanking, delivery and lifetime charge behavior; consider a small proved executable core; retain explicit Python/OS correspondence assumptions. |
-| 4 | One reproducible conditional safety/usefulness case | One command checks the theorem/config, runtime evidence, actual task-success measurement, exact revision bindings and unresolved obligations. |
-| 5 | Demonstrate reusable interfaces with a second client | Common evidence/obligation format and small genuinely shared proof interfaces; optional monitor scenario must specify its protocol/content coverage before calibrating error rates. |
-
-SC-03 outer-topology integration remains a bounded reachability track. Prioritize
-it for the selected safety case only where it supports the actual observation
-boundary; pinned peers and PID attribution do not establish confidentiality.
-Sharper mathematics stays lower priority. Human specification/correspondence review
-should happen once the revised contract is concrete, before expensive deployment work.
-
-## 1. Completed
-
-### Layer 1: collusion (untrusted monitoring with honeypots and a mediator)
-| item | what it gives | status |
-|---|---|---|
-| UMHSF1 | testing core: hockey-stick/TV bounds, data processing, decoder floors, maximal leakage | ✅ verified |
-| UMSURVF1 | honeypot-test survival = binomial CDF; first-moment bounds | ✅ verified |
-| UMPROTF1 | main protocol bound for every colluding pair: (1 − r) + r·L·(n_s+1)/(n_h+1) | ✅ verified |
-| UMSTRATF1 | stratified per-class honeypots: no class-count factor at fixed per-class budget | ✅ verified |
-| UMNOGOF1 | rich decodable mediators lose against every iid honeypot law | ✅ verified |
-| UMLOWERF1 | converse for nonadaptive test designs: budget ∝ number of decodable classes | ✅ verified |
-| UMADAPTF1 | converse for ADAPTIVE testers, t(1 − tn/k); the nonadaptive formula provably fails for adaptive testers | ✅ verified (session 3) |
-| UMADAPTF2 | sharp adaptive converse (t/k)·[(k−a)(1−t)^q + a(1−t)^(q+1)]; strictly beats UMADAPTF1, attained at the witness instance | ✅ verified (frozen cf874653d2fa; session 8) |
-| UMUSEF1 | honest availability identities; mimicry constraint; Cantelli slack costs | ✅ verified |
-| UMDEFERF1 | audit-then-defer: needs a uniform stopping hazard; no-go without one | ✅ verified |
-| UMCERTF1 | certificate form: exact one-shot reduction, Lean-checkable grid certificates (0.154 → 0.07 certified), exactness results | ✅ verified (session 3) |
-| TMCERTF1 | finite-horizon trusted-monitoring certificate checker with rectangular uncertainty, usefulness, rational checker and abstraction interface | ✅ verified (frozen 53a3bc12f43c; session 3) |
-| TMCERTUSF1 | rational usefulness-certificate checker: sound lower bound on honest reward for every admissible history-dependent selector; accepted certificates are never vacuous | ✅ verified (frozen 3b0cda8ceba9; session 8) |
-| TMLIPF1 | parameter-Lipschitz certificate transfer: one-step Bellman error, transfer, grid transfer over arbitrary target sets, policy-quantified risk corollary | ✅ verified (frozen 5c844eb0129e, override; session 8) |
-| TMGACF1 | GAC safety/usefulness bridges and exact separation of constant-rate, coin-count and clocked Red | ✅ verified (frozen 89331ac41986; session 3) |
-| CANONF1 | a verified canonicaliser (toy language) as a concrete trusted mediator | ✅ verified |
-
-### Interface level (VCVio operational games)
-| item | what it gives | status |
-|---|---|---|
-| `Spike` | TV bound for arbitrary `ProbComp` distinguishers | ✅ proved |
-| `HoneypotBridgeProof` | the honeypot test as a crypto-style game is exactly binomial | ✅ proved |
-| `RefinementProof` | trace-level protocol game = the core recursion; end-to-end bound | ✅ proved |
-| `OutcomeProof` | five-outcome game; honest-completion bridge to UMUSEF1; Pareto identity | ✅ proved (session 3) |
-| `SoftSlack` | soft-slack honeypot game: exact survival, seed factorisation, end-to-end bound (1−r)+r·L·n_s/(n_h+1) | ✅ proved (session 5) |
-| `SoftHockey` | hockey-stick form of the soft-slack bound: (1−r)+r·(δ+e^η·n_s/(n_h+1)) | ✅ proved (session 5) |
-| `StratifiedGame` | per-class binomial survival; end-to-end (1−r)+r·L·(s_c+1)/(m+1) under classwise domination and coverage | ✅ proved (session 6) |
-| `DeferGame` | audit-then-defer game equals the exact `ENNReal` recursion, and under calibrated kernels equals the frozen UMDEFERF1 `catV` (`defer_bridge`) | ✅ proved (session 7; calibration is an equality on recall, halt and service rates) |
-| `DeferMono` | **monotone defer bound** (`defer_mono`): recall ≥ r, halt hazard ≥ η and service catch ≥ a imply operational catastrophe ≤ ledger `catV`; with `defer_bridge` the bound is exact under calibration | ✅ proved (session 8) |
-| `ComposeGame` | trusted + untrusted monitoring in one game; fresh trusted coins make the misses multiply: (1 − r) + r·τ·L·(n_s+1)/(n_h+1); tight at n_h = 0 | ✅ proved (session 8) |
-| `ComposeAvg` | composition for any joint kernel (`composedJ_end`) and with the population-average trusted miss τ̄ = 1 − TPR (`composedPop_end`), so certified ROC bands plug in | ✅ proved (session 8) |
-| `ComposeBlindSpot` | **negative result**: population-average trusted miss 1/1000, yet a content-adaptive Red reaches catastrophe w.p. 1; sampled ROC data cannot certify the per-submission τ | ✅ proved (session 8) |
-| `CovertChannel` | covert-propagation bound: P(recover a uniform secret) ≤ |V|/|M| for every shared seed, adaptive encoder and decoder; schema form sⁿ/K; tight; design point 2^-16 | ✅ proved (session 8) |
-| `GatewayModel` | Lean model of the gateway; any refusal blanks delivery; end-to-end bound (|S|+1)^slots/|M| for every adversarial raw trace | ✅ proved (session 8) |
-
-### Empirical certification (preregistered; Lean-checked certificates)
-| item | what it gives | status |
-|---|---|---|
-| LaStraj 2.0 (`PREREG-LASTRAJ.md`) | 30 honest / 17 attack; pipeline end to end | ✅ done; vacuous (≈1 at 100 tasks): too few attacks; Lean passes |
-| LASR held-out test split, all 42 conditions (`PREREG-LASR-TEST.md`) | family-wise 95% over every condition | ✅ done; closed-source monitor 0.63–0.83 at 100 tasks, 0.05–0.22 per task; open-source ≈1; all 42 Lean checks pass |
-| LinuxArena 217, cutoffs 7/3 (`PREREG-LINUXARENA.md`) | 250 honest / 150 attack, public task-set scores | ✅ done; per-task risk 0.115 (Opus attacker), 0.32 (Sol), but 92% of honest work deferred |
-| LinuxArena 217, environment-split calibration (`PREREG-LINUXARENA-SPLIT.md`) | thresholds chosen on 2 environments, certified on 3 | ✅ done; FPR transfers (≤ 6.5%), per-task risk 0.82 (Opus): this monitor's exact safety–usefulness trade-off |
-| Risk decomposition (`CERTIFICATE-DECOMPOSITION.md`, post hoc) | point estimate vs certified | ✅ done; weak monitors: the monitor is the limit; strong monitors at 100 tasks: statistical margin (needs ~1,000–3,000 attacks or predeclaring fewer cutoffs) |
-| Statistical audit (`numerics/stat_audit.py`, post hoc) | duplication, epochs, clustering, matched populations | ✅ done; LASR clean (1 epoch, no duplicates); LinuxArena task ids and honest main-task scores are stripped in the public JSON (cannot audit repeats or report completion); matched-population split: TPR at ≥8 is 7/56 (band [0.04, 0.27]) vs 39/150 pooled, so detection does not transport across environments |
-| Assurance manifests (`assurance/`, `tools/assurance.py`) | per-certificate theorem/data/preregistration hashes and assumption status; checker refuses to promote categories | ✅ done; 44 manifests, 0 deployment-grade |
-| Held-out data search (`reviews/heldout-data-search-2026-10-07.md`) | public datasets, prior art (rocci; Gao 2026) | ✅ done |
-
-### Layer 2: actions (first step)
-| item | what it gives | status |
-|---|---|---|
-| SANDBOXF1, SANDBOX2F1 | mount-table model of a bubblewrap sandbox: the writable-root weakness and the corrected bind order | ✅ verified (model theorems; nothing deployed) |
-
-## 2. In flight
-| item | status |
-|---|---|
-| Lean checks of the 42 LASR certificates and 2 LinuxArena certificates | ✅ all pass (standard axioms) |
-| GitHub export (private `jwcodes12/control-stack`) | ✅ egress slice/follow-up published on `egress-r10-controls` at `7efd2dc`; egress and existing CI passed |
-
-## 3. Programme workstreams (2026-10-07 review; priority order revised above)
-Goal: one end-to-end, independently checkable safety case, optimising for how much uncertainty each result removes.
-
-| priority | work | definition of success | status |
+| Work | Classification | Where | Note |
 |---|---|---|---|
-| P0 | choose one concrete catastrophe and restricted deployment | explicit bad event, action space, threat model, horizon, acceptable usefulness | 🔄 `CATASTROPHE-SPEC.md` fixes exact recovery, machine receivers and finite channels (k = 32, P ≤ 2^-16, 16-bit lifetime budget); actual honest task, usefulness floor and horizon remain to be fixed |
-| P0 | action gateway | every relevant tool action intercepted before execution; unauthorised actions fail closed | 🔄 v1: `gateway/` (schema channels, fail-closed, default-deny) running in a bubblewrap two-instance harness; side channels (files, network, stderr, exit code, duration) closed in tests; red-team within the Lean bound. Residual: shared kernel state (page cache timing) needs VM isolation |
-| P0 | implementation correspondence | runtime traces refine the Lean transition model, or remaining assumptions stated | 🔄 `GatewayModel.lean` proves the end-to-end bound for the gateway model; Python matches the model on 300 adversarial traces (differential test); remaining assumptions in `gateway/CORRESPONDENCE.md` |
-| P1 | empirical certificate validity | held-out, correctly timed measurements for matched populations; pre-action scores | 🔄 (preregistered runs done; transport and timing gaps found) |
-| P1 | trusted/untrusted composition | Lean bound for the actual joint protocol incl. shared state and audit budget | 🔄 (`ComposeGame`, `ComposeAvg`, `ComposeBlindSpot`) |
-| P1 | one reproducible safety case | a verifier reproduces the safety/usefulness pair and every unmet assumption | 🔄 (assurance manifests) |
-| P1 | CI | fast tier plus proof/certificate checks for the safety case | 🔄 egress, fast, auditgate-db and narrow lean-covert jobs passed; complete safety-case replay and cited VCVio/certificate coverage remain |
-| P2 | model coverage | multi-step attacks, stateful monitors, distribution shift, correlated failures; environment-state invariants | ⏳ |
-| P3 | more mathematics | general balanced-schedule attainment (draft `ledger-drafts/UMADAPTF3-draft.lean`, shelved), sharper bounds | ⏸ demoted |
-| — | human review | one AI-control researcher reads the specification and correspondence | 🔒 John |
+| Deployment verifier (Tiers 1-12, scoped R2) | **separated** | `END-STATE.md`, `deployment/HANDOFF-NEXT.md`, `deployment/REVIEW-PACKET-R2.md`, `docs/DEPLOYMENT-CLAIM-v0.md` | Frozen at CONDITIONAL. Remaining items are owner- or hardware-gated (G1, G4 cluster, G6, G9, host coverage). Assurance claims are not expanded by this roadmap. |
+| PR #56 (`audit/lean-reuse-187-20261011`) | **continued, review-gated** | GitHub | Do not merge without independent human review. |
+| Pause branch `audit/r2-v8-trusted-code-20261013` (90 commits past main, no PR) | **continued, review-gated** | `HANDOFF-PAUSE-2026-10-13.md` on that branch | Blind one-to-one checks, English corrections (none applied), Landlock, second host, attack arms. Do not stack M1 on it. |
+| Flexibility test and SC-90 | **continued into M1/M2** | `docs/FLEXIBILITY-TEST.md`, `docs/flexibility-test/` (copied here from b317905) | SC-90 stays outside the Lake build until M2 step 2 decides its place. |
+| F6 audit-budget theory | **continued into M1** | `AuditBudget.lean`, `Families/F6/` | The reuse base. |
+| Layer-1 collusion stack (UMPROT, honeypots, mediator, canonicaliser; proofledger CIDs) | **deferred** | `STACK.md`, `Refinement*.lean`, `Families/F6/MonitorCollusion.lean` | Verified; re-enters via backlog item 2. |
+| Empirical certificates (PREREG-*, `Core/Cert`) | **deferred** | `PREREG-*.md`, `assurance/` | The existing place where point estimates become Lean-checked certificates; M1 output 5 cites it for estimation uncertainty. |
+| 28 scenario bundles and the generator | **deferred** | `scenarios/`, `tools/new_scenario.py` | Parameters, state fields and state-dependent `legal` wait for M2 evidence (flexibility test items 3, 5). |
+| Researcher-friendly plan | **continued into M3** | `docs/PLAN-RESEARCHER-FRIENDLY.md` | Unchanged design. |
+| G8 non-Linux backends | **discontinued** | `END-STATE.md` | Owner decision 2026-10-13. |
+| Chronological roadmap journal (2026-10-07 to 10-11) | **archived** | `docs/ROADMAP-HISTORY.md` | Historical evidence, unchanged. |
 
-## Session 8 status note (2026-10-08)
-- Done this session: covert-channel bound, gateway prototype and Lean model; preregistered empirical certificates;
-  LinuxArena replay (negative result for lexical host policy); auditgate v1.1 (database-level monitoring-integrity
-  gate, Lean invariants, PostgreSQL outcome matrix in CI) with a documented no-go for auto_workflow as deployed.
-- Historical session-8 pause: SC-03 subsequently completed its local slice and remote CI; outer attribution remains open. SC-16 (provenance gate) remains paused. Work on them was interrupted
-  repeatedly in this session; requirements for SC-03 are in reviews/dialogue/chatgpt-08.md and chatgpt-10.md.
-- Dialogue with the external reviewer: latest rounds are chatgpt-10.md (awaiting a Claude round 11).
+## 6. Owner decisions assumed by this plan (unconfirmed)
 
-## 4. Open assumptions (what the stack does NOT give)
-Every guarantee is conditional on these. None is discharged by anything here:
-- the mediator's domination constant L (or δ), and honeypot constructibility and coverage (A9);
-- worst-case audit recall r (A6);
-- the scaffold properties: fresh stateless monitor calls, complete views, test before deployment, absorbing shutdown
-  (A1–A4, A11);
-- for TMCERT, row coverage of the concrete deployment (Abs). An average ROC estimate does not discharge it.
+1. The flagship pair and metrics in M1: hidden random auditing versus flag-triggered auditing (and their split),
+   failure event "≥ k attacks released and never caught", cost "audits spent". If a different safety or usefulness
+   quantity is wanted, say so before M1 starts; the plan does not substitute one later.
+2. M1 work branches from `main`, not from the pause branch; the flexibility-test documents are carried over as docs.
+3. The gate bridge is an obstruction record in M1 and a build attempt only in M2.
+4. PR #56 and the pause branch stay frozen until a person reviews them.
 
-## 5. Needs John 🔒
-- **Scaffold enforcement**: turn A1–A4/A11 into runtime checks or verified code (stateless calls, no clock exposure,
-  test before deploy, absorbing shutdown). It touches deployment.
-- **Sandbox fix**: deploying the corrected bind order (SANDBOX2F1) in the research harness.
-- **Human expert review**: one control researcher reading STACK.md. All review so far has been model-based.
-- **Visibility**: the GitHub repo is private; making it public is a separate decision.
+Standing gates that need the owner, unchanged from before: G1 independent human review (start with
+`deployment/REVIEW-PACKET-R2.md` for the deployment track; the M1 record for the research track); G9 tag, publish,
+outreach; English corrections on the pause branch; a human-authored held-out set.
+
+## 7. Verification rules for every milestone
+
+- Lean: no `sorry`, no new axioms; `#print axioms` on every headline declaration; statements reviewed, not only
+  accepted proofs. Local toolchain is `~/.elan` (Lean 4.34, built Mathlib); `test_cert_ledger`, `test_portfolio_ledger`,
+  `test_trust_root` fail locally for want of `ControlStack.Core.Cert.olean` and pass in CI.
+- CI: cached "green" markers skip the Lean kernel. For a real run delete the `green-*` caches for the ref, re-dispatch,
+  and confirm the "Skipped, identical inputs already passed here" step itself shows `skipped`. A new workflow file cannot
+  be dispatched until it is on `main`. GitHub Actions only; no substitute CI.
+- Report per milestone: exact commit verified, commands or workflows, failures, skipped checks, unresolved
+  obligations. Green CI does not establish specification fidelity or usefulness.
+- Negative controls are required, not optional; a failed proof search is not a counterexample.
+- Additional model review is not independent human review. Record external review as pending until a person has done it.
 
 ## Maintenance
-Update this file whenever a row changes status: verified, frozen, started, or dropped. Also update the matching row in
-STACK.md, and note the change in HISTORY.md when a new snapshot is exported.
 
-## SC-01 repair milestone — 2026-10-08
-
-Implemented the contract/usefulness milestone and durable SQLite lifetime charging.
-See `gateway/scenario/README.md`, the two preregistrations, source-bound receipts
-and `ControlStack/ScenarioARepair.lean`. Contract preregistration: `1001024`.
-Baseline and mediated repair each passed 320/320 episodes and 64/64 lifetimes;
-simultaneous completion lower bound 93.382% exceeds the 90% floor. Ten ledger
-controls, five scenario/oracle/evidence-mutation tests, ten gateway tests, selected
-harness probes, three new standard-axiom Lean checks and full
-`lake build ControlStack` (3,691 jobs) passed. Both final receipt verifiers passed.
-
-The targeted shared-cache experiment decoded one secret bit in 64/64 trials with
-a constant NULL gateway view. This falsifies the sole-transcript premise in the
-current harness. It does not demonstrate full-secret recovery; the finite-view
-Lean bound remains model-only and the case stays CONDITIONAL. Initial results
-and corresponding changed source snapshots are retained, not pooled.
-
-Next blocker: stronger isolation or a justified bound covering all receiver
-observations, followed by repeat probes and gateway/model correspondence. Valid
-host snapshot rollback, statistical runtime independence and workload transport
-remain assumptions. Auditgate untouched. Private tracker: GitHub issue #2.
+Update the status table and the milestone status lines when a milestone output is checked, started or dropped. Do not
+append session journals here; put them in `HISTORY.md`. Keep section 4 at three items: to add one, retire one.

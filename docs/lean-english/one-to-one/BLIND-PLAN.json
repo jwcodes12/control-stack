@@ -1,0 +1,253 @@
+[
+ {
+  "tag": "g0n1",
+  "claims": [
+   "ControlStack.Deployment.runtime_exclusive",
+   "ControlStack.Deployment.agent_call_legal",
+   "ControlStack.Deployment.protocol_safe",
+   "ControlStack.Deployment.one_use",
+   "ControlStack.Deployment.gate_contract",
+   "ControlStack.Deployment.broker_contract",
+   "ControlStack.Deployment.deployment_safe",
+   "ControlStack.Deployment.accepted_path_safety_monotone",
+   "ControlStack.Deployment.path_edge_subset",
+   "ControlStack.Deployment.requested_monotonicity_counterexample"
+  ]
+ },
+ {
+  "tag": "g0n2",
+  "claims": [
+   "ControlStack.Deployment.indexed_receipts_sound",
+   "ControlStack.TrustedBroker.transaction_preserves",
+   "ControlStack.TrustedBroker.transaction_coherent",
+   "ControlStack.TrustedBroker.committed_nonce_unusable",
+   "ControlStack.TrustedBroker.trace_preserves",
+   "ControlStack.Deployment.TranscriptReplay.final_safe",
+   "ControlStack.Deployment.TranscriptReplay.replay_was_not_allowed",
+   "ControlStack.Deployment.TranscriptReplay.omitted_tail_is_accepted"
+  ]
+ },
+ {
+  "tag": "g1n2",
+  "claims": [
+   "ControlStack.SafetyCaseSC01.sc01_case",
+   "ControlStack.GatewayCore.core_bound",
+   "ControlStack.Covert.covert_bound_lifetime",
+   "ControlStack.ChannelInstances.sc02_accumulated",
+   "ControlStack.ChannelInstances.rekey_epoch",
+   "ControlStack.ChannelInstances.log_channel",
+   "ControlStack.ChannelInstances.canonical_seq",
+   "ControlStack.SC07Exfil.windows_needed",
+   "ControlStack.SC07Exfil.sc07_mixed",
+   "ControlStack.SC07Exfil.sc07_fixed_budget"
+  ]
+ },
+ {
+  "tag": "g1n3",
+  "claims": [
+   "ControlStack.SC07Exfil.expected_leak_le",
+   "ControlStack.SC07Exfil.observable_schedule_exfil",
+   "ControlStack.SC07Exfil.datacenter_example",
+   "ControlStack.SC07Liveness.upload_completes",
+   "ControlStack.SC07Liveness.exfil_needs_windows",
+   "ControlStack.SC07Liveness.shared_quota_blocks",
+   "ControlStack.SC07Refinement.concrete_wire_lt",
+   "ControlStack.SC07Refinement.concrete_halt_freezes",
+   "ControlStack.SC07Refinement.sink_within_quota"
+  ]
+ },
+ {
+  "tag": "g2n1",
+  "claims": [
+   "ControlStack.SC08.sc08_safe",
+   "ControlStack.SC08.safe_of_sound",
+   "ControlStack.SC08.halt_freezes",
+   "ControlStack.SC09.sc09_safe",
+   "ControlStack.SC09.spawn_attenuates",
+   "ControlStack.SC09.halt_freezes",
+   "ControlStack.SC10.sc10_safe",
+   "ControlStack.SC10.policy_admin_only",
+   "ControlStack.SC10.halt_freezes",
+   "ControlStack.SC12.sc12_safe"
+  ]
+ },
+ {
+  "tag": "g2n2",
+  "claims": [
+   "ControlStack.SC12.no_fire_after_end",
+   "ControlStack.SC12.halt_freezes",
+   "ControlStack.AuthInstances.sc12_safe_authenticated",
+   "ControlStack.AuthInstances.forged12_spawns_without_auth",
+   "ControlStack.AuditDispatch.trace_safe",
+   "ControlStack.AuditDispatch.app_cannot_effect",
+   "ControlStack.SC14.sc14_safe",
+   "ControlStack.SC14.halt_freezes"
+  ]
+ },
+ {
+  "tag": "g3n1",
+  "claims": [
+   "ControlStack.SC15.sc15_safe",
+   "ControlStack.SC15.halt_freezes",
+   "ControlStack.AuthInstances.sc15_safe_authenticated",
+   "ControlStack.AuthInstances.forged15_merges_without_auth",
+   "ControlStack.SC16.sc16_safe",
+   "ControlStack.SC16.sc16_reviewed_content",
+   "ControlStack.SC16.halt_freezes",
+   "ControlStack.SC16Disjoint.sc16_safe_disjoint",
+   "ControlStack.SC16Disjoint.overlap_reviewer_is_agent",
+   "ControlStack.AuthInstances.sc16_safe_authenticated"
+  ]
+ },
+ {
+  "tag": "g3n2",
+  "claims": [
+   "ControlStack.AuthInstances.forged16_deploys_without_auth",
+   "ControlStack.SC16Refinement.concrete_safe",
+   "ControlStack.SC16Refinement.concrete_reviewed_content",
+   "ControlStack.SC17.sc17_safe",
+   "ControlStack.SC17.reconcile_restores",
+   "ControlStack.SC17.halt_freezes",
+   "ControlStack.SC17Drift.drift_bounded",
+   "ControlStack.SC17Drift.drift_lifetime",
+   "ControlStack.AuthInstances.sc17_safe_authenticated",
+   "ControlStack.AuthInstances.forged17_applies_without_auth"
+  ]
+ },
+ {
+  "tag": "g4n1",
+  "claims": [
+   "ControlStack.SC18.sc18_safe",
+   "ControlStack.SC18.config_untampered",
+   "ControlStack.SC18.halt_freezes",
+   "ControlStack.AuthInstances.sc18_safe_authenticated",
+   "ControlStack.AuthInstances.forged18_redirects_without_auth",
+   "ControlStack.SC18Liveness.honest_release",
+   "ControlStack.SC18Liveness.progress_interleaved",
+   "ControlStack.SC18Liveness.silent_ticks_halt",
+   "ControlStack.SC18Liveness.Resume.resume_safe",
+   "ControlStack.SC18Liveness.Resume.resume_progress"
+  ]
+ },
+ {
+  "tag": "g4n2",
+  "claims": [
+   "ControlStack.SC18Refinement.concrete_safe",
+   "ControlStack.SC18Refinement.concrete_durable",
+   "ControlStack.SC19.sc19_safe",
+   "ControlStack.SC19.halt_freezes",
+   "ControlStack.AuthInstances.sc19_safe_authenticated",
+   "ControlStack.AuthInstances.forged19_destroys_without_auth",
+   "ControlStack.SC20.sc20_safe",
+   "ControlStack.SC20.halt_freezes",
+   "ControlStack.AuthInstances.sc20_safe_authenticated",
+   "ControlStack.AuthInstances.forged20_trains_without_auth"
+  ]
+ },
+ {
+  "tag": "g5n1",
+  "claims": [
+   "ControlStack.EvalIntegrity.sc21_safe",
+   "ControlStack.EvalIntegrity.sc21_undetected_prob",
+   "ControlStack.EvalIntegrity.sc21_undetected_le_pow",
+   "ControlStack.EvalIntegrity.observable_sample_nogo",
+   "ControlStack.EvalIntegrityAdaptive.sc21_adaptive",
+   "ControlStack.EvalIntegrityAdaptive.sc21_adaptive_content",
+   "ControlStack.EvalIntegrityAdaptive.sc21_adaptive_recall",
+   "ControlStack.EvalIntegrity.sc22_unreplicated_misreport",
+   "ControlStack.SC23.sc23_safe",
+   "ControlStack.SC23.halt_freezes"
+  ]
+ },
+ {
+  "tag": "g5n2",
+  "claims": [
+   "ControlStack.SC23Isolation.noninterference",
+   "ControlStack.SC23Isolation.w1_impossible",
+   "ControlStack.SC23Isolation.sc23_isolated_safe",
+   "ControlStack.SC23IsolationV2.noninterference_authed",
+   "ControlStack.SC23IsolationV2.w1_impossible_v2",
+   "ControlStack.SC23IsolationV2.sc23v2_safe_authenticated",
+   "ControlStack.AuthInstances.sc23_safe_authenticated",
+   "ControlStack.AuthInstances.forged23_acts_without_auth",
+   "ControlStack.MonitorCollusion.pass_transfer",
+   "ControlStack.MonitorCollusion.collusion_uniform",
+   "ControlStack.MonitorCollusion.canon_channel",
+   "ControlStack.MonitorCollusion.phase_learning"
+  ]
+ },
+ {
+  "tag": "g6n1",
+  "claims": [
+   "ControlStack.SC25.sc25_safe",
+   "ControlStack.SC25.expired_never_executes",
+   "ControlStack.SC25.halt_freezes",
+   "ControlStack.SC25Content.sc25_content_safe",
+   "ControlStack.SC25Content.digest_only_executes_unaudited",
+   "ControlStack.AuthInstances.sc25_safe_authenticated",
+   "ControlStack.AuthInstances.forged25_executes_without_auth",
+   "ControlStack.SC25Refinement.concrete_safe",
+   "ControlStack.SC25Refinement.concrete_content_safe",
+   "ControlStack.SC26.sc26_safe"
+  ]
+ },
+ {
+  "tag": "g6n2",
+  "claims": [
+   "ControlStack.SC26.safe_of_sound",
+   "ControlStack.SC26.sc26_safe_disjoint",
+   "ControlStack.SC26.sc26_once",
+   "ControlStack.SC26.halt_freezes",
+   "ControlStack.SC26Refinement.concrete_safe",
+   "ControlStack.SC26Refinement.concrete_halt",
+   "ControlStack.SC26Authenticated.sc26_safe_authenticated",
+   "ControlStack.SC26Authenticated.forged_approval_pays_without_auth",
+   "ControlStack.AuthenticatedAdv.sc26_consent_from_honest_script",
+   "ControlStack.SC26Liveness.honest_progress"
+  ]
+ },
+ {
+  "tag": "g6n3",
+  "claims": [
+   "ControlStack.SC26Liveness.progress_interleaved",
+   "ControlStack.SC26Liveness.Concrete.crash_tolerant_progress",
+   "ControlStack.SC26LossyLiveness.lossy_safe",
+   "ControlStack.SC26LossyLiveness.lossy_rounds",
+   "ControlStack.SC26LossyHalt.lossy_halt_keys",
+   "ControlStack.SC26LossyHalt.tagged_rounds"
+  ]
+ },
+ {
+  "tag": "g7n1",
+  "claims": [
+   "ControlStack.AntiRollback.rollback_transfer",
+   "ControlStack.SC27Chain.sc27_safe",
+   "ControlStack.SC27Chain.tamper_after_anchor_detected",
+   "ControlStack.SC27Chain.halt_freezes",
+   "ControlStack.SC27ExtensionOnly.sc27_ext_safe",
+   "ControlStack.SC27ExtensionOnly.tampered_never_anchored",
+   "ControlStack.SC27ExtensionOnly.anchors_chain",
+   "ControlStack.SC27ExtensionOnly.alarm_iff",
+   "ControlStack.SC27Refinement.concrete_ext_safe",
+   "ControlStack.SC27Refinement.concrete_tampered_never_anchored"
+  ]
+ },
+ {
+  "tag": "g7n2",
+  "claims": [
+   "ControlStack.SC28.sc28_safe",
+   "ControlStack.SC28.revoked_lease_stops",
+   "ControlStack.SC28.fork_shares_lease",
+   "ControlStack.SC28.halt_freezes",
+   "ControlStack.AuthInstances.sc28_safe_authenticated",
+   "ControlStack.AuthInstances.forged28_consumes_without_auth",
+   "ControlStack.SC28Liveness.honest_steps_progress",
+   "ControlStack.SC28Liveness.progress_interleaved",
+   "ControlStack.SC28Liveness.global_cap_blocks_honest",
+   "ControlStack.AntiRollback.sc28_rollback_safe",
+   "ControlStack.SC28Refinement.concrete_safe",
+   "ControlStack.SC28Refinement.concrete_revoked_stops",
+   "ControlStack.SC28Refinement.exclusive_placement_safe"
+  ]
+ }
+]

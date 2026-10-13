@@ -1,0 +1,3 @@
+ControlStack/Deployment/Contracts.lean:151
+theorem protocol_safe (R : SC26.Roles) (cap : Nat) (ops : List SC26.Op)
+    (hops : ∀ o ∈ ops, SC26.legal R o) : SC26.Good R cap (SC26.run R cap SC26.full SC26.init ops) :=

@@ -1,0 +1,191 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc 'cat ./defs/*.lean'
+
+---
+/bin/bash -lc "rg -n '"'^-- EXCERPT|''^namespace |''^def (claim15|forged15|Rov|overlap|contents|Inject|Disjoint)|''^structure '"' ./defs/*.lean"
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__SC15Review_defs.lean ./defs/Scenarios__SC16Deploy_defs.lean ./defs/Scenarios__SC16Disjoint_defs.lean'
+
+---
+/bin/bash -lc 'cat ./defs/Scenarios__AuthInstancesA_defs.lean ./defs/Scenarios__AuthInstancesB_defs.lean'
+
+---
+/bin/bash -lc "mkdir -p ./back
+python3 - <<'PY'
+from pathlib import Path
+files = {
+'1-sc15_safe.lean': '''import ControlStack.Scenarios.SC15Review
+
+namespace ControlStack.SC15
+
+def Back_sc15_safe : Prop :=
+  ∀ (E : Env) (ops : List Op),
+    let s := run E full init ops
+    ∀ c ∈ s.merged, MergeOk E s c
+
+end ControlStack.SC15
+''',
+'2-sc15_halt_freezes.lean': '''import ControlStack.Scenarios.SC15Review
+
+namespace ControlStack.SC15
+
+def Back_halt_freezes : Prop :=
+  ∀ (E : Env) (s : St) (ops : List Op),
+    s.halted = true → run E full s ops = s
+
+end ControlStack.SC15
+''',
+'3-sc15_safe_authenticated.lean': '''import ControlStack.Scenarios.AuthInstancesB
+
+namespace ControlStack.AuthInstances
+
+def Back_sc15_safe_authenticated : Prop :=
+  ∀ (E : SC15.Env) (U : List ℕ) (ops : List (ℕ × SC15.Op)),
+    (∀ c ∈ U, c ∉ E.reviewers ∧ c ∉ E.security) →
+    let s := AuthenticatedLog.authRun (SC15.step E SC15.full) claim15 SC15.init ops
+    (∀ c ∈ s.merged, SC15.MergeOk E s c) ∧
+    (∀ r ∈ s.reviews,
+      (r.reviewer, SC15.Op.review r.reviewer r.id r.sec) ∈ ops ∧
+      r.reviewer ∉ U ∧ SC15.roleOk E r.sec r.reviewer = true)
+
+end ControlStack.AuthInstances
+''',
+'4-forged15_merges_without_auth.lean': '''import ControlStack.Scenarios.AuthInstancesB
+
+namespace ControlStack.AuthInstances
+
+def Back_forged15_merges_without_auth : Prop :=
+  let unchecked := AuthenticatedLog.authRun (SC15.step SC15.E0 SC15.full)
+    (fun (_ : SC15.Op) => (none : Option ℕ)) SC15.init forged15
+  let checked := AuthenticatedLog.authRun (SC15.step SC15.E0 SC15.full)
+    claim15 SC15.init forged15
+  0 ∈ unchecked.merged.map SC15.Change.id ∧ checked.merged = []
+
+end ControlStack.AuthInstances
+''',
+'5-sc16_safe.lean': '''import ControlStack.Scenarios.SC16Deploy
+
+namespace ControlStack.SC16
+
+def Back_sc16_safe : Prop :=
+  ∀ (R : Roles) (h : ℕ → ℕ) (ops : List Op),
+    Good R h (run R h full init ops)
+
+end ControlStack.SC16
+''',
+'6-sc16_reviewed_content.lean': '''import ControlStack.Scenarios.SC16Deploy
+
+namespace ControlStack.SC16
+
+def Back_sc16_reviewed_content : Prop :=
+  ∀ (R : Roles) (h : ℕ → ℕ) (ops : List Op),
+    let s := run R h full init ops
+    let contents := s.deployed.map Dep.content ++ s.reviews.map Review.content
+    (∀ (x y : ℕ), x ∈ contents → y ∈ contents → h x = h y → x = y) →
+    ∀ e ∈ s.deployed,
+      ∃ rv ∈ s.reviews,
+        rv.content = e.content ∧ rv.reviewer ∈ R.reviewers ∧ rv.reviewer ≠ rv.stager
+
+end ControlStack.SC16
+''',
+'7-sc16_halt_freezes.lean': '''import ControlStack.Scenarios.SC16Deploy
+
+namespace ControlStack.SC16
+
+def Back_halt_freezes : Prop :=
+  ∀ (R : Roles) (h : ℕ → ℕ) (s : St) (ops : List Op),
+    s.halted = true → run R h full s ops = s
+
+end ControlStack.SC16
+''',
+'8-sc16_safe_disjoint.lean': '''import ControlStack.Scenarios.SC16Disjoint
+
+namespace ControlStack.SC16Disjoint
+
+open ControlStack.SC16
+
+def Back_sc16_safe_disjoint : Prop :=
+  ∀ (R : Roles) (h : ℕ → ℕ) (ops : List Op),
+    (∀ c ∈ R.reviewers, c ∉ R.agents) →
+    (∀ c ∈ R.approvers, c ∉ R.agents) →
+    let s := run R h full init ops
+    let contents := s.deployed.map Dep.content ++ s.reviews.map Review.content
+    (∀ (x y : ℕ), x ∈ contents → y ∈ contents → h x = h y → x = y) →
+    ∀ e ∈ s.deployed,
+      (∃ rv ∈ s.reviews,
+        rv.content = e.content ∧ rv.reviewer ∈ R.reviewers ∧
+        rv.reviewer ∉ R.agents ∧ rv.reviewer ≠ rv.stager) ∧
+      (∃ ap ∈ s.approvals,
+        ap.n = e.n ∧ ap.target = e.target ∧
+        ap.approver ∈ R.approvers ∧ ap.approver ∉ R.agents)
+
+end ControlStack.SC16Disjoint
+''',
+'9-overlap_reviewer_is_agent.lean': '''import ControlStack.Scenarios.SC16Disjoint
+
+namespace ControlStack.SC16Disjoint
+
+open ControlStack.SC16
+
+-- NOTE
+-- AMBIGUOUS: The English calls this one concrete trace but omits the approval
+-- nonce, approval slot, and deploy caller. Best effort uses nonce 0, slot 0,
+-- and deploy caller 1. Approver 3 is the only approver in Rov; the review and
+-- approval digest is 7 under the specified identity hash.
+def Back_overlap_reviewer_is_agent : Prop :=
+  let ops : List Op :=
+    [.stage 1 7, .review 2 7, .approve 3 0 7 5 0, .deploy 1 0 5 7]
+  let s := run Rov (fun x => x) full init ops
+  (∃ e ∈ s.deployed, e.content = 7 ∧ e.target = 5) ∧
+  s.reviews ≠ [] ∧ (∀ rv ∈ s.reviews, rv.reviewer ∈ Rov.agents)
+
+end ControlStack.SC16Disjoint
+''',
+'10-sc16_safe_authenticated.lean': '''import ControlStack.Scenarios.AuthInstancesA
+
+namespace ControlStack.AuthInstances
+
+def Back_sc16_safe_authenticated : Prop :=
+  ∀ (R : SC16.Roles) (h : ℕ → ℕ) (U : List ℕ)
+    (ops : List (ℕ × SC16.Op)),
+    (∀ c ∈ U, c ∉ R.reviewers ∧ c ∉ R.approvers) →
+    let s := AuthenticatedLog.authRun (SC16.step R h SC16.full) claim16 SC16.init ops
+    SC16.Good R h s ∧
+    (∀ rv ∈ s.reviews,
+      (rv.reviewer, SC16.Op.review rv.reviewer rv.d) ∈ ops ∧
+      rv.reviewer ∉ U ∧ rv.reviewer ∈ R.reviewers) ∧
+    (∀ ap ∈ s.approvals,
+      (ap.approver, SC16.Op.approve ap.approver ap.n ap.d ap.target ap.slot) ∈ ops ∧
+      ap.approver ∉ U ∧ ap.approver ∈ R.approvers)
+
+end ControlStack.AuthInstances
+'''
+}
+for name, content in files.items():
+    Path('back', name).write_text(content)
+print('Wrote 10 Lean proposition files under back/.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import json
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+result = subprocess.run('sha256sum back/*.lean', shell=True, check=True, text=True, capture_output=True)
+print(result.stdout, end='')
+files = {}
+for line in result.stdout.splitlines():
+    digest, filename = line.split(maxsplit=1)
+    files[filename] = digest
+manifest = {
+    'utc': datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z'),
+    'files': files,
+}
+Path('back/BACK-HASHES.json').write_text(json.dumps(manifest, indent=2) + '\\n')
+print('Wrote back/BACK-HASHES.json; no Lean files changed after hashing.')
+PY"

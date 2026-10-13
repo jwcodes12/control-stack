@@ -1,0 +1,252 @@
+/bin/bash -lc pwd
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g lakefile.lean -g lakefile.toml -g lean-toolchain -g lake-manifest.json -g 'run_gate.py' -g 'leangate_imports.py' -g 'leangate-imports.patch' -g 'CLAIMS.txt' -g 'BACK-HASHES.json' -g '*.lean' docs/lean-english/one-to-one/blind-g3n1 docs/lean-english/one-to-one/run_gate.py docs/lean-english/one-to-one/leangate_imports.py docs/lean-english/one-to-one/leangate-imports.patch"
+
+---
+/bin/bash -lc 'ls -la'
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g3n1/AGENTS.md AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/run_gate.py docs/lean-english/one-to-one/leangate_imports.py docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'cat docs/lean-english/sol-input/batch-g3n1.md docs/lean-english/one-to-one/blind-g3n1/CLAIMS.txt docs/lean-english/one-to-one/blind-g3n1/back/BACK-HASHES.json'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g3n1/back/*.lean'
+
+---
+/bin/bash -lc 'for p in CLAUDE.md GEMINI.md docs/AGENTS.md docs/lean-english/AGENTS.md docs/lean-english/one-to-one/AGENTS.md docs/lean-english/one-to-one/blind-g3n1/AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,subprocess,datetime,concurrent.futures
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+for d in ['typed','compile-fixes','compile-logs']: (out/d).mkdir(exist_ok=True)
+expected=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+files=sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+def compile(p):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ n=p.name.split('-')[0]
+ (out/'compile-logs'/f'{n}.original.txt').write_text(r.stdout+r.stderr)
+ return p,r.returncode,r.stdout+r.stderr
+rows=[]
+with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+ for p,rc,log in pool.map(compile,files):
+  sha=hashlib.sha256(p.read_bytes()).hexdigest()
+  assert sha==expected['back/'+p.name],p
+  rows.append({'claim':int(p.name.split('-')[0]),'file':str(p),'sha256':sha,'original_compile_exit':rc})
+  print(p.name,rc,log[:1500],flush=True)
+  if rc==0:
+   (out/'typed'/p.name).write_bytes(p.read_bytes())
+   (out/'compile-fixes'/f'{p.name.split(\"-\")[0]}.diff').write_text('No repair. Meaning unchanged; typed file is byte-identical to back file.\\n')
+(out/'compile-logs/summary.json').write_text(json.dumps(rows,indent=2)+'\\n')
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':{'typed/'+p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (out/'typed').glob('*.lean')}},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g3n1/typed/HASHES.json'
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC15Review.lean ControlStack/Scenarios/SC16Deploy.lean'
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC16Disjoint.lean ControlStack/Scenarios/AuthInstancesA.lean ControlStack/Scenarios/AuthInstancesB.lean'
+
+---
+/bin/bash -lc "rg -n 'theorem (sc15_safe|halt_freezes|sc15_safe_authenticated|forged15_merges_without_auth|sc16_safe|sc16_reviewed_content|sc16_safe_disjoint|overlap_reviewer_is_agent|sc16_safe_authenticated)' ControlStack"
+
+---
+/bin/bash -lc "sed -n '286,380p' ControlStack/Scenarios/SC16Deploy.lean"
+
+---
+/bin/bash -lc "sed -n '35,180p' ControlStack/Scenarios/SC16Deploy.lean"
+
+---
+/bin/bash -lc "sed -n '1,100p' ControlStack/Scenarios/AuthInstancesA.lean"
+
+---
+/bin/bash -lc "sed -n '223,275p' ControlStack/Scenarios/SC15Review.lean;"
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC16Disjoint.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil,difflib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+src=out.parent/'run_gate.py'
+s=src.read_text().replace('parents[3]','parents[4]').replace(\"ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay\",\"ControlStack.Scenarios.SC15Review ControlStack.Scenarios.SC16Deploy ControlStack.Scenarios.SC16Disjoint ControlStack.Scenarios.AuthInstancesA ControlStack.Scenarios.AuthInstancesB\").replace(\"g0_*.statement.lean\",\"bg3n1_*.statement.lean\")
+(out/'run_gate_blind.py').write_text(s)
+(out/'runner-relocation.diff').write_text('Path rebasing is required because the copied runner is one directory deeper. Only project/output path rebasing, imports and glob differ.\\n'+''.join(difflib.unified_diff(src.read_text().splitlines(True),s.splitlines(True),fromfile='run_gate.py',tofile='blind-g3n1/run_gate_blind.py')))
+shutil.copyfile(out.parent/'leangate_imports.py',out/'leangate_imports.py')
+(out/'originals-opened.json').write_text('{\"utc\": \"'+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\", \"typed_hashes_saved_before_opening\": true}\\n')
+(out/'PROGRESS.md').write_text('# Progress\\n\\nDone: all 10 original back files compiled without repairs; original hashes verified; byte-identical typed files hashed before originals were opened. Original declarations read.\\n\\nNot done: pointwise comparison gates, witness gates, clean-state re-gating, final report.\\n\\nTime: started 2026-10-13 04:12 UTC.\\n\\nRestrictions: no git, no downloads, no source edits, no comparison results consulted.\\n')
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g3n1/make_comparisons.py'
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g3n1/regate.py'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g3n1/make_comparisons.py')
+s=p.read_text().replace(\"statement = f'namespace PL_{cid}\\\\n\\\\n{opens}\",\"statement = f'namespace PL_{cid}\\\\n\\\\nopen ControlStack\\\\n{opens}\")
+s=s.replace(\"proof = f'theorem original_type\", \"proof = proof.replace('theorem witness : Witness := by decide', 'theorem witness : Witness := by\\\\n  decide')\\n    proof = proof.replace('theorem witness : Witness := by\\\\n', 'theorem witness : Witness := by\\\\n  unfold Witness\\\\n')\\n    proof = f'theorem original_type\")
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g3n1/make_comparisons.py')
+s=p.read_text().replace(\"proof = f'theorem original_type\", \"proof = f'open ControlStack\\\\n{opens}\\\\n\\\\ntheorem original_type\")
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc "date -u '+%Y-%m-%d %H:%M:%S UTC'"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+a=out/'attempts/1'; a.mkdir(parents=True,exist_ok=True)
+for pat in ['*.receipt.json','bg3n1_*.statement.lean','bg3n1_*.proof.lean']:
+ for p in out.glob(pat): shutil.copyfile(p,a/p.name)
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g3n1/make_comparisons.py'
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g3n1/regate.py'
+
+---
+/bin/bash -lc "sed -n '1,130p' docs/lean-english/one-to-one/blind-g3n1/bg3n1_3.statement.lean;"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+a=out/'attempts/2'; a.mkdir(parents=True,exist_ok=True)
+for pat in ['*.receipt.json','bg3n1_*.statement.lean','bg3n1_*.proof.lean']:
+ for p in out.glob(pat): shutil.copyfile(p,a/p.name)
+p=out/'make_comparisons.py'; s=p.read_text()
+s=s.replace(\"    decide\\ntheorem witness : Witness := by\\n  refine ⟨by decide, by decide, ?_⟩\", \"    unfold BackAt OrigAt\\n    decide\\ntheorem witness : Witness := by\\n  refine ⟨by unfold OrigAt; decide, by decide, ?_⟩\",1)
+s=s.replace(\"    · decide\\ntheorem witness : Witness := by\\n  refine ⟨by decide, by decide, ?_⟩\", \"    · unfold OrigAt\\n      decide\\ntheorem witness : Witness := by\\n  refine ⟨by decide, by decide, ?_⟩\",1)
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g3n1/make_comparisons.py'
+
+---
+/bin/bash -lc "PYTHONDONTWRITEBYTECODE=1 python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g3n1/regate.py')
+s=importlib.util.spec_from_file_location('regate',p);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+assert m.check(4)
+assert m.check(9)
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g3n1/bg3n1_4.proof.lean docs/lean-english/one-to-one/blind-g3n1/bg3n1_9.proof.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,shutil,json
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+assert (out/'leangate_imports.py').read_bytes()==(out.parent/'leangate_imports.py').read_bytes()
+a=out/'attempts/3'; a.mkdir(parents=True,exist_ok=True)
+receipts=list(out.glob('*.receipt.json'))
+assert len(receipts)==20
+for p in receipts:
+ assert json.loads(p.read_text())['passed'],p
+ shutil.copyfile(p,a/p.name)
+ p.unlink()
+if (out/'gate-tmp').exists():
+ assert not list((out/'gate-tmp').iterdir())
+ (out/'gate-tmp').rmdir()
+manifest={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for pat in ['bg3n1_*.statement.lean','bg3n1_*.proof.lean','typed/*.lean','typed/HASHES.json','compile-fixes/*.diff','regate.py','run_gate_blind.py','leangate_imports.py','back/*.lean','back/BACK-HASHES.json'] for p in out.glob(pat)}
+(out/'FROZEN-COMPARISON-HASHES.json').write_text(json.dumps(manifest,indent=2)+'\\n')
+(out/'clean-regate-test.json').write_text(json.dumps({'receipts_before_run':0,'gate_scratch_directory_existed':False,'persistent_inputs_sha256':manifest},indent=2)+'\\n')
+print('All 20 checks passed; preserved receipts, removed live receipts and empty scratch directory. Saved input hashes for clean re-gating.')
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g3n1/regate.py'
+
+---
+/bin/bash -lc "date -u '+%Y-%m-%d %H:%M:%S UTC'"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+manifest={p.relative_to(out).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for pat in ['bg3n1_*.statement.lean','bg3n1_*.proof.lean','typed/*.lean','typed/HASHES.json','compile-fixes/*.diff','regate.py','run_gate_blind.py','leangate_imports.py','back/*.lean','back/BACK-HASHES.json'] for p in out.glob(pat)}
+(out/'FROZEN-COMPARISON-HASHES.json').write_text(json.dumps(manifest,indent=2)+'\\n')
+p=out/'clean-regate-test.json'; record=json.loads(p.read_text()); record['persistent_inputs_sha256']=manifest;p.write_text(json.dumps(record,indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,re
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+expected=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+typed=json.loads((out/'typed/HASHES.json').read_text())['files']
+for rel,h in expected.items():
+ assert sha(out/rel)==h
+ assert sha(out/'typed'/Path(rel).name)==h
+for rel,h in typed.items(): assert sha(out/rel)==h
+for rel,h in json.loads((out/'FROZEN-COMPARISON-HASHES.json').read_text()).items(): assert sha(out/rel)==h,rel
+assert (out/'leangate_imports.py').read_bytes()==(out.parent/'leangate_imports.py').read_bytes()
+for n in range(1,11):
+ cid=f'bg3n1_{n}'
+ raw=next((out/'typed').glob(f'{n}-*.lean')).read_text()
+ body=raw[raw.index('def Back_'):raw.rindex('\\nend ')].strip()
+ body=re.sub(r'"'^def Back_'"\\w+','def BackClosed',body,count=1)
+ assert body in (out/f'{cid}.statement.lean').read_text()
+ for target,suffix in [('claim','.receipt.json'),('witness','.witness.receipt.json')]:
+  r=json.loads((out/(cid+suffix)).read_text())
+  assert r['passed'] and r['statement_passed'] and r['target']==target
+  assert r['statement_sha256']==sha(out/f'{cid}.statement.lean')
+  assert r['proof_sha256']==sha(out/f'{cid}.proof.lean')
+  assert r['gate_sha256']==sha(out/'leangate_imports.py')
+  assert r['runner_sha256']==sha(out/'run_gate_blind.py')
+  assert r['log'].startswith('PASS '+target)
+assert not list((out/'gate-tmp').iterdir())
+p=out/'clean-regate-test.json';record=json.loads(p.read_text());record.update(exit_code=0,claim_passes=10,witness_passes=10,persistent_inputs_unchanged=True,scratch_files_after_run=0,completed_utc=datetime.datetime.now(datetime.timezone.utc).isoformat());p.write_text(json.dumps(record,indent=2)+'\\n')
+(out/'verification.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'back_hashes_verified':10,'typed_hashes_verified':10,'frozen_comparison_inputs_unchanged':True,'frozen_bodies_copied_verbatim':10,'helper_byte_identical':True,'claims_passed':10,'witnesses_passed':10,'receipt_hashes_match_saved_inputs':True,'clean_regate_exit':0},indent=2)+'\\n')
+print('PASS: 10 original hashes, 10 typed hashes, frozen bodies, unchanged helper, all 20 receipt/input hash bindings, clean re-gate.')
+print(datetime.datetime.now(datetime.timezone.utc).isoformat())
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g3n1/runner-relocation.diff'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json
+out=Path('docs/lean-english/one-to-one/blind-g3n1')
+for n in range(1,11):
+ r=json.loads((out/f'bg3n1_{n}.receipt.json').read_text());w=json.loads((out/f'bg3n1_{n}.witness.receipt.json').read_text())
+ print(n,'ENGLISH_WEAKER' if n in [4,9] else 'EQUIVALENT','claim='+str(r['passed']),'witness='+str(w['passed']))
+assert (out/'RESULTS.md').is_file() and (out/'PROGRESS.md').is_file()
+PY"

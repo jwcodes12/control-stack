@@ -1,0 +1,9 @@
+ControlStack/Deployment/R2Contracts.lean:38
+theorem accepted_path_safety_monotone (d larger : IR)
+    (subset : ∀ e ∈ d.edges, e ∈ larger.edges)
+    (nodes : d.nodes = larger.nodes)
+    (broker : d.broker = larger.broker) (receiver : d.receiver = larger.receiver)
+    (sink : d.sink = larger.sink) (database : d.database = larger.database)
+    (accepted : Accepted larger) (a : Node) (member : a ∈ d.nodes)
+    (agent : a.agent = true) :
+    ¬ AvoidedPath d a.id d.sink ∧ ¬ AvoidedPath d a.id d.database :=

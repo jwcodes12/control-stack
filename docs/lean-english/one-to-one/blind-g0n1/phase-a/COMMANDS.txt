@@ -1,0 +1,40 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\nFILE: %s\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc 'cat ./defs/Deployment__Contracts_defs.lean'
+
+---
+/bin/bash -lc "rg -n 'Avoid|Path|sinkOnly|"'^namespace|''^def |''^inductive |''^structure '"' ./defs/*.lean"
+
+---
+/bin/bash -lc 'cat ./defs/Deployment__R2Contracts_defs.lean'
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+import datetime
+import json
+import subprocess
+
+result = subprocess.run(
+    ['bash', '--noprofile', '--norc', '-c', 'sha256sum back/*.lean'],
+    check=True, capture_output=True, text=True
+)
+files = {}
+for line in result.stdout.splitlines():
+    digest, filename = line.split(maxsplit=1)
+    files[filename] = digest
+if len(files) "'!= 10:
+    raise RuntimeError('"'Expected exactly ten Lean files')
+manifest = {
+    'utc': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'files': files
+}
+with open('back/BACK-HASHES.json', 'w', encoding='utf-8') as output:
+    json.dump(manifest, output, indent=2)
+    output.write('\\n')
+print(result.stdout, end='')
+print('Manifest written: back/BACK-HASHES.json; utc=' + manifest['utc'])
+PY"

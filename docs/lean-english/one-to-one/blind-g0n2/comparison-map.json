@@ -1,0 +1,74 @@
+{
+  "bg0n2_1": {
+    "typed_file": "typed/1-indexed_receipts_sound.lean",
+    "typed_sha256": "c8ec22ae64a53530f0610123366801407081ac489cb1e7333cf4ec1afe97cb79",
+    "original_file": "ControlStack/Deployment/R2Contracts.lean",
+    "original_signature_text": "theorem indexed_receipts_sound (R : TrustedBroker.Roles) (table : IndexedBrokerTable R)\n    (rs : List (CheckedTrace.Receipt Nat Nat)) (start : Nat)\n    (verified : CheckedTrace.verified table.step start rs = true) :\n    TrustedBroker.Trace R (table.interpret start)\n      (table.interpret (CheckedTrace.recordedEnd start rs))",
+    "conclusion": "TrustedBroker.Trace R (table.interpret start) (table.interpret (CheckedTrace.recordedEnd start rs))",
+    "hypotheses": "CheckedTrace.verified table.step start rs = true",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_2": {
+    "typed_file": "typed/2-transaction_preserves.lean",
+    "typed_sha256": "9f74201aa06550c1338a6d6a99a0985dd636cbed14446c70c19222e77a2ccafe",
+    "original_file": "ControlStack/TrustedBroker.lean",
+    "original_signature_text": "theorem transaction_preserves (roles : Roles) (s t : State)\n    (safe : Safe s) (step : Step roles s t) : Safe t",
+    "conclusion": "Safe t",
+    "hypotheses": "Safe s \u2192 Step roles s t",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_3": {
+    "typed_file": "typed/3-transaction_coherent.lean",
+    "typed_sha256": "ba3e227cafcb7f1c795030dbfd364d24be5beb2059a18d5437a205c68270d51d",
+    "original_file": "ControlStack/TrustedBroker.lean",
+    "original_signature_text": "theorem transaction_coherent (roles : Roles) (s t : State)\n    (coherent : Coherent s) (step : Step roles s t) : Coherent t",
+    "conclusion": "Coherent t",
+    "hypotheses": "Coherent s \u2192 Step roles s t",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_4": {
+    "typed_file": "typed/4-committed_nonce_unusable.lean",
+    "typed_sha256": "b94855bd305776ee76298668b0ffb81e751c22edc4ac22eac026fc33dc8edac7",
+    "original_file": "ControlStack/TrustedBroker.lean",
+    "original_signature_text": "theorem committed_nonce_unusable (roles : Roles) (s : State) (r : Request)\n    (a : Approval) (l : Lease) (now : Nat) (r' : Request)\n    (a' : Approval) (l' : Lease) (sameNonce : r'.nonce = r.nonce) :\n    \u00ac Allowed roles (committed s r a l) now r' a' l'",
+    "conclusion": "\u00ac Allowed roles (committed s r a l) now r' a' l'",
+    "hypotheses": "r'.nonce = r.nonce",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_5": {
+    "typed_file": "typed/5-trace_preserves.lean",
+    "typed_sha256": "060d84bcea765b44064eab3002849b7bcb93e0f08a29141cac16322354c29ac8",
+    "original_file": "ControlStack/TrustedBroker.lean",
+    "original_signature_text": "theorem trace_preserves (roles : Roles) (s t : State)\n    (safe : Safe s) (trace : Trace roles s t) : Safe t",
+    "conclusion": "Safe t",
+    "hypotheses": "Safe s \u2192 Trace roles s t",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_6": {
+    "typed_file": "typed/6-final_safe.lean",
+    "typed_sha256": "bf9b13ab36e7ce4f38f00b085b66552f3c963abc27809ccd01919332111e96d4",
+    "original_file": "ControlStack/Deployment/TranscriptReplay.lean",
+    "original_signature_text": "theorem final_safe : TrustedBroker.Safe s10",
+    "conclusion": "TrustedBroker.Safe s10",
+    "hypotheses": "",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_7": {
+    "typed_file": "typed/7-replay_was_not_allowed.lean",
+    "typed_sha256": "9d48bfd2501c1d7abcdce136c3f99382a8b7cef8716ced59affc18bdb74b8c3e",
+    "original_file": "ControlStack/Deployment/TranscriptReplay.lean",
+    "original_signature_text": "theorem replay_was_not_allowed (now : Nat) (a' : TrustedBroker.Approval) (l' : TrustedBroker.Lease) :\n    \u00ac TrustedBroker.Allowed R s8 now q8 a' l'",
+    "conclusion": "\u00ac TrustedBroker.Allowed R s8 now q8 a' l'",
+    "hypotheses": "",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  },
+  "bg0n2_8": {
+    "typed_file": "typed/8-omitted_tail_is_accepted.lean",
+    "typed_sha256": "45b6ab52f71bb51a875074e27a6963e9213aa19a3beb29eb12792979e06f6dfa",
+    "original_file": "ControlStack/Deployment/TranscriptReplay.lean",
+    "original_signature_text": "theorem omitted_tail_is_accepted : CheckedTrace.verified table.step 0 withoutLastRelease = true",
+    "conclusion": "CheckedTrace.verified table.step 0 withoutLastRelease = true",
+    "hypotheses": "",
+    "method": "Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration."
+  }
+}

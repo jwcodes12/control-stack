@@ -1,0 +1,7 @@
+ControlStack/Deployment/Contracts.lean:159
+theorem gate_contract (R : SC26.Roles) (cap : Nat)
+    (ops : List {o : SC26.Op // SC26.legal R o}) :
+    (SC26.spec R cap).Inv ((SC26.sys R cap).run SC26.init ops) ∧
+    (SC26.sys R cap).effects SC26.init <+: (SC26.sys R cap).effects ((SC26.sys R cap).run SC26.init ops) ∧
+    ∀ e ∈ (SC26.sys R cap).effects ((SC26.sys R cap).run SC26.init ops),
+      (SC26.spec R cap).ok ((SC26.sys R cap).run SC26.init ops) e :=

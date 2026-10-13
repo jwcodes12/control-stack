@@ -1,0 +1,5 @@
+ControlStack/Deployment/R2Contracts.lean:53
+theorem requested_monotonicity_counterexample :
+    sinkOnly.nodes = clean.nodes ∧ (∀ e ∈ sinkOnly.edges, e ∈ clean.edges) ∧
+    (∃ e ∈ sinkOnly.edges, e.source = sinkOnly.receiver ∧ e.target = sinkOnly.sink ∧ e.write = true) ∧
+    Accepted clean ∧ ¬ Accepted sinkOnly :=

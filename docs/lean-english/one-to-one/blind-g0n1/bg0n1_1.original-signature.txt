@@ -1,0 +1,4 @@
+ControlStack/Deployment/Contracts.lean:128
+theorem runtime_exclusive (d : IR) (actual : List Edge) (h : Accepted d)
+    (faithful : Faithful d actual) (e : Edge) (member : e ∈ actual)
+    (authority : e.authority = true) (sink : e.target = d.sink) : e.source = d.receiver :=

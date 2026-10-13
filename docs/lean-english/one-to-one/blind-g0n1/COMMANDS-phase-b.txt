@@ -1,0 +1,309 @@
+/bin/bash -lc "pwd; rg --files -g AGENTS.md -g lakefile.lean -g lakefile.toml -g lean-toolchain -g '*.lean' docs/lean-english/one-to-one/blind-g0n1/back; cat docs/lean-english/one-to-one/blind-g0n1/CLAIMS.txt; cat docs/lean-english/sol-input/batch-g0n1.md"
+
+---
+/bin/bash -lc "rg --files -g AGENTS.md -g '"'!docs/lean-english/**'"'; cat docs/lean-english/one-to-one/blind-g0n1/back/*.lean; cat docs/lean-english/one-to-one/blind-g0n1/BACK-HASHES.json; cat docs/lean-english/one-to-one/run_gate.py; cat docs/lean-english/one-to-one/leangate_imports.py; cat docs/lean-english/one-to-one/leangate-imports.patch"
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g0n1/AGENTS.md /home/opc/projects/blind-work/g0n1/b/AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done; rg --files docs/lean-english/one-to-one/blind-g0n1/back'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import subprocess, hashlib, json, datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+(out/'typed').mkdir(exist_ok=True)
+(out/'compile-fixes').mkdir(exist_ok=True)
+manifest=out/'back/BACK-HASHES.json'
+if manifest.exists(): print(manifest.read_text())
+results={}
+for p in sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0])):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ n=p.name.split('-')[0]
+ (out/'compile-fixes'/f'{n}.original-compile.txt').write_text(r.stdout+r.stderr)
+ results[p.name]={'exit_code':r.returncode,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
+ print(p.name,r.returncode,r.stdout+r.stderr,flush=True)
+ if r.returncode==0:
+  (out/'typed'/p.name).write_bytes(p.read_bytes())
+  (out/'compile-fixes'/f'{n}.diff').write_text('No repairs. File copied byte-for-byte. Meaning unchanged.\\n')
+(out/'compile-fixes/COMPILE.json').write_text(json.dumps(results,indent=2)+'\\n')
+(out/'typed/HASHES.json').write_text(json.dumps({p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (out/'typed').glob('*.lean')},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('Original declarations have not been opened. Initial back-file compilation complete.\\n'+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n')
+PY"
+
+---
+/bin/bash -lc 'for p in AGENTS.md CLAUDE.md GEMINI.md; do if test -f "$p"; then cat "$p"; fi; done'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+m=json.loads((out/'back/BACK-HASHES.json').read_text())
+r={n:hashlib.sha256((out/n).read_bytes()).hexdigest()==h for n,h in m['files'].items()}
+(out/'compile-fixes/PHASE-A-HASH-CHECK.json').write_text(json.dumps(r,indent=2)+'\\n')
+print(r)
+PY"
+
+---
+/bin/bash -lc "rg -n 'theorem (runtime_exclusive|agent_call_legal|protocol_safe|one_use|gate_contract|broker_contract|deployment_safe|accepted_path_safety_monotone|path_edge_subset|requested_monotonicity_counterexample)|def (runtime_exclusive|agent_call_legal|protocol_safe|one_use|gate_contract|broker_contract|deployment_safe|accepted_path_safety_monotone|path_edge_subset|requested_monotonicity_counterexample)' ControlStack; cat ControlStack/Deployment/Contracts.lean; cat ControlStack/Deployment/R2Contracts.lean"
+
+---
+/bin/bash -lc "cat ControlStack/Deployment/Witnesses.lean; rg -n '"'^(def|structure|inductive|theorem) (Good|Inv|Approved|legal|step|initial|Safe|Roles|Trace|State|Allowed|committed|Tx|run|Spec|System)'"' ControlStack/Scenarios/SC26Transaction.lean ControlStack/TrustedBroker.lean ControlStack/Core/Gate.lean; sed -n '1,220p' ControlStack/TrustedBroker.lean; sed -n '1,210p' ControlStack/Scenarios/SC26Transaction.lean; cat ControlStack/Core/Gate.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime,difflib
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+assert len(json.loads((out/'typed/HASHES.json').read_text()))==10
+helpers=out.parent
+(out/'leangate_imports.py').write_bytes((helpers/'leangate_imports.py').read_bytes())
+src=(helpers/'run_gate.py').read_text()
+dst=src.replace('parents[3]','parents[4]').replace(\"ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay\", \"ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay ControlStack.Deployment.R2Contracts\").replace(\"OUT.glob('g0_*.statement.lean')\", \"OUT.glob('bg0n1_*.statement.lean')\")
+(out/'run_gate_blind.py').write_text(dst)
+(out/'run_gate_blind.diff').write_text(''.join(difflib.unified_diff(src.splitlines(True),dst.splitlines(True),fromfile='run_gate.py',tofile='blind-g0n1/run_gate_blind.py')))
+(out/'AUDIT.json').write_text(json.dumps({'typed_hashes_frozen_before_originals':True,'all_phase_a_hashes_match':True,'first_original_read_after_compile_completed':True,'gate_helper_sha256':hashlib.sha256((helpers/'leangate_imports.py').read_bytes()).hexdigest(),'gate_copy_identical':(helpers/'leangate_imports.py').read_bytes()==(out/'leangate_imports.py').read_bytes(),'gate_runner_path_note':'Moving the runner one directory deeper requires parents[4] instead of parents[3]; OUT remains its own parent. The helper is copied byte-for-byte. Other changes: file glob and PL_IMPORTS only.','time_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g0n1/build_comparisons.py; python3 docs/lean-english/one-to-one/blind-g0n1/run_gate_blind.py'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g0n1/build_comparisons.py')
+s=p.read_text().replace('\"decide\"),','\"unfold Witness\\\\n  decide\"),')
+p.write_text(s)
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g0n1/bg0n1_7.statement-check.txt; cat docs/lean-english/one-to-one/blind-g0n1/bg0n1_7.statement.lean; cat docs/lean-english/one-to-one/blind-g0n1/bg0n1_8.gate.txt'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+results={}
+for n in range(1,11):
+ p=out/f'bg0n1_{n}.receipt.json'
+ if p.exists():
+  r=json.loads(p.read_text())
+  if not r['passed']:
+   results[str(n)]={'receipt':r,'log':(out/f'bg0n1_{n}.gate.txt').read_text()}
+(out/'FIRST-GATE-FAILURES.json').write_text(json.dumps(results,indent=2)+'\\n')
+PY
+python3 docs/lean-english/one-to-one/blind-g0n1/build_comparisons.py
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+spec=importlib.util.spec_from_file_location('runner',out/'run_gate_blind.py')
+r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
+for n in [4,7,8,10]:
+ cid=f'bg0n1_{n}'
+ r.run(cid,(out/f'{cid}.statement.lean').read_text(),(out/f'{cid}.proof.lean').read_text())
+PY"
+
+---
+/bin/bash -lc "sed -n '1,110p' docs/lean-english/one-to-one/blind-g0n1/bg0n1_7.statement.lean; sed -n '1,100p' docs/lean-english/one-to-one/blind-g0n1/bg0n1_10.statement.lean; cat docs/lean-english/one-to-one/blind-g0n1/run_gate_blind.diff; rg -n 'def spec|def sys' ControlStack/Scenarios/SC26Transaction.lean"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+files=sorted(out.glob('bg0n1_*.statement.lean'))+sorted(out.glob('bg0n1_*.proof.lean'))
+(out/'FROZEN-HASHES.json').write_text(json.dumps({p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files},indent=2)+'\\n')
+PY
+python3 docs/lean-english/one-to-one/blind-g0n1/regate.py"
+
+---
+/bin/bash -lc "sed -n '588,630p' ControlStack/Scenarios/SC26Transaction.lean; cat docs/lean-english/one-to-one/blind-g0n1/typed/HASHES.json"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+(out/'PROGRESS.md').write_text('''# Phase B progress
+
+Done: all ten Phase A hashes match; all ten back files compile as written; all ten typed files and SHA-256 hashes were saved before opening original declarations. No back-file repairs were needed. Original signatures have been captured; pointwise structural comparisons now pass the claim gate. The hostile English reading is complete.
+
+In progress: separately gating all ten Witnesses through regate.py; verifying re-gating from a receipt-free state; final receipts and RESULTS.md.
+
+Not done: final verdict publication until all required gate checks finish.
+
+Could not do: nothing currently blocked. Abstract witnesses do not attest to observed runtime behavior.
+
+Time: started approximately 2026-10-13 04:12 UTC; current update '''+datetime.datetime.now(datetime.timezone.utc).isoformat()+'.\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+p=out/'compile-fixes/1.original-compile.txt'
+print('First compilation receipt:', datetime.datetime.fromtimestamp(p.stat().st_mtime,datetime.timezone.utc).isoformat())
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g0n1/RESULTS.md <<'EOF'
+# Blind g0n1 Phase B results
+
+The ten original back files compile unchanged, and all ten hashes match Phase A's "'`back/BACK-HASHES.json`. The byte-identical typed copies and `typed/HASHES.json` were saved before opening any original declarations. Each `compile-fixes/<n>.diff` records that no repair was needed. No project sources were edited, no git command was run, and nothing was downloaded.
+
+The comparison is **pointwise**, rather than an iff between two already-proved closed theorems. Every saved statement includes the frozen back proposition, the original declaration'"'s full type, both conclusion predicates, and shape iffs connecting the full propositions to those predicates. Its "'`Claim` includes `BackConclusion ↔ OrigConclusion` at the same parameters under the same hypotheses. The proof uses definitional reduction (`Iff.rfl`), not either theorem'"'s truth. "'`original_signature` separately checks the copied original type against the actual named declaration. Binder order and bound-variable names are immaterial. For the closed claim 10, the gate checks the common formula for **arbitrary small and large IRs**, then specializes its shape to `sinkOnly` and `clean`; it does not infer equivalence merely because both concrete statements are true.
+
+Verdicts below remain pending until the full claim-and-witness re-gate finishes.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+| 1 `runtime_exclusive` | UNDECIDED (gate completion pending) | [claim](bg0n1_1.receipt.json), [witness](bg0n1_1.witness.receipt.json) | Same edge-source equality. Does NOT say (a–c) respected: inclusion, no completeness or monitoring. |
+| 2 `agent_call_legal` | UNDECIDED (gate completion pending) | [claim](bg0n1_2.receipt.json), [witness](bg0n1_2.witness.receipt.json) | Same legal-call predicate. Does NOT say (a–c) respected: legality permits a non-gate call that the model bank rejects. |
+| 3 `protocol_safe` | UNDECIDED (gate completion pending) | [claim](bg0n1_3.receipt.json), [witness](bg0n1_3.witness.receipt.json) | Same `Good`. Does NOT say (a–d) respected: no reviewer, role disjointness, business-intent uniqueness, or Python proof. |
+| 4 `one_use` | UNDECIDED (gate completion pending) | [claim](bg0n1_4.receipt.json), [witness](bg0n1_4.witness.receipt.json) | Same reserved-ID `Nodup`, with no legality premise. Does NOT say (a–c) respected. |
+| 5 `gate_contract` | UNDECIDED (gate completion pending) | [claim](bg0n1_5.receipt.json), [witness](bg0n1_5.witness.receipt.json) | Same invariant/prefix/acceptability conjunction after unfolding the two lets. Prefix caveat respected; cap wording needs clarification below. |
+| 6 `broker_contract` | UNDECIDED (gate completion pending) | [claim](bg0n1_6.receipt.json), [witness](bg0n1_6.witness.receipt.json) | Same `Safe t` under the same trace premise. Does NOT say (a–c) respected: the predicate itself has no approval, sink, or database assertion. |
+| 7 `deployment_safe` | UNDECIDED (gate completion pending) | [claim](bg0n1_7.receipt.json), [witness](bg0n1_7.witness.receipt.json) | Same five conjuncts, grouped into four English items, after unfolding `s`. Does NOT say (a–d) respected. |
+| 8 `accepted_path_safety_monotone` | UNDECIDED (gate completion pending) | [claim](bg0n1_8.receipt.json), [witness](bg0n1_8.witness.receipt.json) | Same absence of both paths for each agent. Does NOT say (a–c) respected: smaller acceptance is not concluded. |
+| 9 `path_edge_subset` | UNDECIDED (gate completion pending) | [claim](bg0n1_9.receipt.json), [witness](bg0n1_9.witness.receipt.json) | Same larger-graph path conclusion under edge inclusion and two ID equalities. All stated exclusions respected. |
+| 10 `requested_monotonicity_counterexample` | UNDECIDED (gate completion pending) | [claim](bg0n1_10.receipt.json), [witness](bg0n1_10.witness.receipt.json) | Same concrete five-part formula, structurally checked for arbitrary IR pairs. Acceptance/path-safety distinction respected. |
+
+## Pointwise comparisons and witnesses
+
+1. With `Accepted d`, `Faithful d actual`, membership of `e`, authority, and sink-target premises fixed, both conclusions are exactly `e.source = d.receiver`. The witness uses the accepted six-node `clean` graph, its nonempty edge list, and its authority-bearing sink edge. `Faithful.captured` is only list inclusion.
+2. With acceptance and the receiver/agent node hypotheses fixed, both conclusions are `SC26.legal (roles d r.uid approvers admins) (.bankCall a.uid key tx)`. Unfolding `roles` and `legal` gives `a.uid ≠ r.uid`. The witness supplies distinct concrete receiver/agent nodes and a direct bank call. The theorem does not prohibit issuing that call or separate approvers/admins from agents.
+3. Under exactly the same operation-legality premise, both conclusions are `SC26.Good R cap (SC26.run R cap SC26.full SC26.init ops)`. The definition has exactly the stated request/payload/reservation/approval, unique-key, and amount-bound clauses. The witness is a five-operation legal trace that actually publishes one positive-amount payment. Approval is an identity-labelled model operation, not independent artifact review.
+4. Both conclusions are `(SC26.run R cap SC26.full SC26.init ops).reserved.Nodup`. No legality premise is inserted. The witness reaches reserved IDs `[0]` and spent amount `1`. The English inference about charging follows from the append-only reservation list and `execute`'"'s nonce guard; it is not a claim about repeated business intent or broker nonces.
+5. Both conclusions contain exactly the SC26 invariant, initial-bank prefix, and per-entry acceptability. The back file names the system "'`G` and final state `s`; these lets reduce to the original expressions. The witness runs five individually typed legal operations and reaches bank `[(0,payload)]`. The prefix from `init.bank = []` does not, by itself, prove monotonicity between arbitrary intermediate states; the separate model step theorem supplies that fact.
+6. Both conclusions are `TrustedBroker.Safe t` under `Trace R (initial cap) t`. Unfolding `Safe` gives `t.spent ≤ t.cap`, `t.releases ≤ t.spent`, consumed-nonce uniqueness, and the budget bound for every lease present in the lookup function. Every step preserves `cap`, so the final `t.cap` is the supplied initial cap (also stated by `broker_trace_cap`). The witness includes a genuine model stage/review/issue/approve/release chain, ending with spent `1`, one release, and consumed nonce `[7]`. These are abstract transitions, not SQLite observations.
+7. With acceptance, extraction, and refinement fixed, the two conclusions agree on authority exclusivity, exact requested/approved published effects, key uniqueness, amount sum, and list length. Unfolding the back file'"'s final-state let is sufficient. The witness has all three premises and one published effect. "'`publication` is equality with the model bank supplied as a refinement premise; no theorem here constructs a true history from real executions. The length bound uses `unitCosts`, and there is no reviewer in SC26.
+8. With edge inclusion, node equality, all four distinguished-ID equalities, larger acceptance, and agent membership fixed, both conclusions are `¬ AvoidedPath d a.id d.sink ∧ ¬ AvoidedPath d a.id d.database`. The witness uses `sinkOnly` as a strict edge subset of accepted `clean`, with an actual agent and matching IDs, while also certifying `¬ Accepted sinkOnly`. This directly exercises the English'"'s exclusion of smaller acceptance.
+9. Under the same inclusion, broker/receiver equality, and smaller-path premise, both conclusions are "'`AvoidedPath larger start target`. The witness has a genuine one-edge path from `3` to `4` in `sinkOnly`, with unequal endpoints and a strict edge subset of `clean`. No acceptance, equal-node, sink, or database premise is added.
+10. Both expressions have the same node equality, universal edge inclusion, existential receiver sink-write edge, larger acceptance, and smaller nonacceptance. All five are preserved in the arbitrary-IR comparison. The witness certifies strict edge deletion, six nodes, accepted `clean`, and rejected `sinkOnly`. This is a concrete rejection by positive writer requirements, not a bypass-safety failure.
+
+## Corrections to the English
+
+No replacement of a principal claim statement is needed to make the frozen back proposition match the original type. The following replacement sentences resolve ambiguous or overly broad supporting prose.
+
+- **Claim 5, cap caveat:** Replace “It says nothing about spend cap here” with: “The acceptability predicate has no cap clause. The invariant conjunct includes `spent ≤ cap`, so the theorem does carry a spending-cap guarantee through that invariant.” The existing parenthesis partly explains this, but the opening sentence suggests the opposite.
+- **Claim 5, append-only wording:** “The final bank extends the initially empty bank. This particular prefix conclusion is vacuous about changes between intermediate states; append-only behavior across individual steps is established by the model'"'s separate prefix theorem.”
+- **Claims 8–9, avoided paths:** “An "'`AvoidedPath` may have zero steps. Each nonzero step follows any listed edge whose target is neither the broker nor the receiver; it does not filter by authority, write, or unknown flags, and it does not constrain the starting vertex.” For claim 9 specifically: “Under edge inclusion and matching broker/receiver IDs, every path defined in this way in the smaller graph is also such a path in the larger graph.”
+- **Claim 6, cap reference:** “`Safe t` bounds spending by the cap stored in `t`; every model step preserves that cap, so a trace from `initial cap` gives the same bound against the supplied initial cap.”
+- **Claim 10, kind:** “This is a concrete counterexample to downward monotonicity of the acceptance predicate, produced by deleting required database-write edges; it is not evidence that the reduced graph gains a bypass path.” Calling it a weakened-model failure can obscure that the transition model is unchanged.
+
+## Ambiguities exposed
+
+- **Runtime scope and completeness (1, 7).** The word “real” is interpreted through caller-supplied lists and world assumptions. Neither `Faithful` nor `ExtractionFaithful` asserts that the observed list enumerates all real edges. The English'"'s explicit “Does NOT say” qualifications prevent the stronger reading. Even the source comment's word “exhausts” is stronger than the structure's inclusion field; the comparison follows the declaration, not that comment.
+- **Permission, identity and rejection (2).** “Legal” is the technical non-gate-credential predicate. It is neither an OS access prohibition nor approval of a business operation. The model's authenticated bank rejects the permitted non-gate direct calls. Binding UID to credential in the real sink remains residual.
+- **Approval versus review (3, 7).** “Approved” is the exact-payload identity assertion in SC26. An approver differs from the requester, but may still be another agent. No artifact reviewer or disjoint role lists are inferred. The English's exclusions are respected.
+- **Reservation versus effects (4).** Reserved-ID uniqueness and bank-key uniqueness are different properties. The former does not prevent equal payloads under distinct IDs. Cap bounds amount, not the number of arbitrary SC26 effects; only claim 7's unit-cost refinement produces the length bound.
+- **Invariant versus acceptability (5).** The cap is absent from "'`spec.ok` but present in `spec.Inv`. “Says nothing about cap” is inaccurate if read as describing the full theorem. Empty-initial-log prefix and arbitrary-state append-only behavior must also be distinguished.
+- **`Safe` versus release provenance (6).** `Safe` is precisely the numerical/nonce/lease predicate. The trace relation has approval/review guards, but a release-provenance statement is not a conjunct of `Safe`. Role separation is a field supplied with `Roles`; witnesses demonstrate model satisfiability, not real identity authenticity.
+- **Refinement versus verified execution (7).** The assumed publication equality covers the exact list for the chosen `ops`. Neither a matching history for every real behavior nor correctness of the Python/OS/database follows from the theorem.
+- **Path semantics and acceptance (8–10).** Zero-step paths exist; avoidance concerns each step'"'s target, not a global exclusion of every visited vertex. Path-safety is preserved by edge deletion under the stated identity/node conditions, whereas "'`Accepted` additionally requires positive database writer facts and may fail. The English correctly separates these properties, but should define “avoided.”
+
+## Reproduction and gate integrity
+
+Run from the repository root:
+
+```text
+python3 docs/lean-english/one-to-one/blind-g0n1/regate.py
+```
+
+The script reads the saved statements/proofs, checks every statement, and invokes the deterministic gate separately for `claim` and `witness` for IDs `bg0n1_1` through `bg0n1_10`. It rewrites only JSON receipts; the helper uses and removes fresh temporary Lean files. It exits nonzero for a missing file, helper mismatch, statement failure, or either proof failure. It needs no old receipts. Imports and project paths come directly from `run_gate_blind.py`.
+
+The local `leangate_imports.py` is a byte-identical copy of the authorized helper; all banned-token and axiom checks are unchanged. `run_gate_blind.diff` records the runner changes: the claim-file glob, `PL_IMPORTS`, and the necessary repository-root depth correction because the output directory is one level deeper. `OUT` still resolves to the runner'"'s own directory. As in the supplied runner, "'`gate_unmodified` is false because the supplied helper has its documented import-header patch; `security_checks_unchanged` records the byte-for-byte comparison with that authorized helper.
+
+All witnesses are nondegenerate hand-authored model instances, with nonempty authority/path/transaction behavior as appropriate. None is an attestation of observed runtime behavior. Initial failed gate attempts are retained in `FIRST-GATE-FAILURES.json`; they concerned unfolding witness definitions and indentation when constructing a comparison let block, not any repair to a frozen back file.
+EOF'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,shutil,datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+prior=out/'first-regate-receipts';prior.mkdir(exist_ok=True)
+for p in out.glob('bg0n1_*.receipt.json'):
+ assert json.loads(p.read_text())['passed'],p
+ p.rename(prior/p.name)
+logs=out/'initial-runner-logs';logs.mkdir(exist_ok=True)
+for pattern in ('bg0n1_*.gate.txt','bg0n1_*.statement-check.txt'):
+ for p in out.glob(pattern): p.rename(logs/p.name)
+assert not list(out.glob('bg0n1_*.receipt.json'))
+if (out/'gate-tmp').exists(): (out/'gate-tmp').rmdir()
+if (out/'__pycache__').exists(): shutil.rmtree(out/'__pycache__')
+protected=list(out.glob('bg0n1_*.statement.lean'))+list(out.glob('bg0n1_*.proof.lean'))+[out/'typed/HASHES.json',out/'run_gate_blind.py',out/'regate.py',out/'leangate_imports.py',out/'FROZEN-HASHES.json']+list((out/'typed').glob('*.lean'))
+(out/'CLEAN-REGATE-BEFORE.json').write_text(json.dumps({'time_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'prior_receipts_present':False,'gate_tmp_present':False,'hashes':{str(p.relative_to(out)):hashlib.sha256(p.read_bytes()).hexdigest() for p in protected}},indent=2)+'\\n')
+PY
+python3 docs/lean-english/one-to-one/blind-g0n1/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+frozen=json.loads((out/'FROZEN-HASHES.json').read_text())
+assert all(hashlib.sha256((out/n).read_bytes()).hexdigest()==h for n,h in frozen.items())
+for row in json.loads((out/'COMPARISONS.json').read_text()):
+ assert hashlib.sha256(Path(row['source']).read_bytes()).hexdigest()==row['source_sha256']
+print('All 20 frozen statements/proofs and both original source files retain their saved hashes.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n1')
+now=datetime.datetime.now(datetime.timezone.utc)
+hashof=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+base=json.loads((out/'CLEAN-REGATE-BEFORE.json').read_text())
+unchanged={n:hashof(out/n)==h for n,h in base['hashes'].items()}
+assert all(unchanged.values())
+receipts={}
+for n in range(1,11):
+ for target,suffix in [('claim','.receipt.json'),('witness','.witness.receipt.json')]:
+  p=out/f'bg0n1_{n}{suffix}'
+  r=json.loads(p.read_text())
+  assert r['passed'] and r['statement_passed'] and r['security_checks_unchanged'] and r['target']==target
+  assert r['statement_sha256']==hashof(out/f'bg0n1_{n}.statement.lean')
+  assert r['proof_sha256']==hashof(out/f'bg0n1_{n}.proof.lean')
+  assert r['gate_sha256']==hashof(out/'leangate_imports.py')
+  receipts[p.name]=True
+assert len(receipts)==20
+assert not list((out/'gate-tmp').iterdir())
+assert not (out/'__pycache__').exists()
+report={'time_utc':now.isoformat(),'regate_exit_code':0,'started_without_receipts':not base['prior_receipts_present'],'started_without_gate_temporary_directory':not base['gate_tmp_present'],'checks_passed':receipts,'protected_files_unchanged':unchanged,'temporary_check_files_removed':True,'python_bytecode_cache_created':False}
+(out/'CLEAN-REGATE-VERIFIED.json').write_text(json.dumps(report,indent=2)+'\\n')
+results=out/'RESULTS.md'
+s=results.read_text().replace('Verdicts below remain pending until the full claim-and-witness re-gate finishes.','All ten pointwise comparisons and all ten separately audited witnesses passed. A second run began with no prior receipts or gate temporary directory, regenerated all twenty PASS receipts, and exited 0. Protected saved files retained their hashes; see "'`CLEAN-REGATE-VERIFIED.json`.'"')
+s=s.replace('UNDECIDED (gate completion pending)','EQUIVALENT')
+results.write_text(s)
+first=datetime.datetime.fromtimestamp((out/'compile-fixes/1.original-compile.txt').stat().st_mtime,datetime.timezone.utc)
+elapsed=(now-first).total_seconds()
+(out/'PROGRESS.md').write_text(f'''# Phase B progress
+
+Done: 10/10 claims, each EQUIVALENT after a passed pointwise claim gate. All 10/10 separately gated Witnesses also passed. Every back file compiled as written; all Phase A hashes matched. Byte-identical typed copies and typed/HASHES.json were saved before opening original declarations. No compilation repair was necessary. All ten compile-fixes records report unchanged meaning.
+
+Done: RESULTS.md contains the verdict table, receipts, per-claim comparisons, hostile checks of every “Does NOT say” qualification, replacement English sentences, and exposed ambiguities. Original signatures and source hashes, frozen statement/proof hashes, initial failed construction attempts, and deterministic gate receipts are saved.
+
+Done: run_gate_blind.py uses the authorized gate helper copied byte-for-byte. Its path/glob/import changes are recorded in run_gate_blind.diff; banned-token and axiom checks are unchanged. regate.py rechecks every saved Claim and Witness, writes only JSON receipts apart from the gate's ephemeral check files, and returns nonzero on any failed check. Independent claims run in four worker threads; each proof still goes through the same deterministic gate separately.
+
+Verification: the first full re-gate passed all 20 checks. The second re-gate started with zero previous receipts, no gate temporary directory, and no Python bytecode cache; it regenerated 20 PASS receipts and exited 0. All protected saved files retained their hashes, and temporary Lean files were removed. Details: CLEAN-REGATE-BEFORE.json and CLEAN-REGATE-VERIFIED.json. The recorded original source files retain their source hashes.
+
+Not done: none of the requested Phase B work remains unfinished. No UNDECIDED claims or outstanding proof failures remain.
+
+Could not do: no requested action was blocked. This check and its abstract nonempty witnesses do not establish real extraction completeness, identity authenticity, storage correctness, or protocol publication refinement; those are expressly outside the conclusions and remain premises.
+
+Time: first saved compilation receipt {first.isoformat()}; completed {now.isoformat()}. Elapsed since that first receipt: {elapsed/60:.1f} minutes. Exact session-start time was not recorded.
+
+Scope: writes stayed under docs/lean-english/one-to-one/blind-g0n1/. No ControlStack source edits, git commands, external comparison records, sub-agents, or downloads were used.
+''')
+audit=json.loads((out/'AUDIT.json').read_text())
+audit.update({'completed_utc':now.isoformat(),'all_10_claims_equivalent':True,'all_10_witnesses_passed':True,'receipt_free_regate_exit_code':0,'english_input_sha256':hashof(Path('docs/lean-english/sol-input/batch-g0n1.md')),'authorized_helper_sha256':hashof(out.parent/'leangate_imports.py')})
+(out/'AUDIT.json').write_text(json.dumps(audit,indent=2)+'\\n')
+print('FINAL: 10 EQUIVALENT; 20 PASS receipts; receipt-free regate exit 0; protected hashes unchanged.')
+print('RESULTS.md and PROGRESS.md finalized.')
+PY"

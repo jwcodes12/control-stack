@@ -112,17 +112,28 @@ def verify(a):
     env = dict(os.environ, PATH=f"{Path.home()}/.elan/bin:" + os.environ["PATH"])
     before = {f.name: f.read_text() for f in bd.glob("*.receipt.json")}
     p = subprocess.run([sys.executable, str(bd / "regate.py")], cwd=work / "b", env=env, text=True, capture_output=True, timeout=7200)
-    rows = []
+    claims = batch(a.tag)
+    ids = {}
     for f in sorted(bd.glob("*.receipt.json")):
-        new = json.loads(f.read_text())
+        m = re.match(r"(b" + re.escape(a.tag) + r"_\d+)\.(witness[.-])?receipt\.json$", f.name)
+        if not m:
+            continue
+        d = json.loads(f.read_text())
+        kind = "witness" if (m.group(2) or d.get("target") == "witness") else "claim"
         old = json.loads(before.get(f.name, "{}") or "{}")
-        w = f.name.replace(".receipt.json", ".witness-receipt.json")
-        wr = json.loads((bd / w).read_text()) if (bd / w).exists() else {}
-        rows.append({"id": f.name.split(".")[0], "claim_passed": new.get("passed"), "witness_passed": wr.get("passed"),
-                     "same_hashes_as_sol": all(new.get(k) == old.get(k) for k in ("statement_sha256", "proof_sha256"))})
+        row = ids.setdefault(m.group(1), {"id": m.group(1)})
+        row[kind + "_passed"] = d.get("passed") if kind == "claim" else d.get("passed", d.get("witness_passed"))
+        row.setdefault("same_hashes_as_sol", True)
+        row["same_hashes_as_sol"] &= all(d.get(k) == old.get(k) for k in ("statement_sha256", "proof_sha256"))
+    rows = [ids[k] for k in sorted(ids, key=lambda x: int(x.rsplit("_", 1)[1]))]
+    # a claim receipt may carry the witness verdict itself (witness_passed) when the driver gates both together
+    for r in rows:
+        if r.get("witness_passed") is None:
+            f = bd / (r["id"] + ".receipt.json")
+            r["witness_passed"] = json.loads(f.read_text()).get("witness_passed")
     result = {"tag": a.tag, "regate_exit": p.returncode, "freeze_command": freeze, "first_original_read": opened,
-              "frozen_before_open": freeze is not None and opened is not None and freeze < opened, "gates": rows,
-              "all_pass": p.returncode == 0 and bool(rows) and all(r["claim_passed"] and r["witness_passed"] for r in rows)}
+              "frozen_before_open": freeze is not None and opened is not None and freeze < opened, "expected_claims": len(claims), "gates": rows,
+              "all_pass": p.returncode == 0 and len(rows) == len(claims) and all(r.get("claim_passed") and r.get("witness_passed") for r in rows)}
     (work / "VERIFY.json").write_text(json.dumps(result, indent=1) + "\n")
     print(json.dumps({k: v for k, v in result.items() if k != "gates"}), f"{len(rows)} gate receipts")
 

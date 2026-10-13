@@ -1,0 +1,456 @@
+/bin/bash -lc "pwd; rg --files -g AGENTS.md -g lakefile.lean -g lakefile.toml -g lean-toolchain -g '*g0n2*' -g 'run_gate.py' -g 'leangate_imports.py' -g 'leangate-imports.patch'"
+
+---
+/bin/bash -lc 'ls docs/lean-english/one-to-one/blind-g0n2; cat docs/lean-english/sol-input/batch-g0n2.md; cat docs/lean-english/one-to-one/blind-g0n2/CLAIMS.txt; cat docs/lean-english/one-to-one/blind-g0n2/BACK-HASHES.json'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/run_gate.py; cat docs/lean-english/one-to-one/leangate_imports.py; cat docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'ls -la docs/lean-english/one-to-one/blind-g0n2/back; for f in docs/lean-english/one-to-one/blind-g0n2/back/*; do cat "$f"; done; for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g0n2/AGENTS.md; do if test -f "$p"; then cat "$p"; fi; done'
+
+---
+/bin/bash -lc 'for p in AGENTS.md CLAUDE.md GEMINI.md; do if test -f "$p"; then cat "$p"; fi; done; python3 - <<'"'PY'
+from pathlib import Path
+import hashlib, json, subprocess, datetime, concurrent.futures
+out=Path('docs/lean-english/one-to-one/blind-g0n2')
+for name in ['compile-fixes','typed','compile-logs']:(out/name).mkdir(exist_ok=True)
+manifest=json.loads((out/'back/BACK-HASHES.json').read_text())
+files=sorted((out/'back').glob('*.lean'))
+for f in files:
+ key='back/'+f.name
+ assert hashlib.sha256(f.read_bytes()).hexdigest()==manifest['files'][key],key
+(out/'PROGRESS.md').write_text('# Phase B progress\\n\\nStarted: '+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n\\nDone: verified all eight Phase A hashes. Original declarations not opened.\\n\\nNot done: compilation, typing hashes, pointwise comparison, gates, English audit.\\n')
+def check(f):
+ r=subprocess.run(['lake','env','lean',str(f)],capture_output=True,text=True,timeout=120)
+ (out/'compile-logs'/f'{f.name.split(\"-\")[0]}.txt').write_text(r.stdout+r.stderr)
+ return f.name,r.returncode,r.stdout+r.stderr
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+ for name,rc,log in pool.map(check,files):print(name,rc,log,flush=True)
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n2')
+hashes={}
+for f in sorted((out/'back').glob('*.lean')):
+ t=out/'typed'/f.name;t.write_bytes(f.read_bytes());hashes[t.name]=hashlib.sha256(t.read_bytes()).hexdigest()
+ (out/'compile-fixes'/f'{f.name.split(\"-\")[0]}.diff').write_text('No repairs: original back file compiled as written. Empty diff; no meaning change.\\n')
+stamp=datetime.datetime.now(datetime.timezone.utc).isoformat()
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':stamp,'original_declarations_opened':False,'files':hashes},indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('# Phase B progress\\n\\nTyping freeze: '+stamp+'\\n\\nDone: all eight Phase A hashes verified; all eight back files compiled unchanged; typed copies and SHA-256 hashes saved BEFORE opening original declarations. No repairs.\\n\\nNot done: pointwise comparison, claims and witness gates, English audit, clean regate.\\n\\nCould not do: nothing so far.\\n')
+print('All eight typed files frozen at',stamp)
+PY"
+
+---
+/bin/bash -lc "rg -n 'indexed_receipts_sound|transaction_preserves|transaction_coherent|committed_nonce_unusable|trace_preserves|final_safe|replay_was_not_allowed|omitted_tail_is_accepted' ControlStack; cat ControlStack/Deployment/R2Contracts.lean; cat ControlStack/Deployment/TranscriptReplay.lean; cat ControlStack/TrustedBroker.lean"
+
+---
+/bin/bash -lc 'cat ControlStack/Core/CheckedTrace.lean; cat lakefile.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import difflib
+p=Path('docs/lean-english/one-to-one');o=p/'blind-g0n2'
+s=(p/'run_gate.py').read_text()
+t=s.replace('parents[3]','parents[4]').replace(\"OUT/'leangate_imports.py'\",\"OUT.parent/'leangate_imports.py'\").replace(\"'g0_*.statement.lean'\",\"'bg0n2_*.statement.lean'\")
+(o/'run_gate_blind.py').write_text(t)
+(o/'run_gate_blind.diff').write_text('Path relocation only: ROOT gains one parent because the copy is one directory deeper; helper stays in the supplied gate directory. OUT is the copy directory. Imports unchanged: existing trusted modules suffice. File glob changed to bg0n2_*.statement.lean. Gate helper/security checks unchanged. Run with python3 -B.\\n\\n'+''.join(difflib.unified_diff(s.splitlines(True),t.splitlines(True),fromfile='run_gate.py',tofile='blind-g0n2/run_gate_blind.py')))
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g0n2/prepare_comparisons.py <<'PY'
+\"\"\"Save pointwise comparisons of frozen translations and inspected source signatures.\"\"\"
+from pathlib import Path
+import json, hashlib
+OUT = Path(__file__).resolve().parent
+ROOT = OUT.parents[3]
+T = 'ControlStack.TrustedBroker.'
+D = 'ControlStack.Deployment.'
+TR = D+'TranscriptReplay.'
+C = 'ControlStack.CheckedTrace.'
+opens = 'open ControlStack ControlStack.TrustedBroker ControlStack.Deployment ControlStack.Deployment.TranscriptReplay\\n'
+params = {
+1: '(R : Roles) (table : IndexedBrokerTable R) (start : Nat) (rs : List (CheckedTrace.Receipt Nat Nat))',
+2: '(roles : Roles) (s t : State)',
+3: '(roles : Roles) (s t : State)',
+4: \"(roles : Roles) (s : State) (r : Request) (a : Approval) (l : Lease) (r' : Request) (now : Nat) (a' : Approval) (l' : Lease)\",
+5: '(roles : Roles) (s t : State)',
+6: '',
+7: \"(now : Nat) (a' : Approval) (l' : Lease)\",
+8: ''}
+args = {1:'R table start rs',2:'roles s t',3:'roles s t',4:\"roles s r a l r' now a' l'\",5:'roles s t',6:'',7:\"now a' l'\",8:''}
+hyps = {1:'CheckedTrace.verified table.step start rs = true',2:'Safe s → Step roles s t',3:'Coherent s → Step roles s t',4:\"r'.nonce = r.nonce\",5:'Safe s → Trace roles s t',6:'',7:'',8:''}
+conclusions = {
+1:'TrustedBroker.Trace R (table.interpret start) (table.interpret (CheckedTrace.recordedEnd start rs))',
+2:'Safe t',3:'Coherent t',
+4:\"¬ Allowed roles (committed s r a l) now r' a' l'\",
+5:'Safe t',6:'TrustedBroker.Safe s10',
+7:\"¬ TrustedBroker.Allowed R s8 now q8 a' l'\",
+8:'CheckedTrace.verified table.step 0 withoutLastRelease = true'}
+# Original signatures keep their actual binder order. Only pointwise comparisons align arguments.
+orig_sigs = {
+1:'∀ (R : Roles) (table : IndexedBrokerTable R) (rs : List (CheckedTrace.Receipt Nat Nat)) (start : Nat), CheckedTrace.verified table.step start rs = true → TrustedBroker.Trace R (table.interpret start) (table.interpret (CheckedTrace.recordedEnd start rs))',
+2:'∀ (roles : Roles) (s t : State), Safe s → Step roles s t → Safe t',
+3:'∀ (roles : Roles) (s t : State), Coherent s → Step roles s t → Coherent t',
+4:\"∀ (roles : Roles) (s : State) (r : Request) (a : Approval) (l : Lease) (now : Nat) (r' : Request) (a' : Approval) (l' : Lease), r'.nonce = r.nonce → ¬ Allowed roles (committed s r a l) now r' a' l'\",
+5:'∀ (roles : Roles) (s t : State), Safe s → Trace roles s t → Safe t',
+6:conclusions[6],7:\"∀ (now : Nat) (a' : Approval) (l' : Lease), \"+conclusions[7],8:conclusions[8]}
+witnesses = {
+1:'∃ (R : Roles) (table : IndexedBrokerTable R) (start : Nat) (rs : List (CheckedTrace.Receipt Nat Nat)), rs ≠ [] ∧ CheckedTrace.verified table.step start rs = true ∧ (table.interpret start).spent < (table.interpret (CheckedTrace.recordedEnd start rs)).spent',
+2:'∃ (roles : Roles) (s t : State), Safe s ∧ Step roles s t ∧ s.spent < t.spent',
+3:'∃ (roles : Roles) (s t : State), Coherent s ∧ Step roles s t ∧ 1 ∉ s.consumed ∧ 1 ∈ t.consumed',
+4:\"∃ (roles : Roles) (s : State) (r : Request) (a : Approval) (l : Lease) (now : Nat) (r' : Request), Allowed roles s now r a l ∧ r'.nonce = r.nonce ∧ 0 < r.cost ∧ ¬ Allowed roles (committed s r a l) now r' a l\",
+5:'∃ (roles : Roles) (s t : State), Safe s ∧ Trace roles s t ∧ s.spent < t.spent ∧ t.releases = 2',
+6:'s10.spent = 2 ∧ s10.cap = 2 ∧ s10.releases = 2 ∧ s10.consumed = [2, 1] ∧ (s10.leases 1).map Lease.used = some 1 ∧ (s10.leases 2).map Lease.used = some 1',
+7:'q8 = q7 ∧ s8 = committed s7 q7 a1 l1 ∧ Allowed R s7 ControlStack.Deployment.TranscriptReplay.now q7 a1 l1 ∧ s8.approvals 1 = some {a1 with used := true}',
+8:'receipts.length = 10 ∧ withoutLastRelease.length = 9 ∧ withoutLastRelease ≠ [] ∧ CheckedTrace.recordedEnd 0 withoutLastRelease = 9 ∧ CheckedTrace.recordedEnd 0 receipts = 10 ∧ CheckedTrace.verified table.step 0 receipts = true'}
+prefix='(.cons tx0 (.cons tx1 (.cons tx2 (.cons tx3 (.cons tx4 (.cons tx5 (.cons tx6 (.nil s7))))))))'
+allowed='''by
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    all_goals first | exact ⟨23703, rfl⟩ | exact Or.inl rfl | decide'''
+proofs = {
+1:'''by
+  refine ⟨R, table, 0, receipts, ?_, transcript_checked, ?_⟩
+  · decide
+  · decide''',
+2:f'''by
+  refine ⟨R, s7, s8, ?_, tx7, ?_⟩
+  · exact trace_preserves R s0 s7 (initial_safe 2) {prefix}
+  · decide''',
+3:f'''by
+  refine ⟨R, s7, s8, ?_, tx7, ?_, ?_⟩
+  · exact trace_coherent R s0 s7 (initial_coherent 2) {prefix}
+  · decide
+  · decide''',
+4:f'''by
+  refine ⟨R, s7, q7, a1, l1, ControlStack.Deployment.TranscriptReplay.now, q8, ?_, rfl, ?_, ?_⟩
+  · exact {allowed}
+  · decide
+  · exact committed_nonce_unusable R s7 q7 a1 l1 ControlStack.Deployment.TranscriptReplay.now q8 a1 l1 rfl''',
+5:'''by
+  refine ⟨R, s0, s10, initial_safe 2, runtime_trace, ?_, ?_⟩ <;> decide''',
+6:'by decide',
+7:f'''by
+  refine ⟨rfl, rfl, ?_, ?_⟩
+  · exact {allowed}
+  · decide''',
+8:'by decide'}
+mapping={}
+for f in sorted((OUT/'typed').glob('*.lean')):
+ n=int(f.name.split('-')[0]);name=f.stem.split('-',1)[1];cid=f'bg0n2_{n}'
+ text=f.read_text();body=text[text.index('def Back_'):text.rindex('\\nend ')].strip()
+ back_name='Back_'+name
+ # Retain the frozen definition text exactly, with its original ambient namespace opened.
+ ambient=D if n==1 else T if n in [2,3,4,5] else TR
+ header=f'namespace PL_{cid}\\nopen {ambient.rstrip(\".\")}\\n'+opens
+ back_term='BackConclusion '+args[n]
+ orig_term='OrigConclusion '+args[n]
+ quantifier=('∀ '+params[n]+', ') if params[n] else ''
+ implications=(hyps[n]+' → ') if hyps[n] else ''
+ back_shape=quantifier+implications+back_term
+ pointwise=quantifier+implications+'('+back_term+' ↔ '+orig_term+')'
+ source_name=ambient+name
+ statement=header+'\\n'+body+'\\n\\n'
+ statement+=f'def BackConclusion {params[n]} : Prop :=\\n  {conclusions[n]}\\n\\n'
+ statement+=f'def OrigConclusion {params[n]} : Prop :=\\n  {conclusions[n]}\\n\\n'
+ statement+=f'def OrigSignature : Prop :=\\n  {orig_sigs[n]}\\n\\n'
+ statement+=f'def originalSignatureChecked : OrigSignature :=\\n  @{source_name}\\n\\n'
+ statement+=f'def Claim : Prop :=\\n  ({back_name} = ({back_shape})) ∧\\n  ({pointwise})\\n\\n'
+ statement+=f'def Witness : Prop :=\\n  {witnesses[n]}\\n\\nend PL_{cid}\\n'
+ claim='by\\n  constructor\\n  · rfl\\n  · '+('intros\\n    ' if params[n] or hyps[n] else '')+'exact Iff.rfl'
+ proof=f'theorem claim : Claim := {claim}\\n\\ntheorem witness : Witness := {proofs[n]}\\n'
+ (OUT/f'{cid}.statement.lean').write_text(statement)
+ (OUT/f'{cid}.proof.lean').write_text(proof)
+ src=ROOT/('ControlStack/Deployment/R2Contracts.lean' if n==1 else 'ControlStack/TrustedBroker.lean' if n in [2,3,4,5] else 'ControlStack/Deployment/TranscriptReplay.lean')
+ source=src.read_text();sig=source[source.index('theorem '+name):].split(':=',1)[0].strip()
+ mapping[cid]={'typed_file':str(f.relative_to(OUT)), 'typed_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'original_file':str(src.relative_to(ROOT)), 'original_signature_text':sig, 'conclusion':conclusions[n], 'hypotheses':hyps[n], 'method':'Definitional equality of frozen Back shape; pointwise iff by Iff.rfl, no use of truth of original theorem. Original signature separately type-checked against its declaration.'}
+(OUT/'comparison-map.json').write_text(json.dumps(mapping,indent=2)+'\\n')
+PY
+python3 -B docs/lean-english/one-to-one/blind-g0n2/prepare_comparisons.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g0n2/regate.py <<'PY'
+\"\"\"Re-gate all eight saved comparisons and their witnesses; never rewrite inputs.
+
+Run from the repository root:
+  python3 -B docs/lean-english/one-to-one/blind-g0n2/regate.py
+Only receipts/logs and transient gate files are written, inside this directory.
+\"\"\"
+from pathlib import Path
+import sys
+sys.dont_write_bytecode = True
+import concurrent.futures
+import datetime
+import hashlib
+import importlib.util
+import json
+
+OUT = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('blind_gate_runner', OUT/'run_gate_blind.py')
+runner = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(runner)
+g = runner.g
+
+
+def check(cid):
+    statement_path = OUT/f'{cid}.statement.lean'
+    proof_path = OUT/f'{cid}.proof.lean'
+    try:
+        statement = statement_path.read_text()
+        proof = proof_path.read_text()
+    except OSError as e:
+        statement, proof = '', ''
+        statement_ok, statement_log = False, f'MISSING INPUT: {e}'
+    else:
+        try:
+            statement_ok, statement_log = g.check_statement(cid, statement, [runner.IMPORTS])
+        except Exception as e:
+            statement_ok, statement_log = False, f'STATEMENT EXCEPTION: {e}'
+    (OUT/f'{cid}.statement-check.txt').write_text(statement_log+'\\n')
+    passed = []
+    for target in ['claim', 'witness']:
+        if statement_ok:
+            try:
+                ok, log = g.gate(cid, statement, proof, target, [runner.IMPORTS], timeout=120)
+            except Exception as e:
+                ok, log = False, f'GATE EXCEPTION: {e}'
+        else:
+            ok, log = False, 'STATEMENT CHECK FAILED\\n'+statement_log
+        stem = cid if target == 'claim' else cid+'.witness'
+        (OUT/f'{stem}.gate.txt').write_text(log+'\\n')
+        receipt = {
+            'cid': cid, 'target': target, 'passed': ok,
+            'statement_check_passed': statement_ok,
+            'statement_sha256': hashlib.sha256(statement.encode()).hexdigest(),
+            'proof_sha256': hashlib.sha256(proof.encode()).hexdigest(),
+            'gate_sha256': hashlib.sha256(Path(g.__file__).read_bytes()).hexdigest(),
+            'runner_sha256': hashlib.sha256((OUT/'run_gate_blind.py').read_bytes()).hexdigest(),
+            'regate_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            'gate_log_sha256': hashlib.sha256((log+'\\n').encode()).hexdigest(),
+            'trusted_header': runner.IMPORTS,
+            'PL_IMPORTS': g.import_header(), 'PL_LEAN_PROJ': str(g.PROJ),
+            'gate_unmodified': False, 'security_checks_unchanged': True,
+            'imports_option_local_only': True,
+            'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        }
+        (OUT/f'{stem}.receipt.json').write_text(json.dumps(receipt, indent=2)+'\\n')
+        passed.append(ok)
+        print(cid, target, 'PASS' if ok else 'FAIL', log[:200], flush=True)
+    return all(passed)
+
+
+if __name__ == '__main__':
+    ids = [f'bg0n2_{n}' for n in range(1, 9)]
+    # All expected ids are checked, even if an input is missing.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(pool.map(check, ids))
+    summary = {'passed': all(results), 'claims_and_witnesses': dict(zip(ids, results)),
+               'utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    (OUT/'regate.receipt.json').write_text(json.dumps(summary, indent=2)+'\\n')
+    sys.exit(0 if all(results) else 1)
+PY
+python3 -B docs/lean-english/one-to-one/blind-g0n2/regate.py"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_4.statement.lean; cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_4.proof.lean; cat docs/lean-english/one-to-one/blind-g0n2/run_gate_blind.diff'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_1.gate.txt; cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_2.gate.txt; cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_4.gate.txt'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_6.gate.txt; cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_8.gate.txt; cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_7.gate.txt'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g0n2/prepare_comparisons.py')
+s=p.read_text().replace(\"proof=f'theorem claim\", \"proof=opens+f'theorem claim\")
+s=s.replace(\"6:'by decide',\", \"6:'by unfold Witness; decide',\").replace(\"8:'by decide'}\", \"8:'by unfold Witness; decide'}\")
+s=s.replace(\"statement+=f'def originalSignatureChecked\", \"statement+=f'theorem originalSignatureChecked\")
+s=s.replace(\"    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩\\n    all_goals\", \"      refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩\\n      all_goals\")
+p.write_text(s)
+PY
+python3 -B docs/lean-english/one-to-one/blind-g0n2/prepare_comparisons.py
+python3 -B docs/lean-english/one-to-one/blind-g0n2/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+p=Path('docs/lean-english/one-to-one/blind-g0n2/prepare_comparisons.py')
+s=p.read_text().replace('all_goals first | exact ⟨23703, rfl⟩ | exact Or.inl rfl | decide','all_goals first | rfl | exact ⟨23703, rfl⟩ | exact Or.inl rfl | decide')
+s=s.replace(\"CheckedTrace.verified table.step 0 receipts = true'}\", \"CheckedTrace.verified table.step 0 receipts = true ∧ CheckedTrace.verified table.step 0 withoutMiddleRelease = false ∧ CheckedTrace.verified table.step 0 withoutDenial = false'}\")
+s=s.replace(\"source_name=ambient+name\", \"\"\"orig_params=params[n]
+ if n==1:
+  orig_params='(R : Roles) (table : IndexedBrokerTable R) (rs : List (CheckedTrace.Receipt Nat Nat)) (start : Nat)'
+ elif n==4:
+  orig_params=\\\"(roles : Roles) (s : State) (r : Request) (a : Approval) (l : Lease) (now : Nat) (r' : Request) (a' : Approval) (l' : Lease)\\\"
+ orig_shape=(('∀ '+orig_params+', ') if orig_params else '')+implications+orig_term
+ source_name=ambient+name\"\"\")
+s=s.replace(\"({back_name} = ({back_shape})) ∧\\\\n  ({pointwise})\", \"({back_name} = ({back_shape})) ∧\\\\n  (OrigSignature = ({orig_shape})) ∧\\\\n  ({pointwise})\")
+s=s.replace(\"claim='by\\\\n  constructor\\\\n  · rfl\\\\n  · '+('intros\\\\n    ' if params[n] or hyps[n] else '')+'exact Iff.rfl'\", \"claim='by\\\\n  refine ⟨rfl, rfl, ?_⟩\\\\n  '+('intros\\\\n  ' if params[n] or hyps[n] else '')+'exact Iff.rfl'\")
+p.write_text(s)
+PY
+python3 -B docs/lean-english/one-to-one/blind-g0n2/prepare_comparisons.py
+python3 -B docs/lean-english/one-to-one/blind-g0n2/regate.py"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_4.proof.lean; cat docs/lean-english/one-to-one/blind-g0n2/bg0n2_1.statement.lean'
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+from pathlib import Path
+import subprocess,json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g0n2')
+proof=out/'bg0n2_1.proof.lean'
+saved=out/'bg0n2_1.proof.lean.regate-test-save'
+hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.glob('bg0n2_*.lean')}
+proof.rename(saved)
+try:
+ code=\"import runpy; m=runpy.run_path('docs/lean-english/one-to-one/blind-g0n2/regate.py'); raise SystemExit(0 if m['check']('bg0n2_1') else 1)\"
+ r=subprocess.run(['python3','-B','-c',code],capture_output=True,text=True)
+ assert r.returncode==1,(r.returncode,r.stdout,r.stderr)
+finally:
+ saved.rename(proof)
+assert hashes=={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.glob('bg0n2_*.lean')}
+validation={'missing_input_check_exit':r.returncode,'missing_input_log':r.stdout+r.stderr,'saved_inputs_sha256':hashes,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'clean_state_regate':'pending'}
+(out/'regate-validation.json').write_text(json.dumps(validation,indent=2)+'\\n')
+# Remove only gate receipts/logs. Saved statements/proofs and compile logs remain intact.
+for pattern in ['bg0n2_*.receipt.json','bg0n2_*.gate.txt','bg0n2_*.statement-check.txt','regate.receipt.json']:
+ for p in out.glob(pattern):p.unlink()
+tmp=out/'gate-tmp'
+assert not list(tmp.iterdir())
+tmp.rmdir()
+print('Missing-input check returned 1; saved inputs unchanged. Receipts and transient gate directory cleared for clean regate.')
+PY
+python3 -B docs/lean-english/one-to-one/blind-g0n2/regate.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g0n2/RESULTS.md <<'EOF'
+# Blind g0n2 Phase B results
+
+All eight **back-translated core statements** are EQUIVALENT to the original declarations. This does not certify every explanatory sentence in the English: the corrections below matter.
+
+All eight Phase A SHA-256 values in "'`back/BACK-HASHES.json` matched. Every back file compiled as written with `lake env lean`; no typing/syntax repairs were needed. Unchanged copies and `typed/HASHES.json` were saved at **2026-10-13T04:10:31.055431+00:00, before any original declaration was opened**. Each `compile-fixes/<n>.diff` records the empty diff and no meaning change.
+
+The saved statements retain the frozen back definition body, reproduce the inspected original signature, and check the original declaration directly against that signature. Each Claim proves by reflexivity that both full statement shapes decompose into the specified hypotheses and conclusions, then proves **BackConclusion ↔ OrigConclusion at the same parameters and under the same hypotheses** with `Iff.rfl`. No comparison obtains equivalence from the truth of two closed theorems. Claims 1 and 4 align differently ordered binders by name. For the fixed instances (6 and 8), the expressions themselves coincide. There are no definition claims in this batch. `comparison-map.json` records source signatures and frozen hashes.
+
+Both targets were separately checked with the supplied deterministic gate. The concrete Witness propositions avoid empty receipts, mere denial steps, and zero-budget examples where applicable. Claim proofs have no axioms except claim 8'"'s permitted "'`propext` and `Quot.sound`; witness proofs use at most those same permitted axioms. No prohibited proof token or additional axiom was accepted.
+
+| Claim | Verdict | Receipts | Note: pointwise comparison |
+| --- | --- | --- | --- |
+| 1 `indexed_receipts_sound` | **EQUIVALENT** | [Claim PASS](bg0n2_1.receipt.json), [Witness PASS](bg0n2_1.witness.receipt.json) | Same `R`, table, start, receipts and verification hypothesis; same `Trace` between interpreted start and recorded end. Witness: ten accepted receipts with increasing spent. |
+| 2 `transaction_preserves` | **EQUIVALENT** | [Claim PASS](bg0n2_2.receipt.json), [Witness PASS](bg0n2_2.witness.receipt.json) | Under identical `Safe s` and `Step roles s t`, `Safe t ↔ Safe t`. Witness: first actual release, spent increases. |
+| 3 `transaction_coherent` | **EQUIVALENT** | [Claim PASS](bg0n2_3.receipt.json), [Witness PASS](bg0n2_3.witness.receipt.json) | Under identical `Coherent s` and `Step roles s t`, `Coherent t ↔ Coherent t`. Witness: nonce 1 enters consumed history on the first release. |
+| 4 `committed_nonce_unusable` | **EQUIVALENT** | [Claim PASS](bg0n2_4.receipt.json), [Witness PASS](bg0n2_4.witness.receipt.json) | Under identical nonce equality, the same negated `Allowed` proposition, for every state, roles, requests, approvals, lease and clock. No initial `Allowed` premise added. Witness additionally shows an initially allowed release followed by same-nonce rejection. |
+| 5 `trace_preserves` | **EQUIVALENT** | [Claim PASS](bg0n2_5.receipt.json), [Witness PASS](bg0n2_5.witness.receipt.json) | Under identical `Safe s` and `Trace roles s t`, `Safe t ↔ Safe t`. Witness: full trace from cap 2, ending after two releases. |
+| 6 `final_safe` | **EQUIVALENT** | [Claim PASS](bg0n2_6.receipt.json), [Witness PASS](bg0n2_6.witness.receipt.json) | Identical fixed expression `TrustedBroker.Safe s10`. Witness independently checks spent, cap and releases equal 2; consumed is `[2,1]`; both leases have used 1. |
+| 7 `replay_was_not_allowed` | **EQUIVALENT** | [Claim PASS](bg0n2_7.receipt.json), [Witness PASS](bg0n2_7.witness.receipt.json) | For every clock, approval and lease, the same `¬ Allowed R s8 now q8 a'"' l'"'`. Witness: `q8 = q7`, concrete allowed first release, and stored approval subsequently used. |
+| 8 `omitted_tail_is_accepted` | **EQUIVALENT** | [Claim PASS](bg0n2_8.receipt.json), [Witness PASS](bg0n2_8.witness.receipt.json) | Identical fixed Boolean acceptance equality. Witness checks lengths 10/9, distinct recorded ends 10/9, full acceptance, and rejection of the specific middle-release and denial deletions. |
+
+## Corrections to the English
+
+1. **Claim 1, “A shorter list also passes.”** This is too broad if read as any shorter list. Claim 8'"'s witness checks that the nine-receipt prefix passes, while deleting the middle release or the denial does not. Replace with: **“A valid prefix can also pass: in this transcript the first nine receipts are accepted. Arbitrary deletions need not pass, because the remaining state ids may no longer form a chain.”**
+
+2. **Claim 4, “A different nonce for the same digest can be approved and released again (limited only by lease and global budget).”** The parenthetical is wrong. "'`Allowed` also requires a live broker, the agent role, matching stored unused approval and its fields, an approver signer, approval and lease expiry tests, lease ownership and non-revocation, positive cost, artifact presence and integrity, a review entry, and nonce freshness. Replace with: **“This theorem does not rule out another release of the same digest under a different nonce. Such a release still has to satisfy the entire `Allowed` guard, including a matching unused approval, the role and expiry checks, artifact and review checks, and lease and global budgets.”** It is permission left open by this result, not an unconditional existence claim or a sink guarantee.
+
+3. **Claim 6, the Kind label and placement of the numeric facts.** The original `final_safe` proof is an application of `trace_preserves` to `initial_safe` and `runtime_trace`; it is not itself a `decide` or native computation. Its explicit conclusion is only `Safe s10`. The numeric equalities follow from the fixed definitions and are separately stated by `final_counts`; the gated Witness also checks them. Replace with: **“The replayed model state `s10` satisfies `Safe`. This concrete instance follows from `runtime_trace` and the general `trace_preserves` theorem. In this fixed instance, spent and cap are both 2; those numeric equalities are separate facts about `s10`.”** Kind: **“Concrete-instance theorem derived from a checked model trace.”**
+
+4. **Claim 7, “closed by `rfl`.”** The theorem is a direct application of `committed_nonce_unusable`; `rfl` discharges the nonce equality supplied to that theorem. Replace with: **“This is a direct instance of `committed_nonce_unusable`; the required equality between the two request nonces is proved by `rfl`.”**
+
+5. **Claim 8, “indistinguishable by this checker from a complete one.”** This should refer to acceptance, not identical visible input or output state. The lists have different lengths and recorded ends, as the witness checks. Replace with: **“Both the full transcript and this nine-receipt prefix return acceptance. Acceptance alone therefore does not establish that all real events were recorded.”**
+
+## Ambiguities exposed
+
+- **Claim 1 — scope and intermediate states.** The original conclusion is the `Trace` relation between the two endpoints. It does not return a receipt-authenticity certificate or a runtime ordering certificate. Its table premise already certifies every table operation at every id. The English respects the real-log and sink exclusions; its shorter-list wording needs correction 1. A checked table is an assumption, not a proof that the runtime used it.
+
+- **Claim 2 — exactly what Safe means.** `Safe` is precisely the four stated constraints: spent ≤ cap, releases ≤ spent, consumed nonces have no duplicates, and every stored lease has used ≤ budget. It says nothing about approvals, reviews, digests or destinations. The model-only, integrity-tampering and clock-rollback exclusions are respected: `Step` never introduces `intact = false`, and time has no monotonicity requirement.
+
+- **Claim 3 — “approval exists and is marked used.”** This means `∃ a, s.approvals nonce = some a ∧ a.used = true`, pointwise for every nonce, exactly as in `Coherent`. It does not refer to an external database or log. The stated invariant limitation is respected; it does not assert the other approval fields are correct.
+
+- **Claim 4 — applying committed versus making a legal release.** The result holds even for inputs that were not allowed in the pre-state. It concerns the state produced by `committed`, and any offered clock, approval and lease for a request with the same nonce. The original proof reads the stored approval and contradicts its required unused flag; no coherence premise is needed. The sink and SQL-refinement exclusions are respected. The budget-only description of a different nonce is not respected by the actual full guard and needs correction 2. This particular declaration is a post-state result; a lifetime “at most once” claim through later transitions additionally needs the model'"'s transition facts.
+
+- **Claim 5 — “any finite sequence.”** This is finite relational closure of "'`Step`, including the empty trace and arbitrary legal serial order. It is not a concurrency implementation proof or a guarantee against real rollback or partial sink effects. The stated exclusions are respected when “excludes” means those real operations are not separately modelled or justified by this theorem.
+
+- **Claim 6 — concrete facts versus invariant content.** The numeral 2 comes from this instance'"'s definitions, not the meaning of "'`Safe` in general. The real-database, sink, approval/review and transcript-completeness exclusions are respected. Neither the equivalence proof nor its witness establishes authenticity of the archived runtime log.
+
+- **Claim 7 — reason for a model rejection versus cause of the recorded denial.** The guard failure is universal over offered clock/approval/lease values, and `q8` is definitionally the same request as `q7`. The receipt for the denial uses `Step.deny`, an unconditional identity transition. Consequently replay acceptance does not attest why a real denial happened. The English explicitly says this and correctly excludes guarantees about different nonces.
+
+- **Claim 8 — completeness versus chain consistency.** The theorem establishes acceptance of this particular prefix. It neither asserts that truncation occurred nor certifies completeness of any real transcript. These negative-control limits are respected. “Indistinguishable” should be restricted to acceptance as in correction 5; removing a middle event or the denial from these fixed receipts instead breaks their id chain.
+
+The gate trusts the project imports as configured by `PL_IMPORTS`; these comparisons certify correspondence to that imported model, not runtime refinement. `run_gate_blind.py` is the supplied runner relocated into this output directory: the project-root depth and gate-helper lookup receive the necessary path adjustments, and the file glob selects `bg0n2_*`. Existing imports suffice. [The exact runner diff](run_gate_blind.diff) records those path/glob changes. The supplied `leangate_imports.py`, including every banned-token and axiom check, is unchanged.
+
+Reproduce all eight statement checks and all sixteen target gates from the repository root:
+
+```sh
+python3 -B docs/lean-english/one-to-one/blind-g0n2/regate.py
+```
+
+`regate.py` reads the saved files and rewrites only receipts/logs, plus transient check files that the deterministic gate removes. It checks all eight expected ids, separately gates Claim and Witness, and exits nonzero on any failure. `-B` and the script'"'s bytecode setting prevent Python cache writes outside this directory. The clean-state check removes prior gate receipts and the empty transient directory before regenerating them; "'`regate-validation.json` records unchanged input hashes and the missing-input failure check.
+EOF'
+
+---
+/bin/bash -lc "python3 -B - <<'PY'
+from pathlib import Path
+import datetime,json,hashlib
+out=Path('docs/lean-english/one-to-one/blind-g0n2')
+summary=json.loads((out/'regate.receipt.json').read_text())
+assert summary['passed']
+validation=json.loads((out/'regate-validation.json').read_text())
+actual={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.glob('bg0n2_*.lean')}
+assert validation['saved_inputs_sha256']==actual
+for n in range(1,9):
+ cid=f'bg0n2_{n}'
+ for target in ['claim','witness']:
+  stem=cid if target=='claim' else cid+'.witness'
+  r=json.loads((out/f'{stem}.receipt.json').read_text())
+  assert r['passed'] and r['statement_check_passed']
+  assert r['statement_sha256']==actual[f'{cid}.statement.lean']
+  assert r['proof_sha256']==actual[f'{cid}.proof.lean']
+  assert r['gate_sha256']==hashlib.sha256((out.parent/'leangate_imports.py').read_bytes()).hexdigest()
+  assert r['runner_sha256']==hashlib.sha256((out/'run_gate_blind.py').read_bytes()).hexdigest()
+  assert r['regate_sha256']==hashlib.sha256((out/'regate.py').read_bytes()).hexdigest()
+  assert r['gate_log_sha256']==hashlib.sha256((out/f'{stem}.gate.txt').read_bytes()).hexdigest()
+ back=next((out/'back').glob(f'{n}-*.lean'))
+ assert back.read_bytes()==(out/'typed'/back.name).read_bytes()
+ embedded=(out/f'{cid}.statement.lean').read_text()
+ body=back.read_text()[back.read_text().index('def Back_'):back.read_text().rindex('\\nend ')].strip()
+ assert body in embedded
+assert not list((out/'gate-tmp').iterdir())
+validation.update({'clean_state_regate':'PASS','clean_state_regate_exit':0,'claim_targets_passed':8,'witness_targets_passed':8,'saved_inputs_unchanged':True,'validated_utc':datetime.datetime.now(datetime.timezone.utc).isoformat()})
+(out/'regate-validation.json').write_text(json.dumps(validation,indent=2)+'\\n')
+end=datetime.datetime.now(datetime.timezone.utc)
+start=datetime.datetime.fromisoformat('2026-10-13T04:09:45+00:00')
+progress=f'''# Phase B progress
+
+Status: **DONE — 8/8 comparisons EQUIVALENT; 8/8 witnesses PASS.**
+
+Time: initial inspection/compilation began approximately 2026-10-13T04:09:45Z; typed freeze was 2026-10-13T04:10:31.055431+00:00; completed {end.isoformat()} (approximately {(end-start).total_seconds()/60:.1f} minutes).
+
+Done:
+
+- Verified all eight Phase A hashes from back/BACK-HASHES.json.
+- Compiled every back file as written; all returned exit 0, without repairs.
+- Saved identical typed files and their SHA-256 manifest before opening original declarations.
+- Recorded empty compile-fix diffs and original compile logs for every claim.
+- Inspected the eight original declarations and relevant model/checker definitions.
+- Saved exact frozen Back bodies, source signatures, pointwise conclusion comparisons and concrete witnesses.
+- Passed eight statement checks and sixteen separate deterministic Claim/Witness gates.
+- Kept the supplied deterministic gate and all its banned-token and axiom checks unchanged; documented runner relocation/glob adjustments.
+- Wrote per-claim verdicts, hostile readings of all Does NOT say clauses, replacement sentences and ambiguity analysis in RESULTS.md.
+- Implemented regate.py; missing-input checking returned failure (exit 1).
+- Cleared prior gate receipts and transient directory, then re-gated all eight claims and witnesses from a clean receipt state (exit 0).
+- Verified regating preserved every saved statement/proof hash, all back/typed byte identities, and receipt hashes of gate, runner, regate, input files and logs.
+
+Not done: **none within the requested Phase B scope.**
+
+What could not be done: **nothing required for this run.** Runtime authenticity, completeness, database/SQL refinement and sink behaviour are excluded by these model claims; they were not certified. Initial comparison-proof failures (namespace lookup, unfolding a Witness definition for decide, and concrete role proofs) were repaired in the new proof files. No back translation was altered.
+
+All authored files are under this directory. No ControlStack source was edited; no git command or download was run. The only English material read was the authorized input batch and Phase A files; only the three authorized gate helpers were read elsewhere under docs/lean-english.
+'''
+(out/'PROGRESS.md').write_text(progress)
+print('All final receipt/input/gate hashes verified; clean-state re-gate passed 16/16; all eight typed files remain unchanged.')
+PY"

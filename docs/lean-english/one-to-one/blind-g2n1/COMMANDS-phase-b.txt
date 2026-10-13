@@ -1,0 +1,706 @@
+/bin/bash -lc 'pwd
+rg --files -g AGENTS.md -g lakefile.lean -g lakefile.toml -g lean-toolchain
+ls docs/lean-english/one-to-one/blind-g2n1
+cat docs/lean-english/sol-input/batch-g2n1.md
+cat docs/lean-english/one-to-one/blind-g2n1/CLAIMS.txt
+cat docs/lean-english/one-to-one/blind-g2n1/BACK-HASHES.json'
+
+---
+/bin/bash -lc 'ls -la docs/lean-english/one-to-one/blind-g2n1/back
+cat docs/lean-english/one-to-one/blind-g2n1/back/*.lean
+cat docs/lean-english/one-to-one/blind-g2n1/back/BACK-HASHES.json
+cat docs/lean-english/one-to-one/run_gate.py
+cat docs/lean-english/one-to-one/leangate_imports.py
+cat docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'for d in /home/opc/projects/blind-work/g2n1/b /home/opc/projects/blind-work/g2n1 /home/opc/projects/blind-work /home/opc/projects /home/opc /home /; do if [ -f "$d/AGENTS.md" ]; then cat "$d/AGENTS.md"; fi; done
+python3 - <<'"'PY'
+from pathlib import Path
+import subprocess, hashlib, json, difflib, datetime
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+for sub in ('typed','compile-fixes','compile-logs'): (out/sub).mkdir(exist_ok=True)
+expected=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+results=[]
+for p in sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0])):
+    digest=hashlib.sha256(p.read_bytes()).hexdigest()
+    assert expected['back/'+p.name]==digest, p
+    r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+    (out/'compile-logs'/f'{p.name.split(\"-\")[0]}.txt').write_text(r.stdout+r.stderr)
+    results.append({'file':p.name,'exit_code':r.returncode,'back_sha256':digest})
+    print(p.name,r.returncode,r.stdout+r.stderr,flush=True)
+    if r.returncode==0:
+        (out/'typed'/p.name).write_bytes(p.read_bytes())
+        (out/'compile-fixes'/f'{p.name.split(\"-\")[0]}.diff').write_text('No repair required. Typed file is byte-identical to the back file. Meaning unchanged.\\n')
+(out/'compile-logs/summary.json').write_text(json.dumps(results,indent=2)+'\\n')
+files={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (out/'typed').glob('*.lean')}
+(out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':files},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc "rg --files -g CLAUDE.md -g GEMINI.md -g AGENTS.md -g '"'!docs/lean-english/**'"'
+ls -la .agents .codex 2>/dev/null"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import datetime
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+(out/'PROGRESS.md').write_text('# Phase B progress\\n\\nStarted: '+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n\\nDone: read only permitted English/back/gate inputs; validated input hashes as each file is compiled.\\n\\nIn progress: compile unchanged back files and freeze typed hashes before reading originals.\\n\\nNot done: original comparisons, gated pointwise proofs and witnesses, clean regate, final results.\\n\\nConstraints: no downloads, no git, no writes outside this directory. No original declarations opened yet.\\n')
+PY"
+
+---
+/bin/bash -lc "cat docs/lean-english/one-to-one/blind-g2n1/typed/HASHES.json
+rg -n 'theorem (sc08_safe|safe_of_sound|halt_freezes|sc09_safe|spawn_attenuates|sc10_safe|policy_admin_only|sc12_safe)|def (Good|init|Sound)' ControlStack/Scenarios/{SC08Exec,SC09Priv,SC10Policy,SC12Persistence}.lean
+cat ControlStack/Scenarios/SC08Exec.lean
+cat ControlStack/Scenarios/SC09Priv.lean"
+
+---
+/bin/bash -lc 'cat ControlStack/Scenarios/SC10Policy.lean
+cat ControlStack/Scenarios/SC12Persistence.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import difflib,json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+source=out.parent/'run_gate.py'
+a=source.read_text()
+b=a.replace('parents[3]','parents[4]').replace(\"OUT/'leangate_imports.py'\",\"OUT.parent/'leangate_imports.py'\").replace(\"ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay\",\"ControlStack.Scenarios.SC08Exec ControlStack.Scenarios.SC09Priv ControlStack.Scenarios.SC10Policy ControlStack.Scenarios.SC12Persistence\").replace(\"g0_*.statement.lean\",\"bg2n1_*.statement.lean\")
+(out/'run_gate_blind.py').write_text(b)
+(out/'run-gate-relocation.diff').write_text('Changes limited to output relocation (including root/helper resolution from the deeper directory), input glob, and PL_IMPORTS. Gate execution, banned-token and axiom checks unchanged.\\n'+''.join(difflib.unified_diff(a.splitlines(True),b.splitlines(True),fromfile='one-to-one/run_gate.py',tofile='blind-g2n1/run_gate_blind.py')))
+files=[Path('ControlStack/Scenarios')/f for f in ('SC08Exec.lean','SC09Priv.lean','SC10Policy.lean','SC12Persistence.lean')]
+(out/'ORIGINAL-SOURCES.json').write_text(json.dumps({'opened_after_typed_hashes':True,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}},indent=2)+'\\n')
+PY"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g2n1/build_comparisons.py <<'PY'
+\"\"\"Save comparisons; frozen Back definitions are copied verbatim from typed files.\"\"\"
+from pathlib import Path
+import json, hashlib
+OUT=Path(__file__).resolve().parent
+
+def frozen(n):
+    p=next((OUT/'typed').glob(f'{n}-*.lean'))
+    hashes=json.loads((OUT/'typed/HASHES.json').read_text())['files']
+    assert hashlib.sha256(p.read_bytes()).hexdigest()==hashes[p.name]
+    t=p.read_text()
+    return t.split('\\nnamespace ',1)[1].split('\\n',1)[1].rsplit('\\nend ',1)[0].strip()
+
+ok8='''def EnglishOk (E : Env) (s : St) : Prop :=
+  ∀ r ∈ s.ran, E.h r.1 ∈ E.allow ∧
+    (E.h r.1 ∈ E.interp → ∃ sc, r.2 = some sc ∧ E.h sc ∈ E.scripts)
+'''
+ok9='''def EnglishOk (P : Policy) (s : St) : Prop :=
+  (∀ q ∈ s.procs, ∀ c ∈ q.caps, (q.lin, c) ∈ s.granted) ∧
+  (∀ u ∈ s.used, (u.lin, u.cap) ∈ s.granted ∨
+    ∃ r ∈ P.elev, u.via = some (r.bin, r.args) ∧ r.cap = u.cap)
+'''
+ok10='''def EnglishOk (E : Env) (s : St) : Prop :=
+  (∀ d ∈ s.decisions, ∃ i w, d.ver = some i ∧
+    s.versions[i]? = some (d.val, w) ∧ w ∈ E.admins ∧ i + 1 = d.curLen) ∧
+  (∀ b ∈ s.builds, E.h b = E.pinnedDigest)
+'''
+ok12='''def EnglishOk (s : St) : Prop :=
+  ∀ e ∈ s.live, e.reg = true ∧ e.origin ∈ s.active ∧ e.origin ∉ s.ended
+'''
+proof_rfl='''theorem claim : Claim := by
+  refine ⟨rfl, ?_, ?_⟩
+  · intros
+    exact Iff.rfl
+  · intros
+    exact Iff.rfl
+'''
+proof_structure='''theorem claim : Claim := by
+  refine ⟨rfl, ?_, ?_⟩
+  · intros
+    exact Iff.rfl
+  · intros
+    constructor
+    · intro h
+      exact ⟨h.1, h.2⟩
+    · intro h
+      exact ⟨h.%s, h.%s⟩
+'''
+exec_w='''def Witness : Prop :=
+  (s0.ran = [] ∧ s0.halted = false) ∧
+  (run E0 full s0 [.exec 1 none, .exec 4 (some 5)]).ran =
+    [(10, none), (20, some 30)]
+'''
+halt8_w='''def Witness : Prop :=
+  let s : St := ⟨[(1, 10)], [(10, none)], true⟩
+  s.halted = true ∧ s.files ≠ [] ∧ s.ran ≠ [] ∧
+    run E0 full s [.write 1 999, .exec 1 none, .halt 9] = s
+'''
+halt9_w='''def Witness : Prop :=
+  let s : St := ⟨[⟨1, 1, [7]⟩], [(1, 7)], [⟨1, 7, none⟩], true⟩
+  s.halted = true ∧ s.procs ≠ [] ∧ s.granted ≠ [] ∧ s.used ≠ [] ∧
+    run P0 full s [.start 9 2 1, .grant 9 1 1 8, .use 1 7, .halt 9] = s
+'''
+halt10_w='''def Witness : Prop :=
+  let s : St := ⟨[(5, 9)], some 0, 2, 3, [⟨1, some 0, 5, 1⟩], [40], true⟩
+  s.halted = true ∧ s.versions ≠ [] ∧ s.decisions ≠ [] ∧ s.builds ≠ [] ∧
+    run E0 full s [.writePolicy 9 6, .decide 2, .build, .halt 9] = s
+'''
+
+cases={}
+cases[1]=('SC08',ok8+'''def BackAt (E : Env) (files : List (ℕ × ℕ)) (ops : List Op) : Prop :=
+  Good E (run E full (⟨files, [], false⟩ : St) ops)
+def OrigAt (E : Env) (files : List (ℕ × ℕ)) (ops : List Op) : Prop :=
+  Good E (run E full ⟨files, [], false⟩ ops)
+def Claim : Prop :=
+  (Back_sc08_safe = (∀ E files ops, BackAt E files ops)) ∧
+  (∀ E files ops, BackAt E files ops ↔ OrigAt E files ops) ∧
+  (∀ E s, EnglishOk E s ↔ Good E s)
+'''+exec_w,proof_rfl)
+
+cases[2]=('SC08',ok8+'''def BackAt (E : Env) (C : Checks) (files : List (ℕ × ℕ))
+    (halted : Bool) (ops : List Op) : Prop :=
+  Good E (run E C (⟨files, [], halted⟩ : St) ops)
+def OrigAt (E : Env) (C : Checks) (files : List (ℕ × ℕ)) (ops : List Op) : Prop :=
+  Good E (run E C ⟨files, [], false⟩ ops)
+def OrigFamily : Prop := ∀ E C files ops, Sound C → OrigAt E C files ops
+-- Domain comparison is independent of the truth of the safety conclusion.
+def BackDomain (C : Checks) (_halted : Bool) : Prop := Sound C
+def OrigDomain (C : Checks) (halted : Bool) : Prop := Sound C ∧ halted = false
+def Claim : Prop :=
+  (Back_safe_of_sound = (∀ E C files halted ops, Sound C → BackAt E C files halted ops)) ∧
+  (Back_safe_of_sound → OrigFamily) ∧
+  (∀ E C files halted ops, Sound C → halted = false →
+    (BackAt E C files halted ops ↔ OrigAt E C files ops)) ∧
+  (∀ C halted, OrigDomain C halted → BackDomain C halted) ∧
+  (∃ C halted, BackDomain C halted ∧ ¬ OrigDomain C halted) ∧
+  (∀ E s, EnglishOk E s ↔ Good E s)
+def Witness : Prop :=
+  Sound full ∧ s0.ran = [] ∧ s0.halted = false ∧
+  (run E0 full s0 [.exec 1 none, .exec 4 (some 5)]).ran =
+    [(10, none), (20, some 30)] ∧
+  BackDomain full true ∧ ¬ OrigDomain full true ∧
+  (run E0 full (⟨s0.files, [], true⟩ : St) [.exec 1 none]).ran = []
+''','''theorem claim : Claim := by
+  refine ⟨rfl, ?_, ?_, ?_, ?_, ?_⟩
+  · intro h E C files ops hC
+    exact h E C files false ops hC
+  · intro E C files halted ops _ hh
+    subst halted
+    exact Iff.rfl
+  · intro C halted h
+    exact h.1
+  · refine ⟨full, true, sound_full, ?_⟩
+    intro h
+    exact Bool.true_ne_false h.2
+  · intros
+    exact Iff.rfl
+''')
+
+for n,ns,back,ww in [(3,'SC08','Back_sc08_halt_freezes',halt8_w),(6,'SC09','Back_sc09_halt_freezes',halt9_w),(9,'SC10','Back_sc10_halt_freezes',halt10_w)]:
+    param='P' if ns=='SC09' else 'E'
+    typ='Policy' if ns=='SC09' else 'Env'
+    cases[n]=(ns,f'''def BackAt ({param} : {typ}) (s : St) (ops : List Op) : Prop :=
+  run {param} full s ops = s
+def OrigAt ({param} : {typ}) (s : St) (ops : List Op) : Prop :=
+  run {param} full s ops = s
+def Claim : Prop :=
+  ({back} = (∀ {param} s ops, s.halted = true → BackAt {param} s ops)) ∧
+  (∀ {param} s ops, s.halted = true → (BackAt {param} s ops ↔ OrigAt {param} s ops))
+'''+ww,'''theorem claim : Claim := by
+  refine ⟨rfl, ?_⟩
+  intros
+  exact Iff.rfl
+''')
+
+cases[4]=('SC09',ok9+'''def BackAt (P : Policy) (ops : List Op) : Prop := Good P (run P full init ops)
+def OrigAt (P : Policy) (ops : List Op) : Prop := Good P (run P full init ops)
+def Claim : Prop :=
+  (Back_sc09_safe = (∀ P ops, BackAt P ops)) ∧
+  (∀ P ops, BackAt P ops ↔ OrigAt P ops) ∧
+  (∀ P s, EnglishOk P s ↔ Good P s)
+def Witness : Prop :=
+  init.procs = [] ∧ init.granted = [] ∧ init.used = [] ∧ init.halted = false ∧
+  (run P0 full init [.start 9 1 1, .grant 9 1 1 7, .use 1 7,
+      .elevate 1 50 3, .spawn 1 2 [7], .use 2 7]).used =
+    [⟨1, 7, none⟩, ⟨1, 8, some (50, 3)⟩, ⟨1, 7, none⟩]
+''',proof_structure % ('caps','uses'))
+
+cases[5]=('SC09','''def BackAt (P : Policy) (s : St) (p ch : ℕ) (q : Proc) (keep : List ℕ) : Prop :=
+  ∀ r ∈ (step P full s (.spawn p ch keep)).procs,
+    r ∉ s.procs → r.lin = q.lin ∧ (∀ c ∈ r.caps, c ∈ q.caps)
+def OrigAt (P : Policy) (s : St) (p ch : ℕ) (keep : List ℕ) (q : Proc) : Prop :=
+  ∀ r ∈ (step P full s (.spawn p ch keep)).procs,
+    r ∉ s.procs → r.lin = q.lin ∧ r.caps ⊆ q.caps
+def Claim : Prop :=
+  (Back_spawn_attenuates = (∀ P s p ch q keep,
+    s.halted = false → procOf s p = some q → procOf s ch = none →
+      BackAt P s p ch q keep)) ∧
+  (∀ P s p ch q keep, s.halted = false → procOf s p = some q →
+    procOf s ch = none → (BackAt P s p ch q keep ↔ OrigAt P s p ch keep q)) ∧
+  (∀ (xs ys : List ℕ), (∀ c ∈ xs, c ∈ ys) ↔ xs ⊆ ys)
+def Witness : Prop :=
+  let q : Proc := ⟨1, 3, [7, 7, 8]⟩
+  let s : St := ⟨[q], [], [], false⟩
+  s.halted = false ∧ procOf s 1 = some q ∧ procOf s 2 = none ∧
+  (step P0 full s (.spawn 1 2 [7])).procs = [q, ⟨2, 3, [7, 7]⟩] ∧
+  (⟨2, 3, [7, 7]⟩ : Proc) ∉ s.procs
+''',proof_rfl)
+
+cases[7]=('SC10',ok10+'''def BackAt (E : Env) (ops : List Op) : Prop := Good E (run E full init ops)
+def OrigAt (E : Env) (ops : List Op) : Prop := Good E (run E full init ops)
+def Claim : Prop :=
+  (Back_sc10_safe = (∀ E, E.h E.pinned = E.pinnedDigest → ∀ ops, BackAt E ops)) ∧
+  (∀ E, E.h E.pinned = E.pinnedDigest → ∀ ops, BackAt E ops ↔ OrigAt E ops) ∧
+  (∀ E s, EnglishOk E s ↔ Good E s)
+def Witness : Prop :=
+  E0.h E0.pinned = E0.pinnedDigest ∧ init.versions = [] ∧
+  init.decisions = [] ∧ init.builds = [] ∧ init.halted = false ∧
+  let s := run E0 full init [.writePolicy 9 5, .decide 1, .writePath 666, .build]
+  s.decisions = [⟨1, some 0, 5, 1⟩] ∧ s.builds = [40] ∧ s.pathTool = 666
+''',proof_structure % ('decs','builds'))
+
+cases[8]=('SC10','''def BackAt (E : Env) (ops : List Op) : Prop :=
+  ∀ pv ∈ (run E full init ops).versions, pv.2 ∈ E.admins
+def OrigAt (E : Env) (ops : List Op) : Prop :=
+  ∀ pv ∈ (run E full init ops).versions, pv.2 ∈ E.admins
+def Claim : Prop :=
+  (Back_policy_admin_only = (∀ E, E.h E.pinned = E.pinnedDigest → ∀ ops, BackAt E ops)) ∧
+  (∀ E, E.h E.pinned = E.pinnedDigest → ∀ ops, BackAt E ops ↔ OrigAt E ops)
+def Witness : Prop :=
+  E0.h E0.pinned = E0.pinnedDigest ∧ init.versions = [] ∧
+  (run E0 full init [.writePolicy 1 999, .writePolicy 9 5, .writePolicy 9 6]).versions =
+    [(5, 9), (6, 9)]
+''','''theorem claim : Claim := by
+  refine ⟨rfl, ?_⟩
+  intros
+  exact Iff.rfl
+''')
+
+cases[10]=('SC12',ok12+'''def BackAt (admins : List ℕ) (ops : List Op) : Prop := Good (run admins full init ops)
+def OrigAt (admins : List ℕ) (ops : List Op) : Prop := Good (run admins full init ops)
+def Claim : Prop :=
+  (Back_sc12_safe = (∀ admins ops, BackAt admins ops)) ∧
+  (∀ admins ops, BackAt admins ops ↔ OrigAt admins ops) ∧
+  (∀ s, EnglishOk s ↔ Good s)
+def Witness : Prop :=
+  init.active = [] ∧ init.ended = [] ∧ init.live = [] ∧ init.fired = [] ∧ init.halted = false ∧
+  let s := run [9] full init
+    [.start 9 1, .spawn 1 5 true 999, .bypass 1 6 true, .fire 5, .endSession 9 1, .fire 5]
+  s.fired = [(5, 1, 0)] ∧ s.live = [] ∧ s.ended = [1]
+''',proof_rfl)
+
+for n,(ns,body,proof) in cases.items():
+    cid=f'bg2n1_{n}'
+    statement=f'namespace PL_{cid}\\nopen ControlStack.{ns}\\n\\n{frozen(n)}\\n\\n{body}\\nend PL_{cid}\\n'
+    witness='theorem witness : Witness := by\\n  decide\\n'
+    if n==2:
+        witness='''theorem witness : Witness := by
+  refine ⟨sound_full, ?_⟩
+  decide
+'''
+    (OUT/f'{cid}.statement.lean').write_text(statement)
+    (OUT/f'{cid}.proof.lean').write_text(proof+'\\n'+witness)
+PY
+python3 docs/lean-english/one-to-one/blind-g2n1/build_comparisons.py"
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g2n1/regate.py <<'PY'
+#"'!/usr/bin/env python3
+"""Re-gate all saved claims and witnesses. Persist only JSON receipts.
+
+Run from the repository root:
+  python3 docs/lean-english/one-to-one/blind-g2n1/regate.py
+No existing receipt or temporary gate file is required.
+"""
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+import hashlib
+import json
+import runpy
+import sys
+
+sys.dont_write_bytecode = True
+OUT = Path(__file__).resolve().parent
+config = runpy.run_path(str(OUT / '"'run_gate_blind.py'), run_name='blind_gate_config')
+g = config['g']
+DEPENDENCIES = [config['IMPORTS']]
+GATE_HASH = hashlib.sha256(Path(g.__file__).read_bytes()).hexdigest()
+IMPORTS = config['os'].environ['PL_IMPORTS']
+
+def check(n):
+    cid = f'bg2n1_{n}'
+    sp = OUT / f'{cid}.statement.lean'
+    pp = OUT / f'{cid}.proof.lean'
+    results = []
+    try:
+        statement, proof = sp.read_text(), pp.read_text()
+        stmt_ok, stmt_log = g.check_statement(cid, statement, DEPENDENCIES)
+        for target in ('claim', 'witness'):
+            passed, log = g.gate(cid, statement, proof, target, DEPENDENCIES, timeout=120)
+            passed = stmt_ok and passed
+            receipt = {
+                'cid': cid, 'target': target, 'passed': passed,
+                'statement_passed': stmt_ok, 'statement_log': stmt_log, 'gate_log': log,
+                'statement_sha256': hashlib.sha256(statement.encode()).hexdigest(),
+                'proof_sha256': hashlib.sha256(proof.encode()).hexdigest(),
+                'gate_sha256': GATE_HASH, 'trusted_header': config['IMPORTS'],
+                'PL_IMPORTS': IMPORTS, 'PL_LEAN_PROJ': str(g.PROJ),
+                'gate_unmodified': False, 'security_checks_unchanged': True,
+                'imports_option_local_only': True,
+            }
+            dest = OUT / (f'{cid}.receipt.json' if target == 'claim' else f'{cid}.witness.receipt.json')
+            dest.write_text(json.dumps(receipt, indent=2) + '\\n')
+            results.append(passed)
+            print(f'{cid} {target}: {\"PASS\" if passed else \"FAIL\"}\\n{log[:1400]}', flush=True)
+    except Exception as error:
+        for target in ('claim', 'witness'):
+            dest = OUT / (f'{cid}.receipt.json' if target == 'claim' else f'{cid}.witness.receipt.json')
+            dest.write_text(json.dumps({'cid': cid, 'target': target, 'passed': False,
+                'error': f'{type(error).__name__}: {error}'}, indent=2) + '\\n')
+        print(f'{cid}: FAIL {type(error).__name__}: {error}', flush=True)
+        return False
+    return all(results)
+
+if __name__ == '__main__':
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(pool.map(check, range(1, 11)))
+    sys.exit(0 if all(results) else 1)
+PY
+PYTHONDONTWRITEBYTECODE=1 python3 docs/lean-english/one-to-one/blind-g2n1/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+(out/'attempts/01').mkdir(parents=True,exist_ok=True)
+for p in out.glob('*.receipt.json'): (out/'attempts/01'/p.name).write_bytes(p.read_bytes())
+p=out/'build_comparisons.py'
+t=p.read_text().replace('exact Bool.true_ne_false h.2','cases h.2')
+t=t.replace(\"witness='theorem witness : Witness := by\\\\n  decide\\\\n'\",\"witness='theorem witness : Witness := by\\\\n  unfold Witness\\\\n  decide\\\\n'\")
+t=t.replace('''theorem witness : Witness := by
+  refine ⟨sound_full, ?_⟩
+  decide
+''','''theorem witness : Witness := by
+  unfold Witness BackDomain OrigDomain
+  refine ⟨sound_full, rfl, rfl, ?_, sound_full, ?_, ?_⟩
+  · decide
+  · intro h
+    cases h.2
+  · decide
+''')
+t=t.replace(\"(OUT/f'{cid}.proof.lean').write_text(proof+'\\\\n'+witness)\",\"(OUT/f'{cid}.proof.lean').write_text(f'open ControlStack.{ns}\\\\n\\\\n'+proof+'\\\\n'+witness)\")
+p.write_text(t)
+PY
+python3 docs/lean-english/one-to-one/blind-g2n1/build_comparisons.py
+PYTHONDONTWRITEBYTECODE=1 python3 docs/lean-english/one-to-one/blind-g2n1/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+p=out/'build_comparisons.py'
+t=p.read_text()
+t=t.replace('''def OrigDomain (C : Checks) (halted : Bool) : Prop := Sound C ∧ halted = false
+def Claim : Prop :=''','''def OrigDomain (C : Checks) (halted : Bool) : Prop := Sound C ∧ halted = false
+def BackCoverage (Q : Checks → Bool → Prop) : Prop :=
+  ∀ C halted, BackDomain C halted → Q C halted
+def OrigCoverage (Q : Checks → Bool → Prop) : Prop :=
+  ∀ C halted, OrigDomain C halted → Q C halted
+def Claim : Prop :=''')
+t=t.replace('''  (∃ C halted, BackDomain C halted ∧ ¬ OrigDomain C halted) ∧
+  (∀ E s, EnglishOk E s ↔ Good E s)''','''  (∃ C halted, BackDomain C halted ∧ ¬ OrigDomain C halted) ∧
+  (∀ Q, BackCoverage Q → OrigCoverage Q) ∧
+  (¬ (∀ Q, OrigCoverage Q → BackCoverage Q)) ∧
+  (∀ E s, EnglishOk E s ↔ Good E s)''')
+t=t.replace('''  refine ⟨rfl, ?_, ?_, ?_, ?_, ?_⟩''','''  refine ⟨rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩''')
+t=t.replace('''    cases h.2
+  · intros
+    exact Iff.rfl
+''','''    cases h.2
+  · intro Q h C halted hO
+    exact h C halted hO.1
+  · intro h
+    have hB : BackCoverage OrigDomain := h OrigDomain (fun _ _ hO => hO)
+    have ht := hB full true sound_full
+    cases ht.2
+  · intros
+    exact Iff.rfl
+''')
+p.write_text(t)
+# Original header snapshot, taken only after the typed freeze.
+claims={1:('SC08Exec','sc08_safe'),2:('SC08Exec','safe_of_sound'),3:('SC08Exec','halt_freezes'),4:('SC09Priv','sc09_safe'),5:('SC09Priv','spawn_attenuates'),6:('SC09Priv','halt_freezes'),7:('SC10Policy','sc10_safe'),8:('SC10Policy','policy_admin_only'),9:('SC10Policy','halt_freezes'),10:('SC12Persistence','sc12_safe')}
+headers=[]
+for n,(module,name) in claims.items():
+    path=Path('ControlStack/Scenarios')/(module+'.lean')
+    text=path.read_text(); start=text.index('theorem '+name+' ')
+    header=text[start:].split(':=',1)[0].strip()
+    line=text[:start].count('\\n')+1
+    headers.append(f'## Claim {n}: {path}:{line}\\n\\n"'```lean'"\\n{header}\\n"'```'"\\n')
+(out/'ORIGINAL-DECLARATIONS.md').write_text('# Original declaration types\\n\\nOpened after typed/HASHES.json was written. OrigAt in the statement files is the conclusion here with the same explicit parameters and hypotheses.\\n\\n'+'\\n'.join(headers))
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+(out/'attempts/02').mkdir(parents=True,exist_ok=True)
+for p in out.glob('*.receipt.json'): (out/'attempts/02'/p.name).write_bytes(p.read_bytes())
+p=out/'build_comparisons.py'
+t=p.read_text()
+t=t.replace('''    [(10, none), (20, some 30)]
+\\'\\'\\'
+halt8_w''','''    [(10, none), (20, some 30)] ∧
+  (run { E0 with interp := [] } full s0 [.write 2 777, .exec 4 (some 2)]).ran =
+    [(20, none)]
+\\'\\'\\'
+halt8_w''')
+t=t.replace('''  (⟨2, 3, [7, 7]⟩ : Proc) ∉ s.procs
+''','''  (⟨2, 3, [7, 7]⟩ : Proc) ∉ s.procs ∧
+  ([7, 7] : List ℕ) ⊆ [7] ∧ ¬ ([7, 7] : List ℕ).Sublist [7]
+''')
+p.write_text(t)
+PY
+python3 docs/lean-english/one-to-one/blind-g2n1/build_comparisons.py
+PYTHONDONTWRITEBYTECODE=1 python3 docs/lean-english/one-to-one/blind-g2n1/regate.py"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g2n1/bg2n1_2.statement.lean
+cat docs/lean-english/one-to-one/blind-g2n1/bg2n1_2.proof.lean
+cat docs/lean-english/one-to-one/blind-g2n1/bg2n1_1.statement.lean
+cat docs/lean-english/one-to-one/blind-g2n1/bg2n1_5.statement.lean'
+
+---
+/bin/bash -lc "cat docs/lean-english/one-to-one/blind-g2n1/PROGRESS.md
+cat > docs/lean-english/one-to-one/blind-g2n1/finalize_results.py <<'PY'
+\"\"\"Write the final report only after checking all current gate receipts.\"\"\"
+from pathlib import Path
+import datetime, hashlib, json
+OUT=Path(__file__).resolve().parent
+names=['SC08.sc08_safe','SC08.safe_of_sound','SC08.halt_freezes','SC09.sc09_safe','SC09.spawn_attenuates','SC09.halt_freezes','SC10.sc10_safe','SC10.policy_admin_only','SC10.halt_freezes','SC12.sc12_safe']
+notes=[
+'Identical initial state and conclusion; expanded RunOk matches the English.',
+'Back admits either initial halted flag; original fixes false. Strict scope extension, with matching conclusions on the original domain.',
+'Whole-state equality under the same halted hypothesis.',
+'Same two Good fields: granted lineage capabilities and grant-or-exact-rule uses.',
+'List membership inclusion is exactly the original List subset relation; q/keep parameter order is aligned explicitly.',
+'Whole-state equality under the same halted hypothesis.',
+'Same hpin hypothesis, decision freshness/value/writer condition, and build digest condition.',
+'Same hpin hypothesis retained, although irrelevant to writer membership.',
+'Whole-state equality under the same halted hypothesis.',
+'Same registration, active origin, and never-ended origin condition; bypass has no claimed label parameter.',
+]
+rows=[]
+proof_hashes={}
+for n,name in enumerate(names,1):
+    cid=f'bg2n1_{n}'
+    sp=OUT/f'{cid}.statement.lean'; pp=OUT/f'{cid}.proof.lean'
+    sh=hashlib.sha256(sp.read_bytes()).hexdigest(); ph=hashlib.sha256(pp.read_bytes()).hexdigest()
+    for suffix in ('receipt.json','witness.receipt.json'):
+        r=json.loads((OUT/f'{cid}.{suffix}').read_text())
+        assert r['passed'] and r['statement_passed'], (cid,suffix)
+        assert r['statement_sha256']==sh and r['proof_sha256']==ph, (cid,suffix)
+        assert r['gate_sha256']==hashlib.sha256((OUT.parent/'leangate_imports.py').read_bytes()).hexdigest()
+    proof_hashes[sp.name]=sh; proof_hashes[pp.name]=ph
+    verdict='ENGLISH_STRONGER' if n==2 else 'EQUIVALENT'
+    rows.append(f'| {n} "'`{name}` | {verdict} | [claim PASS]({cid}.receipt.json), [witness PASS]({cid}.witness.receipt.json) | {notes[n-1]} |'"')
+report='''# Blind g2n1: Phase B results
+
+All ten Phase-A hashes matched. Every back file compiled as written, without repairs. Byte-identical typed copies and their hashes were saved **before** any original declaration was opened. Compilation logs are in "'`compile-logs/`, no-change records in `compile-fixes/`, and the pre-comparison freeze is [typed/HASHES.json](typed/HASHES.json). No git command, download, or edit to `ControlStack/` was used.
+
+| Claim | Verdict | Receipts | Note |
+| --- | --- | --- | --- |
+'"'''+ '\\n'.join(rows)+'''
+
+Nine claims have gated pointwise equivalence. Claim 2 has a gated one-way structural comparison and a strict hypothesis-domain extension; it is **not** an equivalence verdict. Every saved statement and both proof targets passed the deterministic gate, with only "'`propext` and `Quot.sound` in the axiom reports. A PASS certifies the exact saved `Claim` or `Witness`, not every sentence in this report.
+
+## What the comparison proves
+
+The original declaration types are captured in [ORIGINAL-DECLARATIONS.md](ORIGINAL-DECLARATIONS.md), with source locations; source hashes are in [ORIGINAL-SOURCES.json](ORIGINAL-SOURCES.json). The saved statements copy the frozen Back definition verbatim inside the gate namespace, identify its parameterized form by definitional equality, and compare `BackAt` with the original conclusion `OrigAt` for the same parameters and hypotheses. The safety claims additionally prove the English'"'s expanded predicate iff "'`Good` on **arbitrary states**, including unsafe states. These proofs use predicate definitions, not proofs of the original safety theorems. Thus equivalence is not manufactured by proving two closed true propositions.
+
+Claim 2 requires a scope qualification. Its original declaration has initial state `⟨files, [], false⟩`; the frozen Back quantifies over `⟨files, [], halted⟩` for arbitrary `halted`. The gate proves Back → Orig by specializing the supplied Back hypothesis at `false`, and a pointwise iff on that original slice. It separately proves original-domain inclusion in the Back domain and strictness at `full, true`. Finally, it tests the coverage direction against an arbitrary conclusion predicate `Q`: broader coverage entails original coverage, but the converse coverage schema fails (take `Q` to be the original domain). **ENGLISH_STRONGER here means strictly broader parameter/hypothesis coverage.** It does not assert a counterexample to safety or the false claim that the two closed safety propositions cannot imply one another in Lean. No original conclusion exists for the extra initial-`true` parameter case in this declaration; establishing its safety would be a further theorem. This distinction is the point of a one-to-one comparison.
+
+For claim 5, `r.caps ⊆ q.caps` unfolds to `∀ c ∈ r.caps, c ∈ q.caps`. The swapped order of `q` and `keep` is harmless once corresponding parameters are aligned. The separate witness constructs a genuine new child with nonempty capabilities, and also shows `[7,7] ⊆ [7]` while `[7,7]` is not a sublist of `[7]`. This distinguishes the theorem'"'s predicate from a count-sensitive reading, without claiming the actual filtering step duplicates capabilities.
+
+For claim 7, the expanded predicate includes **both** the version index and the recorded policy value: "'`versions[i]? = some (d.val,w)`, `w ∈ admins`, and `i+1 = d.curLen`. The temporal cut is the store length recorded when the decision happened, rather than the final store length. The pinned digest hypothesis is preserved exactly. Claim 8 retains that same hypothesis rather than silently dropping it.
+
+## Hostile reading of “Does NOT say”
+
+| Claim | Assessment of excluded over-readings |
+| --- | --- |
+| 1 | (1) Respected: only `ran` is quantified, with no real-loader mediation theorem. (2) The missing-interpreter-list caveat is substantively right, but “runs any script” overstates the record semantics: unrecognised binaries ignore the script argument and record `none`. The gated witness exhibits this. (3) Respected: allowlisting proves neither harmlessness nor usefulness; the useful witness is just one configuration. |
+| 2 | (1) Respected: `Sound` requires only digest/script checks for this property, with no conclusion about real noexec/halt needs. (2) Respected: digest membership, not path identity, is tested. (3) Respected: hashing and loading are abstract, with no world premise proved. Initial halt scope needs the correction below. |
+| 3 | All three respected: halted is a hypothesis, no halt liveness is established, past run records are preserved, and equality concerns only the model state. The witness has nonempty files and past runs. |
+| 4 | All three respected: grants can provide capabilities; elevation rules are arbitrary trusted entries and do not require lineage-specific entitlement; kernel bypass and complete recording are not proved. Admin identity is a number supplied by an operation. |
+| 5 | All three respected: this is one spawn step; it does not prevent later grants; its hypotheses exclude missing parents and reused child identifiers. “Sub-collection” needs a membership-based definition. |
+| 6 | All three respected: no halt liveness, no real process termination or capability removal, and no statement about operations outside the model. The witness preserves nonempty processes, grants and use records. |
+| 7 | All three respected: builds append the pinned location, whose digest is exactly the `hpin` premise; full ignores search-path choice for builds; no host mounts, real filesystem, or benign compiler semantics are modeled. The witness sets the search-path tool to 666 but records build 40. “Cited” should explicitly include the policy value. |
+| 8 | All three respected: stored values are opaque numbers, writers are claimed caller numbers, and admin-written values need not be correct. The non-admin write in the witness is refused. No mount-table theorem follows without a world mapping to this store. |
+| 9 | All three respected: no halt liveness or real firewall guarantee; no in-flight cancellation; equality concerns the abstract state. The witness preserves existing versions, decisions and builds. |
+| 10 | All three respected: `registryOnly` models refusal of bypass creation, rather than proving real creation-path completeness; prior effects are not undone; real revocation effectiveness is not established. The witness includes an ignored spawn claim, a refused bypass, one pre-end firing and no post-end firing. The hypothesis prose incorrectly gives bypass attempts claimed labels. |
+
+## Corrections to the English
+
+Replacement text only; no input/part file was edited.
+
+1. **Claim 2 — initial state.** Replace “The same safety statement … from any initial files with no runs” and its hypothesis description with: “For any environment and checks with digest checking and script checking on, start with arbitrary files, an empty run list, and the halted flag set to false. After any trace, every recorded run has an allowlisted program digest and every listed-interpreter run has an allowlisted script digest. The noexec and halt switches may have either value.” This matches the named original declaration. If either initial halted flag is intended, name and prove that extension separately.
+
+2. **Claim 1 — missing interpreter entry.** Replace “an allowlisted interpreter missing from that list runs any script” with: “If an allowlisted binary'"'s digest is missing from the interpreter list, the model treats it as a non-interpreter, does not check its supplied script argument, and records the run with no script. This does not establish what a real interpreter executes.”
+
+3. **Claim 5 — sub-collection.** Replace its conclusion with: “Every newly appearing process has the parent's lineage, and every capability value in its capability list occurs in the parent's capability list immediately before this spawn step. The subset predicate is membership inclusion; it does not compare occurrence counts or list order.”
+
+4. **Claim 7 — policy content and time.** Replace the decision clause with: “Every recorded decision stores a policy-version index and the value at that index; the version's writer is on the admin list, and its index plus one equals the store length recorded when that decision was made.” Keep the separate pinned-digest build clause and its hypothesis.
+
+5. **Claim 10 — bypass arguments.** Replace “including arbitrary claimed session labels for spawns and bypass attempts” with: “including arbitrary claimed session labels for registered spawns; bypass attempts carry a parent, child identifier and job flag, but no claimed session label.”
+
+## Ambiguities exposed
+
+- **Claim 2:** “same safety statement” can inherit claim 1's initial "'`false`, while “with no runs” suggests arbitrary initial halt flags. Phase A explicitly chose the latter. The original declaration resolves the scope to `false`; the frozen Back was not revised after seeing it.
+- **Claim 5:** “sub-collection” can mean membership inclusion, multiplicity inclusion, or an order-preserving sublist. Phase A chose membership inclusion and this matches the original. The implementation'"'s filter has additional behavior that should not be substituted for the named theorem's predicate.
+- **Claim 7:** “cited” can suggest a version label without matching its policy value; the formal predicate also checks the value. “Latest” means latest at the decision's recorded cut, not latest after the entire trace. “Pinned location” and “digest” are numbers and a function in this abstraction.
+- **Claims 4, 8, 10:** admin identities are operation-supplied numbers. The English explicitly warns about this for claims 4 and 8; claim 10 would benefit from the same warning. This is an external authentication limitation, not a mismatch in the compared main predicate.
+- **Claims 3, 6, 9:** “frozen” means exact state equality, including preserving existing records. It neither repairs unsafe prior state nor terminates anything in a real OS.
+
+## Reproduction and limits
+
+From the repository root run:
+
+"'```sh
+python3 docs/lean-english/one-to-one/blind-g2n1/regate.py
+```
+
+The script requires all ten statement/proof pairs, rechecks every statement, gates `claim` and `witness` separately using proofledger'"'s deterministic gate, rewrites only the twenty JSON receipts, and returns nonzero on any failure. Temporary gate check files are created inside this output directory and removed by the gate. No existing receipt or gate temporary directory is needed. It uses the project root and the four scenario imports configured in [run_gate_blind.py](run_gate_blind.py). It neither generates statements nor accepts earlier PASS receipts as evidence.
+
+The copied runner changes only the relocated output/path resolution, the input glob and "'`PL_IMPORTS`; [run-gate-relocation.diff](run-gate-relocation.diff) records those edits. Root and helper references require adjustment because the copy is one directory deeper. The gate implementation itself, including banned tokens and nonce/axiom checks, is untouched. Historical failed and intermediate receipts are retained under `attempts/`; only the root-level receipts correspond to final files. In the initial failing run, proof errors caused a nonzero exit; no equivalence verdict was assigned then.
+
+The clean rerun is recorded in [clean-regate-check.json](clean-regate-check.json); final saved Lean-file hashes are in [PROOF-HASHES.json](PROOF-HASHES.json). Statements and proofs are human-authored comparisons whose fidelity to the original declaration types is documented above; the gate certifies those saved propositions, not the correctness of a natural-language interpretation or the real defensive system.
+'"'''
+(OUT/'RESULTS.md').write_text(report)
+(OUT/'PROOF-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':proof_hashes},indent=2)+'\\n')
+clean=json.loads((OUT/'clean-regate-check.json').read_text())
+assert clean['exit_code']==0 and clean['persistent_changes_only_receipts']
+start='2026-10-13T04:10:52+00:00'
+now=datetime.datetime.now(datetime.timezone.utc)
+progress=f'''# Phase B progress
+
+Done: 10/10 unchanged back files compiled; all Phase-A hashes verified; 10 typed copies frozen before originals were read; 10 pointwise/domain comparisons saved; all 10 claim targets and all 10 non-vacuity witnesses passed proofledger's deterministic gate; hostile English review and replacement sentences completed; copied gate runner and clean-state regate validated.
+
+Verdicts: 9 EQUIVALENT; 1 ENGLISH_STRONGER in parameter/hypothesis coverage (claim 2). No closed-true-proposition equivalence argument was used.
+
+Time: first back-compilation stage began around 2026-10-13 04:10 UTC; typed hashes were frozen at 04:11:26 UTC. Completed {now.isoformat()}. Gate receipts contain final hashes and axiom reports.
+
+Not done: none of the requested Phase B artifacts. No input English or original Lean file was changed.
+
+What could not be certified: real-world mediation, authentication, kernel enforcement, digest/loading integrity, physical revocation, host mount configuration and compiler harmlessness remain outside these models. Claim 2's extra initial-true scope is not a case covered by the named original declaration; its verdict is a strict scope comparison, not a safety-failure witness or an assertion that a converse between two closed true theorems is false.
+
+Historical failures: initial proof files lacked witness unfolding and a proof-namespace open; the gate rejected them and regate exited 1. These were repaired only in comparison proof files. No back/typed repair was needed. Final clean-state regate exited 0 and changed only receipts.
+
+Reproduce: "'`python3 docs/lean-english/one-to-one/blind-g2n1/regate.py` from the repository root.
+'"'''
+(OUT/'PROGRESS.md').write_text(progress)
+print('Final report written; all 20 current receipts verified against final saved Lean files.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+p=out/'finalize_results.py'
+t=p.read_text().replace('with only "'`propext` and `Quot.sound` in the axiom reports.'"','with only permitted standard axioms ("'`propext`, `Quot.sound`, and, for the claim-5 witness, `Classical.choice`) in the reports.'"')
+p.write_text(t)
+PY
+PYTHONDONTWRITEBYTECODE=1 python3 docs/lean-english/one-to-one/blind-g2n1/run_gate_blind.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+audit={}
+expected=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+typed=json.loads((out/'typed/HASHES.json').read_text())['files']
+for name,h in typed.items():
+    p=out/'typed'/name
+    assert hashlib.sha256(p.read_bytes()).hexdigest()==h==expected['back/'+name]
+    assert (out/'back'/name).read_bytes()==p.read_bytes()
+    n=int(name.split('-')[0]); body=p.read_text().split('\\nnamespace ',1)[1].split('\\n',1)[1].rsplit('\\nend ',1)[0].strip()
+    assert body in (out/f'bg2n1_{n}.statement.lean').read_text()
+audit['all_back_hashes_match']=True
+audit['all_typed_files_byte_identical']=True
+audit['all_frozen_back_definitions_preserved_in_gate_statements']=True
+orig=json.loads((out/'ORIGINAL-SOURCES.json').read_text())['files']
+assert all(hashlib.sha256(Path(p).read_bytes()).hexdigest()==h for p,h in orig.items())
+audit['original_sources_unchanged']=True
+audit['gate_source_sha256']=hashlib.sha256((out.parent/'leangate_imports.py').read_bytes()).hexdigest()
+audit['utc']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+(out/'AUDIT.json').write_text(json.dumps(audit,indent=2)+'\\n')
+(out/'PROGRESS.md').write_text('# Phase B progress\\n\\nDone: all 10 back files compiled unchanged; all hashes frozen before original inspection; all 10 final comparisons and all 10 final witnesses passed the deterministic gate. Hostile reading and English replacements drafted.\\n\\nIn progress: validating the copied runner directly and re-gating from a clean receipt/temp state; checking that regate persists only receipts; finalizing RESULTS.md.\\n\\nTime: typed hashes frozen 2026-10-13T04:11:26Z. Current '+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n\\nNot done: final clean-run audit and reports. No requested claim remains without a proof/certificate. World assumptions remain unverified as stated in the English.\\n')
+PY"
+
+---
+/bin/bash -lc 'date -u +%Y-%m-%dT%H:%M:%SZ
+ls docs/lean-english/one-to-one/blind-g2n1/gate-tmp'
+
+---
+/bin/bash -lc "cat > docs/lean-english/one-to-one/blind-g2n1/check_clean_regate.py <<'PY'
+\"\"\"Exercise regate with no existing receipts or gate temporary directory.\"\"\"
+from pathlib import Path
+import datetime, hashlib, json, shutil, subprocess
+OUT=Path(__file__).resolve().parent
+ROOT=OUT.parents[3]
+receipt_names={f'bg2n1_{n}{suffix}' for n in range(1,11)
+               for suffix in ('.receipt.json','.witness.receipt.json')}
+archive=OUT/'attempts/before-clean'
+archive.mkdir(parents=True,exist_ok=True)
+for name in receipt_names:
+    p=OUT/name
+    if p.exists():
+        shutil.copyfile(p,archive/name)
+        p.unlink()
+shutil.rmtree(OUT/'gate-tmp',ignore_errors=True)
+
+def snapshot():
+    return {str(p.relative_to(OUT)):hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in OUT.rglob('*') if p.is_file()}
+
+before=snapshot()
+assert not any(name in before for name in receipt_names)
+start=datetime.datetime.now(datetime.timezone.utc)
+r=subprocess.run(['python3',str(OUT/'regate.py')],cwd=ROOT,capture_output=True,text=True)
+after=snapshot()
+changed={p for p in set(before)|set(after) if before.get(p)"'!=after.get(p)}
+only_receipts=changed==receipt_names
+all_passed=all((OUT/n).exists() and json.loads((OUT/n).read_text()).get('"'passed') is True
+               for n in receipt_names)
+result={'started_utc':start.isoformat(),'completed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'exit_code':r.returncode,'started_without_receipts':True,'started_without_gate_tmp':True,
+        'persistent_changes_only_receipts':only_receipts,'all_20_targets_passed':all_passed,
+        'changed_files':sorted(changed),'regate_stdout':r.stdout,'regate_stderr':r.stderr,
+        'nonreceipt_files_before_sha256':before,
+        'initial_failure_exit_code_observed':1}
+(OUT/'clean-regate-check.json').write_text(json.dumps(result,indent=2)+'\\n')
+print(r.stdout, end='')
+print(r.stderr, end='')
+assert r.returncode==0 and only_receipts and all_passed, result
+print('CLEAN REGATE PASSED: only the twenty receipts were persistently written.')
+PY"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g2n1/check_clean_regate.py'
+
+---
+/bin/bash -lc "date -u +%Y-%m-%dT%H:%M:%SZ
+rg -n 'EQUIVALENT|ENGLISH_STRONGER|only permitted|clean-regate' docs/lean-english/one-to-one/blind-g2n1/finalize_results.py"
+
+---
+/bin/bash -lc "python3 docs/lean-english/one-to-one/blind-g2n1/finalize_results.py
+python3 - <<'PY'
+from pathlib import Path
+import json,hashlib
+out=Path('docs/lean-english/one-to-one/blind-g2n1')
+receipts=list(out.glob('*.receipt.json'))
+assert len(receipts)==20 and all(json.loads(p.read_text())['passed'] for p in receipts)
+manifest=json.loads((out/'PROOF-HASHES.json').read_text())['files']
+assert len(manifest)==20
+assert all(hashlib.sha256((out/p).read_bytes()).hexdigest()==h for p,h in manifest.items())
+assert not list((out/'gate-tmp').glob('*.lean'))
+print('Final audit: 20 passing receipts, 20 matching saved Lean hashes, no leftover gate check files.')
+print((out/'RESULTS.md').read_text().split('## What the comparison proves')[0])
+print((out/'PROGRESS.md').read_text())
+PY"

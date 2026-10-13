@@ -1,0 +1,6 @@
+ControlStack/Deployment/R2Contracts.lean:27
+theorem path_edge_subset (d larger : IR)
+    (subset : ∀ e ∈ d.edges, e ∈ larger.edges)
+    (broker : d.broker = larger.broker) (receiver : d.receiver = larger.receiver)
+    (start target : Nat) (path : AvoidedPath d start target) :
+    AvoidedPath larger start target :=

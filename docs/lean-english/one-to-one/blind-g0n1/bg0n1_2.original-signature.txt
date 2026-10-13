@@ -1,0 +1,5 @@
+ControlStack/Deployment/Contracts.lean:143
+theorem agent_call_legal (d : IR) (h : Accepted d) (r a : Node)
+    (hr : r ∈ d.nodes) (rid : r.id = d.receiver) (ha : a ∈ d.nodes)
+    (agent : a.agent = true) (approvers admins : List Nat) (k : Nat) (tx : SC26.Tx) :
+    SC26.legal (roles d r.uid approvers admins) (.bankCall a.uid k tx) :=

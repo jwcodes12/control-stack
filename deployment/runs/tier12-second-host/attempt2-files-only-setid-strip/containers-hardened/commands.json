@@ -1,0 +1,199 @@
+[
+  {
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "sha256:b2bf5015a7b5ff7c5b743673c1032565a316dcd965c444422f2a3cdeb5be6125"
+    ],
+    "ended_monotonic": 246.612069892,
+    "exit": 0,
+    "started_monotonic": 246.600927885,
+    "stderr": "",
+    "stdout": "[\n    {\n        \"Id\": \"sha256:b2bf5015a7b5ff7c5b743673c1032565a316dcd965c444422f2a3cdeb5be6125\",\n        \"RepoTags\": [\n            \"cstack-r2-v8:offline\"\n        ],\n        \"RepoDigests\": [],\n        \"Parent\": \"\",\n        \"Comment\": \"Imported from -\",\n        \"Created\": \"2026-10-13T16:53:00.160616192Z\",\n        \"DockerVersion\": \"28.0.4\",\n        \"Author\": \"\",\n        \"Config\": {\n            \"Hostname\": \"\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PYTHONPATH=/slice\"\n            ],\n            \"Cmd\": null,\n            \"Image\": \"\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"/slice\",\n            \"Entrypoint\": [\n                \"/usr/bin/python3\",\n                \"/slice/entry.py\"\n            ],\n            \"OnBuild\": null,\n            \"Labels\": null\n        },\n        \"Architecture\": \"amd64\",\n        \"Os\": \"linux\",\n        \"Size\": 172790211,\n        \"GraphDriver\": {\n            \"Data\": {\n                \"MergedDir\": \"/var/lib/docker/overlay2/2757ba761785324ebb2fb4dd6309552d3fcb8512c364a6cd81100dc4b0bb051a/merged\",\n                \"UpperDir\": \"/var/lib/docker/overlay2/2757ba761785324ebb2fb4dd6309552d3fcb8512c364a6cd81100dc4b0bb051a/diff\",\n                \"WorkDir\": \"/var/lib/docker/overlay2/2757ba761785324ebb2fb4dd6309552d3fcb8512c364a6cd81100dc4b0bb051a/work\"\n            },\n            \"Name\": \"overlay2\"\n        },\n        \"RootFS\": {\n            \"Type\": \"layers\",\n            \"Layers\": [\n                \"sha256:b3157d56e40665acb839efb27712ceb6ac98dbb8c6893a5adbf6a2faa7098380\"\n            ]\n        },\n        \"Metadata\": {\n            \"LastTagTime\": \"2026-10-13T16:53:00.16192484Z\"\n        }\n    }\n]\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .}}"
+    ],
+    "ended_monotonic": 246.745607463,
+    "exit": 0,
+    "started_monotonic": 246.612120738,
+    "stderr": "",
+    "stdout": "{\"ID\":\"07f0e779-c305-4162-b8ec-c48c30f52fbe\",\"Containers\":0,\"ContainersRunning\":0,\"ContainersPaused\":0,\"ContainersStopped\":0,\"Images\":8,\"Driver\":\"overlay2\",\"DriverStatus\":[[\"Backing Filesystem\",\"extfs\"],[\"Supports d_type\",\"true\"],[\"Using metacopy\",\"false\"],[\"Native Overlay Diff\",\"false\"],[\"userxattr\",\"false\"]],\"Plugins\":{\"Volume\":[\"local\"],\"Network\":[\"bridge\",\"host\",\"ipvlan\",\"macvlan\",\"null\",\"overlay\"],\"Authorization\":null,\"Log\":[\"awslogs\",\"fluentd\",\"gcplogs\",\"gelf\",\"journald\",\"json-file\",\"local\",\"splunk\",\"syslog\"]},\"MemoryLimit\":true,\"SwapLimit\":true,\"CpuCfsPeriod\":true,\"CpuCfsQuota\":true,\"CPUShares\":true,\"CPUSet\":true,\"PidsLimit\":true,\"IPv4Forwarding\":true,\"BridgeNfIptables\":false,\"BridgeNfIp6tables\":false,\"Debug\":false,\"NFd\":22,\"OomKillDisable\":false,\"NGoroutines\":41,\"SystemTime\":\"2026-10-13T16:53:00.566327899Z\",\"LoggingDriver\":\"json-file\",\"CgroupDriver\":\"systemd\",\"CgroupVersion\":\"2\",\"NEventsListener\":0,\"KernelVersion\":\"6.17.0-1022-azure\",\"OperatingSystem\":\"Ubuntu 24.04.5 LTS\",\"OSVersion\":\"24.04\",\"OSType\":\"linux\",\"Architecture\":\"x86_64\",\"IndexServerAddress\":\"https://index.docker.io/v1/\",\"RegistryConfig\":{\"IndexConfigs\":{\"docker.io\":{\"Name\":\"docker.io\",\"Mirrors\":[],\"Secure\":true,\"Official\":true}},\"InsecureRegistryCIDRs\":[\"::1/128\",\"127.0.0.0/8\"],\"Mirrors\":null},\"NCPU\":4,\"MemTotal\":16766414848,\"GenericResources\":null,\"DockerRootDir\":\"/var/lib/docker\",\"HttpProxy\":\"\",\"HttpsProxy\":\"\",\"NoProxy\":\"\",\"Name\":\"runnervmmprz5\",\"Labels\":[],\"ExperimentalBuild\":false,\"ServerVersion\":\"28.0.4\",\"Runtimes\":{\"io.containerd.runc.v2\":{\"path\":\"runc\",\"status\":{\"org.opencontainers.runtime-spec.features\":\"{\\\"ociVersionMin\\\":\\\"1.0.0\\\",\\\"ociVersionMax\\\":\\\"1.3.0\\\",\\\"hooks\\\":[\\\"prestart\\\",\\\"createRuntime\\\",\\\"createContainer\\\",\\\"startContainer\\\",\\\"poststart\\\",\\\"poststop\\\"],\\\"mountOptions\\\":[\\\"async\\\",\\\"atime\\\",\\\"bind\\\",\\\"defaults\\\",\\\"dev\\\",\\\"diratime\\\",\\\"dirsync\\\",\\\"exec\\\",\\\"iversion\\\",\\\"lazytime\\\",\\\"loud\\\",\\\"mand\\\",\\\"noatime\\\",\\\"nodev\\\",\\\"nodiratime\\\",\\\"noexec\\\",\\\"noiversion\\\",\\\"nolazytime\\\",\\\"nomand\\\",\\\"norelatime\\\",\\\"nostrictatime\\\",\\\"nosuid\\\",\\\"nosymfollow\\\",\\\"private\\\",\\\"ratime\\\",\\\"rbind\\\",\\\"rdev\\\",\\\"rdiratime\\\",\\\"relatime\\\",\\\"remount\\\",\\\"rexec\\\",\\\"rnoatime\\\",\\\"rnodev\\\",\\\"rnodiratime\\\",\\\"rnoexec\\\",\\\"rnorelatime\\\",\\\"rnostrictatime\\\",\\\"rnosuid\\\",\\\"rnosymfollow\\\",\\\"ro\\\",\\\"rprivate\\\",\\\"rrelatime\\\",\\\"rro\\\",\\\"rrw\\\",\\\"rshared\\\",\\\"rslave\\\",\\\"rstrictatime\\\",\\\"rsuid\\\",\\\"rsymfollow\\\",\\\"runbindable\\\",\\\"rw\\\",\\\"shared\\\",\\\"silent\\\",\\\"slave\\\",\\\"strictatime\\\",\\\"suid\\\",\\\"symfollow\\\",\\\"sync\\\",\\\"tmpcopyup\\\",\\\"unbindable\\\"],\\\"linux\\\":{\\\"namespaces\\\":[\\\"cgroup\\\",\\\"ipc\\\",\\\"mount\\\",\\\"network\\\",\\\"pid\\\",\\\"time\\\",\\\"user\\\",\\\"uts\\\"],\\\"capabilities\\\":[\\\"CAP_CHOWN\\\",\\\"CAP_DAC_OVERRIDE\\\",\\\"CAP_DAC_READ_SEARCH\\\",\\\"CAP_FOWNER\\\",\\\"CAP_FSETID\\\",\\\"CAP_KILL\\\",\\\"CAP_SETGID\\\",\\\"CAP_SETUID\\\",\\\"CAP_SETPCAP\\\",\\\"CAP_LINUX_IMMUTABLE\\\",\\\"CAP_NET_BIND_SERVICE\\\",\\\"CAP_NET_BROADCAST\\\",\\\"CAP_NET_ADMIN\\\",\\\"CAP_NET_RAW\\\",\\\"CAP_IPC_LOCK\\\",\\\"CAP_IPC_OWNER\\\",\\\"CAP_SYS_MODULE\\\",\\\"CAP_SYS_RAWIO\\\",\\\"CAP_SYS_CHROOT\\\",\\\"CAP_SYS_PTRACE\\\",\\\"CAP_SYS_PACCT\\\",\\\"CAP_SYS_ADMIN\\\",\\\"CAP_SYS_BOOT\\\",\\\"CAP_SYS_NICE\\\",\\\"CAP_SYS_RESOURCE\\\",\\\"CAP_SYS_TIME\\\",\\\"CAP_SYS_TTY_CONFIG\\\",\\\"CAP_MKNOD\\\",\\\"CAP_LEASE\\\",\\\"CAP_AUDIT_WRITE\\\",\\\"CAP_AUDIT_CONTROL\\\",\\\"CAP_SETFCAP\\\",\\\"CAP_MAC_OVERRIDE\\\",\\\"CAP_MAC_ADMIN\\\",\\\"CAP_SYSLOG\\\",\\\"CAP_WAKE_ALARM\\\",\\\"CAP_BLOCK_SUSPEND\\\",\\\"CAP_AUDIT_READ\\\",\\\"CAP_PERFMON\\\",\\\"CAP_BPF\\\",\\\"CAP_CHECKPOINT_RESTORE\\\"],\\\"cgroup\\\":{\\\"v1\\\":true,\\\"v2\\\":true,\\\"systemd\\\":true,\\\"systemdUser\\\":true,\\\"rdma\\\":true},\\\"seccomp\\\":{\\\"enabled\\\":true,\\\"actions\\\":[\\\"SCMP_ACT_ALLOW\\\",\\\"SCMP_ACT_ERRNO\\\",\\\"SCMP_ACT_KILL\\\",\\\"SCMP_ACT_KILL_PROCESS\\\",\\\"SCMP_ACT_KILL_THREAD\\\",\\\"SCMP_ACT_LOG\\\",\\\"SCMP_ACT_NOTIFY\\\",\\\"SCMP_ACT_TRACE\\\",\\\"SCMP_ACT_TRAP\\\"],\\\"operators\\\":[\\\"SCMP_CMP_EQ\\\",\\\"SCMP_CMP_GE\\\",\\\"SCMP_CMP_GT\\\",\\\"SCMP_CMP_LE\\\",\\\"SCMP_CMP_LT\\\",\\\"SCMP_CMP_MASKED_EQ\\\",\\\"SCMP_CMP_NE\\\"],\\\"archs\\\":[\\\"SCMP_ARCH_AARCH64\\\",\\\"SCMP_ARCH_ARM\\\",\\\"SCMP_ARCH_LOONGARCH64\\\",\\\"SCMP_ARCH_MIPS\\\",\\\"SCMP_ARCH_MIPS64\\\",\\\"SCMP_ARCH_MIPS64N32\\\",\\\"SCMP_ARCH_MIPSEL\\\",\\\"SCMP_ARCH_MIPSEL64\\\",\\\"SCMP_ARCH_MIPSEL64N32\\\",\\\"SCMP_ARCH_PPC\\\",\\\"SCMP_ARCH_PPC64\\\",\\\"SCMP_ARCH_PPC64LE\\\",\\\"SCMP_ARCH_RISCV64\\\",\\\"SCMP_ARCH_S390\\\",\\\"SCMP_ARCH_S390X\\\",\\\"SCMP_ARCH_X32\\\",\\\"SCMP_ARCH_X86\\\",\\\"SCMP_ARCH_X86_64\\\"],\\\"knownFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\",\\\"SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV\\\"],\\\"supportedFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\"]},\\\"apparmor\\\":{\\\"enabled\\\":true},\\\"selinux\\\":{\\\"enabled\\\":true},\\\"intelRdt\\\":{\\\"enabled\\\":true},\\\"mountExtensions\\\":{\\\"idmap\\\":{\\\"enabled\\\":true}}},\\\"annotations\\\":{\\\"io.github.seccomp.libseccomp.version\\\":\\\"2.5.5\\\",\\\"org.opencontainers.runc.checkpoint.enabled\\\":\\\"true\\\",\\\"org.opencontainers.runc.commit\\\":\\\"v1.5.1-0-g8f2685a4\\\",\\\"org.opencontainers.runc.version\\\":\\\"1.5.1\\\"},\\\"potentiallyUnsafeConfigAnnotations\\\":[\\\"bundle\\\",\\\"org.systemd.property.\\\",\\\"org.criu.config\\\"]}\"}},\"runc\":{\"path\":\"runc\",\"status\":{\"org.opencontainers.runtime-spec.features\":\"{\\\"ociVersionMin\\\":\\\"1.0.0\\\",\\\"ociVersionMax\\\":\\\"1.3.0\\\",\\\"hooks\\\":[\\\"prestart\\\",\\\"createRuntime\\\",\\\"createContainer\\\",\\\"startContainer\\\",\\\"poststart\\\",\\\"poststop\\\"],\\\"mountOptions\\\":[\\\"async\\\",\\\"atime\\\",\\\"bind\\\",\\\"defaults\\\",\\\"dev\\\",\\\"diratime\\\",\\\"dirsync\\\",\\\"exec\\\",\\\"iversion\\\",\\\"lazytime\\\",\\\"loud\\\",\\\"mand\\\",\\\"noatime\\\",\\\"nodev\\\",\\\"nodiratime\\\",\\\"noexec\\\",\\\"noiversion\\\",\\\"nolazytime\\\",\\\"nomand\\\",\\\"norelatime\\\",\\\"nostrictatime\\\",\\\"nosuid\\\",\\\"nosymfollow\\\",\\\"private\\\",\\\"ratime\\\",\\\"rbind\\\",\\\"rdev\\\",\\\"rdiratime\\\",\\\"relatime\\\",\\\"remount\\\",\\\"rexec\\\",\\\"rnoatime\\\",\\\"rnodev\\\",\\\"rnodiratime\\\",\\\"rnoexec\\\",\\\"rnorelatime\\\",\\\"rnostrictatime\\\",\\\"rnosuid\\\",\\\"rnosymfollow\\\",\\\"ro\\\",\\\"rprivate\\\",\\\"rrelatime\\\",\\\"rro\\\",\\\"rrw\\\",\\\"rshared\\\",\\\"rslave\\\",\\\"rstrictatime\\\",\\\"rsuid\\\",\\\"rsymfollow\\\",\\\"runbindable\\\",\\\"rw\\\",\\\"shared\\\",\\\"silent\\\",\\\"slave\\\",\\\"strictatime\\\",\\\"suid\\\",\\\"symfollow\\\",\\\"sync\\\",\\\"tmpcopyup\\\",\\\"unbindable\\\"],\\\"linux\\\":{\\\"namespaces\\\":[\\\"cgroup\\\",\\\"ipc\\\",\\\"mount\\\",\\\"network\\\",\\\"pid\\\",\\\"time\\\",\\\"user\\\",\\\"uts\\\"],\\\"capabilities\\\":[\\\"CAP_CHOWN\\\",\\\"CAP_DAC_OVERRIDE\\\",\\\"CAP_DAC_READ_SEARCH\\\",\\\"CAP_FOWNER\\\",\\\"CAP_FSETID\\\",\\\"CAP_KILL\\\",\\\"CAP_SETGID\\\",\\\"CAP_SETUID\\\",\\\"CAP_SETPCAP\\\",\\\"CAP_LINUX_IMMUTABLE\\\",\\\"CAP_NET_BIND_SERVICE\\\",\\\"CAP_NET_BROADCAST\\\",\\\"CAP_NET_ADMIN\\\",\\\"CAP_NET_RAW\\\",\\\"CAP_IPC_LOCK\\\",\\\"CAP_IPC_OWNER\\\",\\\"CAP_SYS_MODULE\\\",\\\"CAP_SYS_RAWIO\\\",\\\"CAP_SYS_CHROOT\\\",\\\"CAP_SYS_PTRACE\\\",\\\"CAP_SYS_PACCT\\\",\\\"CAP_SYS_ADMIN\\\",\\\"CAP_SYS_BOOT\\\",\\\"CAP_SYS_NICE\\\",\\\"CAP_SYS_RESOURCE\\\",\\\"CAP_SYS_TIME\\\",\\\"CAP_SYS_TTY_CONFIG\\\",\\\"CAP_MKNOD\\\",\\\"CAP_LEASE\\\",\\\"CAP_AUDIT_WRITE\\\",\\\"CAP_AUDIT_CONTROL\\\",\\\"CAP_SETFCAP\\\",\\\"CAP_MAC_OVERRIDE\\\",\\\"CAP_MAC_ADMIN\\\",\\\"CAP_SYSLOG\\\",\\\"CAP_WAKE_ALARM\\\",\\\"CAP_BLOCK_SUSPEND\\\",\\\"CAP_AUDIT_READ\\\",\\\"CAP_PERFMON\\\",\\\"CAP_BPF\\\",\\\"CAP_CHECKPOINT_RESTORE\\\"],\\\"cgroup\\\":{\\\"v1\\\":true,\\\"v2\\\":true,\\\"systemd\\\":true,\\\"systemdUser\\\":true,\\\"rdma\\\":true},\\\"seccomp\\\":{\\\"enabled\\\":true,\\\"actions\\\":[\\\"SCMP_ACT_ALLOW\\\",\\\"SCMP_ACT_ERRNO\\\",\\\"SCMP_ACT_KILL\\\",\\\"SCMP_ACT_KILL_PROCESS\\\",\\\"SCMP_ACT_KILL_THREAD\\\",\\\"SCMP_ACT_LOG\\\",\\\"SCMP_ACT_NOTIFY\\\",\\\"SCMP_ACT_TRACE\\\",\\\"SCMP_ACT_TRAP\\\"],\\\"operators\\\":[\\\"SCMP_CMP_EQ\\\",\\\"SCMP_CMP_GE\\\",\\\"SCMP_CMP_GT\\\",\\\"SCMP_CMP_LE\\\",\\\"SCMP_CMP_LT\\\",\\\"SCMP_CMP_MASKED_EQ\\\",\\\"SCMP_CMP_NE\\\"],\\\"archs\\\":[\\\"SCMP_ARCH_AARCH64\\\",\\\"SCMP_ARCH_ARM\\\",\\\"SCMP_ARCH_LOONGARCH64\\\",\\\"SCMP_ARCH_MIPS\\\",\\\"SCMP_ARCH_MIPS64\\\",\\\"SCMP_ARCH_MIPS64N32\\\",\\\"SCMP_ARCH_MIPSEL\\\",\\\"SCMP_ARCH_MIPSEL64\\\",\\\"SCMP_ARCH_MIPSEL64N32\\\",\\\"SCMP_ARCH_PPC\\\",\\\"SCMP_ARCH_PPC64\\\",\\\"SCMP_ARCH_PPC64LE\\\",\\\"SCMP_ARCH_RISCV64\\\",\\\"SCMP_ARCH_S390\\\",\\\"SCMP_ARCH_S390X\\\",\\\"SCMP_ARCH_X32\\\",\\\"SCMP_ARCH_X86\\\",\\\"SCMP_ARCH_X86_64\\\"],\\\"knownFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\",\\\"SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV\\\"],\\\"supportedFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\"]},\\\"apparmor\\\":{\\\"enabled\\\":true},\\\"selinux\\\":{\\\"enabled\\\":true},\\\"intelRdt\\\":{\\\"enabled\\\":true},\\\"mountExtensions\\\":{\\\"idmap\\\":{\\\"enabled\\\":true}}},\\\"annotations\\\":{\\\"io.github.seccomp.libseccomp.version\\\":\\\"2.5.5\\\",\\\"org.opencontainers.runc.checkpoint.enabled\\\":\\\"true\\\",\\\"org.opencontainers.runc.commit\\\":\\\"v1.5.1-0-g8f2685a4\\\",\\\"org.opencontainers.runc.version\\\":\\\"1.5.1\\\"},\\\"potentiallyUnsafeConfigAnnotations\\\":[\\\"bundle\\\",\\\"org.systemd.property.\\\",\\\"org.criu.config\\\"]}\"}}},\"DefaultRuntime\":\"runc\",\"Swarm\":{\"NodeID\":\"\",\"NodeAddr\":\"\",\"LocalNodeState\":\"inactive\",\"ControlAvailable\":false,\"Error\":\"\",\"RemoteManagers\":null},\"LiveRestoreEnabled\":false,\"Isolation\":\"\",\"InitBinary\":\"docker-init\",\"ContainerdCommit\":{\"ID\":\"ee2735368117d2eb259779949d5e75cdafec9761\",\"Expected\":\"ee2735368117d2eb259779949d5e75cdafec9761\"},\"RuncCommit\":{\"ID\":\"v1.5.1-0-g8f2685a4\",\"Expected\":\"v1.5.1-0-g8f2685a4\"},\"InitCommit\":{\"ID\":\"de40ad0\",\"Expected\":\"de40ad0\"},\"SecurityOptions\":[\"name=apparmor\",\"name=seccomp,profile=builtin\",\"name=cgroupns\"],\"CDISpecDirs\":[],\"Containerd\":{\"Address\":\"/run/containerd/containerd.sock\",\"Namespaces\":{\"Containers\":\"moby\",\"Plugins\":\"plugins.moby\"}},\"Warnings\":null,\"ClientInfo\":{\"Debug\":false,\"Platform\":{\"Name\":\"Docker Engine - Community\"},\"Version\":\"28.0.4\",\"DefaultAPIVersion\":\"1.48\",\"GitCommit\":\"b8034c0\",\"GoVersion\":\"go1.23.7\",\"Os\":\"linux\",\"Arch\":\"amd64\",\"BuildTime\":\"Tue Mar 25 15:07:16 2025\",\"Context\":\"default\",\"Plugins\":[{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.37.2\",\"ShortDescription\":\"Docker Buildx\",\"Name\":\"buildx\",\"Path\":\"/usr/libexec/docker/cli-plugins/docker-buildx\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v2.38.2\",\"ShortDescription\":\"Docker Compose\",\"Name\":\"compose\",\"Path\":\"/usr/libexec/docker/cli-plugins/docker-compose\"}],\"Warnings\":null}}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .SecurityOptions}}"
+    ],
+    "ended_monotonic": 246.784652683,
+    "exit": 0,
+    "started_monotonic": 246.746276369,
+    "stderr": "",
+    "stdout": "[\"name=apparmor\",\"name=seccomp,profile=builtin\",\"name=cgroupns\"]\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 246.793082911,
+    "exit": 0,
+    "started_monotonic": 246.785708801,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 246.79951866,
+    "exit": 0,
+    "started_monotonic": 246.793100888,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 249.16427556,
+    "exit": 0,
+    "started_monotonic": 246.799527283,
+    "stderr": " Network cstack-r2-clean_isolated  Creating\n Network cstack-r2-clean_isolated  Created\n Container cstack-r2-clean-agent-a-1  Creating\n Container cstack-r2-clean-broker-1  Creating\n Container cstack-r2-clean-agent-b-1  Creating\n Container cstack-r2-clean-reviewer-1  Creating\n Container cstack-r2-clean-approver-1  Creating\n Container cstack-r2-clean-receiver-1  Creating\n Container cstack-r2-clean-broker-1  Created\n Container cstack-r2-clean-approver-1  Created\n Container cstack-r2-clean-reviewer-1  Created\n Container cstack-r2-clean-agent-b-1  Created\n Container cstack-r2-clean-receiver-1  Created\n Container cstack-r2-clean-agent-a-1  Created\n Container cstack-r2-clean-receiver-1  Starting\n Container cstack-r2-clean-reviewer-1  Starting\n Container cstack-r2-clean-broker-1  Starting\n Container cstack-r2-clean-approver-1  Starting\n Container cstack-r2-clean-agent-b-1  Starting\n Container cstack-r2-clean-agent-a-1  Starting\n Container cstack-r2-clean-agent-a-1  Started\n Container cstack-r2-clean-agent-b-1  Started\n Container cstack-r2-clean-reviewer-1  Started\n Container cstack-r2-clean-broker-1  Started\n Container cstack-r2-clean-receiver-1  Started\n Container cstack-r2-clean-approver-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 270.312531693,
+    "exit": 0,
+    "started_monotonic": 259.706208346,
+    "stderr": " Container cstack-r2-clean-agent-a-1  Stopping\n Container cstack-r2-clean-approver-1  Stopping\n Container cstack-r2-clean-reviewer-1  Stopping\n Container cstack-r2-clean-agent-b-1  Stopping\n Container cstack-r2-clean-receiver-1  Stopping\n Container cstack-r2-clean-broker-1  Stopping\n Container cstack-r2-clean-broker-1  Stopped\n Container cstack-r2-clean-broker-1  Removing\n Container cstack-r2-clean-broker-1  Removed\n Container cstack-r2-clean-agent-b-1  Stopped\n Container cstack-r2-clean-agent-b-1  Removing\n Container cstack-r2-clean-approver-1  Stopped\n Container cstack-r2-clean-approver-1  Removing\n Container cstack-r2-clean-agent-a-1  Stopped\n Container cstack-r2-clean-agent-a-1  Removing\n Container cstack-r2-clean-reviewer-1  Stopped\n Container cstack-r2-clean-reviewer-1  Removing\n Container cstack-r2-clean-receiver-1  Stopped\n Container cstack-r2-clean-receiver-1  Removing\n Container cstack-r2-clean-agent-b-1  Removed\n Container cstack-r2-clean-approver-1  Removed\n Container cstack-r2-clean-receiver-1  Removed\n Container cstack-r2-clean-reviewer-1  Removed\n Container cstack-r2-clean-agent-a-1  Removed\n Network cstack-r2-clean_isolated  Removing\n Network cstack-r2-clean_isolated  Removed\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 270.32081621,
+    "exit": 0,
+    "started_monotonic": 270.312559375,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "rm",
+      "sha256:b2bf5015a7b5ff7c5b743673c1032565a316dcd965c444422f2a3cdeb5be6125"
+    ],
+    "ended_monotonic": 270.977243204,
+    "exit": 0,
+    "started_monotonic": 270.320820186,
+    "stderr": "",
+    "stdout": "Untagged: cstack-r2-v8:offline\nDeleted: sha256:b2bf5015a7b5ff7c5b743673c1032565a316dcd965c444422f2a3cdeb5be6125\nDeleted: sha256:b3157d56e40665acb839efb27712ceb6ac98dbb8c6893a5adbf6a2faa7098380\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Names}}"
+    ],
+    "ended_monotonic": 270.988078657,
+    "exit": 0,
+    "started_monotonic": 270.9776525,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "network",
+      "ls",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Name}}"
+    ],
+    "ended_monotonic": 270.997767405,
+    "exit": 0,
+    "started_monotonic": 270.988082443,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "ls",
+      "--filter",
+      "reference=cstack-r2-*",
+      "--format",
+      "{{.Repository}}:{{.Tag}}"
+    ],
+    "ended_monotonic": 271.008855688,
+    "exit": 0,
+    "started_monotonic": 270.99777023,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "volume",
+      "ls",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Name}}"
+    ],
+    "ended_monotonic": 271.019693845,
+    "exit": 0,
+    "started_monotonic": 271.008859013,
+    "stderr": "",
+    "stdout": ""
+  }
+]

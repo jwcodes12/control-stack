@@ -1,0 +1,778 @@
+[
+  {
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "sha256:c77a24f8f298a1c0d41cd4d682179d5cd9078feb225f38bf1191eb4a8210ec2d"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "[\n    {\n        \"Id\": \"sha256:c77a24f8f298a1c0d41cd4d682179d5cd9078feb225f38bf1191eb4a8210ec2d\",\n        \"RepoTags\": [\n            \"cstack-r2-demo:offline\"\n        ],\n        \"RepoDigests\": [\n            \"cstack-r2-demo@sha256:c77a24f8f298a1c0d41cd4d682179d5cd9078feb225f38bf1191eb4a8210ec2d\"\n        ],\n        \"Comment\": \"Imported from -\",\n        \"Created\": \"2026-10-13T02:56:28.54643372Z\",\n        \"Config\": {\n            \"Env\": [\n                \"PYTHONPATH=/slice\"\n            ],\n            \"Entrypoint\": [\n                \"/usr/bin/python3\",\n                \"/slice/entry.py\"\n            ],\n            \"WorkingDir\": \"/slice\"\n        },\n        \"Architecture\": \"arm64\",\n        \"Variant\": \"v8\",\n        \"Os\": \"linux\",\n        \"Size\": 132787767,\n        \"RootFS\": {\n            \"Type\": \"layers\",\n            \"Layers\": [\n                \"sha256:dfcc5a926bbb0fb9d6db2461c6623ddb9fd0a837799a4fee094f6358fe419763\"\n            ]\n        },\n        \"Metadata\": {\n            \"LastTagTime\": \"2026-10-13T02:56:28.581838155Z\"\n        },\n        \"Descriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:c77a24f8f298a1c0d41cd4d682179d5cd9078feb225f38bf1191eb4a8210ec2d\",\n            \"size\": 406\n        }\n    }\n]\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/db",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/sink"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "exit": 0,
+    "stderr": " Network cstack-r2-remediated-writable-sink-mount_isolated Creating \n Network cstack-r2-remediated-writable-sink-mount_isolated Creating \n Network cstack-r2-remediated-writable-sink-mount_isolated Created \n Network cstack-r2-remediated-writable-sink-mount_isolated Created \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Creating \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Creating \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Creating \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Creating \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Creating \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Creating \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Created \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Created \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Created \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Created \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Created \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Created \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Starting \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Starting \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Starting \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Starting \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Starting \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Starting \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Started \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Started \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Started \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Started \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Started \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"honest-agent-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791862003}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"honest-agent-a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"honest-agent-a\", \"expires\": 1791862003}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"honest-agent-a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"honest-agent-a\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"honest-agent-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791862003}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"honest-agent-b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"honest-agent-b\", \"expires\": 1791862003}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"honest-agent-b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"honest-agent-b\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 2}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,2,Path('/output')))"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "2.body\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/sink",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/final/sink"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/final/sink"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;s=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);t=sqlite3.connect(sys.argv[2]);s.backup(t);t.close();s.close()",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/db/gate.db",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/final/database.sqlite"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/final/database.sqlite"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-writable-sink-mount",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/writable-sink-mount/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "exit": 0,
+    "stderr": " Container cstack-r2-remediated-writable-sink-mount-receiver-1 Stopping \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Stopping \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Stopping \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Stopping \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Stopping \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Stopping \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Stopped \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Removing \n Container cstack-r2-remediated-writable-sink-mount-broker-1 Removed \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Stopped \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Removing \n Container cstack-r2-remediated-writable-sink-mount-approver-1 Removed \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Stopped \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Removing \n Container cstack-r2-remediated-writable-sink-mount-agent-b-1 Removed \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Stopped \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Removing \n Container cstack-r2-remediated-writable-sink-mount-receiver-1 Removed \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Stopped \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Removing \n Container cstack-r2-remediated-writable-sink-mount-agent-a-1 Removed \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Stopped \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Removing \n Container cstack-r2-remediated-writable-sink-mount-reviewer-1 Removed \n Network cstack-r2-remediated-writable-sink-mount_isolated Removing \n Network cstack-r2-remediated-writable-sink-mount_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/db",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/sink"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "exit": 0,
+    "stderr": " Network cstack-r2-remediated-trusted-role-uid-collision_isolated Creating \n Network cstack-r2-remediated-trusted-role-uid-collision_isolated Creating \n Network cstack-r2-remediated-trusted-role-uid-collision_isolated Created \n Network cstack-r2-remediated-trusted-role-uid-collision_isolated Created \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Creating \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Creating \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Creating \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Creating \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Creating \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Creating \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Created \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Created \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Created \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Created \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Created \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Created \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Starting \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Starting \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Starting \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Starting \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Starting \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Starting \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Started \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Started \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Started \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Started \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Started \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Started \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"honest-agent-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791862029}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"honest-agent-a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"honest-agent-a\", \"expires\": 1791862029}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"honest-agent-a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"honest-agent-a\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"honest-agent-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791862029}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"honest-agent-b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"honest-agent-b\", \"expires\": 1791862029}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"honest-agent-b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"honest-agent-b\"}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 2}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,2,Path('/output')))"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "2.body\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/sink",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/final/sink"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1000",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/final/sink"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;s=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);t=sqlite3.connect(sys.argv[2]);s.backup(t);t.close();s.close()",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state/db/gate.db",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/final/database.sqlite"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1000",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/final/database.sqlite"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "exit": 0,
+    "stderr": " Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Stopping \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Stopping \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Stopping \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Stopping \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Stopping \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Stopping \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Stopped \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Removing \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-a-1 Removed \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Stopped \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Removing \n Container cstack-r2-remediated-trusted-role-uid-collision-receiver-1 Removed \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Stopped \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Removing \n Container cstack-r2-remediated-trusted-role-uid-collision-approver-1 Removed \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Stopped \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Removing \n Container cstack-r2-remediated-trusted-role-uid-collision-broker-1 Removed \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Stopped \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Removing \n Container cstack-r2-remediated-trusted-role-uid-collision-reviewer-1 Removed \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Stopped \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Removing \n Container cstack-r2-remediated-trusted-role-uid-collision-agent-b-1 Removed \n Network cstack-r2-remediated-trusted-role-uid-collision_isolated Removing \n Network cstack-r2-remediated-trusted-role-uid-collision_isolated Removed \n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/opc/projects/cstack-r2v8-fresh/deployment-container-state"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-remediated-trusted-role-uid-collision",
+      "-f",
+      "/home/opc/projects/cstack-r2v8-fresh-demo/remediated/trusted-role-uid-collision/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "rm",
+      "sha256:c77a24f8f298a1c0d41cd4d682179d5cd9078feb225f38bf1191eb4a8210ec2d"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": "Untagged: cstack-r2-demo:offline\nDeleted: sha256:c77a24f8f298a1c0d41cd4d682179d5cd9078feb225f38bf1191eb4a8210ec2d\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Names}}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "network",
+      "ls",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Name}}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "ls",
+      "--filter",
+      "reference=cstack-r2-*",
+      "--format",
+      "{{.Repository}}:{{.Tag}}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "volume",
+      "ls",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Name}}"
+    ],
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  }
+]

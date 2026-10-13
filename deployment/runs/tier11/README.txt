@@ -18,3 +18,7 @@ Docker afterwards: only postgres:16-alpine and the unrelated crafty-controller c
 No bypass case (writable sink, role-UID collision) was launched live: defensive scope. Failed attempts are kept.
 Not independent attestation: the daemon inventory, the receiver's own hash and the sink bytes are read by checkers that
 trust the daemon and the receiver (TCB). No independent human review.
+
+Fresh clone (the one-command path): git clone --branch audit/r2-v8-trusted-code-20261013 <repo> /home/opc/projects/cstack-r2v8-fresh (at 4f986c6);
+  mkdir -p .lake && ln -s ~/research/control-stack/.lake/packages .lake/packages   # prebuilt pinned Lean deps; no network
+  python3 tools/cstack.py demo --output ~/projects/cstack-r2v8-fresh-demo           # PASS, exit 0, 1m32s  -> demo-fresh-clone/

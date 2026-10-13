@@ -1,0 +1,2 @@
+theorem concrete_revoked_stops (G : ℕ) (pre post : List COp) (lid : ℕ) (hr : lid ∈ (runC G cinit pre).revoked) :
+    counter (runC G cinit (pre ++ post)) lid = counter (runC G cinit pre) lid

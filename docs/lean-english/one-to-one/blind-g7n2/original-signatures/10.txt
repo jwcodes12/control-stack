@@ -1,0 +1,4 @@
+theorem sc28_rollback_safe (admins : List ℕ) (G : ℕ) (ops : List (ROp {o : SC28.Op // SC28.legal o})) :
+    let t := runR (SC28.sys admins G) true (rinit (SC28.sys admins G) SC28.init) ops
+    t.released = (SC28.run admins G SC28.full SC28.init (t.committed.map Subtype.val)).usage ∧
+      SC28.Good G (SC28.run admins G SC28.full SC28.init (t.committed.map Subtype.val))

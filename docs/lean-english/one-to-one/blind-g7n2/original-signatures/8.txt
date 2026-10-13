@@ -1,0 +1,6 @@
+theorem progress_interleaved (s : St) (w a lid b : ℕ) (_hl : leaseOf s w = some lid) (hb : budgetOf s lid = some b)
+    (hcl : spentL s lid + charge full a a ≤ b) (hcg : spentT s + charge full a a ≤ G) (p : List Op) :
+    let t := run admins G full s p
+    (step admins G full t (.work w a a)).usage = t.usage ++ [(w, lid, a)] ∨
+      t.halted = true ∨ lid ∈ t.revoked ∨ leaseOf t w ≠ some lid ∨ spentL s lid < spentL t lid ∨
+      spentT s < spentT t

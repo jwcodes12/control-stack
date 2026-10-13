@@ -1,0 +1,2 @@
+theorem revoked_lease_stops (admins : List ℕ) (G : ℕ) (C : Checks) (s : St) (ops : List Op) (lid : ℕ)
+    (hr : lid ∈ s.revoked) : usedL (run admins G C s ops) lid = usedL s lid

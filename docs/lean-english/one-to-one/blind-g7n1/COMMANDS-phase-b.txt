@@ -1,0 +1,347 @@
+/bin/bash -lc "pwd; rg --files -g 'AGENTS.md' -g 'lakefile.*' -g 'lean-toolchain' -g '*proofledger*' -g '*gate*' -g '*requirements*' . | head -80"
+
+---
+/bin/bash -lc 'cat docs/lean-english/sol-input/batch-g7n1.md docs/lean-english/one-to-one/blind-g7n1/CLAIMS.txt docs/lean-english/one-to-one/blind-g7n1/back/BACK-HASHES.json; cat docs/lean-english/one-to-one/run_gate.py docs/lean-english/one-to-one/leangate_imports.py docs/lean-english/one-to-one/leangate-imports.patch'
+
+---
+/bin/bash -lc 'for p in /AGENTS.md /home/AGENTS.md /home/opc/AGENTS.md /home/opc/projects/AGENTS.md /home/opc/projects/blind-work/AGENTS.md /home/opc/projects/blind-work/g7n1/AGENTS.md AGENTS.md; do if [ -f "$p" ]; then cat "$p"; fi; done; find docs -name AGENTS.md -print; cat docs/lean-english/one-to-one/blind-g7n1/back/*.lean'
+
+---
+/bin/bash -lc 'for p in CLAUDE.md GEMINI.md docs/AGENTS.md docs/lean-english/AGENTS.md docs/lean-english/one-to-one/AGENTS.md docs/lean-english/one-to-one/blind-g7n1/AGENTS.md; do if [ -f "$p" ]; then cat "$p"; fi; done; python3 - <<'"'PY'
+from pathlib import Path
+import subprocess,hashlib,json,concurrent.futures,datetime
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+for d in ['compile-logs','compile-fixes','typed']: (out/d).mkdir(exist_ok=True)
+manifest=json.loads((out/'back/BACK-HASHES.json').read_text())['files']
+files=sorted((out/'back').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+for p in files:
+ assert hashlib.sha256(p.read_bytes()).hexdigest()==manifest['back/'+p.name],p
+
+def compile(p):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{p.name.split(\"-\")[0]}.as-written.txt').write_text(r.stdout+r.stderr)
+ return p.name,r.returncode,r.stdout+r.stderr
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+ for name,rc,log in ex.map(compile,files): print(name,rc,log[:1200])
+(out/'PROGRESS.md').write_text('# Phase B progress\\n\\nStarted: '+datetime.datetime.now(datetime.timezone.utc).isoformat()+'\\n\\nDone: verified all Phase A hashes; compiled all back files as written.\\nNot done: typing repairs and frozen hashes, original comparison, gates, report and regate.\\nOriginal declarations have not been opened.\\n')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import difflib
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+for p in (out/'back').glob('*.lean'):
+ text=p.read_text(); module=text.splitlines()[0].removeprefix('namespace ')
+ repaired=f'import {module}\\n\\n'+text
+ (out/'typed'/p.name).write_text(repaired)
+ diff=''.join(difflib.unified_diff(text.splitlines(True),repaired.splitlines(True),fromfile='back/'+p.name,tofile='typed/'+p.name))
+ (out/'compile-fixes'/(p.name.split('-')[0]+'.diff')).write_text('Repair: add the project module import required to resolve existing identifiers.\\nMeaning change: NO; the proposition body is unchanged.\\n\\n'+diff)
+PY"
+
+---
+/bin/bash -lc "python3 -u - <<'PY'
+from pathlib import Path
+import subprocess,concurrent.futures,hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+files=sorted((out/'typed').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+def compile(p):
+ r=subprocess.run(['lake','env','lean',str(p)],capture_output=True,text=True)
+ (out/'compile-logs'/f'{p.name.split(\"-\")[0]}.typed.txt').write_text(r.stdout+r.stderr)
+ return p.name,r.returncode,r.stdout+r.stderr
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+ results=list(ex.map(compile,files))
+for name,rc,log in results: print(name,rc,log)
+if all(rc==0 for _,rc,_ in results):
+ (out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files}},indent=2)+'\\n')
+ print('ALL TYPED HASHES FROZEN BEFORE ORIGINAL DECLARATIONS')
+PY"
+
+---
+/bin/bash -lc 'lake env printenv LEAN_PATH; rg --files .lake/build/lib/lean/ControlStack | head -20; cat lakefile.lean; ls -d .lake/packages/*/.lake/build/lib/lean/Mathlib.olean'
+
+---
+/bin/bash -lc 'LEAN_PATH=docs/lean-english/one-to-one/blind-g7n1/imports lake env printenv LEAN_PATH'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+(out/'prepare_imports.py').write_text('''\"\"\"Offline project import build; all generated files stay beside this script.\"\"\"
+from pathlib import Path
+import os, re, subprocess, hashlib, json
+OUT = Path(__file__).resolve().parent
+ROOT = OUT.parents[3]
+CACHE = OUT / \"imports\"
+MODULES = [\"ControlStack.AntiRollback\", \"ControlStack.SC27Chain\", \"ControlStack.SC27ExtensionOnly\", \"ControlStack.SC27Refinement\"]
+def prepare():
+    env = dict(os.environ)
+    env[\"LEAN_PATH\"] = str(CACHE) + (\":\" + env[\"LEAN_PATH\"] if env.get(\"LEAN_PATH\") else \"\")
+    done = set()
+    hashes = {}
+    def build(module):
+        if module in done: return
+        source = ROOT / (module.replace(\".\", \"/\") + \".lean\")
+        content = source.read_text()
+        # During typing this reads import directives only; no declarations are displayed.
+        for dep in re.findall(r\""'^import'"\\\\s+([A-Za-z0-9_.]+)\", content, re.M):
+            if dep.startswith(\"ControlStack.\"): build(dep)
+        dest = CACHE / (module.replace(\".\", \"/\") + \".olean\")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        proc = subprocess.run([\"lake\", \"env\", \"lean\", \"-o\", str(dest), str(source)], cwd=ROOT, env=env, capture_output=True, text=True)
+        (OUT / \"compile-logs\" / (module + \".txt\")).write_text(proc.stdout + proc.stderr)
+        if proc.returncode: raise RuntimeError(module + \" build failed: \" + proc.stdout + proc.stderr)
+        hashes[module] = {\"source_sha256\": hashlib.sha256(source.read_bytes()).hexdigest(), \"olean_sha256\": hashlib.sha256(dest.read_bytes()).hexdigest()}
+        done.add(module)
+    for module in MODULES: build(module)
+    (CACHE / \"HASHES.json\").write_text(json.dumps(hashes, indent=2) + \"\\\\n\")
+    return env
+if __name__ == \"__main__\":
+    prepare()
+    print(\"Offline imports ready\")
+''')
+PY
+python3 -u docs/lean-english/one-to-one/blind-g7n1/prepare_imports.py"
+
+---
+/bin/bash -lc "rg --files ControlStack | rg 'AntiRollback|SC27|Gate.lean'"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import difflib
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+mods={'AntiRollback':'ControlStack.Core.AntiRollback','SC27Chain':'ControlStack.Scenarios.SC27Chain','SC27ExtensionOnly':'ControlStack.Scenarios.SC27ExtensionOnly','SC27Refinement':'ControlStack.Scenarios.SC27Refinement'}
+for p in (out/'back').glob('*.lean'):
+ text=p.read_text(); ns=text.splitlines()[0].split('.')[-1]; repaired='import '+mods[ns]+'\\n\\n'+text
+ (out/'typed'/p.name).write_text(repaired)
+ (out/'compile-fixes'/(p.name.split('-')[0]+'.diff')).write_text('Repair: add the module import required to resolve existing identifiers.\\nMeaning change: NO; the proposition body is unchanged.\\n\\n'+''.join(difflib.unified_diff(text.splitlines(True),repaired.splitlines(True),fromfile='back/'+p.name,tofile='typed/'+p.name)))
+p=out/'prepare_imports.py'; t=p.read_text()
+for ns,mod in mods.items(): t=t.replace('\"ControlStack.'+ns+'\"','\"'+mod+'\"')
+p.write_text(t)
+PY
+python3 -u docs/lean-english/one-to-one/blind-g7n1/prepare_imports.py"
+
+---
+/bin/bash -lc 'ls docs/lean-english/one-to-one/blind-g7n1/compile-logs/ControlStack*'
+
+---
+/bin/bash -lc "python3 -u - <<'PY'
+from pathlib import Path
+import subprocess,concurrent.futures,hashlib,json,datetime,os
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+env={**os.environ,'LEAN_PATH':str((out/'imports').resolve())}
+files=sorted((out/'typed').glob('*.lean'),key=lambda p:int(p.name.split('-')[0]))
+def compile(p):
+ r=subprocess.run(['lake','env','lean',str(p)],env=env,capture_output=True,text=True)
+ (out/'compile-logs'/f'{p.name.split(\"-\")[0]}.typed.txt').write_text(r.stdout+r.stderr)
+ return p.name,r.returncode,r.stdout+r.stderr
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex: results=list(ex.map(compile,files))
+for name,rc,log in results: print(name,rc,log)
+if all(rc==0 for _,rc,_ in results):
+ (out/'typed/HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'original_declarations_opened':False,'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files}},indent=2)+'\\n')
+ print('ALL TYPED HASHES FROZEN BEFORE ORIGINAL DECLARATIONS')
+PY"
+
+---
+/bin/bash -lc "rg -n 'rollback_transfer|sc27_safe|tamper_after_anchor_detected|halt_freezes|sc27_ext_safe|tampered_never_anchored|anchors_chain|alarm_iff|concrete_ext_safe|concrete_tampered_never_anchored' ControlStack; cat ControlStack/Core/AntiRollback.lean ControlStack/Scenarios/SC27Chain.lean ControlStack/Scenarios/SC27ExtensionOnly.lean ControlStack/Scenarios/SC27Refinement.lean"
+
+---
+/bin/bash -lc "sed -n '65,130p' ControlStack/Core/AntiRollback.lean; sed -n '195,230p' ControlStack/Core/AntiRollback.lean; sed -n '55,160p' ControlStack/Scenarios/SC27Chain.lean; sed -n '175,255p' ControlStack/Scenarios/SC27Chain.lean; sed -n '37,98p' ControlStack/Scenarios/SC27ExtensionOnly.lean; sed -n '145,235p' ControlStack/Scenarios/SC27ExtensionOnly.lean; sed -n '243,270p' ControlStack/Scenarios/SC27ExtensionOnly.lean; cat ControlStack/Core/Gate.lean | head -85"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import shutil,difflib
+base=Path('docs/lean-english/one-to-one'); out=base/'blind-g7n1'
+shutil.copyfile(base/'leangate_imports.py',out/'leangate_imports.py')
+t=(base/'run_gate.py').read_text(); updated=t.replace('parents[3]','parents[4]').replace(\"ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay\",\"ControlStack.Core.AntiRollback ControlStack.Scenarios.SC27Chain ControlStack.Scenarios.SC27ExtensionOnly ControlStack.Scenarios.SC27Refinement\").replace(\"g0_*.statement.lean\",\"bg7n1_*.statement.lean\")
+(out/'run_gate_blind.py').write_text(updated)
+(out/'run_gate_blind.diff').write_text('Relocation changes project-root depth by one; OUT remains the containing directory. No gate security checks changed.\\n'+''.join(difflib.unified_diff(t.splitlines(True),updated.splitlines(True),fromfile='run_gate.py',tofile='blind-g7n1/run_gate_blind.py')))
+PY"
+
+---
+/bin/bash -lc "sed -n '45,68p' ControlStack/Core/AntiRollback.lean; sed -n '95,104p' ControlStack/Scenarios/SC27ExtensionOnly.lean; sed -n '313,347p' ControlStack/Scenarios/SC27Refinement.lean"
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g7n1/make_comparisons.py'
+
+---
+/bin/bash -lc 'python3 -u docs/lean-english/one-to-one/blind-g7n1/regate.py'
+
+---
+/bin/bash -lc 'python3 docs/lean-english/one-to-one/blind-g7n1/make_comparisons.py
+python3 -u docs/lean-english/one-to-one/blind-g7n1/regate.py'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g7n1/bg7n1_1.gate.txt docs/lean-english/one-to-one/blind-g7n1/bg7n1_1.witness-gate.txt'
+
+---
+/bin/bash -lc "python3 docs/lean-english/one-to-one/blind-g7n1/make_comparisons.py
+python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime,difflib
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+base=out.parent
+t=(base/'run_gate.py').read_text()
+updated=t.replace('OUT=Path(__file__).resolve().parent','OUT=Path(__file__).resolve().parent; ROOT=OUT.parents[3]').replace('ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay','ControlStack.Core.AntiRollback ControlStack.Scenarios.SC27Chain ControlStack.Scenarios.SC27ExtensionOnly ControlStack.Scenarios.SC27Refinement').replace('g0_*.statement.lean','bg7n1_*.statement.lean')
+(out/'run_gate_blind.py').write_text(updated)
+(out/'run_gate_blind.diff').write_text('Only OUT path configuration (including project root for the deeper output directory), PL_IMPORTS and the statement glob change. No gate security checks changed.\\n'+''.join(difflib.unified_diff(t.splitlines(True),updated.splitlines(True),fromfile='run_gate.py',tofile='blind-g7n1/run_gate_blind.py')))
+files=sorted(list(out.glob('bg7n1_*.statement.lean'))+list(out.glob('bg7n1_*.proof.lean')))
+(out/'COMPARISON-HASHES.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'files':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files}},indent=2)+'\\n')
+PY
+python3 -u docs/lean-english/one-to-one/blind-g7n1/regate.py"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,datetime
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+source=json.loads((out/'ORIGINALS.json').read_text())
+notes={
+1:'Identical five-part conclusion under "'`Spec` and `S.Inv initial`; same types and equality instances. The safety limitations are respected, but the blanket rollback-then-write halt aside needs qualification.'"',
+2:'Identical final-state independently anchored membership under the identical per-run "'`InjOn`. No truth, newest-anchor, or post-rewrite laundering guarantee. The statement about compression and provability needs correction.'"',
+3:'The same two concrete traces, same "'`E0`, same conjunction of empty accepted lists. Definitional equality establishes the comparison without exploiting truth of two closed theorems.'"',
+4:'Identical whole-state equality for an arbitrary halted state under "'`full`. No reachability, timing, credential-security, or deployed-process conclusion.'"',
+5:'Identical anchored-membership and latest-anchor prefix conclusion under identical "'`InjOn`, **using the Back'"\\'s empty-state interpretation**. Earlier anchors remain acceptable; contents need not be true.',
+6:'Identical arbitrary-state conclusion under the full "'`Inv E s` and anchored-`l` membership. Old anchor membership is a value-based exception; no injectivity premise. The English invariant summary omits `lastAnch`.'"',
+7:'Identical ordered "'`Pairwise` prefix relation and per-anchor existential latest-list condition from `init`. No accepted-manifest or content-truth claim.'"',
+8:'Identical pointwise alarm iff and unchanged-anchor implication for arbitrary "'`s`. Lists, not heads, determine extension. No promise of alarm consumption or deployed completeness.'"',
+9:'Identical two-part conclusion under "'`TraceInj` and final-set `InjOn`, **using the Back'"\\'s "'`cinit` interpretation**, with `trustWriter = false`. Empty-truncation alarm silence remains possible.'"',
+10:'Identical old-anchor-or-extension conclusion under full concatenated-trace "'`TraceInj` and middle-state anchor membership, **using the Back'"\\'s "'`cinit` interpretation**. No accepted-set injectivity premise.'"'}
+text='''# Blind Phase B results
+
+Verdicts concern the frozen Back versus the original declaration under the same hypotheses. They do not certify an unqualified interpretation of ambiguous English. Claims 5, 9 and 10 use the empty-state reading explicitly recorded by Phase A.
+
+All ten original Phase A hashes matched "'`back/BACK-HASHES.json`. Each file was compiled as written before repair. All ten lacked imports; each repaired file adds only its actual project-module import. Proposition bodies are unchanged. All ten repaired files compiled successfully, and `typed/HASHES.json` was written **before any original declaration was opened**. Each repair and its meaning assessment is in `compile-fixes/<n>.diff`; compiler logs are in `compile-logs/`.
+
+The comparison statements contain the literal frozen Back body, its parameterized conclusion `BackAt`, and the original conclusion `OrigAt`. `Claim` proves both faithful decomposition of the frozen Back and `BackAt ↔ OrigAt` for each parameter instance under the same hypotheses. The iff proofs are `Iff.rfl`: lets, bound-variable names, and parentheses are definitionally immaterial. They do not call either closed safety theorem or derive equivalence from their truth. Claim 3 has no parameters: its two expressions are definitionally identical, independently of proving either expression true. `ORIGINALS.json` records source hashes, declaration headers, and locations for review. Every target was checked with proofledger'"'s deterministic gate, including a separate witness target.
+
+| Claim | Verdict | Receipts | Note |
+|---|---|---|---|
+'''
+for n in range(1,11):
+ c=f'bg7n1_{n}'
+ text+=f'| {n}: "'`{source[str(n)]["original"].split(".")[-1]}` | EQUIVALENT | [claim]({c}.receipt.json), [witness]({c}.witness.receipt.json) | {notes[n]} |'"\\n'
+text+='''
+## Corrections to the English
+
+1. **Claim 1, “Does NOT say”: the unconditional rollback-then-write halt assertion is false.** Replace that aside with: “The theorem guarantees safety, not progress. Restoring a stale record and then attempting a write sets the halt flag; restoring the current anchored record need not halt and can permit further commits. Recovery behavior is governed by the modeled restart and record-restoration steps.” The separately gated witness contains both a stale rollback that halts and a rollback to the current committed record followed by a successful second commit. The trace of the latter is "'`write 5; bump; rollback 1; write 6; bump`.
+
+2. **Claim 2, collision-resistance premise:** replace “not provable in Lean for a compressing hash” with: “For the arbitrary run considered here, assume the head function is injective on the accepted manifests and independently anchored logs in that run. This finite-set property may be provable for a particular specified run, even with a compressing hash. Global injectivity of a fixed-width hash on all lists is impossible.” Compression does not prevent proving collision freedom on a specified finite set. The gate witnesses establish actual nonempty acceptance and the required per-run injectivity in toy instances; no theorem about SHA-256 is claimed.
+
+3. **Claim 5, main sentence:** replace with: “From the empty state, run any finite sequence of operations with the extension-only witness enabled. If the chain head is injective on the accepted manifests and anchored logs of the final state, every accepted manifest equals an anchored log and is a prefix of the witness'"'s latest anchored log.” This states the omitted initialization and retains acceptance of earlier anchors.
+
+4. **Claim 6, invariant description:** replace the parenthetical with: “The starting state satisfies the full model invariant: anchor heads match their lists, anchors form a prefix chain and are prefixes of the recorded last anchor, every recorded last anchor has an anchor entry, and every accepted manifest has a matching anchor head.” The omitted field is "'`Inv.lastAnch`. The actual Back already uses the full `Inv`, so this is a prose correction rather than a Back mismatch.
+
+5. **Claim 9, main sentence:** replace with: “Starting from the empty concrete state `cinit`, run any finite trace in the concrete machine with writer-published heads untrusted. Assuming `TraceInj` across that trace and head injectivity on the final accepted and independently anchored lists, every accepted manifest equals a witness-anchored list and is a prefix of the latest ghost anchor.” Clarify the premises with: “The transition system gives the writer no operation that overwrites witness memory or log. Whether deployed memory, logs and fsync provide this persistence and independence is an external correspondence assumption.” Actual fsync behavior is not a predicate checked by this declaration.
+
+6. **Claim 10, main sentence:** replace with: “Starting from `cinit`, split any finite concrete trace into `pre` and `post`. Under `TraceInj` for `pre ++ post`, if `l` is an anchored ghost list after `pre`, every anchor value after the combined trace is either already in the anchor log after `pre`, or has a ghost list extending `l`.” Keep the qualification that no final accepted-set injectivity is needed.
+
+Claims 3, 4, 7 and 8 need no replacement for the theorem statement.
+
+## Ambiguities exposed
+
+- **Initialization (5, 9, 10):** the prose does not explicitly quantify the starting state. Phase A documented a choice of `init`/`cinit`, which exactly matches the originals. Allowing arbitrary starting states without invariant hypotheses would change the claims: a fabricated starting accepted list with no anchor already violates the proposed safety conclusion. An arbitrary witness log and inconsistent witness memory also invalidate the concrete transfer argument. The EQUIVALENT verdicts are conditional on the saved Back reading, not evidence that the omission is harmless.
+- **Rollback versus stale rollback (1):** `rollback k` can select the current committed record, an older record, or an out-of-range index that does nothing. “Rollback” alone does not imply staleness. A halt is also not an immutable state property in this anti-rollback machine: restart has modeled recovery branches. Claim 4'"'s absorbing halt belongs to a different machine.
+- **World premises versus construction (1, 2, 5, 7, 9, 10):** anchor trust, record integrity, witness independence and deployment correspondence are encoded through the permitted transitions or assumed externally. The iff checks do not establish trusted hardware, real hash collision resistance, real fsync durability, or Python implementation correctness.
+- **Invariant shorthand (6):** “the invariant” can refer to the named full structure, or readers can mistake the parenthetical for an exhaustive list. The latter omits "'`lastAnch`. Also, “matching anchor” means matching head in `Inv.acc`; list equality for accepted manifests additionally needs injectivity.
+- **Old records versus new occurrences (6, 10):** `a ∈ oldAnchors` is list membership of a `(head, ghost-list)` value. The conclusion has no timestamps or occurrence identities. Preserve the literal old-value-or-extension wording; do not turn the theorem into an event-indexed statement without a separate argument.
+- **“Does NOT say” audit:** 1 respects safety-only, commit-only effects and unproved hardware trust, except for the overbroad halt aside corrected above. 2 respects non-genuine contents, older anchors and rewrite laundering; its witness computes both laundering before anchoring and older-anchor acceptance. 3 remains exactly two examples with a toy hash; its witness additionally checks honest acceptance, without generalizing detection. 4 respects model-only state freeze and no liveness/credential guarantee. 5 respects earlier-anchor acceptance and untrusted contents; its witness accepts `[5]` when the latest anchor is `[5,6]`. 6 respects arbitrary appended contents, unauthenticated first anchor and lack of an acceptance conclusion. 7 respects lack of content truth or verifier conclusions. 8 respects absence of alarm-consumption and real-runtime guarantees. 9 respects the implementation gap, older-anchor acceptance and concrete empty-truncation silence; its witness computes that truncation adds neither a fork record nor an anchor. 10 respects arbitrary extending contents, first-anchor limitation and the empty-truncation limitation. These limitations are not promoted into extra safety guarantees.
+
+## Gate and reproduction
+
+Run from the repository root:
+
+```bash
+python3 docs/lean-english/one-to-one/blind-g7n1/regate.py
+```
+
+`regate.py` checks the saved claim inventory and frozen hashes, rebuilds the required project imports offline in a disposable directory under this output directory, and invokes the unchanged `check_statement` and `gate` routines for both `claim` and `witness` on every saved proof. Persistent rewrites are only the paired JSON receipts and gate/statement-check receipt logs. It does not recreate statements or proofs and does not rely on old receipts or the typing-stage `.olean` cache. It exits nonzero on a failed statement, either failed gate target, missing file, modified frozen file, or build failure.
+
+`run_gate_blind.py` is a copy of the allowed wrapper with only output/project path configuration for this deeper directory, the `bg7n1_*` glob and `PL_IMPORTS` changed; see `run_gate_blind.diff`. The copied `leangate_imports.py` is byte-for-byte identical to the authorized helper. Banned-token scans, nonce generation, Lean kernel checking and the allowed-axiom whitelist are unchanged. The receipts retain `gate_unmodified: false` to reflect the supplied upstream import-header patch, and separately certify identical local helper bytes and unchanged security checks. The trusted imports are `ControlStack.Core.AntiRollback`, `ControlStack.Scenarios.SC27Chain`, `ControlStack.Scenarios.SC27ExtensionOnly` and `ControlStack.Scenarios.SC27Refinement`.
+
+A first gate attempt failed because namespace opens in the statements did not carry into the witness proof namespace. The proof files now explicitly open their model namespaces. No frozen Back was edited, and no failure was counted as certification.
+'"'''
+(out/'RESULTS.md').write_text(text)
+print('Draft report written; final receipts are still being checked.')
+PY"
+
+---
+/bin/bash -lc "python3 -u - <<'PY'
+from pathlib import Path
+import subprocess,json,hashlib,datetime,os
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def is_receipt(p): return p.name.endswith(('.receipt.json','.gate.txt','.witness-gate.txt','.statement-check.txt'))
+def snapshot(): return {str(p.relative_to(out)):sha(p) for p in out.rglob('*') if p.is_file() and not is_receipt(p)}
+for rel,h in json.loads((out/'back/BACK-HASHES.json').read_text())['files'].items(): assert sha(out/rel)==h
+for rel,h in json.loads((out/'typed/HASHES.json').read_text())['files'].items(): assert sha(out/'typed'/rel)==h
+for rel,h in json.loads((out/'COMPARISON-HASHES.json').read_text())['files'].items(): assert sha(out/rel)==h
+assert sha(out/'leangate_imports.py')==sha(out.parent/'leangate_imports.py')
+for n in range(1,11):
+ for suffix in ['', '.witness']:
+  r=json.loads((out/f'bg7n1_{n}{suffix}.receipt.json').read_text())
+  assert r['passed'] and r['statement_passed']
+  assert r['statement_sha256']==sha(out/f'bg7n1_{n}.statement.lean')
+  assert r['proof_sha256']==sha(out/f'bg7n1_{n}.proof.lean')
+before=snapshot()
+print('All 20 frozen proof receipts and the gate identity match. Testing receipt-only regeneration.',flush=True)
+r=subprocess.run(['python3','-u',str(out/'regate.py')],env={**os.environ,'LEAN_PATH':''})
+assert r.returncode==0,r.returncode
+assert snapshot()==before, 'Re-gating changed a non-receipt file'
+(out/'VALIDATION.receipt.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'all_20_targets_passed':True,'phase_a_hashes_preserved':True,'typed_hashes_preserved':True,'comparison_hashes_preserved':True,'gate_helper_byte_identical':True,'regate_exit_code':r.returncode,'regate_nonreceipt_files_unchanged':True,'regate_initial_lean_path_empty':True,'regate_disposable_build_cleaned':not any(out.glob('regate-*'))},indent=2)+'\\n')
+print('Regate passed; no non-receipt file changed.',flush=True)
+PY"
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g7n1/PROGRESS.md; cat docs/lean-english/one-to-one/blind-g7n1/typed/HASHES.json | head -8; cat docs/lean-english/one-to-one/blind-g7n1/run_gate_blind.diff'
+
+---
+/bin/bash -lc 'cat docs/lean-english/one-to-one/blind-g7n1/bg7n1_10.statement.lean docs/lean-english/one-to-one/blind-g7n1/bg7n1_10.proof.lean'
+
+---
+/bin/bash -lc "python3 - <<'PY'
+from pathlib import Path
+import json,hashlib,datetime
+out=Path('docs/lean-english/one-to-one/blind-g7n1')
+now=datetime.datetime.now(datetime.timezone.utc)
+start=datetime.datetime.fromisoformat('2026-10-13T10:09:43.239309+00:00')
+freeze=json.loads((out/'typed/HASHES.json').read_text())['utc']
+validation=json.loads((out/'VALIDATION.receipt.json').read_text())
+assert validation['all_20_targets_passed'] and validation['regate_nonreceipt_files_unchanged']
+for n in range(1,11):
+ for suffix in ['', '.witness']:
+  r=json.loads((out/f'bg7n1_{n}{suffix}.receipt.json').read_text())
+  assert r['passed'] and r['statement_passed']
+  for key,tail in [('statement_sha256','.statement.lean'),('proof_sha256','.proof.lean')]:
+   assert r[key]==hashlib.sha256((out/f'bg7n1_{n}{tail}').read_bytes()).hexdigest()
+report=out/'RESULTS.md'; t=report.read_text()
+t=t.replace('before any original declaration was opened','before the comparing agent inspected any original declaration')
+t=t.replace('Each repair and its meaning assessment', 'The offline Lean build and import-discovery script processed project source files to produce missing "'`.olean` dependencies, without displaying declaration text to the comparing agent. Each repair and its meaning assessment'"')
+t+='\\nFinal validation: all 10 claim targets and all 10 witness targets passed. A fresh re-gate with an empty initial "'`LEAN_PATH` exited 0; a before/after hash snapshot confirmed that no non-receipt file changed. The disposable build directory was removed. See [validation receipt](VALIDATION.receipt.json). Completed UTC: '"'+now.isoformat()+'.\\n'
+report.write_text(t)
+(out/'PROGRESS.md').write_text(f'''# Phase B progress
+
+Done: **10/10 claims**, all "'`EQUIVALENT` under the frozen Back readings; **10/10 separately gated witnesses**.
+
+- Verified the original Phase A hashes; compiled every back file as written.
+- Added only an import per claim; saved all 10 meaning-preserving diffs and compiler logs.
+- Successfully compiled every repaired file and froze `typed/HASHES.json` at {freeze}, before inspecting original declaration text.
+- Found and inspected all originals; recorded their locations, headers and source hashes in `ORIGINALS.json`.
+- Saved the literal frozen Back definitions and pointwise iff comparisons; all comparison proofs use definitional equality rather than the truth of the original theorems.
+- Created the copied wrapper and byte-identical deterministic gate helper; froze the saved comparisons and proofs in `COMPARISON-HASHES.json`.
+- Gated all claim and witness targets. Non-degenerate witnesses exercise successful commits, stale/current rollback, accepted manifests, multiple anchors, rejected tampering, whole-state halt, fork alarms and concrete empty-truncation silence.
+- Wrote `RESULTS.md`, including the verdict/receipt table, English corrections, ambiguity analysis and a per-claim “Does NOT say” audit.
+- Tested `regate.py` from the repository root with an empty initial `LEAN_PATH`: it rebuilt dependencies offline, re-gated all 20 targets, exited 0, cleaned its scratch directory and changed only receipts/receipt logs. `VALIDATION.receipt.json` records the checks.
+
+Not done: **none of the requested work remains**. Proposed English replacements are only in `RESULTS.md`, as requested.
+
+Time: first recorded checkpoint {start.isoformat()}; typed freeze {freeze}; completed {now.isoformat()}. Elapsed since first recorded checkpoint: {(now-start).total_seconds()/60:.1f} minutes.
+
+What I could not do: the checkout lacked `.olean` files for the required project modules, so direct imports initially failed. I resolved this by building the required modules and dependencies offline only under this directory. The build/import scanner processed source files without showing original declarations to the comparing agent before the typed freeze. The first gate attempt also found missing proof-namespace opens; these were repaired in the comparison proof files and all gates were rerun successfully. Neither issue prevented completion.
+
+The original Back bodies, `ControlStack/`, and English input/part files were not edited. No git command, download, external publication, or sub-agent was used. The checks make no new claim about real hardware, Python correspondence, fsync behavior or SHA-256 beyond the modeled premises.
+'"''')
+print('Final report and progress saved; 20/20 receipts verified.')
+PY"

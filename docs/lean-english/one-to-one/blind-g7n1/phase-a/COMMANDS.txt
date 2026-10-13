@@ -1,0 +1,170 @@
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "for f in ./defs/*.lean; do printf '\\nFILE %s\\n' \""'$f"; cat "$f"; done'
+
+---
+/bin/bash -lc "mkdir -p ./back
+python3 - <<'PY'
+from pathlib import Path
+files = {
+'1-rollback_transfer.lean': '''namespace ControlStack.AntiRollback
+
+open ControlStack.Gate
+
+def Back_rollback_transfer : Prop :=
+  ∀ (St Op Eff : Type) [DecidableEq St] [DecidableEq Op]
+    (G : System St Op Eff) (S : Spec G) (initial : St),
+    S.Inv initial → ∀ (ops : List (ROp Op)),
+      let final := runR G true (rinit G initial) ops
+      let plain := G.run initial final.committed
+      final.anchor.st = plain ∧
+      final.released = G.effects plain ∧
+      S.Inv plain ∧
+      (∀ e ∈ final.released, S.ok plain e) ∧
+      final.anchor.ver = final.committed.length
+
+end ControlStack.AntiRollback
+''',
+'2-sc27_safe.lean': '''namespace ControlStack.SC27Chain
+
+def Back_sc27_safe : Prop :=
+  ∀ (E : Env) (ops : List Op),
+    let final := run E full init ops
+    Set.InjOn (chainHead E.H E.h0)
+      {l | l ∈ final.accepted ∨ ∃ a ∈ final.anchors, a.2 = some l} →
+    ∀ m ∈ final.accepted, ∃ a ∈ final.anchors, a.2 = some m
+
+end ControlStack.SC27Chain
+''',
+'3-tamper_after_anchor_detected.lean': '''namespace ControlStack.SC27Chain
+
+def Back_tamper_after_anchor_detected : Prop :=
+  (run E0 full init
+    [.append 5, .anchor, .rewrite [7], .verify [7]]).accepted = [] ∧
+  (run E0 full init
+    [.append 5, .append 6, .anchor, .rewrite [6, 5], .verify [6, 5]]).accepted = []
+
+end ControlStack.SC27Chain
+''',
+'4-halt_freezes.lean': '''namespace ControlStack.SC27Chain
+
+def Back_halt_freezes : Prop :=
+  ∀ (E : Env) (s : St) (ops : List Op),
+    s.halted = true → run E full s ops = s
+
+end ControlStack.SC27Chain
+''',
+'5-sc27_ext_safe.lean': '''namespace ControlStack.SC27ExtensionOnly
+
+open ControlStack.SC27Chain (chainHead)
+
+-- NOTE
+-- AMBIGUOUS: The English does not explicitly specify the starting state.
+-- This reading uses the empty state init. A reading allowing arbitrary starting
+-- states would need initial-state hypotheses to obtain the stated safety.
+def Back_sc27_ext_safe : Prop :=
+  ∀ (E : Env) (ops : List Op),
+    let final := run E true init ops
+    Set.InjOn (chainHead E.H E.h0)
+      {l | l ∈ final.accepted ∨ ∃ a ∈ final.anchors, a.2 = l} →
+    ∀ m ∈ final.accepted,
+      (∃ a ∈ final.anchors, a.2 = m) ∧
+      (∃ latest, final.last = some latest ∧ m <+: latest)
+
+end ControlStack.SC27ExtensionOnly
+''',
+'6-tampered_never_anchored.lean': '''namespace ControlStack.SC27ExtensionOnly
+
+def Back_tampered_never_anchored : Prop :=
+  ∀ (E : Env) (s : St) (l : List ℕ) (ops : List Op),
+    Inv E s →
+    (∃ a ∈ s.anchors, a.2 = l) →
+    ∀ a ∈ (run E true s ops).anchors,
+      a ∈ s.anchors ∨ l <+: a.2
+
+end ControlStack.SC27ExtensionOnly
+''',
+'7-anchors_chain.lean': '''namespace ControlStack.SC27ExtensionOnly
+
+def Back_anchors_chain : Prop :=
+  ∀ (E : Env) (ops : List Op),
+    let final := run E true init ops
+    final.anchors.Pairwise (fun a b => a.2 <+: b.2) ∧
+    (∀ a ∈ final.anchors,
+      ∃ latest, final.last = some latest ∧ a.2 <+: latest)
+
+end ControlStack.SC27ExtensionOnly
+''',
+'8-alarm_iff.lean': '''namespace ControlStack.SC27ExtensionOnly
+
+def Back_alarm_iff : Prop :=
+  ∀ (E : Env) (s : St),
+    let next := step E true s .anchor
+    (next.alarms = s.alarms ++ [s.log] ↔ extendsLast s = false) ∧
+    (extendsLast s = false → next.anchors = s.anchors)
+
+end ControlStack.SC27ExtensionOnly
+''',
+'9-concrete_ext_safe.lean': '''namespace ControlStack.SC27Refinement
+
+open ControlStack.SC27Chain (chainHead)
+open ControlStack.SC27ExtensionOnly (Env)
+
+-- NOTE
+-- AMBIGUOUS: The English does not explicitly specify the starting state.
+-- This reading uses the empty concrete state cinit. A reading allowing arbitrary
+-- starting states would need hypotheses on their witness memory and anchor log.
+def Back_concrete_ext_safe : Prop :=
+  ∀ (E : Env) (ops : List COp),
+    TraceInj E cinit ops →
+    let final := runC E false cinit ops
+    Set.InjOn (chainHead E.H E.h0)
+      {l | l ∈ final.accepted ∨ ∃ a ∈ ancs final.wlog, a.2 = l} →
+    ∀ m ∈ final.accepted,
+      (∃ a ∈ ancs final.wlog, a.2 = m) ∧
+      (∃ latest, final.ghostLast = some latest ∧ m <+: latest)
+
+end ControlStack.SC27Refinement
+''',
+'10-concrete_tampered_never_anchored.lean': '''namespace ControlStack.SC27Refinement
+
+open ControlStack.SC27ExtensionOnly (Env)
+
+-- NOTE
+-- AMBIGUOUS: The English specifies the trace split but not its starting state.
+-- This reading starts the combined trace at cinit. Arbitrary starting states
+-- would require additional hypotheses on their witness memory and anchor log.
+def Back_concrete_tampered_never_anchored : Prop :=
+  ∀ (E : Env) (first second : List COp) (l : List ℕ),
+    TraceInj E cinit (first ++ second) →
+    let middle := runC E false cinit first
+    let final := runC E false cinit (first ++ second)
+    (∃ a ∈ ancs middle.wlog, a.2 = l) →
+    ∀ a ∈ ancs final.wlog,
+      a ∈ ancs middle.wlog ∨ l <+: a.2
+
+end ControlStack.SC27Refinement
+'''
+}
+for name, content in files.items():
+    Path('back', name).write_text(content)
+print('Wrote 10 Lean proposition files under back/.')
+PY"
+
+---
+/bin/bash -lc "python3 - <<'PY'
+import subprocess
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+result = subprocess.run(['bash', '-c', 'sha256sum back/*.lean'], check=True, capture_output=True, text=True)
+print(result.stdout, end='')
+files = {}
+for line in result.stdout.splitlines():
+    digest, name = line.split(maxsplit=1)
+    files[name] = digest
+manifest = {'utc': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'), 'files': files}
+Path('back/BACK-HASHES.json').write_text(json.dumps(manifest, indent=2) + '\\n')
+print('Wrote back/BACK-HASHES.json at ' + manifest['utc'])
+PY"

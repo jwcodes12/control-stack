@@ -1,0 +1,2 @@
+theorem sc28_safe (admins : List ℕ) (G : ℕ) (ops : List Op) (hops : ∀ o ∈ ops, legal o) :
+    Good G (run admins G full init ops)

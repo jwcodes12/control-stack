@@ -1,0 +1,23 @@
+Only OUT path configuration (including project root for the deeper output directory), PL_IMPORTS and the statement glob change. No gate security checks changed.
+--- run_gate.py
++++ blind-g7n1/run_gate_blind.py
+@@ -2,10 +2,10 @@
+ from pathlib import Path
+ import importlib.util, os, json, hashlib
+ ROOT=Path(__file__).resolve().parents[3]
+-OUT=Path(__file__).resolve().parent
++OUT=Path(__file__).resolve().parent; ROOT=OUT.parents[3]
+ os.environ['PL_LEAN_PROJ']=str(ROOT)
+ os.environ['PL_GATE_DIR']=str(OUT/'gate-tmp')
+-os.environ['PL_IMPORTS']='ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay'
++os.environ['PL_IMPORTS']='ControlStack.Core.AntiRollback ControlStack.Scenarios.SC27Chain ControlStack.Scenarios.SC27ExtensionOnly ControlStack.Scenarios.SC27Refinement'
+ spec=importlib.util.spec_from_file_location('leangate',OUT/'leangate_imports.py')
+ g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+ IMPORTS=''
+@@ -21,5 +21,5 @@
+  print(cid,ok,log[:240],flush=True)
+  return ok
+ if __name__=='__main__':
+- for p in sorted(OUT.glob('g0_*.statement.lean')):
++ for p in sorted(OUT.glob('bg7n1_*.statement.lean')):
+   run(p.name.removesuffix('.statement.lean'),p.read_text(),p.with_name(p.name.replace('.statement.lean','.proof.lean')).read_text())

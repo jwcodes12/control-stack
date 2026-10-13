@@ -1,0 +1,2 @@
+theorem halt_freezes (admins : List ℕ) (G : ℕ) (s : St) (ops : List Op) (hh : s.halted = true) :
+    (run admins G full s ops).usage = s.usage

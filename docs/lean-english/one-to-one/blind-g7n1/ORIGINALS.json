@@ -1,0 +1,92 @@
+{
+  "1": {
+    "original": "ControlStack.AntiRollback.rollback_transfer",
+    "path": "ControlStack/Core/AntiRollback.lean",
+    "line": 205,
+    "source_sha256": "3efc33a69338d07b822a9a943c6becb15b3f9f2190e6b755091a10121dc51c8d",
+    "declaration_header": "theorem rollback_transfer (G : System St Op Eff) (S : Spec G) (init : St) (hinit : S.Inv init)\n    (ops : List (ROp Op)) :\n    let t ",
+    "typed_file": "1-rollback_transfer.lean",
+    "typed_sha256": "1dc882065f9eca5924d02796195c5323d5ea5d7cf311c5ee71b322596ca593ab"
+  },
+  "2": {
+    "original": "ControlStack.SC27Chain.sc27_safe",
+    "path": "ControlStack/Scenarios/SC27Chain.lean",
+    "line": 191,
+    "source_sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+    "declaration_header": "theorem sc27_safe (E : Env) (ops : List Op)\n    (hinj : Set.InjOn (chainHead E.H E.h0) {l | l \u2208 (run E full init ops).accepted \u2228\n      \u2203 a \u2208 (run E full init ops).anchors, a.2 = some l}) :\n    \u2200 m \u2208 (run E full init ops).accepted, \u2203 a \u2208 (run E full init ops).anchors, a.2 = some m ",
+    "typed_file": "2-sc27_safe.lean",
+    "typed_sha256": "0980d61030dc1c7e7e64f6b4ca2cfddc6355d1ec7bc2515d2eb57c6620cef482"
+  },
+  "3": {
+    "original": "ControlStack.SC27Chain.tamper_after_anchor_detected",
+    "path": "ControlStack/Scenarios/SC27Chain.lean",
+    "line": 251,
+    "source_sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+    "declaration_header": "theorem tamper_after_anchor_detected :\n    (run E0 full init [.append 5, .anchor, .rewrite [7], .verify [7]]).accepted = [] \u2227\n    (run E0 full init [.append 5, .append 6, .anchor, .rewrite [6, 5], .verify [6, 5]]).accepted = [] ",
+    "typed_file": "3-tamper_after_anchor_detected.lean",
+    "typed_sha256": "d01336adec49e743a1c3ac0a84423dd8b8944293e1097a9807a3700d7030d75e"
+  },
+  "4": {
+    "original": "ControlStack.SC27Chain.halt_freezes",
+    "path": "ControlStack/Scenarios/SC27Chain.lean",
+    "line": 212,
+    "source_sha256": "582fcde372e0957ebf1067b3a49c057bd2364fce18592caedfad4397130dd807",
+    "declaration_header": "theorem halt_freezes (E : Env) (s : St) (ops : List Op) (hh : s.halted = true) : run E full s ops = s ",
+    "typed_file": "4-halt_freezes.lean",
+    "typed_sha256": "86e30b4b2954ebadba99eb3de5a20e4ca7551cc3eb78683263a0ba3828ff5031"
+  },
+  "5": {
+    "original": "ControlStack.SC27ExtensionOnly.sc27_ext_safe",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+    "line": 159,
+    "source_sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+    "declaration_header": "theorem sc27_ext_safe (E : Env) (ops : List Op)\n    (hinj : Set.InjOn (chainHead E.H E.h0) {l | l \u2208 (run E true init ops).accepted \u2228\n      \u2203 a \u2208 (run E true init ops).anchors, a.2 = l}) :\n    \u2200 m \u2208 (run E true init ops).accepted,\n      (\u2203 a \u2208 (run E true init ops).anchors, a.2 = m) \u2227 \u2203 l, (run E true init ops).last = some l \u2227 m <+: l ",
+    "typed_file": "5-sc27_ext_safe.lean",
+    "typed_sha256": "51820124db7315469919cf3f4ee8255565d7d597f098f4ab9abe929cd113ddd3"
+  },
+  "6": {
+    "original": "ControlStack.SC27ExtensionOnly.tampered_never_anchored",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+    "line": 173,
+    "source_sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+    "declaration_header": "theorem tampered_never_anchored (E : Env) (s : St) (hs : Inv E s) (ops : List Op) (l : List \u2115)\n    (hl : \u2203 a \u2208 s.anchors, a.2 = l) :\n    \u2200 a \u2208 (run E true s ops).anchors, a \u2208 s.anchors \u2228 l <+: a.2 ",
+    "typed_file": "6-tampered_never_anchored.lean",
+    "typed_sha256": "5a9ad0d83add06a8078e814688b8cd8ea7d5094de17357d751aa1b23fc4bcd93"
+  },
+  "7": {
+    "original": "ControlStack.SC27ExtensionOnly.anchors_chain",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+    "line": 149,
+    "source_sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+    "declaration_header": "theorem anchors_chain (E : Env) (ops : List Op) :\n    (run E true init ops).anchors.Pairwise (fun a b => a.2 <+: b.2) \u2227\n      \u2200 a \u2208 (run E true init ops).anchors, \u2203 l, (run E true init ops).last = some l \u2227 a.2 <+: l ",
+    "typed_file": "7-anchors_chain.lean",
+    "typed_sha256": "c741d5ba248e5ea6ded642e984c5c28772fa74058eee913cd43f17a1e23e04d7"
+  },
+  "8": {
+    "original": "ControlStack.SC27ExtensionOnly.alarm_iff",
+    "path": "ControlStack/Scenarios/SC27ExtensionOnly.lean",
+    "line": 214,
+    "source_sha256": "035ff28c5a5e2999211beaa7230a39e3b9aa885e473bed2656fb8c35d56f785f",
+    "declaration_header": "theorem alarm_iff (E : Env) (s : St) :\n    ((step E true s .anchor).alarms = s.alarms ++ [s.log] \u2194 extendsLast s = false) \u2227\n      (extendsLast s = false \u2192 (step E true s .anchor).anchors = s.anchors) ",
+    "typed_file": "8-alarm_iff.lean",
+    "typed_sha256": "23a2bad66a2ef6c1c41779d19574c347a4d6687be8e9107b37adbe8525011a74"
+  },
+  "9": {
+    "original": "ControlStack.SC27Refinement.concrete_ext_safe",
+    "path": "ControlStack/Scenarios/SC27Refinement.lean",
+    "line": 316,
+    "source_sha256": "e00fc18400720b2d5062dabcf80e6eaba6158e1ee299e89907c11e9598471d54",
+    "declaration_header": "theorem concrete_ext_safe (E : Env) (ops : List COp) (ht : TraceInj E cinit ops)\n    (hinj : Set.InjOn (chainHead E.H E.h0) {l | l \u2208 (runC E false cinit ops).accepted \u2228\n      \u2203 a \u2208 ancs (runC E false cinit ops).wlog, a.2 = l}) :\n    \u2200 m \u2208 (runC E false cinit ops).accepted,\n      (\u2203 a \u2208 ancs (runC E false cinit ops).wlog, a.2 = m) \u2227\n        \u2203 l, (runC E false cinit ops).ghostLast = some l \u2227 m <+: l ",
+    "typed_file": "9-concrete_ext_safe.lean",
+    "typed_sha256": "0400e7e800948ac5673e852ca09a7caf3eb93bca7512ddf8e3e0eb9c3300cf47"
+  },
+  "10": {
+    "original": "ControlStack.SC27Refinement.concrete_tampered_never_anchored",
+    "path": "ControlStack/Scenarios/SC27Refinement.lean",
+    "line": 330,
+    "source_sha256": "e00fc18400720b2d5062dabcf80e6eaba6158e1ee299e89907c11e9598471d54",
+    "declaration_header": "theorem concrete_tampered_never_anchored (E : Env) (pre post : List COp) (ht : TraceInj E cinit (pre ++ post))\n    (l : List \u2115) (hl : \u2203 a \u2208 ancs (runC E false cinit pre).wlog, a.2 = l) :\n    \u2200 a \u2208 ancs (runC E false cinit (pre ++ post)).wlog, a \u2208 ancs (runC E false cinit pre).wlog \u2228 l <+: a.2 ",
+    "typed_file": "10-concrete_tampered_never_anchored.lean",
+    "typed_sha256": "056eee869644b9e2573f7f595e63e391c3bf3c0907ddb6db5673656faed699cc"
+  }
+}

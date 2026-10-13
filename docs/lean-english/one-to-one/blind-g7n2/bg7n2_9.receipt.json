@@ -1,0 +1,17 @@
+{
+  "cid": "bg7n2_9",
+  "target": "claim",
+  "passed": true,
+  "statement_passed": true,
+  "statement_log": "",
+  "gate_log": "PASS claim axioms=['Quot.sound', 'propext']\nglobal_cap_blocks_honest : have s :=\n  run [9] 10 full init [Op.issue 9 0 10, Op.issue 9 1 10, Op.assignTo 9 1 0, Op.assignTo 9 2 1, Op.work 2 10 10];\n(step [9] 10 full s (Op.work 1 1 1)).usage = s.usage \u2227 spentL s 0 = 0 \u2227 s.usage = [(2, 1, 10)]\n'gate_c37c482e5526' depends on axioms: [propext, Quot.sound]\n",
+  "statement_sha256": "ab53d573044da1996840b05b772d81750e44a0ff80bd0ecd06952c21e8eaaf55",
+  "proof_sha256": "3a7b2b95f2c6e39e769cfc11a45f0953122c256a143d7e30ff831d49c3201a0e",
+  "gate_sha256": "8bcaba822fe25a5b7ffe7493980033960d1b262995d2f9060f21f4c58e0e7e84",
+  "gate_unmodified": false,
+  "security_checks_unchanged": true,
+  "imports_option_local_only": true,
+  "PL_IMPORTS": "ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay ControlStack.Scenarios.AuthInstancesA ControlStack.Scenarios.SC28Liveness ControlStack.Scenarios.SC28Refinement ControlStack.Core.AntiRollback",
+  "PL_LEAN_PROJ": "/home/opc/projects/blind-work/g7n2/b",
+  "trusted_header": ""
+}

@@ -1,0 +1,7 @@
+theorem sc28_safe_authenticated (admins : List ℕ) (G : ℕ) (U : List ℕ) (ops : List (ℕ × SC28.Op))
+    (hU : ∀ u ∈ U, u ∉ admins) (hlegal : ∀ io ∈ ops, SC28.legal io.2) :
+    Good G (authRun (SC28.step admins G full) claim28 SC28.init ops) ∧
+    (∀ l ∈ (authRun (SC28.step admins G full) claim28 SC28.init ops).leases, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .issue c l.1 l.2 ∧ c ∈ admins)) ∧
+    (∀ l ∈ (authRun (SC28.step admins G full) claim28 SC28.init ops).revoked, ∃ c o, (c, o) ∈ ops ∧ c ∉ U ∧
+      (o = .revoke c l ∧ c ∈ admins))

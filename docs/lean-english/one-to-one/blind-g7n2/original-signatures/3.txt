@@ -1,0 +1,3 @@
+theorem fork_shares_lease (admins : List ℕ) (G : ℕ) (s : St) (c p ch nl lid : ℕ) (hh : s.halted = false)
+    (hp : leaseOf s p = some lid) (hfresh : ch ∉ s.assign.map Prod.fst) :
+    leaseOf (step admins G full s (.fork c p ch nl)) ch = some lid

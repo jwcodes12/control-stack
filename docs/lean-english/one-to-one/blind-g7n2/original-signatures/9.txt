@@ -1,0 +1,3 @@
+theorem global_cap_blocks_honest :
+    let s := run [9] 10 full init [.issue 9 0 10, .issue 9 1 10, .assignTo 9 1 0, .assignTo 9 2 1, .work 2 10 10]
+    (step [9] 10 full s (.work 1 1 1)).usage = s.usage ∧ spentL s 0 = 0 ∧ s.usage = [(2, 1, 10)]

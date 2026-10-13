@@ -208,9 +208,23 @@ Each row is a short summary; the full replacement sentence is in the cited batch
 | #5 | Deployment.agent_not_receiver_uid | v1 | "Every agent node's UID field differs from the UID field of any listed receiver node; interpreting that as a fact about process identities requires faithful UID extraction." |
 | #12 | Deployment.accepted_no_avoided_path | v1 | Add: "A zero-step path from the starting ID to itself also counts." |
 
+## 4B. Addendum: batches g7n1 and g7n2 (23 claims, run 2026-10-13, after the sections above were tallied)
+
+Verdicts: 22 EQUIVALENT, 1 UNDECIDED (g7n2#6 `forged28_consumes_without_auth`: the original specifies exact unchecked/checked logs; the frozen back reading specifies budget, assignment, lease sum, subtrace and a checked total; the gate shows these abstract output predicates differ in both directions, and no fixed-trace verdict is claimed). The overall run is now 183 claims: EQUIVALENT 173, ENGLISH_STRONGER 4, ENGLISH_WEAKER 3, UNDECIDED 3. The 73/9/64 split above does not include these batches. Proposed replacements are in `blind-g7n1/RESULTS.md` and `blind-g7n2/RESULTS.md` ("Corrections to the English"); none is applied.
+
+Substantive (the English prose is wrong or over-claims):
+- **g7n1#1 `AntiRollback.rollback_transfer`:** the aside that a rollback-then-write always halts is false (rolling back to the current committed record need not halt; the witness trace `write 5; bump; rollback 1; write 6; bump` commits twice). Replace with the safety-not-progress sentence in the source.
+- **g7n1#2 `SC27Chain.sc27_safe`:** "not provable in Lean for a compressing hash" is misleading; the premise is per-run injectivity on the accepted manifests and anchored logs, which can hold for a specified finite run. No claim about SHA-256.
+- **g7n1#5, #9, #10:** the prose omits the starting state (`init` / `cinit`); arbitrary starting states would falsify the safety conclusion. #9 must also say that witness memory and log persistence/independence is an external correspondence assumption.
+- **g7n2#6:** the verdict is UNDECIDED; the English should state the conclusion as exactly two log equalities (`[(1,0,5)]` unauthenticated, `[]` authenticated) and treat budget/assignment/subtrace as separate observations.
+- **g7n2#8:** "starting state ... not halted or not revoked" is not required; the conclusion has escape clauses for halted and revoked states.
+
+Wording-only: g7n1#6 (the invariant list omits `Inv.lastAnch`); g7n2#1 (credential separation is needed to read the logged acts as authorized, not for the numerical theorem), #7 (reported cost versus charge; zero-unit steps are charged one), #9 (label as an availability counterexample), #12 (no termination-time bound proved).
+Unchanged by these batches: g7n1#3, #4, #7, #8 and g7n2#2, #3, #4, #5, #10, #11, #13 needed no replacement.
+
 ## 5. Caveats
 
-- **Not yet run:** claims in batches **g7n1 and g7n2 (23 claims)** have not been run through the one-to-one blind process, so this document says nothing about them.
+- **Coverage:** all 183 deduplicated claims have now been run. Sections 1 to 4 were tallied over the first 160; section 4B covers the last 23 (g7n1, g7n2).
 - **All verdicts are model-generated.** Each verdict comes from a Codex-written (Phase A) blind back-translation of the English, compared with the original Lean and gate-checked by the deterministic gate in a Phase B pass. Gate receipts (`*.receipt.json`, `*.witness.receipt.json`, statement/proof files) sit under each batch directory (`blind-<batch>/`); BLIND-INDEX.md's `re-gated` column says the orchestrator re-ran the batch's gates (`n/a` for blind-g1a and blind-v1, verified by hand per `blind-v1/SUMMARY.md`). No independent human has reviewed any of it.
 - **A verdict is about the stated model formula,** not the real deployment, world assumptions, or the whole narrative (per `RESULTS.md`). EQUIVALENT means the frozen back-translation and the original Lean agree pointwise under the same hypotheses; it does not certify every informal sentence of the English, which is why sections 3B and 4 exist.
 - **Counts:** the 78 "no correction" figure and the 9/64 split between sections 3B and 4 are approximate (see section 1). The per-class totals for non-EQUIVALENT verdicts and the 160 total are exact.

@@ -1,0 +1,3 @@
+theorem forged28_consumes_without_auth :
+    (authRun (SC28.step [9] 1000 full) (fun _ => none) SC28.init forged28).usage = [(1, 0, 5)] ∧
+    (authRun (SC28.step [9] 1000 full) claim28 SC28.init forged28).usage = []

@@ -1,0 +1,16 @@
+/bin/bash -lc 'cat ./input/batch.md ./defs/*.lean'
+
+---
+/bin/bash -lc 'cat ./input/batch.md'
+
+---
+/bin/bash -lc "rg -n 'namespace|def |structure |inductive |variable|abbrev |end ' ./defs/*.lean"
+
+---
+/bin/bash -lc 'cat ./defs/Core__AntiRollback_defs.lean ./defs/Core__Authenticated_defs.lean ./defs/Core__AuthenticatedLog_defs.lean ./defs/Scenarios__AuthInstancesA_defs.lean ./defs/Core__Gate_defs.lean'
+
+---
+/bin/bash -lc 'date -u +%Y-%m-%dT%H:%M:%SZ'
+
+---
+/bin/bash -lc 'sha256sum back/*.lean'

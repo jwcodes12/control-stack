@@ -1,0 +1,17 @@
+{
+  "cid": "bg7n2_10",
+  "target": "witness",
+  "passed": true,
+  "statement_passed": true,
+  "statement_log": "",
+  "gate_log": "PASS witness axioms=['Quot.sound', 'propext']\nsc28_rollback_safe : \u2200 (admins : List \u2115) (G : \u2115) (ops : List (ROp { o // SC28.legal o })),\n  have t := runR (SC28.sys admins G) true (rinit (SC28.sys admins G) SC28.init) ops;\n  t.released = (SC28.run admins G SC28.full SC28.init (List.map Subtype.val t.committed)).usage \u2227\n    SC28.Good G (SC28.run admins G SC28.full SC28.init (List.map Subtype.val t.committed))\n'gate_8f3659e2fddf' depends on axioms: [propext, Quot.sound]\n",
+  "statement_sha256": "24fec056c241d09a3f73ffa22925c5aa0c5268fa83fa3a16c72dacfc68b2d1c9",
+  "proof_sha256": "fa67b02d71603ab43782d56159a67746fb2eb6fdb64a0f3a5d00d912b6b72302",
+  "gate_sha256": "8bcaba822fe25a5b7ffe7493980033960d1b262995d2f9060f21f4c58e0e7e84",
+  "gate_unmodified": false,
+  "security_checks_unchanged": true,
+  "imports_option_local_only": true,
+  "PL_IMPORTS": "ControlStack.Deployment.Witnesses ControlStack.Deployment.TranscriptReplay ControlStack.Scenarios.AuthInstancesA ControlStack.Scenarios.SC28Liveness ControlStack.Scenarios.SC28Refinement ControlStack.Core.AntiRollback",
+  "PL_LEAN_PROJ": "/home/opc/projects/blind-work/g7n2/b",
+  "trusted_header": ""
+}

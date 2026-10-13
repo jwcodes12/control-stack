@@ -1,0 +1,4 @@
+theorem honest_steps_progress (s : St) (w lid b : ℕ) (as : List ℕ) (hh : s.halted = false)
+    (hl : leaseOf s w = some lid) (hb : budgetOf s lid = some b) (hr : lid ∉ s.revoked)
+    (hcl : spentL s lid + charges as ≤ b) (hcg : spentT s + charges as ≤ G) :
+    (run admins G full s (as.map (fun a => .work w a a))).usage = s.usage ++ as.map (fun a => (w, lid, a))

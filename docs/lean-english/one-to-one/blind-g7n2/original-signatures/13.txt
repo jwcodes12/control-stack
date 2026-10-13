@@ -1,0 +1,2 @@
+theorem exclusive_placement_safe (G : ℕ) (ops : List COp) (hu : ∀ o ∈ ops, isUnplaced o = false) :
+    (runC G cinit ops).outside = [] ∧ realTotal (runC G cinit ops) ≤ G

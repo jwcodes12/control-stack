@@ -19,7 +19,7 @@ which is G1 (`deployment/RELEASE-GATES.md`). Concretely:
 
 **What R2 does not mean:** no deployment is "assured"; CONDITIONAL rests on unproved
 faithful extraction and protocol refinement; tested on one host (Oracle Linux 9.8, aarch64,
-Docker 29.8, no Landlock); no LLM agent was ever run against it; only two live bypasses
+Docker 29.8; Landlock was off until 2026-10-13, see G5 below); no LLM agent had been run against it at R2 (a tool-less agent and a scripted attack arm were added in Tier 11, see G2 and T7 below); only two live bypasses
 were observed, both on deliberately misconfigured deployments.
 
 ## Tier 9: trusted-path hardening (done)

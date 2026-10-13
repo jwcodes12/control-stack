@@ -111,4 +111,25 @@ Premises of that model, not proved: the receiver publishes the *approved* digest
 
 What is **not** done: runtime persistence of the log (transactional event persistence in the broker, extractor support, an OS receiver witness), rehashing of live bytes against the logged digest, log custody and rotation, anti-rollback, and the independent human statement-fidelity review. The design doc's acceptance cases that are *model-level* (admitted-and-published, unapproved/tampered emits nothing, crash between admission and publication, duplicate nonce/retry, HALT in flight, false-extraction countermodel) are now each witnessed; the runtime and OS parts of those cases are not. Nothing here changes `trusted_stack`, the broker's `State`, or any pinned file, and `deployment_broker_safe` is unchanged.
 
+## Runtime implementation (source generation `r2-v8`, 2026-10-13)
+
+The owner then authorized runtime persistence (`trusted_stack/controller.py`, `trusted_stack/outbox_receiver.py`; claim text: `docs/DEPLOYMENT-CLAIM-v0.md` "Tier 11"; evidence: `deployment/runs/tier11/`).
+How the model maps onto the runtime, and what stays unproved:
+
+| Lean (`ReleaseLog.lean`, `ReleaseLogPublish.lean`) | Runtime |
+|---|---|
+| `ReleaseEvent` fields (nonce, digest, destination, agent, lease, signer, reviewer, cost) | the columns of `release_log` (checked by `trusted_stack/test_release_log.py`) |
+| a logged release is exactly a broker `release` step | `release()` writes the `release_log` row in the same SQLite transaction as the approval consumption, the budget charge and the `releases` row |
+| `LogSound` (nonces = consumed history, costs sum to spent, length = releases) | `deployment/reconcile.release_log_problems` on every archived SQLite backup of the live runs |
+| `release_event_matches` (event = the approved digest/destination, signer an approver, agent an agent, reviewer role) | the same checker compares each row with the approval it consumed and with the pinned role sets |
+| `PState`/`Receipt`, `receipt_matches_event`, `receipts_nodup` | `publication_receipts` (observed SHA-256 of the file read back; append-only), checked against the log and the sink bytes |
+| `crash_then_publish`, `admitted_is_unpublished` | the real killed-receiver case of the `crash-retry` run: one `release_log` row, sink file present, no publication receipt, then recovery |
+| `halt_in_flight` | the `halt-inflight` run: admitted work in flight when HALT arrives; delivery after HALT is blocked by the receiver (a stricter runtime than the model, which allows it) |
+| `false_extraction_breaks_invariant` | not a runtime test; the receiver's own hash is a TCB fact, and the checker reads the sink bytes independently |
+| append-only | SQL triggers on `release_log` and `publication_receipts`; the database owner can drop them (defence in depth, tested including that tamper) |
+
+Still not done: custody of the log outside the database file (a hash chain with a head kept elsewhere, or signed receipts: Option C), anti-rollback of the whole file, log
+rotation, and the independent human statement review. The model premises (durable log and receipts, atomic receipt, faithful extraction) are *tested* on one host,
+not proved.
+
 **No runtime implementation of any option is authorized by this document.**

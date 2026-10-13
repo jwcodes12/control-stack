@@ -42,8 +42,33 @@ class Principals:
         return type(uid) is int and uid in getattr(self, role, frozenset())
 
 
+# Schema added in source generation r2-v8. Applied idempotently on bootstrap and, for a database created by an older
+# generation, lazily inside the first staging or release transaction. Triggers make release_log append-only against SQL
+# UPDATE/DELETE issued by anything other than the database owner; the owner can drop them, so this is defence in depth,
+# not custody.
+V8_DDL = (
+    """CREATE TABLE IF NOT EXISTS artifact_owner (
+        digest TEXT PRIMARY KEY REFERENCES artifacts(digest), uid INTEGER NOT NULL)""",
+    """CREATE TABLE IF NOT EXISTS release_log (
+        release_id INTEGER PRIMARY KEY REFERENCES releases(id),
+        nonce TEXT UNIQUE NOT NULL, digest TEXT NOT NULL, destination TEXT NOT NULL,
+        agent_uid INTEGER NOT NULL, lease_id TEXT NOT NULL, signer_uid INTEGER NOT NULL,
+        reviewer_uid INTEGER NOT NULL, cost INTEGER NOT NULL, created INTEGER NOT NULL)""",
+    """CREATE TRIGGER IF NOT EXISTS release_log_no_update BEFORE UPDATE ON release_log
+        BEGIN SELECT RAISE(ABORT, 'release_log is append-only'); END""",
+    """CREATE TRIGGER IF NOT EXISTS release_log_no_delete BEFORE DELETE ON release_log
+        BEGIN SELECT RAISE(ABORT, 'release_log is append-only'); END""",
+)
+
+
 class Controller:
     STAGING_QUOTA = 64 * 1024 * 1024  # total staged artifact bytes; refusing more is always safe
+    BUSY_TIMEOUT = 15  # seconds a single SQLite lock wait may last
+    def agent_quota(self):
+        """Each agent's share of the staging quota. The shares sum to at most STAGING_QUOTA, so one agent can never use up
+        the bytes another agent is entitled to."""
+        return self.STAGING_QUOTA // len(self.principals.agents)
+
     def __init__(self, path: Path, principals: Principals, clock=None):
         self.path = Path(path)
         self.principals = principals
@@ -101,6 +126,8 @@ class Controller:
                 body BLOB NOT NULL, created INTEGER NOT NULL);
             """)
             db.execute("INSERT INTO meta VALUES (1, ?, 0, 0)", (global_cap,))
+            for statement in V8_DDL:
+                db.execute(statement)
         dirfd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
         try:
             os.fsync(dirfd)
@@ -119,7 +146,7 @@ class Controller:
             if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o077:
                 raise Denied("missing or insecure SQLite state")
             db = sqlite3.connect(self.path.resolve().as_uri() + "?mode=rw",
-                                 uri=True, timeout=15, isolation_level=None)
+                                 uri=True, timeout=self.BUSY_TIMEOUT, isolation_level=None)
             db.execute("PRAGMA synchronous=FULL")
             db.execute("PRAGMA foreign_keys=ON")
             if db.execute("SELECT COUNT(*) FROM meta WHERE id=1").fetchone() != (1,):
@@ -193,9 +220,20 @@ class Controller:
                 raise Denied("digest collision")
             # Staging is the one agent-callable write that grows the database, so it has a total byte quota: a stuck
             # or hostile agent cannot fill the disk the broker's HALT write also needs. Already-staged bytes stay free.
-            if old is None and db.execute("SELECT COALESCE(SUM(LENGTH(body)),0) FROM artifacts").fetchone()[0] + len(body) > self.STAGING_QUOTA:
-                raise Denied("staging quota exhausted")
+            # Since r2-v8 each agent also has its own share (agent_quota), so one agent cannot use up another's.
+            for statement in V8_DDL:
+                db.execute(statement)
+            if old is None:
+                if db.execute("SELECT COALESCE(SUM(LENGTH(body)),0) FROM artifacts").fetchone()[0] + len(body) > self.STAGING_QUOTA:
+                    raise Denied("staging quota exhausted")
+                mine = db.execute(
+                    "SELECT COALESCE(SUM(LENGTH(a.body)),0) FROM artifacts a JOIN artifact_owner o ON o.digest=a.digest WHERE o.uid=?",
+                    (uid,)).fetchone()[0]
+                if mine + len(body) > self.agent_quota():
+                    raise Denied("per-agent staging quota exhausted")
             db.execute("INSERT OR IGNORE INTO artifacts VALUES (?, ?)", (digest, body))
+            if old is None:
+                db.execute("INSERT OR IGNORE INTO artifact_owner VALUES (?, ?)", (digest, uid))
             return digest
         return self._tx(apply)
 
@@ -339,6 +377,15 @@ class Controller:
             db.execute("UPDATE approvals SET used=1 WHERE nonce=?", (nonce,))
             cur = db.execute("INSERT INTO releases (digest,destination,agent_uid,nonce,lease_id,cost,created) VALUES (?,?,?,?,?,?,?)",
                              (digest, destination, owner, nonce, lease_id, cost, self._now()))
+            # The release event: what the broker admitted at this instant, written in the SAME transaction as the
+            # approval consumption and the budget charge. approvals, reviews (INSERT OR REPLACE) and leases are mutable
+            # afterwards; this row is not (append-only triggers). It records the committed admission, not publication.
+            for statement in V8_DDL:
+                db.execute(statement)
+            db.execute(
+                """INSERT INTO release_log (release_id,nonce,digest,destination,agent_uid,lease_id,signer_uid,reviewer_uid,cost,created)
+                   VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                (cur.lastrowid, nonce, digest, destination, owner, lease_id, approval[4], review[0], cost, self._now()))
             if grant is not None:
                 db.execute(
                     """INSERT INTO delegated_releases

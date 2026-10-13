@@ -9,19 +9,23 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import random
 import secrets
 import sqlite3
 import stat
+import time
 from pathlib import Path
 
 from trusted_stack.controller import Controller, Denied
 
 MAX_BODY = 1024 * 1024
+LOCK_DEADLINE = 120.0  # seconds a delivery may wait for the database writer lock before failing closed
 _FILE_FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
 _DIR_FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
 
 
-def _read_verified(dirfd: int, name: str, expected: bytes, *, links: int = 1) -> None:
+def _read_verified(dirfd: int, name: str, expected: bytes, *, links: int = 1) -> str:
+    """Open, check metadata and compare the bytes. Returns the SHA-256 of the bytes actually READ BACK from the file."""
     try:
         fd = os.open(name, _FILE_FLAGS, dir_fd=dirfd)
     except FileNotFoundError as exc:
@@ -42,6 +46,7 @@ def _read_verified(dirfd: int, name: str, expected: bytes, *, links: int = 1) ->
             data.extend(part)
         if bytes(data) != expected:
             raise Denied("receiver file content differs from trusted record")
+        return hashlib.sha256(bytes(data)).hexdigest()
     finally:
         os.close(fd)
 
@@ -134,6 +139,39 @@ def _publish(dirfd: int, name: str, body: bytes) -> None:
         os.fsync(dirfd)
 
 
+def _begin_immediate(db, deadline: float) -> None:
+    """Take the SQLite writer lock, retrying a busy database until the deadline.
+
+    A single SQLite lock wait ends after Controller.BUSY_TIMEOUT and SQLite's own busy handler polls without any
+    fairness. Since r2-v8 the receiver retries with jittered exponential backoff until a total deadline, so a burst of
+    broker writes delays a delivery instead of failing it, and still fails CLOSED when the deadline passes. This is a
+    mitigation, not strict FIFO scheduling: the lock stays with SQLite, and starvation beyond the deadline is possible.
+    """
+    pause = 0.05
+    while True:
+        try:
+            db.execute("BEGIN IMMEDIATE")
+            return
+        except sqlite3.OperationalError as exc:
+            if "locked" not in str(exc).lower() and "busy" not in str(exc).lower():
+                raise
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(pause * (0.5 + random.random()))
+            pause = min(pause * 2, 1.0)
+
+
+_PUBLICATION_DDL = (
+    """CREATE TABLE IF NOT EXISTS publication_receipts (
+       release_id INTEGER PRIMARY KEY REFERENCES releases(id),
+       observed_sha256 TEXT NOT NULL, destination TEXT NOT NULL, created INTEGER NOT NULL)""",
+    """CREATE TRIGGER IF NOT EXISTS publication_receipts_no_update BEFORE UPDATE ON publication_receipts
+       BEGIN SELECT RAISE(ABORT, 'publication_receipts is append-only'); END""",
+    """CREATE TRIGGER IF NOT EXISTS publication_receipts_no_delete BEFORE DELETE ON publication_receipts
+       BEGIN SELECT RAISE(ABORT, 'publication_receipts is append-only'); END""",
+)
+
+
 def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                    *, after_publish=None, allow_delegation=False) -> str:
     """Publish one previously committed reviewed artifact under <id>.body.
@@ -161,7 +199,7 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
             raise Denied("receiver directory must be private and broker-owned")
         db = controller._open()
         try:
-            db.execute("BEGIN IMMEDIATE")
+            _begin_immediate(db, time.monotonic() + LOCK_DEADLINE)
             if db.execute("SELECT halted FROM meta WHERE id=1").fetchone() != (0,):
                 raise Denied("HALT blocks even pending external delivery")
             _reap_unlinked_pending(dirfd)
@@ -229,13 +267,15 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                 "SELECT digest, destination FROM delivery_receipts WHERE release_id=?",
                 (release_id,)).fetchone()
             name = str(release_id) + ".body"
+            for statement in _PUBLICATION_DDL:
+                db.execute(statement)
             if receipt is not None:
                 if receipt != (digest, destination):
                     raise Denied("durable delivery receipt disagrees")
-                _read_verified(dirfd, name, body)
+                observed = _read_verified(dirfd, name, body)
             else:
                 try:
-                    _read_verified(dirfd, name, body)
+                    observed = _read_verified(dirfd, name, body)
                 except Denied as exc:
                     # ONLY missing files may be newly published. Any different
                     # preexisting bytes, symlink, or metadata mismatch fails shut.
@@ -243,11 +283,25 @@ def deliver_record(controller: Controller, release_id: int, output_dir: Path,
                         _recover_interrupted_link_cleanup(dirfd, name, body)
                     else:
                         _publish(dirfd, name, body)
+                    observed = _read_verified(dirfd, name, body)
                 if after_publish is not None:
                     after_publish()
                 db.execute(
                     "INSERT INTO delivery_receipts VALUES (?,?,?)",
                     (release_id, digest, destination))
+            # The observed hash is that of the bytes read back from the published file at this delivery, and it must be
+            # the logged digest. It is persisted once, append-only, next to the broker's release_log row.
+            if observed != digest:
+                raise Denied("observed published bytes differ from the logged digest")
+            prior = db.execute(
+                "SELECT observed_sha256, destination FROM publication_receipts WHERE release_id=?",
+                (release_id,)).fetchone()
+            if prior is None:
+                db.execute(
+                    "INSERT INTO publication_receipts VALUES (?,?,?,?)",
+                    (release_id, observed, destination, checked_at))
+            elif prior != (observed, destination):
+                raise Denied("durable publication receipt disagrees")
             db.commit()
             return name
         except (sqlite3.Error, OSError) as exc:

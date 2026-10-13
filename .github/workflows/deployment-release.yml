@@ -26,6 +26,8 @@ jobs:
           python3 tools/test_deployment_release.py
           python3 tools/test_deployment_pins.py
           python3 tools/test_deployment_hardening.py
+          # Needs passwordless sudo (chown to the role UIDs), which this hosted job has and the self-hosted kernel runner lacks.
+          python3 tools/test_deployment_scanner.py
           python3 tools/build_deployment_fixtures.py --check
           python3 tools/build_deployment_golden.py --check
       - name: Monotonicity (520 seeded strict additions)
@@ -184,7 +186,7 @@ jobs:
             # Modules that chown fixtures through passwordless sudo cannot run on the sudo-less self-hosted runner.
             # Report that loudly (a SKIPPED module is not a pass); deployment-slice/fixtures runs them on a hosted runner.
             if grep -q "'sudo'" "$test" && ! sudo -n true 2>/dev/null; then
-              echo "SKIPPED $test - needs passwordless sudo, unavailable here; NOT verified by this job (covered only by deployment-slice/fixtures on a hosted runner)"
+              echo "SKIPPED $test - needs passwordless sudo, unavailable here; NOT verified by this job (covered by the hosted fixtures job of this workflow and by deployment-slice/fixtures)"
               echo "::warning::SKIPPED $test (needs passwordless sudo; not verified by this job)"
               echo "- SKIPPED \`$test\` (needs passwordless sudo): NOT verified in this job" >> "$GITHUB_STEP_SUMMARY"
               echo "::endgroup::"

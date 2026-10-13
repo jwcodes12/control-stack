@@ -6,6 +6,7 @@ import ControlStack.Deployment.GuardMinimalityWitnesses
 import ControlStack.Deployment.ProvenanceWitnesses
 import ControlStack.Deployment.ReleaseLog
 import ControlStack.Deployment.ReleaseLogWitnesses
+import ControlStack.Deployment.ReleaseLogPublish
 import ControlStack.Scenarios.SC25RefinementReuse
 import ControlStack.Scenarios.GateReuse
 import ControlStack.Scenarios.RefinementReuse

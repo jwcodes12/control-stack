@@ -225,7 +225,7 @@ Source generation `r2-v7` (`r2-v6` was the first Tier 10 generation; the review'
   (64 MiB) so a stuck agent cannot make the database itself grow without bound. It does not stop an agent filling the host disk through its container's writable layer (the profile
   does not make the root filesystem read-only), so a separate filesystem for the database is a premise. Not fixed: a separate
   receiver process still depends on SQLite's own lock scheduling, and one agent can exhaust the shared
-  staging quota for the other (availability, not safety).
+  staging quota for the other (availability, not safety). (Tier 11 below mitigates both.)
 - **`cstack plan` accepts a fresh scan's own IR.** A scan's IR carries UNKNOWN reasons that replay rules
   do not produce; the planner now reproduces the IR under replay rules or under fresh-scan rules and
   requires one of them to match exactly.
@@ -249,6 +249,36 @@ Source generation `r2-v7` (`r2-v6` was the first Tier 10 generation; the review'
   re-scored result (0 false acceptances, 0 of 8 supported rejected, 22 of 34 UNKNOWN) is **contaminated**
   by that fix. The hand-written baseline caught 0 of the 26 negatives. The author is the same model
   family as the original builder and a different one from the fixer; it is not an independent human.
+
+## Tier 11: persisted release log, per-agent staging quota, receiver lock retry (source generation `r2-v8`)
+
+Changed trusted code: `trusted_stack/controller.py` and `trusted_stack/outbox_receiver.py` (generation vaulted by the pins recipe; hardened fixtures, templates
+and goldens regenerated). Tests: `trusted_stack/test_release_log.py` (12) and `tools/test_deployment_r2.py` (new evidence tests). Live evidence:
+`deployment/runs/tier11/` (README there lists the commands; two failed attempts caused by a missing `PATH` are kept). None of this has had independent human review.
+
+- **Release log (the owner chose the "event log" option of `docs/lean-english/RELEASE-LOG-DESIGN.md`).** `release()` writes one `release_log` row in the SAME
+  transaction as the approval consumption, the budget charge and the `releases` row: nonce, digest, destination, agent, lease, **signer** and **reviewer** as they were at
+  that instant, and cost. `approvals.used`, `reviews` (which is `INSERT OR REPLACE`) and leases keep changing; the log row does not. SQL triggers refuse `UPDATE` and
+  `DELETE` on it. The owner of the database can drop the triggers, so this is defence in depth, not custody. A logged release means the broker COMMITTED the release,
+  not that the receiver received or published anything. The fields are the fields of the Lean `ReleaseEvent`
+  (`ControlStack/Deployment/ReleaseLog.lean`); `test_runtime_columns_correspond_to_the_lean_release_event_fields` fails if they drift apart.
+- **Publication receipt with an observed hash.** `deliver_record` reads the published file back, computes its SHA-256, requires it to equal the logged digest and
+  stores it once in the append-only `publication_receipts`. The hash is computed by the receiver itself (trusted), so it is a record, not an attestation.
+- **Per-agent staging quota.** Each agent's share is `STAGING_QUOTA // number of agents` (32 MiB with two agents); the shares never sum to more than the total, so one
+  agent can no longer use up bytes another is entitled to. The total quota still applies; already-staged bytes stay free. Availability only. Tested at unit level, not under live load.
+- **Receiver lock retry.** `deliver_record` retries a busy SQLite writer lock with jittered exponential backoff up to `LOCK_DEADLINE` (120 s) and then fails closed.
+  It is a mitigation, not FIFO scheduling: the lock stays with SQLite, and starvation past the deadline is possible.
+- **Older databases** are upgraded in place (idempotent `CREATE ... IF NOT EXISTS`) in the first staging or release transaction.
+- **Independent check.** `deployment/reconcile.release_log_problems` (used by `check_container_run.py` and `check_remediated.py` for generation `r2-v8` and later) reads the
+  SQLite backups and the sink: the log equals the `releases` list, costs sum to `spent`, nonces are unique, each row equals the approval it consumed, signer/agent/reviewer hold
+  the pinned roles, each publication receipt names a logged release, carries its digest and destination and equals the SHA-256 of the sink file. Archives of earlier
+  generations have no log and are skipped, not counted as checked.
+- **Live evidence (this host, one run):** `containers-hardened`: five safe cases PASS with the log consistent in every phase; `crash-retry` shows the real killed-process state
+  (one `release_log` row, sink file present, no publication receipt: admitted, delivered, not yet receipted) and the later recovery; `halt-inflight` likewise.
+  `demo-dev-clone`: `cstack demo` PASS. No bypass case was launched.
+- **What this does not do:** it is the same SQLite file as the state it describes, so there is no anti-rollback or custody for the whole file; log rotation is not designed; the
+  `effect_release`/`publish_effect` path and `--effect-root` are as before (outside the claim); the Lean model of the log is model-only and its premises (durable log, atomic
+  receipt, faithful extraction) are tested here on one host, not proved. `deployment_broker_safe` is unchanged.
 
 ## Post-Tier-10 Lean simplification (model-only; not a new release claim)
 

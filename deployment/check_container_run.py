@@ -7,11 +7,13 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from deployment.reconcile import reconcile
+from deployment.reconcile import reconcile,release_log_problems
 from deployment.pins import require_generation,require_hardened_generation
 from tools.collect_deployment_docker import inventory_has_hardening,normalize
 from extractors.compose import collect,sha
 from security_ir.verifier import verify
+
+PRE_V8=frozenset('r2-v%d'%i for i in range(8))  # generations before the persisted release log
 
 def check(output):
     output=Path(output).resolve();pin=json.loads((output/'image-pin.json').read_text());result=json.loads((output/'result.json').read_text())
@@ -64,6 +66,9 @@ def check(output):
             assert files==json.loads((phase/'sink-state.json').read_text()),(case,phase.name,'sink bytes')
             actual=reconcile(phase/'database.sqlite',phase/'sink');assert actual==json.loads((phase/'reconciliation.json').read_text()),(case,phase.name,'DB/sink state')
             assert all(x['classification']!='inconsistent' for x in actual['records'])
+            problems=release_log_problems(phase/'database.sqlite',phase/'sink',agents={23701,23702},approvers={23704},reviewers={23703})
+            if generation not in PRE_V8:assert problems is not None,(case,phase.name,'r2-v8 database has no release_log')
+            if problems is not None:assert problems==[],(case,phase.name,problems)
             if phase.name=='final':assert files==expected['sink_files'] and actual==expected['final']
         final=expected['final'];outcomes=expected['outcomes']
         if case=='clean':assert final['admitted']==final['delivered']==final['spent']==2 and {x['agent_uid'] for x in final['records']}=={23701,23702} and outcomes['direct-egress']=='BLOCKED'

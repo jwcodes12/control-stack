@@ -1,0 +1,163 @@
+{
+  "capture": {
+    "independent_attestation": false,
+    "kind": "docker-inspect",
+    "raw_sha256": "5e52eb73714d82029f30c3ad78f95f55572e6bd8d616ace06b1551df4e8fe9fd"
+  },
+  "services": {
+    "agent-a": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "cap_drop": [
+          "ALL"
+        ],
+        "no_new_privileges": true
+      },
+      "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23701
+    },
+    "agent-b": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "cap_drop": [
+          "ALL"
+        ],
+        "no_new_privileges": true
+      },
+      "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23702
+    },
+    "approver": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "cap_drop": [],
+        "no_new_privileges": false
+      },
+      "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23704
+    },
+    "broker": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "cap_drop": [],
+        "no_new_privileges": false
+      },
+      "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+      "mounts": [
+        {
+          "read_only": false,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23700
+    },
+    "receiver": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "cap_drop": [],
+        "no_new_privileges": false
+      },
+      "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+      "mounts": [
+        {
+          "read_only": false,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "read_only": false,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink",
+          "target": "/output",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23700
+    },
+    "reviewer": {
+      "env_names": [
+        "PYTHONPATH",
+        "SLICE_ROLE"
+      ],
+      "hardening": {
+        "cap_drop": [],
+        "no_new_privileges": false
+      },
+      "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+      "mounts": [
+        {
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ],
+      "networks": [
+        "isolated"
+      ],
+      "uid": 23703
+    }
+  }
+}

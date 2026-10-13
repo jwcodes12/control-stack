@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:375e9b14921f974c37f23b4e9f6c1368d9b1598c2080d7760465a1d394c277fd",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+        "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "budget": 2,
+    "compose_sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+    "database_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+    "receiver_sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "runtime_sha256": "f92ab0fab05ca7c868a6047222460671e53b116ad90363abb63e99f0720cf470",
+    "sink_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "0b6e91427c1f4a80f786915ed820f2ee2829d336dc207f92c37629fc0b680ef1",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "f92ab0fab05ca7c868a6047222460671e53b116ad90363abb63e99f0720cf470",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+      "source": "/home/opc/projects/control-stack-r2v8/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+      "source": "/home/opc/projects/control-stack-r2v8/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "a61f5fdc7282a261ccf4005da262daaa19a6c225ebb8458a013ba1a690274ae0",
+      "source": "/home/opc/projects/control-stack-r2v8/deployment/runs/tier11/demo-dev-clone/remediated/trusted-role-uid-collision/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

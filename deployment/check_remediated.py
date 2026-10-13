@@ -7,7 +7,8 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from deployment.reconcile import reconcile
+from deployment.reconcile import reconcile,release_log_problems
+PRE_V8=frozenset('r2-v%d'%i for i in range(8))  # generations before the persisted release log
 from deployment.pins import require_generation,require_hardened_generation,vaulted_templates
 from deployment.scan import replay_snapshot
 from deployment.plan import apply_patch
@@ -63,6 +64,9 @@ def check(output):
         files={p.name:sha(p) for p in sorted((final/'sink').iterdir())};assert files==row['sink_sha256'] and set(files)=={'1.body','2.body'}
         assert all(p.read_bytes()==BODY for p in (final/'sink').iterdir())
         observed=reconcile(final/'database.sqlite',final/'sink');assert observed==row['final']
+        problems=release_log_problems(final/'database.sqlite',final/'sink',agents={23701,23702},approvers={23704},reviewers={23703})
+        if generation not in PRE_V8:assert problems is not None,'r2-v8 database has no release_log'
+        if problems is not None:assert problems==[],problems
         assert observed['global_cap']==observed['admitted']==observed['delivered']==observed['spent']==2
         assert {record['agent_uid'] for record in observed['records']}=={23701,23702}
         assert row['honest_agents_completed']==2

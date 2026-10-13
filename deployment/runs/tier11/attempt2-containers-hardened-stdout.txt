@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "/home/opc/projects/control-stack-r2v8/deployment/run_containers.py", line 213, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');p.add_argument('--hardened',action='store_true',help='hardened profile, current source generation, bypass cases excluded');a=p.parse_args();run(a.output,a.pin,a.fresh_scan,a.hardened)
+                                                                                                                                                                                                                                                                                                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/opc/projects/control-stack-r2v8/deployment/run_containers.py", line 134, in run
+    ir,bundle=scan(dest);prediction=bundle['verdict'];assert prediction==('UNASSURED' if template!='clean' else 'CONDITIONAL')
+              ~~~~^^^^^^
+  File "/home/opc/projects/control-stack-r2v8/deployment/run_containers.py", line 87, in scan
+    checked=check(ir);bundle=verify(ir)
+  File "/home/opc/projects/control-stack-r2v8/tools/check_deployment_lean.py", line 37, in check
+    build=subprocess.run(['lake','build','ControlStack.Deployment.Contracts'],cwd=ROOT,capture_output=True,text=True)
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.15/3.15.0/lib/python3.15/subprocess.py", line 669, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.15/3.15.0/lib/python3.15/subprocess.py", line 1213, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.15/3.15.0/lib/python3.15/subprocess.py", line 2156, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'lake'
+
+real	0m13.856s
+user	0m0.810s
+sys	0m0.493s

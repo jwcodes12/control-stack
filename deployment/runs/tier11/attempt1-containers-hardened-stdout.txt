@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "/home/opc/projects/control-stack-r2v8/deployment/run_containers.py", line 213, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--output',required=True);p.add_argument('--pin');p.add_argument('--fresh-scan',action='store_true');p.add_argument('--hardened',action='store_true',help='hardened profile, current source generation, bypass cases excluded');a=p.parse_args();run(a.output,a.pin,a.fresh_scan,a.hardened)
+                                                                                                                                                                                                                                                                                                ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/opc/projects/control-stack-r2v8/deployment/run_containers.py", line 107, in run
+    (output/'selinux.txt').write_text('Host: '+cmd(['getenforce']).stdout+'Docker security options: '+cmd(['docker','info','--format','{{json .SecurityOptions}}']).stdout+'All disposable binds use shared z, never private Z on shared directories; daemon currently does not advertise SELinux enforcement. No host-wide relabel or LSM change.\n')
+                                               ~~~^^^^^^^^^^^^^^^^
+  File "/home/opc/projects/control-stack-r2v8/deployment/run_containers.py", line 44, in cmd
+    start=time.monotonic();p=subprocess.run(list(map(str,argv)),cwd=ROOT,text=True,capture_output=True,timeout=60)
+                             ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.15/3.15.0/lib/python3.15/subprocess.py", line 669, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.15/3.15.0/lib/python3.15/subprocess.py", line 1213, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/linuxbrew/.linuxbrew/Cellar/python@3.15/3.15.0/lib/python3.15/subprocess.py", line 2156, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'getenforce'
+
+real	0m0.486s
+user	0m0.195s
+sys	0m0.155s

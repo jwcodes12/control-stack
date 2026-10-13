@@ -51,7 +51,7 @@ any fix** (an agent whose `SLICE_ROLE` is `broker`; fixed in the extractor, so t
 
 T4.2 (false as stated; the safety-only version is proved); independence of the held-out authors (all model-written); the
 F6/F8 Lean candidates from #41 (their own gates are open); the base image outside `/slice` is trusted, not inspected;
-receiver-side SQLite lock scheduling and per-agent staging quotas; one tested host. Everything else is in the gated table
+receiver-side SQLite lock scheduling (mitigated in Tier 11 by a bounded retry, not fixed) and per-agent staging quotas (done in Tier 11, unit-tested only); one tested host. Everything else is in the gated table
 below.
 
 ## Queue

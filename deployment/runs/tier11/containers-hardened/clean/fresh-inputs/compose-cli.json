@@ -1,0 +1,190 @@
+{
+  "name": "cstack-r2-normalize",
+  "networks": {
+    "isolated": {
+      "internal": true,
+      "ipam": {},
+      "name": "cstack-r2-normalize_isolated"
+    }
+  },
+  "services": {
+    "agent-a": {
+      "cap_drop": [
+        "ALL"
+      ],
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "agent-a"
+      },
+      "image": "sha256:3271131339e5920d67ed7cd7665535641cb99a083c63989b0dfb707754d6b61b",
+      "networks": {
+        "isolated": null
+      },
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "user": "23701",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "agent-b": {
+      "cap_drop": [
+        "ALL"
+      ],
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "agent-b"
+      },
+      "image": "sha256:3271131339e5920d67ed7cd7665535641cb99a083c63989b0dfb707754d6b61b",
+      "networks": {
+        "isolated": null
+      },
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "user": "23702",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "approver": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "approver"
+      },
+      "image": "sha256:3271131339e5920d67ed7cd7665535641cb99a083c63989b0dfb707754d6b61b",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23704",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "broker": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "broker"
+      },
+      "image": "sha256:3271131339e5920d67ed7cd7665535641cb99a083c63989b0dfb707754d6b61b",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23700",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    },
+    "receiver": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "receiver"
+      },
+      "image": "sha256:3271131339e5920d67ed7cd7665535641cb99a083c63989b0dfb707754d6b61b",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23700",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+          "target": "/private",
+          "type": "bind"
+        },
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink",
+          "target": "/output",
+          "type": "bind"
+        }
+      ]
+    },
+    "reviewer": {
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "PYTHONPATH": "/slice",
+        "SLICE_ROLE": "reviewer"
+      },
+      "image": "sha256:3271131339e5920d67ed7cd7665535641cb99a083c63989b0dfb707754d6b61b",
+      "networks": {
+        "isolated": null
+      },
+      "user": "23703",
+      "volumes": [
+        {
+          "bind": {
+            "selinux": "z"
+          },
+          "read_only": true,
+          "source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+          "target": "/channel",
+          "type": "bind"
+        }
+      ]
+    }
+  },
+  "x-cstack": {
+    "broker_sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "budget": 2,
+    "channel_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/channel",
+    "database_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/db",
+    "receiver_sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "sink_source": "/home/opc/projects/control-stack-r2v8/deployment-container-state/sink"
+  }
+}

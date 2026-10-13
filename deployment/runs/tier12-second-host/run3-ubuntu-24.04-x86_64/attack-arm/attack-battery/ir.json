@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "budget": 1,
+    "compose_sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+    "database_source": "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+    "receiver_sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "runtime_sha256": "27f35fbd2d3a439c5c1a7ff49e938514c124d343dfc137877fb05ae892c0d332",
+    "sink_source": "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "6f656a16e5cbc39a50fde14a4fd2224d48f23d72d977ef40ee9c929043f23ede",
+      "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "27f35fbd2d3a439c5c1a7ff49e938514c124d343dfc137877fb05ae892c0d332",
+      "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+      "source": "/home/runner/work/control-stack/control-stack/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+      "source": "/home/runner/work/control-stack/control-stack/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "b504c1a7dd16ca7f2b40e7a7ad1158dd82d14eb957cee0ed50ec752a49701bbb",
+      "source": "/home/runner/work/control-stack/control-stack/evidence/attack-arm/attack-battery/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

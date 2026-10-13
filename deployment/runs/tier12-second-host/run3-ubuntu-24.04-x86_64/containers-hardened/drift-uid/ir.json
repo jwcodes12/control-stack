@@ -1,0 +1,291 @@
+{
+  "claim": "local-file-two-agent-v0",
+  "edges": [
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-a",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "agent-b",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "approver",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-database-mount",
+      "to": "database"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "write",
+      "from": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "protected-sink-mount",
+      "to": "sink"
+    },
+    {
+      "authorization": "PERMITTED",
+      "capability": "call",
+      "from": "reviewer",
+      "provenance": {
+        "kind": "STATIC_INFERRED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "reachability": "PRESENT",
+      "reason": "shared-/channel-bind-to-broker",
+      "to": "broker"
+    }
+  ],
+  "nodes": [
+    {
+      "facts": {},
+      "id": "sink",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "sink"
+    },
+    {
+      "facts": {},
+      "id": "database",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "database"
+    },
+    {
+      "facts": {},
+      "id": "unknown",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "unknown"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23701
+      },
+      "id": "agent-a",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca",
+        "privileged": false,
+        "role": "agent",
+        "runtime_match": "MATCH",
+        "uid": 23702
+      },
+      "id": "agent-b",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca",
+        "privileged": false,
+        "role": "approver",
+        "runtime_match": "MATCH",
+        "uid": 23704
+      },
+      "id": "approver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca",
+        "privileged": false,
+        "role": "broker",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "broker",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca",
+        "privileged": false,
+        "role": "receiver",
+        "runtime_match": "MATCH",
+        "uid": 23700
+      },
+      "id": "receiver",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    },
+    {
+      "facts": {
+        "env_names": [
+          "PYTHONPATH",
+          "SLICE_ROLE"
+        ],
+        "host_network": false,
+        "image": "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca",
+        "privileged": false,
+        "role": "reviewer",
+        "runtime_match": "MATCH",
+        "uid": 23703
+      },
+      "id": "reviewer",
+      "provenance": {
+        "kind": "DECLARED",
+        "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+        "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+      },
+      "type": "service"
+    }
+  ],
+  "snapshot": {
+    "broker_sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "budget": 1,
+    "compose_sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+    "database_source": "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+    "receiver_sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "runtime_sha256": "7201ee4b300c07fa06bfc381b0af2b0b6a9e6c0170d33c2d5800cbccff759883",
+    "sink_source": "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+  },
+  "sources": [
+    {
+      "kind": "DECLARED",
+      "sha256": "7f0c70f95d05dc4a143adf24d797ed8f169ed13a4c8f538e2cefa40d19c7b21c",
+      "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.compose.json"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "7201ee4b300c07fa06bfc381b0af2b0b6a9e6c0170d33c2d5800cbccff759883",
+      "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/resolved.runtime.json"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+      "source": "/home/runner/work/control-stack/control-stack/trusted_stack/controller.py"
+    },
+    {
+      "kind": "STATIC_INFERRED",
+      "sha256": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+      "source": "/home/runner/work/control-stack/control-stack/trusted_stack/outbox_receiver.py"
+    },
+    {
+      "kind": "RUNTIME_OBSERVED",
+      "sha256": "a1e74e94529e9b7c7e6007487f6ff94fbd9d89b86d92e0ec8e855ffb272f73f9",
+      "source": "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/fresh-inputs/host-observations.json"
+    }
+  ],
+  "version": "0.1"
+}

@@ -1,0 +1,2414 @@
+[
+  {
+    "argv": [
+      "docker",
+      "image",
+      "inspect",
+      "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca"
+    ],
+    "ended_monotonic": 218.46132229,
+    "exit": 0,
+    "started_monotonic": 218.448309086,
+    "stderr": "",
+    "stdout": "[\n    {\n        \"Id\": \"sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca\",\n        \"RepoTags\": [\n            \"cstack-r2-v8:offline\"\n        ],\n        \"RepoDigests\": [],\n        \"Parent\": \"\",\n        \"Comment\": \"Imported from -\",\n        \"Created\": \"2026-10-13T16:57:15.958188575Z\",\n        \"DockerVersion\": \"28.0.4\",\n        \"Author\": \"\",\n        \"Config\": {\n            \"Hostname\": \"\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PYTHONPATH=/slice\"\n            ],\n            \"Cmd\": null,\n            \"Image\": \"\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"/slice\",\n            \"Entrypoint\": [\n                \"/usr/bin/python3\",\n                \"/slice/entry.py\"\n            ],\n            \"OnBuild\": null,\n            \"Labels\": null\n        },\n        \"Architecture\": \"amd64\",\n        \"Os\": \"linux\",\n        \"Size\": 172790211,\n        \"GraphDriver\": {\n            \"Data\": {\n                \"MergedDir\": \"/var/lib/docker/overlay2/1c7b8a509770dc023e047f06084202e65fac275f59488f74f4a5a519e355909c/merged\",\n                \"UpperDir\": \"/var/lib/docker/overlay2/1c7b8a509770dc023e047f06084202e65fac275f59488f74f4a5a519e355909c/diff\",\n                \"WorkDir\": \"/var/lib/docker/overlay2/1c7b8a509770dc023e047f06084202e65fac275f59488f74f4a5a519e355909c/work\"\n            },\n            \"Name\": \"overlay2\"\n        },\n        \"RootFS\": {\n            \"Type\": \"layers\",\n            \"Layers\": [\n                \"sha256:eaf8a5bb2f4a8c6a7e261eba6ea88142ef21cdea1e98b10b37d07ff0b397c1c7\"\n            ]\n        },\n        \"Metadata\": {\n            \"LastTagTime\": \"2026-10-13T16:57:15.959462557Z\"\n        }\n    }\n]\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .}}"
+    ],
+    "ended_monotonic": 218.668342017,
+    "exit": 0,
+    "started_monotonic": 218.461375759,
+    "stderr": "",
+    "stdout": "{\"ID\":\"07f0e779-c305-4162-b8ec-c48c30f52fbe\",\"Containers\":0,\"ContainersRunning\":0,\"ContainersPaused\":0,\"ContainersStopped\":0,\"Images\":8,\"Driver\":\"overlay2\",\"DriverStatus\":[[\"Backing Filesystem\",\"extfs\"],[\"Supports d_type\",\"true\"],[\"Using metacopy\",\"false\"],[\"Native Overlay Diff\",\"false\"],[\"userxattr\",\"false\"]],\"Plugins\":{\"Volume\":[\"local\"],\"Network\":[\"bridge\",\"host\",\"ipvlan\",\"macvlan\",\"null\",\"overlay\"],\"Authorization\":null,\"Log\":[\"awslogs\",\"fluentd\",\"gcplogs\",\"gelf\",\"journald\",\"json-file\",\"local\",\"splunk\",\"syslog\"]},\"MemoryLimit\":true,\"SwapLimit\":true,\"CpuCfsPeriod\":true,\"CpuCfsQuota\":true,\"CPUShares\":true,\"CPUSet\":true,\"PidsLimit\":true,\"IPv4Forwarding\":true,\"BridgeNfIptables\":false,\"BridgeNfIp6tables\":false,\"Debug\":false,\"NFd\":22,\"OomKillDisable\":false,\"NGoroutines\":41,\"SystemTime\":\"2026-10-13T16:57:16.390485365Z\",\"LoggingDriver\":\"json-file\",\"CgroupDriver\":\"systemd\",\"CgroupVersion\":\"2\",\"NEventsListener\":0,\"KernelVersion\":\"6.17.0-1022-azure\",\"OperatingSystem\":\"Ubuntu 24.04.5 LTS\",\"OSVersion\":\"24.04\",\"OSType\":\"linux\",\"Architecture\":\"x86_64\",\"IndexServerAddress\":\"https://index.docker.io/v1/\",\"RegistryConfig\":{\"IndexConfigs\":{\"docker.io\":{\"Name\":\"docker.io\",\"Mirrors\":[],\"Secure\":true,\"Official\":true}},\"InsecureRegistryCIDRs\":[\"::1/128\",\"127.0.0.0/8\"],\"Mirrors\":null},\"NCPU\":4,\"MemTotal\":16766414848,\"GenericResources\":null,\"DockerRootDir\":\"/var/lib/docker\",\"HttpProxy\":\"\",\"HttpsProxy\":\"\",\"NoProxy\":\"\",\"Name\":\"runnervmmprz5\",\"Labels\":[],\"ExperimentalBuild\":false,\"ServerVersion\":\"28.0.4\",\"Runtimes\":{\"io.containerd.runc.v2\":{\"path\":\"runc\",\"status\":{\"org.opencontainers.runtime-spec.features\":\"{\\\"ociVersionMin\\\":\\\"1.0.0\\\",\\\"ociVersionMax\\\":\\\"1.3.0\\\",\\\"hooks\\\":[\\\"prestart\\\",\\\"createRuntime\\\",\\\"createContainer\\\",\\\"startContainer\\\",\\\"poststart\\\",\\\"poststop\\\"],\\\"mountOptions\\\":[\\\"async\\\",\\\"atime\\\",\\\"bind\\\",\\\"defaults\\\",\\\"dev\\\",\\\"diratime\\\",\\\"dirsync\\\",\\\"exec\\\",\\\"iversion\\\",\\\"lazytime\\\",\\\"loud\\\",\\\"mand\\\",\\\"noatime\\\",\\\"nodev\\\",\\\"nodiratime\\\",\\\"noexec\\\",\\\"noiversion\\\",\\\"nolazytime\\\",\\\"nomand\\\",\\\"norelatime\\\",\\\"nostrictatime\\\",\\\"nosuid\\\",\\\"nosymfollow\\\",\\\"private\\\",\\\"ratime\\\",\\\"rbind\\\",\\\"rdev\\\",\\\"rdiratime\\\",\\\"relatime\\\",\\\"remount\\\",\\\"rexec\\\",\\\"rnoatime\\\",\\\"rnodev\\\",\\\"rnodiratime\\\",\\\"rnoexec\\\",\\\"rnorelatime\\\",\\\"rnostrictatime\\\",\\\"rnosuid\\\",\\\"rnosymfollow\\\",\\\"ro\\\",\\\"rprivate\\\",\\\"rrelatime\\\",\\\"rro\\\",\\\"rrw\\\",\\\"rshared\\\",\\\"rslave\\\",\\\"rstrictatime\\\",\\\"rsuid\\\",\\\"rsymfollow\\\",\\\"runbindable\\\",\\\"rw\\\",\\\"shared\\\",\\\"silent\\\",\\\"slave\\\",\\\"strictatime\\\",\\\"suid\\\",\\\"symfollow\\\",\\\"sync\\\",\\\"tmpcopyup\\\",\\\"unbindable\\\"],\\\"linux\\\":{\\\"namespaces\\\":[\\\"cgroup\\\",\\\"ipc\\\",\\\"mount\\\",\\\"network\\\",\\\"pid\\\",\\\"time\\\",\\\"user\\\",\\\"uts\\\"],\\\"capabilities\\\":[\\\"CAP_CHOWN\\\",\\\"CAP_DAC_OVERRIDE\\\",\\\"CAP_DAC_READ_SEARCH\\\",\\\"CAP_FOWNER\\\",\\\"CAP_FSETID\\\",\\\"CAP_KILL\\\",\\\"CAP_SETGID\\\",\\\"CAP_SETUID\\\",\\\"CAP_SETPCAP\\\",\\\"CAP_LINUX_IMMUTABLE\\\",\\\"CAP_NET_BIND_SERVICE\\\",\\\"CAP_NET_BROADCAST\\\",\\\"CAP_NET_ADMIN\\\",\\\"CAP_NET_RAW\\\",\\\"CAP_IPC_LOCK\\\",\\\"CAP_IPC_OWNER\\\",\\\"CAP_SYS_MODULE\\\",\\\"CAP_SYS_RAWIO\\\",\\\"CAP_SYS_CHROOT\\\",\\\"CAP_SYS_PTRACE\\\",\\\"CAP_SYS_PACCT\\\",\\\"CAP_SYS_ADMIN\\\",\\\"CAP_SYS_BOOT\\\",\\\"CAP_SYS_NICE\\\",\\\"CAP_SYS_RESOURCE\\\",\\\"CAP_SYS_TIME\\\",\\\"CAP_SYS_TTY_CONFIG\\\",\\\"CAP_MKNOD\\\",\\\"CAP_LEASE\\\",\\\"CAP_AUDIT_WRITE\\\",\\\"CAP_AUDIT_CONTROL\\\",\\\"CAP_SETFCAP\\\",\\\"CAP_MAC_OVERRIDE\\\",\\\"CAP_MAC_ADMIN\\\",\\\"CAP_SYSLOG\\\",\\\"CAP_WAKE_ALARM\\\",\\\"CAP_BLOCK_SUSPEND\\\",\\\"CAP_AUDIT_READ\\\",\\\"CAP_PERFMON\\\",\\\"CAP_BPF\\\",\\\"CAP_CHECKPOINT_RESTORE\\\"],\\\"cgroup\\\":{\\\"v1\\\":true,\\\"v2\\\":true,\\\"systemd\\\":true,\\\"systemdUser\\\":true,\\\"rdma\\\":true},\\\"seccomp\\\":{\\\"enabled\\\":true,\\\"actions\\\":[\\\"SCMP_ACT_ALLOW\\\",\\\"SCMP_ACT_ERRNO\\\",\\\"SCMP_ACT_KILL\\\",\\\"SCMP_ACT_KILL_PROCESS\\\",\\\"SCMP_ACT_KILL_THREAD\\\",\\\"SCMP_ACT_LOG\\\",\\\"SCMP_ACT_NOTIFY\\\",\\\"SCMP_ACT_TRACE\\\",\\\"SCMP_ACT_TRAP\\\"],\\\"operators\\\":[\\\"SCMP_CMP_EQ\\\",\\\"SCMP_CMP_GE\\\",\\\"SCMP_CMP_GT\\\",\\\"SCMP_CMP_LE\\\",\\\"SCMP_CMP_LT\\\",\\\"SCMP_CMP_MASKED_EQ\\\",\\\"SCMP_CMP_NE\\\"],\\\"archs\\\":[\\\"SCMP_ARCH_AARCH64\\\",\\\"SCMP_ARCH_ARM\\\",\\\"SCMP_ARCH_LOONGARCH64\\\",\\\"SCMP_ARCH_MIPS\\\",\\\"SCMP_ARCH_MIPS64\\\",\\\"SCMP_ARCH_MIPS64N32\\\",\\\"SCMP_ARCH_MIPSEL\\\",\\\"SCMP_ARCH_MIPSEL64\\\",\\\"SCMP_ARCH_MIPSEL64N32\\\",\\\"SCMP_ARCH_PPC\\\",\\\"SCMP_ARCH_PPC64\\\",\\\"SCMP_ARCH_PPC64LE\\\",\\\"SCMP_ARCH_RISCV64\\\",\\\"SCMP_ARCH_S390\\\",\\\"SCMP_ARCH_S390X\\\",\\\"SCMP_ARCH_X32\\\",\\\"SCMP_ARCH_X86\\\",\\\"SCMP_ARCH_X86_64\\\"],\\\"knownFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\",\\\"SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV\\\"],\\\"supportedFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\"]},\\\"apparmor\\\":{\\\"enabled\\\":true},\\\"selinux\\\":{\\\"enabled\\\":true},\\\"intelRdt\\\":{\\\"enabled\\\":true},\\\"mountExtensions\\\":{\\\"idmap\\\":{\\\"enabled\\\":true}}},\\\"annotations\\\":{\\\"io.github.seccomp.libseccomp.version\\\":\\\"2.5.5\\\",\\\"org.opencontainers.runc.checkpoint.enabled\\\":\\\"true\\\",\\\"org.opencontainers.runc.commit\\\":\\\"v1.5.1-0-g8f2685a4\\\",\\\"org.opencontainers.runc.version\\\":\\\"1.5.1\\\"},\\\"potentiallyUnsafeConfigAnnotations\\\":[\\\"bundle\\\",\\\"org.systemd.property.\\\",\\\"org.criu.config\\\"]}\"}},\"runc\":{\"path\":\"runc\",\"status\":{\"org.opencontainers.runtime-spec.features\":\"{\\\"ociVersionMin\\\":\\\"1.0.0\\\",\\\"ociVersionMax\\\":\\\"1.3.0\\\",\\\"hooks\\\":[\\\"prestart\\\",\\\"createRuntime\\\",\\\"createContainer\\\",\\\"startContainer\\\",\\\"poststart\\\",\\\"poststop\\\"],\\\"mountOptions\\\":[\\\"async\\\",\\\"atime\\\",\\\"bind\\\",\\\"defaults\\\",\\\"dev\\\",\\\"diratime\\\",\\\"dirsync\\\",\\\"exec\\\",\\\"iversion\\\",\\\"lazytime\\\",\\\"loud\\\",\\\"mand\\\",\\\"noatime\\\",\\\"nodev\\\",\\\"nodiratime\\\",\\\"noexec\\\",\\\"noiversion\\\",\\\"nolazytime\\\",\\\"nomand\\\",\\\"norelatime\\\",\\\"nostrictatime\\\",\\\"nosuid\\\",\\\"nosymfollow\\\",\\\"private\\\",\\\"ratime\\\",\\\"rbind\\\",\\\"rdev\\\",\\\"rdiratime\\\",\\\"relatime\\\",\\\"remount\\\",\\\"rexec\\\",\\\"rnoatime\\\",\\\"rnodev\\\",\\\"rnodiratime\\\",\\\"rnoexec\\\",\\\"rnorelatime\\\",\\\"rnostrictatime\\\",\\\"rnosuid\\\",\\\"rnosymfollow\\\",\\\"ro\\\",\\\"rprivate\\\",\\\"rrelatime\\\",\\\"rro\\\",\\\"rrw\\\",\\\"rshared\\\",\\\"rslave\\\",\\\"rstrictatime\\\",\\\"rsuid\\\",\\\"rsymfollow\\\",\\\"runbindable\\\",\\\"rw\\\",\\\"shared\\\",\\\"silent\\\",\\\"slave\\\",\\\"strictatime\\\",\\\"suid\\\",\\\"symfollow\\\",\\\"sync\\\",\\\"tmpcopyup\\\",\\\"unbindable\\\"],\\\"linux\\\":{\\\"namespaces\\\":[\\\"cgroup\\\",\\\"ipc\\\",\\\"mount\\\",\\\"network\\\",\\\"pid\\\",\\\"time\\\",\\\"user\\\",\\\"uts\\\"],\\\"capabilities\\\":[\\\"CAP_CHOWN\\\",\\\"CAP_DAC_OVERRIDE\\\",\\\"CAP_DAC_READ_SEARCH\\\",\\\"CAP_FOWNER\\\",\\\"CAP_FSETID\\\",\\\"CAP_KILL\\\",\\\"CAP_SETGID\\\",\\\"CAP_SETUID\\\",\\\"CAP_SETPCAP\\\",\\\"CAP_LINUX_IMMUTABLE\\\",\\\"CAP_NET_BIND_SERVICE\\\",\\\"CAP_NET_BROADCAST\\\",\\\"CAP_NET_ADMIN\\\",\\\"CAP_NET_RAW\\\",\\\"CAP_IPC_LOCK\\\",\\\"CAP_IPC_OWNER\\\",\\\"CAP_SYS_MODULE\\\",\\\"CAP_SYS_RAWIO\\\",\\\"CAP_SYS_CHROOT\\\",\\\"CAP_SYS_PTRACE\\\",\\\"CAP_SYS_PACCT\\\",\\\"CAP_SYS_ADMIN\\\",\\\"CAP_SYS_BOOT\\\",\\\"CAP_SYS_NICE\\\",\\\"CAP_SYS_RESOURCE\\\",\\\"CAP_SYS_TIME\\\",\\\"CAP_SYS_TTY_CONFIG\\\",\\\"CAP_MKNOD\\\",\\\"CAP_LEASE\\\",\\\"CAP_AUDIT_WRITE\\\",\\\"CAP_AUDIT_CONTROL\\\",\\\"CAP_SETFCAP\\\",\\\"CAP_MAC_OVERRIDE\\\",\\\"CAP_MAC_ADMIN\\\",\\\"CAP_SYSLOG\\\",\\\"CAP_WAKE_ALARM\\\",\\\"CAP_BLOCK_SUSPEND\\\",\\\"CAP_AUDIT_READ\\\",\\\"CAP_PERFMON\\\",\\\"CAP_BPF\\\",\\\"CAP_CHECKPOINT_RESTORE\\\"],\\\"cgroup\\\":{\\\"v1\\\":true,\\\"v2\\\":true,\\\"systemd\\\":true,\\\"systemdUser\\\":true,\\\"rdma\\\":true},\\\"seccomp\\\":{\\\"enabled\\\":true,\\\"actions\\\":[\\\"SCMP_ACT_ALLOW\\\",\\\"SCMP_ACT_ERRNO\\\",\\\"SCMP_ACT_KILL\\\",\\\"SCMP_ACT_KILL_PROCESS\\\",\\\"SCMP_ACT_KILL_THREAD\\\",\\\"SCMP_ACT_LOG\\\",\\\"SCMP_ACT_NOTIFY\\\",\\\"SCMP_ACT_TRACE\\\",\\\"SCMP_ACT_TRAP\\\"],\\\"operators\\\":[\\\"SCMP_CMP_EQ\\\",\\\"SCMP_CMP_GE\\\",\\\"SCMP_CMP_GT\\\",\\\"SCMP_CMP_LE\\\",\\\"SCMP_CMP_LT\\\",\\\"SCMP_CMP_MASKED_EQ\\\",\\\"SCMP_CMP_NE\\\"],\\\"archs\\\":[\\\"SCMP_ARCH_AARCH64\\\",\\\"SCMP_ARCH_ARM\\\",\\\"SCMP_ARCH_LOONGARCH64\\\",\\\"SCMP_ARCH_MIPS\\\",\\\"SCMP_ARCH_MIPS64\\\",\\\"SCMP_ARCH_MIPS64N32\\\",\\\"SCMP_ARCH_MIPSEL\\\",\\\"SCMP_ARCH_MIPSEL64\\\",\\\"SCMP_ARCH_MIPSEL64N32\\\",\\\"SCMP_ARCH_PPC\\\",\\\"SCMP_ARCH_PPC64\\\",\\\"SCMP_ARCH_PPC64LE\\\",\\\"SCMP_ARCH_RISCV64\\\",\\\"SCMP_ARCH_S390\\\",\\\"SCMP_ARCH_S390X\\\",\\\"SCMP_ARCH_X32\\\",\\\"SCMP_ARCH_X86\\\",\\\"SCMP_ARCH_X86_64\\\"],\\\"knownFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\",\\\"SECCOMP_FILTER_FLAG_WAIT_KILLABLE_RECV\\\"],\\\"supportedFlags\\\":[\\\"SECCOMP_FILTER_FLAG_TSYNC\\\",\\\"SECCOMP_FILTER_FLAG_SPEC_ALLOW\\\",\\\"SECCOMP_FILTER_FLAG_LOG\\\"]},\\\"apparmor\\\":{\\\"enabled\\\":true},\\\"selinux\\\":{\\\"enabled\\\":true},\\\"intelRdt\\\":{\\\"enabled\\\":true},\\\"mountExtensions\\\":{\\\"idmap\\\":{\\\"enabled\\\":true}}},\\\"annotations\\\":{\\\"io.github.seccomp.libseccomp.version\\\":\\\"2.5.5\\\",\\\"org.opencontainers.runc.checkpoint.enabled\\\":\\\"true\\\",\\\"org.opencontainers.runc.commit\\\":\\\"v1.5.1-0-g8f2685a4\\\",\\\"org.opencontainers.runc.version\\\":\\\"1.5.1\\\"},\\\"potentiallyUnsafeConfigAnnotations\\\":[\\\"bundle\\\",\\\"org.systemd.property.\\\",\\\"org.criu.config\\\"]}\"}}},\"DefaultRuntime\":\"runc\",\"Swarm\":{\"NodeID\":\"\",\"NodeAddr\":\"\",\"LocalNodeState\":\"inactive\",\"ControlAvailable\":false,\"Error\":\"\",\"RemoteManagers\":null},\"LiveRestoreEnabled\":false,\"Isolation\":\"\",\"InitBinary\":\"docker-init\",\"ContainerdCommit\":{\"ID\":\"ee2735368117d2eb259779949d5e75cdafec9761\",\"Expected\":\"ee2735368117d2eb259779949d5e75cdafec9761\"},\"RuncCommit\":{\"ID\":\"v1.5.1-0-g8f2685a4\",\"Expected\":\"v1.5.1-0-g8f2685a4\"},\"InitCommit\":{\"ID\":\"de40ad0\",\"Expected\":\"de40ad0\"},\"SecurityOptions\":[\"name=apparmor\",\"name=seccomp,profile=builtin\",\"name=cgroupns\"],\"CDISpecDirs\":[],\"Containerd\":{\"Address\":\"/run/containerd/containerd.sock\",\"Namespaces\":{\"Containers\":\"moby\",\"Plugins\":\"plugins.moby\"}},\"Warnings\":null,\"ClientInfo\":{\"Debug\":false,\"Platform\":{\"Name\":\"Docker Engine - Community\"},\"Version\":\"28.0.4\",\"DefaultAPIVersion\":\"1.48\",\"GitCommit\":\"b8034c0\",\"GoVersion\":\"go1.23.7\",\"Os\":\"linux\",\"Arch\":\"amd64\",\"BuildTime\":\"Tue Mar 25 15:07:16 2025\",\"Context\":\"default\",\"Plugins\":[{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v0.37.2\",\"ShortDescription\":\"Docker Buildx\",\"Name\":\"buildx\",\"Path\":\"/usr/libexec/docker/cli-plugins/docker-buildx\"},{\"SchemaVersion\":\"0.1.0\",\"Vendor\":\"Docker Inc.\",\"Version\":\"v2.38.2\",\"ShortDescription\":\"Docker Compose\",\"Name\":\"compose\",\"Path\":\"/usr/libexec/docker/cli-plugins/docker-compose\"}],\"Warnings\":null}}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "info",
+      "--format",
+      "{{json .SecurityOptions}}"
+    ],
+    "ended_monotonic": 218.713627951,
+    "exit": 0,
+    "started_monotonic": 218.669263192,
+    "stderr": "",
+    "stdout": "[\"name=apparmor\",\"name=seccomp,profile=builtin\",\"name=cgroupns\"]\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 218.723375794,
+    "exit": 0,
+    "started_monotonic": 218.715052284,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 218.730474153,
+    "exit": 0,
+    "started_monotonic": 218.723387406,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 219.898316682,
+    "exit": 0,
+    "started_monotonic": 218.730480084,
+    "stderr": " Network cstack-r2-clean_isolated  Creating\n Network cstack-r2-clean_isolated  Created\n Container cstack-r2-clean-agent-b-1  Creating\n Container cstack-r2-clean-agent-a-1  Creating\n Container cstack-r2-clean-broker-1  Creating\n Container cstack-r2-clean-receiver-1  Creating\n Container cstack-r2-clean-approver-1  Creating\n Container cstack-r2-clean-reviewer-1  Creating\n Container cstack-r2-clean-reviewer-1  Created\n Container cstack-r2-clean-agent-a-1  Created\n Container cstack-r2-clean-agent-b-1  Created\n Container cstack-r2-clean-receiver-1  Created\n Container cstack-r2-clean-approver-1  Created\n Container cstack-r2-clean-broker-1  Created\n Container cstack-r2-clean-agent-b-1  Starting\n Container cstack-r2-clean-receiver-1  Starting\n Container cstack-r2-clean-broker-1  Starting\n Container cstack-r2-clean-reviewer-1  Starting\n Container cstack-r2-clean-approver-1  Starting\n Container cstack-r2-clean-agent-a-1  Starting\n Container cstack-r2-clean-receiver-1  Started\n Container cstack-r2-clean-reviewer-1  Started\n Container cstack-r2-clean-approver-1  Started\n Container cstack-r2-clean-agent-a-1  Started\n Container cstack-r2-clean-agent-b-1  Started\n Container cstack-r2-clean-broker-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 230.385564684,
+    "exit": 0,
+    "started_monotonic": 230.260620694,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 230.508579759,
+    "exit": 0,
+    "started_monotonic": 230.385611581,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791912447}"
+    ],
+    "ended_monotonic": 230.63795996,
+    "exit": 0,
+    "started_monotonic": 230.508627778,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791912447}"
+    ],
+    "ended_monotonic": 230.766556635,
+    "exit": 0,
+    "started_monotonic": 230.638041151,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 230.896211315,
+    "exit": 0,
+    "started_monotonic": 230.766610234,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791912447}"
+    ],
+    "ended_monotonic": 231.022793229,
+    "exit": 0,
+    "started_monotonic": 230.896259004,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791912447}"
+    ],
+    "ended_monotonic": 231.152324652,
+    "exit": 0,
+    "started_monotonic": 231.022841309,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 231.286920472,
+    "exit": 0,
+    "started_monotonic": 231.152378723,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 231.411168337,
+    "exit": 0,
+    "started_monotonic": 231.286971497,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-b\"}"
+    ],
+    "ended_monotonic": 231.535921239,
+    "exit": 0,
+    "started_monotonic": 231.411216998,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 2}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 231.687622681,
+    "exit": 0,
+    "started_monotonic": 231.535955182,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,2,Path('/output')))"
+    ],
+    "ended_monotonic": 231.833611753,
+    "exit": 0,
+    "started_monotonic": 231.687637268,
+    "stderr": "",
+    "stdout": "2.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,socket\ns=socket.socket();s.settimeout(1)\ntry:s.connect(('192.0.2.1',9));print(json.dumps({'connected':True}))\nexcept OSError as e:print(json.dumps({'connected':False,'error':str(e)}))\nassert not any(line.split()[1]=='00000000' for line in open('/proc/net/route').readlines()[1:])"
+    ],
+    "ended_monotonic": 231.951481779,
+    "exit": 0,
+    "started_monotonic": 231.833624496,
+    "stderr": "",
+    "stdout": "{\"connected\": false, \"error\": \"[Errno 101] Network is unreachable\"}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/final/sink"
+    ],
+    "ended_monotonic": 231.960907712,
+    "exit": 0,
+    "started_monotonic": 231.951635175,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/final/sink"
+    ],
+    "ended_monotonic": 231.968621328,
+    "exit": 0,
+    "started_monotonic": 231.960920717,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 232.043796582,
+    "exit": 0,
+    "started_monotonic": 231.969079591,
+    "stderr": "",
+    "stdout": "{\"admitted\": 2, \"delivered\": 2, \"global_cap\": 2, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}, {\"agent_uid\": 23702, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"b\", \"receipt_present\": true, \"release_id\": 2}], \"spent\": 2, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/final/database.sqlite"
+    ],
+    "ended_monotonic": 232.071609449,
+    "exit": 0,
+    "started_monotonic": 232.044092222,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/final/database.sqlite"
+    ],
+    "ended_monotonic": 232.079613686,
+    "exit": 0,
+    "started_monotonic": 232.071631009,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-clean",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/clean/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 242.406630633,
+    "exit": 0,
+    "started_monotonic": 232.079860255,
+    "stderr": " Container cstack-r2-clean-reviewer-1  Stopping\n Container cstack-r2-clean-agent-b-1  Stopping\n Container cstack-r2-clean-broker-1  Stopping\n Container cstack-r2-clean-approver-1  Stopping\n Container cstack-r2-clean-agent-a-1  Stopping\n Container cstack-r2-clean-receiver-1  Stopping\n Container cstack-r2-clean-approver-1  Stopped\n Container cstack-r2-clean-approver-1  Removing\n Container cstack-r2-clean-approver-1  Removed\n Container cstack-r2-clean-agent-a-1  Stopped\n Container cstack-r2-clean-agent-a-1  Removing\n Container cstack-r2-clean-agent-a-1  Removed\n Container cstack-r2-clean-agent-b-1  Stopped\n Container cstack-r2-clean-agent-b-1  Removing\n Container cstack-r2-clean-receiver-1  Stopped\n Container cstack-r2-clean-receiver-1  Removing\n Container cstack-r2-clean-agent-b-1  Removed\n Container cstack-r2-clean-receiver-1  Removed\n Container cstack-r2-clean-reviewer-1  Stopped\n Container cstack-r2-clean-reviewer-1  Removing\n Container cstack-r2-clean-broker-1  Stopped\n Container cstack-r2-clean-broker-1  Removing\n Container cstack-r2-clean-reviewer-1  Removed\n Container cstack-r2-clean-broker-1  Removed\n Network cstack-r2-clean_isolated  Removing\n Network cstack-r2-clean_isolated  Removed\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 242.415750345,
+    "exit": 0,
+    "started_monotonic": 242.406635041,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 242.425915757,
+    "exit": 0,
+    "started_monotonic": 242.416951522,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 242.434305149,
+    "exit": 0,
+    "started_monotonic": 242.425934692,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 242.911121415,
+    "exit": 0,
+    "started_monotonic": 242.434318254,
+    "stderr": " Network cstack-r2-concurrent-cap1_isolated  Creating\n Network cstack-r2-concurrent-cap1_isolated  Created\n Container cstack-r2-concurrent-cap1-reviewer-1  Creating\n Container cstack-r2-concurrent-cap1-agent-a-1  Creating\n Container cstack-r2-concurrent-cap1-agent-b-1  Creating\n Container cstack-r2-concurrent-cap1-approver-1  Creating\n Container cstack-r2-concurrent-cap1-broker-1  Creating\n Container cstack-r2-concurrent-cap1-receiver-1  Creating\n Container cstack-r2-concurrent-cap1-agent-a-1  Created\n Container cstack-r2-concurrent-cap1-receiver-1  Created\n Container cstack-r2-concurrent-cap1-broker-1  Created\n Container cstack-r2-concurrent-cap1-approver-1  Created\n Container cstack-r2-concurrent-cap1-reviewer-1  Created\n Container cstack-r2-concurrent-cap1-agent-b-1  Created\n Container cstack-r2-concurrent-cap1-receiver-1  Starting\n Container cstack-r2-concurrent-cap1-agent-a-1  Starting\n Container cstack-r2-concurrent-cap1-broker-1  Starting\n Container cstack-r2-concurrent-cap1-agent-b-1  Starting\n Container cstack-r2-concurrent-cap1-approver-1  Starting\n Container cstack-r2-concurrent-cap1-reviewer-1  Starting\n Container cstack-r2-concurrent-cap1-receiver-1  Started\n Container cstack-r2-concurrent-cap1-reviewer-1  Started\n Container cstack-r2-concurrent-cap1-broker-1  Started\n Container cstack-r2-concurrent-cap1-agent-b-1  Started\n Container cstack-r2-concurrent-cap1-agent-a-1  Started\n Container cstack-r2-concurrent-cap1-approver-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 253.455893793,
+    "exit": 0,
+    "started_monotonic": 253.33209862,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 253.579597914,
+    "exit": 0,
+    "started_monotonic": 253.455938556,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791912471}"
+    ],
+    "ended_monotonic": 253.704765696,
+    "exit": 0,
+    "started_monotonic": 253.579647466,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791912471}"
+    ],
+    "ended_monotonic": 253.828111834,
+    "exit": 0,
+    "started_monotonic": 253.704818494,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 253.95035023,
+    "exit": 0,
+    "started_monotonic": 253.828162308,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791912471}"
+    ],
+    "ended_monotonic": 254.069217269,
+    "exit": 0,
+    "started_monotonic": 253.950395354,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791912471}"
+    ],
+    "ended_monotonic": 254.190920609,
+    "exit": 0,
+    "started_monotonic": 254.069263114,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "touch",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/channel/race-go"
+    ],
+    "ended_monotonic": 254.332385402,
+    "exit": 0,
+    "started_monotonic": 254.324006558,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys,time;from pathlib import Path;from trusted_stack.client import request;print('READY',flush=True)\nwhile not Path('/channel/race-go').exists():time.sleep(.01)\nprint(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 254.347459241,
+    "exit": 0,
+    "started_monotonic": 254.191491362,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys,time;from pathlib import Path;from trusted_stack.client import request;print('READY',flush=True)\nwhile not Path('/channel/race-go').exists():time.sleep(.01)\nprint(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-b\"}"
+    ],
+    "ended_monotonic": 254.347559187,
+    "exit": 0,
+    "started_monotonic": 254.19183928,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 254.490945042,
+    "exit": 0,
+    "started_monotonic": 254.347584885,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/final/sink"
+    ],
+    "ended_monotonic": 254.499275135,
+    "exit": 0,
+    "started_monotonic": 254.49109407,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/final/sink"
+    ],
+    "ended_monotonic": 254.506593333,
+    "exit": 0,
+    "started_monotonic": 254.499287919,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 254.551148518,
+    "exit": 0,
+    "started_monotonic": 254.506921625,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 1, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23702, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"b\", \"receipt_present\": true, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/final/database.sqlite"
+    ],
+    "ended_monotonic": 254.578991468,
+    "exit": 0,
+    "started_monotonic": 254.551381192,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/final/database.sqlite"
+    ],
+    "ended_monotonic": 254.587097143,
+    "exit": 0,
+    "started_monotonic": 254.57904619,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-concurrent-cap1",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/concurrent-cap1/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 264.901033249,
+    "exit": 0,
+    "started_monotonic": 254.58731575,
+    "stderr": " Container cstack-r2-concurrent-cap1-agent-b-1  Stopping\n Container cstack-r2-concurrent-cap1-approver-1  Stopping\n Container cstack-r2-concurrent-cap1-receiver-1  Stopping\n Container cstack-r2-concurrent-cap1-reviewer-1  Stopping\n Container cstack-r2-concurrent-cap1-broker-1  Stopping\n Container cstack-r2-concurrent-cap1-agent-a-1  Stopping\n Container cstack-r2-concurrent-cap1-approver-1  Stopped\n Container cstack-r2-concurrent-cap1-approver-1  Removing\n Container cstack-r2-concurrent-cap1-receiver-1  Stopped\n Container cstack-r2-concurrent-cap1-receiver-1  Removing\n Container cstack-r2-concurrent-cap1-approver-1  Removed\n Container cstack-r2-concurrent-cap1-receiver-1  Removed\n Container cstack-r2-concurrent-cap1-agent-a-1  Stopped\n Container cstack-r2-concurrent-cap1-agent-a-1  Removing\n Container cstack-r2-concurrent-cap1-agent-b-1  Stopped\n Container cstack-r2-concurrent-cap1-agent-b-1  Removing\n Container cstack-r2-concurrent-cap1-reviewer-1  Stopped\n Container cstack-r2-concurrent-cap1-reviewer-1  Removing\n Container cstack-r2-concurrent-cap1-agent-a-1  Removed\n Container cstack-r2-concurrent-cap1-broker-1  Stopped\n Container cstack-r2-concurrent-cap1-broker-1  Removing\n Container cstack-r2-concurrent-cap1-agent-b-1  Removed\n Container cstack-r2-concurrent-cap1-reviewer-1  Removed\n Container cstack-r2-concurrent-cap1-broker-1  Removed\n Network cstack-r2-concurrent-cap1_isolated  Removing\n Network cstack-r2-concurrent-cap1_isolated  Removed\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 264.910406935,
+    "exit": 0,
+    "started_monotonic": 264.901039251,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 264.919898406,
+    "exit": 0,
+    "started_monotonic": 264.911340253,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 264.927605167,
+    "exit": 0,
+    "started_monotonic": 264.919921138,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 265.415938229,
+    "exit": 0,
+    "started_monotonic": 264.927611679,
+    "stderr": " Network cstack-r2-crash-retry_isolated  Creating\n Network cstack-r2-crash-retry_isolated  Created\n Container cstack-r2-crash-retry-broker-1  Creating\n Container cstack-r2-crash-retry-reviewer-1  Creating\n Container cstack-r2-crash-retry-receiver-1  Creating\n Container cstack-r2-crash-retry-agent-b-1  Creating\n Container cstack-r2-crash-retry-agent-a-1  Creating\n Container cstack-r2-crash-retry-approver-1  Creating\n Container cstack-r2-crash-retry-agent-a-1  Created\n Container cstack-r2-crash-retry-agent-b-1  Created\n Container cstack-r2-crash-retry-reviewer-1  Created\n Container cstack-r2-crash-retry-receiver-1  Created\n Container cstack-r2-crash-retry-broker-1  Created\n Container cstack-r2-crash-retry-approver-1  Created\n Container cstack-r2-crash-retry-agent-a-1  Starting\n Container cstack-r2-crash-retry-agent-b-1  Starting\n Container cstack-r2-crash-retry-approver-1  Starting\n Container cstack-r2-crash-retry-receiver-1  Starting\n Container cstack-r2-crash-retry-broker-1  Starting\n Container cstack-r2-crash-retry-reviewer-1  Starting\n Container cstack-r2-crash-retry-agent-b-1  Started\n Container cstack-r2-crash-retry-broker-1  Started\n Container cstack-r2-crash-retry-approver-1  Started\n Container cstack-r2-crash-retry-receiver-1  Started\n Container cstack-r2-crash-retry-agent-a-1  Started\n Container cstack-r2-crash-retry-reviewer-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 275.795599784,
+    "exit": 0,
+    "started_monotonic": 275.669567296,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 275.91970257,
+    "exit": 0,
+    "started_monotonic": 275.795644067,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791912493}"
+    ],
+    "ended_monotonic": 276.041294543,
+    "exit": 0,
+    "started_monotonic": 275.919748826,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791912493}"
+    ],
+    "ended_monotonic": 276.164155226,
+    "exit": 0,
+    "started_monotonic": 276.04134153,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 276.286106698,
+    "exit": 0,
+    "started_monotonic": 276.164203626,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791912493}"
+    ],
+    "ended_monotonic": 276.409685893,
+    "exit": 0,
+    "started_monotonic": 276.286152373,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791912493}"
+    ],
+    "ended_monotonic": 276.537202067,
+    "exit": 0,
+    "started_monotonic": 276.409736377,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 276.664399162,
+    "exit": 0,
+    "started_monotonic": 276.537250497,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 276.792612043,
+    "exit": 0,
+    "started_monotonic": 276.664464534,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 276.804504211,
+    "exit": 1,
+    "started_monotonic": 276.793344867,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 276.844087524,
+    "exit": 1,
+    "started_monotonic": 276.834665446,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 276.883047192,
+    "exit": 1,
+    "started_monotonic": 276.874219856,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 276.921511803,
+    "exit": 1,
+    "started_monotonic": 276.913187383,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 276.959768576,
+    "exit": 0,
+    "started_monotonic": 276.9516285,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/inflight/sink"
+    ],
+    "ended_monotonic": 276.967695306,
+    "exit": 0,
+    "started_monotonic": 276.959892327,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/inflight/sink"
+    ],
+    "ended_monotonic": 276.975426322,
+    "exit": 0,
+    "started_monotonic": 276.967709152,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 277.023082176,
+    "exit": 0,
+    "started_monotonic": 276.975789479,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"unknown-commit\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": false, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 1}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 277.051293832,
+    "exit": 0,
+    "started_monotonic": 277.023327263,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 277.059800733,
+    "exit": 0,
+    "started_monotonic": 277.051318348,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "ps",
+      "-q",
+      "receiver"
+    ],
+    "ended_monotonic": 277.13341132,
+    "exit": 0,
+    "started_monotonic": 277.059814459,
+    "stderr": "",
+    "stdout": "9bca2a0852d0cee9e490ddecccce6a933e73b28314e1a65be61ec37c1cfab96a\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "kill",
+      "-s",
+      "KILL",
+      "9bca2a0852d0cee9e490ddecccce6a933e73b28314e1a65be61ec37c1cfab96a"
+    ],
+    "ended_monotonic": 277.211404296,
+    "exit": 0,
+    "started_monotonic": 277.133419636,
+    "stderr": "",
+    "stdout": "9bca2a0852d0cee9e490ddecccce6a933e73b28314e1a65be61ec37c1cfab96a\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nimport time\ndef hook():\n Path('/private/published-ready').write_text('durable publication before receipt')\n while not Path('/private/publish-go').exists():time.sleep(.01)\nprint(deliver_record(controller,1,Path('/output'),after_publish=hook))"
+    ],
+    "ended_monotonic": 277.211528497,
+    "exit": 137,
+    "started_monotonic": 276.793322385,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/after-crash/sink"
+    ],
+    "ended_monotonic": 277.22218152,
+    "exit": 0,
+    "started_monotonic": 277.211682383,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/after-crash/sink"
+    ],
+    "ended_monotonic": 277.2297208,
+    "exit": 0,
+    "started_monotonic": 277.222201067,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 277.275417015,
+    "exit": 0,
+    "started_monotonic": 277.230090919,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"unknown-commit\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": false, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 1}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/after-crash/database.sqlite"
+    ],
+    "ended_monotonic": 277.303076672,
+    "exit": 0,
+    "started_monotonic": 277.275657252,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/after-crash/database.sqlite"
+    ],
+    "ended_monotonic": 277.311182267,
+    "exit": 0,
+    "started_monotonic": 277.303099876,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "start",
+      "9bca2a0852d0cee9e490ddecccce6a933e73b28314e1a65be61ec37c1cfab96a"
+    ],
+    "ended_monotonic": 277.427156573,
+    "exit": 0,
+    "started_monotonic": 277.311194038,
+    "stderr": "",
+    "stdout": "9bca2a0852d0cee9e490ddecccce6a933e73b28314e1a65be61ec37c1cfab96a\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 277.581318556,
+    "exit": 0,
+    "started_monotonic": 277.427169747,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nprint(deliver_record(controller,1,Path('/output')))"
+    ],
+    "ended_monotonic": 277.726785185,
+    "exit": 0,
+    "started_monotonic": 277.581330769,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/final/sink"
+    ],
+    "ended_monotonic": 288.235235343,
+    "exit": 0,
+    "started_monotonic": 288.224793068,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/final/sink"
+    ],
+    "ended_monotonic": 288.242667033,
+    "exit": 0,
+    "started_monotonic": 288.235247195,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 288.287630055,
+    "exit": 0,
+    "started_monotonic": 288.242977671,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 1, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/final/database.sqlite"
+    ],
+    "ended_monotonic": 288.315355314,
+    "exit": 0,
+    "started_monotonic": 288.287864862,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/final/database.sqlite"
+    ],
+    "ended_monotonic": 288.323384926,
+    "exit": 0,
+    "started_monotonic": 288.315378897,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-crash-retry",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/crash-retry/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 298.64098248,
+    "exit": 0,
+    "started_monotonic": 288.323635092,
+    "stderr": " Container cstack-r2-crash-retry-broker-1  Stopping\n Container cstack-r2-crash-retry-receiver-1  Stopping\n Container cstack-r2-crash-retry-reviewer-1  Stopping\n Container cstack-r2-crash-retry-agent-b-1  Stopping\n Container cstack-r2-crash-retry-approver-1  Stopping\n Container cstack-r2-crash-retry-agent-a-1  Stopping\n Container cstack-r2-crash-retry-approver-1  Stopped\n Container cstack-r2-crash-retry-approver-1  Removing\n Container cstack-r2-crash-retry-approver-1  Removed\n Container cstack-r2-crash-retry-agent-a-1  Stopped\n Container cstack-r2-crash-retry-agent-a-1  Removing\n Container cstack-r2-crash-retry-agent-a-1  Removed\n Container cstack-r2-crash-retry-agent-b-1  Stopped\n Container cstack-r2-crash-retry-agent-b-1  Removing\n Container cstack-r2-crash-retry-broker-1  Stopped\n Container cstack-r2-crash-retry-broker-1  Removing\n Container cstack-r2-crash-retry-agent-b-1  Removed\n Container cstack-r2-crash-retry-receiver-1  Stopped\n Container cstack-r2-crash-retry-receiver-1  Removing\n Container cstack-r2-crash-retry-broker-1  Removed\n Container cstack-r2-crash-retry-reviewer-1  Stopped\n Container cstack-r2-crash-retry-reviewer-1  Removing\n Container cstack-r2-crash-retry-receiver-1  Removed\n Container cstack-r2-crash-retry-reviewer-1  Removed\n Network cstack-r2-crash-retry_isolated  Removing\n Network cstack-r2-crash-retry_isolated  Removed\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 298.651198862,
+    "exit": 0,
+    "started_monotonic": 298.64098758,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 298.661505435,
+    "exit": 0,
+    "started_monotonic": 298.652861358,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 298.669404464,
+    "exit": 0,
+    "started_monotonic": 298.661523368,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 299.113938213,
+    "exit": 0,
+    "started_monotonic": 298.669412319,
+    "stderr": " Network cstack-r2-halt-inflight_isolated  Creating\n Network cstack-r2-halt-inflight_isolated  Created\n Container cstack-r2-halt-inflight-reviewer-1  Creating\n Container cstack-r2-halt-inflight-agent-b-1  Creating\n Container cstack-r2-halt-inflight-agent-a-1  Creating\n Container cstack-r2-halt-inflight-receiver-1  Creating\n Container cstack-r2-halt-inflight-approver-1  Creating\n Container cstack-r2-halt-inflight-broker-1  Creating\n Container cstack-r2-halt-inflight-approver-1  Created\n Container cstack-r2-halt-inflight-receiver-1  Created\n Container cstack-r2-halt-inflight-agent-b-1  Created\n Container cstack-r2-halt-inflight-reviewer-1  Created\n Container cstack-r2-halt-inflight-broker-1  Created\n Container cstack-r2-halt-inflight-agent-a-1  Created\n Container cstack-r2-halt-inflight-agent-b-1  Starting\n Container cstack-r2-halt-inflight-broker-1  Starting\n Container cstack-r2-halt-inflight-approver-1  Starting\n Container cstack-r2-halt-inflight-receiver-1  Starting\n Container cstack-r2-halt-inflight-reviewer-1  Starting\n Container cstack-r2-halt-inflight-agent-a-1  Starting\n Container cstack-r2-halt-inflight-approver-1  Started\n Container cstack-r2-halt-inflight-agent-b-1  Started\n Container cstack-r2-halt-inflight-broker-1  Started\n Container cstack-r2-halt-inflight-receiver-1  Started\n Container cstack-r2-halt-inflight-agent-a-1  Started\n Container cstack-r2-halt-inflight-reviewer-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 309.660518922,
+    "exit": 0,
+    "started_monotonic": 309.529440764,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "reviewer",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"review\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}"
+    ],
+    "ended_monotonic": 309.785000529,
+    "exit": 0,
+    "started_monotonic": 309.660565939,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-a\", \"agent_uid\": 23701, \"budget\": 1, \"expires\": 1791912527}"
+    ],
+    "ended_monotonic": 309.909169259,
+    "exit": 0,
+    "started_monotonic": 309.78510313,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23701, \"lease_id\": \"lease-a\", \"expires\": 1791912527}"
+    ],
+    "ended_monotonic": 310.037415699,
+    "exit": 0,
+    "started_monotonic": 309.909226054,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-b",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"stage\", \"body_b64\": \"ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==\"}"
+    ],
+    "ended_monotonic": 310.162891588,
+    "exit": 0,
+    "started_monotonic": 310.03747051,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\"}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"issue_lease\", \"lease_id\": \"lease-b\", \"agent_uid\": 23702, \"budget\": 1, \"expires\": 1791912527}"
+    ],
+    "ended_monotonic": 310.301132946,
+    "exit": 0,
+    "started_monotonic": 310.162941701,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "approver",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"approve\", \"nonce\": \"b\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"agent_uid\": 23702, \"lease_id\": \"lease-b\", \"expires\": 1791912527}"
+    ],
+    "ended_monotonic": 310.423886558,
+    "exit": 0,
+    "started_monotonic": 310.301179683,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 310.54606922,
+    "exit": 0,
+    "started_monotonic": 310.423936521,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": 1}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "agent-a",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"effect_release\", \"nonce\": \"a\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"destination\": \"metadata-only\", \"lease_id\": \"lease-a\"}"
+    ],
+    "ended_monotonic": 310.66779069,
+    "exit": 0,
+    "started_monotonic": 310.546116648,
+    "stderr": "",
+    "stdout": "{\"error\": \"DENIED\", \"ok\": false}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 310.677367573,
+    "exit": 1,
+    "started_monotonic": 310.668352987,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 310.717699342,
+    "exit": 1,
+    "started_monotonic": 310.707496704,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 310.756786324,
+    "exit": 1,
+    "started_monotonic": 310.748075824,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 310.795243813,
+    "exit": 1,
+    "started_monotonic": 310.786930313,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "test",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/published-ready"
+    ],
+    "ended_monotonic": 310.833346852,
+    "exit": 0,
+    "started_monotonic": 310.825367685,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/inflight/sink"
+    ],
+    "ended_monotonic": 310.840971319,
+    "exit": 0,
+    "started_monotonic": 310.833455855,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/inflight/sink"
+    ],
+    "ended_monotonic": 310.84830755,
+    "exit": 0,
+    "started_monotonic": 310.84098231,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 310.893998177,
+    "exit": 0,
+    "started_monotonic": 310.848623769,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [{\"agent_uid\": 23701, \"classification\": \"unknown-commit\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": false, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 1}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 310.922678471,
+    "exit": 0,
+    "started_monotonic": 310.894274191,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/inflight/database.sqlite"
+    ],
+    "ended_monotonic": 310.930991811,
+    "exit": 0,
+    "started_monotonic": 310.922701995,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "touch",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/publish-go"
+    ],
+    "ended_monotonic": 311.140173756,
+    "exit": 0,
+    "started_monotonic": 311.13159962,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nimport time\ndef hook():\n Path('/private/published-ready').write_text('durable publication before receipt')\n while not Path('/private/publish-go').exists():time.sleep(.01)\nprint(deliver_record(controller,1,Path('/output'),after_publish=hook))"
+    ],
+    "ended_monotonic": 311.159441253,
+    "exit": 0,
+    "started_monotonic": 310.668335154,
+    "stderr": "",
+    "stdout": "1.body\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "broker",
+      "/usr/bin/python3",
+      "-c",
+      "import json,sys;from trusted_stack.client import request;print(json.dumps(request('/channel/broker.sock',json.loads(sys.argv[1]))))",
+      "{\"op\": \"halt\"}"
+    ],
+    "ended_monotonic": 311.159531711,
+    "exit": 0,
+    "started_monotonic": 310.931450675,
+    "stderr": "",
+    "stdout": "{\"ok\": true, \"result\": true}\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "exec",
+      "-T",
+      "receiver",
+      "/usr/bin/python3",
+      "-c",
+      "from pathlib import Path;from trusted_stack.controller import Controller,Principals;from trusted_stack.outbox_receiver import deliver_record;controller=Controller(Path('/private/gate.db'),Principals(frozenset({23701,23702}),frozenset({23703}),frozenset({23704}),frozenset({23700})))\nfrom trusted_stack.controller import Denied\ntry:deliver_record(controller,1,Path('/output'));raise AssertionError('post-HALT delivery succeeded')\nexcept Denied:print('HALT blocks subsequent delivery')"
+    ],
+    "ended_monotonic": 311.314283322,
+    "exit": 0,
+    "started_monotonic": 311.15956317,
+    "stderr": "",
+    "stdout": "HALT blocks subsequent delivery\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/final/sink"
+    ],
+    "ended_monotonic": 311.324422001,
+    "exit": 0,
+    "started_monotonic": 311.314449191,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/final/sink"
+    ],
+    "ended_monotonic": 311.333179137,
+    "exit": 0,
+    "started_monotonic": 311.324438792,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 311.382086274,
+    "exit": 0,
+    "started_monotonic": 311.333532425,
+    "stderr": "",
+    "stdout": "{\"admitted\": 1, \"delivered\": 1, \"global_cap\": 1, \"halted\": true, \"records\": [{\"agent_uid\": 23701, \"classification\": \"delivered\", \"digest\": \"286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b\", \"file_present\": true, \"nonce\": \"a\", \"receipt_present\": true, \"release_id\": 1}], \"spent\": 1, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/final/database.sqlite"
+    ],
+    "ended_monotonic": 311.411738748,
+    "exit": 0,
+    "started_monotonic": 311.382370794,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/final/database.sqlite"
+    ],
+    "ended_monotonic": 311.420411317,
+    "exit": 0,
+    "started_monotonic": 311.411761951,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-halt-inflight",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/halt-inflight/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 321.761970485,
+    "exit": 0,
+    "started_monotonic": 311.420669287,
+    "stderr": " Container cstack-r2-halt-inflight-broker-1  Stopping\n Container cstack-r2-halt-inflight-reviewer-1  Stopping\n Container cstack-r2-halt-inflight-agent-a-1  Stopping\n Container cstack-r2-halt-inflight-agent-b-1  Stopping\n Container cstack-r2-halt-inflight-receiver-1  Stopping\n Container cstack-r2-halt-inflight-approver-1  Stopping\n Container cstack-r2-halt-inflight-receiver-1  Stopped\n Container cstack-r2-halt-inflight-receiver-1  Removing\n Container cstack-r2-halt-inflight-receiver-1  Removed\n Container cstack-r2-halt-inflight-agent-b-1  Stopped\n Container cstack-r2-halt-inflight-agent-b-1  Removing\n Container cstack-r2-halt-inflight-agent-b-1  Removed\n Container cstack-r2-halt-inflight-broker-1  Stopped\n Container cstack-r2-halt-inflight-broker-1  Removing\n Container cstack-r2-halt-inflight-approver-1  Stopped\n Container cstack-r2-halt-inflight-approver-1  Removing\n Container cstack-r2-halt-inflight-broker-1  Removed\n Container cstack-r2-halt-inflight-approver-1  Removed\n Container cstack-r2-halt-inflight-reviewer-1  Stopped\n Container cstack-r2-halt-inflight-reviewer-1  Removing\n Container cstack-r2-halt-inflight-reviewer-1  Removed\n Container cstack-r2-halt-inflight-agent-a-1  Stopped\n Container cstack-r2-halt-inflight-agent-a-1  Removing\n Container cstack-r2-halt-inflight-agent-a-1  Removed\n Network cstack-r2-halt-inflight_isolated  Removing\n Network cstack-r2-halt-inflight_isolated  Removed\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 321.77144875,
+    "exit": 0,
+    "started_monotonic": 321.761975514,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "23700:23700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 321.780825119,
+    "exit": 0,
+    "started_monotonic": 321.772505487,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chmod",
+      "700",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 321.78869004,
+    "exit": 0,
+    "started_monotonic": 321.78084181,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never"
+    ],
+    "ended_monotonic": 322.240137658,
+    "exit": 0,
+    "started_monotonic": 321.788699127,
+    "stderr": " Network cstack-r2-drift-uid_isolated  Creating\n Network cstack-r2-drift-uid_isolated  Created\n Container cstack-r2-drift-uid-agent-a-1  Creating\n Container cstack-r2-drift-uid-approver-1  Creating\n Container cstack-r2-drift-uid-reviewer-1  Creating\n Container cstack-r2-drift-uid-receiver-1  Creating\n Container cstack-r2-drift-uid-broker-1  Creating\n Container cstack-r2-drift-uid-agent-b-1  Creating\n Container cstack-r2-drift-uid-reviewer-1  Created\n Container cstack-r2-drift-uid-receiver-1  Created\n Container cstack-r2-drift-uid-agent-a-1  Created\n Container cstack-r2-drift-uid-agent-b-1  Created\n Container cstack-r2-drift-uid-approver-1  Created\n Container cstack-r2-drift-uid-broker-1  Created\n Container cstack-r2-drift-uid-receiver-1  Starting\n Container cstack-r2-drift-uid-agent-a-1  Starting\n Container cstack-r2-drift-uid-approver-1  Starting\n Container cstack-r2-drift-uid-broker-1  Starting\n Container cstack-r2-drift-uid-agent-b-1  Starting\n Container cstack-r2-drift-uid-reviewer-1  Starting\n Container cstack-r2-drift-uid-agent-a-1  Started\n Container cstack-r2-drift-uid-agent-b-1  Started\n Container cstack-r2-drift-uid-broker-1  Started\n Container cstack-r2-drift-uid-reviewer-1  Started\n Container cstack-r2-drift-uid-receiver-1  Started\n Container cstack-r2-drift-uid-approver-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/drift-launch.compose.json",
+      "up",
+      "-d",
+      "--pull",
+      "never",
+      "--no-deps",
+      "--force-recreate",
+      "agent-a"
+    ],
+    "ended_monotonic": 342.620232629,
+    "exit": 0,
+    "started_monotonic": 332.337495764,
+    "stderr": " Container cstack-r2-drift-uid-agent-a-1  Recreate\n Container cstack-r2-drift-uid-agent-a-1  Recreated\n Container cstack-r2-drift-uid-agent-a-1  Starting\n Container cstack-r2-drift-uid-agent-a-1  Started\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "cp",
+      "-a",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/final/sink"
+    ],
+    "ended_monotonic": 352.612276025,
+    "exit": 0,
+    "started_monotonic": 352.603353611,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "-R",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/final/sink"
+    ],
+    "ended_monotonic": 352.62022141,
+    "exit": 0,
+    "started_monotonic": 352.612295451,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "/home/runner/work/control-stack/control-stack/deployment/reconcile.py",
+      "--db",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "--sink",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/sink"
+    ],
+    "ended_monotonic": 352.667925116,
+    "exit": 0,
+    "started_monotonic": 352.620512572,
+    "stderr": "",
+    "stdout": "{\"admitted\": 0, \"delivered\": 0, \"global_cap\": 1, \"halted\": false, \"records\": [], \"spent\": 0, \"unknown_commit\": 0}\n"
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "python3",
+      "-c",
+      "import sqlite3,sys;source=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro',uri=True);target=sqlite3.connect(sys.argv[2]);source.backup(target);target.close();source.close()",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state/db/gate.db",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/final/database.sqlite"
+    ],
+    "ended_monotonic": 352.697150044,
+    "exit": 0,
+    "started_monotonic": 352.668214595,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "chown",
+      "1001",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/final/database.sqlite"
+    ],
+    "ended_monotonic": 352.705683414,
+    "exit": 0,
+    "started_monotonic": 352.697173798,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 363.056796594,
+    "exit": 0,
+    "started_monotonic": 352.705894356,
+    "stderr": " Container cstack-r2-drift-uid-receiver-1  Stopping\n Container cstack-r2-drift-uid-agent-a-1  Stopping\n Container cstack-r2-drift-uid-broker-1  Stopping\n Container cstack-r2-drift-uid-agent-b-1  Stopping\n Container cstack-r2-drift-uid-approver-1  Stopping\n Container cstack-r2-drift-uid-reviewer-1  Stopping\n Container cstack-r2-drift-uid-agent-a-1  Stopped\n Container cstack-r2-drift-uid-agent-a-1  Removing\n Container cstack-r2-drift-uid-approver-1  Stopped\n Container cstack-r2-drift-uid-approver-1  Removing\n Container cstack-r2-drift-uid-agent-a-1  Removed\n Container cstack-r2-drift-uid-approver-1  Removed\n Container cstack-r2-drift-uid-broker-1  Stopped\n Container cstack-r2-drift-uid-broker-1  Removing\n Container cstack-r2-drift-uid-reviewer-1  Stopped\n Container cstack-r2-drift-uid-reviewer-1  Removing\n Container cstack-r2-drift-uid-broker-1  Removed\n Container cstack-r2-drift-uid-agent-b-1  Stopped\n Container cstack-r2-drift-uid-agent-b-1  Removing\n Container cstack-r2-drift-uid-reviewer-1  Removed\n Container cstack-r2-drift-uid-receiver-1  Stopped\n Container cstack-r2-drift-uid-receiver-1  Removing\n Container cstack-r2-drift-uid-agent-b-1  Removed\n Container cstack-r2-drift-uid-receiver-1  Removed\n Network cstack-r2-drift-uid_isolated  Removing\n Network cstack-r2-drift-uid_isolated  Removed\n",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "sudo",
+      "-n",
+      "rm",
+      "-rf",
+      "/home/runner/work/control-stack/control-stack/deployment-container-state"
+    ],
+    "ended_monotonic": 363.066426211,
+    "exit": 0,
+    "started_monotonic": 363.056800742,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "compose",
+      "-p",
+      "cstack-r2-drift-uid",
+      "-f",
+      "/home/runner/work/control-stack/control-stack/evidence/containers-hardened/drift-uid/compose.json",
+      "down",
+      "--volumes",
+      "--remove-orphans"
+    ],
+    "ended_monotonic": 363.155986632,
+    "exit": 0,
+    "started_monotonic": 363.067086791,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "rm",
+      "sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca"
+    ],
+    "ended_monotonic": 363.603550007,
+    "exit": 0,
+    "started_monotonic": 363.156048317,
+    "stderr": "",
+    "stdout": "Untagged: cstack-r2-v8:offline\nDeleted: sha256:07575754aa66f81ba00fb904d34b279cce32509c9887a57525ccf818b225a6ca\nDeleted: sha256:eaf8a5bb2f4a8c6a7e261eba6ea88142ef21cdea1e98b10b37d07ff0b397c1c7\n"
+  },
+  {
+    "argv": [
+      "docker",
+      "ps",
+      "-a",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Names}}"
+    ],
+    "ended_monotonic": 363.619152881,
+    "exit": 0,
+    "started_monotonic": 363.606270764,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "network",
+      "ls",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Name}}"
+    ],
+    "ended_monotonic": 363.631745225,
+    "exit": 0,
+    "started_monotonic": 363.619157019,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "image",
+      "ls",
+      "--filter",
+      "reference=cstack-r2-*",
+      "--format",
+      "{{.Repository}}:{{.Tag}}"
+    ],
+    "ended_monotonic": 363.647643289,
+    "exit": 0,
+    "started_monotonic": 363.631749824,
+    "stderr": "",
+    "stdout": ""
+  },
+  {
+    "argv": [
+      "docker",
+      "volume",
+      "ls",
+      "--filter",
+      "name=cstack-r2-",
+      "--format",
+      "{{.Name}}"
+    ],
+    "ended_monotonic": 363.661174518,
+    "exit": 0,
+    "started_monotonic": 363.647647537,
+    "stderr": "",
+    "stdout": ""
+  }
+]

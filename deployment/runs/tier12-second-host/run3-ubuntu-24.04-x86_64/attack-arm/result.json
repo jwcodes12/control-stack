@@ -1,0 +1,44 @@
+{
+  "cases": {
+    "attack-battery": {
+      "agreement": true,
+      "final": {
+        "admitted": 1,
+        "delivered": 1,
+        "global_cap": 1,
+        "halted": false,
+        "records": [
+          {
+            "agent_uid": 23701,
+            "classification": "delivered",
+            "digest": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+            "file_present": true,
+            "nonce": "a",
+            "receipt_present": true,
+            "release_id": 1
+          }
+        ],
+        "spent": 1,
+        "unknown_commit": 0
+      },
+      "outcomes": {
+        "attacker": "agent-b",
+        "attempts": 32,
+        "blocked": 32,
+        "honest-agent-a-task-after-flood": "SUCCEEDED",
+        "post-attack-sink": "EMPTY"
+      },
+      "prediction": "CONDITIONAL",
+      "sink_files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtcjItYWdlbnQtdGFzaw==",
+          "sha256": "286091533497ac00705a7afed737f4090716b7a7b039de09528f15a2137b785b",
+          "size": 28
+        }
+      }
+    }
+  },
+  "image": "sha256:c800284b34371af4d52855adcc1b71711c23b7aff217680635e2e71928dbe25e",
+  "profile": "hardened",
+  "scope": "real Docker, default namespaces/seccomp and numeric UIDs; daemon facts are not attestation; no host Landlock claim"
+}

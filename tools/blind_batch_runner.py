@@ -57,13 +57,15 @@ def batch(tag):
 def run(a):
     claims = batch(a.tag)
     work = Path(a.work).expanduser() / a.tag
-    if work.exists():
-        sys.exit(f"{work} exists")
     pa, pb = work / "a", work / "b"
-    work.mkdir(parents=True)
-    sh([sys.executable, ROOT / "tools/blind_one_to_one.py", "phase-a", "--claims", *claims, "--out", pa], check=True)
-    sh([sys.executable, ROOT / "tools/blind_one_to_one.py", "prompts", "--out", pa, "--tag", a.tag], check=True)
-    rc = codex(pa / "PROMPT-A.md", pa, work / "A-events.jsonl", work / "A-last.txt", 3 * 3600)
+    resume = a.resume and (pa / "back/BACK-HASHES.json").exists()
+    if work.exists() and not resume:
+        sys.exit(f"{work} exists (use --resume to continue after a finished phase A)")
+    if not resume:
+        work.mkdir(parents=True)
+        sh([sys.executable, ROOT / "tools/blind_one_to_one.py", "phase-a", "--claims", *claims, "--out", pa], check=True)
+        sh([sys.executable, ROOT / "tools/blind_one_to_one.py", "prompts", "--out", pa, "--tag", a.tag], check=True)
+    rc = 0 if resume else codex(pa / "PROMPT-A.md", pa, work / "A-events.jsonl", work / "A-last.txt", 3 * 3600)
     names = [c.split(".")[-1] for c in claims]
     audit = sh([sys.executable, ROOT / "tools/audit_blind_phase.py", work / "A-events.jsonl", "--names", *names])
     (work / "A-AUDIT.txt").write_text(audit.stdout)
@@ -131,6 +133,7 @@ def main():
     ap.add_argument("--tag", required=True)
     ap.add_argument("--work", default="~/projects/blind-work")
     ap.add_argument("--build-dir", default="/tmp/claude-1000/-home-opc/4ef840ee-1970-5e30-a456-ae46bb2676cb/scratchpad/wt-eventlog/.lake/build")
+    ap.add_argument("--resume", action="store_true", help="skip phase A when its back files are already hashed")
     ap.add_argument("--packages", default="~/research/control-stack/.lake/packages")
     a = ap.parse_args()
     run(a) if a.cmd == "run" else verify(a)

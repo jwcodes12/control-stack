@@ -36,9 +36,12 @@ def main():
         reasons = []
         if SUSPECT.search(body):
             reasons.append("path or tool outside the allowed set")
-        for name in a.names:
-            if re.search(r"\b" + re.escape(name) + r"\b", cmd):
-                reasons.append("mentions original name " + name)
+        # A name is only suspicious in a command that SEARCHES for it (rg/grep/find...): the phase A files are themselves named after the
+        # claims, so writing them necessarily mentions the names.
+        if re.search(r"(?:^|[\s;&|(])(?:rg|grep|egrep|fgrep|ag|ack|find|fd|locate|git)\s", cmd):
+            for name in a.names:
+                if re.search(r"\b" + re.escape(name) + r"\b", cmd):
+                    reasons.append("searches for original name " + name)
         if reasons:
             flagged.append((cmd, reasons))
     print(f"{len(commands)} commands; {len(flagged)} flagged")

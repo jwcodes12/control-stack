@@ -1,0 +1,51 @@
+{
+  "cases": {
+    "clean": {
+      "files": {
+        "1.body": {
+          "body_b64": "ZXhhY3QtcmV2aWV3ZWQtdHdvLWFnZW50LXNsaWNl",
+          "sha256": "7534a1f834da4c4d067cd12b4ac649bc6e2b4d4ef784cd3fc3b5d9acf064e1f3",
+          "size": 30
+        }
+      },
+      "halt_client_ready_before_receiver_release": true,
+      "halt_during_inflight": "HALT waited for publication/receipt transaction; published bytes survive; new delivery denied",
+      "replay_denied": true,
+      "result": "PASS",
+      "sink_evidence": "/var/tmp/g5-boundary/clean-after-halt-sink.json",
+      "two_agents_shared_budget": true
+    },
+    "trusted-role-uid-collision": {
+      "direct_owner_bypass": true,
+      "launcher_error": "DENIED: distinct trusted broker UID mandatory",
+      "launcher_same_uid_rejected": true,
+      "result": "UNASSURED",
+      "sink_evidence": "/var/tmp/g5-boundary/trusted-role-uid-collision-sink.json"
+    },
+    "writable-sink-mount": {
+      "confined_write_denied": true,
+      "direct_helper_bypass": true,
+      "limitation": "native mode/authority mutation corresponding to writable mount, not Docker bind-mount execution",
+      "result": "UNASSURED",
+      "sink_evidence": "/var/tmp/g5-boundary/writable-sink-mount-sink.json"
+    }
+  },
+  "scope": "native Linux broker/receiver boundary; synthetic Compose was not launched",
+  "sink_directory": "/var/tmp/g5-boundary/sink",
+  "source_sha256": {
+    "tools/run_deployment_boundary.py": "4269d62318f30cbf3dd732157d510f661b9c4365d0f548848802f4a5a353660d",
+    "tools/test_confined_effect_broker.py": "8e764e4e2c50fb0ed423bbca7c7cce4ed961eb6666b5a9fc28bf262aff183443",
+    "trusted_stack/agent_confinement.py": "47d78068dc92dac61656fa473abe61373f356912808be0a20a69592baa440160",
+    "trusted_stack/controller.py": "e22a0d9d8ff21a45d59145e869c9cd19643dd0a4ee9a525f722c5845d2335303",
+    "trusted_stack/outbox_receiver.py": "4010f86498363d4683291cd80fe5643e9047e30382dd7446222cfc284408c861",
+    "trusted_stack/server.py": "ead00e598f1ecb4ef69b20b930566f34274e551f75e46aa56db07545ef5bcc11"
+  },
+  "temporary_accounts_created": false,
+  "uids": [
+    23700,
+    23701,
+    23702,
+    23703,
+    23704
+  ]
+}

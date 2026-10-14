@@ -12,6 +12,7 @@ on:
       - 'numerics/test_budgeted_audit.py'
       - 'numerics/budgeted_audit/**'
       - 'docs/records/**'
+      - 'experiments/E1-flag-budget-replay/**'
       - 'tools/check_records.py'
       - 'THEOREM-REGISTRY.json'
       - 'ControlStack/Families/F6/**'
@@ -45,6 +46,8 @@ jobs:
         run: python3 tools/check_records.py
       - name: No sorry, admit or native_decide in the M1 Lean modules
         run: |
-          ! grep -nE '\bsorry\b|\badmit\b|native_decide|implemented_by|@\[extern' ControlStack/Families/F6/FlagBudget.lean ControlStack/Families/F6/SplitAudit.lean
+          ! grep -nE '\bsorry\b|\badmit\b|native_decide|implemented_by|@\[extern' ControlStack/Families/F6/FlagBudget.lean ControlStack/Families/F6/SplitAudit.lean ControlStack/Families/F6/Truncation.lean ControlStack/Families/F6/ClassAudit.lean
       - name: Executable model against the Lean closed forms; frozen results reproduce
         run: python3 numerics/test_budgeted_audit.py
+      - name: E1 analysis on generated data with known truth; the confirmatory run is refused before the freeze
+        run: python3 experiments/E1-flag-budget-replay/test_analyze.py

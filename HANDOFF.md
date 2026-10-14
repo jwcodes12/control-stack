@@ -1,3 +1,48 @@
+# Research track handoff: experiment E1 staged, truncation closed (2026-10-14)
+
+Branch `research/e1-replay-prereg-20261014`, stacked on `research/m1-flagship-20261013` (PR #65). Read
+[ROADMAP.md](ROADMAP.md) section 4 "Experiment E1", then
+[experiments/E1-flag-budget-replay/PREREG.md](experiments/E1-flag-budget-replay/PREREG.md).
+
+**State: the experiment is ready to run and has NOT been run.** It needs the owner's authorisation.
+
+**What changed since the Milestone 1 handoff below.**
+
+- `ControlStack/Families/F6/Truncation.lean` (new, proved by a delegated prover against frozen statements and
+  recompiled independently): `prefix_eq_truncated`; the three split bounds for "k attacks released before the first
+  catch". Closes Milestone 1's first "not met" item.
+- `ControlStack/Families/F6/ClassAudit.lean` (new): `class_flag_bound` (the attacker chooses the kind of attack; the
+  bound uses the minimum recall over kinds), `class_average_witness`. This is the statement E1's premises feed.
+- `data/linuxarena-public/compact/` (new): labels (`meta/`) and sealed scores (`sealed/`) for the 22,215
+  trajectories of the LinuxArena public mirror (CC-BY-4.0), extracted by streaming the ten shards once.
+- `experiments/E1-flag-budget-replay/` (new): `PREREG.md` (DRAFT), `analyze.py`, `test_analyze.py` (11 checks on
+  generated data), `extract_scores.py`, `freeze.py`, `freeze.json` (status DRAFT), `development_run_ids.json`,
+  `results/dev.json` (development sample only).
+- Record, roadmap (revision 3), registry annotations, statement catalogue and the `m1-budgeted-audit` workflow
+  updated.
+
+**To run E1** (owner):
+
+1. Read `PREREG.md`; edit anything you disagree with.
+2. `python3 experiments/E1-flag-budget-replay/freeze.py --write`, then commit `freeze.json`.
+3. Run the command it prints (`E1_PREREG_SHA256=... python3 experiments/E1-flag-budget-replay/analyze.py --confirm`).
+   About two minutes of CPU. No network, no model calls, no cost. It writes `results/confirmatory.json` once and
+   refuses to run again.
+4. Apply the consequence precommitted in `PREREG.md` section 7 for whichever way the primary endpoint came out.
+
+**Do not** read `data/linuxarena-public/compact/sealed/` or run `--confirm` before step 2. The seal is a convention.
+
+**Reviews of the experiment design (models, not people).** A hostile referee of another model family reviewed the
+draft preregistration and said "freeze after fixes": premise transfer became the primary endpoint; the replay
+values became sensitivity analyses; outcomes that are trivially true when a bound equals 1 are now reported as
+uninformative; the test-side false-positive bound respects task clustering; the pooled recall is described as a
+naive comparator, not a certificate; the constant-rate search was refined; dropped records and per-policy flag
+rates are reported. A second reviewer audited the analysis code against the preregistration (see the pull request).
+
+**Verification.** E1_VERIFICATION_PLACEHOLDER
+
+---
+
 # Research track handoff: Milestone 1 flagship (2026-10-13)
 
 Read first: [ROADMAP.md](ROADMAP.md) (revision 2), then the record

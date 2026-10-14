@@ -109,6 +109,8 @@ All in `ControlStack/Families/F6/`. `#print axioms` for each: `propext`, `Classi
 | split, S-independent flags, all attacks: ≤ C(N−k,Bh)/C(N,Bh)·(1−ρ)^k + P(Binomial(N, α) ≥ Bf) | `SplitAudit.split_product_bound` |
 | k = 1: C(N−1,Bh)/C(N,Bh) = 1 − Bh/N | `SplitAudit.hidden_one_step` |
 | C(N−k,B)/C(N,B) ≤ ((N−B)/N)^k for 0 < N, k ≤ N, B ≤ N (existing) | `AuditBudget.survival_le_pow` |
+| the same three bounds for the event "k attacks released before the first catch" (harm done even if caught later) | `Truncation.split_hidden_bound_prefix`, `Truncation.split_flag_bound_prefix`, `Truncation.split_product_bound_prefix`, from `Truncation.prefix_eq_truncated` |
+| attacker who chooses the kind of attack: P(≥ k attacks, never caught) ≤ (1−ρ)^k + P(Binomial(N, α) ≥ Bf) when **every** class has recall ≥ ρ | `ClassAudit.class_flag_bound` |
 | N = 100, Bh = 10, k = 5, ρ = 1/2: pre-exhaustion event ≤ 10104934117421/553929902606080 ≈ 0.0182 | `SplitAudit.split_example` |
 
 Definitions a reader needs: `SplitAudit.splitK`, `SplitAudit.catchRule`, `FlagBudget.totSucc`, `FlagBudget.preSucc`,
@@ -145,6 +147,7 @@ recursion; the executable model checks it equals the binomial sum), `ReservedAud
 | generalisation a researcher might make | witness (Lean-checked value of a concrete kernel) |
 |---|---|
 | "With monitor recall ρ on every attack the attacker's success is at most (1−ρ)^k." | `SplitAudit.exhaustion_witness`: monitor recall 1, false-positive rate α ∈ (0,1], Bf = 1, N = 2. Attacking in the last round succeeds with probability exactly α, because a flag raised after exhaustion triggers no audit. No flag needs to be observed. (The catch recall after exhaustion is 0; the witness refutes compounding the monitor's recall, not a per-attack catch recall.) |
+| "Recall averaged over the kinds of attack in the benchmark can be used in the bound." | `ClassAudit.class_average_witness`: two attack classes with recall 1 and 0 (average 1/2). The attacker who always uses the second is never caught, against a claimed 1/2. `ClassAudit.class_flag_bound` needs ρ below the recall of every class. |
 | "The monitor's measured recall is ρ, so ρ can be used in the bound." | `SplitAudit.average_recall_witness`: the monitor catches attacks in round 0 and misses them in round 1. An attacker spread evenly over the rounds is missed half the time (measured recall 1/2); the attacker who picks round 1 is never caught, against a claimed bound of 1/2. |
 | "The hidden-schedule bound and the per-schedule recall bound multiply." | `SplitAudit.dependence_witness` (N = 3, Bh = 1, Bf = 2, k = 1): recall is exactly 1/2 for every schedule and history, so `split_flag_bound`'s premise holds, but the false positive in round 0 reveals whether round 1 is reserved. The attacker avoids the reserved round and succeeds with probability 1/2 under each schedule, not C(2,1)/C(3,1)·1/2 = 1/3. |
 | "A random schedule protects whether or not it is secret." | `AuditBudget.observable_schedule_nogo` (existing; stated for fixed attack sets, a different formalisation from `val`). The executable model reproduces it on `splitK` with a known schedule. |
@@ -189,6 +192,12 @@ With measured (ρ̂, α̂) the bounds are **illustrative** unless ρ̂ is a lowe
 classes and α̂ an upper one; the repository's existing route from estimates to checked certificates is `Core/Cert`
 with the preregistrations in `prereg/`, not used here.
 
+**The experiment that tests this bridge** is preregistered as a draft in
+[experiments/E1-flag-budget-replay/PREREG.md](../../experiments/E1-flag-budget-replay/PREREG.md): a replay of real
+monitor scores (LinuxArena public mirror, 22,215 trajectories, CC-BY-4.0) through the flag-budget protocol, with
+recall and false-positive bounds measured on six environments and checked on four others. It has not been run; it
+needs the owner's authorisation.
+
 **Two kinds of agreement, kept apart.** The tests show the executable model agrees with the Lean closed forms on
 the instances tried. They do not show that any runtime implements `splitK`; no Lean-to-runtime correspondence is
 claimed (`trusted_stack/audit.py` is a reference schedule only).
@@ -204,8 +213,8 @@ claimed (`trusted_stack/audit.py` is a reference schedule only).
 | `hrec`: conditional recall ≥ ρ at every history with budget left | one-round supermartingale inequality (`pre_step`) | compounding needs it at each attack, whatever preceded it | empirical, and it is **most of the conclusion** | red-team per history class; adversarially search for low-recall histories | no for an average; partly for a per-class minimum | not identifiable from a fixed benchmark: the attacker chooses the history | no bound is proved; informally the factor per attack becomes the miss probability at the history the attacker picks, which `average_recall_witness` shows can be 1 |
 | `hfp`: P(flag and not caught) ≤ α at every history with budget left | one-round inequality for the binomial-tail potential (`tail_step`) | exhaustion is what removes P2's protection | empirical | honest-run flag rates; check for bursts and for attacker-induced flags | partly (see table above) | untested | the exhaustion term grows; at αN ≥ Bf it is about 1/2 or more |
 | hard first-come budget | defines exhaustion | it is the protocol | definitional | n/a | n/a | n/a | threshold-ranked or paced budgets are different protocols (backlog item 2) |
-| catch is absorbing; event is "never caught by round N" | payoffs carry `liveInd` | lets caught transcripts be ignored | modelling choice | see next row | n/a | n/a | harm before a later catch is not counted |
-| "k attacks released before the first catch" has the same supremum | not used by any theorem | would turn the event into the one a designer cares about | informal argument (stop after k; a non-attack is never caught) | executable model confirms it for N ≤ 5 (`prefix_event_has_the_same_optimum`) | n/a | argued, not Lean-checked | until proved, the theorems bound the smaller event only |
+| catch is absorbing; base event is "never caught by round N" | payoffs carry `liveInd` | lets caught transcripts be ignored | modelling choice | superseded for `splitK` by the next row | n/a | n/a | n/a |
+| "k attacks released before the first catch" has the same value against the attacker stopped after k attacks | `Truncation.prefix_eq_truncated` | turns the event into the one a designer cares about | mathematical (proved for `splitK`: a non-attack is never caught) | the executable model agrees for N ≤ 5 (`prefix_event_has_the_same_optimum`) | n/a | proved | not proved for an arbitrary kernel, nor for `ClassAudit.classK` |
 
 Why `flag_pre_bound` is worth having although `hrec` carries most of it (*interpretation*): the theorem's content is
 the compounding against adaptive timing and the exact accounting of exhaustion. Its use is to isolate the unresolved
@@ -298,6 +307,12 @@ Status of that review: **pending; no reviewer has been asked.**
     "ControlStack/Families/F6/FlagBudget.lean::flag_pre_bound",
     "ControlStack/Families/F6/FlagBudget.lean::flag_exhaust_bound",
     "ControlStack/Families/F6/FlagBudget.lean::flag_total_bound",
+    "ControlStack/Families/F6/Truncation.lean::prefix_eq_truncated",
+    "ControlStack/Families/F6/Truncation.lean::split_hidden_bound_prefix",
+    "ControlStack/Families/F6/Truncation.lean::split_flag_bound_prefix",
+    "ControlStack/Families/F6/Truncation.lean::split_product_bound_prefix",
+    "ControlStack/Families/F6/ClassAudit.lean::class_flag_bound",
+    "ControlStack/Families/F6/ClassAudit.lean::class_average_witness",
     "ControlStack/Families/F6/ReservedAudit.lean::reserved_leak_bound",
     "ControlStack/Families/F6/ReservedAudit.lean::reserved_total_le",
     "ControlStack/Families/F6/ReservedAudit.lean::flag_audits_le",
@@ -323,6 +338,9 @@ Status of that review: **pending; no reviewer has been asked.**
     "ControlStack/Families/F6/FlagBudget.lean::binTail",
     "ControlStack/Families/F6/FlagBudget.lean::W1",
     "ControlStack/Families/F6/FlagBudget.lean::W2",
+    "ControlStack/Families/F6/ClassAudit.lean::classK",
+    "ControlStack/Families/F6/Truncation.lean::prefSucc",
+    "ControlStack/Families/F6/Truncation.lean::stopAfter",
     "ControlStack/Families/F6/ReservedAudit.lean::pU",
     "ControlStack/Core/Leakage.lean::val"
   ],
@@ -334,8 +352,13 @@ Status of that review: **pending; no reviewer has been asked.**
     "ControlStack/Families/F6/SplitAudit.lean::split_product_bound": ["split_product_pre", "flag_exhaust_bound", "totSucc_le"],
     "ControlStack/Families/F6/FlagBudget.lean::flag_pre_bound": ["val_le_potential", "pre_step"],
     "ControlStack/Families/F6/FlagBudget.lean::flag_exhaust_bound": ["val_le_potential", "tail_step"],
-    "ControlStack/Families/F6/FlagBudget.lean::flag_total_bound": ["flag_pre_bound", "flag_exhaust_bound", "totSucc_le"]
+    "ControlStack/Families/F6/FlagBudget.lean::flag_total_bound": ["flag_pre_bound", "flag_exhaust_bound", "totSucc_le"],
+    "ControlStack/Families/F6/Truncation.lean::split_flag_bound_prefix": ["prefix_eq_truncated", "split_flag_bound", "stopAfter_isDist"],
+    "ControlStack/Families/F6/Truncation.lean::split_product_bound_prefix": ["prefix_eq_truncated", "split_product_bound"],
+    "ControlStack/Families/F6/ClassAudit.lean::class_flag_bound": ["flag_total_bound"]
   },
-  "executable": ["numerics/budgeted_audit.py", "numerics/test_budgeted_audit.py", "numerics/budgeted_audit/results.json"]
+  "executable": ["numerics/budgeted_audit.py", "numerics/test_budgeted_audit.py", "numerics/budgeted_audit/results.json",
+                 "experiments/E1-flag-budget-replay/analyze.py", "experiments/E1-flag-budget-replay/test_analyze.py",
+                 "experiments/E1-flag-budget-replay/PREREG.md"]
 }
 ```

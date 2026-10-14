@@ -1,5 +1,12 @@
 # HISTORY
 
+## 2026-10-14: experiment E1 staged; truncation closed (branch `research/e1-replay-prereg-20261014`)
+
+- `Truncation.lean` (prefix event has the same value against the stopped attacker; delegated proof, recompiled) and
+  `ClassAudit.lean` (class-choosing attacker; minimum recall over classes).
+- LinuxArena public mirror streamed once (16.8 GB, not stored) into compact labels and sealed scores.
+- Experiment E1 preregistered as a DRAFT with its analysis, tests and freeze helper. Not run. Needs the owner.
+
 ## 2026-10-13: research track, Milestone 1 flagship (branch `research/m1-flagship-20261013`)
 
 - Roadmap revision 2. Three model reviews of the M1 design before implementation (soundness, relevance, a hostile

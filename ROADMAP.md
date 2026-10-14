@@ -1,8 +1,10 @@
-# ROADMAP: control-stack, research refocus (revision 2, 2026-10-13)
+# ROADMAP: control-stack, research refocus (revision 3, 2026-10-14)
 
 Canonical status. Base commit of this revision: `main` at `e7b4b25`. Revision 1 (same day, merged as #64) set the
 gated milestones; this revision corrects the Milestone 1 design after three model reviews, records Milestone 1 as
-implemented, and re-plans Milestones 2 to 4 from what Milestone 1 showed. The chronological journal before the
+implemented, and re-plans Milestones 2 to 4 from what Milestone 1 showed. Revision 3 (branch
+`research/e1-replay-prereg-20261014`, stacked on the Milestone 1 branch) closes Milestone 1's truncation gap and
+sets up experiment E1 (section 4), which is ready to run and waits for the owner. The chronological journal before the
 refocus is archived unchanged in [docs/ROADMAP-HISTORY.md](docs/ROADMAP-HISTORY.md). Everything in this repository is
 **model-written and model-reviewed; no independent human review has happened** (G1 below).
 
@@ -10,7 +12,8 @@ refocus is archived unchanged in [docs/ROADMAP-HISTORY.md](docs/ROADMAP-HISTORY.
 
 | Milestone | Status | Gate still open |
 |---|---|---|
-| M1 flagship: a hard audit budget against an adaptive attacker | **implemented; verified locally and by CI at `df08678`** (PR #65; commands and runs in [HANDOFF.md](HANDOFF.md)) | external human review (the packet is section 8 of the record); five stated gaps (M1 "not met") |
+| M1 flagship: a hard audit budget against an adaptive attacker | **implemented; verified locally and by CI at `df08678`** (PR #65; commands and runs in [HANDOFF.md](HANDOFF.md)) | external human review (the packet is section 8 of the record); four stated gaps (M1 "not met") |
+| E1 experiment: replay of real monitor scores through the flag-budget protocol | **stage ready, not run**: data extracted and sealed, analysis written and tested on generated data and on a disclosed development sample, preregistration in DRAFT | owner authorisation (`freeze.py --write`), then one command; costs nothing |
 | M2 third protocol: defer-to-trusted in the same round model, where usefulness first differs | planned | reuse without silently strengthening assumptions |
 | M3 discovery and accessibility | planned; the M1 record is the first card | a reader outside the project finds, instantiates and challenges one result; untested |
 | M4 theory or experimental extension | planned; three ranked candidates in section 5 | answers a concrete question with an explicit evidence story |
@@ -56,6 +59,9 @@ Grounded in a direct reading of the declarations named here, the flexibility tes
   `val_add`, the flag-budget bookkeeping, `binTail`, `flag_pre_bound`, `flag_exhaust_bound`, `flag_total_bound`.
 - New in M1, `ControlStack/Families/F6/SplitAudit.lean`: `splitK`, `split_hidden_bound`, `split_flag_bound`,
   `split_min_bound`, `split_product_pre`, `split_product_bound`, three kernel witnesses.
+- New in revision 3, `ControlStack/Families/F6/Truncation.lean`: `prefix_eq_truncated` and the three bounds for the
+  event "k attacks released before the first catch"; `ControlStack/Families/F6/ClassAudit.lean`:
+  `class_flag_bound` (the attacker chooses the kind of attack; ρ is the minimum over kinds), `class_average_witness`.
 - `ControlStack/DeferMono.lean` (`catVE_toReal_le_catV`) on `DeferGame.lean` (VCVio), and `ledger/TMCERT.lean`,
   `ledger/TMGAC.lean` (certificate checker for stateful trusted monitoring; exact 13/50 against 11/32 separation of
   constant-rate and clocked attackers). Reusable as mathematics; in other models (item 3).
@@ -97,9 +103,10 @@ No declaration connects the gate model, the VCVio game or the ledger model to th
   necessary in every formulation. The files are unchanged; the record uses the weaker wording.
 - `AuditBudget` argues adaptivity in a prose remark; the adaptive statements are `Leakage.audit_adaptive_hidden` and
   the F6 ones.
-- All round-kernel results bound "≥ k attacks and never caught by round N". "k attacks released before the first
-  catch" is the event a designer cares about; the step between them is argued and numerically checked, not proved
-  (note at `Leakage.survInd`; M1 "not met", item 1).
+- The round-kernel results in `Leakage`, `ReservedAudit` and `ReservedRecall` bound "≥ k attacks and never caught by
+  round N", not "k attacks released before the first catch". For the M1 split kernel the step is now proved
+  (`Truncation.prefix_eq_truncated`); for the older hidden-flag kernels it is still only argued (note at
+  `Leakage.survInd`).
 - SC-90's `harmful_effect_is_a_miss` is "every effect is Cleared"; the `harm` bit is never read.
 - The deployment verifier's verdicts never exceed CONDITIONAL and rest on unproved faithful extraction and protocol
   refinement (`docs/DEPLOYMENT-CLAIM-v0.md`).
@@ -163,16 +170,50 @@ with no informative bound in a regime, or two bounds that do not compose, stated
 
 **Not met in M1** (positive objectives that remain open; none is hidden in an assumed lemma).
 
-1. The safety event is "≥ k attacks and never caught by round N". That "k attacks released before the first catch"
-   has the same supremum is argued and confirmed by exhaustive computation for N ≤ 5, not Lean-checked.
-2. Reserved audits are perfect in the visible-flag model. Imperfect reserved recall is proved only with hidden flags.
-3. Honest-task usefulness does not distinguish the protocols (none of them blocks or defers); only audits spent do.
-4. The exhaustion premise bounds "flag and not caught", which includes false positives the attacker induces. No
+1. Reserved audits are perfect in the visible-flag model. Imperfect reserved recall is proved only with hidden flags.
+2. Honest-task usefulness does not distinguish the protocols (none of them blocks or defers); only audits spent do.
+3. The exhaustion premise bounds "flag and not caught", which includes false positives the attacker induces. No
    statement separates honest false positives from induced ones.
-5. Two of four cited papers were read only as abstracts; the other two through an automated fetch of their HTML.
+4. Two of four cited papers were read only as abstracts; the other two through an automated fetch of their HTML.
+
+Closed in revision 3: the safety event. `Truncation.prefix_eq_truncated` shows that "k attacks released before the
+first catch" has the same value against the attacker stopped after k attacks, so the three bounds hold for that
+event (`Truncation.split_hidden_bound_prefix`, `split_flag_bound_prefix`, `split_product_bound_prefix`). The proof
+was delegated to a prover agent against frozen statements and recompiled independently.
 
 **Excluded on purpose:** trusted editing, resampling, suspicion scores and thresholds that vary with time or budget,
 side channels outside the visible history, the gate bridge, any ControlArena or inspect_ai adapter.
+
+### Experiment E1: do the premises hold on real monitor scores? (stage ready, not run)
+
+**Why this experiment.** The theorems reduce safety to two premises: recall at least ρ for every kind of attack at
+every history, and false-positive rate at most α. Proofs cannot say whether a real monitor satisfies them or whether
+they can be measured in one place and relied on in another. E1 tests exactly that bridge, on real scores, for free.
+
+- **Data.** LinuxArena public mirror (Hugging Face, CC-BY-4.0): 22,215 trajectories in 10 environments with
+  per-action monitor scores. Primary monitor GPT-5 Nano: 3,996 honest trajectories (200 distinct tasks) and 1,444
+  successful attacks in 25 attack classes, after excluding a 932-trajectory development sample. Its monitor scores
+  were not used by any earlier analysis here. Labels are in `data/linuxarena-public/compact/meta/`; scores are in
+  `compact/sealed/` and have not been read.
+- **Design.** Calibrate the threshold, the false-positive upper bound and per-class recall lower bounds on six
+  environments; check them on four others; compare the Lean bound built from the minimum recall with the number
+  built from the benchmark's average recall, against exact attacker values on the test rates.
+- **Primary endpoint: premise transfer.** Do the false-positive bound and the per-class recall bounds measured in
+  six environments hold in four others? Consequences of each answer are precommitted in the preregistration.
+- **Sensitivity analyses** (they follow from the measured rates and the Lean arithmetic, so they are not tests of
+  the theorems): whether the average-recall number is beaten by an attacker who uses the weakest tested class; what
+  the min-recall certificate says and whether it is vacuous; the size of the timing effect with and without
+  headroom.
+- **What it cannot do.** It is a replay with independent resampling, not a live adaptive attacker; it says nothing
+  about attack kinds outside the dataset; it does not validate a deployment.
+- **Files.** `experiments/E1-flag-budget-replay/`: `PREREG.md` (DRAFT), `analyze.py`, `test_analyze.py` (11 checks),
+  `extract_scores.py`, `freeze.py`, `results/dev.json` (development set only).
+- **To run** (owner): read `PREREG.md`; `python3 experiments/E1-flag-budget-replay/freeze.py --write`; commit
+  `freeze.json`; run the printed command (about two minutes of CPU, no network, no model calls).
+- **Risks.** 200 distinct honest tasks limit how tight any false-positive bound can be; the weakest attack class
+  probably makes the min-recall certificate vacuous for a cheap monitor (the model-attacks-only variant is
+  preregistered for that case); a replay cannot stand in for an adaptive attacker.
+- **Status.** Stage ready. Not run. Not authorised.
 
 ### Milestone 2: a third protocol in the same foundations (planned)
 
@@ -182,9 +223,8 @@ honest usefulness differs, so it forces a usefulness quantity: the expected numb
 
 Steps, in order:
 
-1. **Truncation lemma** (closes M1 item 1): for kernels in which a non-attack round is never caught, the supremum of
-   "k attacks released before the first catch" equals that of "≥ k attacks, never caught". Needed before any
-   statement about harm.
+1. **Truncation for the defer kernel.** Done for `splitK` in revision 3 (`Truncation.lean`); the defer kernel needs
+   its own instance, or a version of the lemma for any kernel in which a non-attack round is never caught.
 2. **The defer kernel and its two quantities**: safety by `val_le_potential` with a potential in which a deferred
    attack is neither released nor caught; usefulness as an exact expectation over honest play.
 3. **Evaluation of reuse**: which of `flagCount`, `preAtt`, `pre_step`, `tail_step`, `splitK` carried over unchanged,
@@ -304,6 +344,8 @@ Retired from the active list in this revision: dependence-sensitive composition 
    the active three.
 4. Existing F6 files stay byte-identical until M2 shows which refactor two protocols need.
 5. PR #56 and the pause branch stay frozen until a person reviews them.
+6. E1 as drafted: primary monitor, split by environment, the four outcomes and their decision rules. Authorising
+   the run is the owner's step; nothing in this repository runs it automatically.
 
 Standing gates that need the owner, unchanged: G1 independent human review (the M1 record's section 8 for the
 research track; `deployment/REVIEW-PACKET-R2.md` for the deployment track); G9 tag, publish, outreach; English

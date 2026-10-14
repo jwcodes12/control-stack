@@ -18,7 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BLOCK = re.compile(r"```json record-index\n(.*?)\n```", re.S)
 TOP = re.compile(r"(?m)^(?:noncomputable\s+)?(?:theorem|lemma|def|abbrev|instance|structure|inductive)\s")
-NAMESPACES = ("SplitAudit", "FlagBudget", "ReservedAudit", "ReservedRecall", "AuditBudget", "Leakage", "Necessity")
+NAMESPACES = ("SplitAudit", "FlagBudget", "Truncation", "ClassAudit", "ReservedAudit", "ReservedRecall", "AuditBudget",
+              "Leakage", "Necessity")
 
 
 def decl_text(path, name):

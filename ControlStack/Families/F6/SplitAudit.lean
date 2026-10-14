@@ -37,9 +37,9 @@ Results.
 Limits (what is NOT claimed).
 - Reserved audits catch an attacked round with certainty here. Imperfect reserved recall is proved only for the
   hidden-flag model (`ReservedRecall.adaptive_recall_bound`, `AOut Unit`); combining it with visible flags is open.
-- The failure event is "≥ k attacks and never caught by round N". "k attacks released before the first catch" is a
-  larger event; the two have the same supremum over attackers only via a truncation argument that is NOT proved
-  (see the note at `Leakage.survInd`).
+- The failure event here is "≥ k attacks and never caught by round N". "k attacks released before the first catch" is
+  a larger event; `Truncation.prefix_eq_truncated` shows it has the same value against the attacker stopped after k
+  attacks, so every bound in this file also holds for it (`Truncation.split_*_bound_prefix`).
 - `split_hidden_bound` needs the flag law to be a function of the visible history. A flag process with hidden
   state that depends on S can leak the schedule; the hidden-flag theorem `ReservedAudit.reserved_policy_bound`
   allows any flag law only because there the attacker never sees a flag.

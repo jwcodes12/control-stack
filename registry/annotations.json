@@ -1149,5 +1149,66 @@
   "status": "SOURCE_ONLY",
   "necessity_witness": "ControlStack.SplitAudit.dependence_witness",
   "record": "M1 flagship record docs/records/budgeted-audit-vs-adaptive-attacker.md (2026-10-13); model-written and model-reviewed, no independent human review; CI compilation is not fidelity or applicability evidence"
+ },
+ "ControlStack/Families/F6/Truncation.lean::prefix_eq_truncated": {
+  "family": "F6",
+  "adversary": "ADAPTIVE_FEEDBACK",
+  "scenarios": [],
+  "premises": [
+   "Split kernel only: catch is a deterministic function of schedule, visible history, attack bit and flag; a non-attack round is never caught",
+   "Attack law and flag law are probability distributions at every history"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "NOT_RECORDED",
+  "record": "M1 flagship record docs/records/budgeted-audit-vs-adaptive-attacker.md (2026-10-14); model-written and model-reviewed, no independent human review; CI compilation is not fidelity or applicability evidence"
+ },
+ "ControlStack/Families/F6/Truncation.lean::split_hidden_bound_prefix": {
+  "family": "F6",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [],
+  "premises": [
+   "Premises of split_hidden_bound",
+   "Event: k attacks released before the first catch"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.AuditBudget.observable_schedule_nogo",
+  "record": "M1 flagship record docs/records/budgeted-audit-vs-adaptive-attacker.md (2026-10-14); model-written and model-reviewed, no independent human review; CI compilation is not fidelity or applicability evidence"
+ },
+ "ControlStack/Families/F6/Truncation.lean::split_flag_bound_prefix": {
+  "family": "F6",
+  "adversary": "ADAPTIVE_FEEDBACK",
+  "scenarios": [],
+  "premises": [
+   "Premises of split_flag_bound",
+   "Event: k attacks released before the first catch"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.SplitAudit.exhaustion_witness",
+  "record": "M1 flagship record docs/records/budgeted-audit-vs-adaptive-attacker.md (2026-10-14); model-written and model-reviewed, no independent human review; CI compilation is not fidelity or applicability evidence"
+ },
+ "ControlStack/Families/F6/Truncation.lean::split_product_bound_prefix": {
+  "family": "F6",
+  "adversary": "SIDE_OBSERVING",
+  "scenarios": [],
+  "premises": [
+   "Premises of split_product_bound",
+   "Event: k attacks released before the first catch"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.SplitAudit.dependence_witness",
+  "record": "M1 flagship record docs/records/budgeted-audit-vs-adaptive-attacker.md (2026-10-14); model-written and model-reviewed, no independent human review; CI compilation is not fidelity or applicability evidence"
+ },
+ "ControlStack/Families/F6/ClassAudit.lean::class_flag_bound": {
+  "family": "F6",
+  "adversary": "ADAPTIVE_FEEDBACK",
+  "scenarios": [],
+  "premises": [
+   "Attacker chooses no attack or an attack class from a finite set, with any law that is a function of the visible history",
+   "While budget remains every class is flagged with probability >= rho and a non-attack with probability <= alpha, at every visible history",
+   "A flagged attack with budget left is audited and caught with certainty"
+  ],
+  "status": "SOURCE_ONLY",
+  "necessity_witness": "ControlStack.ClassAudit.class_average_witness",
+  "record": "M1 flagship record docs/records/budgeted-audit-vs-adaptive-attacker.md (2026-10-14); model-written and model-reviewed, no independent human review; CI compilation is not fidelity or applicability evidence"
  }
 }

@@ -1,3 +1,81 @@
+# Research track handoff: experiment E1 run (2026-10-14)
+
+**E1 has been run.** The owner authorised it ("Go ahead, u r good"); the preregistration was frozen at commit
+`1213a2c` and the confirmatory analysis ran once with no deviation. Read
+[experiments/E1-flag-budget-replay/RESULTS.md](experiments/E1-flag-budget-replay/RESULTS.md). The sections below
+describe the state before the run and how it was staged; where they say "not run", that was true when written.
+
+Next step named by the preregistration: a live run with an attack policy that knows the protocol. It costs money
+and has not been started or scoped. `results/confirmatory.started` and `results/confirmatory.json` must stay; the
+run is one-shot and `analyze.py --confirm` refuses to repeat it.
+
+---
+
+# Staging notes: experiment E1 staged, truncation closed (2026-10-14)
+
+Branch `research/e1-replay-prereg-20261014`, stacked on `research/m1-flagship-20261013` (PR #65). Read
+[ROADMAP.md](ROADMAP.md) section 4 "Experiment E1", then
+[experiments/E1-flag-budget-replay/PREREG.md](experiments/E1-flag-budget-replay/PREREG.md).
+
+**State: the experiment is ready to run and has NOT been run.** It needs the owner's authorisation.
+
+**What changed since the Milestone 1 handoff below.**
+
+- `ControlStack/Families/F6/Truncation.lean` (new, proved by a delegated prover against frozen statements and
+  recompiled independently): `prefix_eq_truncated`; the three split bounds for "k attacks released before the first
+  catch". Closes Milestone 1's first "not met" item.
+- `ControlStack/Families/F6/ClassAudit.lean` (new): `class_flag_bound` (the attacker chooses the kind of attack; the
+  bound uses the minimum recall over kinds), `class_average_witness`. This is the statement E1's premises feed.
+- `data/linuxarena-public/compact/` (new): labels (`meta/`) and sealed scores (`sealed/`) for the 22,215
+  trajectories of the LinuxArena public mirror (CC-BY-4.0), extracted by streaming the ten shards once.
+- `experiments/E1-flag-budget-replay/` (new): `PREREG.md` (DRAFT), `analyze.py`, `test_analyze.py` (15 checks on
+  generated data), `extract_scores.py`, `freeze.py`, `freeze.json` (status DRAFT), `development_run_ids.json`,
+  `results/dev.json` (development sample only).
+- Record, roadmap (revision 3), registry annotations, statement catalogue and the `m1-budgeted-audit` workflow
+  updated.
+
+**To run E1** (owner):
+
+1. Read `PREREG.md`; edit anything you disagree with.
+2. `python3 experiments/E1-flag-budget-replay/freeze.py --write`, then commit `freeze.json`.
+3. Run the command it prints (`E1_PREREG_SHA256=... python3 experiments/E1-flag-budget-replay/analyze.py --confirm`).
+   About two minutes of CPU. No network, no model calls, no cost. It writes `results/confirmatory.json` once and
+   refuses to run again.
+4. Apply the consequence precommitted in `PREREG.md` section 7 for whichever way the primary endpoint came out.
+
+**Do not** read `data/linuxarena-public/compact/sealed/` or run `--confirm` before step 2. The seal is a convention.
+
+**Reviews of the experiment design (models, not people).** A hostile referee of another model family reviewed the
+draft preregistration and said "freeze after fixes": premise transfer became the primary endpoint; the replay
+values became sensitivity analyses; outcomes that are trivially true when a bound equals 1 are now reported as
+uninformative; the test-side false-positive bound respects task clustering; the pooled recall is described as a
+naive comparator, not a certificate; the constant-rate search was refined; dropped records and per-policy flag
+rates are reported. A second reviewer audited the analysis code against the preregistration and found one
+blocking bug and four lesser ones, all fixed: 92 trajectory ids are shared between a base run and its re-scored
+copy, which would have crashed the one-shot run; the run guards were assertions (void under `python -O`); the
+freeze could be repeated after a crash; the calibration flag count was reported from the target rather than
+measured; the threshold index used floating point. It independently confirmed the counts in the preregistration,
+the Clopper-Pearson and bootstrap code, and the attacker-value programme.
+
+**Verification** (run on the commit after `e8af227` that carries the audit fixes).
+
+| command | result |
+|---|---|
+| `lake build` | Build completed successfully (3832 jobs) |
+| `lake env lean` on `Truncation.lean`, `ClassAudit.lean` | every `#print axioms` line is `[propext, Classical.choice, Quot.sound]`; no warnings |
+| `python3 experiments/E1-flag-budget-replay/test_analyze.py` | 15/15 (generated data only; includes a rehearsal of freeze, confirm and the one-shot guards in a temporary tree) |
+| `python3 experiments/E1-flag-budget-replay/analyze.py --check-data` | label and score files line up; 11,961 usable monitor-run trajectories; prints counts only |
+| `python3 numerics/test_budgeted_audit.py` | 12/12 |
+| `python3 tools/check_records.py` | 0 problems |
+| `tools/build_registry.py`, `build_statement_catalog.py`, `build_lean_english_overview.py`, `build_status.py`, `build_overview.py` with `--check` | consistent (registry: 2326 declarations) |
+| `python3 tools/check_deployment_prereg.py --base origin/main` | PASS (no protected path touched; the E1 preregistration lives in `experiments/`, because that guard reserves `prereg/`) |
+| GitHub Actions on pull request #67 | at `e8af227`: 27 passed, 0 failed, 3 skipped (the same three as on #65); `full-build` ran uncached, 3832 jobs. Runs on later commits are in the pull request. |
+
+Not verified: anything about the confirmatory data. The sealed scores have not been read, so the pipeline has run
+end to end only on generated data and on the 932-trajectory development sample.
+
+---
+
 # Research track handoff: Milestone 1 flagship (2026-10-13)
 
 Read first: [ROADMAP.md](ROADMAP.md) (revision 2), then the record

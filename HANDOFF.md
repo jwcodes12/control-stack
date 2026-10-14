@@ -20,7 +20,48 @@ independent human review**.
   gains eight entries; `THEOREM-REGISTRY.*` and `LEAN-STATEMENTS-NORMAL-FORM.md` regenerated.
 - No existing Lean file, frozen evidence, pinned artifact or `ControlStack/EgressGate.lean` was modified.
 
-**Verification report.** VERIFICATION_PLACEHOLDER
+**Verification report.** Code commit verified: `df08678` (this note is a later documentation-only commit).
+
+Local (Lean 4.34.0 from `~/.elan`, Mathlib from the shared package tree):
+
+| command | result |
+|---|---|
+| `lake build` | Build completed successfully (3830 jobs), no errors |
+| `lake env lean ControlStack/Families/F6/FlagBudget.lean`, `.../SplitAudit.lean` | 8 + 12 `#print axioms` lines, each `[propext, Classical.choice, Quot.sound]`; no warnings |
+| `python3 tools/build_registry.py --check` | registry consistent: 2294 declarations |
+| `python3 tools/build_statement_catalog.py --check`, `build_lean_english_overview.py --check`, `build_status.py --check`, `build_overview.py --check` | all consistent |
+| `python3 tools/check_scenarios.py` | exit 0 |
+| `python3 tools/check_records.py` | 1 record checked, 0 problems (and it fails on a mutated record: misspelt declaration, false dependency) |
+| `python3 numerics/test_budgeted_audit.py` | 12/12 checks passed |
+| `for t in tools/test_*.py` | 27 pass. 9 fail identically on an unmodified clone (5 need `python -m` invocation, 3 need root, 1 needs the `trusted_stack` path). 7 more fail only in a git worktree because `.git` is a file there (`NotADirectoryError`); they pass on a normal clone and in CI. |
+
+GitHub Actions on `df08678` (pull request #65): 27 checks passed, 0 failed, 3 skipped.
+
+- `full-build` (deployment-release, GitHub-hosted, run 38488290056): its green-marker cache missed, so it ran
+  `lake build` for real; the log shows `Built ControlStack.Families.F6.FlagBudget`, `Built
+  ControlStack.Families.F6.SplitAudit`, `Build completed successfully (3830 jobs)`.
+- `model-and-record` (new workflow, run 38488289998): record references resolve; banned-token grep clean; 12/12.
+- `generated-declaration-and-statement-consistency`, `generated-index-drift`, `guards`: registry, statement
+  catalogue, overview and scenario index consistent.
+- Skipped, not passed: `lean-vcvio`, `linux-boundary`, `live-containers` (path- or environment-gated; none covers
+  the files changed here).
+
+Reviews (models, not people). Before implementation: soundness, relevance, and a hostile referee of another model
+family; outcomes in ROADMAP section 3. After implementation: the same referee audited the Lean statements against
+the record's English. It reported no defect in the statements and eight wording defects, all fixed in `df08678`:
+
+1. `dependence_witness` refuted only a product with schedule-averaged recall. Replaced by a schedule-leak instance
+   with recall 1/2 for every schedule.
+2. `exhaustion_witness` refutes compounding of monitor recall, not of a per-attack catch recall; α range stated.
+3. Failure-table cell conflated the witness's success probability with the binomial exhaustion bound.
+4. `FlagBudget` theorems constrain an arbitrary sub-probability kernel, not a protocol; header and record reworded.
+5. Premises quantify over all histories, not only reachable ones.
+6. The blind average is an upper bound, not an equality.
+7. No variable-recall product is proved; wording removed.
+8. `totSucc`, `binTail`, `hidden_one_step` docstrings qualified.
+
+What green CI does not establish: that the model captures the question, that the English matches the Lean beyond
+the points audited, or that any deployed monitor satisfies the premises.
 
 **Not met, and what is needed to continue** (same list as ROADMAP section 4, M1).
 

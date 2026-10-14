@@ -10,7 +10,7 @@ refocus is archived unchanged in [docs/ROADMAP-HISTORY.md](docs/ROADMAP-HISTORY.
 
 | Milestone | Status | Gate still open |
 |---|---|---|
-| M1 flagship: a hard audit budget against an adaptive attacker | **implemented; verified locally and by CI on the pull request** (commit and runs in [HANDOFF.md](HANDOFF.md)) | external human review (the packet is section 8 of the record); five stated gaps (M1 "not met") |
+| M1 flagship: a hard audit budget against an adaptive attacker | **implemented; verified locally and by CI at `df08678`** (PR #65; commands and runs in [HANDOFF.md](HANDOFF.md)) | external human review (the packet is section 8 of the record); five stated gaps (M1 "not met") |
 | M2 third protocol: defer-to-trusted in the same round model, where usefulness first differs | planned | reuse without silently strengthening assumptions |
 | M3 discovery and accessibility | planned; the M1 record is the first card | a reader outside the project finds, instantiates and challenges one result; untested |
 | M4 theory or experimental extension | planned; three ranked candidates in section 5 | answers a concrete question with an explicit evidence story |

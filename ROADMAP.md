@@ -13,7 +13,7 @@ refocus is archived unchanged in [docs/ROADMAP-HISTORY.md](docs/ROADMAP-HISTORY.
 | Milestone | Status | Gate still open |
 |---|---|---|
 | M1 flagship: a hard audit budget against an adaptive attacker | **implemented; verified locally and by CI at `df08678`** (PR #65; commands and runs in [HANDOFF.md](HANDOFF.md)) | external human review (the packet is section 8 of the record); four stated gaps (M1 "not met") |
-| E1 experiment: replay of real monitor scores through the flag-budget protocol | **stage ready, not run**: data extracted and sealed, analysis written and tested on generated data and on a disclosed development sample, preregistration in DRAFT | owner authorisation (`freeze.py --write`), then one command; costs nothing |
+| E1 experiment: replay of real monitor scores through the flag-budget protocol | **run once on 2026-10-14** from freeze commit `1213a2c`, no deviations; results in [experiments/E1-flag-budget-replay/RESULTS.md](experiments/E1-flag-budget-replay/RESULTS.md) | human review of the design and the reading; the live-attacker follow-up is unfunded |
 | M2 third protocol: defer-to-trusted in the same round model, where usefulness first differs | planned | reuse without silently strengthening assumptions |
 | M3 discovery and accessibility | planned; the M1 record is the first card | a reader outside the project finds, instantiates and challenges one result; untested |
 | M4 theory or experimental extension | planned; three ranked candidates in section 5 | answers a concrete question with an explicit evidence story |
@@ -184,7 +184,7 @@ was delegated to a prover agent against frozen statements and recompiled indepen
 **Excluded on purpose:** trusted editing, resampling, suspicion scores and thresholds that vary with time or budget,
 side channels outside the visible history, the gate bridge, any ControlArena or inspect_ai adapter.
 
-### Experiment E1: do the premises hold on real monitor scores? (stage ready, not run)
+### Experiment E1: do the premises hold on real monitor scores? (run 2026-10-14)
 
 **Why this experiment.** The theorems reduce safety to two premises: recall at least ρ for every kind of attack at
 every history, and false-positive rate at most α. Proofs cannot say whether a real monitor satisfies them or whether
@@ -213,7 +213,23 @@ they can be measured in one place and relied on in another. E1 tests exactly tha
 - **Risks.** 200 distinct honest tasks limit how tight any false-positive bound can be; the weakest attack class
   probably makes the min-recall certificate vacuous for a cheap monitor (the model-attacks-only variant is
   preregistered for that case); a replay cannot stand in for an adaptive attacker.
-- **Status.** Stage ready. Not run. Not authorised.
+- **Status.** Authorised by the owner, frozen at `1213a2c`, run once, no deviations.
+- **Result** (details and caveats in `RESULTS.md`).
+  - Primary endpoint, by the preregistered rule: neither premise failed in the primary cell. The test
+    false-positive rate (8.4%) was above its calibrated bound (6.6%) at the point estimate but not significantly; in
+    the adjacent conventional-calibration cell it failed significantly (16.8% against 12.7%). No attack class's
+    recall fell significantly below its bound; those tests have little power.
+  - The number built from average recall (0.573) was beaten by an attacker using the weakest tested class,
+    significantly but by a thin margin.
+  - The minimum-recall certificate was 1: uninformative for this monitor at these sample sizes.
+  - Timing mattered at the conventional calibration (last-round attacker 0.98 against 0.39 for the best
+    constant-rate attacker) and stopped mattering at three times headroom (0.52 against 0.51).
+  - Descriptive: at one threshold the false-positive rate ran from 1% to 12% across environments and from under 1%
+    to over 20% across honest agent policies.
+  - The primary monitor's hardest known attack class was in the development sample and therefore excluded.
+- **Consequence applied** (precommitted for "neither fails"): no change to what the record tells a designer to
+  measure; the next empirical step is a live run with an attack policy that knows the protocol. That costs money
+  and is not started.
 
 ### Milestone 2: a third protocol in the same foundations (planned)
 

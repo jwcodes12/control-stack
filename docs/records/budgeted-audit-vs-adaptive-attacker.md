@@ -192,11 +192,19 @@ With measured (ρ̂, α̂) the bounds are **illustrative** unless ρ̂ is a lowe
 classes and α̂ an upper one; the repository's existing route from estimates to checked certificates is `Core/Cert`
 with the preregistrations in `prereg/`, not used here.
 
-**The experiment that tests this bridge** is preregistered as a draft in
-[experiments/E1-flag-budget-replay/PREREG.md](../../experiments/E1-flag-budget-replay/PREREG.md): a replay of real
-monitor scores (LinuxArena public mirror, 22,215 trajectories, CC-BY-4.0) through the flag-budget protocol, with
-recall and false-positive bounds measured on six environments and checked on four others. It has not been run; it
-needs the owner's authorisation.
+**The experiment that tests this bridge** was preregistered and run once on 2026-10-14
+([PREREG.md](../../experiments/E1-flag-budget-replay/PREREG.md),
+[RESULTS.md](../../experiments/E1-flag-budget-replay/RESULTS.md)): a replay of real monitor scores (LinuxArena
+public mirror, 22,215 trajectories, CC-BY-4.0) through the flag-budget protocol, with recall and false-positive
+bounds measured on six environments and checked on four others. *Empirical finding, one dataset, one monitor as
+primary:* by the preregistered rule neither premise failed in the primary cell, with the false-positive rate above
+its calibrated bound at the point estimate (8.4% against 6.6%) and failing significantly in the adjacent
+conventional-calibration cell; the minimum-recall certificate was 1 (uninformative); the average-recall number was
+beaten by an attacker using the weakest tested class; the timing effect was large at the conventional calibration
+and gone at three times headroom. Descriptively, the false-positive rate at one threshold ranged from 1% to 12%
+across environments and from under 1% to over 20% across honest agent policies, which bears directly on the α row
+of the table above: a pooled rate is not the rate of a given deployment. The replay used independent resampling
+and no adaptive attacker.
 
 **Two kinds of agreement, kept apart.** The tests show the executable model agrees with the Lean closed forms on
 the instances tried. They do not show that any runtime implements `splitK`; no Lean-to-runtime correspondence is

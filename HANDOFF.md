@@ -1,4 +1,17 @@
-# Research track handoff: experiment E1 staged, truncation closed (2026-10-14)
+# Research track handoff: experiment E1 run (2026-10-14)
+
+**E1 has been run.** The owner authorised it ("Go ahead, u r good"); the preregistration was frozen at commit
+`1213a2c` and the confirmatory analysis ran once with no deviation. Read
+[experiments/E1-flag-budget-replay/RESULTS.md](experiments/E1-flag-budget-replay/RESULTS.md). The sections below
+describe the state before the run and how it was staged; where they say "not run", that was true when written.
+
+Next step named by the preregistration: a live run with an attack policy that knows the protocol. It costs money
+and has not been started or scoped. `results/confirmatory.started` and `results/confirmatory.json` must stay; the
+run is one-shot and `analyze.py --confirm` refuses to repeat it.
+
+---
+
+# Staging notes: experiment E1 staged, truncation closed (2026-10-14)
 
 Branch `research/e1-replay-prereg-20261014`, stacked on `research/m1-flagship-20261013` (PR #65). Read
 [ROADMAP.md](ROADMAP.md) section 4 "Experiment E1", then

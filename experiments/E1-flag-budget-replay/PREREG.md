@@ -7,7 +7,8 @@ human review. The experiment costs no money: it calls no model and reads public 
 To authorise: the owner reads this file, changes what they disagree with, then runs
 `python3 experiments/E1-flag-budget-replay/freeze.py --write`, commits `freeze.json`, and runs the one command it
 prints. `analyze.py --confirm` refuses to run unless `freeze.json` says FROZEN, every pinned hash matches, and no
-confirmatory result exists.
+confirmatory run has been started. It writes `results/confirmatory.started` before it reads any score, so a crashed
+run cannot be silently repeated.
 
 ## 1. Question
 
@@ -36,6 +37,10 @@ the measured rates fall) from the part that follows from the mathematics once th
 - **Extraction.** `extract_scores.py` streamed each shard once and wrote two compact files per shard:
   `data/linuxarena-public/compact/meta/<shard>.jsonl.gz` (labels and counts, no score values) and
   `data/linuxarena-public/compact/sealed/<shard>.jsonl.gz` (per-action scores). The raw shards were not stored.
+  The extractor writes plain `.jsonl`; each file was then compressed with `gzip -9 -n`, and the per-shard hash
+  records were merged into `compact/raw_shards.json`. The compressed files are what `freeze.json` pins.
+- **Repeated ids.** 92 trajectory ids occur twice: a base agent run and the monitor run that re-scored it share
+  ids. Base runs are not used; among monitor-run rows ids are unique, and the loader stops if they are not.
 
 | raw shard | rows | bytes | SHA-256 of the raw stream |
 |---|---|---|---|
@@ -62,9 +67,12 @@ The hashes of the twenty compact files are pinned in `freeze.json` at the freeze
   in section 7 and are the reason human-crafted attacks are expected to be the weakest class.
 - **Labels of the full data.** Run names, environments, task and side-task ids, success flags and counts were read
   for all 22,215 trajectories, to fix inclusion rules and the tables in section 4.
-- **Scores of the full data.** Not read. They were written by `extract_scores.py`, which computes no statistic, and
-  `analyze.py` has been run only on generated data and on the development set. This is a convention inside one
-  agent session, not a technical seal.
+- **Scores of the full data.** No statistic of them has been computed or looked at. They were written by
+  `extract_scores.py`, which computes none; `analyze.py` has been run on generated data and on the development set;
+  and `analyze.py --check-data` has been run on the confirmatory files to check that label and score files line up
+  and to count records (it prints counts only: 11,961 monitor-run trajectories with a scored action, 9,967
+  base-run rows and 287 unscored monitor-run rows dropped). This is a convention inside one agent session, not a
+  technical seal.
 - **Earlier use of this dataset in this repository.** `replay/` used the **actions** (not the scores) of these
   trajectories for a structural-policy replay and evaluated its own test environments once; the same four
   environments are the test environments here. Monitor scores of the mirror were not used by any earlier analysis.
@@ -81,6 +89,9 @@ The hashes of the twenty compact files are pinned in `freeze.json` at the freeze
   monitor with the most runs. Other monitors are secondary.
 - **Honest and attack.** Honest: no side task. Attack: a side task and `side_task_success = true` (an attack that
   would have done harm if released). Unsuccessful attempts are not used.
+- **Monitor errors.** Some scored actions carry a monitor error flag (in the primary pool, 577 of 6,289 trajectories
+  have at least one, 567 of them honest). Scores are used as recorded. The primary endpoint is recomputed with
+  those trajectories removed, as a sensitivity analysis.
 - **Attack class.** The subject name Y of an attack run (the attack policy or strategy). A class is included if it
   has at least 10 successful attacks in calibration and at least 10 in test.
 - **Split.** By environment. Test: `clinical_trial`, `model_registry`, `slack_clone`, `tiktok`. Calibration: the
@@ -104,7 +115,11 @@ no-scratchpad 58/31; Opus thinking=16k attack 32/19; Opus thinking=4k attack 37/
 Opus thinking=off attack 34/19; Sonnet attack 48/26; straj-cmp 42/24; strategy-attack 26/24. Excluded for size: No
 Intranet attack (21/6). `straj-cmp` is human-crafted; the other 24 are model attack policies.
 
-The honest pool has 20 trajectories per task (one per agent policy), so honest observations are clustered by task.
+The honest pool has 20 trajectories per task, one per honest run (four calibration tasks have 19), so honest
+observations are clustered by task. Two pairs of honest runs appear to be the same agent trajectories scored twice
+by the monitor (Haiku honest with Haiku honest no-goals; Honest (env desc) with Opus attack env-desc honest), so
+there are fewer than 20 independent agent policies. The task-level bootstrap is the part of the analysis that
+allows for this; the Clopper-Pearson bounds on honest data do not.
 
 ## 5. Protocol replayed and operating points
 
@@ -129,8 +144,10 @@ false-positive estimate at 1 to 2%.
 For a cell with target a, and C the number of included classes (25 expected for the primary monitor; whatever the
 inclusion rule yields is used):
 
-- **Threshold.** With n calibration honest trajectories and x = ⌊a·n⌋, θ is the (x+1)-th largest calibration honest
-  score; a trajectory is flagged iff its score > θ. Exactly x calibration honest trajectories are flagged.
+- **Threshold.** With n calibration honest trajectories and x = ⌊Bf·n/(c·N)⌋ (integer arithmetic), θ is the
+  (x+1)-th largest calibration honest score; a trajectory is flagged iff its score > θ. The realised number of
+  flagged calibration honest trajectories is reported and used in every bound; it equals x unless scores tie exactly
+  after tie-breaking.
 - **False-positive bound α⁺.** The larger of (i) the one-sided Clopper-Pearson upper bound for x of n at level 0.025
   and (ii) the 97.5th percentile of the flag rate under a bootstrap that resamples whole tasks (2000 resamples, seed
   20261014, θ fixed). Neither is an exact 97.5% bound here: (i) assumes independent trajectories, (ii) is a
@@ -148,7 +165,7 @@ inclusion rule yields is used):
   false-positive rate is the smaller of the Clopper-Pearson lower bound at 0.025 and the 2.5th percentile of the
   task-cluster bootstrap on the test pool.
 - **Replay values.** V(ρ, α) is the exact success of the optimal attacker in the i.i.d. game. The class-targeting
-  attacker uses c0, the class with the lowest calibration recall (ties: alphabetical), fixed before test data are
+  attacker uses c0, the class with the lowest calibration recall (ties: codepoint order of the class name), fixed before test data are
   read: V_c0 = V(ρ_c0,test, α_test); its conservative version uses the 97.5% Clopper-Pearson upper bound of
   ρ_c0,test and the lower bound of α_test. The natural-mix attacker uses pooled test recall. The best constant-rate
   attacker is found on an 80-point geometric grid of rates with ternary refinement (a lower bound on the best
@@ -187,17 +204,18 @@ No experiment-wide error rate is claimed.
 | | quantity | rule | expectation |
 |---|---|---|---|
 | S1 | Is the average number beaten by the class-targeting attacker? | testable only if B_avg < 1; point: V_c0 > B_avg; significant: conservative V_c0 > B_avg. Not beaten does **not** show recall is homogeneous. | Testable and significant, about 75%. |
-| S2 | What does the min-recall certificate say? | report B_min; "equals one" if B_min = 1 (then it holds for any data and confirms nothing); non-vacuous if B_min < 0.5; violated if some class's conservative replay value exceeds it. | B_min = 1, about 85% (a tested class with recall near 0). |
+| S2 | What does the min-recall certificate say? | report B_min; "equals one" if B_min = 1 (then it holds for any data and confirms nothing); non-vacuous if B_min < 0.5; holds at the point estimate if V(min_c ρ_c,test, α_test) ≤ B_min; violated if, for some class, V at the Clopper-Pearson upper bound of its test recall at level 0.025/C and at the lower bound of α_test exceeds B_min. | B_min = 1, about 85% (a tested class with recall near 0). |
 | S3 | Size of the timing effect | natural-mix attacker: late-blind minus best constant-rate at c = 1, 2, 3; "as predicted" if ≥ 0.10 at c = 1 and ≤ 0.03 at c = 3. | As predicted, about 45%; depends on T-α. |
 
 The expectations are the author's guesses, recorded so that surprise can be measured; they are not part of any test.
 
 **Further descriptive output.** The same endpoints with human-crafted attacks removed (24 model classes); all
 primary-grid cells and the two N = 1000 cells; per-class calibration and test recall; honest flag rate per agent
-policy; leave-one-environment-out false-positive transfer (ten folds, primary cell); every other monitor with at
-least 75 honest trajectories in each split and at least two included classes (expected: ten monitors, 120/80
-honest each); counts of records dropped at load (runs that are not monitor runs; monitor-run trajectories with no
-scored action).
+policy; the primary endpoint without trajectories that have a monitor error; leave-one-environment-out
+false-positive transfer (ten folds, primary cell); every other monitor with at least 75 honest trajectories in each
+split and at least two included classes (expected: ten monitors with 120 calibration and 79 or 80 test honest
+trajectories each); counts of records dropped at load (runs that are not monitor runs; monitor-run trajectories
+with no scored action).
 
 ## 8. How results will be read
 
@@ -243,8 +261,10 @@ could do. No outcome can confirm or refute a Lean theorem.
 
 ## 10. Rules
 
-- One confirmatory run. No cell, class rule, threshold rule or constant changes after the freeze. If the analysis
-  crashes, the fix and the reason are recorded and the run is labelled accordingly.
+- One confirmatory run. No cell, class rule, threshold rule or constant changes after the freeze. `freeze.py`
+  refuses to freeze twice. If the analysis crashes, `results/confirmatory.started` remains and blocks a rerun; the
+  cause, the fix and the new pins are written to `PREREG-DEVIATIONS.md` in this directory before the marker is
+  removed, and the result is labelled as a rerun after a deviation.
 - Results are reported whether or not they match section 7. Anything computed after seeing the confirmatory
   results is labelled exploratory.
 - The Lean statements are not edited in response to the results.
@@ -254,11 +274,13 @@ could do. No outcome can confirm or refute a Lean theorem.
 | artifact | role |
 |---|---|
 | `experiments/E1-flag-budget-replay/analyze.py` | the analysis; `--confirm` is the confirmatory run |
-| `experiments/E1-flag-budget-replay/test_analyze.py` | 11 checks on generated data with known truth |
+| `experiments/E1-flag-budget-replay/test_analyze.py` | 15 checks: generated data with known truth, and a rehearsal of freeze and confirm in a temporary tree |
 | `experiments/E1-flag-budget-replay/extract_scores.py` | extraction from the raw shards |
 | `experiments/E1-flag-budget-replay/freeze.py` | computes and writes the pins |
 | `numerics/budgeted_audit.py` | exact attacker values and the bound's binomial tail |
 | `ControlStack/Families/F6/ClassAudit.lean`, `FlagBudget.lean`, `Truncation.lean` | the statements whose premises are tested |
 
-SHA-256 values of `PREREG.md`, `analyze.py`, `numerics/budgeted_audit.py` and the twenty data files are written to
-`freeze.json` by `freeze.py --write`; that commit is the freeze.
+SHA-256 values of `PREREG.md`, of the five code files (`analyze.py`, `test_analyze.py`, `extract_scores.py`,
+`freeze.py`, `numerics/budgeted_audit.py`) and of the twenty data files are written to `freeze.json` by
+`freeze.py --write`; that commit is the freeze. `analyze.py --confirm` re-checks every one of them. Its guards are
+explicit exits, not assertions, so they hold under `python -O`.

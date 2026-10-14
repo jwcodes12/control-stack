@@ -1,6 +1,6 @@
 /-
 F6: flag-triggered auditing against an attacker who chooses WHICH KIND of attack to make. This is the statement an
-experiment with labelled attack types tests (preregistration `prereg/E1-FLAG-BUDGET-REPLAY-DRAFT.md`).
+experiment with labelled attack types tests (preregistration `experiments/E1-flag-budget-replay/PREREG.md`).
 
 Model (the `val` kernel semantics; visible output `AOut Bool` = (attack, flag, caught)). In each round the attacker
 either does not attack or attacks with a class c from a finite type C, with any law that is a function of the

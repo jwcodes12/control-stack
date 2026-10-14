@@ -24,20 +24,29 @@ def sha(p):
 def main(argv):
     data = ROOT / DATA
     files = sorted(p.relative_to(data).as_posix() for d in ("meta", "sealed") for p in (data / d).glob("*.jsonl.gz"))
-    assert len(files) == 20, files
+    if len(files) != 20:
+        sys.exit(f"E1: expected 20 compact data files, found {len(files)}")
     freeze = {
         "status": "FROZEN" if "--write" in argv else "DRAFT",
         "experiment": "E1-FLAG-BUDGET-REPLAY",
         "prereg_sha256": sha(HERE / "PREREG.md"),
-        "analysis_sha256": sha(HERE / "analyze.py"),
-        "model_sha256": sha(ROOT / "numerics" / "budgeted_audit.py"),
+        "code_sha256": {rel: sha(ROOT / rel) for rel in (
+            "experiments/E1-flag-budget-replay/analyze.py",
+            "experiments/E1-flag-budget-replay/test_analyze.py",
+            "experiments/E1-flag-budget-replay/extract_scores.py",
+            "experiments/E1-flag-budget-replay/freeze.py",
+            "numerics/budgeted_audit.py")},
         "data_dir": DATA,
         "data_sha256": {f: sha(data / f) for f in files},
         "development_run_ids": json.loads((HERE / "development_run_ids.json").read_text()),
     }
     text = json.dumps(freeze, indent=1, sort_keys=True) + "\n"
     if "--write" in argv:
-        assert not (HERE / "results" / "confirmatory.json").exists(), "already run"
+        current = json.loads((HERE / "freeze.json").read_text()) if (HERE / "freeze.json").exists() else {}
+        if current.get("status") == "FROZEN":
+            sys.exit("E1: freeze.json is already FROZEN. A second freeze is a deviation; see PREREG.md section 10.")
+        if any((HERE / "results" / f).exists() for f in ("confirmatory.json", "confirmatory.started")):
+            sys.exit("E1: a confirmatory run was already started")
         (HERE / "freeze.json").write_text(text)
         print("freeze.json written with status FROZEN. Commit it, then run:")
         print(f"  E1_PREREG_SHA256={freeze['prereg_sha256']} python3 experiments/E1-flag-budget-replay/analyze.py --confirm")

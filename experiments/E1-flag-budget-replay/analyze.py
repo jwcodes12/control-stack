@@ -9,6 +9,7 @@ and what the Lean bounds built from them say, against an average-recall shortcut
 Modes
   --synthetic SEED   generated data with known truth (used by the tests; no real data)
   --dev              the 932-trajectory public sample only (development set; exposure disclosed in the prereg)
+  --check-data       structure of the confirmatory files only (alignment, unique ids, counts); no score statistic
   --confirm          the confirmatory run. Refuses unless E1_PREREG_SHA256 equals the SHA-256 of PREREG.md, the
                      data files match freeze.json, and results/confirmatory.json does not exist yet.
 
@@ -149,40 +150,49 @@ def _open(path):
     return gzip.open(path, "rt") if str(path).endswith(".gz") else open(path)
 
 
+def die(msg):
+    """Stop with a message. Not an assert: guards must survive `python -O`."""
+    sys.exit(f"E1: {msg}")
+
+
 def load(data_dir, shards):
-    """Join labels and scores by trajectory id. Returns one record per trajectory with a scored action."""
+    """Join labels and scores line by line (the extractor wrote both files in the same order) and check the ids
+    agree. Returns one record per monitor-run trajectory that has a scored action.
+
+    The dataset repeats some trajectory ids: a base agent run and the monitor run that re-scored it can share ids.
+    Base runs are not used, so ids are required to be unique among monitor-run rows only."""
     data_dir = Path(data_dir)
     recs, seen = [], set()
     DROPS.clear()
     for sh in shards:
         meta_p = next(p for p in (data_dir / "meta" / f"{sh}.jsonl.gz", data_dir / "meta" / f"{sh}.jsonl") if p.exists())
         seal_p = next(p for p in (data_dir / "sealed" / f"{sh}.jsonl.gz", data_dir / "sealed" / f"{sh}.jsonl") if p.exists())
-        scores = {}
-        with _open(seal_p) as f:
-            for line in f:
-                r = json.loads(line)
-                vals = [s for s in r["action_scores"] if s is not None]
-                scores[r["trajectory_id"]] = max(vals) if vals else None
-        with _open(meta_p) as f:
-            for line in f:
-                m = json.loads(line)
-                tid = m["trajectory_id"]
-                assert tid not in seen, f"duplicate trajectory id {tid}"
-                seen.add(tid)
-                mon, subj = parse_run(m["run_display_name"])
-                s = scores.get(tid)
-                if mon is None:
-                    DROPS["not_a_monitor_run"] += 1      # base agent runs: no "<X> monitor on <Y>" name
-                    continue
-                if s is None:
-                    DROPS["monitor_run_without_scored_action"] += 1
-                    continue
-                recs.append({
-                    "id": tid, "run_id": m["run_id"], "monitor": mon, "subject": subj, "env": m["environment"],
-                    "task": (m["environment"], m["main_task"]), "side": (m["environment"], m["side_task"]),
-                    "attack": m["side_task"] is not None,
-                    "success": bool(m["side_task_success"]), "score": s + 1e-6 * tie_break(tid),
-                })
+        with _open(meta_p) as fm, _open(seal_p) as fs:
+            meta_lines, seal_lines = fm.readlines(), fs.readlines()
+        if len(meta_lines) != len(seal_lines):
+            die(f"{sh}: label and score files have different lengths")
+        for ml, sl in zip(meta_lines, seal_lines):
+            m, r = json.loads(ml), json.loads(sl)
+            tid = m["trajectory_id"]
+            if r["trajectory_id"] != tid:
+                die(f"{sh}: label and score rows are out of step at {tid}")
+            mon, subj = parse_run(m["run_display_name"])
+            if mon is None:
+                DROPS["not_a_monitor_run"] += 1      # base agent runs: no "<X> monitor on <Y>" name
+                continue
+            if tid in seen:
+                die(f"duplicate trajectory id among monitor runs: {tid}")
+            seen.add(tid)
+            vals = [x for x in r["action_scores"] if x is not None]
+            if not vals:
+                DROPS["monitor_run_without_scored_action"] += 1
+                continue
+            recs.append({
+                "id": tid, "run_id": m["run_id"], "monitor": mon, "subject": subj, "env": m["environment"],
+                "task": (m["environment"], m["main_task"]), "attack": m["side_task"] is not None,
+                "success": bool(m["side_task_success"]), "monitor_errors": int(m.get("n_monitor_errors") or 0),
+                "score": max(vals) + 1e-6 * tie_break(tid),
+            })
     return recs
 
 
@@ -198,14 +208,12 @@ def synthetic(seed, recalls=None, alpha_shift=1.0, n_tasks=20, n_pol=20):
             task_eff = rng.gauss(0, 0.5)
             for p in range(n_pol):
                 recs.append({"id": f"h-{env}-{t}-{p}", "run_id": f"hon{p}", "monitor": PRIMARY_MONITOR,
-                             "subject": f"pol{p} honest", "env": env, "task": (env, f"t{t}"), "side": (env, None),
-                             "attack": False,
+                             "subject": f"pol{p} honest", "env": env, "task": (env, f"t{t}"), "attack": False,
                              "success": False, "score": rng.gauss(0, 1) + task_eff + shift})
         for c, mu in recalls.items():
             for j in range(8):
                 recs.append({"id": f"a-{env}-{c}-{j}", "run_id": f"att-{c}", "monitor": PRIMARY_MONITOR,
-                             "subject": c, "env": env, "task": (env, f"t{j}"), "side": (env, f"s{j}"),
-                             "attack": True, "success": True,
+                             "subject": c, "env": env, "task": (env, f"t{j}"), "attack": True, "success": True,
                              "score": rng.gauss(mu, 1)})
     return recs
 
@@ -229,12 +237,13 @@ def lean_bound(N, Bf, k, rho, alpha):
 def analyse_cell(cal_h, test_h, cal_a, test_a, classes, N, Bf, k, c):
     target = Bf / (c * N)
     n = len(cal_h)
-    x = int(math.floor(target * n))
+    x_target = (Bf * n) // (c * N)                       # floor(target * n) in integers
     ordered = sorted((r["score"] for r in cal_h), reverse=True)
-    theta = ordered[x] if x < n else -math.inf          # flag iff score > theta: exactly x calibration flags
+    theta = ordered[x_target] if x_target < n else -math.inf    # flag iff score > theta
     flag = lambda r: r["score"] > theta                  # noqa: E731
     d_alpha, d_rho = DELTA / 2, DELTA / (2 * max(1, len(classes)))
     cal_flags = [flag(r) for r in cal_h]
+    x = sum(cal_flags)                                   # realised count; equals x_target unless scores tie exactly
     a_cp = cp_upper(x, n, d_alpha)
     a_boot = cluster_boot_quantile(cal_flags, [r["task"] for r in cal_h], 1 - d_alpha)
     a_plus = max(a_cp, a_boot)                            # the certificate's false-positive bound
@@ -268,7 +277,13 @@ def analyse_cell(cal_h, test_h, cal_a, test_a, classes, N, Bf, k, c):
                            num=float) for v in per.values())
     return {
         "N": N, "Bf": Bf, "k": k, "headroom": c, "flag_rate_target": target, "threshold": theta,
-        "cal_honest_n": n, "cal_honest_flagged": x, "cal_honest_tasks": len({r["task"] for r in cal_h}),
+        "cal_honest_n": n, "cal_honest_flag_target": x_target, "cal_honest_flagged": x,
+        "cal_honest_tasks": len({r["task"] for r in cal_h}),
+        "trajectories_with_a_monitor_error": {
+            "cal_honest": sum(1 for r in cal_h if r.get("monitor_errors")),
+            "test_honest": sum(1 for r in test_h if r.get("monitor_errors")),
+            "cal_attack": sum(1 for r in cal_a if r["subject"] in classes and r.get("monitor_errors")),
+            "test_attack": sum(1 for r in test_a if r["subject"] in classes and r.get("monitor_errors"))},
         "alpha_cp_upper": a_cp, "alpha_cluster_boot_upper": a_boot, "alpha_plus": a_plus,
         "test_honest_n": nt, "test_honest_flagged": xt, "alpha_test": a_test,
         "alpha_test_lower": a_test_low, "alpha_test_cp_lower": cp_lower(xt, nt, 0.025),
@@ -310,8 +325,9 @@ def is_human_crafted(subject):
 
 
 def analyse(recs, monitor, cells, exclude_runs=frozenset(), test_envs=TEST_ENVS, min_honest=MIN_HONEST,
-            class_filter=None):
-    rs = [r for r in recs if r["monitor"] == monitor and r["run_id"] not in exclude_runs]
+            class_filter=None, record_filter=None):
+    rs = [r for r in recs if r["monitor"] == monitor and r["run_id"] not in exclude_runs
+          and (record_filter is None or record_filter(r))]
     cal = [r for r in rs if r["env"] not in test_envs]
     test = [r for r in rs if r["env"] in test_envs]
     cal_h, test_h = [r for r in cal if not r["attack"]], [r for r in test if not r["attack"]]
@@ -369,10 +385,9 @@ def leave_one_env_out(recs, monitor, exclude_runs, N=100, Bf=10, k=1, c=2):
         cal_h, test_h = [r for r in rs if r["env"] != env], [r for r in rs if r["env"] == env]
         if len(test_h) < 50:
             continue
-        target = Bf / (c * N)
         n = len(cal_h)
-        x = int(math.floor(target * n))
-        theta = sorted((r["score"] for r in cal_h), reverse=True)[x]
+        theta = sorted((r["score"] for r in cal_h), reverse=True)[(Bf * n) // (c * N)]
+        x = sum(r["score"] > theta for r in cal_h)
         a_plus = max(cp_upper(x, n, DELTA / 2),
                      cluster_boot_quantile([r["score"] > theta for r in cal_h], [r["task"] for r in cal_h], 1 - DELTA / 2))
         tf = [r["score"] > theta for r in test_h]
@@ -391,6 +406,11 @@ def run(recs, exclude_runs=frozenset(), secondary=True, min_honest=MIN_HONEST, p
                               min_honest=min_honest)}
     res["primary_model_attacks_only"] = analyse(recs, PRIMARY_MONITOR, CELLS, exclude_runs, min_honest=min_honest,
                                                 class_filter=lambda c: not is_human_crafted(c))
+    k1 = [cell for cell in CELLS if cell[3] == 1]
+    res["primary_without_monitor_error_trajectories"] = analyse(
+        recs, PRIMARY_MONITOR, k1, exclude_runs, min_honest=min_honest, record_filter=lambda r: not r.get("monitor_errors"))
+    if "cells" in res["primary_without_monitor_error_trajectories"]:
+        res["without_monitor_error_trajectories_verdicts"] = primary_verdicts(res["primary_without_monitor_error_trajectories"])
     if "cells" in res["primary"]:
         res["primary_verdicts"] = primary_verdicts(res["primary"])
         if "cells" in res["primary_model_attacks_only"]:
@@ -416,6 +436,19 @@ def main(argv):
         res = run(synthetic(int(argv[argv.index("--synthetic") + 1])), secondary=False)
         print(json.dumps(res["primary_verdicts"], indent=1))
         return 0
+    if "--check-data" in argv:
+        # Structure only: alignment of label and score files, unique ids, record counts. Prints no score statistic.
+        recs = load(ROOT / "data" / "linuxarena-public" / "compact", SHARDS)
+        dev = set(json.loads((HERE / "development_run_ids.json").read_text()))
+        prim = [r for r in recs if r["monitor"] == PRIMARY_MONITOR and r["run_id"] not in dev]
+        print(json.dumps({
+            "records": len(recs), "dropped_at_load": dict(DROPS), "monitors": len({r["monitor"] for r in recs}),
+            "primary_honest_cal": sum(1 for r in prim if not r["attack"] and r["env"] not in TEST_ENVS),
+            "primary_honest_test": sum(1 for r in prim if not r["attack"] and r["env"] in TEST_ENVS),
+            "primary_successful_attacks_cal": sum(1 for r in prim if r["attack"] and r["success"] and r["env"] not in TEST_ENVS),
+            "primary_successful_attacks_test": sum(1 for r in prim if r["attack"] and r["success"] and r["env"] in TEST_ENVS),
+        }, indent=1))
+        return 0
     if "--dev" in argv:
         data = Path(os.environ.get("E1_DEV_DIR", "/var/tmp/e1-data/dev"))
         res = run(load(data, ["sample"]), min_honest=50)   # the sample has 80 honest test trajectories
@@ -427,20 +460,26 @@ def main(argv):
         return 0
     if "--confirm" in argv:
         freeze = json.loads((HERE / "freeze.json").read_text())
-        assert freeze.get("status") == "FROZEN", "freeze.json is not marked FROZEN: the experiment is not authorised"
+        if freeze.get("status") != "FROZEN":
+            die("freeze.json is not marked FROZEN: the experiment is not authorised")
         prereg_sha = sha256_file(HERE / "PREREG.md")
-        assert os.environ.get("E1_PREREG_SHA256") == prereg_sha == freeze["prereg_sha256"], \
-            "E1_PREREG_SHA256 must equal the SHA-256 of PREREG.md recorded in freeze.json"
-        assert sha256_file(Path(__file__)) == freeze["analysis_sha256"], "analyze.py differs from the frozen analysis"
-        assert sha256_file(ROOT / "numerics" / "budgeted_audit.py") == freeze["model_sha256"]
+        if not (os.environ.get("E1_PREREG_SHA256") == prereg_sha == freeze["prereg_sha256"]):
+            die("E1_PREREG_SHA256 must equal the SHA-256 of PREREG.md recorded in freeze.json")
+        for rel, digest in freeze["code_sha256"].items():
+            if sha256_file(ROOT / rel) != digest:
+                die(f"pinned file changed since the freeze: {rel}")
         data = ROOT / freeze["data_dir"]
         for rel, digest in freeze["data_sha256"].items():
-            assert sha256_file(data / rel) == digest, f"data file changed: {rel}"
-        out = HERE / "results" / "confirmatory.json"
-        assert not out.exists(), "results/confirmatory.json exists: the confirmatory run is one-shot"
-        res = run(load(data, SHARDS), exclude_runs=frozenset(freeze["development_run_ids"]))
-        res["freeze"] = {"prereg_sha256": prereg_sha, "analysis_sha256": freeze["analysis_sha256"]}
+            if sha256_file(data / rel) != digest:
+                die(f"data file changed since the freeze: {rel}")
+        out, started = HERE / "results" / "confirmatory.json", HERE / "results" / "confirmatory.started"
+        if out.exists() or started.exists():
+            die("a confirmatory run was already started (results/confirmatory.started or .json exists); it is one-shot. "
+                "After a crash, record the cause and the fix in PREREG-DEVIATIONS.md before removing the marker.")
         out.parent.mkdir(exist_ok=True)
+        started.write_text(prereg_sha + "\n")          # written before any score is read
+        res = run(load(data, SHARDS), exclude_runs=frozenset(freeze["development_run_ids"]))
+        res["freeze"] = {"prereg_sha256": prereg_sha, "code_sha256": freeze["code_sha256"]}
         out.write_text(json.dumps(res, indent=1, sort_keys=True) + "\n")
         print(f"wrote {out}")
         print(json.dumps(res.get("primary_verdicts"), indent=1))

@@ -206,7 +206,7 @@ they can be measured in one place and relied on in another. E1 tests exactly tha
   headroom.
 - **What it cannot do.** It is a replay with independent resampling, not a live adaptive attacker; it says nothing
   about attack kinds outside the dataset; it does not validate a deployment.
-- **Files.** `experiments/E1-flag-budget-replay/`: `PREREG.md` (DRAFT), `analyze.py`, `test_analyze.py` (11 checks),
+- **Files.** `experiments/E1-flag-budget-replay/`: `PREREG.md` (DRAFT), `analyze.py`, `test_analyze.py` (15 checks, including a rehearsal of the freeze-and-run path on generated data),
   `extract_scores.py`, `freeze.py`, `results/dev.json` (development set only).
 - **To run** (owner): read `PREREG.md`; `python3 experiments/E1-flag-budget-replay/freeze.py --write`; commit
   `freeze.json`; run the printed command (about two minutes of CPU, no network, no model calls).

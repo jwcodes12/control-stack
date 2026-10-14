@@ -190,15 +190,19 @@ def tie_break_is_deterministic_and_small():
 
 
 @check
-def confirmatory_mode_refuses_before_the_freeze():
-    """With freeze.json not marked FROZEN (or the wrong environment variable) the confirmatory run must not start."""
+def confirmatory_mode_refuses_without_the_right_key():
+    """In the real tree, whatever its state (draft, frozen, already run), `--confirm` with a wrong E1_PREREG_SHA256
+    must stop before reading any score and must not create or change any result file. Holds under `python -O`."""
+    res = Path(a.__file__).parent / "results"
+    before = sorted((p.name, p.stat().st_mtime_ns) for p in res.glob("*")) if res.exists() else []
     env = dict(os.environ, E1_PREREG_SHA256="0" * 64)
     for flags in ([], ["-O"]):                 # the guard must not be an assert
         p = subprocess.run([sys.executable, *flags, str(Path(a.__file__)), "--confirm"], capture_output=True,
                            text=True, env=env)
-        assert p.returncode != 0 and "not authorised" in p.stderr, (flags, p.stderr)
-    res = Path(a.__file__).parent / "results"
-    assert not (res / "confirmatory.json").exists() and not (res / "confirmatory.started").exists()
+        assert p.returncode != 0 and ("not authorised" in p.stderr or "E1_PREREG_SHA256 must equal" in p.stderr), \
+            (flags, p.stderr)
+    after = sorted((p.name, p.stat().st_mtime_ns) for p in res.glob("*")) if res.exists() else []
+    assert before == after
 
 
 @check

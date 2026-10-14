@@ -1,12 +1,16 @@
 # Preregistration E1-FLAG-BUDGET-REPLAY
 
-**Status: DRAFT. Not authorised. The confirmatory analysis has not been run.**
+**Status: FROZEN on 2026-10-14. The confirmatory analysis had not been run when this text was frozen.**
 Written 2026-10-14 on branch `research/e1-replay-prereg-20261014`. Model-written and model-reviewed; no independent
 human review. The experiment costs no money: it calls no model and reads public data already extracted.
 
-To authorise: the owner reads this file, changes what they disagree with, then runs
-`python3 experiments/E1-flag-budget-replay/freeze.py --write`, commits `freeze.json`, and runs the one command it
-prints. `analyze.py --confirm` refuses to run unless `freeze.json` says FROZEN, every pinned hash matches, and no
+Authorisation. The agent told the owner the experiment was staged, that the run is one-shot, and what the freeze
+steps are, and asked for an explicit go-ahead. The owner replied "Go ahead, u r good". The agent then froze this
+text and ran the confirmatory analysis once. The owner made no edit to this preregistration before the freeze;
+whether they read it in full is not known.
+
+Procedure: `python3 experiments/E1-flag-budget-replay/freeze.py --write`, commit `freeze.json`, then the one command
+it prints. `analyze.py --confirm` refuses to run unless `freeze.json` says FROZEN, every pinned hash matches, and no
 confirmatory run has been started. It writes `results/confirmatory.started` before it reads any score, so a crashed
 run cannot be silently repeated.
 

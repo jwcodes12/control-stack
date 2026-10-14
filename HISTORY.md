@@ -1,5 +1,15 @@
 # HISTORY
 
+## 2026-10-13: research track, Milestone 1 flagship (branch `research/m1-flagship-20261013`)
+
+- Roadmap revision 2. Three model reviews of the M1 design before implementation (soundness, relevance, a hostile
+  referee from another family); their objections and the outcomes are in ROADMAP section 3.
+- New Lean: `Families/F6/FlagBudget.lean`, `Families/F6/SplitAudit.lean` (flag-budget bound with an exhaustion term,
+  hidden-schedule bound with visible flags, product bound, three kernel witnesses). Existing Lean unchanged.
+- New executable model `numerics/budgeted_audit.py` with 12 checks; first research record in `docs/records/`.
+- Not met: truncation lemma, imperfect reserved recall with visible flags, a distinguishing usefulness quantity,
+  human review. See HANDOFF.md.
+
 ## 2026-10-08 — structure merge work branch (not yet verified)
 
 - From exact main `18c1859`, selected B's single 28-case `scenarios/` tree and static checker, retained A's two CI roles, and ported C's Lean family scaffold, explicit policy tamper/dual-gate counterexample, adversary taxonomy and future prereg templates.

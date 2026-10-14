@@ -127,7 +127,8 @@ relevance, one hostile referee from a different model family. None is an indepen
 | The flag theorem as first proposed bounded only attacks made before exhaustion, an event the attacker can avoid; that is a metric substitution | all three | the headline statement is about all attacks and carries an explicit exhaustion term (`flag_total_bound`) |
 | The product of the two bounds is provable now, not a conjecture | soundness, referee | proved (`split_product_pre`, `split_product_bound`) |
 | "The split gets the minimum of the two bounds" is false for the total-attack event | soundness (by its own computation) | the minimum is stated with the exhaustion term; the counterexample is a test |
-| The dependence witness was misstated (flags on every reserved round leak the schedule) | soundness, referee | replaced by flags that fire only on attacks in reserved rounds |
+| The dependence witness was misstated, and its first replacement refuted only a product with schedule-averaged recall | soundness, referee (twice) | replaced by a monitor with recall 1/2 for every schedule whose false positive leaks the schedule (`dependence_witness`) |
+| Eight places where the record or a docstring claimed more than the Lean statement (statement audit of the finished work by the referee; no defect found in the statements themselves) | referee | all reworded; listed in HANDOFF.md |
 | "P1 holds for any flags" is false once flags are visible | soundness, referee | the theorem requires the flag law to be a function of the visible history; stated as a limit |
 | The recall premise contains most of the conclusion | referee | recorded in the assumption audit with the reason the theorem is still useful |
 | Lead with the per-step ratio and the exhaustion probability; add the constant-rate attacker | relevance | done in the record and the executable model |

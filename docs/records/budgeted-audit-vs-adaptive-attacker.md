@@ -21,9 +21,9 @@ attacker who adapts to everything it has seen, and what breaks each guarantee?
 | what goes wrong | P1 | P2 | witness |
 |---|---|---|---|
 | schedule leaks | bound fails (attacker avoids S) | unaffected | `AuditBudget.observable_schedule_nogo` |
-| false positives exhaust the flag budget | unaffected if flags are a function of the visible history | attacker who attacks late wins with the exhaustion probability, even at recall 1 | `SplitAudit.exhaustion_witness` |
+| false positives exhaust the flag budget | unaffected if flags are a function of the visible history | an attacker who attacks late succeeds whenever earlier false positives used the budget, even at monitor recall 1 (probability α in the witness) | `SplitAudit.exhaustion_witness` |
 | recall holds only on average | unaffected (monitor not used) | attacker picks the histories where recall is low | `SplitAudit.average_recall_witness` |
-| flags depend on the schedule | not covered by the theorem | per-schedule bound still holds | `SplitAudit.dependence_witness` (product fails) |
+| flags depend on the schedule | not covered by the theorem; the flags can leak S | per-schedule bound still holds | `SplitAudit.dependence_witness` (product fails) |
 
 Each "unaffected" cell is one failure at a time. A known schedule together with an exhausted flag budget leaves
 attacks unaudited by both parts (`ReservedAudit.observable_and_exhausted`).
@@ -74,17 +74,22 @@ real-valued kernels; no measure theory).
 - **Cost.** Audits spent, at most Bh + Bf. Honest-task usefulness is the same for P1, P2 and the split by
   construction, because none of them blocks, edits or defers an uncaught action (*modelling choice*). The first
   protocol in which usefulness differs is defer-to-trusted (Milestone 2).
-- **Attacker class.** Any σ that is a function of the visible history. For the flag bounds on a general kernel
-  (`FlagBudget.flag_total_bound`) the kernel is arbitrary, so the attacker may also depend on hidden state; only the
-  current round's monitor coin is outside its control. Quantifier order: the parameters (ρ, α) are fixed first, then
-  the bound holds for every attacker.
+- **Attacker class.** On `splitK`: any σ that is a function of the visible history; the monitor's coin in the
+  current round is drawn after the attack bit. The general theorems (`FlagBudget.flag_total_bound` and its two
+  parts) are weaker in structure and stronger in scope: they constrain an arbitrary sub-probability kernel only
+  through `hrec` and `hfp`, impose no catch rule and no separate monitor coin, and so cover any attacker, monitor
+  and audit behaviour for which those two inequalities hold. Quantifier order: (ρ, α) are fixed first, then the bound
+  holds for every kernel satisfying the premises.
+- **Histories.** The Lean premises quantify over every history (and, on `splitK`, every schedule), reachable or not.
+  That is stronger than "every reachable history"; a measurement programme only needs the reachable ones, but no
+  theorem here is stated with that weaker premise.
 
 **Which kind of guarantee each statement is** (direction §5B):
 
 | statement | kind |
 |---|---|
 | all bounds in section 3 | uniform over the adversary class above |
-| premises `hrec`, `hfp` (ρ, α) | conditional at every reachable history with budget remaining |
+| premises `hrec`, `hfp` (ρ, α) | conditional at every history with budget remaining (all histories in the Lean statement) |
 | `average_recall_witness`, first conjunct | performance against one specified attack distribution |
 | any benchmark recall number | average over a fixed dataset; not a premise of any theorem here |
 
@@ -126,8 +131,9 @@ recursion; the executable model checks it equals the binomial sum), `ReservedAud
   hidden-schedule game to a game against an S-independent certificate) with `pre_step` (new: bounds that certificate
   game). Connecting obligations, all proved: the certificate dominates the kernel for every S (`splitK_dominated`),
   the blind average of the S-dependent payoff is ≤ C/C times the S-free payoff (`Leakage.blind_audit`), and the
-  certificate satisfies the recall inequality. The obligation that could not be discharged in general is
-  S-independence of the flag law; `dependence_witness` shows the product is false without it.
+  certificate satisfies the recall inequality. The premise that carries the composition is S-independence of the
+  flag law: `dependence_witness` shows the product is false when the flag law depends on the schedule, even with
+  the same recall for every schedule.
 - **What does not compose, stated precisely.** (i) Imperfect reserved-audit recall with visible flags:
   `ReservedRecall.adaptive_recall_bound` is stated for `AOut Unit` (flags hidden) and its discount lemmas
   (`phi`, `fac`, `phi_live`) are not generic in the leak type. (ii) The deterministic gate model (`Core/Gate.lean`,
@@ -138,9 +144,9 @@ recursion; the executable model checks it equals the binomial sum), `ReservedAud
 
 | generalisation a researcher might make | witness (Lean-checked value of a concrete kernel) |
 |---|---|
-| "With recall ρ per attack the attacker's success is at most (1−ρ)^k." | `SplitAudit.exhaustion_witness`: recall 1, false-positive rate α, Bf = 1, N = 2. Attacking in the last round succeeds with probability exactly α. No flag needs to be observed. |
+| "With monitor recall ρ on every attack the attacker's success is at most (1−ρ)^k." | `SplitAudit.exhaustion_witness`: monitor recall 1, false-positive rate α ∈ (0,1], Bf = 1, N = 2. Attacking in the last round succeeds with probability exactly α, because a flag raised after exhaustion triggers no audit. No flag needs to be observed. (The catch recall after exhaustion is 0; the witness refutes compounding the monitor's recall, not a per-attack catch recall.) |
 | "The monitor's measured recall is ρ, so ρ can be used in the bound." | `SplitAudit.average_recall_witness`: the monitor catches attacks in round 0 and misses them in round 1. An attacker spread evenly over the rounds is missed half the time (measured recall 1/2); the attacker who picks round 1 is never caught, against a claimed bound of 1/2. |
-| "Two valid bounds multiply." | `SplitAudit.dependence_witness`: flags fire exactly on reserved rounds. Averaged over the schedule the monitor flags an attack with probability 1/2 and the hidden-schedule value is 1/2, but success is 1/2, not 1/4. |
+| "The hidden-schedule bound and the per-schedule recall bound multiply." | `SplitAudit.dependence_witness` (N = 3, Bh = 1, Bf = 2, k = 1): recall is exactly 1/2 for every schedule and history, so `split_flag_bound`'s premise holds, but the false positive in round 0 reveals whether round 1 is reserved. The attacker avoids the reserved round and succeeds with probability 1/2 under each schedule, not C(2,1)/C(3,1)·1/2 = 1/3. |
 | "A random schedule protects whether or not it is secret." | `AuditBudget.observable_schedule_nogo` (existing; stated for fixed attack sets, a different formalisation from `val`). The executable model reproduces it on `splitK` with a known schedule. |
 | "For the split, take the smaller of the two per-step bounds." | False for the total-attack event: N = 6, Bh = 2, Bf = 1, k = 2, ρ = 1/2, α = 1/4 gives optimum 781/2560 ≈ 0.305 > min(2/5, 1/4). Executable model only (`exhaustion_beats_the_recall_term`), found independently by a reviewer's own programme. |
 
@@ -191,11 +197,11 @@ claimed (`trusted_stack/audit.py` is a reference schedule only).
 
 | assumption | role in the proof | why needed | kind | how to justify or challenge | does a measurement match its quantifiers? | plausibility | if weakened |
 |---|---|---|---|---|---|---|---|
-| S uniform over Bh-subsets, drawn before play | makes the blind average of "no attack in S" equal C(N−k,Bh)/C(N,Bh) (`blind_audit`) | the count is for the uniform law | implementation premise | inspect the scheduler and its randomness source | yes, by inspection or a statistical test of the generator | untested for any deployment | a non-uniform law gives a different, possibly much worse, constant |
+| S uniform over Bh-subsets, drawn before play | makes the blind average of "≥ k attacks, none in S" at most C(N−k,Bh)/C(N,Bh) (`blind_audit`) | the count is for the uniform law | implementation premise | inspect the scheduler and its randomness source | yes, by inspection or a statistical test of the generator | untested for any deployment | a non-uniform law gives a different, possibly much worse, constant |
 | S hidden: attack law depends only on the visible history | the certificate is S-independent, so transfer applies | otherwise the attacker avoids S | empirical and implementation | enumerate observation channels; leakage tests | only for listed channels | not identifiable in general (cannot prove absence of side channels) | `Leakage.audit_leak_bound` degrades the bound by the leak's certificate mass; total leak gives 1 (`observable_schedule_nogo`) |
-| flag law independent of S (function of visible history and attack bit) | same certificate argument, with flags visible | S-dependent visible flags can reveal S or correlate catches | implementation | inspect the dispatcher | yes, by inspection | plausible when monitor and scheduler are separate programs; untested | product fails (`dependence_witness`); per-schedule flag bound still holds |
+| flag law independent of S (function of visible history and attack bit) | same certificate argument, with flags visible | S-dependent visible flags can reveal S (`dependence_witness`) or correlate catches | implementation | inspect the dispatcher | yes, by inspection | plausible when monitor and scheduler are separate programs; untested | product fails (`dependence_witness`); per-schedule flag bound still holds |
 | reserved audit catches an attack with certainty | "never caught" implies "no attack in S" | used by `totSucc_eq_successInd` | empirical | measure audit recall on known attacks | yes, a rate on audited attacks | known to be imperfect in practice | proved only with hidden flags (`ReservedRecall.adaptive_recall_bound`); with visible flags it is open |
-| `hrec`: conditional recall ≥ ρ at every history with budget left | one-round supermartingale inequality (`pre_step`) | compounding needs it at each attack, whatever preceded it | empirical, and it is **most of the conclusion** | red-team per history class; adversarially search for low-recall histories | no for an average; partly for a per-class minimum | not identifiable from a fixed benchmark: the attacker chooses the history | (1−ρ)^k is replaced by the product of the recalls on the path the attacker picks (`average_recall_witness`: can be 1) |
+| `hrec`: conditional recall ≥ ρ at every history with budget left | one-round supermartingale inequality (`pre_step`) | compounding needs it at each attack, whatever preceded it | empirical, and it is **most of the conclusion** | red-team per history class; adversarially search for low-recall histories | no for an average; partly for a per-class minimum | not identifiable from a fixed benchmark: the attacker chooses the history | no bound is proved; informally the factor per attack becomes the miss probability at the history the attacker picks, which `average_recall_witness` shows can be 1 |
 | `hfp`: P(flag and not caught) ≤ α at every history with budget left | one-round inequality for the binomial-tail potential (`tail_step`) | exhaustion is what removes P2's protection | empirical | honest-run flag rates; check for bursts and for attacker-induced flags | partly (see table above) | untested | the exhaustion term grows; at αN ≥ Bf it is about 1/2 or more |
 | hard first-come budget | defines exhaustion | it is the protocol | definitional | n/a | n/a | n/a | threshold-ranked or paced budgets are different protocols (backlog item 2) |
 | catch is absorbing; event is "never caught by round N" | payoffs carry `liveInd` | lets caught transcripts be ignored | modelling choice | see next row | n/a | n/a | harm before a later catch is not counted |

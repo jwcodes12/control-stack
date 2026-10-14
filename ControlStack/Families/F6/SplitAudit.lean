@@ -22,14 +22,15 @@ Results.
    Proof: `Leakage.seq_transfer` reduces the hidden-schedule game to a blind game against an S-independent
    certificate; the pre-exhaustion potential of `FlagBudget.pre_step` then bounds the certificate game.
 5. Negative controls (Lean-checked values of concrete kernels in the same semantics):
-   - `exhaustion_witness`: recall 1, false-positive rate α, Bf = 1, N = 2. An attacker who simply attacks in the
-     last round (it need not see any flag) succeeds with probability exactly α. The exhaustion term cannot be dropped.
+   - `exhaustion_witness`: monitor recall 1, false-positive rate α ∈ [0,1], Bf = 1, N = 2. An attacker who simply
+     attacks in the last round (it need not see any flag) succeeds with probability exactly α. So monitor recall does
+     not compound unless exhaustion is accounted for; for α > 0 the bound without the exhaustion term is false.
    - `average_recall_witness`: the monitor flags attacks in round 0 and misses them in round 1. An attacker spread
      evenly over the two rounds is missed with probability 1/2 (measured recall 1/2); the attacker who picks round 1
      is never caught. Recall averaged over an attack distribution is not the per-history premise.
-   - `dependence_witness`: the monitor flags an attack exactly when the round is reserved. Averaged over S it flags
-     an attack with probability 1/2, yet success is 1/2, not 1/2 · 1/2: the product needs the flag law to be
-     S-independent.
+   - `dependence_witness`: the monitor has recall exactly 1/2 for every schedule, but its false positive in round 0
+     reveals whether round 1 is reserved. The attacker avoids the reserved round and succeeds with probability
+     1/2 = (1−ρ), not the product 1/3: the product needs the flag law to be S-independent.
 6. Numbers: `hidden_one_step` (k = 1: the hidden-schedule bound is exactly 1 − Bh/N), `split_example`
    (N = 100, Bh = 10, k = 5, ρ = 1/2: ≈ 0.584 hidden alone, 0.03125 flags alone, ≈ 0.0182 for the product).
 
@@ -467,25 +468,19 @@ theorem splitK_val_two {N : ℕ} (Bf : ℕ) (σ : List (AOut Bool) → Bool → 
   simp only [splitK_val_succ]
   simp [Leakage.val]
 
-theorem sum_finset_fin2 (F : Finset (Fin 2) → ℝ) :
-    ∑ S : Finset (Fin 2), F S = F ∅ + F {0} + F {1} + F {0, 1} := by
-  have huniv : (Finset.univ : Finset (Finset (Fin 2))) = {∅, {0}, {1}, {0, 1}} := by decide
-  rw [huniv, Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_singleton]
-  ring
-
 /-- the attacker that attacks exactly in round r and ignores everything it sees -/
 noncomputable def attackAt (r : ℕ) : List (AOut Bool) → Bool → ℝ :=
   fun g a => if a = decide (g.length = r) then 1 else 0
 
-/-- a monitor with recall 1 and false-positive rate α -/
+/-- a monitor with recall 1 and false-positive rate α (a probability law only for 0 ≤ α ≤ 1) -/
 noncomputable def fpMonitor (α : ℝ) : Finset (Fin 2) → List (AOut Bool) → Bool → Bool → ℝ :=
   fun _ _ a f => if a then (if f then 1 else 0) else (if f then α else 1 - α)
 
-/-- **Exhaustion** (N = 2, no reserved audits, Bf = 1, k = 1). The monitor flags every attack (recall 1, so the
-pre-exhaustion bound is (1−1)^1 = 0) and flags a non-attack with probability α. The attacker attacks in the last
-round whatever it has seen. It succeeds exactly when round 0 raised a false positive: probability α. The exhaustion
-term of `split_flag_bound` is therefore needed; here that term is α + (1−α)·α. -/
+/-- **Exhaustion** (N = 2, no reserved audits, Bf = 1, k = 1). The monitor flags every attack (monitor recall 1,
+so the pre-exhaustion bound is (1−1)^1 = 0) and flags a non-attack with probability α. The attacker attacks in the
+last round whatever it has seen. It succeeds exactly when round 0 raised a false positive: probability α. The
+identity holds for every real α; it is a statement about probabilities for 0 ≤ α ≤ 1 and a strict counterexample to
+"success ≤ (1 − monitor recall)^k" for α > 0. The exhaustion term of `split_flag_bound` here is α + (1−α)·α. -/
 theorem exhaustion_witness (α : ℝ) :
     val (splitK 1 (attackAt 1) (fpMonitor α) (∅ : Finset (Fin 2))) (totSucc (N := 2) 1) 2 [] = α ∧
       binTail α 1 2 0 = α + (1 - α) * α := by
@@ -520,34 +515,73 @@ theorem average_recall_witness :
       card_attackSet_two, liveInd, caughtFlag]
   · simp [binTail]; norm_num
 
-/-- a monitor whose flag depends on the schedule: it flags an attack exactly when the round is reserved -/
-noncomputable def schedMonitor : Finset (Fin 2) → List (AOut Bool) → Bool → Bool → ℝ :=
-  fun S g a f => if f = (a && decide (memN S g.length)) then 1 else 0
+theorem card_attackSet_three (o₀ o₁ o₂ : AOut Bool) :
+    (attackSet (N := 3) [o₀, o₁, o₂]).card =
+      (if o₀.1 = true then 1 else 0) + (if o₁.1 = true then 1 else 0) + (if o₂.1 = true then 1 else 0) := by
+  unfold attackSet
+  rw [Finset.card_filter, Fin.sum_univ_three]
+  simp [attacked]
 
-/-- **Schedule-dependent flags do not multiply** (N = 2, Bh = 1, Bf = 1, k = 1). The monitor flags an attack exactly
-when the round is reserved. Averaged over the schedule it flags a round-0 attack with probability 1/2, and the
-hidden-schedule value C(1,1)/C(2,1) is 1/2, but the attacker's success is 1/2, not the product 1/4: the flag adds
-nothing to the reserved audit. `split_product_pre` requires an S-independent flag law for this reason. -/
+/-- a three-round split game, written out -/
+theorem splitK_val_three {N : ℕ} (Bf : ℕ) (σ : List (AOut Bool) → Bool → ℝ)
+    (τ : Finset (Fin N) → List (AOut Bool) → Bool → Bool → ℝ) (S : Finset (Fin N))
+    (pay : List (AOut Bool) → ℝ) :
+    val (splitK Bf σ τ S) pay 3 [] = ∑ a : Bool, ∑ f : Bool, σ [] a * τ S [] a f *
+      ∑ a' : Bool, ∑ f' : Bool, σ [(a, f, catchRule Bf S [] a f)] a' * τ S [(a, f, catchRule Bf S [] a f)] a' f' *
+        ∑ a'' : Bool, ∑ f'' : Bool,
+          σ [(a, f, catchRule Bf S [] a f), (a', f', catchRule Bf S [(a, f, catchRule Bf S [] a f)] a' f')] a'' *
+          τ S [(a, f, catchRule Bf S [] a f), (a', f', catchRule Bf S [(a, f, catchRule Bf S [] a f)] a' f')] a'' f'' *
+          pay [(a, f, catchRule Bf S [] a f), (a', f', catchRule Bf S [(a, f, catchRule Bf S [] a f)] a' f'),
+            (a'', f'', catchRule Bf S
+              [(a, f, catchRule Bf S [] a f), (a', f', catchRule Bf S [(a, f, catchRule Bf S [] a f)] a' f')]
+              a'' f'')] := by
+  show val (splitK Bf σ τ S) pay (0 + 1 + 1 + 1) [] = _
+  simp only [splitK_val_succ]
+  simp [Leakage.val]
+
+/-- a monitor whose FALSE POSITIVES depend on the schedule: it flags an attack with probability 1/2 whatever the
+schedule and history (so its conditional recall is exactly 1/2 for every schedule), and it flags the non-attack
+round 0 exactly when round 1 is reserved -/
+noncomputable def leakMonitor : Finset (Fin 3) → List (AOut Bool) → Bool → Bool → ℝ :=
+  fun S g a f => if a then 1 / 2 else (if f = (decide (g.length = 0) && decide (memN S 1)) then 1 else 0)
+
+/-- the attacker that waits in round 0, then attacks in round 1 if round 0 was not flagged and in round 2 if it was -/
+noncomputable def leakAttacker : List (AOut Bool) → Bool → ℝ :=
+  fun g a => if a = (decide (g.length = 1) && !(g.headD (false, false, false)).2.1 ||
+    decide (g.length = 2) && (g.headD (false, false, false)).2.1) then 1 else 0
+
+/-- **Schedule-dependent flags break the product** (N = 3, Bh = 1, Bf = 2, k = 1). The monitor's recall is exactly
+1/2 at every history and for every schedule, so the per-schedule premise of `split_flag_bound` holds with ρ = 1/2.
+Its false positive in round 0 reveals whether round 1 is reserved. The attacker reads that flag and attacks in a
+round it knows is not reserved; under each of the three schedules it succeeds with probability 1/2 = (1−ρ)^1, not
+the product C(2,1)/C(3,1) · (1 − 1/2) = 1/3. `split_product_pre` requires an S-independent flag law for this reason. -/
 theorem dependence_witness :
-    ∑ S : Finset (Fin 2), pU 2 1 S * val (splitK 1 (attackAt 0) schedMonitor S) (totSucc (N := 2) 1) 2 [] = 1 / 2 ∧
-    ∑ S : Finset (Fin 2), pU 2 1 S * schedMonitor S [] true true = 1 / 2 ∧
-    (Nat.choose (2 - 1) 1 : ℝ) / (Nat.choose 2 1 : ℝ) * (1 - 1 / 2) ^ 1 = 1 / 4 := by
-  have p0 : pU 2 1 (∅ : Finset (Fin 2)) = 0 := by simp [pU, AuditBudget.randomSchedules]
-  have p1 : pU 2 1 ({0} : Finset (Fin 2)) = 1 / 2 := by simp [pU, AuditBudget.randomSchedules]
-  have p2 : pU 2 1 ({1} : Finset (Fin 2)) = 1 / 2 := by simp [pU, AuditBudget.randomSchedules]
-  have p3 : pU 2 1 ({0, 1} : Finset (Fin 2)) = 0 := by simp [pU, AuditBudget.randomSchedules]
-  have m00 : memN ({0} : Finset (Fin 2)) 0 := ⟨0, by simp, rfl⟩
-  have m01 : ¬ memN ({0} : Finset (Fin 2)) 1 := by rintro ⟨j, hj, h⟩; simp at hj; subst hj; simp at h
-  have m10 : ¬ memN ({1} : Finset (Fin 2)) 0 := by rintro ⟨j, hj, h⟩; simp at hj; subst hj; simp at h
-  have m11 : memN ({1} : Finset (Fin 2)) 1 := ⟨1, by simp, rfl⟩
-  refine ⟨?_, ?_, ?_⟩
-  · rw [sum_finset_fin2]
-    simp only [splitK_val_two]
-    simp [p0, p1, p2, p3, attackAt, schedMonitor, catchRule, m00, m01, m10, m11,
-      flagCount, totSucc, card_attackSet_two, liveInd, caughtFlag]
-  · rw [sum_finset_fin2]
-    simp [p0, p1, p2, p3, schedMonitor, m00, m10]
-  · norm_num
+    val (splitK 2 leakAttacker leakMonitor ({0} : Finset (Fin 3))) (totSucc (N := 3) 1) 3 [] = 1 / 2 ∧
+    val (splitK 2 leakAttacker leakMonitor ({1} : Finset (Fin 3))) (totSucc (N := 3) 1) 3 [] = 1 / 2 ∧
+    val (splitK 2 leakAttacker leakMonitor ({2} : Finset (Fin 3))) (totSucc (N := 3) 1) 3 [] = 1 / 2 ∧
+    (∀ (S : Finset (Fin 3)) (g : List (AOut Bool)), leakMonitor S g true true = 1 / 2) ∧
+    (Nat.choose (3 - 1) 1 : ℝ) / (Nat.choose 3 1 : ℝ) * (1 - 1 / 2) ^ 1 = 1 / 3 := by
+  have m00 : memN ({0} : Finset (Fin 3)) 0 := by decide
+  have m01 : ¬ memN ({0} : Finset (Fin 3)) 1 := by decide
+  have m02 : ¬ memN ({0} : Finset (Fin 3)) 2 := by decide
+  have m10 : ¬ memN ({1} : Finset (Fin 3)) 0 := by decide
+  have m11 : memN ({1} : Finset (Fin 3)) 1 := by decide
+  have m12 : ¬ memN ({1} : Finset (Fin 3)) 2 := by decide
+  have m20 : ¬ memN ({2} : Finset (Fin 3)) 0 := by decide
+  have m21 : ¬ memN ({2} : Finset (Fin 3)) 1 := by decide
+  have m22 : memN ({2} : Finset (Fin 3)) 2 := by decide
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [splitK_val_three]
+    simp [leakAttacker, leakMonitor, catchRule, m00, m01, m02, flagCount, totSucc, card_attackSet_three, liveInd,
+      caughtFlag]
+  · rw [splitK_val_three]
+    simp [leakAttacker, leakMonitor, catchRule, m10, m11, m12, flagCount, totSucc, card_attackSet_three, liveInd,
+      caughtFlag]
+  · rw [splitK_val_three]
+    simp [leakAttacker, leakMonitor, catchRule, m20, m21, m22, flagCount, totSucc, card_attackSet_three, liveInd,
+      caughtFlag]
+  · intro S g; simp [leakMonitor]
+  · norm_num [Nat.choose]
 
 end Witnesses
 
@@ -555,9 +589,10 @@ end Witnesses
 
 section Numbers
 
-/-- **One-step attacks.** For k = 1 the hidden-schedule bound is exactly 1 − Bh/N: with a 2% reserved budget a
-single-step attack survives with probability 0.98. (`AuditBudget.random_subset_survival` shows this is the exact
-survival of a fixed one-round attack, so the bound is not loose.) -/
+/-- **One-step attacks.** For k = 1 the hidden-schedule bound is exactly 1 − Bh/N: with a 2% reserved budget the
+reserved audits alone bound a single-step attack's success only by 0.98 (flag audits can lower the actual value).
+`AuditBudget.random_subset_survival` shows 1 − Bh/N is the exact survival of a fixed one-round attack against the
+schedule alone, so the hidden-schedule bound is not loose. -/
 theorem hidden_one_step {N Bh : ℕ} (hN : 0 < N) (hB : Bh ≤ N) :
     (Nat.choose (N - 1) Bh : ℝ) / (Nat.choose N Bh : ℝ) = 1 - (Bh : ℝ) / N := by
   obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, by omega⟩

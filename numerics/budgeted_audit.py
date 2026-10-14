@@ -136,9 +136,21 @@ def class_monitor(S, g, a):
     return 1 if (a and len(g) == 0) else 0
 
 
-def sched_monitor(S, g, a):
-    """`SplitAudit.schedMonitor`: flags an attack exactly when the round is reserved."""
-    return 1 if (a and len(g) in S) else 0
+def leak_monitor(S, g, a):
+    """`SplitAudit.leakMonitor` (N = 3): recall 1/2 for every schedule; the non-attack round 0 is flagged exactly when
+    round 1 is reserved, so its false positive leaks the schedule."""
+    if a:
+        return Fr(1, 2)
+    return 1 if (len(g) == 0 and 1 in S) else 0
+
+
+def leak_attacker(g):
+    """`SplitAudit.leakAttacker`: wait in round 0; attack in round 1 if round 0 was not flagged, else in round 2."""
+    if len(g) == 1:
+        return 0 if g[0][1] else 1
+    if len(g) == 2:
+        return 1 if g[0][1] else 0
+    return 0
 
 
 def schedules(N, Bh):

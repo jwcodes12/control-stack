@@ -1,6 +1,10 @@
 /-
-F6: monitor-flag-triggered auditing with a HARD first-come budget, against attackers who may see everything that
-has already happened (their own actions, every flag, every catch, hence the budget state).
+F6: bounds for round kernels with a HARD first-come flag budget. The theorems here constrain an ARBITRARY
+non-negative sub-probability kernel through two premises (`hrec`, `hfp`); they do not themselves impose a catch rule
+or a separate monitor coin. The protocol that satisfies the premises (attack, then flag, then audit while budget
+remains) is `SplitAudit.splitK`; see `SplitAudit.split_flag_bound`. Because the kernel is arbitrary, the attacker may
+depend on everything that has already happened (its own actions, every flag, every catch, hence the budget state).
+A kernel row may sum to less than 1; the missing mass is play that has stopped and counts as no success.
 
 Round model (the `val` kernel semantics of `Core/Leakage.lean`). Visible round output `AOut Bool`:
 (attack bit, monitor flag, caught). A flagged round is audited while fewer than Bf EARLIER rounds were flagged; the
@@ -204,8 +208,8 @@ end Book
 
 section Tail
 
-/-- P(at least Bf − j further successes in n Bernoulli(α) trials), by its recursion: the probability that a flag
-count now at j reaches Bf within n more rounds when each round flags with probability α. -/
+/-- For 0 ≤ α ≤ 1: P(at least Bf − j further successes in n Bernoulli(α) trials), by its recursion: the probability
+that a flag count now at j reaches Bf within n more rounds when each round flags with probability α. -/
 noncomputable def binTail (α : ℝ) (Bf : ℕ) : ℕ → ℕ → ℝ
   | 0, j => if Bf ≤ j then 1 else 0
   | n + 1, j => if Bf ≤ j then 1 else α * binTail α Bf n (j + 1) + (1 - α) * binTail α Bf n j
@@ -259,7 +263,8 @@ section Events
 
 variable {N : ℕ}
 
-/-- ≥ k attacks and never caught -/
+/-- ≥ k attacks and never caught. Attacks are counted in the first N positions (`attackSet` over `Fin N`) and
+catches anywhere in the list, so this is the intended event on the length-N transcripts that `val … N []` produces. -/
 noncomputable def totSucc (k : ℕ) (t : List (AOut Bool)) : ℝ :=
   (if k ≤ (attackSet (N := N) t).card then 1 else 0) * liveInd caughtFlag t
 

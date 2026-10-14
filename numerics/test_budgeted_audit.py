@@ -58,10 +58,13 @@ def lean_witnesses():
     assert m.value(2, 0, 2, 1, m.spread_attacker, m.class_monitor) == Fr(1, 2)
     assert m.value(2, 0, 2, 1, m.attack_at(1), m.class_monitor) == 1
     assert m.flag_bound(2, 2, 1, Fr(1, 2), Fr(0)) == Fr(1, 2)
-    # dependence_witness
-    assert m.value(2, 1, 1, 1, m.attack_at(0), m.sched_monitor) == Fr(1, 2)
-    assert sum(Fr(1, 2) * m.sched_monitor(S, (), True) for S in m.schedules(2, 1)) == Fr(1, 2)
-    assert m.hyp(2, 1, 1) * (1 - Fr(1, 2)) == Fr(1, 4)
+    # dependence_witness: recall 1/2 for every schedule, a false positive that leaks the schedule
+    for S in ([0], [1], [2]):
+        assert m.value(3, 1, 2, 1, m.leak_attacker, m.leak_monitor, known=S) == Fr(1, 2)
+    assert m.value(3, 1, 2, 1, m.leak_attacker, m.leak_monitor) == Fr(1, 2)
+    assert m.optimal(3, 1, 2, 1, m.leak_monitor) == Fr(1, 2)
+    assert m.product_pre_bound(3, 1, 1, Fr(1, 2)) == Fr(1, 3)
+    assert m.optimal(3, 1, 2, 1, m.iid_monitor(Fr(1, 2), 0)) == Fr(1, 3)  # same recall, S-independent flags
 
 
 @check
